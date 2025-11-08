@@ -70,36 +70,164 @@ export const Tags: { [id: IDEntry]: TagData } = {
 		desc: "Affected by a variety of moves, abilities, and items. Moves affected by contact moves include: Spiky Shield, King's Shield. Abilities affected by contact moves include: Iron Barbs, Rough Skin, Gooey, Flame Body, Static, Tough Claws. Items affected by contact moves include: Rocky Helmet, Sticky Barb.",
 		moveFilter: move => 'contact' in move.flags,
 	},
-	sound: {
-		name: "Sound",
-		desc: "Doesn't affect Soundproof Pokémon. (All sound moves also bypass Substitute.)",
-		moveFilter: move => 'sound' in move.flags,
-	},
-	powder: {
-		name: "Powder",
-		desc: "Doesn't affect Grass-type Pokémon, Overcoat Pokémon, or Safety Goggles holders.",
-		moveFilter: move => 'powder' in move.flags,
-	},
-	fist: {
-		name: "Fist",
-		desc: "Boosted 1.2x by Iron Fist.",
-		moveFilter: move => 'punch' in move.flags,
-	},
-	pulse: {
-		name: "Pulse",
-		desc: "Boosted 1.5x by Mega Launcher.",
-		moveFilter: move => 'pulse' in move.flags,
+	binding: {
+		name: "Binding",
+		desc: "Move traps and damages the target for multiple turns.",
+		moveFilter: move => 'bind' in move.flags,
 	},
 	bite: {
 		name: "Bite",
 		desc: "Boosted 1.5x by Strong Jaw.",
 		moveFilter: move => 'bite' in move.flags,
 	},
-	ballistic: {
-		name: "Ballistic",
+	bomb: {
+		name: "Bomb",
+		desc: "Move is a bomb-based attack.",
+		moveFilter: move => 'bomb' in move.flags,
+	},
+	bullet: {
+		name: "Bullet",
 		desc: "Doesn't affect Bulletproof Pokémon.",
 		moveFilter: move => 'bullet' in move.flags,
 	},
+	drain: {
+		name: "Drain",
+		desc: "Move drains HP from the target.",
+		moveFilter: move => 'drain' in move.flags,
+	},
+	explosive: {
+		name: "Explosive",
+		desc: "Move causes an explosion.",
+		moveFilter: move => 'explosive' in move.flags,
+	},
+	fist: {
+		name: "Fist",
+		desc: "Boosted 1.2x by Iron Fist.",
+		moveFilter: move => 'punch' in move.flags,
+	},
+	powder: {
+		name: "Powder",
+		desc: "Doesn't affect Grass-type Pokémon, Overcoat Pokémon, or Safety Goggles holders.",
+		moveFilter: move => 'powder' in move.flags,
+	},
+	pulse: {
+		name: "Pulse",
+		desc: "Boosted 1.5x by Mega Launcher.",
+		moveFilter: move => 'pulse' in move.flags,
+	},
+	slicing: {
+		name: "Slicing",
+		desc: "Boosted 1.5x by Sharpness.",
+		moveFilter: move => 'slicing' in move.flags,
+	},
+	sound: {
+		name: "Sound",
+		desc: "Doesn't affect Soundproof Pokémon. (All sound moves also bypass Substitute.)",
+		moveFilter: move => 'sound' in move.flags,
+	},
+	wind: {
+		name: "Wind",
+		desc: "Activates Wind Power and Wind Rider abilities.",
+		moveFilter: move => 'wind' in move.flags,
+	},
+
+
+	airborne: {
+		name: "Airborne",
+		desc: "Move is executed while airborne.",
+		moveFilter: move => 'airborne' in move.flags,
+	},
+	aura: {
+		name: "Aura",
+		desc: "Move is an aura-based attack.",
+		moveFilter: move => 'aura' in move.flags,
+	},
+	beam: {
+		name: "Beam",
+		desc: "Move is a beam-based attack.",
+		moveFilter: move => 'beam' in move.flags,
+	},
+	breath: {
+		name: "Breath",
+		desc: "Move is a breath-based attack.",
+		moveFilter: move => 'breath' in move.flags,
+	},
+	claw: {
+		name: "Claw",
+		desc: "Move is a claw-based attack.",
+		moveFilter: move => 'claw' in move.flags,
+	},
+	crush: {
+		name: "Crush",
+		desc: "Move is a crushing attack.",
+		moveFilter: move => 'crush' in move.flags,
+	},
+	kick: {
+		name: "Kick",
+		desc: "Move is a kicking attack.",
+		moveFilter: move => 'kick' in move.flags,
+	},
+	launch: {
+		name: "Launch",
+		desc: "Move launches the user or projectiles.",
+		moveFilter: move => 'launch' in move.flags,
+	},
+	light: {
+		name: "Light",
+		desc: "Move is a light-based attack.",
+		moveFilter: move => 'light' in move.flags,
+	},
+	lunar: {
+		name: "Lunar",
+		desc: "Move is a lunar/moon-based attack.",
+		moveFilter: move => 'lunar' in move.flags,
+	},
+	magic: {
+		name: "Magic",
+		desc: "Move is a magic-based attack.",
+		moveFilter: move => 'magic' in move.flags,
+	},
+	pierce: {
+		name: "Pierce",
+		desc: "Move is a piercing attack.",
+		moveFilter: move => 'pierce' in move.flags,
+	},
+	shadow: {
+		name: "Shadow",
+		desc: "Move is a shadow-based attack.",
+		moveFilter: move => 'shadow' in move.flags,
+	},
+	solar: {
+		name: "Solar",
+		desc: "Move is a solar/sun-based attack.",
+		moveFilter: move => 'solar' in move.flags,
+	},
+	spin: {
+		name: "Spin",
+		desc: "Move involves spinning.",
+		moveFilter: move => 'spin' in move.flags,
+	},
+	sweep: {
+		name: "Sweep",
+		desc: "Move is a sweeping attack.",
+		moveFilter: move => 'sweep' in move.flags,
+	},
+	throw: {
+		name: "Throw",
+		desc: "Move involves throwing.",
+		moveFilter: move => 'throw' in move.flags,
+	},
+	weapon: {
+		name: "Weapon",
+		desc: "Move uses a weapon.",
+		moveFilter: move => 'weapon' in move.flags,
+	},
+	wing: {
+		name: "Wing",
+		desc: "Move is a wing-based attack.",
+		moveFilter: move => 'wing' in move.flags,
+	},
+
 	bypassprotect: {
 		name: "Bypass Protect",
 		desc: "Bypasses Protect, Detect, King's Shield, and Spiky Shield.",
