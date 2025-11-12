@@ -41,14 +41,26 @@ const findFilesForPath = path => {
 	return out;
 };
 
-exports.transpile = decl => {
-	esbuild.buildSync({
+exports.transpile = async (decl) => {
+	await esbuild.build({
 		entryPoints: findFilesForPath('./'),
 		outdir: './dist',
 		outbase: '.',
 		format: 'cjs',
 		tsconfig: './tsconfig.json',
 		sourcemap: true,
+		plugins: [{
+			name: 'strip-region-markers',
+			setup(build) {
+				build.onLoad({ filter: /\.ts$/ }, async (args) => {
+					const contents = await fs.promises.readFile(args.path, 'utf8');
+					// Remove //#region and //#endregion comments
+					const stripped = contents.replace(/^\s*\/\/#region.*$/gm, '')
+						.replace(/^\s*\/\/#endregion.*$/gm, '');
+					return { contents: stripped, loader: 'ts' };
+				});
+			},
+		}],
 	});
 	fs.copyFileSync('./config/config-example.js', './dist/config/config-example.js');
 	copyOverDataJSON();

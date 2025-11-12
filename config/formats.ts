@@ -283,10 +283,9 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 		ruleset: ['Team Preview', 'Cancel Mod', 'Max Team Size = 24', 'Max Move Count = 24', 'Max Level = 9999', 'Default Level = 100'],
 	},
 
-	// S/V Doubles
-	///////////////////////////////////////////////////////////////////
+	//#endregion
 
-	//#region UNOFFICIAL METAGAMES
+	//#region UNOFFICIAL METAS
 
 	{
 		section: "Unofficial Metagames",
@@ -1000,6 +999,11 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 		ruleset: ['Standard NatDex', 'Dynamax Clause'],
 		banlist: ['ND Uber', 'Arena Trap', 'Moody', 'Power Construct', 'Shadow Tag', 'King\'s Rock', 'Razor Fang', 'Quick Claw', 'Baton Pass'],
 	},
+
+	//#endregion
+
+	//#region NATIONAL DEX OTHER TIERS
+
 	{
 		section: "National Dex Other Tiers",
 	},
