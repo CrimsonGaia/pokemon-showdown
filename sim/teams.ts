@@ -38,6 +38,11 @@ export interface PokemonSet {
 	 */
 	ability: string;
 	/**
+	 * Second ability (optional). This can be an id or a full name.
+	 * This should always be converted to an id before use.
+	 */
+	ability2?: string;
+	/**
 	 * Each move can be an id, e.g. "shellsmash" or a full name,
 	 * e.g. "Shell Smash"
 	 * These should always be converted to ids before use.

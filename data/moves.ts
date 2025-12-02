@@ -14104,6 +14104,12 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		onTryHit(target, source, move) {
 			this.add('-activate', target, 'move: Poltergeist', this.dex.items.get(target.item).name);
 		},
+		onAfterHit(target, source, move) {
+			const item = target.getItem();
+			if (item && item.isFragile) {
+				target.breakItem(source, move);
+			}
+		},
 		secondary: null,
 		target: "normal",
 		type: "Ghost",

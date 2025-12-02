@@ -24,16 +24,49 @@ export type MoveTarget =
 	'adjacentAlly' | 'adjacentAllyOrSelf' | 'adjacentFoe' | 'all' | 'allAdjacent' | 'allAdjacentFoes' |
 	'allies' | 'allySide' | 'allyTeam' | 'any' | 'foeSide' | 'normal' | 'randomNormal' | 'scripted' | 'self';
 
-/** Possible move flags. */
-interface MoveFlags {
-	allyanim?: 1; // The move plays its animation when used on an ally.
-	bypasssub?: 1; // Ignores a target's substitute.
+export interface MoveFlags {
+	// --- Core Flags (ordered) ---
+	binding?: 1; //
 	bite?: 1; // Power is multiplied by 1.5 when used by a Pokemon with the Ability Strong Jaw.
 	bullet?: 1; // Has no effect on Pokemon with the Ability Bulletproof.
+	bomb?: 1; //
+	contact?: 1; // Makes contact.
+	crash?: 1; //
+	dance?: 1; // When used by a Pokemon, other Pokemon with the Ability Dancer can attempt to execute the same move.
+	drain?: 1; //
+	explosive?: 1; //
+	heal?: 1; // Prevented from being executed or selected during Heal Block's effect.
+	powder?: 1; // Has no effect on Pokemon which are Grass-type, have the Ability Overcoat, or hold Safety Goggles.
+	pulse?: 1; // Power is multiplied by 1.5 when used by a Pokemon with the Ability Mega Launcher.
+	punch?: 1; // Power is multiplied by 1.2 when used by a Pokemon with the Ability Iron Fist.
+	slicing?: 1; // Power is multiplied by 1.5 when used by a Pokemon with the Ability Sharpness.
+	sound?: 1; // Has no effect on Pokemon with the Ability Soundproof.
+	wind?: 1; // Activates the Wind Power and Wind Rider Abilities.
+	airborne?: 1; //
+	aura?: 1; //
+	beam?: 1; //
+	breath?: 1; //
+	claw?: 1; //
+	crush?: 1; //
+	kick?: 1; //
+	launch?: 1; //
+	light?: 1; //
+	lunar?: 1; //
+	magic?: 1; //
+	pierce?: 1; //
+	shadow?: 1; //
+	solar?: 1; //
+	spin?: 1; //
+	sweep?: 1; //
+	throw?: 1; //
+	weapon?: 1; //
+	wing?: 1; //
+
+	// --- Remaining Flags ---
+	allyanim?: 1; // The move plays its animation when used on an ally.
+	bypasssub?: 1; // Ignores a target's substitute.
 	cantusetwice?: 1; // The user cannot select this move after a previous successful use.
 	charge?: 1; // The user is unable to make a move between turns.
-	contact?: 1; // Makes contact.
-	dance?: 1; // When used by a Pokemon, other Pokemon with the Ability Dancer can attempt to execute the same move.
 	defrost?: 1; // Thaws the user if executed successfully while the user is frozen.
 	distance?: 1; // Can target a Pokemon positioned anywhere in a Triple Battle.
 	failcopycat?: 1; // Cannot be selected by Copycat.
@@ -43,7 +76,6 @@ interface MoveFlags {
 	failmimic?: 1; // Cannot be copied by Mimic.
 	futuremove?: 1; // Targets a slot, and in 2 turns damages that slot.
 	gravity?: 1; // Prevented from being executed or selected during Gravity's effect.
-	heal?: 1; // Prevented from being executed or selected during Heal Block's effect.
 	metronome?: 1; // Can be selected by Metronome.
 	mirror?: 1; // Can be copied by Mirror Move.
 	mustpressure?: 1; // Additional PP is deducted due to Pressure when it ordinarily would not.
@@ -53,18 +85,11 @@ interface MoveFlags {
 	nosketch?: 1; // Cannot be copied by Sketch.
 	nosleeptalk?: 1; // Cannot be selected by Sleep Talk.
 	pledgecombo?: 1; // Gems will not activate. Cannot be redirected by Storm Drain / Lightning Rod.
-	powder?: 1; // Has no effect on Pokemon which are Grass-type, have the Ability Overcoat, or hold Safety Goggles.
 	protect?: 1; // Blocked by Detect, Protect, Spiky Shield, and if not a Status move, King's Shield.
-	pulse?: 1; // Power is multiplied by 1.5 when used by a Pokemon with the Ability Mega Launcher.
-	punch?: 1; // Power is multiplied by 1.2 when used by a Pokemon with the Ability Iron Fist.
 	recharge?: 1; // If this move is successful, the user must recharge on the following turn and cannot make a move.
 	reflectable?: 1; // Bounced back to the original user by Magic Coat or the Ability Magic Bounce.
-	slicing?: 1; // Power is multiplied by 1.5 when used by a Pokemon with the Ability Sharpness.
 	snatch?: 1; // Can be stolen from the original user and instead used by another Pokemon using Snatch.
-	sound?: 1; // Has no effect on Pokemon with the Ability Soundproof.
-	wind?: 1; // Activates the Wind Power and Wind Rider Abilities.
-}
-
+	}
 export interface HitEffect {
 	onHit?: MoveEventMethods['onHit'];
 
@@ -142,6 +167,28 @@ export interface MoveEventMethods {
 }
 
 export interface MoveData extends EffectData, MoveEventMethods, HitEffect {
+	/** Hidden Power */
+	realMove?: string;
+	damage?: number | 'level' | false | null;
+	contestType?: string;
+	noPPBoosts?: boolean;
+	// Z-move data
+	isZ?: boolean | IDEntry;
+	zMove?: {
+		basePower?: number,
+		effect?: IDEntry,
+		boost?: SparseBoostsTable,
+	};
+	// Max move data
+	isMax?: boolean | string;
+	maxMove?: {
+		basePower: number,
+	};
+	ohko?: boolean | 'Ice';
+	thawsTarget?: boolean;
+	heal?: number[] | null;
+	forceSwitch?: boolean;
+
 	name: string;
 	/** move index number, used for Metronome rolls */
 	num?: number;
@@ -151,50 +198,18 @@ export interface MoveData extends EffectData, MoveEventMethods, HitEffect {
 	pp: number;
 	category: 'Physical' | 'Special' | 'Status';
 	type: string;
+	/**
+	 * Secondary type for dual-typed moves. If present, this move is considered to have both types for effectiveness and STAB.
+	 */
+	type2?: string;
 	priority: number;
 	target: MoveTarget;
 	flags: MoveFlags;
-	/** Hidden Power */
-	realMove?: string;
-
-	damage?: number | 'level' | false | null;
-	contestType?: string;
-	noPPBoosts?: boolean;
-
-	// Z-move data
-	// -----------
-	/**
-	 * ID of the Z-Crystal that calls the move.
-	 * `true` for Z-Powered status moves like Z-Encore.
-	 */
-	isZ?: boolean | IDEntry;
-	zMove?: {
-		basePower?: number,
-		effect?: IDEntry,
-		boost?: SparseBoostsTable,
-	};
-
-	// Max move data
-	// -------------
-	/**
-	 * `true` for Max moves like Max Airstream. If its a G-Max moves, this is
-	 * the species name of the Gigantamax Pokemon that can use this G-Max move.
-	 */
-	isMax?: boolean | string;
-	maxMove?: {
-		basePower: number,
-	};
-
-	// Hit effects
-	// -----------
-	ohko?: boolean | 'Ice';
-	thawsTarget?: boolean;
-	heal?: number[] | null;
-	forceSwitch?: boolean;
 	selfSwitch?: 'copyvolatile' | 'shedtail' | boolean;
 	selfBoost?: { boosts?: SparseBoostsTable };
 	selfdestruct?: 'always' | 'ifHit' | boolean;
 	breaksProtect?: boolean;
+	// Restored standard move data properties
 	/**
 	 * Note that this is only "true" recoil. Other self-damage, like Struggle,
 	 * crash (High Jump Kick), Mind Blown, Life Orb, and even Substitute and
@@ -246,7 +261,7 @@ export interface MoveData extends EffectData, MoveEventMethods, HitEffect {
 	ignorePositiveEvasion?: boolean;
 	multiaccuracy?: boolean;
 	multihit?: number | number[];
-	multihitType?: 'parentalbond';
+	multihitType?: 'parentalbond' | 'doubleteam';
 	noDamageVariance?: boolean;
 	nonGhostTarget?: MoveTarget;
 	spreadModifier?: number;
@@ -271,13 +286,16 @@ export interface MoveData extends EffectData, MoveEventMethods, HitEffect {
 	baseMove?: ID;
 }
 
-export type ModdedMoveData = MoveData | Partial<Omit<MoveData, 'name'>> & {
+export type ModdedMoveData = MoveData | Partial<Omit<MoveData, 'name' | 'type2'>> & {
 	inherit: true,
 	igniteBoosted?: boolean,
 	settleBoosted?: boolean,
 	bodyofwaterBoosted?: boolean,
 	longWhipBoost?: boolean,
 	gen?: number,
+	pierce1?: boolean;
+	pierce2?: boolean;
+	pierce3?: boolean;
 };
 
 export interface MoveDataTable { [moveid: IDEntry]: MoveData }
@@ -303,6 +321,15 @@ interface MoveHitData {
 
 type MutableMove = BasicEffect & MoveData;
 export interface ActiveMove extends MutableMove {
+		/** If true, this move ignores immunity breaking effects (e.g., Magic Coat trumps them). */
+		ignoreImmunityBreaking?: boolean;
+	intendedTotalDamage?: number;
+	pierce1?: boolean;
+	pierce2?: boolean;
+	pierce3?: boolean;
+		isZ?: boolean | IDEntry;
+		isMax?: boolean | string;
+		baseMove?: ID;
 	readonly name: string;
 	readonly effectType: 'Move';
 	readonly id: ID;
@@ -353,6 +380,8 @@ export class DataMove extends BasicEffect implements Readonly<BasicEffect & Move
 	declare readonly effectType: 'Move';
 	/** Move type. */
 	readonly type: string;
+	/** Secondary type for dual-typed moves. If present, this move is considered to have both types for effectiveness and STAB. */
+	readonly type2?: string;
 	/** Move target. */
 	readonly target: MoveTarget;
 	/** Move base power. */
@@ -476,6 +505,7 @@ export class DataMove extends BasicEffect implements Readonly<BasicEffect & Move
 		this.fullname = `move: ${this.name}`;
 		this.effectType = 'Move';
 		this.type = Utils.getString(data.type);
+		this.type2 = data.type2 ? Utils.getString(data.type2) : undefined;
 		this.target = data.target;
 		this.basePower = Number(data.basePower);
 		this.accuracy = data.accuracy!;

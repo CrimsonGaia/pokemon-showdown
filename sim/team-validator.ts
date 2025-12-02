@@ -579,6 +579,8 @@ export class TeamValidator {
 		set.item = item.name;
 		let ability = dex.abilities.get(Utils.getString(set.ability));
 		set.ability = ability.name;
+		let ability2 = dex.abilities.get(Utils.getString(set.ability2 || ''));
+		if (set.ability2) set.ability2 = ability2.name;
 		let nature = dex.natures.get(Utils.getString(set.nature));
 		set.nature = nature.name;
 		if (!Array.isArray(set.moves)) set.moves = [];
@@ -635,6 +637,7 @@ export class TeamValidator {
 		species = dex.species.get(set.species);
 		item = dex.items.get(set.item);
 		ability = dex.abilities.get(set.ability);
+		ability2 = dex.abilities.get(set.ability2 || '');
 
 		if (!['M', 'F'].includes(set.gender)) set.gender = '';
 		if (this.gen <= 5 || ruleTable.has('obtainablemisc')) {
@@ -668,6 +671,15 @@ export class TeamValidator {
 				set.ability = '';
 			} else {
 				return [`"${set.ability}" is an invalid ability.`];
+			}
+		}
+		if (ability2.id && !ability2.exists) {
+			if (dex.gen < 3) {
+				// gen 1-2 don't have abilities, just silently remove
+				ability2 = dex.abilities.get('');
+				set.ability2 = undefined;
+			} else {
+				return [`"${set.ability2}" is an invalid ability.`];
 			}
 		}
 		if (nature.id && !nature.exists) {
@@ -765,6 +777,12 @@ export class TeamValidator {
 		ability = dex.abilities.get(set.ability);
 		problem = this.checkAbility(set, ability, setHas);
 		if (problem) problems.push(problem);
+
+		if (set.ability2) {
+			ability2 = dex.abilities.get(set.ability2);
+			problem = this.checkAbility(set, ability2, setHas);
+			if (problem) problems.push(problem);
+		}
 
 		if (!set.nature || dex.gen <= 2) {
 			set.nature = '';

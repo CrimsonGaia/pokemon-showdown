@@ -413,8 +413,8 @@ export class Battle {
 	static compareRedirectOrder(this: void, a: AnyObject, b: AnyObject) {
 		return ((b.priority || 0) - (a.priority || 0)) ||
 			((b.speed || 0) - (a.speed || 0)) ||
-			((a.effectHolder?.abilityState && b.effectHolder?.abilityState) ?
-				-(b.effectHolder.abilityState.effectOrder - a.effectHolder.abilityState.effectOrder) : 0) ||
+			((a.effectHolder?.abilityState1 && b.effectHolder?.abilityState1) ?
+				-(b.effectHolder.abilityState1.effectOrder - a.effectHolder.abilityState1.effectOrder) : 0) ||
 				0;
 	}
 
@@ -526,7 +526,7 @@ export class Battle {
 			if (handler.state?.target instanceof Pokemon) {
 				let expectedStateLocation;
 				if (effect.effectType === 'Ability' && !handler.state.id.startsWith('ability:')) {
-					expectedStateLocation = handler.state.target.abilityState;
+					expectedStateLocation = handler.state.target.abilityState1;
 				} else if (effect.effectType === 'Item' && !handler.state.id.startsWith('item:')) {
 					expectedStateLocation = handler.state.target.itemState;
 				} else if (effect.effectType === 'Status') {
@@ -1115,11 +1115,19 @@ export class Battle {
 				}, callbackName));
 			}
 		}
-		const ability = pokemon.getAbility();
-		callback = this.getCallback(pokemon, ability, callbackName);
-		if (callback !== undefined || (getKey && pokemon.abilityState[getKey])) {
+		// Handle both abilities
+		const ability1 = pokemon.getAbility(1);
+		callback = this.getCallback(pokemon, ability1, callbackName);
+		if (callback !== undefined || (getKey && pokemon.abilityState1[getKey])) {
 			handlers.push(this.resolvePriority({
-				effect: ability, callback, state: pokemon.abilityState, end: pokemon.clearAbility, effectHolder: pokemon,
+				effect: ability1, callback, state: pokemon.abilityState1, end: () => pokemon.clearAbility(1), effectHolder: pokemon,
+			}, callbackName));
+		}
+		const ability2 = pokemon.getAbility(2);
+		callback = this.getCallback(pokemon, ability2, callbackName);
+		if (callback !== undefined || (getKey && pokemon.abilityState2[getKey])) {
+			handlers.push(this.resolvePriority({
+				effect: ability2, callback, state: pokemon.abilityState2, end: () => pokemon.clearAbility(2), effectHolder: pokemon,
 			}, callbackName));
 		}
 		const item = pokemon.getItem();
@@ -1690,7 +1698,7 @@ export class Battle {
 						if (!species.abilities) continue;
 						for (const abilitySlot in species.abilities) {
 							const abilityName = species.abilities[abilitySlot as keyof Species['abilities']];
-							if (abilityName === source.ability) {
+							if (abilityName === source.ability1 || abilityName === source.ability2) {
 								// pokemon event was already run above so we don't need
 								// to run it again.
 								continue;
@@ -2516,12 +2524,14 @@ export class Battle {
 				if (pokemon.side.pokemonLeft) pokemon.side.pokemonLeft--;
 				if (pokemon.side.totalFainted < 100) pokemon.side.totalFainted++;
 				this.runEvent('Faint', pokemon, faintData.source, faintData.effect);
-				this.singleEvent('End', pokemon.getAbility(), pokemon.abilityState, pokemon);
+				this.singleEvent('End', pokemon.getAbility(1), pokemon.abilityState1, pokemon);
+				this.singleEvent('End', pokemon.getAbility(2), pokemon.abilityState2, pokemon);
 				this.singleEvent('End', pokemon.getItem(), pokemon.itemState, pokemon);
 				if (pokemon.formeRegression && !pokemon.transformed) {
 					// before clearing volatiles
 					pokemon.baseSpecies = this.dex.species.get(pokemon.set.species || pokemon.set.name);
-					pokemon.baseAbility = toID(pokemon.set.ability);
+					pokemon.baseAbility1 = toID(pokemon.set.ability);
+					pokemon.baseAbility2 = toID(pokemon.set.ability2);
 				}
 				pokemon.clearVolatile(false);
 				pokemon.fainted = true;
@@ -2652,8 +2662,12 @@ export class Battle {
 				if (!species) continue;
 				pokemon.baseSpecies = rawSpecies;
 				pokemon.details = pokemon.getUpdatedDetails();
-				pokemon.setAbility(species.abilities['0'], null, null, true);
-				pokemon.baseAbility = pokemon.ability;
+				pokemon.setAbility(species.abilities['0'], null, null, true, false, 1);
+				if (species.abilities['1']) {
+					pokemon.setAbility(species.abilities['1'], null, null, true, false, 2);
+				}
+				pokemon.baseAbility1 = pokemon.ability1;
+				pokemon.baseAbility2 = pokemon.ability2;
 
 				const behemothMove: { [k: string]: string } = {
 					'Zacian-Crowned': 'behemothblade', 'Zamazenta-Crowned': 'behemothbash',

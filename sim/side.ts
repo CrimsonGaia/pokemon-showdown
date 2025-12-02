@@ -77,12 +77,16 @@ export interface PokemonSwitchRequestData {
 	 * Move IDs for choosable moves. Also includes Hidden Power Type, Frustration/Return power.
 	 */
 	moves: ID[];
-	/** Permanent ability (the one applied on switch-in). */
+	/** Permanent ability set 1 (the first ability applied on switch-in). */
 	baseAbility: ID;
+	/** Permanent ability set 2 (the second ability applied on switch-in). */
+	baseAbility2?: ID;
 	item: ID;
 	pokeball: ID;
-	/** Current ability. Only sent in Gen 7+. */
+	/** Current ability 1. Only sent in Gen 7+. */
 	ability?: ID;
+	/** Current ability 2. Only sent in Gen 7+. */
+	ability2?: ID;
 	/** @see https://dex.pokemonshowdown.com/abilities/commander */
 	commanding?: boolean;
 	/** @see https://dex.pokemonshowdown.com/moves/revivalblessing */

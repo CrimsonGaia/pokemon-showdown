@@ -1,4 +1,3 @@
-import type { SSBSet } from "./random-teams";
 import type { ChosenAction } from '../../../sim/side';
 import { FS } from '../../../lib';
 import { toID } from '../../../sim/dex-data';
@@ -53,70 +52,6 @@ export function enemyStaff(pokemon: Pokemon): string {
  * @param pokemon the Pokemon to assign the set to
  * @param newSet the SSBSet to assign
  */
-export function changeSet(context: Battle, pokemon: Pokemon, newSet: SSBSet, changeAbility = false) {
-	if (pokemon.transformed) return;
-	const evs: StatsTable = {
-		hp: newSet.evs?.hp || 0,
-		atk: newSet.evs?.atk || 0,
-		def: newSet.evs?.def || 0,
-		spa: newSet.evs?.spa || 0,
-		spd: newSet.evs?.spd || 0,
-		spe: newSet.evs?.spe || 0,
-	};
-	const ivs: StatsTable = {
-		hp: newSet.ivs?.hp || 31,
-		atk: newSet.ivs?.atk || 31,
-		def: newSet.ivs?.def || 31,
-		spa: newSet.ivs?.spa || 31,
-		spd: newSet.ivs?.spd || 31,
-		spe: newSet.ivs?.spe || 31,
-	};
-	pokemon.set.evs = evs;
-	pokemon.set.ivs = ivs;
-	if (newSet.nature) pokemon.set.nature = Array.isArray(newSet.nature) ? context.sample(newSet.nature) : newSet.nature;
-	const oldGender = pokemon.set.gender;
-	if ((pokemon.set.gender !== newSet.gender) && !Array.isArray(newSet.gender)) {
-		pokemon.set.gender = newSet.gender;
-		// @ts-expect-error Shut up sharp_claw wanted this
-		pokemon.gender = newSet.gender;
-	}
-	const oldShiny = pokemon.set.shiny;
-	pokemon.set.shiny = (typeof newSet.shiny === 'number') ? context.randomChance(1, newSet.shiny) : !!newSet.shiny;
-	let percent = (pokemon.hp / pokemon.baseMaxhp);
-	if (newSet.species === 'Shedinja') percent = 1;
-	pokemon.formeChange(newSet.species, context.effect, true);
-	if (!pokemon.terastallized && newSet.teraType) {
-		const allTypes = context.dex.types.names();
-		pokemon.teraType = newSet.teraType === 'Any' ? context.sample(allTypes) :
-			Array.isArray(newSet.teraType) ? context.sample(newSet.teraType) : newSet.teraType;
-	}
-	const details = pokemon.getUpdatedDetails();
-	if (oldShiny !== pokemon.set.shiny || oldGender !== pokemon.gender) context.add('replace', pokemon, details);
-	if (changeAbility) pokemon.setAbility(newSet.ability as string, undefined, undefined, true);
-
-	pokemon.baseMaxhp = pokemon.species.name === 'Shedinja' ? 1 : Math.floor(Math.floor(
-		2 * pokemon.species.baseStats.hp + pokemon.set.ivs.hp + Math.floor(pokemon.set.evs.hp / 4) + 100
-	) * pokemon.level / 100 + 10);
-	const newMaxHP = pokemon.baseMaxhp;
-	pokemon.hp = Math.round(newMaxHP * percent);
-	pokemon.maxhp = newMaxHP;
-	context.add('-heal', pokemon, pokemon.getHealth, '[silent]');
-	if (pokemon.item) {
-		let item = newSet.item;
-		if (typeof item !== 'string') item = item[context.random(item.length)];
-		if (context.toID(item) !== (pokemon.item || pokemon.lastItem)) pokemon.setItem(item);
-	}
-	if (!pokemon.m.datacorrupt) {
-		const newMoves = changeMoves(context, pokemon, newSet.moves.concat(newSet.signatureMove));
-		pokemon.moveSlots = newMoves;
-		// Necessary so pokemon doesn't get 8 moves
-		(pokemon as any).baseMoveSlots = newMoves;
-	}
-	pokemon.canMegaEvo = context.actions.canMegaEvo(pokemon);
-	pokemon.canUltraBurst = context.actions.canUltraBurst(pokemon);
-	pokemon.canTerastallize = (pokemon.canTerastallize === null) ? null : context.actions.canTerastallize(pokemon);
-	context.add('message', `${pokemon.name} changed form!`);
-}
 
 export const PSEUDO_WEATHERS = [
 	// Normal pseudo weathers
@@ -158,9 +93,41 @@ export function changeMoves(context: Battle, pokemon: Pokemon, newMoves: (string
 	return result;
 }
 
+
 export const Scripts: ModdedBattleScriptsData = {
 	gen: 9,
 	inherit: 'gen9',
+
+
+	// Magic moves ignore type and ability immunities, treat those immunities as resistances
+	init() {
+		for (const id in this.data.Moves) {
+			const move = this.data.Moves[id];
+			if (move.flags && move.flags.magic) {
+				move.ignoreImmunity = true;
+				move.ignoreAbility = true;
+				const origEffect = move.onEffectiveness;
+				move.onEffectiveness = function(typeMod: number, target: any, type: string, moveArg: any) {
+					if (typeMod <= -99) return -1;
+					if (typeof origEffect === 'function') {
+						return origEffect.call(this, typeMod, target, type, moveArg);
+					}
+					return typeMod;
+				};
+				   // Magic moves use 1.2x as their base STAB if one type matches, 1.4x if both types match, then are further modified by Tera, Adaptability, etc.
+				   (move as any).onModifySTAB = function(stab: number, source: any, target: any, moveArg: any) {
+					   const moveTypes = [moveArg.type];
+					   if (moveArg.type2 && moveArg.type2 !== moveArg.type) moveTypes.push(moveArg.type2);
+					   const matches = moveArg.forceSTAB ? moveTypes : moveTypes.filter(t => source.hasType(t));
+					   if (matches.length === 1) {
+						   return 1.2;
+					   } else if (matches.length === 2) {
+						   return 1.4;
+					   }
+				   };
+			}
+		}
+	},
 	boost(boost, target, source, effect, isSecondary, isSelf) {
 		if (this.event) {
 			if (!target) target = this.event.target;
@@ -305,7 +272,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				if (pokemon.side.pokemonLeft) pokemon.side.pokemonLeft--;
 				if (pokemon.side.totalFainted < 100) pokemon.side.totalFainted++;
 				this.runEvent('Faint', pokemon, faintData.source, faintData.effect);
-				this.singleEvent('End', pokemon.getAbility(), pokemon.abilityState, pokemon);
+				this.singleEvent('End', pokemon.getAbility(), pokemon.abilityState1, pokemon);
 				pokemon.clearVolatile(false);
 				pokemon.fainted = true;
 				pokemon.illusion = null;
@@ -678,7 +645,7 @@ export const Scripts: ModdedBattleScriptsData = {
 	actions: {
 		terastallize(pokemon) {
 			if (pokemon.illusion && ['Ogerpon', 'Terapagos'].includes(pokemon.illusion.species.baseSpecies)) {
-				this.battle.singleEvent('End', this.dex.abilities.get('Illusion'), pokemon.abilityState, pokemon);
+				this.battle.singleEvent('End', this.dex.abilities.get('Illusion'), pokemon.abilityState1, pokemon);
 			}
 
 			const type = pokemon.teraType;
@@ -719,6 +686,11 @@ export const Scripts: ModdedBattleScriptsData = {
 				const bondModifier = this.battle.gen > 6 && !pokemon.hasAbility('Almost Frosty') ? 0.25 : 0.5;
 				this.battle.debug(`Parental Bond modifier: ${bondModifier}`);
 				baseDamage = this.battle.modify(baseDamage, bondModifier);
+			} else if (move.multihitType === 'doubleteam' && move.hit > 1) {
+				// Double Team modifier
+				const doubleTeamModifier = 0.25;
+				this.battle.debug(`Double Team modifier: ${doubleTeamModifier}`);
+				baseDamage = this.battle.modify(baseDamage, doubleTeamModifier);
 			}
 
 			// weather modifier
@@ -806,15 +778,26 @@ export const Scripts: ModdedBattleScriptsData = {
 			// Final modifier. Modifiers that modify damage after min damage check, such as Life Orb.
 			baseDamage = this.battle.runEvent('ModifyDamage', pokemon, target, move, baseDamage);
 
-			if (move.isZOrMaxPowered && target.getMoveHitData(move).zBrokeProtect) {
-				baseDamage = this.battle.modify(baseDamage, 0.25);
-				this.battle.add('-zbroken', target);
+
+				// Custom pierce properties for protection-breaking moves
+				if (target.getMoveHitData(move).zBrokeProtect) {
+					if (move.pierce1) {
+						baseDamage = this.battle.modify(baseDamage, 0.5);
+						this.battle.add('-pierce', target, '1', '1/2 of the damage went through.');
+					} else if (move.pierce2) {
+						baseDamage = this.battle.modify(baseDamage, 0.25);
+						this.battle.add('-pierce', target, '2', '1/4 of the damage went through.');
+					} else if (move.pierce3) {
+						baseDamage = this.battle.modify(baseDamage, 0.125);
+						this.battle.add('-pierce', target, '3', '1/8 of the damage went through.');
+					} else if (move.isZOrMaxPowered) {
+					baseDamage = this.battle.modify(baseDamage, 0.25);
+					this.battle.add('-zbroken', target);
+				}
 			}
 
-			// Generation 6-7 moves the check for minimum 1 damage after the final modifier...
-			if (this.battle.gen !== 5 && !baseDamage) return 1;
-
-			// ...but 16-bit truncation happens even later, and can truncate to 0
+		// Generation 6-7 moves the check for minimum 1 damage after the final modifier...
+		if (this.battle.gen !== 5 && !baseDamage) return 1;			// ...but 16-bit truncation happens even later, and can truncate to 0
 			return tr(baseDamage, 16);
 		},
 		switchIn(pokemon, pos, sourceEffect, isDrag) {
@@ -859,7 +842,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				// will definitely switch out at this point
 
 				oldActive.illusion = null;
-				this.battle.singleEvent('End', oldActive.getAbility(), oldActive.abilityState, oldActive);
+				this.battle.singleEvent('End', oldActive.getAbility(), oldActive.abilityState1, oldActive);
 
 				// if a pokemon is forced out by Whirlwind/etc or Eject Button/Pack, it can't use its chosen move
 				this.battle.queue.cancelAction(oldActive);
@@ -901,7 +884,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			} else {
 				this.battle.add(isDrag ? 'drag' : 'switch', pokemon, pokemon.getFullDetails);
 			}
-			pokemon.abilityState = this.battle.initEffectState({ id: pokemon.ability, target: pokemon });
+			pokemon.abilityState1 = this.battle.initEffectState({ id: pokemon.ability1, target: pokemon });
 			pokemon.itemState = this.battle.initEffectState({ id: pokemon.item, target: pokemon });
 			if (isDrag && this.battle.gen === 2) pokemon.draggedIn = this.battle.turn;
 			pokemon.previouslySwitchedIn++;
@@ -1184,7 +1167,7 @@ export const Scripts: ModdedBattleScriptsData = {
 
 			if (zMove) {
 				if (pokemon.illusion) {
-					this.battle.singleEvent('End', this.dex.abilities.get('Illusion'), pokemon.abilityState, pokemon);
+					this.battle.singleEvent('End', this.dex.abilities.get('Illusion'), pokemon.abilityState1, pokemon);
 				}
 				this.battle.add('-zpower', pokemon);
 				// 1 z move per poke
@@ -1213,7 +1196,7 @@ export const Scripts: ModdedBattleScriptsData = {
 				// but before any multipliers like Agility or Choice Scarf
 				// Ties go to whichever Pokemon has had the ability for the least amount of time
 				dancers.sort(
-					(a, b) => -(b.storedStats['spe'] - a.storedStats['spe']) || b.abilityState.effectOrder - a.abilityState.effectOrder
+					(a, b) => -(b.storedStats['spe'] - a.storedStats['spe']) || b.abilityState1.effectOrder - a.abilityState1.effectOrder
 				);
 				const targetOf1stDance = this.battle.activeTarget!;
 				for (const dancer of dancers) {
@@ -1720,6 +1703,54 @@ export const Scripts: ModdedBattleScriptsData = {
 			}
 
 			return [damage, targets];
+		},
+		getDamage(
+			source, target, move,
+			suppressMessages = false
+		) {
+			if (typeof move === 'string') move = this.dex.getActiveMove(move);
+			if (typeof move === 'number') {
+				// @ts-ignore - normal damage calculation for number
+				return this.constructor.prototype.getDamage.call(this, source, target, move, suppressMessages);
+			}
+
+			// Check if this is Fusion Bolt or Fusion Flare in fusion mode - if so, we need custom defense calculation
+			const isFusionMode = (move.id === 'fusionbolt' || move.id === 'fusionflare') && (move as any).fusionMode;
+			
+			if (isFusionMode) {
+				// We need to manually calculate damage with averaged defense
+				// First get the base damage calculation
+				// @ts-ignore - call parent getDamage to get most of the calculation
+				const baseDamageCalc = this.constructor.prototype.getDamage;
+				
+				// Temporarily modify the move to use averaged defense
+				const originalOverride = move.overrideDefensiveStat;
+				
+				// Calculate with def
+				(move as any).overrideDefensiveStat = 'def';
+				const damageWithDef = baseDamageCalc.call(this, source, target, move, suppressMessages);
+				
+				// Calculate with spd  
+				(move as any).overrideDefensiveStat = 'spd';
+				const damageWithSpD = baseDamageCalc.call(this, source, target, move, suppressMessages);
+				
+				// Restore original
+				if (originalOverride) {
+					(move as any).overrideDefensiveStat = originalOverride;
+				} else {
+					delete (move as any).overrideDefensiveStat;
+				}
+				
+				// Average the two damage values
+				if (typeof damageWithDef === 'number' && typeof damageWithSpD === 'number') {
+					return Math.floor((damageWithDef + damageWithSpD) / 2);
+				}
+				// If either failed, return the failure
+				return damageWithDef === false || damageWithSpD === false ? false : damageWithDef || damageWithSpD;
+			}
+			
+			// @ts-ignore - normal damage calculation
+			return this.constructor.prototype.getDamage.call(this, source, target, move, suppressMessages);
 		},
 	},
 	pokemon: {

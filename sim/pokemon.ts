@@ -114,9 +114,12 @@ export class Pokemon {
 	storedStats: StatsExceptHPTable;
 	boosts: BoostsTable;
 
-	baseAbility: ID;
-	ability: ID;
-	abilityState: EffectState;
+	baseAbility1: ID;
+	baseAbility2: ID;
+	ability1: ID;
+	ability2: ID;
+	abilityState1: EffectState;
+	abilityState2: EffectState;
 
 	item: ID;
 	itemState: EffectState;
@@ -412,16 +415,19 @@ export class Pokemon {
 		this.storedStats = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
 		this.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
 
-		this.baseAbility = toID(set.ability);
-		this.ability = this.baseAbility;
-		this.abilityState = this.battle.initEffectState({ id: this.ability, target: this });
+		this.baseAbility1 = toID(set.ability);
+		this.baseAbility2 = toID(set.ability2);
+		this.ability1 = this.baseAbility1;
+		this.ability2 = this.baseAbility2;
+		this.abilityState1 = this.battle.initEffectState({ id: this.ability1, target: this });
+		this.abilityState2 = this.battle.initEffectState({ id: this.ability2, target: this });
 
 		this.item = toID(set.item);
 		this.itemState = this.battle.initEffectState({ id: this.item, target: this });
 		this.lastItem = '';
 		this.usedItemThisTurn = false;
-		this.ateBerry = false;
 		this.itemKnockedOff = false;
+		this.ateBerry = false;
 
 		this.trapped = false;
 		this.maybeTrapped = false;
@@ -854,11 +860,12 @@ export class Pokemon {
 		if (this.volatiles['gastroacid']) return true;
 
 		// Check if any active pokemon have the ability Neutralizing Gas
-		if (this.hasItem('Ability Shield') || this.ability === ('neutralizinggas' as ID)) return false;
+		if (this.hasItem('Ability Shield') || this.ability1 === 'neutralizinggas' || this.ability2 === 'neutralizinggas') return false;
 		for (const pokemon of this.battle.getAllActive()) {
 			// can't use hasAbility because it would lead to infinite recursion
-			if (pokemon.ability === ('neutralizinggas' as ID) && !pokemon.volatiles['gastroacid'] &&
-				!pokemon.transformed && !pokemon.abilityState.ending && !this.volatiles['commanding']) {
+			if ((pokemon.ability1 === 'neutralizinggas' || pokemon.ability2 === 'neutralizinggas') && 
+				!pokemon.volatiles['gastroacid'] && !pokemon.transformed && 
+				!pokemon.abilityState1.ending && !pokemon.abilityState2.ending && !this.volatiles['commanding']) {
 				return true;
 			}
 		}
@@ -1141,11 +1148,15 @@ export class Pokemon {
 				}
 				return move as ID;
 			}),
-			baseAbility: this.baseAbility,
+			baseAbility: this.baseAbility1,
+			baseAbility2: this.baseAbility2,
 			item: this.item,
 			pokeball: this.pokeball,
 		};
-		if (this.battle.gen > 6) entry.ability = this.ability;
+		if (this.battle.gen > 6) {
+			entry.ability = this.ability1;
+			entry.ability2 = this.ability2;
+		}
 		if (this.battle.gen >= 9) {
 			entry.commanding = !!this.volatiles['commanding'] && !this.fainted;
 			entry.reviving = this.isActive && !!this.side.slotConditions[this.position]['revivalblessing'];
@@ -1315,7 +1326,14 @@ export class Pokemon {
 			this.knownType = true;
 			this.apparentType = this.terastallized;
 		}
-		if (this.battle.gen > 2) this.setAbility(pokemon.ability, this, null, true, true);
+		if (this.battle.gen > 2) {
+			this.setAbility(pokemon.ability1, this, null, true, true, 1);
+			if (pokemon.ability2) {
+				this.setAbility(pokemon.ability2, this, null, true, true, 2);
+			} else {
+				this.ability2 = '' as ID;
+			}
+		}
 
 		// Change formes based on held items (for Transform)
 		// Only ever relevant in Generation 4 since Generation 3 didn't have item-based forme changes
@@ -1422,7 +1440,8 @@ export class Pokemon {
 					this.moveThisTurnResult = true; // Ultra Burst counts as an action for Truant
 				} else if (source.isPrimalOrb) {
 					if (this.illusion) {
-						this.ability = '';
+						this.ability1 = '' as ID;
+						this.ability2 = '' as ID;
 						this.battle.add('-primal', this.illusion, species.requiredItem);
 					} else {
 						this.battle.add('-primal', this, species.requiredItem);
@@ -1446,13 +1465,21 @@ export class Pokemon {
 		if (isPermanent && (!source || !['disguise', 'iceface'].includes(source.id))) {
 			if (this.illusion && source) {
 				// Tera forme by Ogerpon or Terapagos breaks the Illusion
-				this.ability = ''; // Don't allow Illusion to wear off
+				this.ability1 = '' as ID; // Don't allow Illusion to wear off
+				this.ability2 = '' as ID;
 			}
 			const ability = species.abilities[abilitySlot] || species.abilities['0'];
+			const ability2 = species.abilities[abilitySlot + 1] || species.abilities['1'] || '';
 			// Ogerpon's forme change doesn't override permanent abilities
-			if (source || !this.getAbility().flags['cantsuppress']) this.setAbility(ability, null, null, true);
+			if (source || !this.getAbility().flags['cantsuppress']) {
+				this.setAbility(ability, null, null, true, false, 1);
+				if (ability2) {
+					this.setAbility(ability2, null, null, true, false, 2);
+				}
+			}
 			// However, its ability does reset upon switching out
-			this.baseAbility = toID(ability);
+			this.baseAbility1 = toID(ability);
+			this.baseAbility2 = toID(ability2);
 		}
 		if (this.terastallized) {
 			this.knownType = true;
@@ -1492,7 +1519,8 @@ export class Pokemon {
 		}
 
 		this.transformed = false;
-		this.ability = this.baseAbility;
+		this.ability1 = this.baseAbility1;
+		this.ability2 = this.baseAbility2;
 		this.hpType = this.baseHpType;
 		this.hpPower = this.baseHpPower;
 		if (this.canTerastallize === false) this.canTerastallize = this.teraType;
@@ -1526,7 +1554,8 @@ export class Pokemon {
 
 		this.volatileStaleness = undefined;
 
-		delete this.abilityState.started;
+		delete this.abilityState1.started;
+		delete this.abilityState2.started;
 		delete this.itemState.started;
 
 		this.setSpecies(this.baseSpecies);
@@ -1825,8 +1854,8 @@ export class Pokemon {
 		if (!source) source = this;
 		if (this.battle.gen <= 4) {
 			if (source.itemKnockedOff) return false;
-			if (toID(this.ability) === 'multitype') return false;
-			if (toID(source.ability) === 'multitype') return false;
+			if (this.ability1 === 'multitype' || this.ability2 === 'multitype') return false;
+			if (source.ability1 === 'multitype' || source.ability2 === 'multitype') return false;
 		}
 		const item = this.getItem();
 		if (this.battle.runEvent('TakeItem', this, source, null, item)) {
@@ -1883,22 +1912,24 @@ export class Pokemon {
 
 	setAbility(
 		ability: string | Ability, source?: Pokemon | null, sourceEffect?: Effect | null,
-		isFromFormeChange = false, isTransform = false,
+		isFromFormeChange = false, isTransform = false, slot: 1 | 2 = 1,
 	) {
 		if (!this.hp) return false;
 		if (typeof ability === 'string') ability = this.battle.dex.abilities.get(ability);
 		if (!sourceEffect && this.battle.effect) sourceEffect = this.battle.effect;
-		const oldAbility = this.battle.dex.abilities.get(this.ability);
+		const abilityKey = slot === 1 ? 'ability1' : 'ability2';
+		const abilityStateKey = slot === 1 ? 'abilityState1' : 'abilityState2';
+		const oldAbility = this.battle.dex.abilities.get(this[abilityKey]);
 		if (!isFromFormeChange) {
-			if (ability.flags['cantsuppress'] || this.getAbility().flags['cantsuppress']) return false;
+			if (ability.flags['cantsuppress'] || oldAbility.flags['cantsuppress']) return false;
 		}
 		if (!isFromFormeChange && !isTransform) {
 			const setAbilityEvent: boolean | null = this.battle.runEvent('SetAbility', this, source, sourceEffect, ability);
 			if (!setAbilityEvent) return setAbilityEvent;
 		}
-		this.battle.singleEvent('End', oldAbility, this.abilityState, this, source);
-		this.ability = ability.id;
-		this.abilityState = this.battle.initEffectState({ id: ability.id, target: this });
+		this.battle.singleEvent('End', oldAbility, this[abilityStateKey], this, source);
+		this[abilityKey] = ability.id;
+		this[abilityStateKey] = this.battle.initEffectState({ id: ability.id, target: this });
 		if (sourceEffect && !isFromFormeChange && !isTransform) {
 			if (source) {
 				this.battle.add('-ability', this, ability.name, oldAbility.name, `[from] ${sourceEffect.fullname}`, `[of] ${source}`);
@@ -1908,26 +1939,44 @@ export class Pokemon {
 		}
 		if (ability.id && this.battle.gen > 3 &&
 			(!isTransform || oldAbility.id !== ability.id || this.battle.gen <= 4)) {
-			this.battle.singleEvent('Start', ability, this.abilityState, this, source);
+			this.battle.singleEvent('Start', ability, this[abilityStateKey], this, source);
 		}
 		return oldAbility.id;
 	}
 
-	getAbility() {
-		return this.battle.dex.abilities.getByID(this.ability);
+	getAbility(slot: 1 | 2 = 1) {
+		const abilityKey = slot === 1 ? 'ability1' : 'ability2';
+		return this.battle.dex.abilities.getByID(this[abilityKey]);
+	}
+
+	getAbilities(): Ability[] {
+		const abilities: Ability[] = [];
+		if (this.ability1) abilities.push(this.battle.dex.abilities.getByID(this.ability1));
+		if (this.ability2) abilities.push(this.battle.dex.abilities.getByID(this.ability2));
+		return abilities;
 	}
 
 	hasAbility(ability: string | string[]) {
 		if (Array.isArray(ability)) {
-			if (!ability.map(toID).includes(this.ability)) return false;
+			const abilityIDs = ability.map(toID);
+			if (!abilityIDs.includes(this.ability1) && !abilityIDs.includes(this.ability2)) return false;
 		} else {
-			if (toID(ability) !== this.ability) return false;
+			const abilityID = toID(ability);
+			if (abilityID !== this.ability1 && abilityID !== this.ability2) return false;
 		}
 		return !this.ignoringAbility();
 	}
 
-	clearAbility() {
-		return this.setAbility('');
+	clearAbility(slot?: 1 | 2) {
+		if (slot === 1) {
+			return this.setAbility('', undefined, undefined, false, false, 1);
+		} else if (slot === 2) {
+			return this.setAbility('', undefined, undefined, false, false, 2);
+		} else {
+			// Clear both
+			this.setAbility('', undefined, undefined, false, false, 1);
+			return this.setAbility('', undefined, undefined, false, false, 2);
+		}
 	}
 
 	getNature() {
@@ -2163,22 +2212,29 @@ export class Pokemon {
 		if (this.terastallized && move.type === 'Stellar') {
 			totalTypeMod = 1;
 		} else {
-			for (const type of this.getTypes()) {
-				let typeMod = this.battle.dex.getEffectiveness(move, type);
-				typeMod = this.battle.singleEvent('Effectiveness', move, null, this, type, move, typeMod);
-				totalTypeMod += this.battle.runEvent('Effectiveness', this, type, move, typeMod);
+			const moveTypes = [move.type];
+			if (move.type2 && move.type2 !== move.type) moveTypes.push(move.type2);
+			for (const attackingType of moveTypes) {
+				for (const defendingType of this.getTypes()) {
+					let typeMod = this.battle.dex.getEffectiveness(attackingType, defendingType);
+					typeMod = this.battle.singleEvent('Effectiveness', move, null, this, defendingType, move, typeMod);
+					totalTypeMod += this.battle.runEvent('Effectiveness', this, defendingType, move, typeMod);
+				}
 			}
 		}
 		if (this.species.name === 'Terapagos-Terastal' && this.hasAbility('Tera Shell') &&
 			!this.battle.suppressingAbility(this)) {
-			if (this.abilityState.resisted) return -1; // all hits of multi-hit move should be not very effective
+			// Check which ability slot has Tera Shell
+			const teraShellSlot = this.ability1 === 'terashell' ? 1 : 2;
+			const abilityStateKey = teraShellSlot === 1 ? 'abilityState1' : 'abilityState2';
+			if (this[abilityStateKey].resisted) return -1; // all hits of multi-hit move should be not very effective
 			if (move.category === 'Status' || move.id === 'struggle' || !this.runImmunity(move) ||
 				totalTypeMod < 0 || this.hp < this.maxhp) {
 				return totalTypeMod;
 			}
 
 			this.battle.add('-activate', this, 'ability: Tera Shell');
-			this.abilityState.resisted = true;
+			this[abilityStateKey].resisted = true;
 			return -1;
 		}
 		return totalTypeMod;
@@ -2232,6 +2288,30 @@ export class Pokemon {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Breaks a fragile item, triggering onFragileBreak and removing the item.
+	 * Returns true if an item was broken, false otherwise.
+	 */
+	breakItem(source?: Pokemon, effect?: Effect) {
+		const item = this.getItem();
+		if (!item.id || (!item.isFragile && !item.isMildlyFragile)) return false;
+		if (typeof source === 'undefined' && this.battle.event?.target) source = this.battle.event.target;
+		if (typeof effect === 'undefined' && this.battle.effect) effect = this.battle.effect;
+		if (item.onFragileBreak) {
+			this.battle.singleEvent('FragileBreak', item, this.itemState, this, source, effect);
+		}
+		if (item.isFragile) {
+			this.battle.add('-enditem', this, item, '[broken]');
+			this.lastItem = this.item;
+			this.item = '';
+			this.battle.clearEffectState(this.itemState);
+			this.usedItemThisTurn = true;
+			return true;
+		}
+		// For isMildlyFragile, only trigger the effect, do not remove the item
+		return false;
 	}
 
 	destroy() {

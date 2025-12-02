@@ -2,15 +2,35 @@ import type { PokemonEventMethods, ConditionData } from './dex-conditions';
 import { assignMissingFields, BasicEffect, toID } from './dex-data';
 import { Utils } from '../lib/utils';
 
+
+interface BelchData {
+	basePower?: number;
+	status?: string;
+	volatileStatus?: string;
+	effect?: CommonHandlers['ResultMove'];
+	chance?: number; 
+}
+
 interface FlingData {
 	basePower: number;
 	status?: string;
 	volatileStatus?: string;
 	effect?: CommonHandlers['ResultMove'];
 }
-
 export interface ItemData extends Partial<Item>, PokemonEventMethods {
 	name: string;
+	/** If true, this item is considered fragile and may break/disappear under certain conditions. */
+	isFragile?: boolean;
+	/** If true, this item is considered mildly fragile and will trigger its effect when disturbed, but will not break. */
+	isMildlyFragile?: boolean;
+	/**
+	 * Function called when this item breaks due to fragility (not from being eaten or knocked off).
+	 */
+	onFragileBreak?: (this: Battle, pokemon: Pokemon, source?: Pokemon, effect?: Effect) => void;
+	/**
+	 * Function called when this item is mildly disturbed (mildly fragile effect).
+	 */
+	onMildlyFragileBreak?: (this: Battle, pokemon: Pokemon, source?: Pokemon, effect?: Effect) => void;
 }
 
 export type ModdedItemData = ItemData | Partial<Omit<ItemData, 'name'>> & {
@@ -27,11 +47,27 @@ export class Item extends BasicEffect implements Readonly<BasicEffect> {
 	/** just controls location on the item spritesheet */
 	declare readonly num: number;
 
+	/** If true, this item is considered fragile and may break/disappear under certain conditions. */
+	readonly isFragile: boolean;
+	/** If true, this item is considered mildly fragile and will trigger its effect when disturbed, but will not break. */
+	readonly isMildlyFragile: boolean;
 	/**
-	 * A Move-like object depicting what happens when Fling is used on
-	 * this item.
+	 * Function called when this item breaks due to fragility (not from being eaten or knocked off).
+	 */
+	readonly onFragileBreak?: (this: Battle, pokemon: Pokemon, source?: Pokemon, effect?: Effect) => void;
+	/**
+	 * Function called when this item is mildly disturbed (mildly fragile effect).
+	 */
+	readonly onMildlyFragileBreak?: (this: Battle, pokemon: Pokemon, source?: Pokemon, effect?: Effect) => void;
+
+	/**
+	 * A Move-like object depicting what happens when Fling is used on this item.
 	 */
 	readonly fling?: FlingData;
+	/**
+	 * A Move-like object depicting what happens when Belch is used on this item.
+	 */
+	readonly belch?: BelchData;
 	/**
 	 * If this is a Drive: The type it turns Techno Blast into.
 	 * undefined, if not a Drive.
@@ -127,6 +163,10 @@ export class Item extends BasicEffect implements Readonly<BasicEffect> {
 		this.isGem = !!data.isGem;
 		this.isPokeball = !!data.isPokeball;
 		this.isPrimalOrb = !!data.isPrimalOrb;
+		this.isFragile = !!data.isFragile;
+		this.isMildlyFragile = !!data.isMildlyFragile;
+		this.onFragileBreak = data.onFragileBreak;
+		this.onMildlyFragileBreak = data.onMildlyFragileBreak;
 
 		if (!this.gen) {
 			if (this.num >= 1124) {

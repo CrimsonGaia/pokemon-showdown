@@ -270,7 +270,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 				this.boost({ atk: length }, source, source, this.dex.abilities.get('chillingneigh'));
 			}
 		},
-		flags: { failroleplay: 1, noreceiver: 1, noentrain: 1, notrace: 1, failskillswap: 1, cantsuppress: 1 },
+		flags: { noreceiver: 1, noentrain: 1, notrace: 1, failskillswap: 1 },
 		name: "As One (Glastrier)",
 		rating: 3.5,
 		num: 266,
@@ -294,7 +294,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 				this.boost({ spa: length }, source, source, this.dex.abilities.get('grimneigh'));
 			}
 		},
-		flags: { failroleplay: 1, noreceiver: 1, noentrain: 1, notrace: 1, failskillswap: 1, cantsuppress: 1 },
+		flags: { noreceiver: 1, noentrain: 1, notrace: 1, failskillswap: 1 },
 		name: "As One (Spectrier)",
 		rating: 3.5,
 		num: 267,
@@ -596,7 +596,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			return false;
 		},
 		// Permanent sleep "status" implemented in the relevant sleep-checking effects
-		flags: { failroleplay: 1, noreceiver: 1, noentrain: 1, notrace: 1, failskillswap: 1, cantsuppress: 1 },
+		flags: { noreceiver: 1, noentrain: 1, notrace: 1, failskillswap: 1 },
 		name: "Comatose",
 		rating: 4,
 		num: 213,

@@ -2,6 +2,21 @@ import { assignMissingFields, BasicEffect, toID } from './dex-data';
 import { Utils } from '../lib/utils';
 import { isDeepStrictEqual } from 'node:util';
 
+/**
+ * Ability system structure:
+ * - Each Pokemon has 2 ability sets
+ * - Set 1: abilities['0'] (required) and abilities['1'] (optional)
+ * - Set 2: abilities['H'] (optional) and abilities['S'] (optional)
+ * - When a Pokemon is created, it gets both abilities from one set
+ * 
+ * Examples:
+ * - abilities: { 0: "Overgrow", H: "Chlorophyll" }
+ *   Set 1: [Overgrow], Set 2: [Chlorophyll]
+ * - abilities: { 0: "Keen Eye", 1: "Tangled Feet", H: "Big Pecks" }
+ *   Set 1: [Keen Eye, Tangled Feet], Set 2: [Big Pecks]
+ * - abilities: { 0: "Pressure", 1: "Unnerve", H: "Multiscale", S: "Snow Warning" }
+ *   Set 1: [Pressure, Unnerve], Set 2: [Multiscale, Snow Warning]
+ */
 interface SpeciesAbility {
 	0: string;
 	1?: string;
@@ -362,6 +377,34 @@ export class Species extends BasicEffect implements Readonly<BasicEffect & Speci
 			}
 		}
 		assignMissingFields(this, data);
+	}
+
+	/**
+	 * Get ability set 1 (abilities['0'] and abilities['1'])
+	 * Returns array of 1 or 2 abilities
+	 */
+	getAbilitySet1(): [string] | [string, string] {
+		if (this.abilities['1']) { return [this.abilities['0'], this.abilities['1']]; }
+		return [this.abilities['0']];
+	}
+
+	/**
+	 * Get ability set 2 (abilities['H'] and abilities['S'])
+	 * Returns array of 1 or 2 abilities, or empty array if no second set
+	 */
+	getAbilitySet2(): [] | [string] | [string, string] {
+		if (this.abilities['H'] && this.abilities['S']) { return [this.abilities['H'], this.abilities['S']]; }
+		if (this.abilities['H']) { return [this.abilities['H']]; }
+		if (this.abilities['S']) { return [this.abilities['S']]; }
+		return [];
+	}
+
+	/**
+	 * Get abilities for a specific set number (1 or 2)
+	 */
+	getAbilitySet(setNumber: 1 | 2): [] | [string] | [string, string] {
+		if (setNumber === 1) { return this.getAbilitySet1(); }
+		return this.getAbilitySet2();
 	}
 }
 

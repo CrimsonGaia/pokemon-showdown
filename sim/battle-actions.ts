@@ -101,7 +101,8 @@ export class BattleActions {
 			// will definitely switch out at this point
 
 			oldActive.illusion = null;
-			this.battle.singleEvent('End', oldActive.getAbility(), oldActive.abilityState, oldActive);
+			this.battle.singleEvent('End', oldActive.getAbility(1), oldActive.abilityState1, oldActive);
+			this.battle.singleEvent('End', oldActive.getAbility(2), oldActive.abilityState2, oldActive);
 			this.battle.singleEvent('End', oldActive.getItem(), oldActive.itemState, oldActive);
 
 			// if a pokemon is forced out by Whirlwind/etc or Eject Button/Pack, it can't use its chosen move
@@ -140,7 +141,8 @@ export class BattleActions {
 		for (const moveSlot of pokemon.moveSlots) {
 			moveSlot.used = false;
 		}
-		pokemon.abilityState = this.battle.initEffectState({ id: pokemon.ability, target: pokemon });
+		pokemon.abilityState1 = this.battle.initEffectState({ id: pokemon.ability1, target: pokemon });
+		pokemon.abilityState2 = this.battle.initEffectState({ id: pokemon.ability2, target: pokemon });
 		pokemon.itemState = this.battle.initEffectState({ id: pokemon.item, target: pokemon });
 		this.battle.runEvent('BeforeSwitchIn', pokemon);
 		if (sourceEffect) {
@@ -300,7 +302,10 @@ export class BattleActions {
 
 		if (zMove) {
 			if (pokemon.illusion) {
-				this.battle.singleEvent('End', this.dex.abilities.get('Illusion'), pokemon.abilityState, pokemon);
+				// Check which ability slot has Illusion
+				const illusionSlot = pokemon.ability1 === 'illusion' ? 1 : 2;
+				const abilityStateKey = illusionSlot === 1 ? 'abilityState1' : 'abilityState2';
+				this.battle.singleEvent('End', this.dex.abilities.get('Illusion'), pokemon[abilityStateKey], pokemon);
 			}
 			this.battle.add('-zpower', pokemon);
 			pokemon.side.zMoveUsed = true;
@@ -332,7 +337,7 @@ export class BattleActions {
 			// but before any multipliers like Agility or Choice Scarf
 			// Ties go to whichever Pokemon has had the ability for the least amount of time
 			dancers.sort(
-				(a, b) => -(b.storedStats['spe'] - a.storedStats['spe']) || b.abilityState.effectOrder - a.abilityState.effectOrder
+				(a, b) => -(b.storedStats['spe'] - a.storedStats['spe']) || b.abilityState1.effectOrder - a.abilityState1.effectOrder
 			);
 			const targetOf1stDance = this.battle.activeTarget!;
 			for (const dancer of dancers) {
@@ -955,7 +960,15 @@ export class BattleActions {
 				// Damage from each hit is individually counted for the
 				// purposes of Counter, Metal Burst, and Mirror Coat.
 				damage[i] = md === true || !md ? 0 : md;
-				// Total damage dealt is accumulated for the purposes of recoil (Parental Bond).
+				// For recoil moves, also track intended (uncapped) damage for correct recoil calculation.
+				if (move.recoil) {
+					if (!move.intendedTotalDamage) move.intendedTotalDamage = 0;
+					// md can be true/false/number; only add if number
+					if (typeof md === 'number') {
+						// If md > target.hp, intended damage is md, actual is capped at target.hp
+						move.intendedTotalDamage += md;
+					}
+				}
 				move.totalDamage += damage[i];
 			}
 			if (move.mindBlownRecoil) {
@@ -982,7 +995,11 @@ export class BattleActions {
 
 		if ((move.recoil || move.id === 'chloroblast') && move.totalDamage) {
 			const hpBeforeRecoil = pokemon.hp;
-			this.battle.damage(this.calcRecoilDamage(move.totalDamage, move, pokemon), pokemon, pokemon, 'recoil');
+			let recoilBase = move.totalDamage;
+			if (move.recoil && move.intendedTotalDamage) {
+				recoilBase = move.intendedTotalDamage;
+			}
+			this.battle.damage(this.calcRecoilDamage(recoilBase, move, pokemon), pokemon, pokemon, 'recoil');
 			if (pokemon.hp <= pokemon.maxhp / 2 && hpBeforeRecoil > pokemon.maxhp / 2) {
 				this.battle.runEvent('EmergencyExit', pokemon, pokemon);
 			}
@@ -1393,7 +1410,12 @@ export class BattleActions {
 
 	calcRecoilDamage(damageDealt: number, move: Move, pokemon: Pokemon): number {
 		if (move.id === 'chloroblast') return Math.round(pokemon.maxhp / 2);
-		return this.battle.clampIntRange(Math.round(damageDealt * move.recoil![0] / move.recoil![1]), 1);
+		let recoil = Math.round(damageDealt * move.recoil![0] / move.recoil![1]);
+		// Halve recoil if the user has the Reckless ability
+		if (pokemon.hasAbility && pokemon.hasAbility('reckless')) {
+			recoil = Math.floor(recoil / 2);
+		}
+		return this.battle.clampIntRange(recoil, 1);
 	}
 
 	getZMove(move: Move, pokemon: Pokemon, skipChecks?: boolean): string | undefined {
@@ -1620,23 +1642,18 @@ export class BattleActions {
 
 		let critMult;
 		let critRatio = this.battle.runEvent('ModifyCritRatio', source, target, move, move.critRatio || 0);
-		if (this.battle.gen <= 5) {
-			critRatio = this.battle.clampIntRange(critRatio, 0, 5);
-			critMult = [0, 16, 8, 4, 3, 2];
-		} else {
-			critRatio = this.battle.clampIntRange(critRatio, 0, 4);
-			if (this.battle.gen === 6) {
-				critMult = [0, 16, 8, 2, 1];
-			} else {
-				critMult = [0, 24, 8, 2, 1];
-			}
-		}
+		// Custom crit tiers for Indigo Starstorm
+		critRatio = Math.max(0, Math.min(critRatio, 15));
+		critMult = [96, 64, 48, 24, 16, 12, 8, 6, 4, 3, 2, 1.5, 1.333, 1.2, 1];
 
 		const moveHit = target.getMoveHitData(move);
 		moveHit.crit = move.willCrit || false;
 		if (move.willCrit === undefined) {
-			if (critRatio) {
+			// If critRatio <= 0, never crit
+			if (critRatio > 0) {
 				moveHit.crit = this.battle.randomChance(1, critMult[critRatio]);
+			} else {
+				moveHit.crit = false;
 			}
 		}
 
@@ -1760,9 +1777,17 @@ export class BattleActions {
 		if (type !== '???') {
 			let stab: number | [number, number] = 1;
 
-			const isSTAB = move.forceSTAB || pokemon.hasType(type) || pokemon.getTypes(false, true).includes(type);
+			const moveTypes = [move.type];
+			if (move.type2 && move.type2 !== move.type) moveTypes.push(move.type2);
+			const matches = move.forceSTAB ? moveTypes : moveTypes.filter(t => pokemon.hasType(t) || pokemon.getTypes(false, true).includes(t));
+			const isSTAB = matches.length > 0;
+			const matchesBoth = moveTypes.length === 2 && matches.length === 2 && moveTypes[0] !== moveTypes[1] && matches[0] !== matches[1];
 			if (isSTAB) {
-				stab = 1.5;
+				if (matchesBoth) {
+					stab = 1.7;
+				} else {
+					stab = 1.5;
+				}
 			}
 
 			// The Stellar tera type makes this incredibly confusing
@@ -1781,8 +1806,12 @@ export class BattleActions {
 					}
 				}
 			} else {
-				if (pokemon.terastallized === type && pokemon.getTypes(false, true).includes(type)) {
-					stab = 2;
+				if (pokemon.terastallized && moveTypes.includes(pokemon.terastallized) && pokemon.getTypes(false, true).includes(pokemon.terastallized)) {
+					if (matchesBoth) {
+						stab = 2.2;
+					} else {
+						stab = 2;
+					}
 				}
 				stab = this.battle.runEvent('ModifySTAB', pokemon, target, move, stab);
 			}
@@ -1931,7 +1960,10 @@ export class BattleActions {
 		}
 
 		if (pokemon.illusion && ['Ogerpon', 'Terapagos'].includes(pokemon.illusion.species.baseSpecies)) {
-			this.battle.singleEvent('End', this.dex.abilities.get('Illusion'), pokemon.abilityState, pokemon);
+			// Check which ability slot has Illusion
+			const illusionSlot = pokemon.ability1 === 'illusion' ? 1 : 2;
+			const abilityStateKey = illusionSlot === 1 ? 'abilityState1' : 'abilityState2';
+			this.battle.singleEvent('End', this.dex.abilities.get('Illusion'), pokemon[abilityStateKey], pokemon);
 		}
 
 		const type = pokemon.teraType;
