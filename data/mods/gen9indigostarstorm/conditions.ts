@@ -1098,27 +1098,17 @@ export const Conditions = {
 				if (groundedEffects.includes(type)) { return false; }
 			}
 		},
-		// Prevent Tailwind from being set while active
-		onTrySideCondition(condition, target, source, effect) {
-			if (condition === 'stealthrock' && this.field.isWeather('turbulentwinds')) {
-				if (!this.field.stealthRockSuppressed) {
-					this.add('-message', 'Stealth Rock is suppressed by Turbulent Winds!');
-					this.field.stealthRockSuppressed = true;
-				}
-				return false;
-			}
-			if (condition === 'tailwind' && this.field.isWeather('turbulentwinds')) {
-				this.add('-message', 'Tailwind cannot be set while Turbulent Winds are active!');
-				return false;
-			}
-		},
-		// Prevent Stealth Rock activation while weather is active
+		// Prevent Tailwind and Stealth Rock from being set while active
 		onTrySideCondition(condition, target, source, effect) {
 			if (condition === 'stealthrock' && this.field.isWeather('turbulentwinds')) {
 				if (!this.field.stealthRockSuppressed) {
 					this.add('-message', 'The rocks were swept up by the Turbulent Winds!');
 					this.field.stealthRockSuppressed = true;
 				}
+				return false;
+			}
+			if (condition === 'tailwind' && this.field.isWeather('turbulentwinds')) {
+				this.add('-message', 'Tailwind cannot be set while Turbulent Winds are active!');
 				return false;
 			}
 		},
@@ -1177,27 +1167,17 @@ export const Conditions = {
 				if (groundedEffects.includes(type)) { return false; }
 			}
 		},
-		// Prevent Tailwind from being set while active
-		onTrySideCondition(condition, target, source, effect) {
-			if (condition === 'stealthrock' && this.field.isWeather('deltastream')) {
-				if (!this.field.stealthRockSuppressed) {
-					this.add('-message', 'Stealth Rock is suppressed by Delta Stream!');
-					this.field.stealthRockSuppressed = true;
-				}
-				return false;
-			}
-			if (condition === 'tailwind' && this.field.isWeather('deltastream')) {
-				this.add('-message', 'Tailwind cannot be set while Delta Stream is active!');
-				return false;
-			}
-		},
-		// Prevent Stealth Rock activation while weather is active
+		// Prevent Tailwind and Stealth Rock from being set while active
 		onTrySideCondition(condition, target, source, effect) {
 			if (condition === 'stealthrock' && this.field.isWeather('deltastream')) {
 				if (!this.field.stealthRockSuppressed) {
 					this.add('-message', 'The rocks were swept up by Delta Stream!');
 					this.field.stealthRockSuppressed = true;
 				}
+				return false;
+			}
+			if (condition === 'tailwind' && this.field.isWeather('deltastream')) {
+				this.add('-message', 'Tailwind cannot be set while Delta Stream is active!');
 				return false;
 			}
 		},
@@ -1624,8 +1604,6 @@ export const Conditions = {
 					this.damage(pokemon.baseMaxhp / divisor, pokemon);
 				}
 		},
-		onFieldResidualOrder: 26,
-		onFieldResidualSubOrder: 8,
 		onFieldEnd() { this.add('-fieldend', 'SeaofFire'); },
 	},
 	swamp: {
