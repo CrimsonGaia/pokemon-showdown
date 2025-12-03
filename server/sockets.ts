@@ -361,16 +361,20 @@ export class ServerStream extends Streams.ObjectReadWriteStream<string> {
 						}
 					}
 
-					void server.serve(req, res, e => {
-						if (e.status === 404) {
-							void staticServer.serveFile('404.html', 404, {}, req, res);
+
+				void server.serve(req, res, e => {
+					if (e.status === 404) {
+						// Only serve index.html for navigation requests, not static assets
+						const url = req.url || '/';
+						const hasFileExtension = /\.[a-z0-9]+$/i.test(url.split('?')[0]);
+						if (!hasFileExtension) {
+							void staticServer.serveFile('index.html', 200, {}, req, res);
 							return true;
 						}
-					});
+					}
 				});
-			};
-
-			this.server.on('request', staticRequestHandler);
+			});
+		};			this.server.on('request', staticRequestHandler);
 			if (this.serverSsl) this.serverSsl.on('request', staticRequestHandler);
 		} catch {
 			console.log('Could not start static server');
@@ -383,7 +387,7 @@ export class ServerStream extends Streams.ObjectReadWriteStream<string> {
 
 		const sockjs: typeof import('sockjs') = (require as any)('sockjs');
 		const options: import('sockjs').ServerOptions & { faye_server_options?: { [key: string]: any } } = {
-			sockjs_url: `//play.pokemonshowdown.com/js/lib/sockjs-1.4.0-nwjsfix.min.js`,
+			sockjs_url: `/js/lib/sockjs-1.4.0-nwjsfix.min.js`,
 			prefix: '/showdown',
 			log(severity: string, message: string) {
 				if (severity === 'error') console.log(`ERROR: ${message}`);

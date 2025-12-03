@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+	<meta charset="UTF-8" />
+
+	<title>Trainer sprites - Showdown!</title>
+
+	<meta name="viewport" content="width=device-width" />
+	<link rel="stylesheet" href="http://play.pokemonshowdown.com/dirindex/font-awesome.min.css" />
+	<link rel="stylesheet" href="http://play.pokemonshowdown.com/dirindex/fontawesome5-solid-duotone.min.css?" />
+
+	<style>
+		/*********************************************************
+		 * Layout
+		 *********************************************************/
+
+		html, body {
+			margin: 0;
+			padding: 0;
+			min-height: 100%;
+		}
+
+		html {
+			color: white;
+			font-family: Verdana,Helvetica,sans-serif;
+			font-size: 11pt;
+			background: #f0f0f0;
+			color: #333333;
+		}
+		body {
+			background: linear-gradient(to bottom, rgba(77, 93, 140, 0.6), rgba(77, 93, 140, 0.2) 80px, transparent 160px, transparent);
+		}
+
+		header {
+			margin: 0;
+			padding: 2px;
+			/* background: rgba(255, 255, 255, .2);
+			border-bottom: 1px solid rgba(255, 255, 255, .6); */
+			text-align: center;
+			height: 60px;
+		}
+		.nav-wrapper {
+			width: 700px;
+			margin: 0 auto;
+			position: relative;
+		}
+		.nav {
+			padding: 0;
+		}
+		.nav-wrapper .nav {
+			padding-left: 140px;
+			padding-top: 5px;
+		}
+		.nav li {
+			float: left;
+			list-style-type: none;
+		}
+		.nav img {
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+		.nav a, .nav a:visited {
+			color: white;
+			background: #3a4f88;
+			background: linear-gradient(to bottom, #4c63a3, #273661);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px 1px rgba(255, 255, 255, 0.5);
+			border: 1px solid #222c4a;
+			text-shadow: black 0px -1px 0;
+			padding: 8px 15px;
+			font-weight: bold;
+			text-decoration: none;
+			border-radius: 0;
+			margin-left: -1px;
+			font-size: 11pt;
+		}
+		.dark .nav a, .dark .nav a:visited {
+			/* make sure other styling doesn't override */
+			color: white;
+			background: #3a4f88;
+			background: linear-gradient(to bottom, #4c63a3, #273661);
+			border: 1px solid #222c4a;
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px 1px rgba(255, 255, 255, 0.5);
+		}
+		.nav a:hover, .dark .nav a:hover {
+			background: linear-gradient(to bottom, #5a77c7, #2f447f);
+			border: 1px solid #222c4a;
+		}
+		.nav a:active, .dark .nav a:active {
+			background: linear-gradient(to bottom, #273661, #4c63a3);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px -1px rgba(255, 255, 255, 0.5);
+		}
+		.nav a.cur, .nav a.cur:hover, .nav a.cur:active,
+		.dark .nav a.cur, .dark .nav a.cur:hover, .dark .nav a.cur:active {
+			color: #CCCCCC;
+			background: rgba(79, 109, 148, 0.7);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45);
+			border: 1px solid #222c4a;
+		}
+		.nav a.nav-first {
+			margin-left: 10px;
+			border-top-left-radius: 8px;
+			border-bottom-left-radius: 8px;
+		}
+		.nav a.nav-last {
+			border-top-right-radius: 8px;
+			border-bottom-right-radius: 8px;
+		}
+		.nav a.greenbutton {
+			background: linear-gradient(to bottom, #4ca363, #276136);
+		}
+		.nav a.greenbutton:hover {
+			background: linear-gradient(to bottom, #5ac777, #2f7f44);
+		}
+		.nav a.greenbutton:active {
+			background: linear-gradient(to bottom, #276136, #4ca363);
+			box-shadow: 0 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px -1px rgba(255, 255, 255, 0.5);
+		}
+		.nav a.purplebutton {
+			background: linear-gradient(to bottom,hsl(267, 36.40%, 46.90%),hsl(267, 42.60%, 26.70%));
+		}
+		.nav a.purplebutton:hover {
+			background: linear-gradient(to bottom,hsl(267, 49.30%, 56.70%),hsl(267, 46.00%, 34.10%));
+		}
+		.nav a.purplebutton:active {
+			background: linear-gradient(to bottom,hsl(267, 42.60%, 26.70%),hsl(267, 36.40%, 46.90%));
+			box-shadow: 0 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px -1px rgba(255, 255, 255, 0.5);
+		}
+
+		@media (max-width:700px) {
+			.nav-wrapper {
+				width: auto;
+				display: inline-block;
+			}
+			.nav-wrapper .nav {
+				padding-left: 135px;
+			}
+			.nav a {
+				font-weight: normal;
+				padding: 8px 7px;
+			}
+			.nav img {
+				top: 10px;
+			}
+		}
+
+		@media (max-width:554px) {
+			header {
+				height: 100px;
+			}
+			.nav-wrapper .nav {
+				padding-left: 0;
+				padding-top: 50px;
+			}
+			.nav img {
+				top: 10px;
+			}
+			.nav a {
+				padding: 8px 12px;
+			}
+			.nav a.nav-first {
+				margin-left: 0;
+			}
+			.nav a.greenbutton {
+				position: absolute;
+				top: 10px;
+				right: 0;
+			}
+		}
+		@media (max-width:419px) {
+			.nav a {
+				padding: 8px 7px;
+			}
+		}
+		@media (max-width:359px) {
+			.nav-wrapper {
+				padding-left: 5px;
+			}
+			.nav a {
+				padding: 8px 4px;
+			}
+		}
+
+		footer {
+			clear: both;
+			text-align: center;
+			color: #888888;
+			padding: 10px 0 10px 0;
+		}
+		footer p {
+			margin: 10px 0;
+		}
+		footer a {
+			color: #AAAAAA;
+		}
+		footer a:hover {
+			color: #6688AA;
+		}
+		footer a.cur, footer a.cur:hover {
+			color: #888888;
+			font-weight: bold;
+			text-decoration: none;
+		}
+
+		/*********************************************************
+		 * Main
+		 *********************************************************/
+		.button {
+			color: white;
+			background: #3a4f88;
+			background: linear-gradient(to bottom, #4c63a3, #273661);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px 1px rgba(255, 255, 255, 0.5);
+			border: 1px solid #222c4a;
+			padding: 3px 10px;
+			text-shadow: black 0px -1px 0;
+			border-radius: 10px;
+			text-decoration: none;
+			display: inline-block;
+			font-family: Verdana,Helvetica,sans-serif;
+			font-size: 11pt;
+			cursor: pointer;
+		}
+		.button:hover {
+			text-decoration: none;
+		}
+		main {
+			margin: 0 auto;
+			padding: 0 15px 15px 15px;
+			max-width: 800px;
+			overflow-wrap: break-word;
+		}
+		a {
+			color: #0073aa;
+		}
+		a:visited {
+			color: #8000aa;
+		}
+		h1 {
+			font-size: 20px;
+			margin-bottom: 20px;
+		}
+		.parentlink {
+			padding: 0 0 12px 0;
+		}
+		.parentlink a {
+			text-decoration: none;
+			display: block;
+			border: 1px solid transparent;
+			padding: 4px 8px 4px 40px;
+			border-radius: 4px;
+		}
+		.parentlink a:hover {
+			background: #e7ebee;
+			border-color: #5f8a9e;
+		}
+		.parentlink i, .parentlink em {
+			vertical-align: middle;
+		}
+		@media (prefers-color-scheme: dark) {
+			html {
+				background: #000;
+				color: #ddd;
+				color-scheme: dark;
+			}
+			a {
+				color:rgb(99, 174, 209);
+			}
+			a:visited {
+				color:rgb(177, 123, 195);
+			}
+			.parentlink a:hover {
+				background: #181818;
+				border-color: #444;
+			}
+		}
+
+		/*********************************************************
+		 * Dirlist
+		 *********************************************************/
+		h1 a {
+			font-weight: normal;
+			text-decoration: none;
+		}
+		h1 a:hover {
+			text-decoration: underline;
+		}
+
+		.dirlist {
+			font-size: 14px;
+			list-style-type: none;
+			padding: 0;
+		}
+		.header {
+			padding: 0 7px 0 39px;
+			border-bottom: 1px solid #888888;
+			background: #f0f0f0;
+		}
+		.parentlink {
+			padding: 0 0 12px 0;
+		}
+
+		.header a, .header a:visited {
+			text-decoration: none;
+			padding: 5px 0;
+			color: inherit;
+		}
+		.header a:hover {
+			text-decoration: none;
+			background: #dddddd;
+		}
+		a.row {
+			text-decoration: none;
+			display: block;
+			border: 1px solid transparent;
+			padding: 4px 8px 4px 40px;
+			border-radius: 4px;
+		}
+		a.row:hover {
+			background:#e7ebee;
+			border-color:#5f8a9e;
+		}
+		a.row * {
+			vertical-align: middle;
+		}
+
+		.icon {
+			display: inline-block;
+			width: 32px;
+			margin-left: -32px;
+			font-size: 20px;
+			text-align: center;
+			color: #777;
+		}
+		.icon.fa-arrow-circle-o-up, .icon.fa-folder-open {
+			color: #3798c5;
+			--fa-secondary-opacity: 0.55;
+		}
+		.icon.fa-image, .icon.fa-picture-o, .icon.fa-film, .icon.fa-video, .icon.fa-video-camera, .icon.fa-volume, .icon.fa-volume-up {
+			color: rgb(139, 115, 82);
+			--fa-secondary-opacity: 0.4;
+		}
+		.icon.icon-js {
+			color: rgb(160, 153, 89);
+		}
+		.icon.icon-ts, .icon.icon-md {
+			color: rgb(83, 112, 149);
+		}
+		.icon.icon-html {
+			color: rgb(166, 125, 67);
+		}
+		.icon.icon-php, .icon.icon-css {
+			color: rgb(125, 83, 149);
+		}
+		.icon.fa-file-pdf, .icon.fa-file-pdf-o, .icon.fa-font-case {
+			color: rgb(149, 83, 83);
+		}
+		.icon.fa-file-archive, .icon.fa-file-archive-o {
+			color:rgb(116, 149, 163);
+		}
+		.filename {
+			display: inline-block;
+			width: 50%;
+			min-width: 260px;
+			font-family: monospace;
+			font-size: 10pt;
+		}
+		.parentlink .filename {
+			font-family: inherit;
+			font-style: italic;
+		}
+		.filesize {
+			display: inline-block;
+			width: 20%;
+			min-width: 80px;
+			color: #666666;
+		}
+		.filemtime {
+			display: inline-block;
+			color: #666666;
+			font-size: 0.9em;
+			min-width: 150px;
+		}
+		.header .icon, .header .filename, .header .filesize, .header .filemtime {
+			font-style: normal;
+			font-family: inherit;
+			font-size: inherit;
+			color: inherit;
+		}
+		@media (prefers-color-scheme: dark) {
+			.header {
+				background: #000;
+			}
+			.header a:hover {
+				background: #333;
+			}
+			.icon {
+				color: #888;
+			}
+			a.row:hover {
+				background: #181818;
+				border-color: #444;
+			}
+			.filesize, .filemtime {
+				color: #888;
+			}
+		}
+
+		/*********************************************************
+		 * Icons
+		 *********************************************************/
+
+		.dirlist-icons {
+			font-size: 0;
+		}
+		.dirlist-icons li {
+			display: inline-block;
+			vertical-align: top;
+			width: 133px;
+			font-size: 10pt;
+		}
+		.dirlist-icons li.header {
+			display: block;
+			width: auto;
+			height: auto;
+			margin-bottom: 2px;
+		}
+		.dirlist-icons .row, .dirlist-icons a.row:hover {
+			text-align: center;
+			padding: 0;
+			text-decoration: none;
+		}
+		.dirlist-icons .row .filesize, .dirlist-icons .row .filemtime {
+			display: none;
+		}
+		.dirlist-icons .row .icon, .dirlist-icons a.row:hover .icon {
+			display: block;
+			font-size: 60px;
+			margin: 0;
+			width: auto;
+			text-decoration: none;
+		}
+		.dirlist-icons .row .filename {
+			display: block;
+			min-width: auto;
+			width: auto;
+			font-size: 9pt;
+		}
+
+		/*********************************************************
+		 * Spriteindex
+		 *********************************************************/
+
+		figure {
+			width: 96px;
+			display: inline-block;
+			vertical-align: top;
+			text-align: center;
+			margin: 0.5em 10px;
+			overflow-wrap: break-word;
+		}
+		figure img {
+			image-rendering: pixelated;
+		}
+		figure figcaption {
+			font-size: 12px;
+			text-align: center;
+		}
+		a {
+			text-decoration: none;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+	</style>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-26211653-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'UA-26211653-1');
+	</script>
+	<!-- End Google Analytics -->
+</head><body>
+
+	<header>
+		<div class="nav-wrapper"><ul class="nav">
+			<li><a class="button nav-first" href="http://pokemonshowdown.com/"><img src="http://play.pokemonshowdown.com/pokemonshowdownbeta.png" srcset="http://play.pokemonshowdown.com/pokemonshowdownbeta.png 1x, http://play.pokemonshowdown.com/pokemonshowdownbeta@2x.png 2x" alt="Pok&eacute;mon Showdown" width="146" height="44" /> Home</a></li>
+			<li><a class="button" href="http://pokemonshowdown.com/dex/">Pok&eacute;dex</a></li>
+			<li><a class="button" href="http://replay.pokemonshowdown.com/">Replay</a></li>
+			<li><a class="button purplebutton" href="http://smogon.com/dex/" target="_blank">Strategy</a></li>
+			<li><a class="button nav-last purplebutton" href="http://smogon.com/forums/" target="_blank">Forum</a></li>
+			<li><a class="button greenbutton nav-first nav-last" href="http://play.pokemonshowdown.com/">Play</a></li>
+		</ul></div>
+	</header>
+
+	<main>
+		<h1>
+			Index of
+			<a href="http://play.pokemonshowdown.com/">play.pokemonshowdown.com</a><wbr />/<a href="../index.html">sprites</a><wbr />/trainers/
+		</h1>
+
+		<p class="parentlink">
+			<a class="row" href="../index.html">
+				<i class="icon fa fa-arrow-circle-o-up">
+				</i><em>(Parent directory)
+				</em>
+			</a>
+		</p>
+	<h2>Trainer sprites</h2>
+	<h4>Many of these sprites are not from the games. Credit must be given to the <a href="index.html@filter=credited">appropriate artist</a> if used elsewhere. DO NOT EDIT without permission.</h4>
+	<div>
+		View:
+		<ul class="nav" style="display:inline-block;vertical-align:middle;margin:0 10px 0 0">
+			<li><a class="button nav-first cur" href="index.html@view=sprites">Sprites</a></li>
+			<li><a class="button nav-last" href="index.html@view=dir">Directory</a></li>
+		</ul>
+		Filter:
+		<ul class="nav" style="display:inline-block;vertical-align:middle;margin:0">
+			<li><a class="button nav-first" href="index.html@view=sprites">All</a></li>
+			<li><a class="button cur" href="index.html@view=sprites&amp;filter=recent">Recent</a></li>
+			<li><a class="button nav-last" href="index.html@view=sprites&amp;filter=credited">Credited</a></li>
+		</ul>
+	</div>
+</main>
+<h3 style="margin:1em;border-bottom:1px solid #999;padding-bottom:2px">New in 2025-10</h3><figure id="shauntal-masters.png">
+	<img loading="lazy" src="shauntal-masters.png" alt="shauntal-masters.png" title="shauntal-masters.png" />
+	<figcaption><a href="shauntal-masters.png">shauntal-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="selene-masters2.png">
+	<img loading="lazy" src="selene-masters2.png" alt="selene-masters2.png" title="selene-masters2.png" />
+	<figcaption><a href="selene-masters2.png">selene-masters2</a><br />by kyledove</figcaption>
+</figure>
+<figure id="morty-masters3.png">
+	<img loading="lazy" src="morty-masters3.png" alt="morty-masters3.png" title="morty-masters3.png" />
+	<figcaption><a href="morty-masters3.png">morty-masters3</a><br />by kyledove</figcaption>
+</figure>
+<figure id="may-masters4.png">
+	<img loading="lazy" src="may-masters4.png" alt="may-masters4.png" title="may-masters4.png" />
+	<figcaption><a href="may-masters4.png">may-masters4</a><br />by kyledove</figcaption>
+</figure>
+<figure id="marley-masters.png">
+	<img loading="lazy" src="marley-masters.png" alt="marley-masters.png" title="marley-masters.png" />
+	<figcaption><a href="marley-masters.png">marley-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="lance-masters2.png">
+	<img loading="lazy" src="lance-masters2.png" alt="lance-masters2.png" title="lance-masters2.png" />
+	<figcaption><a href="lance-masters2.png">lance-masters2</a><br />by kyledove</figcaption>
+</figure>
+<figure id="iono-masters2.png">
+	<img loading="lazy" src="iono-masters2.png" alt="iono-masters2.png" title="iono-masters2.png" />
+	<figcaption><a href="iono-masters2.png">iono-masters2</a><br />by kyledove</figcaption>
+</figure>
+<figure id="iono-masters.png">
+	<img loading="lazy" src="iono-masters.png" alt="iono-masters.png" title="iono-masters.png" />
+	<figcaption><a href="iono-masters.png">iono-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="erika-masters3.png">
+	<img loading="lazy" src="erika-masters3.png" alt="erika-masters3.png" title="erika-masters3.png" />
+	<figcaption><a href="erika-masters3.png">erika-masters3</a><br />by kyledove</figcaption>
+</figure>
+<figure id="elio-masters.png">
+	<img loading="lazy" src="elio-masters.png" alt="elio-masters.png" title="elio-masters.png" />
+	<figcaption><a href="elio-masters.png">elio-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="elesa-masters3.png">
+	<img loading="lazy" src="elesa-masters3.png" alt="elesa-masters3.png" title="elesa-masters3.png" />
+	<figcaption><a href="elesa-masters3.png">elesa-masters3</a><br />by kyledove</figcaption>
+</figure>
+<figure id="cynthia-masters4.png">
+	<img loading="lazy" src="cynthia-masters4.png" alt="cynthia-masters4.png" title="cynthia-masters4.png" />
+	<figcaption><a href="cynthia-masters4.png">cynthia-masters4</a><br />by kyledove</figcaption>
+</figure>
+<figure id="bugsy-masters.png">
+	<img loading="lazy" src="bugsy-masters.png" alt="bugsy-masters.png" title="bugsy-masters.png" />
+	<figcaption><a href="bugsy-masters.png">bugsy-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="brendan-masters2.png">
+	<img loading="lazy" src="brendan-masters2.png" alt="brendan-masters2.png" title="brendan-masters2.png" />
+	<figcaption><a href="brendan-masters2.png">brendan-masters2</a><br />by kyledove</figcaption>
+</figure>
+<figure id="az-lza.png">
+	<img loading="lazy" src="az-lza.png" alt="az-lza.png" title="az-lza.png" />
+	<figcaption><a href="az-lza.png">az-lza</a><br />by kyledove</figcaption>
+</figure>
+<figure id="naveen.png">
+	<img loading="lazy" src="naveen.png" alt="naveen.png" title="naveen.png" />
+	<figcaption><a href="naveen.png">naveen</a><br />by Horo</figcaption>
+</figure>
+<figure id="mable.png">
+	<img loading="lazy" src="mable.png" alt="mable.png" title="mable.png" />
+	<figcaption><a href="mable.png">mable</a><br />by Horo</figcaption>
+</figure>
+<figure id="lida.png">
+	<img loading="lazy" src="lida.png" alt="lida.png" title="lida.png" />
+	<figcaption><a href="lida.png">lida</a><br />by Horo</figcaption>
+</figure>
+<figure id="emma-lza.png">
+	<img loading="lazy" src="emma-lza.png" alt="emma-lza.png" title="emma-lza.png" />
+	<figcaption><a href="emma-lza.png">emma-lza</a><br />by Horo</figcaption>
+</figure>
+<h3 style="margin:1em;border-bottom:1px solid #999;padding-bottom:2px">New in 2025-04</h3><figure id="miku-ice.png">
+	<img loading="lazy" src="miku-ice.png" alt="miku-ice.png" title="miku-ice.png" />
+	<figcaption><a href="miku-ice.png">miku-ice</a><br />by RADU</figcaption>
+</figure>
+<figure id="miku-ghost.png">
+	<img loading="lazy" src="miku-ghost.png" alt="miku-ghost.png" title="miku-ghost.png" />
+	<figcaption><a href="miku-ghost.png">miku-ghost</a><br />by Flamibane</figcaption>
+</figure>
+<figure id="miku-fairy.png">
+	<img loading="lazy" src="miku-fairy.png" alt="miku-fairy.png" title="miku-fairy.png" />
+	<figcaption><a href="miku-fairy.png">miku-fairy</a><br />by wisteriapurple</figcaption>
+</figure>
+<figure id="trace.png">
+	<img loading="lazy" src="trace.png" alt="trace.png" title="trace.png" />
+	<figcaption><a href="trace.png">trace</a><br />by kyledove</figcaption>
+</figure>
+<figure id="paxton.png">
+	<img loading="lazy" src="paxton.png" alt="paxton.png" title="paxton.png" />
+	<figcaption><a href="paxton.png">paxton</a><br />by kyledove</figcaption>
+</figure>
+<figure id="harmony.png">
+	<img loading="lazy" src="harmony.png" alt="harmony.png" title="harmony.png" />
+	<figcaption><a href="harmony.png">harmony</a><br />by kyledove</figcaption>
+</figure>
+<figure id="daisy.png">
+	<img loading="lazy" src="daisy.png" alt="daisy.png" title="daisy.png" />
+	<figcaption><a href="daisy.png">daisy</a><br />by kyledove</figcaption>
+</figure>
+<figure id="bill.png">
+	<img loading="lazy" src="bill.png" alt="bill.png" title="bill.png" />
+	<figcaption><a href="bill.png">bill</a><br />by kyledove</figcaption>
+</figure>
+<figure id="baoba.png">
+	<img loading="lazy" src="baoba.png" alt="baoba.png" title="baoba.png" />
+	<figcaption><a href="baoba.png">baoba</a><br />by kyledove</figcaption>
+</figure>
+<h3 style="margin:1em;border-bottom:1px solid #999;padding-bottom:2px">New in 2025-01</h3><figure id="nemona-masters.png">
+	<img loading="lazy" src="nemona-masters.png" alt="nemona-masters.png" title="nemona-masters.png" />
+	<figcaption><a href="nemona-masters.png">nemona-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="roy.png">
+	<img loading="lazy" src="roy.png" alt="roy.png" title="roy.png" />
+	<figcaption><a href="roy.png">roy</a><br />by Horo</figcaption>
+</figure>
+<figure id="liko.png">
+	<img loading="lazy" src="liko.png" alt="liko.png" title="liko.png" />
+	<figcaption><a href="liko.png">liko</a><br />by Horo</figcaption>
+</figure>
+<h3 style="margin:1em;border-bottom:1px solid #999;padding-bottom:2px">New in 2024-07</h3><figure id="gardenia-masters.png">
+	<img loading="lazy" src="gardenia-masters.png" alt="gardenia-masters.png" title="gardenia-masters.png" />
+	<figcaption><a href="gardenia-masters.png">gardenia-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="cheren-masters.png">
+	<img loading="lazy" src="cheren-masters.png" alt="cheren-masters.png" title="cheren-masters.png" />
+	<figcaption><a href="cheren-masters.png">cheren-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="bianca-masters.png">
+	<img loading="lazy" src="bianca-masters.png" alt="bianca-masters.png" title="bianca-masters.png" />
+	<figcaption><a href="bianca-masters.png">bianca-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="acerola-masters3.png">
+	<img loading="lazy" src="acerola-masters3.png" alt="acerola-masters3.png" title="acerola-masters3.png" />
+	<figcaption><a href="acerola-masters3.png">acerola-masters3</a><br />by kyledove</figcaption>
+</figure>
+<figure id="red-lgpe.png">
+	<img loading="lazy" src="red-lgpe.png" alt="red-lgpe.png" title="red-lgpe.png" />
+	<figcaption><a href="red-lgpe.png">red-lgpe</a><br />by Horo</figcaption>
+</figure>
+<h3 style="margin:1em;border-bottom:1px solid #999;padding-bottom:2px">New in 2024-04</h3><figure id="zinnia-masters.png">
+	<img loading="lazy" src="zinnia-masters.png" alt="zinnia-masters.png" title="zinnia-masters.png" />
+	<figcaption><a href="zinnia-masters.png">zinnia-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="yancy.png">
+	<img loading="lazy" src="yancy.png" alt="yancy.png" title="yancy.png" />
+	<figcaption><a href="yancy.png">yancy</a><br />by kyledove</figcaption>
+</figure>
+<figure id="willow.png">
+	<img loading="lazy" src="willow.png" alt="willow.png" title="willow.png" />
+	<figcaption><a href="willow.png">willow</a><br />by kyledove</figcaption>
+</figure>
+<figure id="willow-casual.png">
+	<img loading="lazy" src="willow-casual.png" alt="willow-casual.png" title="willow-casual.png" />
+	<figcaption><a href="willow-casual.png">willow-casual</a><br />by kyledove</figcaption>
+</figure>
+<figure id="wally-rse.png">
+	<img loading="lazy" src="wally-rse.png" alt="wally-rse.png" title="wally-rse.png" />
+	<figcaption><a href="wally-rse.png">wally-rse</a><br />by kyledove</figcaption>
+</figure>
+<figure id="vince.png">
+	<img loading="lazy" src="vince.png" alt="vince.png" title="vince.png" />
+	<figcaption><a href="vince.png">vince</a><br />by kyledove</figcaption>
+</figure>
+<figure id="victor-masters.png">
+	<img loading="lazy" src="victor-masters.png" alt="victor-masters.png" title="victor-masters.png" />
+	<figcaption><a href="victor-masters.png">victor-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="toddsnap2.png">
+	<img loading="lazy" src="toddsnap2.png" alt="toddsnap2.png" title="toddsnap2.png" />
+	<figcaption><a href="toddsnap2.png">toddsnap2</a><br />by kyledove</figcaption>
+</figure>
+<figure id="toddsnap.png">
+	<img loading="lazy" src="toddsnap.png" alt="toddsnap.png" title="toddsnap.png" />
+	<figcaption><a href="toddsnap.png">toddsnap</a><br />by kyledove</figcaption>
+</figure>
+<figure id="spenser.png">
+	<img loading="lazy" src="spenser.png" alt="spenser.png" title="spenser.png" />
+	<figcaption><a href="spenser.png">spenser</a><br />by kyledove</figcaption>
+</figure>
+<figure id="spark.png">
+	<img loading="lazy" src="spark.png" alt="spark.png" title="spark.png" />
+	<figcaption><a href="spark.png">spark</a><br />by kyledove</figcaption>
+</figure>
+<figure id="spark-casual.png">
+	<img loading="lazy" src="spark-casual.png" alt="spark-casual.png" title="spark-casual.png" />
+	<figcaption><a href="spark-casual.png">spark-casual</a><br />by kyledove</figcaption>
+</figure>
+<figure id="sierra.png">
+	<img loading="lazy" src="sierra.png" alt="sierra.png" title="sierra.png" />
+	<figcaption><a href="sierra.png">sierra</a><br />by kyledove</figcaption>
+</figure>
+<figure id="selene-masters.png">
+	<img loading="lazy" src="selene-masters.png" alt="selene-masters.png" title="selene-masters.png" />
+	<figcaption><a href="selene-masters.png">selene-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="sabrina-frlg.png">
+	<img loading="lazy" src="sabrina-frlg.png" alt="sabrina-frlg.png" title="sabrina-frlg.png" />
+	<figcaption><a href="sabrina-frlg.png">sabrina-frlg</a><br />by kyledove</figcaption>
+</figure>
+<figure id="rosa-pokestar3.png">
+	<img loading="lazy" src="rosa-pokestar3.png" alt="rosa-pokestar3.png" title="rosa-pokestar3.png" />
+	<figcaption><a href="rosa-pokestar3.png">rosa-pokestar3</a><br />by kyledove</figcaption>
+</figure>
+<figure id="river.png">
+	<img loading="lazy" src="river.png" alt="river.png" title="river.png" />
+	<figcaption><a href="river.png">river</a><br />by kyledove</figcaption>
+</figure>
+<figure id="rita.png">
+	<img loading="lazy" src="rita.png" alt="rita.png" title="rita.png" />
+	<figcaption><a href="rita.png">rita</a><br />by kyledove</figcaption>
+</figure>
+<figure id="rhi.png">
+	<img loading="lazy" src="rhi.png" alt="rhi.png" title="rhi.png" />
+	<figcaption><a href="rhi.png">rhi</a><br />by kyledove</figcaption>
+</figure>
+<figure id="phil.png">
+	<img loading="lazy" src="phil.png" alt="phil.png" title="phil.png" />
+	<figcaption><a href="phil.png">phil</a><br />by kyledove</figcaption>
+</figure>
+<figure id="peony-league.png">
+	<img loading="lazy" src="peony-league.png" alt="peony-league.png" title="peony-league.png" />
+	<figcaption><a href="peony-league.png">peony-league</a><br />by kyledove</figcaption>
+</figure>
+<figure id="neroli.png">
+	<img loading="lazy" src="neroli.png" alt="neroli.png" title="neroli.png" />
+	<figcaption><a href="neroli.png">neroli</a><br />by kyledove</figcaption>
+</figure>
+<figure id="nancy.png">
+	<img loading="lazy" src="nancy.png" alt="nancy.png" title="nancy.png" />
+	<figcaption><a href="nancy.png">nancy</a><br />by kyledove</figcaption>
+</figure>
+<figure id="nate-pokestar3.png">
+	<img loading="lazy" src="nate-pokestar3.png" alt="nate-pokestar3.png" title="nate-pokestar3.png" />
+	<figcaption><a href="nate-pokestar3.png">nate-pokestar3</a><br />by kyledove</figcaption>
+</figure>
+<figure id="mrstone.png">
+	<img loading="lazy" src="mrstone.png" alt="mrstone.png" title="mrstone.png" />
+	<figcaption><a href="mrstone.png">mrstone</a><br />by kyledove</figcaption>
+</figure>
+<figure id="mrbriney.png">
+	<img loading="lazy" src="mrbriney.png" alt="mrbriney.png" title="mrbriney.png" />
+	<figcaption><a href="mrbriney.png">mrbriney</a><br />by kyledove</figcaption>
+</figure>
+<figure id="mom-unova.png">
+	<img loading="lazy" src="mom-unova.png" alt="mom-unova.png" title="mom-unova.png" />
+	<figcaption><a href="mom-unova.png">mom-unova</a><br />by kyledove</figcaption>
+</figure>
+<figure id="mom-paldea.png">
+	<img loading="lazy" src="mom-paldea.png" alt="mom-paldea.png" title="mom-paldea.png" />
+	<figcaption><a href="mom-paldea.png">mom-paldea</a><br />by kyledove</figcaption>
+</figure>
+<figure id="mohn.png">
+	<img loading="lazy" src="mohn.png" alt="mohn.png" title="mohn.png" />
+	<figcaption><a href="mohn.png">mohn</a><br />by kyledove</figcaption>
+</figure>
+<figure id="mohn-anime.png">
+	<img loading="lazy" src="mohn-anime.png" alt="mohn-anime.png" title="mohn-anime.png" />
+	<figcaption><a href="mohn-anime.png">mohn-anime</a><br />by kyledove</figcaption>
+</figure>
+<figure id="mirror.png">
+	<img loading="lazy" src="mirror.png" alt="mirror.png" title="mirror.png" />
+	<figcaption><a href="mirror.png">mirror</a><br />by kyledove</figcaption>
+</figure>
+<figure id="mateo.png">
+	<img loading="lazy" src="mateo.png" alt="mateo.png" title="mateo.png" />
+	<figcaption><a href="mateo.png">mateo</a><br />by kyledove</figcaption>
+</figure>
+<figure id="magnus.png">
+	<img loading="lazy" src="magnus.png" alt="magnus.png" title="magnus.png" />
+	<figcaption><a href="magnus.png">magnus</a><br />by kyledove</figcaption>
+</figure>
+<figure id="magmasuit.png">
+	<img loading="lazy" src="magmasuit.png" alt="magmasuit.png" title="magmasuit.png" />
+	<figcaption><a href="magmasuit.png">magmasuit</a><br />by kyledove</figcaption>
+</figure>
+<figure id="magmagruntf-rse.png">
+	<img loading="lazy" src="magmagruntf-rse.png" alt="magmagruntf-rse.png" title="magmagruntf-rse.png" />
+	<figcaption><a href="magmagruntf-rse.png">magmagruntf-rse</a><br />by kyledove</figcaption>
+</figure>
+<figure id="magmagrunt-rse.png">
+	<img loading="lazy" src="magmagrunt-rse.png" alt="magmagrunt-rse.png" title="magmagrunt-rse.png" />
+	<figcaption><a href="magmagrunt-rse.png">magmagrunt-rse</a><br />by kyledove</figcaption>
+</figure>
+<figure id="jamie.png">
+	<img loading="lazy" src="jamie.png" alt="jamie.png" title="jamie.png" />
+	<figcaption><a href="jamie.png">jamie</a><br />by kyledove</figcaption>
+</figure>
+<figure id="jacq.png">
+	<img loading="lazy" src="jacq.png" alt="jacq.png" title="jacq.png" />
+	<figcaption><a href="jacq.png">jacq</a><br />by kyledove</figcaption>
+</figure>
+<figure id="irida-masters.png">
+	<img loading="lazy" src="irida-masters.png" alt="irida-masters.png" title="irida-masters.png" />
+	<figcaption><a href="irida-masters.png">irida-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="playerf-go.png">
+	<img loading="lazy" src="playerf-go.png" alt="playerf-go.png" title="playerf-go.png" />
+	<figcaption><a href="playerf-go.png">playerf-go</a><br />by kyledove</figcaption>
+</figure>
+<figure id="player-go.png">
+	<img loading="lazy" src="player-go.png" alt="player-go.png" title="player-go.png" />
+	<figcaption><a href="player-go.png">player-go</a><br />by kyledove</figcaption>
+</figure>
+<figure id="heath.png">
+	<img loading="lazy" src="heath.png" alt="heath.png" title="heath.png" />
+	<figcaption><a href="heath.png">heath</a><br />by kyledove</figcaption>
+</figure>
+<figure id="gurkinn.png">
+	<img loading="lazy" src="gurkinn.png" alt="gurkinn.png" title="gurkinn.png" />
+	<figcaption><a href="gurkinn.png">gurkinn</a><br />by kyledove</figcaption>
+</figure>
+<figure id="greta.png">
+	<img loading="lazy" src="greta.png" alt="greta.png" title="greta.png" />
+	<figcaption><a href="greta.png">greta</a><br />by kyledove</figcaption>
+</figure>
+<figure id="dana.png">
+	<img loading="lazy" src="dana.png" alt="dana.png" title="dana.png" />
+	<figcaption><a href="dana.png">dana</a><br />by kyledove</figcaption>
+</figure>
+<figure id="gladion-masters.png">
+	<img loading="lazy" src="gladion-masters.png" alt="gladion-masters.png" title="gladion-masters.png" />
+	<figcaption><a href="gladion-masters.png">gladion-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="curtis.png">
+	<img loading="lazy" src="curtis.png" alt="curtis.png" title="curtis.png" />
+	<figcaption><a href="curtis.png">curtis</a><br />by kyledove</figcaption>
+</figure>
+<figure id="cliff.png">
+	<img loading="lazy" src="cliff.png" alt="cliff.png" title="cliff.png" />
+	<figcaption><a href="cliff.png">cliff</a><br />by kyledove</figcaption>
+</figure>
+<figure id="christoph.png">
+	<img loading="lazy" src="christoph.png" alt="christoph.png" title="christoph.png" />
+	<figcaption><a href="christoph.png">christoph</a><br />by kyledove</figcaption>
+</figure>
+<figure id="candice-masters.png">
+	<img loading="lazy" src="candice-masters.png" alt="candice-masters.png" title="candice-masters.png" />
+	<figcaption><a href="candice-masters.png">candice-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="candela.png">
+	<img loading="lazy" src="candela.png" alt="candela.png" title="candela.png" />
+	<figcaption><a href="candela.png">candela</a><br />by kyledove</figcaption>
+</figure>
+<figure id="candela-casual.png">
+	<img loading="lazy" src="candela-casual.png" alt="candela-casual.png" title="candela-casual.png" />
+	<figcaption><a href="candela-casual.png">candela-casual</a><br />by kyledove</figcaption>
+</figure>
+<figure id="blanche.png">
+	<img loading="lazy" src="blanche.png" alt="blanche.png" title="blanche.png" />
+	<figcaption><a href="blanche.png">blanche</a><br />by kyledove</figcaption>
+</figure>
+<figure id="brandon.png">
+	<img loading="lazy" src="brandon.png" alt="brandon.png" title="brandon.png" />
+	<figcaption><a href="brandon.png">brandon</a><br />by kyledove</figcaption>
+</figure>
+<figure id="blanche-casual.png">
+	<img loading="lazy" src="blanche-casual.png" alt="blanche-casual.png" title="blanche-casual.png" />
+	<figcaption><a href="blanche-casual.png">blanche-casual</a><br />by kyledove</figcaption>
+</figure>
+<figure id="barry-masters.png">
+	<img loading="lazy" src="barry-masters.png" alt="barry-masters.png" title="barry-masters.png" />
+	<figcaption><a href="barry-masters.png">barry-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="arlo.png">
+	<img loading="lazy" src="arlo.png" alt="arlo.png" title="arlo.png" />
+	<figcaption><a href="arlo.png">arlo</a><br />by kyledove</figcaption>
+</figure>
+<figure id="archie-usum.png">
+	<img loading="lazy" src="archie-usum.png" alt="archie-usum.png" title="archie-usum.png" />
+	<figcaption><a href="archie-usum.png">archie-usum</a><br />by kyledove</figcaption>
+</figure>
+<figure id="aquasuit.png">
+	<img loading="lazy" src="aquasuit.png" alt="aquasuit.png" title="aquasuit.png" />
+	<figcaption><a href="aquasuit.png">aquasuit</a><br />by kyledove</figcaption>
+</figure>
+<figure id="aquagruntf.png">
+	<img loading="lazy" src="aquagruntf.png" alt="aquagruntf.png" title="aquagruntf.png" />
+	<figcaption><a href="aquagruntf.png">aquagruntf</a><br />by kyledove</figcaption>
+</figure>
+<figure id="aquagruntf-rse.png">
+	<img loading="lazy" src="aquagruntf-rse.png" alt="aquagruntf-rse.png" title="aquagruntf-rse.png" />
+	<figcaption><a href="aquagruntf-rse.png">aquagruntf-rse</a><br />by kyledove</figcaption>
+</figure>
+<figure id="aquagrunt.png">
+	<img loading="lazy" src="aquagrunt.png" alt="aquagrunt.png" title="aquagrunt.png" />
+	<figcaption><a href="aquagrunt.png">aquagrunt</a><br />by kyledove</figcaption>
+</figure>
+<figure id="aquagrunt-rse.png">
+	<img loading="lazy" src="aquagrunt-rse.png" alt="aquagrunt-rse.png" title="aquagrunt-rse.png" />
+	<figcaption><a href="aquagrunt-rse.png">aquagrunt-rse</a><br />by kyledove</figcaption>
+</figure>
+<figure id="anabel.png">
+	<img loading="lazy" src="anabel.png" alt="anabel.png" title="anabel.png" />
+	<figcaption><a href="anabel.png">anabel</a><br />by kyledove</figcaption>
+</figure>
+<figure id="allister-unmasked.png">
+	<img loading="lazy" src="allister-unmasked.png" alt="allister-unmasked.png" title="allister-unmasked.png" />
+	<figcaption><a href="allister-unmasked.png">allister-unmasked</a><br />by kyledove</figcaption>
+</figure>
+<figure id="adaman-masters.png">
+	<img loading="lazy" src="adaman-masters.png" alt="adaman-masters.png" title="adaman-masters.png" />
+	<figcaption><a href="adaman-masters.png">adaman-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="aarune.png">
+	<img loading="lazy" src="aarune.png" alt="aarune.png" title="aarune.png" />
+	<figcaption><a href="aarune.png">aarune</a><br />by kyledove</figcaption>
+</figure>
+<h3 style="margin:1em;border-bottom:1px solid #999;padding-bottom:2px">New in 2024-01</h3><figure id="scottie-masters.png">
+	<img loading="lazy" src="scottie-masters.png" alt="scottie-masters.png" title="scottie-masters.png" />
+	<figcaption><a href="scottie-masters.png">scottie-masters</a><br />by Grapo</figcaption>
+</figure>
+<figure id="kris.png">
+	<img loading="lazy" src="kris.png" alt="kris.png" title="kris.png" />
+	<figcaption><a href="kris.png">kris</a><br />by Selena</figcaption>
+</figure>
+<figure id="yukito-hideko.png">
+	<img loading="lazy" src="yukito-hideko.png" alt="yukito-hideko.png" title="yukito-hideko.png" />
+	<figcaption><a href="yukito-hideko.png">yukito-hideko</a><br />by kyledove</figcaption>
+</figure>
+<figure id="worker-gen9.png">
+	<img loading="lazy" src="worker-gen9.png" alt="worker-gen9.png" title="worker-gen9.png" />
+	<figcaption><a href="worker-gen9.png">worker-gen9</a><br />by kyledove</figcaption>
+</figure>
+<figure id="wallace-masters.png">
+	<img loading="lazy" src="wallace-masters.png" alt="wallace-masters.png" title="wallace-masters.png" />
+	<figcaption><a href="wallace-masters.png">wallace-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="viola-masters.png">
+	<img loading="lazy" src="viola-masters.png" alt="viola-masters.png" title="viola-masters.png" />
+	<figcaption><a href="viola-masters.png">viola-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="victor-tundra.png">
+	<img loading="lazy" src="victor-tundra.png" alt="victor-tundra.png" title="victor-tundra.png" />
+	<figcaption><a href="victor-tundra.png">victor-tundra</a><br />by kyledove</figcaption>
+</figure>
+<figure id="victor-league.png">
+	<img loading="lazy" src="victor-league.png" alt="victor-league.png" title="victor-league.png" />
+	<figcaption><a href="victor-league.png">victor-league</a><br />by kyledove</figcaption>
+</figure>
+<figure id="tucker.png">
+	<img loading="lazy" src="tucker.png" alt="tucker.png" title="tucker.png" />
+	<figcaption><a href="tucker.png">tucker</a><br />by kyledove</figcaption>
+</figure>
+<figure id="tate-gen6.png">
+	<img loading="lazy" src="tate-gen6.png" alt="tate-gen6.png" title="tate-gen6.png" />
+	<figcaption><a href="tate-gen6.png">tate-gen6</a><br />by kyledove</figcaption>
+</figure>
+<figure id="sycamore-masters.png">
+	<img loading="lazy" src="sycamore-masters.png" alt="sycamore-masters.png" title="sycamore-masters.png" />
+	<figcaption><a href="sycamore-masters.png">sycamore-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="ruffian.png">
+	<img loading="lazy" src="ruffian.png" alt="ruffian.png" title="ruffian.png" />
+	<figcaption><a href="ruffian.png">ruffian</a><br />by kyledove</figcaption>
+</figure>
+<figure id="roxie-masters.png">
+	<img loading="lazy" src="roxie-masters.png" alt="roxie-masters.png" title="roxie-masters.png" />
+	<figcaption><a href="roxie-masters.png">roxie-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="roxanne-masters.png">
+	<img loading="lazy" src="roxanne-masters.png" alt="roxanne-masters.png" title="roxanne-masters.png" />
+	<figcaption><a href="roxanne-masters.png">roxanne-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="rosa-pokestar2.png">
+	<img loading="lazy" src="rosa-pokestar2.png" alt="rosa-pokestar2.png" title="rosa-pokestar2.png" />
+	<figcaption><a href="rosa-pokestar2.png">rosa-pokestar2</a><br />by kyledove</figcaption>
+</figure>
+<figure id="red-masters3.png">
+	<img loading="lazy" src="red-masters3.png" alt="red-masters3.png" title="red-masters3.png" />
+	<figcaption><a href="red-masters3.png">red-masters3</a><br />by kyledove</figcaption>
+</figure>
+<figure id="piers-masters.png">
+	<img loading="lazy" src="piers-masters.png" alt="piers-masters.png" title="piers-masters.png" />
+	<figcaption><a href="piers-masters.png">piers-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="perrin.png">
+	<img loading="lazy" src="perrin.png" alt="perrin.png" title="perrin.png" />
+	<figcaption><a href="perrin.png">perrin</a><br />by kyledove</figcaption>
+</figure>
+<figure id="ogreclan.png">
+	<img loading="lazy" src="ogreclan.png" alt="ogreclan.png" title="ogreclan.png" />
+	<figcaption><a href="ogreclan.png">ogreclan</a><br />by kyledove</figcaption>
+</figure>
+<figure id="nate-pokestar.png">
+	<img loading="lazy" src="nate-pokestar.png" alt="nate-pokestar.png" title="nate-pokestar.png" />
+	<figcaption><a href="nate-pokestar.png">nate-pokestar</a><br />by kyledove</figcaption>
+</figure>
+<figure id="nate-masters.png">
+	<img loading="lazy" src="nate-masters.png" alt="nate-masters.png" title="nate-masters.png" />
+	<figcaption><a href="nate-masters.png">nate-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="mustard-champion.png">
+	<img loading="lazy" src="mustard-champion.png" alt="mustard-champion.png" title="mustard-champion.png" />
+	<figcaption><a href="mustard-champion.png">mustard-champion</a><br />by kyledove</figcaption>
+</figure>
+<figure id="mina-masters.png">
+	<img loading="lazy" src="mina-masters.png" alt="mina-masters.png" title="mina-masters.png" />
+	<figcaption><a href="mina-masters.png">mina-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="miku-water.png">
+	<img loading="lazy" src="miku-water.png" alt="miku-water.png" title="miku-water.png" />
+	<figcaption><a href="miku-water.png">miku-water</a><br />by kyledove</figcaption>
+</figure>
+<figure id="miku-psychic.png">
+	<img loading="lazy" src="miku-psychic.png" alt="miku-psychic.png" title="miku-psychic.png" />
+	<figcaption><a href="miku-psychic.png">miku-psychic</a><br />by kyledove</figcaption>
+</figure>
+<figure id="miku-grass.png">
+	<img loading="lazy" src="miku-grass.png" alt="miku-grass.png" title="miku-grass.png" />
+	<figcaption><a href="miku-grass.png">miku-grass</a><br />by kyledove</figcaption>
+</figure>
+<figure id="miku-fire.png">
+	<img loading="lazy" src="miku-fire.png" alt="miku-fire.png" title="miku-fire.png" />
+	<figcaption><a href="miku-fire.png">miku-fire</a><br />by kyledove</figcaption>
+</figure>
+<figure id="may-rs.png">
+	<img loading="lazy" src="may-rs.png" alt="may-rs.png" title="may-rs.png" />
+	<figcaption><a href="may-rs.png">may-rs</a><br />by kyledove</figcaption>
+</figure>
+<figure id="may-e.png">
+	<img loading="lazy" src="may-e.png" alt="may-e.png" title="may-e.png" />
+	<figcaption><a href="may-e.png">may-e</a><br />by kyledove</figcaption>
+</figure>
+<figure id="lysandre-masters.png">
+	<img loading="lazy" src="lysandre-masters.png" alt="lysandre-masters.png" title="lysandre-masters.png" />
+	<figcaption><a href="lysandre-masters.png">lysandre-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="liza-gen6.png">
+	<img loading="lazy" src="liza-gen6.png" alt="liza-gen6.png" title="liza-gen6.png" />
+	<figcaption><a href="liza-gen6.png">liza-gen6</a><br />by kyledove</figcaption>
+</figure>
+<figure id="leaf-masters2.png">
+	<img loading="lazy" src="leaf-masters2.png" alt="leaf-masters2.png" title="leaf-masters2.png" />
+	<figcaption><a href="leaf-masters2.png">leaf-masters2</a><br />by kyledove</figcaption>
+</figure>
+<figure id="lana-masters.png">
+	<img loading="lazy" src="lana-masters.png" alt="lana-masters.png" title="lana-masters.png" />
+	<figcaption><a href="lana-masters.png">lana-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="lacey.png">
+	<img loading="lazy" src="lacey.png" alt="lacey.png" title="lacey.png" />
+	<figcaption><a href="lacey.png">lacey</a><br />by kyledove</figcaption>
+</figure>
+<figure id="kieran-champion.png">
+	<img loading="lazy" src="kieran-champion.png" alt="kieran-champion.png" title="kieran-champion.png" />
+	<figcaption><a href="kieran-champion.png">kieran-champion</a><br />by kyledove</figcaption>
+</figure>
+<figure id="juliana-festival.png">
+	<img loading="lazy" src="juliana-festival.png" alt="juliana-festival.png" title="juliana-festival.png" />
+	<figcaption><a href="juliana-festival.png">juliana-festival</a><br />by kyledove</figcaption>
+</figure>
+<figure id="janitor-gen9.png">
+	<img loading="lazy" src="janitor-gen9.png" alt="janitor-gen9.png" title="janitor-gen9.png" />
+	<figcaption><a href="janitor-gen9.png">janitor-gen9</a><br />by kyledove</figcaption>
+</figure>
+<figure id="iono.png">
+	<img loading="lazy" src="iono.png" alt="iono.png" title="iono.png" />
+	<figcaption><a href="iono.png">iono</a><br />by kyledove</figcaption>
+</figure>
+<figure id="hyde.png">
+	<img loading="lazy" src="hyde.png" alt="hyde.png" title="hyde.png" />
+	<figcaption><a href="hyde.png">hyde</a><br />by kyledove</figcaption>
+</figure>
+<figure id="hiker-gen9.png">
+	<img loading="lazy" src="hiker-gen9.png" alt="hiker-gen9.png" title="hiker-gen9.png" />
+	<figcaption><a href="hiker-gen9.png">hiker-gen9</a><br />by kyledove</figcaption>
+</figure>
+<figure id="hau-masters.png">
+	<img loading="lazy" src="hau-masters.png" alt="hau-masters.png" title="hau-masters.png" />
+	<figcaption><a href="hau-masters.png">hau-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="gloria-tundra.png">
+	<img loading="lazy" src="gloria-tundra.png" alt="gloria-tundra.png" title="gloria-tundra.png" />
+	<figcaption><a href="gloria-tundra.png">gloria-tundra</a><br />by kyledove</figcaption>
+</figure>
+<figure id="gloria-league.png">
+	<img loading="lazy" src="gloria-league.png" alt="gloria-league.png" title="gloria-league.png" />
+	<figcaption><a href="gloria-league.png">gloria-league</a><br />by kyledove</figcaption>
+</figure>
+<figure id="florian-festival.png">
+	<img loading="lazy" src="florian-festival.png" alt="florian-festival.png" title="florian-festival.png" />
+	<figcaption><a href="florian-festival.png">florian-festival</a><br />by kyledove</figcaption>
+</figure>
+<figure id="flaregrunt.png">
+	<img loading="lazy" src="flaregrunt.png" alt="flaregrunt.png" title="flaregrunt.png" />
+	<figcaption><a href="flaregrunt.png">flaregrunt</a><br />by kyledove</figcaption>
+</figure>
+<figure id="flaregruntf.png">
+	<img loading="lazy" src="flaregruntf.png" alt="flaregruntf.png" title="flaregruntf.png" />
+	<figcaption><a href="flaregruntf.png">flaregruntf</a><br />by kyledove</figcaption>
+</figure>
+<figure id="drayton.png">
+	<img loading="lazy" src="drayton.png" alt="drayton.png" title="drayton.png" />
+	<figcaption><a href="drayton.png">drayton</a><br />by kyledove</figcaption>
+</figure>
+<figure id="delinquentf-gen9.png">
+	<img loading="lazy" src="delinquentf-gen9.png" alt="delinquentf-gen9.png" title="delinquentf-gen9.png" />
+	<figcaption><a href="delinquentf-gen9.png">delinquentf-gen9</a><br />by kyledove</figcaption>
+</figure>
+<figure id="delinquentf2-gen9.png">
+	<img loading="lazy" src="delinquentf2-gen9.png" alt="delinquentf2-gen9.png" title="delinquentf2-gen9.png" />
+	<figcaption><a href="delinquentf2-gen9.png">delinquentf2-gen9</a><br />by kyledove</figcaption>
+</figure>
+<figure id="delinquent-gen9.png">
+	<img loading="lazy" src="delinquent-gen9.png" alt="delinquent-gen9.png" title="delinquent-gen9.png" />
+	<figcaption><a href="delinquent-gen9.png">delinquent-gen9</a><br />by kyledove</figcaption>
+</figure>
+<figure id="cyrano.png">
+	<img loading="lazy" src="cyrano.png" alt="cyrano.png" title="cyrano.png" />
+	<figcaption><a href="cyrano.png">cyrano</a><br />by kyledove</figcaption>
+</figure>
+<figure id="crispin.png">
+	<img loading="lazy" src="crispin.png" alt="crispin.png" title="crispin.png" />
+	<figcaption><a href="crispin.png">crispin</a><br />by kyledove</figcaption>
+</figure>
+<figure id="courier.png">
+	<img loading="lazy" src="courier.png" alt="courier.png" title="courier.png" />
+	<figcaption><a href="courier.png">courier</a><br />by kyledove</figcaption>
+</figure>
+<figure id="cook-gen9.png">
+	<img loading="lazy" src="cook-gen9.png" alt="cook-gen9.png" title="cook-gen9.png" />
+	<figcaption><a href="cook-gen9.png">cook-gen9</a><br />by kyledove</figcaption>
+</figure>
+<figure id="clive-v.png">
+	<img loading="lazy" src="clive-v.png" alt="clive-v.png" title="clive-v.png" />
+	<figcaption><a href="clive-v.png">clive-v</a><br />by kyledove</figcaption>
+</figure>
+<figure id="clair-masters.png">
+	<img loading="lazy" src="clair-masters.png" alt="clair-masters.png" title="clair-masters.png" />
+	<figcaption><a href="clair-masters.png">clair-masters</a><br />by kyledove</figcaption>
+</figure>
+<figure id="caretaker.png">
+	<img loading="lazy" src="caretaker.png" alt="caretaker.png" title="caretaker.png" />
+	<figcaption><a href="caretaker.png">caretaker</a><br />by kyledove</figcaption>
+</figure>
+<figure id="briar.png">
+	<img loading="lazy" src="briar.png" alt="briar.png" title="briar.png" />
+	<figcaption><a href="briar.png">briar</a><br />by kyledove</figcaption>
+</figure>
+<figure id="cabbie-gen9.png">
+	<img loading="lazy" src="cabbie-gen9.png" alt="cabbie-gen9.png" title="cabbie-gen9.png" />
+	<figcaption><a href="cabbie-gen9.png">cabbie-gen9</a><br />by kyledove</figcaption>
+</figure>
+<figure id="brendan-rs.png">
+	<img loading="lazy" src="brendan-rs.png" alt="brendan-rs.png" title="brendan-rs.png" />
+	<figcaption><a href="brendan-rs.png">brendan-rs</a><br />by kyledove</figcaption>
+</figure>
+<figure id="brassius.png">
+	<img loading="lazy" src="brassius.png" alt="brassius.png" title="brassius.png" />
+	<figcaption><a href="brassius.png">brassius</a><br />by kyledove</figcaption>
+</figure>
+<figure id="blue-masters2.png">
+	<img loading="lazy" src="blue-masters2.png" alt="blue-masters2.png" title="blue-masters2.png" />
+	<figcaption><a href="blue-masters2.png">blue-masters2</a><br />by kyledove</figcaption>
+</figure>
+<figure id="blackbelt-gen9.png">
+	<img loading="lazy" src="blackbelt-gen9.png" alt="blackbelt-gen9.png" title="blackbelt-gen9.png" />
+	<figcaption><a href="blackbelt-gen9.png">blackbelt-gen9</a><br />by kyledove</figcaption>
+</figure>
+<figure id="backpacker-gen9.png">
+	<img loading="lazy" src="backpacker-gen9.png" alt="backpacker-gen9.png" title="backpacker-gen9.png" />
+	<figcaption><a href="backpacker-gen9.png">backpacker-gen9</a><br />by kyledove</figcaption>
+</figure>
+<figure id="artist-gen9.png">
+	<img loading="lazy" src="artist-gen9.png" alt="artist-gen9.png" title="artist-gen9.png" />
+	<figcaption><a href="artist-gen9.png">artist-gen9</a><br />by kyledove</figcaption>
+</figure>
+<figure id="amarys.png">
+	<img loading="lazy" src="amarys.png" alt="amarys.png" title="amarys.png" />
+	<figcaption><a href="amarys.png">amarys</a><br />by kyledove</figcaption>
+</figure>
+<figure id="aetherfoundation2.png">
+	<img loading="lazy" src="aetherfoundation2.png" alt="aetherfoundation2.png" title="aetherfoundation2.png" />
+	<figcaption><a href="aetherfoundation2.png">aetherfoundation2</a><br />by kyledove</figcaption>
+</figure>
+<figure id="acerola-masters2.png">
+	<img loading="lazy" src="acerola-masters2.png" alt="acerola-masters2.png" title="acerola-masters2.png" />
+	<figcaption><a href="acerola-masters2.png">acerola-masters2</a><br />by kyledove</figcaption>
+</figure>
+<figure id="brendan-e.png">
+	<img loading="lazy" src="brendan-e.png" alt="brendan-e.png" title="brendan-e.png" />
+	<figcaption><a href="brendan-e.png">brendan-e</a><br />by hyo-oppa</figcaption>
+</figure>
+<figure id="rosa-masters3.png">
+	<img loading="lazy" src="rosa-masters3.png" alt="rosa-masters3.png" title="rosa-masters3.png" />
+	<figcaption><a href="rosa-masters3.png">rosa-masters3</a><br />by Grapo</figcaption>
+</figure>
+<figure id="phoebe-masters.png">
+	<img loading="lazy" src="phoebe-masters.png" alt="phoebe-masters.png" title="phoebe-masters.png" />
+	<figcaption><a href="phoebe-masters.png">phoebe-masters</a><br />by Grapo</figcaption>
+</figure>
+<figure id="miku-flying.png">
+	<img loading="lazy" src="miku-flying.png" alt="miku-flying.png" title="miku-flying.png" />
+	<figcaption><a href="miku-flying.png">miku-flying</a><br />by Brumirage</figcaption>
+</figure>
+<figure id="miku-ground.png">
+	<img loading="lazy" src="miku-ground.png" alt="miku-ground.png" title="miku-ground.png" />
+	<figcaption><a href="miku-ground.png">miku-ground</a><br />by Brumirage</figcaption>
+</figure>
+</html>

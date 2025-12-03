@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+	<meta charset="UTF-8" />
+
+	<title>/sprites/digimon/sprites/digimon-back/ - Showdown!</title>
+
+	<meta name="viewport" content="width=device-width" />
+	<link rel="stylesheet" href="http://play.pokemonshowdown.com/dirindex/font-awesome.min.css" />
+	<link rel="stylesheet" href="http://play.pokemonshowdown.com/dirindex/fontawesome5-solid-duotone.min.css?" />
+
+	<style>
+		/*********************************************************
+		 * Layout
+		 *********************************************************/
+
+		html, body {
+			margin: 0;
+			padding: 0;
+			min-height: 100%;
+		}
+
+		html {
+			color: white;
+			font-family: Verdana,Helvetica,sans-serif;
+			font-size: 11pt;
+			background: #f0f0f0;
+			color: #333333;
+		}
+		body {
+			background: linear-gradient(to bottom, rgba(77, 93, 140, 0.6), rgba(77, 93, 140, 0.2) 80px, transparent 160px, transparent);
+		}
+
+		header {
+			margin: 0;
+			padding: 2px;
+			/* background: rgba(255, 255, 255, .2);
+			border-bottom: 1px solid rgba(255, 255, 255, .6); */
+			text-align: center;
+			height: 60px;
+		}
+		.nav-wrapper {
+			width: 700px;
+			margin: 0 auto;
+			position: relative;
+		}
+		.nav {
+			padding: 0;
+		}
+		.nav-wrapper .nav {
+			padding-left: 140px;
+			padding-top: 5px;
+		}
+		.nav li {
+			float: left;
+			list-style-type: none;
+		}
+		.nav img {
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+		.nav a, .nav a:visited {
+			color: white;
+			background: #3a4f88;
+			background: linear-gradient(to bottom, #4c63a3, #273661);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px 1px rgba(255, 255, 255, 0.5);
+			border: 1px solid #222c4a;
+			text-shadow: black 0px -1px 0;
+			padding: 8px 15px;
+			font-weight: bold;
+			text-decoration: none;
+			border-radius: 0;
+			margin-left: -1px;
+			font-size: 11pt;
+		}
+		.dark .nav a, .dark .nav a:visited {
+			/* make sure other styling doesn't override */
+			color: white;
+			background: #3a4f88;
+			background: linear-gradient(to bottom, #4c63a3, #273661);
+			border: 1px solid #222c4a;
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px 1px rgba(255, 255, 255, 0.5);
+		}
+		.nav a:hover, .dark .nav a:hover {
+			background: linear-gradient(to bottom, #5a77c7, #2f447f);
+			border: 1px solid #222c4a;
+		}
+		.nav a:active, .dark .nav a:active {
+			background: linear-gradient(to bottom, #273661, #4c63a3);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px -1px rgba(255, 255, 255, 0.5);
+		}
+		.nav a.cur, .nav a.cur:hover, .nav a.cur:active,
+		.dark .nav a.cur, .dark .nav a.cur:hover, .dark .nav a.cur:active {
+			color: #CCCCCC;
+			background: rgba(79, 109, 148, 0.7);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45);
+			border: 1px solid #222c4a;
+		}
+		.nav a.nav-first {
+			margin-left: 10px;
+			border-top-left-radius: 8px;
+			border-bottom-left-radius: 8px;
+		}
+		.nav a.nav-last {
+			border-top-right-radius: 8px;
+			border-bottom-right-radius: 8px;
+		}
+		.nav a.greenbutton {
+			background: linear-gradient(to bottom, #4ca363, #276136);
+		}
+		.nav a.greenbutton:hover {
+			background: linear-gradient(to bottom, #5ac777, #2f7f44);
+		}
+		.nav a.greenbutton:active {
+			background: linear-gradient(to bottom, #276136, #4ca363);
+			box-shadow: 0 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px -1px rgba(255, 255, 255, 0.5);
+		}
+		.nav a.purplebutton {
+			background: linear-gradient(to bottom,hsl(267, 36.40%, 46.90%),hsl(267, 42.60%, 26.70%));
+		}
+		.nav a.purplebutton:hover {
+			background: linear-gradient(to bottom,hsl(267, 49.30%, 56.70%),hsl(267, 46.00%, 34.10%));
+		}
+		.nav a.purplebutton:active {
+			background: linear-gradient(to bottom,hsl(267, 42.60%, 26.70%),hsl(267, 36.40%, 46.90%));
+			box-shadow: 0 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px -1px rgba(255, 255, 255, 0.5);
+		}
+
+		@media (max-width:700px) {
+			.nav-wrapper {
+				width: auto;
+				display: inline-block;
+			}
+			.nav-wrapper .nav {
+				padding-left: 135px;
+			}
+			.nav a {
+				font-weight: normal;
+				padding: 8px 7px;
+			}
+			.nav img {
+				top: 10px;
+			}
+		}
+
+		@media (max-width:554px) {
+			header {
+				height: 100px;
+			}
+			.nav-wrapper .nav {
+				padding-left: 0;
+				padding-top: 50px;
+			}
+			.nav img {
+				top: 10px;
+			}
+			.nav a {
+				padding: 8px 12px;
+			}
+			.nav a.nav-first {
+				margin-left: 0;
+			}
+			.nav a.greenbutton {
+				position: absolute;
+				top: 10px;
+				right: 0;
+			}
+		}
+		@media (max-width:419px) {
+			.nav a {
+				padding: 8px 7px;
+			}
+		}
+		@media (max-width:359px) {
+			.nav-wrapper {
+				padding-left: 5px;
+			}
+			.nav a {
+				padding: 8px 4px;
+			}
+		}
+
+		footer {
+			clear: both;
+			text-align: center;
+			color: #888888;
+			padding: 10px 0 10px 0;
+		}
+		footer p {
+			margin: 10px 0;
+		}
+		footer a {
+			color: #AAAAAA;
+		}
+		footer a:hover {
+			color: #6688AA;
+		}
+		footer a.cur, footer a.cur:hover {
+			color: #888888;
+			font-weight: bold;
+			text-decoration: none;
+		}
+
+		/*********************************************************
+		 * Main
+		 *********************************************************/
+		.button {
+			color: white;
+			background: #3a4f88;
+			background: linear-gradient(to bottom, #4c63a3, #273661);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px 1px rgba(255, 255, 255, 0.5);
+			border: 1px solid #222c4a;
+			padding: 3px 10px;
+			text-shadow: black 0px -1px 0;
+			border-radius: 10px;
+			text-decoration: none;
+			display: inline-block;
+			font-family: Verdana,Helvetica,sans-serif;
+			font-size: 11pt;
+			cursor: pointer;
+		}
+		.button:hover {
+			text-decoration: none;
+		}
+		main {
+			margin: 0 auto;
+			padding: 0 15px 15px 15px;
+			max-width: 800px;
+			overflow-wrap: break-word;
+		}
+		a {
+			color: #0073aa;
+		}
+		a:visited {
+			color: #8000aa;
+		}
+		h1 {
+			font-size: 20px;
+			margin-bottom: 20px;
+		}
+		.parentlink {
+			padding: 0 0 12px 0;
+		}
+		.parentlink a {
+			text-decoration: none;
+			display: block;
+			border: 1px solid transparent;
+			padding: 4px 8px 4px 40px;
+			border-radius: 4px;
+		}
+		.parentlink a:hover {
+			background: #e7ebee;
+			border-color: #5f8a9e;
+		}
+		.parentlink i, .parentlink em {
+			vertical-align: middle;
+		}
+		@media (prefers-color-scheme: dark) {
+			html {
+				background: #000;
+				color: #ddd;
+				color-scheme: dark;
+			}
+			a {
+				color:rgb(99, 174, 209);
+			}
+			a:visited {
+				color:rgb(177, 123, 195);
+			}
+			.parentlink a:hover {
+				background: #181818;
+				border-color: #444;
+			}
+		}
+
+		/*********************************************************
+		 * Dirlist
+		 *********************************************************/
+		h1 a {
+			font-weight: normal;
+			text-decoration: none;
+		}
+		h1 a:hover {
+			text-decoration: underline;
+		}
+
+		.dirlist {
+			font-size: 14px;
+			list-style-type: none;
+			padding: 0;
+		}
+		.header {
+			padding: 0 7px 0 39px;
+			border-bottom: 1px solid #888888;
+			background: #f0f0f0;
+		}
+		.parentlink {
+			padding: 0 0 12px 0;
+		}
+
+		.header a, .header a:visited {
+			text-decoration: none;
+			padding: 5px 0;
+			color: inherit;
+		}
+		.header a:hover {
+			text-decoration: none;
+			background: #dddddd;
+		}
+		a.row {
+			text-decoration: none;
+			display: block;
+			border: 1px solid transparent;
+			padding: 4px 8px 4px 40px;
+			border-radius: 4px;
+		}
+		a.row:hover {
+			background:#e7ebee;
+			border-color:#5f8a9e;
+		}
+		a.row * {
+			vertical-align: middle;
+		}
+
+		.icon {
+			display: inline-block;
+			width: 32px;
+			margin-left: -32px;
+			font-size: 20px;
+			text-align: center;
+			color: #777;
+		}
+		.icon.fa-arrow-circle-o-up, .icon.fa-folder-open {
+			color: #3798c5;
+			--fa-secondary-opacity: 0.55;
+		}
+		.icon.fa-image, .icon.fa-picture-o, .icon.fa-film, .icon.fa-video, .icon.fa-video-camera, .icon.fa-volume, .icon.fa-volume-up {
+			color: rgb(139, 115, 82);
+			--fa-secondary-opacity: 0.4;
+		}
+		.icon.icon-js {
+			color: rgb(160, 153, 89);
+		}
+		.icon.icon-ts, .icon.icon-md {
+			color: rgb(83, 112, 149);
+		}
+		.icon.icon-html {
+			color: rgb(166, 125, 67);
+		}
+		.icon.icon-php, .icon.icon-css {
+			color: rgb(125, 83, 149);
+		}
+		.icon.fa-file-pdf, .icon.fa-file-pdf-o, .icon.fa-font-case {
+			color: rgb(149, 83, 83);
+		}
+		.icon.fa-file-archive, .icon.fa-file-archive-o {
+			color:rgb(116, 149, 163);
+		}
+		.filename {
+			display: inline-block;
+			width: 50%;
+			min-width: 260px;
+			font-family: monospace;
+			font-size: 10pt;
+		}
+		.parentlink .filename {
+			font-family: inherit;
+			font-style: italic;
+		}
+		.filesize {
+			display: inline-block;
+			width: 20%;
+			min-width: 80px;
+			color: #666666;
+		}
+		.filemtime {
+			display: inline-block;
+			color: #666666;
+			font-size: 0.9em;
+			min-width: 150px;
+		}
+		.header .icon, .header .filename, .header .filesize, .header .filemtime {
+			font-style: normal;
+			font-family: inherit;
+			font-size: inherit;
+			color: inherit;
+		}
+		@media (prefers-color-scheme: dark) {
+			.header {
+				background: #000;
+			}
+			.header a:hover {
+				background: #333;
+			}
+			.icon {
+				color: #888;
+			}
+			a.row:hover {
+				background: #181818;
+				border-color: #444;
+			}
+			.filesize, .filemtime {
+				color: #888;
+			}
+		}
+
+		/*********************************************************
+		 * Icons
+		 *********************************************************/
+
+		.dirlist-icons {
+			font-size: 0;
+		}
+		.dirlist-icons li {
+			display: inline-block;
+			vertical-align: top;
+			width: 133px;
+			font-size: 10pt;
+		}
+		.dirlist-icons li.header {
+			display: block;
+			width: auto;
+			height: auto;
+			margin-bottom: 2px;
+		}
+		.dirlist-icons .row, .dirlist-icons a.row:hover {
+			text-align: center;
+			padding: 0;
+			text-decoration: none;
+		}
+		.dirlist-icons .row .filesize, .dirlist-icons .row .filemtime {
+			display: none;
+		}
+		.dirlist-icons .row .icon, .dirlist-icons a.row:hover .icon {
+			display: block;
+			font-size: 60px;
+			margin: 0;
+			width: auto;
+			text-decoration: none;
+		}
+		.dirlist-icons .row .filename {
+			display: block;
+			min-width: auto;
+			width: auto;
+			font-size: 9pt;
+		}
+
+		/*********************************************************
+		 * Spriteindex
+		 *********************************************************/
+
+		figure {
+			width: 96px;
+			display: inline-block;
+			vertical-align: top;
+			text-align: center;
+			margin: 0.5em 10px;
+			overflow-wrap: break-word;
+		}
+		figure img {
+			image-rendering: pixelated;
+		}
+		figure figcaption {
+			font-size: 12px;
+			text-align: center;
+		}
+		a {
+			text-decoration: none;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+	</style>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-26211653-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'UA-26211653-1');
+	</script>
+	<!-- End Google Analytics -->
+</head><body>
+
+	<header>
+		<div class="nav-wrapper"><ul class="nav">
+			<li><a class="button nav-first" href="http://pokemonshowdown.com/"><img src="http://play.pokemonshowdown.com/pokemonshowdownbeta.png" srcset="http://play.pokemonshowdown.com/pokemonshowdownbeta.png 1x, http://play.pokemonshowdown.com/pokemonshowdownbeta@2x.png 2x" alt="Pok&eacute;mon Showdown" width="146" height="44" /> Home</a></li>
+			<li><a class="button" href="http://pokemonshowdown.com/dex/">Pok&eacute;dex</a></li>
+			<li><a class="button" href="http://replay.pokemonshowdown.com/">Replay</a></li>
+			<li><a class="button purplebutton" href="http://smogon.com/dex/" target="_blank">Strategy</a></li>
+			<li><a class="button nav-last purplebutton" href="http://smogon.com/forums/" target="_blank">Forum</a></li>
+			<li><a class="button greenbutton nav-first nav-last" href="http://play.pokemonshowdown.com/">Play</a></li>
+		</ul></div>
+	</header>
+
+	<main>
+		<h1>
+			Index of
+			<a href="http://play.pokemonshowdown.com/">play.pokemonshowdown.com</a><wbr />/<a href="../../../index.html">sprites</a><wbr />/<a href="../../../digimon">digimon</a><wbr />/<a href="../../sprites">sprites</a><wbr />/digimon-back/
+		</h1>
+
+		<p class="parentlink">
+			<a class="row" href="../../sprites">
+				<i class="icon fa fa-arrow-circle-o-up">
+				</i><em>(Parent directory)
+				</em>
+			</a>
+		</p>
+	<div>
+		View:
+		<ul class="nav" style="display:inline-block;vertical-align:middle;margin:0 10px 0 0">
+			<li><a class="button nav-first cur" href="index.html@view=sprites">Sprites</a></li>
+			<li><a class="button nav-last" href="index.html@view=dir">Directory</a></li>
+		</ul>
+		Filter:
+		<ul class="nav" style="display:inline-block;vertical-align:middle;margin:0">
+			<li><a class="button nav-first cur" href="index.html@view=sprites">All</a></li>
+			<li><a class="button nav-last" href="index.html@view=sprites&amp;filter=recent">Recent</a></li>
+		</ul>
+	</div>
+</main>
+<figure id="agumon.png">
+	<img loading="lazy" src="agumon.png" alt="agumon.png" title="agumon.png" />
+	<figcaption><a href="agumon.png">agumon</a></figcaption>
+</figure>
+<figure id="agumonx.png">
+	<img loading="lazy" src="agumonx.png" alt="agumonx.png" title="agumonx.png" />
+	<figcaption><a href="agumonx.png">agumonx</a></figcaption>
+</figure>
+<figure id="airdramon.png">
+	<img loading="lazy" src="airdramon.png" alt="airdramon.png" title="airdramon.png" />
+	<figcaption><a href="airdramon.png">airdramon</a></figcaption>
+</figure>
+<figure id="akatorimon.png">
+	<img loading="lazy" src="akatorimon.png" alt="akatorimon.png" title="akatorimon.png" />
+	<figcaption><a href="akatorimon.png">akatorimon</a></figcaption>
+</figure>
+<figure id="alphamon.png">
+	<img loading="lazy" src="alphamon.png" alt="alphamon.png" title="alphamon.png" />
+	<figcaption><a href="alphamon.png">alphamon</a></figcaption>
+</figure>
+<figure id="andromon.png">
+	<img loading="lazy" src="andromon.png" alt="andromon.png" title="andromon.png" />
+	<figcaption><a href="andromon.png">andromon</a></figcaption>
+</figure>
+<figure id="angemon.png">
+	<img loading="lazy" src="angemon.png" alt="angemon.png" title="angemon.png" />
+	<figcaption><a href="angemon.png">angemon</a></figcaption>
+</figure>
+<figure id="angewomon.png">
+	<img loading="lazy" src="angewomon.png" alt="angewomon.png" title="angewomon.png" />
+	<figcaption><a href="angewomon.png">angewomon</a></figcaption>
+</figure>
+<figure id="angewomonx.png">
+	<img loading="lazy" src="angewomonx.png" alt="angewomonx.png" title="angewomonx.png" />
+	<figcaption><a href="angewomonx.png">angewomonx</a></figcaption>
+</figure>
+<figure id="aruraumon.png">
+	<img loading="lazy" src="aruraumon.png" alt="aruraumon.png" title="aruraumon.png" />
+	<figcaption><a href="aruraumon.png">aruraumon</a></figcaption>
+</figure>
+<figure id="bakemon.png">
+	<img loading="lazy" src="bakemon.png" alt="bakemon.png" title="bakemon.png" />
+	<figcaption><a href="bakemon.png">bakemon</a></figcaption>
+</figure>
+<figure id="beastmon.png">
+	<img loading="lazy" src="beastmon.png" alt="beastmon.png" title="beastmon.png" />
+	<figcaption><a href="beastmon.png">beastmon</a></figcaption>
+</figure>
+<figure id="betamon.png">
+	<img loading="lazy" src="betamon.png" alt="betamon.png" title="betamon.png" />
+	<figcaption><a href="betamon.png">betamon</a></figcaption>
+</figure>
+<figure id="betamonx.png">
+	<img loading="lazy" src="betamonx.png" alt="betamonx.png" title="betamonx.png" />
+	<figcaption><a href="betamonx.png">betamonx</a></figcaption>
+</figure>
+<figure id="birdramon.png">
+	<img loading="lazy" src="birdramon.png" alt="birdramon.png" title="birdramon.png" />
+	<figcaption><a href="birdramon.png">birdramon</a></figcaption>
+</figure>
+<figure id="biyomon.png">
+	<img loading="lazy" src="biyomon.png" alt="biyomon.png" title="biyomon.png" />
+	<figcaption><a href="biyomon.png">biyomon</a></figcaption>
+</figure>
+<figure id="blackagumon.png">
+	<img loading="lazy" src="blackagumon.png" alt="blackagumon.png" title="blackagumon.png" />
+	<figcaption><a href="blackagumon.png">blackagumon</a></figcaption>
+</figure>
+<figure id="blackagumonx.png">
+	<img loading="lazy" src="blackagumonx.png" alt="blackagumonx.png" title="blackagumonx.png" />
+	<figcaption><a href="blackagumonx.png">blackagumonx</a></figcaption>
+</figure>
+<figure id="blackgabumon.png">
+	<img loading="lazy" src="blackgabumon.png" alt="blackgabumon.png" title="blackgabumon.png" />
+	<figcaption><a href="blackgabumon.png">blackgabumon</a></figcaption>
+</figure>
+<figure id="blackgarurumon.png">
+	<img loading="lazy" src="blackgarurumon.png" alt="blackgarurumon.png" title="blackgarurumon.png" />
+	<figcaption><a href="blackgarurumon.png">blackgarurumon</a></figcaption>
+</figure>
+<figure id="blackgatomon.png">
+	<img loading="lazy" src="blackgatomon.png" alt="blackgatomon.png" title="blackgatomon.png" />
+	<figcaption><a href="blackgatomon.png">blackgatomon</a></figcaption>
+</figure>
+<figure id="blackgreymon.png">
+	<img loading="lazy" src="blackgreymon.png" alt="blackgreymon.png" title="blackgreymon.png" />
+	<figcaption><a href="blackgreymon.png">blackgreymon</a></figcaption>
+</figure>
+<figure id="blackmetalgarurumon.png">
+	<img loading="lazy" src="blackmetalgarurumon.png" alt="blackmetalgarurumon.png" title="blackmetalgarurumon.png" />
+	<figcaption><a href="blackmetalgarurumon.png">blackmetalgarurumon</a></figcaption>
+</figure>
+<figure id="blackwargreymon.png">
+	<img loading="lazy" src="blackwargreymon.png" alt="blackwargreymon.png" title="blackwargreymon.png" />
+	<figcaption><a href="blackwargreymon.png">blackwargreymon</a></figcaption>
+</figure>
+<figure id="blackwargreymonx.png">
+	<img loading="lazy" src="blackwargreymonx.png" alt="blackwargreymonx.png" title="blackwargreymonx.png" />
+	<figcaption><a href="blackwargreymonx.png">blackwargreymonx</a></figcaption>
+</figure>
+<figure id="blackweregarurumon.png">
+	<img loading="lazy" src="blackweregarurumon.png" alt="blackweregarurumon.png" title="blackweregarurumon.png" />
+	<figcaption><a href="blackweregarurumon.png">blackweregarurumon</a></figcaption>
+</figure>
+<figure id="bluemeramon.png">
+	<img loading="lazy" src="bluemeramon.png" alt="bluemeramon.png" title="bluemeramon.png" />
+	<figcaption><a href="bluemeramon.png">bluemeramon</a></figcaption>
+</figure>
+<figure id="boltmon.png">
+	<img loading="lazy" src="boltmon.png" alt="boltmon.png" title="boltmon.png" />
+	<figcaption><a href="boltmon.png">boltmon</a></figcaption>
+</figure>
+<figure id="botamon.png">
+	<img loading="lazy" src="botamon.png" alt="botamon.png" title="botamon.png" />
+	<figcaption><a href="botamon.png">botamon</a></figcaption>
+</figure>
+<figure id="bukamon.png">
+	<img loading="lazy" src="bukamon.png" alt="bukamon.png" title="bukamon.png" />
+	<figcaption><a href="bukamon.png">bukamon</a></figcaption>
+</figure>
+<figure id="centarumon.png">
+	<img loading="lazy" src="centarumon.png" alt="centarumon.png" title="centarumon.png" />
+	<figcaption><a href="centarumon.png">centarumon</a></figcaption>
+</figure>
+<figure id="cherubimonevil.png">
+	<img loading="lazy" src="cherubimonevil.png" alt="cherubimonevil.png" title="cherubimonevil.png" />
+	<figcaption><a href="cherubimonevil.png">cherubimonevil</a></figcaption>
+</figure>
+<figure id="cherubimonevilx.png">
+	<img loading="lazy" src="cherubimonevilx.png" alt="cherubimonevilx.png" title="cherubimonevilx.png" />
+	<figcaption><a href="cherubimonevilx.png">cherubimonevilx</a></figcaption>
+</figure>
+<figure id="cherubimongood.png">
+	<img loading="lazy" src="cherubimongood.png" alt="cherubimongood.png" title="cherubimongood.png" />
+	<figcaption><a href="cherubimongood.png">cherubimongood</a></figcaption>
+</figure>
+<figure id="cherubimongoodx.png">
+	<img loading="lazy" src="cherubimongoodx.png" alt="cherubimongoodx.png" title="cherubimongoodx.png" />
+	<figcaption><a href="cherubimongoodx.png">cherubimongoodx</a></figcaption>
+</figure>
+<figure id="chrysalimon.png">
+	<img loading="lazy" src="chrysalimon.png" alt="chrysalimon.png" title="chrysalimon.png" />
+	<figcaption><a href="chrysalimon.png">chrysalimon</a></figcaption>
+</figure>
+<figure id="clearagumon.png">
+	<img loading="lazy" src="clearagumon.png" alt="clearagumon.png" title="clearagumon.png" />
+	<figcaption><a href="clearagumon.png">clearagumon</a></figcaption>
+</figure>
+<figure id="coelamon.png">
+	<img loading="lazy" src="coelamon.png" alt="coelamon.png" title="coelamon.png" />
+	<figcaption><a href="coelamon.png">coelamon</a></figcaption>
+</figure>
+<figure id="darkrizamon.png">
+	<img loading="lazy" src="darkrizamon.png" alt="darkrizamon.png" title="darkrizamon.png" />
+	<figcaption><a href="darkrizamon.png">darkrizamon</a></figcaption>
+</figure>
+<figure id="demidevimon.png">
+	<img loading="lazy" src="demidevimon.png" alt="demidevimon.png" title="demidevimon.png" />
+	<figcaption><a href="demidevimon.png">demidevimon</a></figcaption>
+</figure>
+<figure id="devimon.png">
+	<img loading="lazy" src="devimon.png" alt="devimon.png" title="devimon.png" />
+	<figcaption><a href="devimon.png">devimon</a></figcaption>
+</figure>
+<figure id="devitamamon.png">
+	<img loading="lazy" src="devitamamon.png" alt="devitamamon.png" title="devitamamon.png" />
+	<figcaption><a href="devitamamon.png">devitamamon</a></figcaption>
+</figure>
+<figure id="diaboromon.png">
+	<img loading="lazy" src="diaboromon.png" alt="diaboromon.png" title="diaboromon.png" />
+	<figcaption><a href="diaboromon.png">diaboromon</a></figcaption>
+</figure>
+<figure id="diaboromonx.png">
+	<img loading="lazy" src="diaboromonx.png" alt="diaboromonx.png" title="diaboromonx.png" />
+	<figcaption><a href="diaboromonx.png">diaboromonx</a></figcaption>
+</figure>
+<figure id="digitamamon.png">
+	<img loading="lazy" src="digitamamon.png" alt="digitamamon.png" title="digitamamon.png" />
+	<figcaption><a href="digitamamon.png">digitamamon</a></figcaption>
+</figure>
+<figure id="dodomon.png">
+	<img loading="lazy" src="dodomon.png" alt="dodomon.png" title="dodomon.png" />
+	<figcaption><a href="dodomon.png">dodomon</a></figcaption>
+</figure>
+<figure id="dokunemon.png">
+	<img loading="lazy" src="dokunemon.png" alt="dokunemon.png" title="dokunemon.png" />
+	<figcaption><a href="dokunemon.png">dokunemon</a></figcaption>
+</figure>
+<figure id="dolphmon.png">
+	<img loading="lazy" src="dolphmon.png" alt="dolphmon.png" title="dolphmon.png" />
+	<figcaption><a href="dolphmon.png">dolphmon</a></figcaption>
+</figure>
+<figure id="dorimon.png">
+	<img loading="lazy" src="dorimon.png" alt="dorimon.png" title="dorimon.png" />
+	<figcaption><a href="dorimon.png">dorimon</a></figcaption>
+</figure>
+<figure id="dorugamon.png">
+	<img loading="lazy" src="dorugamon.png" alt="dorugamon.png" title="dorugamon.png" />
+	<figcaption><a href="dorugamon.png">dorugamon</a></figcaption>
+</figure>
+<figure id="dorugoramon.png">
+	<img loading="lazy" src="dorugoramon.png" alt="dorugoramon.png" title="dorugoramon.png" />
+	<figcaption><a href="dorugoramon.png">dorugoramon</a></figcaption>
+</figure>
+<figure id="dorugreymon.png">
+	<img loading="lazy" src="dorugreymon.png" alt="dorugreymon.png" title="dorugreymon.png" />
+	<figcaption><a href="dorugreymon.png">dorugreymon</a></figcaption>
+</figure>
+<figure id="dorumon.png">
+	<img loading="lazy" src="dorumon.png" alt="dorumon.png" title="dorumon.png" />
+	<figcaption><a href="dorumon.png">dorumon</a></figcaption>
+</figure>
+<figure id="drimogemon.png">
+	<img loading="lazy" src="drimogemon.png" alt="drimogemon.png" title="drimogemon.png" />
+	<figcaption><a href="drimogemon.png">drimogemon</a></figcaption>
+</figure>
+<figure id="ebemon.png">
+	<img loading="lazy" src="ebemon.png" alt="ebemon.png" title="ebemon.png" />
+	<figcaption><a href="ebemon.png">ebemon</a></figcaption>
+</figure>
+<figure id="ebemonx.png">
+	<img loading="lazy" src="ebemonx.png" alt="ebemonx.png" title="ebemonx.png" />
+	<figcaption><a href="ebemonx.png">ebemonx</a></figcaption>
+</figure>
+<figure id="elecmon.png">
+	<img loading="lazy" src="elecmon.png" alt="elecmon.png" title="elecmon.png" />
+	<figcaption><a href="elecmon.png">elecmon</a></figcaption>
+</figure>
+<figure id="etemon.png">
+	<img loading="lazy" src="etemon.png" alt="etemon.png" title="etemon.png" />
+	<figcaption><a href="etemon.png">etemon</a></figcaption>
+</figure>
+<figure id="flarerizamon.png">
+	<img loading="lazy" src="flarerizamon.png" alt="flarerizamon.png" title="flarerizamon.png" />
+	<figcaption><a href="flarerizamon.png">flarerizamon</a></figcaption>
+</figure>
+<figure id="frigimon.png">
+	<img loading="lazy" src="frigimon.png" alt="frigimon.png" title="frigimon.png" />
+	<figcaption><a href="frigimon.png">frigimon</a></figcaption>
+</figure>
+<figure id="fugamon.png">
+	<img loading="lazy" src="fugamon.png" alt="fugamon.png" title="fugamon.png" />
+	<figcaption><a href="fugamon.png">fugamon</a></figcaption>
+</figure>
+<figure id="gabumon.png">
+	<img loading="lazy" src="gabumon.png" alt="gabumon.png" title="gabumon.png" />
+	<figcaption><a href="gabumon.png">gabumon</a></figcaption>
+</figure>
+<figure id="gabumonx.png">
+	<img loading="lazy" src="gabumonx.png" alt="gabumonx.png" title="gabumonx.png" />
+	<figcaption><a href="gabumonx.png">gabumonx</a></figcaption>
+</figure>
+<figure id="garudamon.png">
+	<img loading="lazy" src="garudamon.png" alt="garudamon.png" title="garudamon.png" />
+	<figcaption><a href="garudamon.png">garudamon</a></figcaption>
+</figure>
+<figure id="garudamonx.png">
+	<img loading="lazy" src="garudamonx.png" alt="garudamonx.png" title="garudamonx.png" />
+	<figcaption><a href="garudamonx.png">garudamonx</a></figcaption>
+</figure>
+<figure id="garurumon.png">
+	<img loading="lazy" src="garurumon.png" alt="garurumon.png" title="garurumon.png" />
+	<figcaption><a href="garurumon.png">garurumon</a></figcaption>
+</figure>
+<figure id="garurumonx.png">
+	<img loading="lazy" src="garurumonx.png" alt="garurumonx.png" title="garurumonx.png" />
+	<figcaption><a href="garurumonx.png">garurumonx</a></figcaption>
+</figure>
+<figure id="gatomon.png">
+	<img loading="lazy" src="gatomon.png" alt="gatomon.png" title="gatomon.png" />
+	<figcaption><a href="gatomon.png">gatomon</a></figcaption>
+</figure>
+<figure id="gatomonx.png">
+	<img loading="lazy" src="gatomonx.png" alt="gatomonx.png" title="gatomonx.png" />
+	<figcaption><a href="gatomonx.png">gatomonx</a></figcaption>
+</figure>
+<figure id="gekomon.png">
+	<img loading="lazy" src="gekomon.png" alt="gekomon.png" title="gekomon.png" />
+	<figcaption><a href="gekomon.png">gekomon</a></figcaption>
+</figure>
+<figure id="geremon.png">
+	<img loading="lazy" src="geremon.png" alt="geremon.png" title="geremon.png" />
+	<figcaption><a href="geremon.png">geremon</a></figcaption>
+</figure>
+<figure id="gigadramon.png">
+	<img loading="lazy" src="gigadramon.png" alt="gigadramon.png" title="gigadramon.png" />
+	<figcaption><a href="gigadramon.png">gigadramon</a></figcaption>
+</figure>
+<figure id="giromon.png">
+	<img loading="lazy" src="giromon.png" alt="giromon.png" title="giromon.png" />
+	<figcaption><a href="giromon.png">giromon</a></figcaption>
+</figure>
+<figure id="goburimon.png">
+	<img loading="lazy" src="goburimon.png" alt="goburimon.png" title="goburimon.png" />
+	<figcaption><a href="goburimon.png">goburimon</a></figcaption>
+</figure>
+<figure id="gomamon.png">
+	<img loading="lazy" src="gomamon.png" alt="gomamon.png" title="gomamon.png" />
+	<figcaption><a href="gomamon.png">gomamon</a></figcaption>
+</figure>
+<figure id="gomamonx.png">
+	<img loading="lazy" src="gomamonx.png" alt="gomamonx.png" title="gomamonx.png" />
+	<figcaption><a href="gomamonx.png">gomamonx</a></figcaption>
+</figure>
+<figure id="gotsumon.png">
+	<img loading="lazy" src="gotsumon.png" alt="gotsumon.png" title="gotsumon.png" />
+	<figcaption><a href="gotsumon.png">gotsumon</a></figcaption>
+</figure>
+<figure id="gotsumonx.png">
+	<img loading="lazy" src="gotsumonx.png" alt="gotsumonx.png" title="gotsumonx.png" />
+	<figcaption><a href="gotsumonx.png">gotsumonx</a></figcaption>
+</figure>
+<figure id="greymon.png">
+	<img loading="lazy" src="greymon.png" alt="greymon.png" title="greymon.png" />
+	<figcaption><a href="greymon.png">greymon</a></figcaption>
+</figure>
+<figure id="greymonx.png">
+	<img loading="lazy" src="greymonx.png" alt="greymonx.png" title="greymonx.png" />
+	<figcaption><a href="greymonx.png">greymonx</a></figcaption>
+</figure>
+<figure id="guardromon.png">
+	<img loading="lazy" src="guardromon.png" alt="guardromon.png" title="guardromon.png" />
+	<figcaption><a href="guardromon.png">guardromon</a></figcaption>
+</figure>
+<figure id="gururumon.png">
+	<img loading="lazy" src="gururumon.png" alt="gururumon.png" title="gururumon.png" />
+	<figcaption><a href="gururumon.png">gururumon</a></figcaption>
+</figure>
+<figure id="herculeskabuterimon.png">
+	<img loading="lazy" src="herculeskabuterimon.png" alt="herculeskabuterimon.png" title="herculeskabuterimon.png" />
+	<figcaption><a href="herculeskabuterimon.png">herculeskabuterimon</a></figcaption>
+</figure>
+<figure id="herculeskabuterimonx.png">
+	<img loading="lazy" src="herculeskabuterimonx.png" alt="herculeskabuterimonx.png" title="herculeskabuterimonx.png" />
+	<figcaption><a href="herculeskabuterimonx.png">herculeskabuterimonx</a></figcaption>
+</figure>
+<figure id="hiandromon.png">
+	<img loading="lazy" src="hiandromon.png" alt="hiandromon.png" title="hiandromon.png" />
+	<figcaption><a href="hiandromon.png">hiandromon</a></figcaption>
+</figure>
+<figure id="hyogamon.png">
+	<img loading="lazy" src="hyogamon.png" alt="hyogamon.png" title="hyogamon.png" />
+	<figcaption><a href="hyogamon.png">hyogamon</a></figcaption>
+</figure>
+<figure id="icedevimon.png">
+	<img loading="lazy" src="icedevimon.png" alt="icedevimon.png" title="icedevimon.png" />
+	<figcaption><a href="icedevimon.png">icedevimon</a></figcaption>
+</figure>
+<figure id="iceleomon.png">
+	<img loading="lazy" src="iceleomon.png" alt="iceleomon.png" title="iceleomon.png" />
+	<figcaption><a href="iceleomon.png">iceleomon</a></figcaption>
+</figure>
+<figure id="iceleomonx.png">
+	<img loading="lazy" src="iceleomonx.png" alt="iceleomonx.png" title="iceleomonx.png" />
+	<figcaption><a href="iceleomonx.png">iceleomonx</a></figcaption>
+</figure>
+<figure id="icemon.png">
+	<img loading="lazy" src="icemon.png" alt="icemon.png" title="icemon.png" />
+	<figcaption><a href="icemon.png">icemon</a></figcaption>
+</figure>
+<figure id="ikkakumon.png">
+	<img loading="lazy" src="ikkakumon.png" alt="ikkakumon.png" title="ikkakumon.png" />
+	<figcaption><a href="ikkakumon.png">ikkakumon</a></figcaption>
+</figure>
+<figure id="infermon.png">
+	<img loading="lazy" src="infermon.png" alt="infermon.png" title="infermon.png" />
+	<figcaption><a href="infermon.png">infermon</a></figcaption>
+</figure>
+<figure id="junglemojyamon.png">
+	<img loading="lazy" src="junglemojyamon.png" alt="junglemojyamon.png" title="junglemojyamon.png" />
+	<figcaption><a href="junglemojyamon.png">junglemojyamon</a></figcaption>
+</figure>
+<figure id="kabuterimon.png">
+	<img loading="lazy" src="kabuterimon.png" alt="kabuterimon.png" title="kabuterimon.png" />
+	<figcaption><a href="kabuterimon.png">kabuterimon</a></figcaption>
+</figure>
+<figure id="keramon.png">
+	<img loading="lazy" src="keramon.png" alt="keramon.png" title="keramon.png" />
+	<figcaption><a href="keramon.png">keramon</a></figcaption>
+</figure>
+<figure id="keramonx.png">
+	<img loading="lazy" src="keramonx.png" alt="keramonx.png" title="keramonx.png" />
+	<figcaption><a href="keramonx.png">keramonx</a></figcaption>
+</figure>
+<figure id="kokatorimon.png">
+	<img loading="lazy" src="kokatorimon.png" alt="kokatorimon.png" title="kokatorimon.png" />
+	<figcaption><a href="kokatorimon.png">kokatorimon</a></figcaption>
+</figure>
+<figure id="koromon.png">
+	<img loading="lazy" src="koromon.png" alt="koromon.png" title="koromon.png" />
+	<figcaption><a href="koromon.png">koromon</a></figcaption>
+</figure>
+<figure id="kunemon.png">
+	<img loading="lazy" src="kunemon.png" alt="kunemon.png" title="kunemon.png" />
+	<figcaption><a href="kunemon.png">kunemon</a></figcaption>
+</figure>
+<figure id="kuramon.png">
+	<img loading="lazy" src="kuramon.png" alt="kuramon.png" title="kuramon.png" />
+	<figcaption><a href="kuramon.png">kuramon</a></figcaption>
+</figure>
+<figure id="kuwagamon.png">
+	<img loading="lazy" src="kuwagamon.png" alt="kuwagamon.png" title="kuwagamon.png" />
+	<figcaption><a href="kuwagamon.png">kuwagamon</a></figcaption>
+</figure>
+<figure id="kuwagamonx.png">
+	<img loading="lazy" src="kuwagamonx.png" alt="kuwagamonx.png" title="kuwagamonx.png" />
+	<figcaption><a href="kuwagamonx.png">kuwagamonx</a></figcaption>
+</figure>
+<figure id="ladydevimon.png">
+	<img loading="lazy" src="ladydevimon.png" alt="ladydevimon.png" title="ladydevimon.png" />
+	<figcaption><a href="ladydevimon.png">ladydevimon</a></figcaption>
+</figure>
+<figure id="ladydevimonx.png">
+	<img loading="lazy" src="ladydevimonx.png" alt="ladydevimonx.png" title="ladydevimonx.png" />
+	<figcaption><a href="ladydevimonx.png">ladydevimonx</a></figcaption>
+</figure>
+<figure id="leomon.png">
+	<img loading="lazy" src="leomon.png" alt="leomon.png" title="leomon.png" />
+	<figcaption><a href="leomon.png">leomon</a></figcaption>
+</figure>
+<figure id="leomonx.png">
+	<img loading="lazy" src="leomonx.png" alt="leomonx.png" title="leomonx.png" />
+	<figcaption><a href="leomonx.png">leomonx</a></figcaption>
+</figure>
+<figure id="lilithmon.png">
+	<img loading="lazy" src="lilithmon.png" alt="lilithmon.png" title="lilithmon.png" />
+	<figcaption><a href="lilithmon.png">lilithmon</a></figcaption>
+</figure>
+<figure id="lilithmonx.png">
+	<img loading="lazy" src="lilithmonx.png" alt="lilithmonx.png" title="lilithmonx.png" />
+	<figcaption><a href="lilithmonx.png">lilithmonx</a></figcaption>
+</figure>
+<figure id="lillymon.png">
+	<img loading="lazy" src="lillymon.png" alt="lillymon.png" title="lillymon.png" />
+	<figcaption><a href="lillymon.png">lillymon</a></figcaption>
+</figure>
+<figure id="lillymonx.png">
+	<img loading="lazy" src="lillymonx.png" alt="lillymonx.png" title="lillymonx.png" />
+	<figcaption><a href="lillymonx.png">lillymonx</a></figcaption>
+</figure>
+<figure id="machinedramon.png">
+	<img loading="lazy" src="machinedramon.png" alt="machinedramon.png" title="machinedramon.png" />
+	<figcaption><a href="machinedramon.png">machinedramon</a></figcaption>
+</figure>
+<figure id="magnaangemon.png">
+	<img loading="lazy" src="magnaangemon.png" alt="magnaangemon.png" title="magnaangemon.png" />
+	<figcaption><a href="magnaangemon.png">magnaangemon</a></figcaption>
+</figure>
+<figure id="magnadramon.png">
+	<img loading="lazy" src="magnadramon.png" alt="magnadramon.png" title="magnadramon.png" />
+	<figcaption><a href="magnadramon.png">magnadramon</a></figcaption>
+</figure>
+<figure id="magnadramonx.png">
+	<img loading="lazy" src="magnadramonx.png" alt="magnadramonx.png" title="magnadramonx.png" />
+	<figcaption><a href="magnadramonx.png">magnadramonx</a></figcaption>
+</figure>
+<figure id="mamemon.png">
+	<img loading="lazy" src="mamemon.png" alt="mamemon.png" title="mamemon.png" />
+	<figcaption><a href="mamemon.png">mamemon</a></figcaption>
+</figure>
+<figure id="mamemonx.png">
+	<img loading="lazy" src="mamemonx.png" alt="mamemonx.png" title="mamemonx.png" />
+	<figcaption><a href="mamemonx.png">mamemonx</a></figcaption>
+</figure>
+<figure id="marineangemon.png">
+	<img loading="lazy" src="marineangemon.png" alt="marineangemon.png" title="marineangemon.png" />
+	<figcaption><a href="marineangemon.png">marineangemon</a></figcaption>
+</figure>
+<figure id="megadramon.png">
+	<img loading="lazy" src="megadramon.png" alt="megadramon.png" title="megadramon.png" />
+	<figcaption><a href="megadramon.png">megadramon</a></figcaption>
+</figure>
+<figure id="megakabuterimon.png">
+	<img loading="lazy" src="megakabuterimon.png" alt="megakabuterimon.png" title="megakabuterimon.png" />
+	<figcaption><a href="megakabuterimon.png">megakabuterimon</a></figcaption>
+</figure>
+<figure id="megaseadramon.png">
+	<img loading="lazy" src="megaseadramon.png" alt="megaseadramon.png" title="megaseadramon.png" />
+	<figcaption><a href="megaseadramon.png">megaseadramon</a></figcaption>
+</figure>
+<figure id="megaseadramonx.png">
+	<img loading="lazy" src="megaseadramonx.png" alt="megaseadramonx.png" title="megaseadramonx.png" />
+	<figcaption><a href="megaseadramonx.png">megaseadramonx</a></figcaption>
+</figure>
+<figure id="meicoomon.png">
+	<img loading="lazy" src="meicoomon.png" alt="meicoomon.png" title="meicoomon.png" />
+	<figcaption><a href="meicoomon.png">meicoomon</a></figcaption>
+</figure>
+<figure id="meicrackmon.png">
+	<img loading="lazy" src="meicrackmon.png" alt="meicrackmon.png" title="meicrackmon.png" />
+	<figcaption><a href="meicrackmon.png">meicrackmon</a></figcaption>
+</figure>
+<figure id="meicrackmonvm.png">
+	<img loading="lazy" src="meicrackmonvm.png" alt="meicrackmonvm.png" title="meicrackmonvm.png" />
+	<figcaption><a href="meicrackmonvm.png">meicrackmonvm</a></figcaption>
+</figure>
+<figure id="meramon.png">
+	<img loading="lazy" src="meramon.png" alt="meramon.png" title="meramon.png" />
+	<figcaption><a href="meramon.png">meramon</a></figcaption>
+</figure>
+<figure id="meramonx.png">
+	<img loading="lazy" src="meramonx.png" alt="meramonx.png" title="meramonx.png" />
+	<figcaption><a href="meramonx.png">meramonx</a></figcaption>
+</figure>
+<figure id="metaletemon.png">
+	<img loading="lazy" src="metaletemon.png" alt="metaletemon.png" title="metaletemon.png" />
+	<figcaption><a href="metaletemon.png">metaletemon</a></figcaption>
+</figure>
+<figure id="metalgarurumon.png">
+	<img loading="lazy" src="metalgarurumon.png" alt="metalgarurumon.png" title="metalgarurumon.png" />
+	<figcaption><a href="metalgarurumon.png">metalgarurumon</a></figcaption>
+</figure>
+<figure id="metalgarurumonx.png">
+	<img loading="lazy" src="metalgarurumonx.png" alt="metalgarurumonx.png" title="metalgarurumonx.png" />
+	<figcaption><a href="metalgarurumonx.png">metalgarurumonx</a></figcaption>
+</figure>
+<figure id="metalgreymonvaccine.png">
+	<img loading="lazy" src="metalgreymonvaccine.png" alt="metalgreymonvaccine.png" title="metalgreymonvaccine.png" />
+	<figcaption><a href="metalgreymonvaccine.png">metalgreymonvaccine</a></figcaption>
+</figure>
+<figure id="metalgreymonvaccinex.png">
+	<img loading="lazy" src="metalgreymonvaccinex.png" alt="metalgreymonvaccinex.png" title="metalgreymonvaccinex.png" />
+	<figcaption><a href="metalgreymonvaccinex.png">metalgreymonvaccinex</a></figcaption>
+</figure>
+<figure id="metalgreymonvirus.png">
+	<img loading="lazy" src="metalgreymonvirus.png" alt="metalgreymonvirus.png" title="metalgreymonvirus.png" />
+	<figcaption><a href="metalgreymonvirus.png">metalgreymonvirus</a></figcaption>
+</figure>
+<figure id="metalgreymonvirusx.png">
+	<img loading="lazy" src="metalgreymonvirusx.png" alt="metalgreymonvirusx.png" title="metalgreymonvirusx.png" />
+	<figcaption><a href="metalgreymonvirusx.png">metalgreymonvirusx</a></figcaption>
+</figure>
+<figure id="metalmamemon.png">
+	<img loading="lazy" src="metalmamemon.png" alt="metalmamemon.png" title="metalmamemon.png" />
+	<figcaption><a href="metalmamemon.png">metalmamemon</a></figcaption>
+</figure>
+<figure id="metalmamemonx.png">
+	<img loading="lazy" src="metalmamemonx.png" alt="metalmamemonx.png" title="metalmamemonx.png" />
+	<figcaption><a href="metalmamemonx.png">metalmamemonx</a></figcaption>
+</figure>
+<figure id="metalseadramon.png">
+	<img loading="lazy" src="metalseadramon.png" alt="metalseadramon.png" title="metalseadramon.png" />
+	<figcaption><a href="metalseadramon.png">metalseadramon</a></figcaption>
+</figure>
+<figure id="meteormon.png">
+	<img loading="lazy" src="meteormon.png" alt="meteormon.png" title="meteormon.png" />
+	<figcaption><a href="meteormon.png">meteormon</a></figcaption>
+</figure>
+<figure id="mikemon.png">
+	<img loading="lazy" src="mikemon.png" alt="mikemon.png" title="mikemon.png" />
+	<figcaption><a href="mikemon.png">mikemon</a></figcaption>
+</figure>
+<figure id="modokibetamon.png">
+	<img loading="lazy" src="modokibetamon.png" alt="modokibetamon.png" title="modokibetamon.png" />
+	<figcaption><a href="modokibetamon.png">modokibetamon</a></figcaption>
+</figure>
+<figure id="mojyamon.png">
+	<img loading="lazy" src="mojyamon.png" alt="mojyamon.png" title="mojyamon.png" />
+	<figcaption><a href="mojyamon.png">mojyamon</a></figcaption>
+</figure>
+<figure id="monochromon.png">
+	<img loading="lazy" src="monochromon.png" alt="monochromon.png" title="monochromon.png" />
+	<figcaption><a href="monochromon.png">monochromon</a></figcaption>
+</figure>
+<figure id="monochromonx.png">
+	<img loading="lazy" src="monochromonx.png" alt="monochromonx.png" title="monochromonx.png" />
+	<figcaption><a href="monochromonx.png">monochromonx</a></figcaption>
+</figure>
+<figure id="monzaemon.png">
+	<img loading="lazy" src="monzaemon.png" alt="monzaemon.png" title="monzaemon.png" />
+	<figcaption><a href="monzaemon.png">monzaemon</a></figcaption>
+</figure>
+<figure id="monzaemonx.png">
+	<img loading="lazy" src="monzaemonx.png" alt="monzaemonx.png" title="monzaemonx.png" />
+	<figcaption><a href="monzaemonx.png">monzaemonx</a></figcaption>
+</figure>
+<figure id="morishellmon.png">
+	<img loading="lazy" src="morishellmon.png" alt="morishellmon.png" title="morishellmon.png" />
+	<figcaption><a href="morishellmon.png">morishellmon</a></figcaption>
+</figure>
+<figure id="motimon.png">
+	<img loading="lazy" src="motimon.png" alt="motimon.png" title="motimon.png" />
+	<figcaption><a href="motimon.png">motimon</a></figcaption>
+</figure>
+<figure id="muchomon.png">
+	<img loading="lazy" src="muchomon.png" alt="muchomon.png" title="muchomon.png" />
+	<figcaption><a href="muchomon.png">muchomon</a></figcaption>
+</figure>
+<figure id="mudfrigimon.png">
+	<img loading="lazy" src="mudfrigimon.png" alt="mudfrigimon.png" title="mudfrigimon.png" />
+	<figcaption><a href="mudfrigimon.png">mudfrigimon</a></figcaption>
+</figure>
+<figure id="myotismon.png">
+	<img loading="lazy" src="myotismon.png" alt="myotismon.png" title="myotismon.png" />
+	<figcaption><a href="myotismon.png">myotismon</a></figcaption>
+</figure>
+<figure id="myotismonx.png">
+	<img loading="lazy" src="myotismonx.png" alt="myotismonx.png" title="myotismonx.png" />
+	<figcaption><a href="myotismonx.png">myotismonx</a></figcaption>
+</figure>
+<figure id="nanimon.png">
+	<img loading="lazy" src="nanimon.png" alt="nanimon.png" title="nanimon.png" />
+	<figcaption><a href="nanimon.png">nanimon</a></figcaption>
+</figure>
+<figure id="ninjamon.png">
+	<img loading="lazy" src="ninjamon.png" alt="ninjamon.png" title="ninjamon.png" />
+	<figcaption><a href="ninjamon.png">ninjamon</a></figcaption>
+</figure>
+<figure id="nisedrimogemon.png">
+	<img loading="lazy" src="nisedrimogemon.png" alt="nisedrimogemon.png" title="nisedrimogemon.png" />
+	<figcaption><a href="nisedrimogemon.png">nisedrimogemon</a></figcaption>
+</figure>
+<figure id="numemon.png">
+	<img loading="lazy" src="numemon.png" alt="numemon.png" title="numemon.png" />
+	<figcaption><a href="numemon.png">numemon</a></figcaption>
+</figure>
+<figure id="numemonx.png">
+	<img loading="lazy" src="numemonx.png" alt="numemonx.png" title="numemonx.png" />
+	<figcaption><a href="numemonx.png">numemonx</a></figcaption>
+</figure>
+<figure id="nyaromon.png">
+	<img loading="lazy" src="nyaromon.png" alt="nyaromon.png" title="nyaromon.png" />
+	<figcaption><a href="nyaromon.png">nyaromon</a></figcaption>
+</figure>
+<figure id="ogremon.png">
+	<img loading="lazy" src="ogremon.png" alt="ogremon.png" title="ogremon.png" />
+	<figcaption><a href="ogremon.png">ogremon</a></figcaption>
+</figure>
+<figure id="ogremonx.png">
+	<img loading="lazy" src="ogremonx.png" alt="ogremonx.png" title="ogremonx.png" />
+	<figcaption><a href="ogremonx.png">ogremonx</a></figcaption>
+</figure>
+<figure id="omnimon.png">
+	<img loading="lazy" src="omnimon.png" alt="omnimon.png" title="omnimon.png" />
+	<figcaption><a href="omnimon.png">omnimon</a></figcaption>
+</figure>
+<figure id="omnimonx.png">
+	<img loading="lazy" src="omnimonx.png" alt="omnimonx.png" title="omnimonx.png" />
+	<figcaption><a href="omnimonx.png">omnimonx</a></figcaption>
+</figure>
+<figure id="omnimonzwart.png">
+	<img loading="lazy" src="omnimonzwart.png" alt="omnimonzwart.png" title="omnimonzwart.png" />
+	<figcaption><a href="omnimonzwart.png">omnimonzwart</a></figcaption>
+</figure>
+<figure id="ophanimon.png">
+	<img loading="lazy" src="ophanimon.png" alt="ophanimon.png" title="ophanimon.png" />
+	<figcaption><a href="ophanimon.png">ophanimon</a></figcaption>
+</figure>
+<figure id="ophanimonx.png">
+	<img loading="lazy" src="ophanimonx.png" alt="ophanimonx.png" title="ophanimonx.png" />
+	<figcaption><a href="ophanimonx.png">ophanimonx</a></figcaption>
+</figure>
+<figure id="otamamon.png">
+	<img loading="lazy" src="otamamon.png" alt="otamamon.png" title="otamamon.png" />
+	<figcaption><a href="otamamon.png">otamamon</a></figcaption>
+</figure>
+<figure id="otamamonx.png">
+	<img loading="lazy" src="otamamonx.png" alt="otamamonx.png" title="otamamonx.png" />
+	<figcaption><a href="otamamonx.png">otamamonx</a></figcaption>
+</figure>
+<figure id="palmon.png">
+	<img loading="lazy" src="palmon.png" alt="palmon.png" title="palmon.png" />
+	<figcaption><a href="palmon.png">palmon</a></figcaption>
+</figure>
+<figure id="palmonx.png">
+	<img loading="lazy" src="palmonx.png" alt="palmonx.png" title="palmonx.png" />
+	<figcaption><a href="palmonx.png">palmonx</a></figcaption>
+</figure>
+<figure id="patamon.png">
+	<img loading="lazy" src="patamon.png" alt="patamon.png" title="patamon.png" />
+	<figcaption><a href="patamon.png">patamon</a></figcaption>
+</figure>
+<figure id="penguinmon.png">
+	<img loading="lazy" src="penguinmon.png" alt="penguinmon.png" title="penguinmon.png" />
+	<figcaption><a href="penguinmon.png">penguinmon</a></figcaption>
+</figure>
+<figure id="phoenixmon.png">
+	<img loading="lazy" src="phoenixmon.png" alt="phoenixmon.png" title="phoenixmon.png" />
+	<figcaption><a href="phoenixmon.png">phoenixmon</a></figcaption>
+</figure>
+<figure id="phoenixmonx.png">
+	<img loading="lazy" src="phoenixmonx.png" alt="phoenixmonx.png" title="phoenixmonx.png" />
+	<figcaption><a href="phoenixmonx.png">phoenixmonx</a></figcaption>
+</figure>
+<figure id="piddomon.png">
+	<img loading="lazy" src="piddomon.png" alt="piddomon.png" title="piddomon.png" />
+	<figcaption><a href="piddomon.png">piddomon</a></figcaption>
+</figure>
+<figure id="piximon.png">
+	<img loading="lazy" src="piximon.png" alt="piximon.png" title="piximon.png" />
+	<figcaption><a href="piximon.png">piximon</a></figcaption>
+</figure>
+<figure id="platinumsukamon.png">
+	<img loading="lazy" src="platinumsukamon.png" alt="platinumsukamon.png" title="platinumsukamon.png" />
+	<figcaption><a href="platinumsukamon.png">platinumsukamon</a></figcaption>
+</figure>
+<figure id="poyomon.png">
+	<img loading="lazy" src="poyomon.png" alt="poyomon.png" title="poyomon.png" />
+	<figcaption><a href="poyomon.png">poyomon</a></figcaption>
+</figure>
+<figure id="princemamemon.png">
+	<img loading="lazy" src="princemamemon.png" alt="princemamemon.png" title="princemamemon.png" />
+	<figcaption><a href="princemamemon.png">princemamemon</a></figcaption>
+</figure>
+<figure id="princemamemonx.png">
+	<img loading="lazy" src="princemamemonx.png" alt="princemamemonx.png" title="princemamemonx.png" />
+	<figcaption><a href="princemamemonx.png">princemamemonx</a></figcaption>
+</figure>
+<figure id="psychemon.png">
+	<img loading="lazy" src="psychemon.png" alt="psychemon.png" title="psychemon.png" />
+	<figcaption><a href="psychemon.png">psychemon</a></figcaption>
+</figure>
+<figure id="punimon.png">
+	<img loading="lazy" src="punimon.png" alt="punimon.png" title="punimon.png" />
+	<figcaption><a href="punimon.png">punimon</a></figcaption>
+</figure>
+<figure id="raguelmon.png">
+	<img loading="lazy" src="raguelmon.png" alt="raguelmon.png" title="raguelmon.png" />
+	<figcaption><a href="raguelmon.png">raguelmon</a></figcaption>
+</figure>
+<figure id="rasielmon.png">
+	<img loading="lazy" src="rasielmon.png" alt="rasielmon.png" title="rasielmon.png" />
+	<figcaption><a href="rasielmon.png">rasielmon</a></figcaption>
+</figure>
+<figure id="redvegiemon.png">
+	<img loading="lazy" src="redvegiemon.png" alt="redvegiemon.png" title="redvegiemon.png" />
+	<figcaption><a href="redvegiemon.png">redvegiemon</a></figcaption>
+</figure>
+<figure id="rockmon.png">
+	<img loading="lazy" src="rockmon.png" alt="rockmon.png" title="rockmon.png" />
+	<figcaption><a href="rockmon.png">rockmon</a></figcaption>
+</figure>
+<figure id="rosemon.png">
+	<img loading="lazy" src="rosemon.png" alt="rosemon.png" title="rosemon.png" />
+	<figcaption><a href="rosemon.png">rosemon</a></figcaption>
+</figure>
+<figure id="rosemonx.png">
+	<img loading="lazy" src="rosemonx.png" alt="rosemonx.png" title="rosemonx.png" />
+	<figcaption><a href="rosemonx.png">rosemonx</a></figcaption>
+</figure>
+<figure id="saberdramon.png">
+	<img loading="lazy" src="saberdramon.png" alt="saberdramon.png" title="saberdramon.png" />
+	<figcaption><a href="saberdramon.png">saberdramon</a></figcaption>
+</figure>
+<figure id="saberleomon.png">
+	<img loading="lazy" src="saberleomon.png" alt="saberleomon.png" title="saberleomon.png" />
+	<figcaption><a href="saberleomon.png">saberleomon</a></figcaption>
+</figure>
+<figure id="salamon.png">
+	<img loading="lazy" src="salamon.png" alt="salamon.png" title="salamon.png" />
+	<figcaption><a href="salamon.png">salamon</a></figcaption>
+</figure>
+<figure id="salamonx.png">
+	<img loading="lazy" src="salamonx.png" alt="salamonx.png" title="salamonx.png" />
+	<figcaption><a href="salamonx.png">salamonx</a></figcaption>
+</figure>
+<figure id="sandyanmamon.png">
+	<img loading="lazy" src="sandyanmamon.png" alt="sandyanmamon.png" title="sandyanmamon.png" />
+	<figcaption><a href="sandyanmamon.png">sandyanmamon</a></figcaption>
+</figure>
+<figure id="seadramon.png">
+	<img loading="lazy" src="seadramon.png" alt="seadramon.png" title="seadramon.png" />
+	<figcaption><a href="seadramon.png">seadramon</a></figcaption>
+</figure>
+<figure id="seadramonx.png">
+	<img loading="lazy" src="seadramonx.png" alt="seadramonx.png" title="seadramonx.png" />
+	<figcaption><a href="seadramonx.png">seadramonx</a></figcaption>
+</figure>
+<figure id="seraphimon.png">
+	<img loading="lazy" src="seraphimon.png" alt="seraphimon.png" title="seraphimon.png" />
+	<figcaption><a href="seraphimon.png">seraphimon</a></figcaption>
+</figure>
+<figure id="shamanmon.png">
+	<img loading="lazy" src="shamanmon.png" alt="shamanmon.png" title="shamanmon.png" />
+	<figcaption><a href="shamanmon.png">shamanmon</a></figcaption>
+</figure>
+<figure id="shellmon.png">
+	<img loading="lazy" src="shellmon.png" alt="shellmon.png" title="shellmon.png" />
+	<figcaption><a href="shellmon.png">shellmon</a></figcaption>
+</figure>
+<figure id="shimaunimon.png">
+	<img loading="lazy" src="shimaunimon.png" alt="shimaunimon.png" title="shimaunimon.png" />
+	<figcaption><a href="shimaunimon.png">shimaunimon</a></figcaption>
+</figure>
+<figure id="shogungekomon.png">
+	<img loading="lazy" src="shogungekomon.png" alt="shogungekomon.png" title="shogungekomon.png" />
+	<figcaption><a href="shogungekomon.png">shogungekomon</a></figcaption>
+</figure>
+<figure id="skullgreymon.png">
+	<img loading="lazy" src="skullgreymon.png" alt="skullgreymon.png" title="skullgreymon.png" />
+	<figcaption><a href="skullgreymon.png">skullgreymon</a></figcaption>
+</figure>
+<figure id="snowagumon.png">
+	<img loading="lazy" src="snowagumon.png" alt="snowagumon.png" title="snowagumon.png" />
+	<figcaption><a href="snowagumon.png">snowagumon</a></figcaption>
+</figure>
+<figure id="snowgoburimon.png">
+	<img loading="lazy" src="snowgoburimon.png" alt="snowgoburimon.png" title="snowgoburimon.png" />
+	<figcaption><a href="snowgoburimon.png">snowgoburimon</a></figcaption>
+</figure>
+<figure id="soulmon.png">
+	<img loading="lazy" src="soulmon.png" alt="soulmon.png" title="soulmon.png" />
+	<figcaption><a href="soulmon.png">soulmon</a></figcaption>
+</figure>
+<figure id="sukamon.png">
+	<img loading="lazy" src="sukamon.png" alt="sukamon.png" title="sukamon.png" />
+	<figcaption><a href="sukamon.png">sukamon</a></figcaption>
+</figure>
+<figure id="tanemon.png">
+	<img loading="lazy" src="tanemon.png" alt="tanemon.png" title="tanemon.png" />
+	<figcaption><a href="tanemon.png">tanemon</a></figcaption>
+</figure>
+<figure id="tankmon.png">
+	<img loading="lazy" src="tankmon.png" alt="tankmon.png" title="tankmon.png" />
+	<figcaption><a href="tankmon.png">tankmon</a></figcaption>
+</figure>
+<figure id="tekkamon.png">
+	<img loading="lazy" src="tekkamon.png" alt="tekkamon.png" title="tekkamon.png" />
+	<figcaption><a href="tekkamon.png">tekkamon</a></figcaption>
+</figure>
+<figure id="tentomon.png">
+	<img loading="lazy" src="tentomon.png" alt="tentomon.png" title="tentomon.png" />
+	<figcaption><a href="tentomon.png">tentomon</a></figcaption>
+</figure>
+<figure id="togemon.png">
+	<img loading="lazy" src="togemon.png" alt="togemon.png" title="togemon.png" />
+	<figcaption><a href="togemon.png">togemon</a></figcaption>
+</figure>
+<figure id="togemonx.png">
+	<img loading="lazy" src="togemonx.png" alt="togemonx.png" title="togemonx.png" />
+	<figcaption><a href="togemonx.png">togemonx</a></figcaption>
+</figure>
+<figure id="tokomon.png">
+	<img loading="lazy" src="tokomon.png" alt="tokomon.png" title="tokomon.png" />
+	<figcaption><a href="tokomon.png">tokomon</a></figcaption>
+</figure>
+<figure id="tokomonx.png">
+	<img loading="lazy" src="tokomonx.png" alt="tokomonx.png" title="tokomonx.png" />
+	<figcaption><a href="tokomonx.png">tokomonx</a></figcaption>
+</figure>
+<figure id="toyagumon.png">
+	<img loading="lazy" src="toyagumon.png" alt="toyagumon.png" title="toyagumon.png" />
+	<figcaption><a href="toyagumon.png">toyagumon</a></figcaption>
+</figure>
+<figure id="tsukaimon.png">
+	<img loading="lazy" src="tsukaimon.png" alt="tsukaimon.png" title="tsukaimon.png" />
+	<figcaption><a href="tsukaimon.png">tsukaimon</a></figcaption>
+</figure>
+<figure id="tsumemon.png">
+	<img loading="lazy" src="tsumemon.png" alt="tsumemon.png" title="tsumemon.png" />
+	<figcaption><a href="tsumemon.png">tsumemon</a></figcaption>
+</figure>
+<figure id="tsunomon.png">
+	<img loading="lazy" src="tsunomon.png" alt="tsunomon.png" title="tsunomon.png" />
+	<figcaption><a href="tsunomon.png">tsunomon</a></figcaption>
+</figure>
+<figure id="tyrannomon.png">
+	<img loading="lazy" src="tyrannomon.png" alt="tyrannomon.png" title="tyrannomon.png" />
+	<figcaption><a href="tyrannomon.png">tyrannomon</a></figcaption>
+</figure>
+<figure id="tyrannomonx.png">
+	<img loading="lazy" src="tyrannomonx.png" alt="tyrannomonx.png" title="tyrannomonx.png" />
+	<figcaption><a href="tyrannomonx.png">tyrannomonx</a></figcaption>
+</figure>
+<figure id="unimon.png">
+	<img loading="lazy" src="unimon.png" alt="unimon.png" title="unimon.png" />
+	<figcaption><a href="unimon.png">unimon</a></figcaption>
+</figure>
+<figure id="vademon.png">
+	<img loading="lazy" src="vademon.png" alt="vademon.png" title="vademon.png" />
+	<figcaption><a href="vademon.png">vademon</a></figcaption>
+</figure>
+<figure id="vademonx.png">
+	<img loading="lazy" src="vademonx.png" alt="vademonx.png" title="vademonx.png" />
+	<figcaption><a href="vademonx.png">vademonx</a></figcaption>
+</figure>
+<figure id="vegiemon.png">
+	<img loading="lazy" src="vegiemon.png" alt="vegiemon.png" title="vegiemon.png" />
+	<figcaption><a href="vegiemon.png">vegiemon</a></figcaption>
+</figure>
+<figure id="venommyotismon.png">
+	<img loading="lazy" src="venommyotismon.png" alt="venommyotismon.png" title="venommyotismon.png" />
+	<figcaption><a href="venommyotismon.png">venommyotismon</a></figcaption>
+</figure>
+<figure id="vermilimon.png">
+	<img loading="lazy" src="vermilimon.png" alt="vermilimon.png" title="vermilimon.png" />
+	<figcaption><a href="vermilimon.png">vermilimon</a></figcaption>
+</figure>
+<figure id="vikemon.png">
+	<img loading="lazy" src="vikemon.png" alt="vikemon.png" title="vikemon.png" />
+	<figcaption><a href="vikemon.png">vikemon</a></figcaption>
+</figure>
+<figure id="wargreymon.png">
+	<img loading="lazy" src="wargreymon.png" alt="wargreymon.png" title="wargreymon.png" />
+	<figcaption><a href="wargreymon.png">wargreymon</a></figcaption>
+</figure>
+<figure id="wargreymonx.png">
+	<img loading="lazy" src="wargreymonx.png" alt="wargreymonx.png" title="wargreymonx.png" />
+	<figcaption><a href="wargreymonx.png">wargreymonx</a></figcaption>
+</figure>
+<figure id="warumonzaemon.png">
+	<img loading="lazy" src="warumonzaemon.png" alt="warumonzaemon.png" title="warumonzaemon.png" />
+	<figcaption><a href="warumonzaemon.png">warumonzaemon</a></figcaption>
+</figure>
+<figure id="waruseadramon.png">
+	<img loading="lazy" src="waruseadramon.png" alt="waruseadramon.png" title="waruseadramon.png" />
+	<figcaption><a href="waruseadramon.png">waruseadramon</a></figcaption>
+</figure>
+<figure id="weedmon.png">
+	<img loading="lazy" src="weedmon.png" alt="weedmon.png" title="weedmon.png" />
+	<figcaption><a href="weedmon.png">weedmon</a></figcaption>
+</figure>
+<figure id="weregarurumon.png">
+	<img loading="lazy" src="weregarurumon.png" alt="weregarurumon.png" title="weregarurumon.png" />
+	<figcaption><a href="weregarurumon.png">weregarurumon</a></figcaption>
+</figure>
+<figure id="whamon.png">
+	<img loading="lazy" src="whamon.png" alt="whamon.png" title="whamon.png" />
+	<figcaption><a href="whamon.png">whamon</a></figcaption>
+</figure>
+<figure id="yanmamon.png">
+	<img loading="lazy" src="yanmamon.png" alt="yanmamon.png" title="yanmamon.png" />
+	<figcaption><a href="yanmamon.png">yanmamon</a></figcaption>
+</figure>
+<figure id="yuramon.png">
+	<img loading="lazy" src="yuramon.png" alt="yuramon.png" title="yuramon.png" />
+	<figcaption><a href="yuramon.png">yuramon</a></figcaption>
+</figure>
+<figure id="zudomon.png">
+	<img loading="lazy" src="zudomon.png" alt="zudomon.png" title="zudomon.png" />
+	<figcaption><a href="zudomon.png">zudomon</a></figcaption>
+</figure>
+</html>
