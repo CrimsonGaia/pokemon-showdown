@@ -112,9 +112,7 @@ Pokemon=function(){
 
 
 
-
-
-function Pokemon(data,side){this.name='';this.speciesForme='';this.ident='';this.details='';this.searchid='';this.side=void 0;this.slot=0;this.fainted=false;this.hp=0;this.maxhp=1000;this.level=100;this.gender='N';this.shiny=false;this.hpcolor='g';this.moves=[];this.ability='';this.baseAbility='';this.ability2='';this.baseAbility2='';this.item='';this.itemEffect='';this.prevItem='';this.prevItemEffect='';this.terastallized='';this.teraType='';this.boosts={};this.status='';this.statusStage=0;this.volatiles={};this.turnstatuses={};this.movestatuses={};this.lastMove='';this.moveTrack=[];this.statusData={sleepTurns:0,toxicTurns:0};this.timesAttacked=0;this.sprite=void 0;
+function Pokemon(data,side){this.name='';this.speciesForme='';this.ident='';this.details='';this.searchid='';this.side=void 0;this.slot=0;this.fainted=false;this.hp=0;this.maxhp=1000;this.level=100;this.gender='N';this.shiny=false;this.hpcolor='g';this.moves=[];this.ability='';this.baseAbility='';this.item='';this.itemEffect='';this.prevItem='';this.prevItemEffect='';this.terastallized='';this.teraType='';this.boosts={};this.status='';this.statusStage=0;this.volatiles={};this.turnstatuses={};this.movestatuses={};this.lastMove='';this.moveTrack=[];this.statusData={sleepTurns:0,toxicTurns:0};this.timesAttacked=0;this.sprite=void 0;
 this.side=side;
 this.speciesForme=data.speciesForme;
 
@@ -362,18 +360,11 @@ return;
 }
 this.moveTrack.push([moveName,pp]);
 };_proto.
-rememberAbility=function rememberAbility(ability,isNotBase){var slot=arguments.length>2&&arguments[2]!==undefined?arguments[2]:1;
+rememberAbility=function rememberAbility(ability,isNotBase){
 ability=Dex.abilities.get(ability).name;
-if(slot===1){
 this.ability=ability;
 if(!this.baseAbility&&!isNotBase){
 this.baseAbility=ability;
-}
-}else{
-this.ability2=ability;
-if(!this.baseAbility2&&!isNotBase){
-this.baseAbility2=ability;
-}
 }
 };_proto.
 getBoost=function getBoost(boostStat){
@@ -431,7 +422,6 @@ return'bad';
 };_proto.
 clearVolatile=function clearVolatile(){
 this.ability=this.baseAbility;
-this.ability2=this.baseAbility2;
 this.boosts={};
 this.clearVolatiles();
 for(var i=0;i<this.moveTrack.length;i++){
@@ -536,11 +526,10 @@ return false;
 }
 return!this.getTypeList(serverPokemon).includes('Flying');
 };_proto.
-effectiveAbility=function effectiveAbility(serverPokemon){var slot=arguments.length>1&&arguments[1]!==undefined?arguments[1]:1;
-var abilityName=slot===1?
-(serverPokemon==null?void 0:serverPokemon.ability)||this.ability||(serverPokemon==null?void 0:serverPokemon.baseAbility)||'':
-(serverPokemon==null?void 0:serverPokemon.ability2)||this.ability2||(serverPokemon==null?void 0:serverPokemon.baseAbility2)||'';
-var ability=this.side.battle.dex.abilities.get(abilityName);
+effectiveAbility=function effectiveAbility(serverPokemon){
+var ability=this.side.battle.dex.abilities.get(
+(serverPokemon==null?void 0:serverPokemon.ability)||this.ability||(serverPokemon==null?void 0:serverPokemon.baseAbility)||''
+);
 if(
 this.fainted||
 this.volatiles['transform']&&ability.flags['notransform']||
@@ -984,10 +973,6 @@ this.clearPokemon();
 this.battle=null;
 this.foe=null;
 };return Side;}();var
-
-
-
-
 
 
 

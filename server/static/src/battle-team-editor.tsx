@@ -1647,7 +1647,7 @@ class TeamTextbox extends preact.Component<{
 					placeholder=" Paste exported teams, pokepaste URLs, or JSON here" readOnly={editor.readonly}
 				/>
 				<textarea
-					class="textbox teamtextbox heighttester" tabIndex={-1} aria-hidden
+					class="textbox teamtextbox heighttester" tabIndex={-1} aria-hidden title="Team text height tester"
 					style={`padding-left:${editor.narrow ? '50px' : '100px'};visibility:hidden;left:-15px`}
 				/>
 				<div class="teamoverlays">
@@ -2390,7 +2390,7 @@ class StatForm extends preact.Component<{
 		const autoSpread = set.ivs && editor.defaultIVs(set, false);
 		const autoSpreadValue = autoSpread && Object.values(autoSpread).join('/');
 		if (!hpIVdata) {
-			return <select name="ivspread" class="button" onChange={this.changeIVSpread}>
+			return <select name="ivspread" class="button" onChange={this.changeIVSpread} title="IV spreads">
 				<option value="" selected>IV spreads</option>
 				{autoSpreadValue && <option value="auto">Auto ({autoSpreadValue})</option>}
 				<optgroup label="min Atk">
@@ -2410,7 +2410,7 @@ class StatForm extends preact.Component<{
 		const minStat = editor.gen >= 6 ? 0 : 2;
 		const hpIVs = hpIVdata.map(ivs => ivs.split('').map(iv => parseInt(iv)));
 
-		return <select name="ivspread" class="button" onChange={this.changeIVSpread}>
+		return <select name="ivspread" class="button" onChange={this.changeIVSpread} title="IV spreads">
 			<option value="" selected>Hidden Power {hpType} IVs</option>
 			{autoSpreadValue && <option value="auto">Auto ({autoSpreadValue})</option>}
 			<optgroup label="min Atk">
@@ -2813,7 +2813,7 @@ class StatForm extends preact.Component<{
 						/></td>
 						<td><input
 							name={`evslider-${statID}`} value={set.evs?.[statID] ?? defaultEV} min="0" max={maxEV} step={stepEV}
-							type="range" class="evslider" tabIndex={-1} aria-hidden
+							type="range" class="evslider" tabIndex={-1} aria-hidden title={`${statID} EV slider`}
 							onInput={this.changeEV} onChange={this.changeEV}
 						/></td>
 						<td><input
@@ -2830,7 +2830,7 @@ class StatForm extends preact.Component<{
 					</tr>
 				</table>
 				{editor.gen >= 3 && <p>
-					Nature: <select name="nature" class="button" onChange={this.changeNature}>
+					Nature: <select name="nature" class="button" onChange={this.changeNature} title="Nature">
 						{Object.entries(BattleNatures).map(([natureName, curNature]) => (
 							<option value={natureName} selected={curNature === nature}>
 								{natureName}

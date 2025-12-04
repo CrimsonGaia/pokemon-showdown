@@ -572,7 +572,7 @@ request.chosenTeamSize=3;
 }for(var _i9=0,_request$side$pokemon4=
 
 request.side.pokemon;_i9<_request$side$pokemon4.length;_i9++){var switchable=_request$side$pokemon4[_i9];
-if(toID(switchable.baseAbility)==='illusion'||toID(switchable.baseAbility2)==='illusion'){
+if(toID(switchable.baseAbility)==='illusion'){
 request.chosenTeamSize=request.side.pokemon.length;
 }
 }

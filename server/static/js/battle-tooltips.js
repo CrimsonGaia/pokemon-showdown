@@ -26,8 +26,7 @@ ModifiableValue=function(){
 
 
 
-
-function ModifiableValue(battle,pokemon,serverPokemon){this.value=0;this.maxValue=0;this.comment=void 0;this.battle=void 0;this.pokemon=void 0;this.serverPokemon=void 0;this.itemName=void 0;this.abilityName=void 0;this.abilityName2=void 0;this.weatherName=void 0;this.isAccuracy=false;
+function ModifiableValue(battle,pokemon,serverPokemon){this.value=0;this.maxValue=0;this.comment=void 0;this.battle=void 0;this.pokemon=void 0;this.serverPokemon=void 0;this.itemName=void 0;this.abilityName=void 0;this.weatherName=void 0;this.isAccuracy=false;
 this.comment=[];
 this.battle=battle;
 this.pokemon=pokemon;
@@ -36,8 +35,6 @@ this.serverPokemon=serverPokemon;
 this.itemName=this.battle.dex.items.get(serverPokemon.item).name;
 var ability=serverPokemon.ability||(pokemon==null?void 0:pokemon.ability)||serverPokemon.baseAbility;
 this.abilityName=this.battle.dex.abilities.get(ability).name;
-var ability2=serverPokemon.ability2||(pokemon==null?void 0:pokemon.ability2)||serverPokemon.baseAbility2||'';
-this.abilityName2=this.battle.dex.abilities.get(ability2).name;
 this.weatherName=this.battle.dex.moves.get(battle.weather).exists?
 this.battle.dex.moves.get(battle.weather).name:this.battle.dex.abilities.get(battle.weather).name;
 }var _proto=ModifiableValue.prototype;_proto.
@@ -67,14 +64,13 @@ return false;
 return true;
 };_proto.
 tryAbility=function tryAbility(abilityName){var _this$pokemon2,_this$pokemon3;
-var slot=abilityName===this.abilityName?1:abilityName===this.abilityName2?2:0;
-if(!slot)return false;
+if(abilityName!==this.abilityName)return false;
 if((_this$pokemon2=this.pokemon)!=null&&_this$pokemon2.volatiles['gastroacid']){
 this.comment.push(" ("+abilityName+" suppressed by Gastro Acid)");
 return false;
 }
 
-if(!((_this$pokemon3=this.pokemon)!=null&&_this$pokemon3.effectiveAbility(this.serverPokemon,slot)))return false;
+if(!((_this$pokemon3=this.pokemon)!=null&&_this$pokemon3.effectiveAbility(this.serverPokemon)))return false;
 return true;
 };_proto.
 tryWeather=function tryWeather(weatherName){
@@ -83,11 +79,8 @@ if(!weatherName)weatherName=this.weatherName;else
 if(weatherName!==this.weatherName)return false;for(var _i2=0,_this$battle$sides2=
 this.battle.sides;_i2<_this$battle$sides2.length;_i2++){var side=_this$battle$sides2[_i2];for(var _i4=0,_side$active2=
 side.active;_i4<_side$active2.length;_i4++){var active=_side$active2[_i4];
-if(active&&(['Air Lock','Cloud Nine'].includes(active.ability)||
-['Air Lock','Cloud Nine'].includes(active.ability2))){
-var suppressingAbility=['Air Lock','Cloud Nine'].includes(active.ability)?
-active.ability:active.ability2;
-this.comment.push(" ("+weatherName+" suppressed by "+suppressingAbility+")");
+if(active&&['Air Lock','Cloud Nine'].includes(active.ability)){
+this.comment.push(" ("+weatherName+" suppressed by "+active.ability+")");
 return false;
 }
 }
@@ -567,7 +560,6 @@ foeActive=[].concat(foeActive,pokemon.side.active).filter(function(active){retur
 }
 
 if(pokemon.ability==='(suppressed)')serverPokemon.ability='(suppressed)';
-if(pokemon.ability2==='(suppressed)')serverPokemon.ability2='(suppressed)';
 var ability=toID(serverPokemon.ability||pokemon.ability||serverPokemon.baseAbility);
 var item=this.battle.dex.items.get(serverPokemon.item);
 
@@ -896,8 +888,7 @@ var _status=pokemon.status?" <span class=\"status "+pokemon.status+"\">"+pokemon
 text+="<p><small>HP:</small> "+Pokemon.getHPText(pokemon,this.battle.reportExactHP)+exacthp+_status;
 if(clientPokemon){
 if(pokemon.status==='tox'){
-if(pokemon.ability==='Poison Heal'||pokemon.ability==='Magic Guard'||
-pokemon.ability2==='Poison Heal'||pokemon.ability2==='Magic Guard'){
+if(pokemon.ability==='Poison Heal'||pokemon.ability==='Magic Guard'){
 text+=" <small>Would take if ability removed: "+Math.floor(
 100/16*Math.min(clientPokemon.statusData.toxicTurns+1,15)
 )+"%</small>";
@@ -1040,11 +1031,7 @@ return true;
 return false;
 };_proto2.
 
-hasAbility=function hasAbility(ability,ability2,targetAbility){
-return ability===targetAbility||ability2===targetAbility;
-};_proto2.
-
-calculateModifiedStats=function calculateModifiedStats(clientPokemon,serverPokemon,statStagesOnly){var _clientPokemon$effect,_clientPokemon$effect2,_clientPokemon$volati;
+calculateModifiedStats=function calculateModifiedStats(clientPokemon,serverPokemon,statStagesOnly){var _clientPokemon$effect,_clientPokemon$volati;
 var stats=Object.assign({},serverPokemon.stats);
 var pokemon=clientPokemon||serverPokemon;
 var isPowerTrick=clientPokemon==null?void 0:clientPokemon.volatiles['powertrick'];for(var _i20=0,_Dex$statNamesExceptH2=
@@ -1073,15 +1060,12 @@ stats[statName]=Math.floor(stats[statName]);
 if(statStagesOnly)return stats;
 
 var ability=toID((_clientPokemon$effect=
-clientPokemon==null?void 0:clientPokemon.effectiveAbility(serverPokemon,1))!=null?_clientPokemon$effect:serverPokemon.ability||serverPokemon.baseAbility
-);
-var ability2=toID((_clientPokemon$effect2=
-clientPokemon==null?void 0:clientPokemon.effectiveAbility(serverPokemon,2))!=null?_clientPokemon$effect2:serverPokemon.ability2||serverPokemon.baseAbility2
+clientPokemon==null?void 0:clientPokemon.effectiveAbility(serverPokemon))!=null?_clientPokemon$effect:serverPokemon.ability||serverPokemon.baseAbility
 );
 
 
 if(pokemon.status){
-if(this.battle.gen>2&&(ability==='guts'||ability2==='guts')){
+if(this.battle.gen>2&&ability==='guts'){
 stats.atk=Math.floor(stats.atk*1.5);
 }else if(this.battle.gen<2&&pokemon.status==='brn'){
 stats.atk=Math.floor(stats.atk*0.5);
@@ -1106,7 +1090,7 @@ var speedHalvingEVItems=[
 'machobrace','poweranklet','powerband','powerbelt','powerbracer','powerlens','powerweight'];
 
 if(
-(ability==='klutz'||ability2==='klutz')&&!speedHalvingEVItems.includes(item)||
+ability==='klutz'&&!speedHalvingEVItems.includes(item)||
 this.battle.hasPseudoWeather('Magic Room')||
 clientPokemon!=null&&clientPokemon.volatiles['embargo'])
 {
@@ -1161,10 +1145,10 @@ weather='';
 if(item==='choiceband'&&!(clientPokemon!=null&&clientPokemon.volatiles['dynamax'])){
 stats.atk=Math.floor(stats.atk*1.5);
 }
-if(this.hasAbility(ability,ability2,'purepower')||this.hasAbility(ability,ability2,'hugepower')){
+if(ability==='purepower'||ability==='hugepower'){
 stats.atk*=2;
 }
-if(this.hasAbility(ability,ability2,'hustle')||this.hasAbility(ability,ability2,'gorillatactics')&&!(clientPokemon!=null&&clientPokemon.volatiles['dynamax'])){
+if(ability==='hustle'||ability==='gorillatactics'&&!(clientPokemon!=null&&clientPokemon.volatiles['dynamax'])){
 stats.atk=Math.floor(stats.atk*1.5);
 }
 if(weather){
@@ -1174,21 +1158,21 @@ stats.spd=Math.floor(stats.spd*1.5);
 if(this.pokemonHasType(pokemon,'Ice')&&weather==='snowscape'){
 stats.def=Math.floor(stats.def*1.5);
 }
-if(this.hasAbility(ability,ability2,'sandrush')&&weather==='sandstorm'){
+if(ability==='sandrush'&&weather==='sandstorm'){
 speedModifiers.push(2);
 }
-if(this.hasAbility(ability,ability2,'slushrush')&&(weather==='hail'||weather==='snowscape')){
+if(ability==='slushrush'&&(weather==='hail'||weather==='snowscape')){
 speedModifiers.push(2);
 }
 if(item!=='utilityumbrella'){
 if(weather==='sunnyday'||weather==='desolateland'){
-if(this.hasAbility(ability,ability2,'chlorophyll')){
+if(ability==='chlorophyll'){
 speedModifiers.push(2);
 }
-if(this.hasAbility(ability,ability2,'solarpower')){
+if(ability==='solarpower'){
 stats.spa=Math.floor(stats.spa*1.5);
 }
-if(this.hasAbility(ability,ability2,'orichalcumpulse')){
+if(ability==='orichalcumpulse'){
 stats.atk=Math.floor(stats.atk*1.3333);
 }
 var allyActive=clientPokemon==null?void 0:clientPokemon.side.active;
@@ -1204,13 +1188,13 @@ stats.spd=Math.floor(stats.spd*1.5);
 }
 }
 if(weather==='raindance'||weather==='primordialsea'){
-if(this.hasAbility(ability,ability2,'swiftswim')){
+if(ability==='swiftswim'){
 speedModifiers.push(2);
 }
 }
 }
 }
-if(this.hasAbility(ability,ability2,'defeatist')&&serverPokemon.hp<=serverPokemon.maxhp/2){
+if(ability==='defeatist'&&serverPokemon.hp<=serverPokemon.maxhp/2){
 stats.atk=Math.floor(stats.atk*0.5);
 stats.spa=Math.floor(stats.spa*0.5);
 }
@@ -1219,7 +1203,7 @@ if(clientPokemon.volatiles['slowstart']){
 stats.atk=Math.floor(stats.atk*0.5);
 speedModifiers.push(0.5);
 }
-if(this.hasAbility(ability,ability2,'unburden')&&clientPokemon.volatiles['itemremoved']&&!item){
+if(ability==='unburden'&&clientPokemon.volatiles['itemremoved']&&!item){
 speedModifiers.push(2);
 }for(var _i26=0,_Dex$statNamesExceptH6=
 Dex.statNamesExceptHP;_i26<_Dex$statNamesExceptH6.length;_i26++){var _statName2=_Dex$statNamesExceptH6[_i26];
@@ -1233,10 +1217,10 @@ stats[_statName2]=Math.floor(stats[_statName2]*1.3);
 }
 }
 if(pokemon.status){
-if(this.hasAbility(ability,ability2,'marvelscale')){
+if(ability==='marvelscale'){
 stats.def=Math.floor(stats.def*1.5);
 }
-if(this.hasAbility(ability,ability2,'quickfeet')){
+if(ability==='quickfeet'){
 speedModifiers.push(1.5);
 }
 }
@@ -1244,14 +1228,14 @@ if(item==='eviolite'&&this.battle.dex.species.get(serverPokemon.speciesForme).nf
 stats.def=Math.floor(stats.def*1.5);
 stats.spd=Math.floor(stats.spd*1.5);
 }
-if(this.hasAbility(ability,ability2,'grasspelt')&&this.battle.hasPseudoWeather('Grassy Terrain')){
+if(ability==='grasspelt'&&this.battle.hasPseudoWeather('Grassy Terrain')){
 stats.def=Math.floor(stats.def*1.5);
 }
 if(this.battle.hasPseudoWeather('Electric Terrain')){
-if(this.hasAbility(ability,ability2,'surgesurfer')){
+if(ability==='surgesurfer'){
 speedModifiers.push(2);
 }
-if(this.hasAbility(ability,ability2,'hadronengine')){
+if(ability==='hadronengine'){
 stats.spa=Math.floor(stats.spa*1.3333);
 }
 }
@@ -1265,10 +1249,10 @@ if(item==='souldew'&&this.battle.gen<=6&&(species==='Latios'||species==='Latias'
 stats.spa=Math.floor(stats.spa*1.5);
 stats.spd=Math.floor(stats.spd*1.5);
 }
-if(clientPokemon&&(this.hasAbility(ability,ability2,'plus')||this.hasAbility(ability,ability2,'minus'))){
+if(clientPokemon&&(ability==='plus'||ability==='minus')){
 var _allyActive=clientPokemon.side.active;
 if(_allyActive.length>1){
-var abilityName=ability==='plus'||ability2==='plus'?'Plus':'Minus';for(var _i28=0;_i28<
+var abilityName=ability==='plus'?'Plus':'Minus';for(var _i28=0;_i28<
 _allyActive.length;_i28++){var _ally=_allyActive[_i28];
 if(!_ally||_ally===clientPokemon||_ally.fainted)continue;
 var _allyAbility=this.getAllyAbility(_ally);
@@ -1291,26 +1275,26 @@ speedModifiers.push(1.5);
 if(item==='ironball'||speedHalvingEVItems.includes(item)){
 speedModifiers.push(0.5);
 }
-if(this.hasAbility(ability,ability2,'furcoat')){
+if(ability==='furcoat'){
 stats.def*=2;
 }
 if(this.battle.abilityActive('Vessel of Ruin')){
-if(!this.hasAbility(ability,ability2,'vesselofruin')){
+if(ability!=='vesselofruin'){
 stats.spa=Math.floor(stats.spa*0.75);
 }
 }
 if(this.battle.abilityActive('Sword of Ruin')){
-if(!this.hasAbility(ability,ability2,'swordofruin')){
+if(ability!=='swordofruin'){
 stats.def=Math.floor(stats.def*0.75);
 }
 }
 if(this.battle.abilityActive('Tablets of Ruin')){
-if(!this.hasAbility(ability,ability2,'tabletsofruin')){
+if(ability!=='tabletsofruin'){
 stats.atk=Math.floor(stats.atk*0.75);
 }
 }
 if(this.battle.abilityActive('Beads of Ruin')){
-if(!this.hasAbility(ability,ability2,'beadsofruin')){
+if(ability!=='beadsofruin'){
 stats.spd=Math.floor(stats.spd*0.75);
 }
 }
@@ -1320,20 +1304,20 @@ if(this.battle.tier.includes('Super Staff Bros')){
 if(pokemon.name==='Felucia'){
 speedModifiers.push(1.5);
 }
-if(this.hasAbility(ability,ability2,'misspelled')){
+if(ability==='misspelled'){
 stats.spa=Math.floor(stats.spa*1.5);
 }
-if(this.hasAbility(ability,ability2,'fortifyingfrost')&&weather==='snowscape'){
+if(ability==='fortifyingfrost'&&weather==='snowscape'){
 stats.spa=Math.floor(stats.spa*1.5);
 stats.spd=Math.floor(stats.spd*1.5);
 }
 if(weather==='deserteddunes'&&this.pokemonHasType(pokemon,'Rock')){
 stats.spd=Math.floor(stats.spd*1.25);
 }
-if(weather==='stormsurge'&&this.hasAbility(ability,ability2,'swiftswim')){
+if(weather==='stormsurge'&&ability==='swiftswim'){
 speedModifiers.push(2);
 }
-if(pokemon.status&&this.hasAbility(ability,ability2,'fortifiedmetal')){
+if(pokemon.status&&ability==='fortifiedmetal'){
 stats.atk=Math.floor(stats.atk*1.5);
 }
 if(ability==='grassyemperor'&&this.battle.hasPseudoWeather('Grassy Terrain')){
@@ -2037,8 +2021,7 @@ value.modify(2,'Terrain Pulse boost');
 }
 }
 if(
-move.id==='watershuriken'&&pokemon.getSpeciesForme()==='Greninja-Ash'&&(
-pokemon.ability==='Battle Bond'||pokemon.ability2==='Battle Bond'))
+move.id==='watershuriken'&&pokemon.getSpeciesForme()==='Greninja-Ash'&&pokemon.ability==='Battle Bond')
 {
 value.set(20,'Battle Bond');
 }
@@ -2211,11 +2194,11 @@ value.modify(1.5,'Steely Spirit');
 }for(var _i50=0,_pokemon$side$foe$act2=
 pokemon.side.foe.active;_i50<_pokemon$side$foe$act2.length;_i50++){var foe=_pokemon$side$foe$act2[_i50];
 if(!foe||foe.fainted)continue;
-if((foe.ability==='Fairy Aura'||foe.ability2==='Fairy Aura')&&moveType==='Fairy'){
+if(foe.ability==='Fairy Aura'&&moveType==='Fairy'){
 auraBoosted='Fairy Aura';
-}else if((foe.ability==='Dark Aura'||foe.ability2==='Dark Aura')&&moveType==='Dark'){
+}else if(foe.ability==='Dark Aura'&&moveType==='Dark'){
 auraBoosted='Dark Aura';
-}else if(foe.ability==='Aura Break'||foe.ability2==='Aura Break'){
+}else if(foe.ability==='Aura Break'){
 auraBroken=true;
 }
 }

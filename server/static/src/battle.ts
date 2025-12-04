@@ -90,8 +90,6 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 	moves: string[] = [];
 	ability = '';
 	baseAbility = '';
-	ability2 = '';
-	baseAbility2 = '';
 	item = '';
 	itemEffect = '';
 	prevItem = '';
@@ -362,18 +360,11 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 		}
 		this.moveTrack.push([moveName, pp]);
 	}
-	rememberAbility(ability: string, isNotBase?: boolean, slot: 1 | 2 = 1) {
+	rememberAbility(ability: string, isNotBase?: boolean) {
 		ability = Dex.abilities.get(ability).name;
-		if (slot === 1) {
-			this.ability = ability;
-			if (!this.baseAbility && !isNotBase) {
-				this.baseAbility = ability;
-			}
-		} else {
-			this.ability2 = ability;
-			if (!this.baseAbility2 && !isNotBase) {
-				this.baseAbility2 = ability;
-			}
+		this.ability = ability;
+		if (!this.baseAbility && !isNotBase) {
+			this.baseAbility = ability;
 		}
 	}
 	getBoost(boostStat: Dex.BoostStatName) {
@@ -431,7 +422,6 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 	}
 	clearVolatile() {
 		this.ability = this.baseAbility;
-		this.ability2 = this.baseAbility2;
 		this.boosts = {};
 		this.clearVolatiles();
 		for (let i = 0; i < this.moveTrack.length; i++) {
@@ -536,11 +526,10 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 		}
 		return !this.getTypeList(serverPokemon).includes('Flying');
 	}
-	effectiveAbility(serverPokemon?: ServerPokemon, slot: 1 | 2 = 1) {
-		const abilityName = slot === 1 
-			? (serverPokemon?.ability || this.ability || serverPokemon?.baseAbility || '')
-			: (serverPokemon?.ability2 || this.ability2 || serverPokemon?.baseAbility2 || '');
-		const ability = this.side.battle.dex.abilities.get(abilityName);
+	effectiveAbility(serverPokemon?: ServerPokemon) {
+		const ability = this.side.battle.dex.abilities.get(
+			serverPokemon?.ability || this.ability || serverPokemon?.baseAbility || ''
+		);
 		if (
 			this.fainted ||
 			(this.volatiles['transform'] && ability.flags['notransform']) ||
@@ -1023,11 +1012,7 @@ export interface ServerPokemon extends PokemonDetails, PokemonHealth {
 	/** currently an ID, will revise to name */
 	baseAbility: string;
 	/** currently an ID, will revise to name */
-	baseAbility2?: string;
-	/** currently an ID, will revise to name */
 	ability?: string;
-	/** currently an ID, will revise to name */
-	ability2?: string;
 	/** currently an ID, will revise to name */
 	item: string;
 	/** currently an ID, will revise to name */

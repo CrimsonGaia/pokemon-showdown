@@ -139,9 +139,14 @@ export const Conditions = {
 		onStart(target, source, sourceEffect) {
 			if (sourceEffect && sourceEffect.effectType === 'Ability') { this.add('-status', target, 'fear', '[from] ability: ' + sourceEffect.name, `[of] ${source}`); } 
 			else { this.add('-status', target, 'fear'); }
-			if (target.hasType('Dark') || target.hasType('Fighting')) { this.effectState.fearStacks = 0; } 
-			else if (target.hasType('Normal') || target.hasType('Psychic')) { this.effectState.fearStacks = 4; } 
-			else { this.effectState.fearStacks = 2; }
+			// Initialize fear counter based on type
+			if (target.hasType('Dark') || target.hasType('Fighting')) {
+				this.effectState.fearStacks = 0;
+			} else if (target.hasType('Normal') || target.hasType('Psychic')) {
+				this.effectState.fearStacks = 4;
+			} else {
+				this.effectState.fearStacks = 2;
+			}
 		},
 		onModifySpA(spa, pokemon) { return Math.floor(spa * 0.5); },
 		onDamagingHit(damage, target, source, move) {
@@ -179,7 +184,9 @@ export const Conditions = {
 			}
 		},
 		onSourceModifyDamage(damage, source, target, move) {
-			if (move && (move.type === 'Dark' || move.type === 'Shadow')) { return this.chainModify(2); }
+			if (move && (move.type === 'Dark' || move.type === 'Shadow')) {
+				return this.chainModify(2);
+			}
 		},
 	},
 	frz: {
@@ -1098,17 +1105,25 @@ export const Conditions = {
 				if (groundedEffects.includes(type)) { return false; }
 			}
 		},
-		// Prevent Tailwind and Stealth Rock from being set while active
+		// Prevent Tailwind from being set while active
 		onTrySideCondition(condition, target, source, effect) {
 			if (condition === 'stealthrock' && this.field.isWeather('turbulentwinds')) {
 				if (!this.field.stealthRockSuppressed) {
-					this.add('-message', 'The rocks were swept up by the Turbulent Winds!');
+					this.add('-message', 'Stealth Rock is suppressed by Turbulent Winds!');
 					this.field.stealthRockSuppressed = true;
 				}
 				return false;
 			}
 			if (condition === 'tailwind' && this.field.isWeather('turbulentwinds')) {
 				this.add('-message', 'Tailwind cannot be set while Turbulent Winds are active!');
+				return false;
+			}
+			// Prevent Stealth Rock activation while weather is active
+			if (condition === 'stealthrock' && this.field.isWeather('turbulentwinds')) {
+				if (!this.field.stealthRockSuppressed) {
+					this.add('-message', 'The rocks were swept up by the Turbulent Winds!');
+					this.field.stealthRockSuppressed = true;
+				}
 				return false;
 			}
 		},
@@ -1167,7 +1182,7 @@ export const Conditions = {
 				if (groundedEffects.includes(type)) { return false; }
 			}
 		},
-		// Prevent Tailwind and Stealth Rock from being set while active
+		// Prevent Tailwind from being set while active
 		onTrySideCondition(condition, target, source, effect) {
 			if (condition === 'stealthrock' && this.field.isWeather('deltastream')) {
 				if (!this.field.stealthRockSuppressed) {
@@ -1584,8 +1599,6 @@ export const Conditions = {
 		effectType: "Field",
 		duration: 4,
 		onFieldStart(field, source, effect) { this.add('-fieldstart', 'SeaofFire'); },
-		onFieldResidualOrder: 5,
-		onFieldResidualSubOrder: 1,
 		onFieldResidual() {
 				for (const pokemon of this.getAllActive()) {
 					if (pokemon.hasType('Fire')) continue;
@@ -1604,6 +1617,8 @@ export const Conditions = {
 					this.damage(pokemon.baseMaxhp / divisor, pokemon);
 				}
 		},
+		onFieldResidualOrder: 26,
+		onFieldResidualSubOrder: 8,
 		onFieldEnd() { this.add('-fieldend', 'SeaofFire'); },
 	},
 	swamp: {

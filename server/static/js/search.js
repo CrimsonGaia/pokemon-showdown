@@ -291,7 +291,6 @@
 	buf += '<button class="sortcol flagsortcol' + (this.sortCol === 'flag' ? ' cur' : '') + '" data-sort="flag">Flags</button>';
 	buf += '<button class="sortcol powersortcol' + (this.sortCol === 'power' ? ' cur' : '') + '" data-sort="power">Power</button>';
 		buf += '<button class="sortcol accuracysortcol' + (this.sortCol === 'accuracy' ? ' cur' : '') + '" data-sort="accuracy">Accuracy</button>';
-		buf += '<button class="sortcol critratiocol' + (this.sortCol === 'critratio' ? ' cur' : '') + '" data-sort="critratio">Crit</button>';
 		buf += '<button class="sortcol ppsortcol' + (this.sortCol === 'pp' ? ' cur' : '') + '" data-sort="pp">PP</button>';
 		buf += '</div></li>';
 		return buf;
@@ -700,21 +699,14 @@
 		}
 		buf += '<span class="col flagcol";">' + innerFlagsHtml + '</span> ';
 
-	// power, accuracy, crit ratio, pp
-	var pp = (move.pp === 1 || move.noPPBoosts ? move.pp : move.pp * 8 / 5);
-	if (this.engine && this.engine.dex.gen < 3) pp = Math.min(61, pp);
-	buf += '<span class="col labelcol">' + (move.category !== 'Status' ? ('<em>Power</em><br />' + (move.basePower || '&mdash;')) : '') + '</span> ';
-	buf += '<span class="col widelabelcol"><em>Accuracy</em><br />' + (move.accuracy && move.accuracy !== true ? move.accuracy + '%' : '&mdash;') + '</span> ';
-var critMult = [96, 64, 48, 24, 16, 12, 8, 6, 4, 3, 2, 1.5, 1.333, 1.2, 1];;
-var critDisplay = '&mdash;';
-if (typeof move.critRatio === 'number' && move.critRatio >= 0 && move.critRatio <= 12) {
-    var mapped = move.critRatio - 4;
-    var sign = mapped >= 0 ? '+' : '';
-    var ratio = '1/' + critMult[move.critRatio];
-    critDisplay = sign + mapped + ' [' + ratio + ']';
-}
-buf += '<span class="col labelcol"><em>Crit</em><br />' + critDisplay + '</span> ';
-	buf += '<span class="col pplabelcol"><em>PP</em><br />' + pp + '</span> ';		// desc
+		// power, accuracy, pp
+		var pp = (move.pp === 1 || move.noPPBoosts ? move.pp : move.pp * 8 / 5);
+		if (this.engine && this.engine.dex.gen < 3) pp = Math.min(61, pp);
+		buf += '<span class="col labelcol">' + (move.category !== 'Status' ? ('<em>Power</em><br />' + (move.basePower || '&mdash;')) : '') + '</span> ';
+		buf += '<span class="col widelabelcol"><em>Accuracy</em><br />' + (move.accuracy && move.accuracy !== true ? move.accuracy + '%' : '&mdash;') + '</span> ';
+		buf += '<span class="col pplabelcol"><em>PP</em><br />' + pp + '</span> ';
+
+		// desc
 		buf += '<span class="col movedesccol">' + BattleLog.escapeHTML(move.shortDesc || move.desc) + '</span> ';
 
 		buf += '</a>';
