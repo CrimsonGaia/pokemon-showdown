@@ -1793,7 +1793,7 @@ export const Rulesets: import('../sim/dex-formats').FormatDataTable = {
 			if (!target) return; // Chat command
 			if (effect && ['imposter', 'transform'].includes(effect.id)) return;
 			const types = [...new Set(target.baseMoveSlots.slice(0, 2).map(move => this.dex.moves.get(move.id).type))];
-			return { ...species, types };
+			return { ...species, types } as any;
 		},
 		onSwitchIn(pokemon) {
 			this.add('-start', pokemon, 'typechange', (pokemon.illusion || pokemon).getTypes(true).join('/'), '[silent]');
@@ -2269,7 +2269,8 @@ export const Rulesets: import('../sim/dex-formats').FormatDataTable = {
 			newSpecies.baseStats = allies[2].baseSpecies.baseStats;
 			newSpecies.bst = allies[2].baseSpecies.bst;
 			pokemon.item = allies[0].item;
-			pokemon.ability = pokemon.baseAbility = allies[1].ability;
+			pokemon.ability1 = pokemon.baseAbility1 = allies[1].ability1;
+			pokemon.ability2 = pokemon.baseAbility2 = allies[1].ability2 || '';
 			pokemon.set.evs = allies[2].set.evs;
 			pokemon.set.nature = allies[2].set.nature;
 			pokemon.set.ivs = allies[2].set.ivs;
@@ -2296,7 +2297,7 @@ export const Rulesets: import('../sim/dex-formats').FormatDataTable = {
 			const typesSet = new Set(species.types);
 			const bonusType = this.dex.types.get(target.teraType);
 			if (bonusType.exists) typesSet.add(bonusType.name);
-			return { ...species, types: [...typesSet] };
+			return { ...species, types: [...typesSet] } as any;
 		},
 		onSwitchIn(pokemon) {
 			this.add('-start', pokemon, 'typechange', (pokemon.illusion || pokemon).getTypes(true).join('/'), '[silent]');
@@ -3241,6 +3242,17 @@ export const Rulesets: import('../sim/dex-formats').FormatDataTable = {
 			}
 			const speciesMods = [...this.ruleTable.keys()].map(r => this.dex.data.Rulesets[r]).filter(r => r?.onModifySpecies);
 			if (!speciesMods.length) throw new Error('This format has no rules that modify base stats.');
+		},
+	},
+
+	//#region Indigo Starstorm Rulesets
+	indigostarstormtimer: {
+		effectType: 'ValidatorRule',
+		name: 'Indigo Starstorm Timer',
+		desc: "15 sec Team Preview / 20 min Your Time / 30 sec per turn",
+		// Timer settings are handled by the client/server
+		onBegin() {
+			this.add('rule', 'Indigo Starstorm Timer: 15s Team Preview, 20min Your Time, 30s per turn');
 		},
 	},
 };
