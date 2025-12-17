@@ -52,18 +52,22 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 				this.add('-status', target, 'slp', '[from] ability: ' + sourceEffect.name, `[of] ${source}`);
 			} else if (sourceEffect && sourceEffect.effectType === 'Move') {
 				this.add('-status', target, 'slp', `[from] move: ${sourceEffect.name}`);
-			} else {
-				this.add('-status', target, 'slp');
-			}
-			// 1-3 turns
-			this.effectState.startTime = this.random(2, 5);
-			this.effectState.time = this.effectState.startTime;
+		} else {
+			this.add('-status', target, 'slp');
+		}
+		// 1-3 turns
+		this.effectState.startTime = this.random(2, 5);
+		// Electric types have halved sleep timer
+		if (target.hasType('Electric')) {
+			this.effectState.startTime = Math.ceil(this.effectState.startTime / 2);
+		}
+		this.effectState.time = this.effectState.startTime;
 
-			if (target.removeVolatile('nightmare')) {
-				this.add('-end', target, 'Nightmare', '[silent]');
-			}
-		},
-		onBeforeMovePriority: 10,
+		if (target.removeVolatile('nightmare')) {
+			this.add('-end', target, 'Nightmare', '[silent]');
+		}
+	},
+	onBeforeMovePriority: 10,
 		onBeforeMove(pokemon, target, move) {
 			if (pokemon.hasAbility('earlybird')) {
 				pokemon.statusState.time--;
@@ -853,9 +857,9 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 		name: 'Arceus',
 		onTypePriority: 1,
 		onType(types, pokemon) {
-			if (pokemon.transformed || pokemon.ability !== 'multitype' && this.gen >= 8) return types;
-			let type: string | undefined = 'Normal';
-			if (pokemon.ability === 'multitype') {
+		if (pokemon.transformed || pokemon.ability1 !== 'multitype' && this.gen >= 8) return types;
+		let type: string | undefined = 'Normal';
+		if (pokemon.ability1 === 'multitype') {
 				type = pokemon.getItem().onPlate;
 				if (!type) {
 					type = 'Normal';
@@ -868,9 +872,9 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 		name: 'Silvally',
 		onTypePriority: 1,
 		onType(types, pokemon) {
-			if (pokemon.transformed || pokemon.ability !== 'rkssystem' && this.gen >= 8) return types;
-			let type: string | undefined = 'Normal';
-			if (pokemon.ability === 'rkssystem') {
+		if (pokemon.transformed || pokemon.ability1 !== 'rkssystem' && this.gen >= 8) return types;
+		let type: string | undefined = 'Normal';
+		if (pokemon.ability1 === 'rkssystem') {
 				type = pokemon.getItem().onMemory;
 				if (!type) {
 					type = 'Normal';

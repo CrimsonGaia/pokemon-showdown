@@ -2222,6 +2222,20 @@ export class Pokemon {
 				}
 			}
 		}
+		
+		// Check flag-based effectiveness (weakness/resistance to move flags)
+		for (const defendingType of this.getTypes()) {
+			const typeData = this.battle.dex.types.get(defendingType);
+			if (!typeData) continue;
+			
+			for (const flag in move.flags) {
+				const flagMod = typeData.damageTaken[flag];
+				if (flagMod === 1) totalTypeMod += 0.5; // weak to this flag (1.5x)
+				if (flagMod === 2) totalTypeMod -= 0.5; // resist this flag (÷1.5)
+				// flagMod === 3 (immunity) is already handled by runImmunity checks
+			}
+		}
+		
 		if (this.species.name === 'Terapagos-Terastal' && this.hasAbility('Tera Shell') &&
 			!this.battle.suppressingAbility(this)) {
 			// Check which ability slot has Tera Shell

@@ -1155,6 +1155,15 @@ export class BattleActions {
 		const pokemonOriginalHP = pokemon.hp;
 		if (damagedDamage.length && !isSecondary && !isSelf) {
 			this.battle.runEvent('DamagingHit', damagedTargets, pokemon, move, damagedDamage);
+			// Electric types become charged when hit by Electric-type moves
+			for (const t of damagedTargets) {
+				if (move.type === 'Electric' && t.hasType('Electric')) {
+					if (!t.volatiles['charged']) {
+						t.addVolatile('charged');
+						this.battle.add('-start', t, 'charged', '[from] Electric type');
+					}
+				}
+			}
 			if (moveData.onAfterHit) {
 				for (const t of damagedTargets) {
 					this.battle.singleEvent('AfterHit', moveData, {}, t, pokemon, move);
@@ -1526,7 +1535,7 @@ export class BattleActions {
 			}
 			maxMove.category = move.category;
 		}
-		maxMove.baseMove = move.id;
+			maxMove.baseMove = move.id;
 		// copy the priority for Psychic Terrain, Quick Guard
 		maxMove.priority = move.priority;
 		maxMove.isZOrMaxPowered = true;
@@ -1821,22 +1830,37 @@ export class BattleActions {
 
 		// types
 		let typeMod = target.runEffectiveness(move);
-		typeMod = this.battle.clampIntRange(typeMod, -6, 6);
+		// Clamp to -6 to 6 range (supports decimal values for flag effectiveness)
+		typeMod = Math.max(-6, Math.min(typeMod, 6));
 		target.getMoveHitData(move).typeMod = typeMod;
 		if (typeMod > 0) {
 			if (!suppressMessages) this.battle.add('-supereffective', target);
 
-			for (let i = 0; i < typeMod; i++) {
+			// Apply type effectiveness: each full point is 2x, each 0.5 is 1.5x
+			const fullSteps = Math.floor(typeMod);
+			const halfStep = typeMod % 1 >= 0.5;
+			for (let i = 0; i < fullSteps; i++) {
 				baseDamage *= 2;
 			}
+			if (halfStep) baseDamage = tr(baseDamage * 1.5);
 		}
 		if (typeMod < 0) {
 			if (!suppressMessages) this.battle.add('-resisted', target);
 
-			for (let i = 0; i > typeMod; i--) {
+			// Apply type resistance: each full point is ÷2, each 0.5 is ÷1.5
+			const absTypeMod = Math.abs(typeMod);
+			const fullSteps = Math.floor(absTypeMod);
+			const halfStep = absTypeMod % 1 >= 0.5;
+			for (let i = 0; i < fullSteps; i++) {
 				baseDamage = tr(baseDamage / 2);
 			}
+			if (halfStep) baseDamage = tr(baseDamage / 1.5);
 		}
+
+		if (move.type === 'Bug' && pokemon.hp <= pokemon.maxhp / 5) {baseDamage = this.battle.modify(baseDamage, 1.3); }
+		if (move.type === 'Fire' && pokemon.hp <= pokemon.maxhp / 5) { baseDamage = this.battle.modify(baseDamage, 1.3); }
+		if (move.type === 'Grass' && pokemon.hp <= pokemon.maxhp / 5) { baseDamage = this.battle.modify(baseDamage, 1.3); }
+		if (move.type === 'Water' && pokemon.hp <= pokemon.maxhp / 5) { baseDamage = this.battle.modify(baseDamage, 1.3); }
 
 		if (isCrit && !suppressMessages) this.battle.add('-crit', target);
 

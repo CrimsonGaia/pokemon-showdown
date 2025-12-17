@@ -1210,6 +1210,30 @@ export const Scripts: ModdedBattleScriptsData = {
 					this.runMove(move.id, dancer, dancersTargetLoc, { sourceEffect: dancer.getAbility(), externalMove: true });
 				}
 			}
+			// Musician works identically to Dancer, but for sound moves
+			if (move.flags['sound'] && moveDidSomething && !move.isExternal) {
+				const musicians = [];
+				for (const currentPoke of this.battle.getAllActive()) {
+					if (pokemon === currentPoke) continue;
+					if (currentPoke.hasAbility('musician') && !currentPoke.isSemiInvulnerable()) {
+						musicians.push(currentPoke);
+					}
+				}
+				musicians.sort(
+					(a, b) => -(b.storedStats['spe'] - a.storedStats['spe']) || b.abilityState1.effectOrder - a.abilityState1.effectOrder
+				);
+				const targetOf1stSound = this.battle.activeTarget!;
+				for (const musician of musicians) {
+					if (this.battle.faintMessages()) break;
+					if (musician.fainted) continue;
+					this.battle.add('-activate', musician, 'ability: ' + musician.getAbility().name);
+					const musiciansTarget = !targetOf1stSound.isAlly(musician) && pokemon.isAlly(musician) ?
+						targetOf1stSound :
+						pokemon;
+					const musiciansTargetLoc = musician.getLocOf(musiciansTarget);
+					this.runMove(move.id, musician, musiciansTargetLoc, { sourceEffect: musician.getAbility(), externalMove: true });
+				}
+			}
 			if (noLock && pokemon.volatiles['lockedmove']) delete pokemon.volatiles['lockedmove'];
 			this.battle.faintMessages();
 			this.battle.checkWin();
@@ -1755,18 +1779,81 @@ export const Scripts: ModdedBattleScriptsData = {
 	},
 	pokemon: {
 		isGrounded(negateImmunity) {
-			if ('gravity' in this.battle.field.pseudoWeather) return true;
-			if ('ingrain' in this.volatiles && this.battle.gen >= 4) return true;
-			if ('smackdown' in this.volatiles) return true;
-			const item = (this.ignoringItem() ? '' : this.item);
-			if (item === 'ironball') return true;
-			// If a Fire/Flying type uses Burn Up and Roost, it becomes ???/Flying-type, but it's still grounded.
-			if (!negateImmunity && this.hasType('Flying') && !(this.hasType('???') && 'roost' in this.volatiles)) return false;
-			if (this.hasAbility('levitate') && !this.battle.suppressingAbility(this)) return null;
-			if ('magnetrise' in this.volatiles) return false;
-			if ('riseabove' in this.volatiles) return false;
-			if ('telekinesis' in this.volatiles) return false;
-			return item !== 'airballoon';
+			// Calculate current grounding state
+			let isCurrentlyGrounded = true;
+			
+			if ('gravity' in this.battle.field.pseudoWeather) isCurrentlyGrounded = true;
+			else if ('ingrain' in this.volatiles && this.battle.gen >= 4) isCurrentlyGrounded = true;
+			else if ('smackdown' in this.volatiles) isCurrentlyGrounded = true;
+			else {
+				const item = (this.ignoringItem() ? '' : this.item);
+				if (item === 'ironball') isCurrentlyGrounded = true;
+				// If a Fire/Flying type uses Burn Up and Roost, it becomes ???/Flying-type, but it's still grounded.
+				else if (!negateImmunity && this.hasType('Flying') && !(this.hasType('???') && 'roost' in this.volatiles)) isCurrentlyGrounded = false;
+				else if (this.hasAbility('levitate') && !this.battle.suppressingAbility(this)) isCurrentlyGrounded = false;
+				else if ('magnetrise' in this.volatiles) isCurrentlyGrounded = false;
+				else if ('riseabove' in this.volatiles) isCurrentlyGrounded = false;
+				else if ('telekinesis' in this.volatiles) isCurrentlyGrounded = false;
+				else if (item === 'airballoon') isCurrentlyGrounded = false;
+			}
+			
+			// Check if grounding status changed from false to true
+			const wasGrounded = this.volatiles['trackgroundedstate']?.grounded;
+			if (wasGrounded === false && isCurrentlyGrounded === true && !negateImmunity && this.isActive) {
+				// Apply grounded hazards immediately
+				const side = this.side;
+				
+				// Sticky Web
+				if (side.sideConditions['stickyweb']) {
+					if (!this.hasItem('heavydutyboots')) {
+						this.battle.add('-activate', this, 'move: Sticky Web');
+						this.battle.boost({ spe: -1 }, this, side.foe.active[0], this.battle.dex.getActiveMove('stickyweb'));
+					}
+				}
+				
+				// Spikes
+				if (side.sideConditions['spikes']) {
+					if (!this.hasItem('heavydutyboots') && !this.hasType('Bug')) {
+						const layers = side.sideConditions['spikes'].layers;
+						const damageAmounts = [0, 3, 4, 6]; // 1/8, 1/6, 1/4
+						this.battle.damage(damageAmounts[layers] * this.maxhp / 24);
+					}
+				}
+				
+				// Toxic Spikes
+				if (side.sideConditions['toxicspikes']) {
+					if (this.hasType('Poison')) {
+						this.battle.add('-sideend', side, 'move: Toxic Spikes', `[of] ${this}`);
+						side.removeSideCondition('toxicspikes');
+					} else if (!this.hasType('Steel') && !this.hasItem('heavydutyboots') && !this.hasType('Bug')) {
+						const layers = side.sideConditions['toxicspikes'].layers;
+						if (layers >= 2) {
+							this.trySetStatus('tox', side.foe.active[0]);
+						} else {
+							this.trySetStatus('psn', side.foe.active[0]);
+						}
+					}
+				}
+				
+				// Steel Spikes (if present in your mod)
+				if (side.sideConditions['steelspikes']) {
+					if (!this.hasItem('heavydutyboots')) {
+						const layers = side.sideConditions['steelspikes'].layers || 1;
+						const damageAmounts = [0, 3, 4, 6]; // 1/8, 1/6, 1/4
+						this.battle.damage(damageAmounts[layers] * this.maxhp / 24);
+					}
+				}
+			}
+			
+			// Update the tracked grounding state
+			if (!this.volatiles['trackgroundedstate']) {
+				this.addVolatile('trackgroundedstate' as ID);
+			}
+			if (this.volatiles['trackgroundedstate']) {
+				this.volatiles['trackgroundedstate'].grounded = isCurrentlyGrounded;
+			}
+			
+			return isCurrentlyGrounded;
 		},
 		effectiveWeather() {
 			const weather = this.battle.field.effectiveWeather();

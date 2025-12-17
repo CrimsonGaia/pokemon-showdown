@@ -4,7 +4,15 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 	
 	
 	
-	//#region PHYSICAL MOVES
+
+
+
+
+
+
+
+
+	
 	accelerock: {
 		num: 709,
 		accuracy: 100,
@@ -556,6 +564,19 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		critRatio: 4,
 		flags: { weapon: 1, protect: 1, mirror: 1, metronome: 1 },
 		multihit: [2, 5],
+		onAfterMoveSecondarySelf(pokemon, target, move) {
+			if (pokemon.species.name === 'Lucario' || pokemon.species.baseSpecies === 'Lucario') {
+				// Clear any existing aura status before applying Weapon Conjuration
+				if (pokemon.status === 'aura') {
+					pokemon.clearStatus();
+				}
+				pokemon.setStatus('aura', pokemon, {
+					auraAbility: 'weaponconjuration',
+					auraName: 'Weapon Conjuration',
+					auraDuration: 3,
+				} as any);
+			}
+		},
 		secondary: null,
 		target: "normal",
 	},
@@ -813,6 +834,35 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			}
 		},
 		secondary: {}, // Sheer Force-boosted
+		target: "normal",
+	},
+	chistrike: {
+		num: -1001,
+		accuracy: 100,
+		basePower: 80,
+		type: "Fighting",
+		category: "Physical",
+		name: "Chi Strike",
+		pp: 16,
+		priority: 0,
+		critRatio: 6,
+		flags: { aura: 1, contact: 1, protect: 1, mirror: 1, punch: 1, metronome: 1 },
+		secondary: {
+			chance: 30,
+			self: {
+				onHit(source) {
+					// Clear any existing aura status before applying Indomitable Spirit
+					if (source.status === 'aura') {
+						source.clearStatus();
+					}
+					source.setStatus('aura', source, {
+						auraAbility: 'indomitablespirit',
+						auraName: 'Indomitable Spirit',
+						auraDuration: 4,
+					} as any);
+				},
+			},
+		},
 		target: "normal",
 	},
 	circlethrow: {
@@ -1683,7 +1733,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 				pokemon.setStatus('aura', pokemon, {
 					auraAbility: 'fellstinger',
 					auraName: 'Fell Stinger',
-					auraDuration: 5,
+					auraDuration: 3,
 				} as any);
 			}
 		},
@@ -1999,6 +2049,16 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			onStart(pokemon) { this.add('-singleturn', pokemon, 'move: Focus Punch'); },
 			onHit(pokemon, source, move) { if (move.category !== 'Status') { this.effectState.lostFocus = true; } },
 			onTryAddVolatile(status, pokemon) { if (status.id === 'flinch') return null; },
+		},
+		onHit(target, source) {
+			if (target.status === 'aura') {
+				target.clearStatus();
+			}
+			target.setStatus('aura', target, {
+				auraAbility: 'indomitablespirit',
+				auraName: 'Indomitable Spirit',
+				auraDuration: 4,
+			} as any);
 		},
 		secondary: null,
 		target: "normal",
@@ -4546,23 +4606,35 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 	},
 	skyattack: {
 		num: 143,
-		accuracy: 90,
-		basePower: 140,
+		accuracy: 95,
+		basePower: 115,
 		type: "Flying",
 		category: "Physical",
 		name: "Sky Attack",
 		pp: 5,
 		priority: 0,
 		critRatio: 7,
-		flags: { charge: 1, protect: 1, mirror: 1, distance: 1, metronome: 1, nosleeptalk: 1, failinstruct: 1 },
-		onTryMove(attacker, defender, move) {
-			if (attacker.removeVolatile(move.id)) { return; }
-			this.add('-prepare', attacker, move.name);
-			if (!this.runEvent('ChargeMove', attacker, defender, move)) { return; }
-			attacker.addVolatile('twoturnmove', defender);
-			return null;
+		flags: { magic: 1, protect: 1, mirror: 1, distance: 1, metronome: 1 },
+		onTry(source, target) {
+			if (source.volatiles['curse']) { this.add('-fail', source, 'move: Sky Attack', '[cursed]');
+				return null;
+			}
+			if (source.volatiles['skyattackinterrupted']) { this.add('-fail', source, 'move: Sky Attack', '[interrupted]');
+				source.removeVolatile('skyattackinterrupted');
+				return null;
+			}
 		},
-		secondary: { chance: 30, volatileStatus: 'flinch', },
+		onPrepareHit(target, source) { this.add('-start', source, 'move: Sky Attack', '[glowing]'); },
+		beforeTurnCallback(pokemon) { pokemon.addVolatile('skyattackglowing'); },
+		condition: {
+			duration: 1,
+			onDamagingHit(damage, target, source, move) { if (move.type === 'Dark' || move.flags?.drain || move.flags?.shadow) {
+					target.addVolatile('skyattackinterrupted');
+					this.add('-message', `${target.name}'s glowing was interrupted!`);
+				}
+			},
+		},
+		secondary: { chance: 20, volatileStatus: 'flinch', },
 		target: "any",
 	},
 	skydrop: {
@@ -6383,6 +6455,26 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		secondary: { chance: 30, status: 'par', },
 		target: "allAdjacent",
 	},
+	discombobulate: {
+		num: 821,
+		accuracy: 100,
+		basePower: 75,
+		type: "Psychic",
+		category: "Special",
+		name: "Discombobulate",
+		pp: 15,
+		priority: 0,
+		critRatio: 3,
+		flags: { protect: 1, mirror: 1, metronome: 1 },
+		onAfterHit(target, source, move) {
+			if (target.hp) {
+				target.addVolatile('discombobulated');
+				target.addVolatile('confusion');
+			}
+		},
+		secondary: { chance: 20, volatileStatus: 'confusion' },
+		target: "normal",
+	},
 	doomdesire: {
 		num: 353,
 		accuracy: 100,
@@ -6820,20 +6912,20 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		secondary: {
 			chance: 70,
 			onHit(target, source, move) {
-				if (target.hasType('Dragon')) { target.setStatus('dragonblight', source); }
-				else if (target.hasType('Electric')) { target.setStatus('par', source); }
+				if (target.hasType('Dragon')) { target.setStatus('dragonblight', source, null, true); }
+				else if (target.hasType('Electric')) { target.setStatus('par', source, null, true); }
 				else if (target.hasType('Fighting')) {
 					target.setStatus('aura', target, {
 						auraAbility: 'migraine',
 						auraName: 'Migraine',
-						auraDuration: 7,
+						auraDuration: 2,
 					} as any);
 				}
-				else if (target.hasType('Fire')) { target.setStatus('brn', source); }
+				else if (target.hasType('Fire')) { target.setStatus('brn', source, null, true); }
 				else if (target.hasType('Ghost')) { target.addVolatile('curse', source); }
-				else if (target.hasType('Ice')) { target.setStatus('frostbite', source); }
-				else if (target.hasType('Normal')) { target.setStatus('drowsy', source); }
-				else if (target.hasType('Poison')) { target.setStatus('psn', source); }
+				else if (target.hasType('Ice')) { target.setStatus('frostbite', source, null, true); }
+				else if (target.hasType('Normal')) { target.setStatus('drowsy', source, null, true); }
+				else if (target.hasType('Poison')) { target.setStatus('psn', source, null, true); }
 				else if (target.hasType('Psychic')) { target.addVolatile('confusion', source); }
 			},
 		},
@@ -8306,6 +8398,38 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
         secondary: { chance: 20, boosts: {def: -1,}, },
 		target: "normal",
 	},
+	psywave: {
+		num: 149,
+		accuracy: 100,
+		basePower: 0,
+		damageCallback(pokemon, target) {
+			// Scale damage based on target's Psychic-type weakness/resistance
+			let baseDamage = 120; // neutral
+			let effectiveness = 0;
+			for (const type of target.getTypes()) { effectiveness += this.dex.getEffectiveness('Psychic', type); }
+			if (effectiveness <= -2) { baseDamage = 60; } 
+			else if (effectiveness === -1) { baseDamage = 90; } 
+			else if (effectiveness === 0) { baseDamage = 120; } 
+			else if (effectiveness === 1) { baseDamage = 150; } 
+			else if (effectiveness >= 2) { baseDamage = 180; }
+			
+			// Scale damage based on user's level (25% damage at level 20, 100% at level 100)
+			// Formula: 0.25 + (level - 20) * 0.75 / 80
+			// Level 20: 0.25 (25%), Level 100: 1.0 (100%)
+			const levelScaling = Math.max(0.25, Math.min(1.0, 0.25 + (pokemon.level - 20) * 0.75 / 80));
+			baseDamage = Math.floor(baseDamage * levelScaling);
+			
+			return baseDamage;
+		},
+		type: "Psychic",
+		category: "Special",
+		name: "Psywave",
+		pp: 15,
+		priority: 0,
+		flags: { pulse: 1, protect: 1, mirror: 1, metronome: 1 },
+		secondary: null,
+		target: "normal",
+	},
 	relicsong: {
 		num: 547,
 		accuracy: 100,
@@ -8993,7 +9117,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			if (targetPriority < userMovePriority) { if (target.addVolatile('tripped')) { this.add('-start', target, 'tripped'); } }
 		},
 		target: "allAdjacent",
-        onModifyType(move, pokemon, target) { if (pokemon.battle.field.isTerrain('toxicterrain')) { move.type2 = 'Poison'; } },
 	},
 	swift: {
 		num: 129,
@@ -9008,6 +9131,31 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		flags: { magic: 1, protect: 1, mirror: 1, metronome: 1 },
 		secondary: null,
 		target: "allAdjacentFoes",
+	},
+	synchronoise: {
+		num: 485,
+		accuracy: 100,
+		basePower: 75,
+		type: "Psychic",
+		category: "Special",
+		name: "Synchronoise",
+		pp: 10,
+		priority: 0,
+		critRatio: 1,
+		flags: { protect: 1, mirror: 1, metronome: 1, heal: 1 },
+		// Don't damage allies, only enemies
+		onModifyMove(move, source) { move.onTryHit = function (target, source) { if (source.isAlly(target)) return null; }; },
+		// 2x damage if target shares a type with the user
+		onBasePower(basePower, source, target, move) { if (target.hasType(source.getTypes())) { return this.chainModify(2); } },
+		onAfterMoveSecondarySelf(source, target, move) {
+			if (!target || target.fainted) return;
+			for (const ally of source.adjacentAllies()) { // Heal 1/4HP if ally shares a type, otherwise 1/8HP
+				const healAmount = ally.hasType(source.getTypes()) ? 4 : 8;
+				this.heal(ally.maxhp / healAmount, ally, source);
+			}
+		},
+		secondary: null,
+		target: "allAdjacent",
 	},
 	syrupbomb: {
 		num: 903,
@@ -9047,6 +9195,35 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		multihit: 2,
 		secondary: null,
 		target: "normal",
+	},
+	teatime: {
+		num: 752,
+		accuracy: 100,
+		basePower: 80,
+		type: "Ghost",
+		category: "Special",
+		name: "Teatime",
+		pp: 10,
+		priority: 0,
+		critRatio: 4,
+		flags: { protect: 1, mirror: 1, metronome: 1 },
+		onHitField(target, source, move) {
+			const targets: Pokemon[] = [];
+			for (const pokemon of this.getAllActive()) {
+				if (this.runEvent('Invulnerability', pokemon, source, move) === false) { this.add('-miss', source, pokemon); } 
+				else if (this.runEvent('TryHit', pokemon, source, move) && pokemon.getItem().isBerry) { targets.push(pokemon); }
+			}
+			this.add('-fieldactivate', 'move: Teatime');
+			if (!targets.length) {
+				this.add('-fail', source, 'move: Teatime');
+				this.attrLastMove('[still]');
+				return this.NOT_FAIL;
+			}
+			for (const pokemon of targets) { pokemon.eatItem(true); }
+		},
+		secondary: { chance: 20, status: 'brn' },
+		target: "allAdjacentFoes",
+
 	},
 	terablast: {
 		num: 851,
@@ -10015,7 +10192,13 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 				return this.NOT_FAIL;
 			}
 		},
-		self: { onHit(source) { source.skipBeforeSwitchOutEventFlag = true; }, },
+		self: {
+			onHit(source) {
+				source.skipBeforeSwitchOutEventFlag = true;
+				// Clear boosts before the copyvolatile switch happens
+				source.clearBoosts();
+			},
+		},
 		selfSwitch: 'copyvolatile',
 		secondary: null,
 		target: "self",
@@ -12278,8 +12461,11 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		priority: 0,
 		flags: { magic: 1, protect: 1, reflectable: 1, mirror: 1, allyanim: 1, metronome: 1, powder: 1 },
 		onHit(target) {
-			if (target.getTypes().join() === 'Psychic' || !target.setType('Psychic')) return false;
-			this.add('-start', target, 'typechange', 'Psychic');
+			target.addVolatile('magicdust');
+			const volatile = target.volatiles['magicdust'];
+			if (volatile) {
+				volatile.duration = 3;
+			}
 		},
 		secondary: null,
 		target: "normal",
@@ -13683,7 +13869,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			if (move && move.name === 'Sleep Talk') {
 				return true;
 			}
-			if (source.status === 'slp' || source.hasAbility('comatose')) return false;
+			if (source.status === 'slp') return false;
 			if (source.hp === source.maxhp) {
 				this.add('-fail', source, 'heal');
 				return null;
@@ -13943,6 +14129,26 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		secondary: null,
 		target: "self",
 	},
+	shatteredpsyche: {
+		num: 648,
+		accuracy: true,
+		basePower: 0,
+		type: "Psychic",
+		category: "Status",
+		name: "Shattered Psyche",
+		pp: 8,
+		priority: 0,
+		flags: { aura: 1, protect: 1, reflectable: 1, allyanim: 1, metronome: 1 },
+		onHit(target, source) {
+			target.setStatus('aura', target, {
+				auraAbility: 'migraine',
+				auraName: 'Migraine',
+				auraDuration: 5,
+			} as any);
+		},
+		secondary: null,
+		target: "normal",
+	},
 	shedtail: {
 		num: 880,
 		accuracy: true,
@@ -14083,6 +14289,20 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		},
 		target: "self",
 
+	},
+	silverpowder: {
+		num: 600,
+		accuracy: 100,
+		basePower: 0,
+		type: "Bug",
+		category: "Status",
+		name: "Powder",
+		pp: 20,
+		priority: 0,
+		flags: { protect: 1, reflectable: 1, mirror: 1, metronome: 1, powder: 1 },
+		onHitField(target, source, move) { for (const foe of source.foes()) { foe.side.addSideCondition('silverpowder'); } },
+		secondary: null,
+		target: "allAdjacentFoes",
 	},
 	simplebeam: {
 		num: 493,
@@ -14393,7 +14613,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 				this.effectState.layers++;
 			},
 			onSwitchIn(pokemon) {
-				if (!pokemon.isGrounded() || pokemon.hasItem('heavydutyboots')) return;
+				if (!pokemon.isGrounded() || pokemon.hasItem('heavydutyboots') || pokemon.hasType('Bug')) return;
 				const damageAmounts = [0, 3, 4, 6]; // 1/8, 1/6, 1/4
 				this.damage(damageAmounts[this.effectState.layers] * pokemon.maxhp / 24);
 			},
@@ -15067,34 +15287,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		secondary: null,
 		target: "normal",
 	},
-	teatime: {
-		num: 752,
-		accuracy: true,
-		basePower: 0,
-		type: "Normal",
-		category: "Status",
-		name: "Teatime",
-		pp: 10,
-		priority: 0,
-		flags: { bypasssub: 1, metronome: 1 },
-		onHitField(target, source, move) {
-			const targets: Pokemon[] = [];
-			for (const pokemon of this.getAllActive()) {
-				if (this.runEvent('Invulnerability', pokemon, source, move) === false) { this.add('-miss', source, pokemon); } 
-				else if (this.runEvent('TryHit', pokemon, source, move) && pokemon.getItem().isBerry) { targets.push(pokemon); }
-			}
-			this.add('-fieldactivate', 'move: Teatime');
-			if (!targets.length) {
-				this.add('-fail', source, 'move: Teatime');
-				this.attrLastMove('[still]');
-				return this.NOT_FAIL;
-			}
-			for (const pokemon of targets) { pokemon.eatItem(true); }
-		},
-		secondary: null,
-		target: "all",
-
-	},
 	teeterdance: {
 		num: 298,
 		accuracy: 100,
@@ -15335,7 +15527,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 				if (pokemon.hasType('Poison')) {
 					this.add('-sideend', pokemon.side, 'move: Toxic Spikes', `[of] ${pokemon}`);
 					pokemon.side.removeSideCondition('toxicspikes');
-				} else if (pokemon.hasType('Steel') || pokemon.hasItem('heavydutyboots')) {
+				} else if (pokemon.hasType('Steel') || pokemon.hasItem('heavydutyboots') || pokemon.hasType('Bug')) {
 				} else if (this.effectState.layers >= 2) { pokemon.trySetStatus('tox', pokemon.side.foe.active[0]); } 
 				else { pokemon.trySetStatus('psn', pokemon.side.foe.active[0]); }
 			},
@@ -17037,21 +17229,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		secondary: null,
 		target: "normal",
 	},
-	shatteredpsyche: {
-		num: 648,
-		accuracy: true,
-		basePower: 1,
-		type: "Psychic",
-		category: "Physical",
-		isNonstandard: "Past",
-		name: "Shattered Psyche",
-		pp: 1,
-		priority: 0,
-		flags: {},
-		isZ: "psychiumz",
-		secondary: null,
-		target: "normal",
-	},
 	sinisterarrowraid: {
 		num: 695,
 		accuracy: true,
@@ -18067,21 +18244,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		secondary: { chance: 10, self: {boosts: {atk: 1, def: 1, spa: 1, spd: 1, spe: 1,},}, },
 		target: "normal",
 	},
-	psywave: {
-		num: 149,
-		accuracy: 100,
-		basePower: 0,
-		damageCallback(pokemon) { return (this.random(50, 151) * pokemon.level) / 100; },
-		type: "Psychic",
-		category: "Special",
-		isNonstandard: "Past",
-		name: "Psywave",
-		pp: 15,
-		priority: 0,
-		flags: { protect: 1, mirror: 1, metronome: 1 },
-		secondary: null,
-		target: "normal",
-	},
 	razorwind: {
 		num: 13,
 		accuracy: 100,
@@ -18179,21 +18341,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		flags: { protect: 1, mirror: 1, metronome: 1 },
 		secondary: null,
 		target: "normal",
-	},
-	synchronoise: {
-		num: 485,
-		accuracy: 100,
-		basePower: 120,
-		type: "Psychic",
-		category: "Special",
-		isNonstandard: "Past",
-		name: "Synchronoise",
-		pp: 10,
-		priority: 0,
-		flags: { protect: 1, mirror: 1, metronome: 1 },
-		onTryImmunity(target, source) { return target.hasType(source.getTypes()); },
-		secondary: null,
-		target: "allAdjacent",
 	},
 	technoblast: {
 		num: 546,
@@ -18824,34 +18971,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		flags: { protect: 1, reflectable: 1, mirror: 1, bypasssub: 1, allyanim: 1, metronome: 1 },
 		volatileStatus: 'foresight',
 		onTryHit(target) { if (target.volatiles['miracleeye']) return false; },
-		secondary: null,
-		target: "normal",
-	},
-	powder: {
-		num: 600,
-		accuracy: 100,
-		basePower: 0,
-		type: "Bug",
-		category: "Status",
-		isNonstandard: "Past",
-		name: "Powder",
-		pp: 20,
-		priority: 1,
-		flags: { protect: 1, reflectable: 1, mirror: 1, bypasssub: 1, metronome: 1, powder: 1 },
-		volatileStatus: 'powder',
-		condition: {
-			duration: 1,
-			onStart(target) { this.add('-singleturn', target, 'Powder'); },
-			onTryMovePriority: -1,
-			onTryMove(pokemon, target, move) {
-				if (move.type === 'Fire') {
-					this.add('-activate', pokemon, 'move: Powder');
-					this.damage(this.clampIntRange(Math.round(pokemon.maxhp / 4), 1));
-					this.attrLastMove('[still]');
-					return false;
-				}
-			},
-		},
 		secondary: null,
 		target: "normal",
 	},

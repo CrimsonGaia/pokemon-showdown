@@ -162,7 +162,7 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 &&
-				pokemon.hasAbility('gluttony') && pokemon.abilityState.gluttony)) {
+				pokemon.hasAbility('gluttony') && pokemon.abilityState1.gluttony)) {
 				pokemon.eatItem();
 			}
 		},
@@ -271,7 +271,7 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 &&
-				pokemon.hasAbility('gluttony') && pokemon.abilityState.gluttony)) {
+				pokemon.hasAbility('gluttony') && pokemon.abilityState1.gluttony)) {
 				pokemon.eatItem();
 			}
 		},
@@ -1235,7 +1235,7 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 			if (
 				priority <= 0 &&
 				(pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 &&
-					pokemon.hasAbility('gluttony') && pokemon.abilityState.gluttony))
+					pokemon.hasAbility('gluttony') && pokemon.abilityState1.gluttony))
 			) {
 				if (pokemon.eatItem()) {
 					this.add('-activate', pokemon, 'item: Custap Berry', '[consumed]');
@@ -2045,7 +2045,7 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 &&
-				pokemon.hasAbility('gluttony') && pokemon.abilityState.gluttony)) {
+				pokemon.hasAbility('gluttony') && pokemon.abilityState1.gluttony)) {
 				pokemon.eatItem();
 			}
 		},
@@ -2391,7 +2391,7 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 &&
-				pokemon.hasAbility('gluttony') && pokemon.abilityState.gluttony)) {
+				pokemon.hasAbility('gluttony') && pokemon.abilityState1.gluttony)) {
 				pokemon.eatItem();
 			}
 		},
@@ -2876,7 +2876,7 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 &&
-				pokemon.hasAbility('gluttony') && pokemon.abilityState.gluttony)) {
+				pokemon.hasAbility('gluttony') && pokemon.abilityState1.gluttony)) {
 				pokemon.eatItem();
 			}
 		},
@@ -3218,7 +3218,7 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 &&
-				pokemon.hasAbility('gluttony') && pokemon.abilityState.gluttony)) {
+				pokemon.hasAbility('gluttony') && pokemon.abilityState1.gluttony)) {
 				pokemon.eatItem();
 			}
 		},
@@ -3353,7 +3353,7 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 &&
-				pokemon.hasAbility('gluttony') && pokemon.abilityState.gluttony)) {
+				pokemon.hasAbility('gluttony') && pokemon.abilityState1.gluttony)) {
 				pokemon.eatItem();
 			}
 		},
@@ -3649,7 +3649,7 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 &&
-				pokemon.hasAbility('gluttony') && pokemon.abilityState.gluttony)) {
+				pokemon.hasAbility('gluttony') && pokemon.abilityState1.gluttony)) {
 				pokemon.eatItem();
 			}
 		},
@@ -4017,7 +4017,7 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 		},
 		onResidual(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 &&
-				pokemon.hasAbility('gluttony') && pokemon.abilityState.gluttony)) {
+				pokemon.hasAbility('gluttony') && pokemon.abilityState1.gluttony)) {
 				pokemon.eatItem();
 			}
 		},
@@ -4482,7 +4482,7 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 &&
-				pokemon.hasAbility('gluttony') && pokemon.abilityState.gluttony)) {
+				pokemon.hasAbility('gluttony') && pokemon.abilityState1.gluttony)) {
 				pokemon.eatItem();
 			}
 		},
@@ -5415,7 +5415,7 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 &&
-				pokemon.hasAbility('gluttony') && pokemon.abilityState.gluttony)) {
+				pokemon.hasAbility('gluttony') && pokemon.abilityState1.gluttony)) {
 				pokemon.eatItem();
 			}
 		},
@@ -5910,7 +5910,7 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 &&
-				pokemon.hasAbility('gluttony') && pokemon.abilityState.gluttony)) {
+				pokemon.hasAbility('gluttony') && pokemon.abilityState1.gluttony)) {
 				pokemon.eatItem();
 			}
 		},
@@ -7644,7 +7644,7 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 &&
-				pokemon.hasAbility('gluttony') && pokemon.abilityState.gluttony)) {
+				pokemon.hasAbility('gluttony') && pokemon.abilityState1.gluttony)) {
 				pokemon.eatItem();
 			}
 		},
@@ -8071,3 +8071,4 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 		isNonstandard: "CAP",
 	},
 };
+
