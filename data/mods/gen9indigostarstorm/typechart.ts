@@ -52,6 +52,19 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Ground: 2,
 			Poison: 2,
 		},
+		affinity: {
+			binding: 5,
+			bite: 5,
+			claw: 5,
+			dance: 5,
+			drain: 5,
+			sound: 5,
+		},
+		aversion: {
+			aura: 6,
+			beam: 6,
+			kick: 6,
+		},
 		HPivs: { atk: 30, def: 30, spd: 30 },
 		HPdvs: { atk: 13, def: 13 },
 	},
@@ -84,6 +97,19 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Dark: 2,
 			Ghost: 2,
 		},
+		affinity: {
+			aura: 5,
+			magic: 5,
+			pulse: 5,
+			shadow: 5,
+			weapon: 5,
+		},
+		aversion: {
+			beam: 6,
+			heal: 6,
+			light: 6,
+			solar: 6,
+		},
 		HPivs: {},
 	},
 	dragon: {
@@ -111,6 +137,20 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Fire: 2,
 			Grass: 2,
 			Water: 2,
+		},
+		affinity: {
+			aura: 5,
+			bite: 5,
+			bomb: 5,
+			breath: 5,
+			bullet: 5,
+			claw: 5,
+			magic: 5,
+		},
+		aversion: {
+			kick: 6,
+			lunar: 6,
+			weapon: 6,
 		},
 		HPivs: { atk: 30 },
 		HPdvs: { def: 14 },
@@ -140,6 +180,19 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Electric: 2,
 			Flying: 2,
 			Steel: 2,
+		},
+		affinity: {
+			beam: 5,
+			explosive: 5,
+			drain: 5,
+			light: 5,
+			pulse: 5,
+			sound: 5,
+		},
+		aversion: {
+			bomb: 6,
+			powder: 6,
+			slice: 6,
 		},
 		HPivs: { spa: 30 },
 		HPdvs: { atk: 14 },
@@ -171,9 +224,26 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Fighting: 2,
 			Ghost: 2,
 		},
+		affinity: {
+			heal: 5,
+			lunar: 5,
+			magic: 5,
+			wing: 5,
+		},
+		aversion: {
+			beam: 6,
+			bite: 6,
+			breath: 6,
+			claw: 6,
+			crash: 6,
+			shadow: 6,
+			solar: 6,
+		},
 	},
 	fighting: {
 		damageTaken: {
+			//Immune
+			fear: 3,
 			// Weak
 			Fairy: 1,
 			Flying: 1,
@@ -198,6 +268,20 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Rock: 2,
 			Steel: 2,
 		},
+		affinity: {
+			aura: 5,
+			binding: 5,
+			dance: 5,
+			kick: 5,
+			punch: 5,
+			sweep: 5,
+			throw: 5,
+		},
+		aversion: {
+			bite: 6,
+			magic: 6,
+			weapon: 6,
+		},
 		HPivs: { def: 30, spa: 30, spd: 30, spe: 30 },
 		HPdvs: { atk: 12, def: 12 },
 	},
@@ -205,7 +289,8 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 		damageTaken: {
 			//Immune
 			brn: 3,
-			
+			frz: 3,
+			frostbite: 3,
 			hail: 3,
 			// Weak
 			Ground: 1,
@@ -231,6 +316,24 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Ice: 2,
 			Steel: 2,
 		},
+		affinity: {
+			aura: 5,
+			bomb: 5,
+			breath: 5,
+			explosive: 5,
+			light: 5,
+			wind: 5,
+		},
+		aversion: {
+			airborne: 6,
+			beam: 6,
+			crash: 6,
+			pierce: 6,
+			pulse: 6,
+			shadow: 6,
+			spin: 6,
+			weapon: 6,
+		},
 		HPivs: { atk: 30, spa: 30, spe: 30 },
 		HPdvs: { atk: 14, def: 12 },
 	},
@@ -238,6 +341,7 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 		damageTaken: {
 			//Immune
 			Ground: 3,
+			sweep: 3,
 			// Weak
 			Electric: 1,
 			Ice: 1,
@@ -261,16 +365,34 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Fighting: 2,
 			Grass: 2,
 		},
+		affinity: {
+			airborne: 5,
+			bomb: 5,
+			claw: 5,
+			pierce: 5,
+			wind: 5,
+			wing: 5,
+		},
+		aversion: {
+			binding: 6,
+			crush: 6,
+			kick: 6,
+			punch: 6,
+			sweep: 6,
+			weapon: 6,
+		},
 		HPivs: { hp: 30, atk: 30, def: 30, spa: 30, spd: 30 },
 		HPdvs: { atk: 12, def: 13 },
 	},
 	ghost: {
 		damageTaken: {
 			//Immune
+			binding: 3,
 			trapped: 3,
 			hail: 3,
 			Fighting: 3,
 			Normal: 3,
+			psn: 3,
 			// Weak
 			Dark: 1,
 			Ghost: 1,
@@ -292,6 +414,23 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			banal: 2,
 			Bug: 2,
 			Poison: 2,
+		},
+		affinity: {
+			airborne: 5,
+			magic: 5,
+			shadow: 5,
+			weapon: 5,
+			wind: 5,
+		},
+		aversion: {
+			aura: 6,
+			contact: 6,
+			crash: 6,
+			drain: 6,
+			explosive: 6,
+			heal: 6,
+			pierce: 6,
+			pulse: 6,
 		},
 		HPivs: { def: 30, spd: 30 },
 		HPdvs: { atk: 13, def: 14 },
@@ -323,6 +462,19 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Grass: 2,
 			Ground: 2,
 			Water: 2,
+		},
+		affinity: {
+			aura: 5,
+			drain: 5,
+			heal: 5,
+			pierce: 5,
+			solar: 5,
+		},
+		aversion: {
+			bite: 6,
+			claw: 6,
+			spin: 6,
+			weapon: 6,
 		},
 		HPivs: { atk: 30, spa: 30 },
 		HPdvs: { atk: 14, def: 14 },
@@ -356,6 +508,19 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Poison: 2,
 			Rock: 2,
 		},
+		affinity: {
+			binding: 5,
+			drain: 5,
+			kick: 5,
+			spin: 5,
+		},
+		aversion: {
+			airborne: 6,
+			spin: 6,
+			throw: 6,
+			wind: 6,
+			wing: 6,
+		},
 		HPivs: { spa: 30, spd: 30 },
 		HPdvs: { atk: 12 },
 	},
@@ -364,6 +529,8 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			//Immune
 			hail: 3,
 			frz: 3,
+			frostbite: 3,
+			light: 3,
 			// Weak
 			Fighting: 1,
 			Fire: 1,
@@ -387,6 +554,16 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			// Resist
 			banal: 2,
 			Ice: 2,
+		},
+		affinity: {
+			beam: 5,
+			light: 5,
+			pierce: 5,
+			spin: 5,
+		},
+		aversion: {
+			slice: 6,
+			weapon: 6,
 		},
 		HPivs: { atk: 30, def: 30 },
 		HPdvs: { def: 13 },
@@ -418,12 +595,27 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			// Resist
 			banal: 2,
 		},
+		affinity: {
+			contact: 5,
+			heal: 5,
+			sound: 5,
+			weapon: 5,
+		},
+		aversion: {
+			aura: 6,
+			dance: 6,
+			kick: 6,
+			magic: 6,
+			punch: 6,
+			shadow: 6,
+		},
 	},
 	poison: {
 		damageTaken: {
 			//Immune
 			psn: 3,
 			tox: 3,
+			breath: 3,
 			// Weak
 			Ground: 1,
 			Psychic: 1,
@@ -448,12 +640,23 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Grass: 2,
 			Poison: 2,
 		},
+		affinity: {
+			binding: 5,
+			breath: 5,
+			contact: 5,
+			drain: 5,
+			explosive: 5,
+		},
+		aversion: {
+			heal: 6,
+		},
 		HPivs: { def: 30, spa: 30, spd: 30 },
 		HPdvs: { atk: 12, def: 14 },
 	},
 	psychic: {
 		damageTaken: {
 			//Immune
+			confuse: 3,
 			hail: 3,
 			sandstorm: 3,
 			// Weak
@@ -480,6 +683,23 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Fighting: 2,
 			Psychic: 2,
 		},
+		affinity: {
+			aura: 5,
+			beam: 5,
+			binding: 5,
+			explosive: 5,
+			heal: 5,
+			light: 5,
+			pulse: 5,
+			throw: 5,
+			weapon: 5,
+		},
+		aversion: {
+			dance: 6,
+			kick: 6,
+			punch: 6,
+			sweep: 6,
+		},
 		HPivs: { atk: 30, spe: 30 },
 		HPdvs: { def: 12 },
 	},
@@ -487,6 +707,7 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 		damageTaken: {
 			//Immune
 			sandstorm: 3,
+			flinch: 3,
 			// Weak
 			Fighting: 1,
 			Grass: 1,
@@ -511,6 +732,24 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Normal: 2,
 			Poison: 2,
 		},
+		affinity: {
+			airborne: 5,
+			binding: 5,
+			bomb: 5,
+			bullet: 5,
+			crash: 5,
+			crush: 5,
+			magic: 5,
+			spin: 5,
+			throw: 5,
+			weapon: 5,
+		},
+		aversion: {
+			aura: 6,
+			bite: 6,
+			dance: 6,
+			pierce: 6,
+		},
 		HPivs: { def: 30, spd: 30, spe: 30 },
 		HPdvs: { atk: 13, def: 12 },
 	},
@@ -522,18 +761,18 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			sandstorm: 3,
 			Poison: 3,
 			// Weak
+			Electric: 1,
 			Fighting: 1,
 			Fire: 1,
+			Ghost: 1,
 			Ground: 1,
+			Water: 1,
 			// Neutral
-			Dark: 0,
-			Electric: 0,
-			Ghost: 0,
 			Stellar: 0,
-			Water: 0,
 			// Resist
 			banal: 2,
 			Bug: 2,
+			Dark: 2,
 			Dragon: 2,
 			Fairy: 2,
 			Flying: 2,
@@ -543,6 +782,23 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Psychic: 2,
 			Rock: 2,
 			Steel: 2,
+		},
+		affinity: {
+			beam: 5,
+			bullet: 5,
+			crash: 5,
+			crush: 5,
+			pierce: 5,
+			slice: 5,
+			weapon: 5,
+		},
+		aversion: {
+			aura: 6,
+			dance: 6,
+			explosive: 6,
+			heal: 6,
+			magic: 6,
+			pulse: 6,
 		},
 		HPivs: { spd: 30 },
 		HPdvs: { atk: 13 },
@@ -572,12 +828,24 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			// Resist
 			banal: 2,
 		},
+		affinity: {
+			aura: 5,
+			beam: 5,
+			light: 5,
+			lunar: 5,
+			magic: 5,
+			solar: 5,
+			spin: 5,
+		},
 	},
 	water: {
 		damageTaken: {
+			//Immune
+			crush: 3,
 			// Weak
 			Electric: 1,
 			Grass: 1,
+			Poison: 1,
 			// Neutral
 			Bug: 0,
 			Dark: 0,
@@ -588,7 +856,6 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Ghost: 0,
 			Ground: 0,
 			Normal: 0,
-			Poison: 0,
 			Psychic: 0,
 			Rock: 0,
 			Stellar: 0,
@@ -598,6 +865,22 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Ice: 2,
 			Steel: 2,
 			Water: 2,
+		},
+		affinity: {
+			beam: 5,
+			bomb: 5,
+			heal: 5,
+			magic: 5,
+			wind: 5,
+		},
+		aversion: {
+			breath: 6,
+			crash: 6,
+			drain: 6,
+			explosive: 6,
+			pierce: 6,
+			slice: 6,
+			weapon: 6,
 		},
 		HPivs: { atk: 30, def: 30, spa: 30 },
 		HPdvs: { atk: 14, def: 13 },

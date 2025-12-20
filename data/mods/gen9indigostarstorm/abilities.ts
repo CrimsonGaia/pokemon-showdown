@@ -757,6 +757,14 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		num: 1049,
 
 	},
+	rejuvenation: {
+		onStart(pokemon) { if (!pokemon.volatiles['aquaring']) { pokemon.addVolatile('aquaring'); } },
+		flags: {},
+		name: "Rejuvenation",
+		shortDesc: "On switch-in, the user surrounds itself with Aqua Ring.",
+		rating: 3.5,
+		num: -1,
+	},
 	resonance: {
 		onTryHit(target, source, move) {
 			if (move.flags?.sound || move.flags?.wind) { this.add('-immune', target, '[from] ability: Resonance');
@@ -4828,8 +4836,15 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 			if (ability.flags['noreceiver'] || ability.id === 'noability') return;
 			this.effectState.target.setAbility(ability, target);
 		},
+		onSourceModifyDamage(damage, source, target, move) {
+			if (move.flags?.magic) {
+				this.debug('Power of Alchemy magic resistance');
+				return this.chainModify(0.75);
+			}
+		},
 		flags: { failroleplay: 1, noreceiver: 1, noentrain: 1, notrace: 1 },
 		name: "Power of Alchemy",
+		shortDesc: "Copies ally's ability on faint. Resists magic moves (0.75x damage).",
 		rating: 0,
 		num: 223,
 	},

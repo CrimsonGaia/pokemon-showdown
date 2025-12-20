@@ -114,11 +114,16 @@ export const Scripts: ModdedBattleScriptsData = {
 					}
 					return typeMod;
 				};
-				   // Magic moves use 1.2x as their base STAB if one type matches, 1.4x if both types match, then are further modified by Tera, Adaptability, etc.
+				   // Magic moves use 1.2x as their base STAB if one type matches, 1.4x if both types match
+				   // Magic moves are not affected by Terastallization - only check original types
 				   (move as any).onModifySTAB = function(stab: number, source: any, target: any, moveArg: any) {
 					   const moveTypes = [moveArg.type];
 					   if (moveArg.type2 && moveArg.type2 !== moveArg.type) moveTypes.push(moveArg.type2);
-					   const matches = moveArg.forceSTAB ? moveTypes : moveTypes.filter(t => source.hasType(t));
+					   
+					   // Only check original types (pre-Tera), ignore current Tera type
+					   const originalTypes = source.getTypes(false, true);
+					   const matches = moveArg.forceSTAB ? moveTypes : moveTypes.filter(t => originalTypes.includes(t));
+					   
 					   if (matches.length === 1) {
 						   return 1.2;
 					   } else if (matches.length === 2) {
@@ -642,6 +647,7 @@ export const Scripts: ModdedBattleScriptsData = {
 
 		return false;
 	},
+	//#region Actions
 	actions: {
 		terastallize(pokemon) {
 			if (pokemon.illusion && ['Ogerpon', 'Terapagos'].includes(pokemon.illusion.species.baseSpecies)) {
@@ -651,6 +657,13 @@ export const Scripts: ModdedBattleScriptsData = {
 			const type = pokemon.teraType;
 			this.battle.add('-terastallize', pokemon, type);
 			pokemon.terastallized = type;
+			// Store original types for Stellar STAB calculation
+			if (type === 'Stellar') {
+				if (!pokemon.volatiles['stellaroriginal']) {
+					pokemon.addVolatile('stellaroriginal');
+				}
+				pokemon.volatiles['stellaroriginal'].types = pokemon.getTypes(false, true);
+			}
 			for (const ally of pokemon.side.pokemon) {
 				ally.canTerastallize = null;
 			}
@@ -715,33 +728,94 @@ export const Scripts: ModdedBattleScriptsData = {
 			if (type !== '???') {
 				let stab: number | [number, number] = 1;
 
-				const isSTAB = move.forceSTAB || pokemon.hasType(type) || pokemon.getTypes(false, true).includes(type);
-				if (isSTAB) {
+			const moveTypes = [move.type];
+			if (move.type2 && move.type2 !== move.type) moveTypes.push(move.type2);
+			const matches = move.forceSTAB ? moveTypes : moveTypes.filter(t => pokemon.hasType(t) || pokemon.getTypes(false, true).includes(t));
+			const isSTAB = matches.length > 0;
+			const matchesBoth = moveTypes.length === 2 && matches.length === 2 && moveTypes[0] !== moveTypes[1] && matches[0] !== matches[1];
+			if (isSTAB) {
+				if (matchesBoth) {
+					stab = 1.7;
+				} else {
 					stab = 1.5;
 				}
+			}
 
-				// The Stellar tera type makes this incredibly confusing
-				// If the move's type does not match one of the user's base types,
-				// the Stellar tera type applies a one-time 1.2x damage boost for that type.
-				//
-				// If the move's type does match one of the user's base types,
-				// then the Stellar tera type applies a one-time 2x STAB boost for that type,
-				// and then goes back to using the regular 1.5x STAB boost for those types.
-				if (pokemon.terastallized === 'Stellar') {
+			// Stellar tera type: 1.7x STAB for original types (unlimited), 1.2x for other types (one-time)
+			if (pokemon.terastallized === 'Stellar') {
+				const originalTypes = pokemon.volatiles['stellaroriginal']?.types || [];
+				const matchesOriginalType = moveTypes.some(t => originalTypes.includes(t));
+				if (matchesOriginalType) {
+					// Original types get 1.7x STAB permanently
+					stab = 1.7;
+				} else {
+					// Non-original types get 1.2x boost one time only (1.5x for Terapagos, unlimited)
 					if (!pokemon.stellarBoostedTypes.includes(type)) {
-						stab = isSTAB ? 2 : [4915, 4096];
-						if (!(pokemon.species.name === 'Terapagos-Stellar' || pokemon.species.baseSpecies === 'Meloetta')) {
+						if (pokemon.species.name === 'Terapagos-Stellar') {
+							stab = 1.4; // Terapagos gets 1.5x unlimited
+						} else {
+							stab = [4915, 4096]; // 1.2x one-time
 							pokemon.stellarBoostedTypes.push(type);
 						}
 					}
-				} else {
-					if (pokemon.terastallized === type && pokemon.getTypes(false, true).includes(type)) {
+				}
+			} else {
+				if (pokemon.terastallized && moveTypes.includes(pokemon.terastallized) && pokemon.getTypes(false, true).includes(pokemon.terastallized)) {
+					// Tera type that was also an original type gets 2x/2.2x STAB
+					if (matchesBoth) {
+						stab = 2.2;
+					} else {
 						stab = 2;
 					}
-					stab = this.battle.runEvent('ModifySTAB', pokemon, target, move, stab);
+				} else if (pokemon.terastallized && isSTAB) {
+					// Original types get 1.2x STAB when terastallized to a different type
+					const originalTypes = pokemon.getTypes(false, true);
+					const matchesOriginalType = moveTypes.some(t => originalTypes.includes(t));
+					if (matchesOriginalType) {
+						stab = [4915, 4096]; // 1.2x
+					}
 				}
+				// If Tera'd to a new type and move matches that Tera type, normal STAB (1.5x/1.7x) applies from earlier calculation
+				stab = this.battle.runEvent('ModifySTAB', pokemon, target, move, stab);
+			}
 
-				baseDamage = this.battle.modify(baseDamage, stab);
+			baseDamage = this.battle.modify(baseDamage, stab);
+		}
+
+		// Type affinity/aversion based on move flags
+		// Stack additively: each affinity adds +0.1, each aversion adds -0.1
+		// Uses original types, not affected by Terastallization
+		let flagModifier = 0;
+		for (const type of pokemon.getTypes(false, true)) {
+			const typeData = this.dex.types.get(type);
+				if (!typeData) continue;
+				
+				// Check affinity (5 = +0.1 per matching flag)
+				if (typeData.affinity && move.flags) {
+					for (const flag in move.flags) {
+						if (typeData.affinity[flag] === 5) {
+							this.battle.debug(`${type} has affinity with ${flag} flag`);
+							flagModifier += 0.1;
+						}
+					}
+				}
+				
+				// Check aversion (6 = -0.1 per matching flag)
+				if (typeData.aversion && move.flags) {
+					for (const flag in move.flags) {
+						if (typeData.aversion[flag] === 6) {
+							this.battle.debug(`${type} has aversion to ${flag} flag`);
+							flagModifier -= 0.1;
+						}
+					}
+				}
+			}
+			
+			// Apply the total flag modifier once
+			if (flagModifier !== 0) {
+				const totalMultiplier = 1 + flagModifier;
+				this.battle.debug(`Total flag modifier: ${totalMultiplier}x`);
+				baseDamage = this.battle.modify(baseDamage, totalMultiplier);
 			}
 
 			// types
@@ -1777,7 +1851,18 @@ export const Scripts: ModdedBattleScriptsData = {
 			return this.constructor.prototype.getDamage.call(this, source, target, move, suppressMessages);
 		},
 	},
+	//#region Pokemon
 	pokemon: {
+		getTypes(excludeAdded?: boolean, preterastallized?: boolean): string[] {
+			// All Tera types (including Stellar) function as pure type defensively
+			if (!preterastallized && this.terastallized) {
+				return [this.terastallized];
+			}
+			const types = this.battle.runEvent('Type', this, null, null, this.types);
+			if (!types.length) types.push(this.battle.gen >= 5 ? 'Normal' : '???');
+			if (!excludeAdded && this.addedType) return types.concat(this.addedType);
+			return types;
+		},
 		isGrounded(negateImmunity) {
 			// Calculate current grounding state
 			let isCurrentlyGrounded = true;
@@ -1835,7 +1920,7 @@ export const Scripts: ModdedBattleScriptsData = {
 					}
 				}
 				
-				// Steel Spikes (if present in your mod)
+				// Steel Spikes 
 				if (side.sideConditions['steelspikes']) {
 					if (!this.hasItem('heavydutyboots')) {
 						const layers = side.sideConditions['steelspikes'].layers || 1;
@@ -1941,7 +2026,72 @@ export const Scripts: ModdedBattleScriptsData = {
 
 			return { targets, pressureTargets };
 		},
+		runEffectiveness(move) {
+			// Calculate type-based effectiveness first
+			let totalTypeMod = 0;
+			if (this.terastallized && move.type === 'Stellar') {
+				totalTypeMod = 1;
+			} else {
+				const moveTypes = [move.type];
+				if (move.type2 && move.type2 !== move.type) moveTypes.push(move.type2);
+				
+				// Magic moves ignore Tera and use original types for effectiveness
+				const defendingTypes = (move.flags?.magic) ? this.getTypes(false, true) : this.getTypes();
+				
+				for (const attackingType of moveTypes) {
+					for (const defendingType of defendingTypes) {
+						let typeMod = this.battle.dex.getEffectiveness(attackingType, defendingType);
+						typeMod = this.battle.singleEvent('Effectiveness', move, null, this, defendingType, move, typeMod);
+						totalTypeMod += this.battle.runEvent('Effectiveness', this, defendingType, move, typeMod);
+					}
+				}
+			}
+			
+			// Check flag-based effectiveness (weakness/resistance to move flags)
+			// Value 4 = weak to flag (1.5x damage taken = +0.585 typeMod to get log2(1.5))
+			// Value 5 = resist flag (0.75x damage taken = -0.415 typeMod to get log2(0.75))
+			for (const defendingType of this.getTypes()) {
+				const typeData = this.battle.dex.types.get(defendingType);
+				if (!typeData || !typeData.damageTaken) continue;
+				
+				for (const flag in move.flags) {
+					const flagMod = typeData.damageTaken[flag];
+					if (flagMod === 4) {
+						// Weak to this flag: multiply damage by 1.5
+						// Since typeMod uses log scale where each +1 = 2x, we need 0.585 for 1.5x
+						this.battle.debug(`${defendingType} is weak to ${flag} flag (1.5x)`);
+						totalTypeMod += 0.585;
+					}
+					if (flagMod === 5) {
+						// Resist this flag: multiply damage by 0.75  
+						// Since typeMod uses log scale where each -1 = 0.5x, we need -0.415 for 0.75x
+						this.battle.debug(`${defendingType} resists ${flag} flag (0.75x)`);
+						totalTypeMod -= 0.415;
+					}
+					// flagMod === 3 (immunity) is already handled by runImmunity checks elsewhere
+				}
+			}
+			
+			// Handle Terapagos-Terastal Tera Shell ability
+			if (this.species.name === 'Terapagos-Terastal' && this.hasAbility('Tera Shell') &&
+				!this.battle.suppressingAbility(this)) {
+				const teraShellSlot = this.ability1 === 'terashell' ? 1 : 2;
+				const abilityStateKey = teraShellSlot === 1 ? 'abilityState1' : 'abilityState2';
+				if (this[abilityStateKey].resisted) return -1;
+				if (move.category === 'Status' || move.id === 'struggle' || !this.runImmunity(move) ||
+					totalTypeMod < 0 || this.hp < this.maxhp) {
+					return totalTypeMod;
+				}
+
+				this.battle.add('-activate', this, 'ability: Tera Shell');
+				this[abilityStateKey].resisted = true;
+				return -1;
+			}
+
+			return totalTypeMod;
+		},
 	},
+	//#region Side
 	side: {
 		getChoice() {
 			if (this.choice.actions.length > 1 && this.choice.actions.every(action => action.choice === 'team')) {
@@ -2090,6 +2240,7 @@ export const Scripts: ModdedBattleScriptsData = {
 			return true;
 		},
 	},
+	//#region Queue
 	queue: {
 		resolveAction(action, midTurn) {
 			if (!action) throw new Error(`Action not passed to resolveAction`);

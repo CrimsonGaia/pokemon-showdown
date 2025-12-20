@@ -29,7 +29,7 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 		mod: 'gen9indigostarstorm',
 		desc: `Singles format for the Indigo Starstorm mod with custom clauses.`,
 		ruleset: [
-			'Indigo Starstorm Timer', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
+			'Indigo Starstorm Timer', 'Item Reveal', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
 			'Freeze Clause', 'Item Clause', 'Level Clause', 'Species Clause', 'Tera Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
 		],
 	},
@@ -39,7 +39,7 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 		gameType: 'doubles',
 		desc: `Doubles format for the Indigo Starstorm mod with custom clauses.`,
 		ruleset: [
-			'Indigo Starstorm Timer', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
+			'Indigo Starstorm Timer', 'Item Reveal', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
 			'Freeze Clause', 'Item Clause', 'Level Clause', 'Species Clause', 'Tera Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
 		],
 	},

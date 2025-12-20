@@ -3678,8 +3678,14 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		priority: 0,
 		critRatio: 4,
 		flags: { weapon: 1, protect: 1, mirror: 1, metronome: 1 },
-		onTry(source, target) { return !!target.item; },
-		onTryHit(target, source, move) { this.add('-activate', target, 'move: Poltergeist', this.dex.items.get(target.item).name); },
+		onTry(source, target) {  // Steel types are always susceptible to Poltergeist, even without an item
+			if (target.hasType('Steel')) return true;
+			return !!target.item; 
+		},
+		onTryHit(target, source, move) { 
+			if (target.item) { this.add('-activate', target, 'move: Poltergeist', this.dex.items.get(target.item).name);  } 
+			else if (target.hasType('Steel')) { this.add('-activate', target, 'move: Poltergeist', '[Steel type]'); }
+		},
 		onAfterHit(this, source, target) {
 			const item = target.getItem();
 			if (item && item.isFragile) {
@@ -9956,9 +9962,17 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			onStart(pokemon) { this.add('-start', pokemon, 'Aqua Ring'); },
 			onResidualOrder: 6,
 			onResidual(pokemon) { this.heal(pokemon.baseMaxhp / 16); },
+			onSetStatus(status, target, source, effect) { if (status.id === 'brn' || status.id === 'bubbleblight') { this.add('-immune', target, '[from] Aqua Ring');
+					return false;
+				}
+			},
+			onModifySecondaries(secondaries) { return secondaries.map(secondary => { if (secondary.chance) { return {...secondary, chance: secondary.chance * 0.5}; }
+					return secondary;
+				});
+			},
 		},
 		secondary: null,
-		target: "self",
+		target: "allyTeam",
 	},
 	aromatherapy: {
 		num: 312,

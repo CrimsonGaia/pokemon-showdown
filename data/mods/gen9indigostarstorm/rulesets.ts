@@ -794,6 +794,44 @@ export const Rulesets: import('../../../sim/dex-formats').FormatDataTable = {
 			'Timeout Auto Choose', 'DC Timer Bank',
 		],
 	},
+	itemreveal: {
+		effectType: 'Rule',
+		name: 'Item Reveal',
+		desc: "All items are revealed at battle start (but not which Pokémon holds them)",
+		onBegin() {
+			this.add('rule', 'Item Reveal: All items revealed at start');
+			
+			// Collect all items from both sides
+			const p1Items: string[] = [];
+			const p2Items: string[] = [];
+			
+			for (const pokemon of this.sides[0].pokemon) {
+				if (pokemon.item) {
+					const item = this.dex.items.get(pokemon.item);
+					p1Items.push(item.name);
+				}
+			}
+			
+			for (const pokemon of this.sides[1].pokemon) {
+				if (pokemon.item) {
+					const item = this.dex.items.get(pokemon.item);
+					p2Items.push(item.name);
+				}
+			}
+			
+			// Sort items alphabetically for consistency
+			p1Items.sort();
+			p2Items.sort();
+			
+			// Display items for each side
+			if (p1Items.length) {
+				this.add('message', `${this.sides[0].name}'s team items: ${p1Items.join(', ')}`);
+			}
+			if (p2Items.length) {
+				this.add('message', `${this.sides[1].name}'s team items: ${p2Items.join(', ')}`);
+			}
+		},
+	},
 	speciesclause: {
 		effectType: 'ValidatorRule',
 		name: 'Species Clause',

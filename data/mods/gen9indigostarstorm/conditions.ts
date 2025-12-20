@@ -2000,3 +2000,9 @@ export const roundhousekick: ModdedConditionData = {
 		}
 	},
 };
+export const stellaroriginal: ModdedConditionData = {
+	name: 'stellaroriginal',
+	effectType: 'Volatile',
+	noCopy: true,
+	// Stores the original types before Stellar Terastallization for STAB calculation
+};

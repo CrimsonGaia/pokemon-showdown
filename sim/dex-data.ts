@@ -209,6 +209,8 @@ export class DexNatures {
 
 export interface TypeData {
 	damageTaken: { [attackingTypeNameOrEffectid: string]: number };
+	affinity?: { [flag: string]: number };
+	aversion?: { [flag: string]: number };
 	HPdvs?: SparseStatsTable;
 	HPivs?: SparseStatsTable;
 	isNonstandard?: Nonstandard | null;
@@ -252,6 +254,10 @@ export class TypeInfo implements Readonly<TypeData> {
 	 * result is: 0 = normal, 1 = weakness, 2 = resistance, 3 = immunity
 	 */
 	readonly damageTaken: { [attackingTypeNameOrEffectid: string]: number };
+	/** Flags that this type has affinity with (5 = 1.15x damage boost when using) */
+	readonly affinity: { [flag: string]: number };
+	/** Flags that this type has aversion to (6 = 0.85x damage reduction when using) */
+	readonly aversion: { [flag: string]: number };
 	/** The IVs to get this Type Hidden Power (in gen 3 and later) */
 	readonly HPivs: SparseStatsTable;
 	/** The DVs to get this Type Hidden Power (in gen 2). */
@@ -265,6 +271,8 @@ export class TypeInfo implements Readonly<TypeData> {
 		this.gen = data.gen || 0;
 		this.isNonstandard = data.isNonstandard || null;
 		this.damageTaken = data.damageTaken || {};
+		this.affinity = data.affinity || {};
+		this.aversion = data.aversion || {};
 		this.HPivs = data.HPivs || {};
 		this.HPdvs = data.HPdvs || {};
 		assignMissingFields(this, data);
