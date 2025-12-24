@@ -34,25 +34,33 @@ export const Tags: { [id: IDEntry]: TagData } = {
 		name: "Mega",
 		speciesFilter: species => !!species.isMega,
 	},
-	mythical: {
-		name: "Mythical",
-		speciesFilter: species => species.tags.includes("Mythical"),
+	powerhouse: {
+		name: "Powerhouse",
+		speciesFilter: species => species.tags.includes("Powerhouse"),
 	},
-	sublegendary: {
-		name: "Sub-Legendary",
-		speciesFilter: species => species.tags.includes("Sub-Legendary"),
+	legendary: {
+		name: "Legendary",
+		speciesFilter: species => species.tags.includes("Legendary"),
 	},
 	restrictedlegendary: {
 		name: "Restricted Legendary",
 		speciesFilter: species => species.tags.includes("Restricted Legendary"),
 	},
-	ultrabeast: {
-		name: "Ultra Beast",
-		speciesFilter: species => species.tags.includes("Ultra Beast"),
+	mythical: {
+		name: "Mythical",
+		speciesFilter: species => species.tags.includes("Mythical"),
+	},
+	restrictedmythical: {
+		name: "Restricted Mythical",
+		speciesFilter: species => species.tags.includes("Restricted Mythical"),
 	},
 	paradox: {
 		name: "Paradox",
 		speciesFilter: species => species.tags.includes("Paradox"),
+	},
+	restrictedparadox: {
+		name: "Restricted Paradox",
+		speciesFilter: species => species.tags.includes("Restricted Paradox"),
 	},
 
 	// Move tags

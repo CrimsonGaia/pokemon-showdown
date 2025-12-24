@@ -24,7 +24,7 @@ interface SpeciesAbility {
 	S?: string;
 }
 
-type SpeciesTag = "Mythical" | "Restricted Legendary" | "Sub-Legendary" | "Ultra Beast" | "Paradox";
+type SpeciesTag = "Powerhouse" | "Legendary" | "Restricted Legendary" | "Mythical" | "Restricted Mythical" | "Paradox" | "Restricted Paradox" | "Ultra Beast" | "Single Stage Pokemon" | "1st Stage" | "2nd Stage" | "3rd Stage" | "Fully Evolved";
 
 export interface SpeciesData extends Partial<Species> {
 	name: string;

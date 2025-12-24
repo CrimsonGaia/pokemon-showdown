@@ -26,6 +26,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Ivysaur"],
 		eggGroups: ["Monster", "Grass"],
+		tags: ["1st Stage"],
 	},
 	ivysaur: {
 		num: 2,
@@ -47,6 +48,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Venusaur"],
 		eggGroups: ["Monster", "Grass"],
+		tags: ["2nd Stage"],
 	},
 	venusaur: {
 		num: 3,
@@ -70,6 +72,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Venusaur-Mega"],
 		formeOrder: ["Venusaur", "Venusaur-Mega"],
 		canGigantamax: "G-Max Vine Lash",
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	charmander: {
 		num: 4,
@@ -86,6 +89,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Charmeleon"],
 		eggGroups: ["Monster", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	charmeleon: {
 		num: 5,
@@ -107,6 +111,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Charizard"],
 		eggGroups: ["Monster", "Dragon"],
+		tags: ["2nd Stage"],
 	},
 	charizard: {
 		num: 6,
@@ -130,6 +135,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Charizard-Mega-X", "Charizard-Mega-Y"],
 		formeOrder: ["Charizard", "Charizard-Mega-X", "Charizard-Mega-Y"],
 		canGigantamax: "G-Max Wildfire",
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	squirtle: {
 		num: 7,
@@ -149,6 +155,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Wartortle"],
 		eggGroups: ["Monster", "Water 1"],
+		tags: ["1st Stage"],
 	},
 	wartortle: {
 		num: 8,
@@ -170,6 +177,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Blastoise"],
 		eggGroups: ["Monster", "Water 1"],
+		tags: ["2nd Stage"],
 	},
 	blastoise: {
 		num: 9,
@@ -193,6 +201,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Blastoise-Mega"],
 		formeOrder: ["Blastoise", "Blastoise-Mega"],
 		canGigantamax: "G-Max Cannonade",
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	ekans: {
 		num: 23,
@@ -211,6 +220,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Arbok"],
 		eggGroups: ["Field", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	arbok: {
 		num: 24,
@@ -230,6 +240,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Ekans",
 		evoLevel: 22,
 		eggGroups: ["Field", "Dragon"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	pikachu: {
 		num: 25,
@@ -259,6 +270,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 			"Pikachu-Rock-Star", "Pikachu-Belle", "Pikachu-Pop-Star", "Pikachu-PhD", "Pikachu-Libre", "Pikachu-Cosplay", // formes 1-6 from Gen 6
 		],
 		canGigantamax: "G-Max Volt Crash",
+		tags: ["2nd Stage"],
 	},
 	raichu: {
 		num: 26,
@@ -281,6 +293,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field", "Fairy"],
 		otherFormes: ["Raichu-Alola"],
 		formeOrder: ["Raichu", "Raichu-Alola"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	raichualola: {
 		num: 26,
@@ -304,6 +317,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoItem: "Thunder Stone",
 		evoRegion: "Alola",
 		eggGroups: ["Field", "Fairy"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	sandshrew: {
 		num: 27,
@@ -321,6 +335,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Sandshrew-Alola"],
 		formeOrder: ["Sandshrew", "Sandshrew-Alola"],
+		tags: ["1st Stage"],
 	},
 	sandshrewalola: {
 		num: 27,
@@ -338,6 +353,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Sandslash-Alola"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	sandslash: {
 		num: 28,
@@ -359,6 +375,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Sandslash-Alola"],
 		formeOrder: ["Sandslash", "Sandslash-Alola"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	sandslashalola: {
 		num: 28,
@@ -381,6 +398,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Ice Stone",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	clefairy: {
 		num: 35,
@@ -402,6 +420,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelFriendship",
 		evos: ["Clefable"],
 		eggGroups: ["Fairy"],
+		tags: ["2nd Stage"],
 	},
 	clefable: {
 		num: 36,
@@ -425,6 +444,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Fairy"],
 		otherFormes: ["Clefable-Mega"],
 		formeOrder: ["Clefable", "Clefable-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	vulpix: {
 		num: 37,
@@ -446,6 +466,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Vulpix-Alola"],
 		formeOrder: ["Vulpix", "Vulpix-Alola"],
+		tags: ["1st Stage"],
 	},
 	vulpixalola: {
 		num: 37,
@@ -467,6 +488,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Ninetales-Alola"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	ninetales: {
 		num: 38,
@@ -490,6 +512,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Ninetales-Alola"],
 		formeOrder: ["Ninetales", "Ninetales-Alola"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	ninetalesalola: {
 		num: 38,
@@ -513,6 +536,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Ice Stone",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	jigglypuff: {
 		num: 39,
@@ -534,6 +558,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelFriendship",
 		evos: ["Wigglytuff"],
 		eggGroups: ["Fairy"],
+		tags: ["2nd Stage"],
 	},
 	wigglytuff: {
 		num: 40,
@@ -555,6 +580,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Moon Stone",
 		eggGroups: ["Fairy"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	oddish: {
 		num: 43,
@@ -573,6 +599,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Gloom"],
 		eggGroups: ["Grass"],
+		tags: ["1st Stage"],
 	},
 	gloom: {
 		num: 44,
@@ -593,6 +620,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 21,
 		evos: ["Vileplume", "Bellossom"],
 		eggGroups: ["Grass"],
+		tags: ["2nd Stage"],
 	},
 	vileplume: {
 		num: 45,
@@ -613,6 +641,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Leaf Stone",
 		eggGroups: ["Grass"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	venonat: {
 		num: 48,
@@ -631,6 +660,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Venomoth"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	venomoth: {
 		num: 49,
@@ -650,6 +680,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Venonat",
 		evoLevel: 31,
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	diglett: {
 		num: 50,
@@ -670,6 +701,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Diglett-Alola"],
 		formeOrder: ["Diglett", "Diglett-Alola"],
+		tags: ["1st Stage"],
 	},
 	diglettalola: {
 		num: 50,
@@ -690,6 +722,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Dugtrio-Alola"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	dugtrio: {
 		num: 51,
@@ -711,6 +744,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Dugtrio-Alola"],
 		formeOrder: ["Dugtrio", "Dugtrio-Alola"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	dugtrioalola: {
 		num: 51,
@@ -732,6 +766,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Diglett-Alola",
 		evoLevel: 26,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	meowth: {
 		num: 52,
@@ -753,6 +788,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Meowth-Alola", "Meowth-Galar"],
 		formeOrder: ["Meowth", "Meowth-Alola", "Meowth-Galar"],
 		canGigantamax: "G-Max Gold Rush",
+		tags: ["1st Stage"],
 	},
 	meowthalola: {
 		num: 52,
@@ -773,6 +809,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Persian-Alola"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	meowthgalar: {
 		num: 52,
@@ -793,6 +830,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Perrserker"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	persian: {
 		num: 53,
@@ -814,6 +852,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Persian-Alola"],
 		formeOrder: ["Persian", "Persian-Alola"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	persianalola: {
 		num: 53,
@@ -835,6 +874,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Meowth-Alola",
 		evoType: "levelFriendship",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	psyduck: {
 		num: 54,
@@ -853,6 +893,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Golduck"],
 		eggGroups: ["Water 1", "Field"],
+		tags: ["1st Stage"],
 	},
 	golduck: {
 		num: 55,
@@ -872,6 +913,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Psyduck",
 		evoLevel: 33,
 		eggGroups: ["Water 1", "Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	mankey: {
 		num: 56,
@@ -890,6 +932,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Primeape"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	primeape: {
 		num: 57,
@@ -910,6 +953,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 28,
 		evos: ["Annihilape"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage"],
 	},
 	growlithe: {
 		num: 58,
@@ -931,6 +975,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Growlithe-Hisui"],
 		formeOrder: ["Growlithe", "Growlithe-Hisui"],
+		tags: ["1st Stage"],
 	},
 	growlithehisui: {
 		num: 58,
@@ -952,6 +997,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Arcanine-Hisui"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	arcanine: {
 		num: 59,
@@ -975,6 +1021,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Arcanine-Hisui"],
 		formeOrder: ["Arcanine", "Arcanine-Hisui"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	arcaninehisui: {
 		num: 59,
@@ -998,6 +1045,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Fire Stone",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	poliwag: {
 		num: 60,
@@ -1016,6 +1064,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Poliwhirl"],
 		eggGroups: ["Water 1"],
+		tags: ["1st Stage"],
 	},
 	poliwhirl: {
 		num: 61,
@@ -1036,6 +1085,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 25,
 		evos: ["Poliwrath", "Politoed"],
 		eggGroups: ["Water 1"],
+		tags: ["2nd Stage"],
 	},
 	poliwrath: {
 		num: 62,
@@ -1056,6 +1106,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Water Stone",
 		eggGroups: ["Water 1"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	bellsprout: {
 		num: 69,
@@ -1074,6 +1125,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Weepinbell"],
 		eggGroups: ["Grass"],
+		tags: ["1st Stage"],
 	},
 	weepinbell: {
 		num: 70,
@@ -1094,6 +1146,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 21,
 		evos: ["Victreebel"],
 		eggGroups: ["Grass"],
+		tags: ["2nd Stage"],
 	},
 	victreebel: {
 		num: 71,
@@ -1116,6 +1169,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Grass"],
 		otherFormes: ["Victreebel-Mega"],
 		formeOrder: ["Victreebel", "Victreebel-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	tentacool: {
 		num: 72,
@@ -1134,6 +1188,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Tentacruel"],
 		eggGroups: ["Water 3"],
+		tags: ["1st Stage"],
 	},
 	tentacruel: {
 		num: 73,
@@ -1153,6 +1208,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Tentacool",
 		evoLevel: 30,
 		eggGroups: ["Water 3"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	geodude: {
 		num: 74,
@@ -1173,6 +1229,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Mineral"],
 		otherFormes: ["Geodude-Alola"],
 		formeOrder: ["Geodude", "Geodude-Alola"],
+		tags: ["1st Stage"],
 	},
 	geodudealola: {
 		num: 74,
@@ -1193,6 +1250,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Graveler-Alola"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	graveler: {
 		num: 75,
@@ -1215,6 +1273,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Mineral"],
 		otherFormes: ["Graveler-Alola"],
 		formeOrder: ["Graveler", "Graveler-Alola"],
+		tags: ["2nd Stage"],
 	},
 	graveleralola: {
 		num: 75,
@@ -1237,6 +1296,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 25,
 		evos: ["Golem-Alola"],
 		eggGroups: ["Mineral"],
+		tags: ["2nd Stage"],
 	},
 	golem: {
 		num: 76,
@@ -1258,6 +1318,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Mineral"],
 		otherFormes: ["Golem-Alola"],
 		formeOrder: ["Golem", "Golem-Alola"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	golemalola: {
 		num: 76,
@@ -1279,6 +1340,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Graveler-Alola",
 		evoType: "trade",
 		eggGroups: ["Mineral"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	slowpoke: {
 		num: 79,
@@ -1299,6 +1361,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster", "Water 1"],
 		otherFormes: ["Slowpoke-Galar"],
 		formeOrder: ["Slowpoke", "Slowpoke-Galar"],
+		tags: ["1st Stage"],
 	},
 	slowpokegalar: {
 		num: 79,
@@ -1316,6 +1379,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		evos: ["Slowbro-Galar", "Slowking-Galar"],
 		eggGroups: ["Monster", "Water 1"],
+		tags: ["1st Stage"],
 	},
 	slowbro: {
 		num: 80,
@@ -1337,6 +1401,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster", "Water 1"],
 		otherFormes: ["Slowbro-Mega", "Slowbro-Galar"],
 		formeOrder: ["Slowbro", "Slowbro-Mega", "Slowbro-Galar"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	slowbrogalar: {
 		num: 80,
@@ -1359,6 +1424,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Galarica Cuff",
 		eggGroups: ["Monster", "Water 1"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	magnemite: {
 		num: 81,
@@ -1378,6 +1444,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Magneton"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	magneton: {
 		num: 82,
@@ -1399,6 +1466,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 30,
 		evos: ["Magnezone"],
 		eggGroups: ["Mineral"],
+		tags: ["2nd Stage"],
 	},
 	doduo: {
 		num: 84,
@@ -1417,6 +1485,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Dodrio"],
 		eggGroups: ["Flying"],
+		tags: ["1st Stage"],
 	},
 	dodrio: {
 		num: 85,
@@ -1436,6 +1505,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Doduo",
 		evoLevel: 31,
 		eggGroups: ["Flying"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	seel: {
 		num: 86,
@@ -1454,6 +1524,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Dewgong"],
 		eggGroups: ["Water 1", "Field"],
+		tags: ["1st Stage"],
 	},
 	dewgong: {
 		num: 87,
@@ -1473,6 +1544,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Seel",
 		evoLevel: 34,
 		eggGroups: ["Water 1", "Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	grimer: {
 		num: 88,
@@ -1493,6 +1565,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Amorphous"],
 		otherFormes: ["Grimer-Alola"],
 		formeOrder: ["Grimer", "Grimer-Alola"],
+		tags: ["1st Stage"],
 	},
 	grimeralola: {
 		num: 88,
@@ -1513,6 +1586,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Muk-Alola"],
 		eggGroups: ["Amorphous"],
+		tags: ["1st Stage"],
 	},
 	muk: {
 		num: 89,
@@ -1534,6 +1608,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Amorphous"],
 		otherFormes: ["Muk-Alola"],
 		formeOrder: ["Muk", "Muk-Alola"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	mukalola: {
 		num: 89,
@@ -1555,6 +1630,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Grimer-Alola",
 		evoLevel: 38,
 		eggGroups: ["Amorphous"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	shellder: {
 		num: 90,
@@ -1573,6 +1649,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Cloyster"],
 		eggGroups: ["Water 3"],
+		tags: ["1st Stage"],
 	},
 	cloyster: {
 		num: 91,
@@ -1593,6 +1670,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Water Stone",
 		eggGroups: ["Water 3"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	gastly: {
 		num: 92,
@@ -1611,6 +1689,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Haunter"],
 		eggGroups: ["Amorphous"],
+		tags: ["1st Stage"],
 	},
 	haunter: {
 		num: 93,
@@ -1631,6 +1710,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 25,
 		evos: ["Gengar"],
 		eggGroups: ["Amorphous"],
+		tags: ["2nd Stage"],
 	},
 	gengar: {
 		num: 94,
@@ -1650,6 +1730,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Gengar-Mega"],
 		formeOrder: ["Gengar", "Gengar-Mega"],
 		canGigantamax: "G-Max Terror",
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	drowzee: {
 		num: 96,
@@ -1668,6 +1749,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Hypno"],
 		eggGroups: ["Human-Like"],
+		tags: ["1st Stage"],
 	},
 	hypno: {
 		num: 97,
@@ -1687,6 +1769,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Drowzee",
 		evoLevel: 26,
 		eggGroups: ["Human-Like"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	voltorb: {
 		num: 100,
@@ -1708,6 +1791,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Mineral"],
 		otherFormes: ["Voltorb-Hisui"],
 		formeOrder: ["Voltorb", "Voltorb-Hisui"],
+		tags: ["1st Stage"],
 	},
 	voltorbhisui: {
 		num: 100,
@@ -1729,6 +1813,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Electrode-Hisui"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	electrode: {
 		num: 101,
@@ -1751,6 +1836,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Mineral"],
 		otherFormes: ["Electrode-Hisui"],
 		formeOrder: ["Electrode", "Electrode-Hisui"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	electrodehisui: {
 		num: 101,
@@ -1774,6 +1860,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Leaf Stone",
 		eggGroups: ["Mineral"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	exeggcute: {
 		num: 102,
@@ -1789,6 +1876,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		evos: ["Exeggutor", "Exeggutor-Alola"],
 		eggGroups: ["Grass"],
+		tags: ["1st Stage"],
 	},
 	exeggutor: {
 		num: 103,
@@ -1808,6 +1896,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Grass"],
 		otherFormes: ["Exeggutor-Alola"],
 		formeOrder: ["Exeggutor", "Exeggutor-Alola"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	exeggutoralola: {
 		num: 103,
@@ -1831,6 +1920,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoItem: "Leaf Stone",
 		evoRegion: "Alola",
 		eggGroups: ["Grass"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	hitmonlee: {
 		num: 106,
@@ -1852,6 +1942,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 20,
 		evoCondition: "with an Atk stat > its Def stat",
 		eggGroups: ["Human-Like"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	hitmonchan: {
 		num: 107,
@@ -1873,6 +1964,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 20,
 		evoCondition: "with an Atk stat < its Def stat",
 		eggGroups: ["Human-Like"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	koffing: {
 		num: 109,
@@ -1891,6 +1983,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Weezing", "Weezing-Galar"],
 		eggGroups: ["Amorphous"],
+		tags: ["1st Stage"],
 	},
 	weezing: {
 		num: 110,
@@ -1912,6 +2005,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Amorphous"],
 		otherFormes: ["Weezing-Galar"],
 		formeOrder: ["Weezing", "Weezing-Galar"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	weezinggalar: {
 		num: 110,
@@ -1934,6 +2028,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 35,
 		evoRegion: "Galar",
 		eggGroups: ["Amorphous"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	rhyhorn: {
 		num: 111,
@@ -1952,6 +2047,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Rhydon"],
 		eggGroups: ["Monster", "Field"],
+		tags: ["1st Stage"],
 	},
 	rhydon: {
 		num: 112,
@@ -1972,6 +2068,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 42,
 		evos: ["Rhyperior"],
 		eggGroups: ["Monster", "Field"],
+		tags: ["2nd Stage"],
 	},
 	chansey: {
 		num: 113,
@@ -1993,6 +2090,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Blissey"],
 		eggGroups: ["Fairy"],
 		canHatch: true,
+		tags: ["2nd Stage"],
 	},
 	horsea: {
 		num: 116,
@@ -2011,6 +2109,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Seadra"],
 		eggGroups: ["Water 1", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	seadra: {
 		num: 117,
@@ -2031,6 +2130,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 32,
 		evos: ["Kingdra"],
 		eggGroups: ["Water 1", "Dragon"],
+		tags: ["2nd Stage"],
 	},
 	scyther: {
 		num: 123,
@@ -2049,6 +2149,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Scizor", "Kleavor"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	electabuzz: {
 		num: 125,
@@ -2067,6 +2168,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 30,
 		evos: ["Electivire"],
 		eggGroups: ["Human-Like"],
+		tags: ["2nd Stage"],
 	},
 	magmar: {
 		num: 126,
@@ -2085,6 +2187,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 30,
 		evos: ["Magmortar"],
 		eggGroups: ["Human-Like"],
+		tags: ["2nd Stage"],
 	},
 	tauros: {
 		num: 128,
@@ -2105,6 +2208,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Tauros-Paldea-Combat", "Tauros-Paldea-Blaze", "Tauros-Paldea-Aqua"],
 		formeOrder: ["Tauros", "Tauros-Paldea-Combat", "Tauros-Paldea-Blaze", "Tauros-Paldea-Aqua"],
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	taurospaldeacombat: {
 		num: 128,
@@ -2125,6 +2229,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 115,
 		color: "Black",
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	taurospaldeablaze: {
 		num: 128,
@@ -2145,6 +2250,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 85,
 		color: "Black",
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	taurospaldeaaqua: {
 		num: 128,
@@ -2165,6 +2271,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 110,
 		color: "Black",
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	magikarp: {
 		num: 129,
@@ -2183,6 +2290,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Gyarados"],
 		eggGroups: ["Water 2", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	gyarados: {
 		num: 130,
@@ -2201,6 +2309,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 2", "Dragon"],
 		otherFormes: ["Gyarados-Mega"],
 		formeOrder: ["Gyarados", "Gyarados-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	lapras: {
 		num: 131,
@@ -2219,6 +2328,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Monster", "Water 1"],
 		canGigantamax: "G-Max Resonance",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	ditto: {
 		num: 132,
@@ -2233,6 +2343,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 4,
 		color: "Purple",
 		eggGroups: ["Ditto"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	eevee: {
 		num: 133,
@@ -2255,6 +2366,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Eevee-Starter"],
 		formeOrder: ["Eevee", "Eevee-Starter"],
 		canGigantamax: "G-Max Cuddle",
+		tags: ["1st Stage"],
 	},
 	vaporeon: {
 		num: 134,
@@ -2273,6 +2385,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Water Stone",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	jolteon: {
 		num: 135,
@@ -2291,6 +2404,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Thunder Stone",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	flareon: {
 		num: 136,
@@ -2309,6 +2423,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Fire Stone",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	porygon: {
 		num: 137,
@@ -2328,6 +2443,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		evos: ["Porygon2"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	snorlax: {
 		num: 143,
@@ -2350,6 +2466,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster"],
 		canHatch: true,
 		canGigantamax: "G-Max Replenish",
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	articuno: {
 		num: 144,
@@ -2364,7 +2481,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.7,
 		weightkg: 55.4,
 		color: "Blue",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Articuno-Galar"],
 		formeOrder: ["Articuno", "Articuno-Galar"],
@@ -2385,6 +2502,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 50.9,
 		color: "Purple",
 		eggGroups: ["Undiscovered"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	zapdos: {
 		num: 145,
@@ -2401,7 +2519,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.6,
 		weightkg: 52.6,
 		color: "Yellow",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Zapdos-Galar"],
 		formeOrder: ["Zapdos", "Zapdos-Galar"],
@@ -2425,6 +2543,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 58.2,
 		color: "Yellow",
 		eggGroups: ["Undiscovered"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	moltres: {
 		num: 146,
@@ -2442,7 +2561,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 2,
 		weightkg: 60,
 		color: "Yellow",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Moltres-Galar"],
 		formeOrder: ["Moltres", "Moltres-Galar"],
@@ -2466,6 +2585,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 66,
 		color: "Red",
 		eggGroups: ["Undiscovered"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	dratini: {
 		num: 147,
@@ -2481,6 +2601,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Dragonair"],
 		eggGroups: ["Water 1", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	dragonair: {
 		num: 148,
@@ -2498,6 +2619,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 30,
 		evos: ["Dragonite"],
 		eggGroups: ["Water 1", "Dragon"],
+		tags: ["2nd Stage"],
 	},
 	dragonite: {
 		num: 149,
@@ -2516,6 +2638,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1", "Dragon"],
 		otherFormes: ["Dragonite-Mega"],
 		formeOrder: ["Dragonite", "Dragonite-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	mewtwo: {
 		num: 150,
@@ -2534,7 +2657,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 122,
 		color: "Purple",
 		eggGroups: ["Undiscovered"],
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Mewtwo-Mega-X", "Mewtwo-Mega-Y"],
 		formeOrder: ["Mewtwo", "Mewtwo-Mega-X", "Mewtwo-Mega-Y"],
 	},
@@ -2551,7 +2674,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.4,
 		weightkg: 4,
 		color: "Pink",
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 
@@ -2573,6 +2696,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Bayleef"],
 		eggGroups: ["Monster", "Grass"],
+		tags: ["1st Stage"],
 	},
 	bayleef: {
 		num: 153,
@@ -2594,6 +2718,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Meganium"],
 		eggGroups: ["Monster", "Grass"],
+		tags: ["2nd Stage"],
 	},
 	meganium: {
 		num: 154,
@@ -2616,6 +2741,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster", "Grass"],
 		otherFormes: ["Meganium-Mega"],
 		formeOrder: ["Meganium", "Meganium-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	cyndaquil: {
 		num: 155,
@@ -2632,6 +2758,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Quilava"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	quilava: {
 		num: 156,
@@ -2653,6 +2780,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 14,
 		evos: ["Typhlosion", "Typhlosion-Hisui"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage"],
 	},
 	typhlosion: {
 		num: 157,
@@ -2675,6 +2803,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Typhlosion-Hisui"],
 		formeOrder: ["Typhlosion", "Typhlosion-Hisui"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	typhlosionhisui: {
 		num: 157,
@@ -2697,6 +2826,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Quilava",
 		evoLevel: 36,
 		eggGroups: ["Field"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	totodile: {
 		num: 158,
@@ -2713,6 +2843,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Croconaw"],
 		eggGroups: ["Monster", "Water 1"],
+		tags: ["1st Stage"],
 	},
 	croconaw: {
 		num: 159,
@@ -2734,6 +2865,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 18,
 		evos: ["Feraligatr"],
 		eggGroups: ["Monster", "Water 1"],
+		tags: ["2nd Stage"],
 	},
 	feraligatr: {
 		num: 160,
@@ -2753,6 +2885,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster", "Water 1"],
 		otherFormes: ["Feraligatr-Mega"],
 		formeOrder: ["Feraligatr", "Feraligatr-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	sentret: {
 		num: 161,
@@ -2771,6 +2904,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Furret"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	furret: {
 		num: 162,
@@ -2790,6 +2924,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Sentret",
 		evoLevel: 15,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	hoothoot: {
 		num: 163,
@@ -2808,6 +2943,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Noctowl"],
 		eggGroups: ["Flying"],
+		tags: ["1st Stage"],
 	},
 	noctowl: {
 		num: 164,
@@ -2827,6 +2963,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Hoothoot",
 		evoLevel: 20,
 		eggGroups: ["Flying"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	spinarak: {
 		num: 167,
@@ -2845,6 +2982,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Ariados"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	ariados: {
 		num: 168,
@@ -2864,6 +3002,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Spinarak",
 		evoLevel: 22,
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	chinchou: {
 		num: 170,
@@ -2882,6 +3021,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Lanturn"],
 		eggGroups: ["Water 2"],
+		tags: ["1st Stage"],
 	},
 	lanturn: {
 		num: 171,
@@ -2901,6 +3041,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Chinchou",
 		evoLevel: 27,
 		eggGroups: ["Water 2"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	pichu: {
 		num: 172,
@@ -2922,6 +3063,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		canHatch: true,
 		otherFormes: ["Pichu-Spiky-eared"],
 		formeOrder: ["Pichu", "Pichu-Spiky-eared"],
+		tags: ["1st Stage"],
 	},
 	cleffa: {
 		num: 173,
@@ -2939,6 +3081,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Clefairy"],
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
+		tags: ["1st Stage"],
 	},
 	igglybuff: {
 		num: 174,
@@ -2959,6 +3102,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Jigglypuff"],
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
+		tags: ["1st Stage"],
 	},
 	mareep: {
 		num: 179,
@@ -2977,6 +3121,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Flaaffy"],
 		eggGroups: ["Monster", "Field"],
+		tags: ["1st Stage"],
 	},
 	flaaffy: {
 		num: 180,
@@ -2997,6 +3142,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 15,
 		evos: ["Ampharos"],
 		eggGroups: ["Monster", "Field"],
+		tags: ["2nd Stage"],
 	},
 	ampharos: {
 		num: 181,
@@ -3018,6 +3164,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster", "Field"],
 		otherFormes: ["Ampharos-Mega"],
 		formeOrder: ["Ampharos", "Ampharos-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	bellossom: {
 		num: 182,
@@ -3038,6 +3185,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Sun Stone",
 		eggGroups: ["Grass"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	marill: {
 		num: 183,
@@ -3059,6 +3207,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Azumarill"],
 		eggGroups: ["Water 1", "Fairy"],
 		canHatch: true,
+		tags: ["2nd Stage"],
 	},
 	azumarill: {
 		num: 184,
@@ -3078,6 +3227,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Marill",
 		evoLevel: 18,
 		eggGroups: ["Water 1", "Fairy"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	sudowoodo: {
 		num: 185,
@@ -3099,6 +3249,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoMove: "Mimic",
 		eggGroups: ["Mineral"],
 		canHatch: true,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	politoed: {
 		num: 186,
@@ -3116,6 +3267,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "trade",
 		evoItem: "King's Rock",
 		eggGroups: ["Water 1"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	hoppip: {
 		num: 187,
@@ -3134,6 +3286,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		evos: ["Skiploom"],
 		eggGroups: ["Fairy", "Grass"],
+		tags: ["1st Stage"],
 	},
 	skiploom: {
 		num: 188,
@@ -3154,6 +3307,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 18,
 		evos: ["Jumpluff"],
 		eggGroups: ["Fairy", "Grass"],
+		tags: ["2nd Stage"],
 	},
 	jumpluff: {
 		num: 189,
@@ -3173,6 +3327,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Skiploom",
 		evoLevel: 27,
 		eggGroups: ["Fairy", "Grass"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	aipom: {
 		num: 190,
@@ -3191,6 +3346,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Ambipom"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	sunkern: {
 		num: 191,
@@ -3209,6 +3365,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Sunflora"],
 		eggGroups: ["Grass"],
+		tags: ["1st Stage"],
 	},
 	sunflora: {
 		num: 192,
@@ -3226,6 +3383,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Sun Stone",
 		eggGroups: ["Grass"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	yanma: {
 		num: 193,
@@ -3243,6 +3401,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Yanmega"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	wooper: {
 		num: 194,
@@ -3263,6 +3422,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1", "Field"],
 		otherFormes: ["Wooper-Paldea"],
 		formeOrder: ["Wooper", "Wooper-Paldea"],
+		tags: ["1st Stage"],
 	},
 	wooperpaldea: {
 		num: 194,
@@ -3283,6 +3443,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Clodsire"],
 		eggGroups: ["Water 1", "Field"],
+		tags: ["1st Stage"],
 	},
 	quagsire: {
 		num: 195,
@@ -3302,6 +3463,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Wooper",
 		evoLevel: 20,
 		eggGroups: ["Water 1", "Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	espeon: {
 		num: 196,
@@ -3323,6 +3485,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelFriendship",
 		evoCondition: "during the day",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	umbreon: {
 		num: 197,
@@ -3344,6 +3507,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelFriendship",
 		evoCondition: "at night",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	murkrow: {
 		num: 198,
@@ -3362,6 +3526,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		evos: ["Honchkrow"],
 		eggGroups: ["Flying"],
+		tags: ["1st Stage"],
 	},
 	slowking: {
 		num: 199,
@@ -3384,6 +3549,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster", "Water 1"],
 		otherFormes: ["Slowking-Galar"],
 		formeOrder: ["Slowking", "Slowking-Galar"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	slowkinggalar: {
 		num: 199,
@@ -3406,6 +3572,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Galarica Wreath",
 		eggGroups: ["Monster", "Water 1"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	misdreavus: {
 		num: 200,
@@ -3421,6 +3588,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Mismagius"],
 		eggGroups: ["Amorphous"],
+		tags: ["1st Stage"],
 	},
 	girafarig: {
 		num: 203,
@@ -3439,6 +3607,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Farigiraf"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	pineco: {
 		num: 204,
@@ -3454,6 +3623,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Forretress"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	forretress: {
 		num: 205,
@@ -3470,6 +3640,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Pineco",
 		evoLevel: 31,
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	dunsparce: {
 		num: 206,
@@ -3488,6 +3659,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Dudunsparce", "Dudunsparce-Three-Segment"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	gligar: {
 		num: 207,
@@ -3506,6 +3678,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Gliscor"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	snubbull: {
 		num: 209,
@@ -3525,6 +3698,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		evos: ["Granbull"],
 		eggGroups: ["Field", "Fairy"],
+		tags: ["1st Stage"],
 	},
 	granbull: {
 		num: 210,
@@ -3545,6 +3719,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Snubbull",
 		evoLevel: 23,
 		eggGroups: ["Field", "Fairy"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	qwilfish: {
 		num: 211,
@@ -3564,6 +3739,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 2"],
 		otherFormes: ["Qwilfish-Hisui"],
 		formeOrder: ["Qwilfish", "Qwilfish-Hisui"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	qwilfishhisui: {
 		num: 211,
@@ -3584,6 +3760,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		evos: ["Overqwil"],
 		eggGroups: ["Water 2"],
+		tags: ["1st Stage"],
 	},
 	scizor: {
 		num: 212,
@@ -3606,6 +3783,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Bug"],
 		otherFormes: ["Scizor-Mega"],
 		formeOrder: ["Scizor", "Scizor-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	
 	heracross: {
@@ -3626,6 +3804,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Bug"],
 		otherFormes: ["Heracross-Mega"],
 		formeOrder: ["Heracross", "Heracross-Mega"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	sneasel: {
 		num: 215,
@@ -3646,6 +3825,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Sneasel-Hisui"],
 		formeOrder: ["Sneasel", "Sneasel-Hisui"],
+		tags: ["1st Stage"],
 	},
 	sneaselhisui: {
 		num: 215,
@@ -3665,6 +3845,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Sneasler"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	teddiursa: {
 		num: 216,
@@ -3680,6 +3861,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Ursaring"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	ursaring: {
 		num: 217,
@@ -3700,6 +3882,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 30,
 		evos: ["Ursaluna"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage"],
 	},
 	slugma: {
 		num: 218,
@@ -3718,6 +3901,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Magcargo"],
 		eggGroups: ["Amorphous"],
+		tags: ["1st Stage"],
 	},
 	magcargo: {
 		num: 219,
@@ -3737,6 +3921,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Slugma",
 		evoLevel: 38,
 		eggGroups: ["Amorphous"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	swinub: {
 		num: 220,
@@ -3755,6 +3940,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Piloswine"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	piloswine: {
 		num: 221,
@@ -3775,6 +3961,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 33,
 		evos: ["Mamoswine"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage"],
 	},
 	delibird: {
 		num: 225,
@@ -3792,6 +3979,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 16,
 		color: "Red",
 		eggGroups: ["Water 1", "Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	skarmory: {
 		num: 227,
@@ -3811,6 +3999,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Flying"],
 		otherFormes: ["Skarmory-Mega"],
 		formeOrder: ["Skarmory", "Skarmory-Mega"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	houndour: {
 		num: 228,
@@ -3829,6 +4018,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		evos: ["Houndoom"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	houndoom: {
 		num: 229,
@@ -3850,6 +4040,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Houndoom-Mega"],
 		formeOrder: ["Houndoom", "Houndoom-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	kingdra: {
 		num: 230,
@@ -3870,6 +4061,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "trade",
 		evoItem: "Dragon Scale",
 		eggGroups: ["Water 1", "Dragon"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	phanpy: {
 		num: 231,
@@ -3885,6 +4077,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Donphan"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	donphan: {
 		num: 232,
@@ -3904,6 +4097,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Phanpy",
 		evoLevel: 25,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	porygon2: {
 		num: 233,
@@ -3926,6 +4120,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoItem: "Up-Grade",
 		evos: ["Porygon-Z"],
 		eggGroups: ["Mineral"],
+		tags: ["2nd Stage"],
 	},
 	stantler: {
 		num: 234,
@@ -3944,6 +4139,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Wyrdeer"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	smeargle: {
 		num: 235,
@@ -3958,6 +4154,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 58,
 		color: "White",
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	tyrogue: {
 		num: 236,
@@ -3978,6 +4175,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Hitmonlee", "Hitmonchan", "Hitmontop"],
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
+		tags: ["1st Stage"],
 	},
 	hitmontop: {
 		num: 237,
@@ -3996,6 +4194,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 20,
 		evoCondition: "with an Atk stat equal to its Def stat",
 		eggGroups: ["Human-Like"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	elekid: {
 		num: 239,
@@ -4013,6 +4212,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Electabuzz"],
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
+		tags: ["1st Stage"],
 	},
 	magby: {
 		num: 240,
@@ -4030,6 +4230,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Magmar"],
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
+		tags: ["1st Stage"],
 	},
 	blissey: {
 		num: 242,
@@ -4047,6 +4248,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Chansey",
 		evoType: "levelFriendship",
 		eggGroups: ["Fairy"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	raikou: {
 		num: 243,
@@ -4064,7 +4266,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.9,
 		weightkg: 178,
 		color: "Yellow",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	entei: {
@@ -4083,7 +4285,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 2.1,
 		weightkg: 198,
 		color: "Brown",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	suicune: {
@@ -4102,7 +4304,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 2,
 		weightkg: 187,
 		color: "Blue",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	larvitar: {
@@ -4119,6 +4321,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Pupitar"],
 		eggGroups: ["Monster"],
+		tags: ["1st Stage"],
 	},
 	pupitar: {
 		num: 247,
@@ -4139,6 +4342,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 30,
 		evos: ["Tyranitar"],
 		eggGroups: ["Monster"],
+		tags: ["2nd Stage"],
 	},
 	tyranitar: {
 		num: 248,
@@ -4160,6 +4364,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster"],
 		otherFormes: ["Tyranitar-Mega"],
 		formeOrder: ["Tyranitar", "Tyranitar-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	lugia: {
 		num: 249,
@@ -4177,7 +4382,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 5.2,
 		weightkg: 216,
 		color: "White",
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	hooh: {
@@ -4196,7 +4401,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 3.8,
 		weightkg: 199,
 		color: "Red",
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 
@@ -4221,6 +4426,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Grovyle"],
 		eggGroups: ["Monster", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	grovyle: {
 		num: 253,
@@ -4242,6 +4448,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Sceptile"],
 		eggGroups: ["Monster", "Dragon"],
+		tags: ["2nd Stage"],
 	},
 	sceptile: {
 		num: 254,
@@ -4264,6 +4471,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster", "Dragon"],
 		otherFormes: ["Sceptile-Mega"],
 		formeOrder: ["Sceptile", "Sceptile-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	torchic: {
 		num: 255,
@@ -4280,6 +4488,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Combusken"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	combusken: {
 		num: 256,
@@ -4301,6 +4510,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Blaziken"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage"],
 	},
 	blaziken: {
 		num: 257,
@@ -4323,6 +4533,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Blaziken-Mega"],
 		formeOrder: ["Blaziken", "Blaziken-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	mudkip: {
 		num: 258,
@@ -4339,6 +4550,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Marshtomp"],
 		eggGroups: ["Monster", "Water 1"],
+		tags: ["1st Stage"],
 	},
 	marshtomp: {
 		num: 259,
@@ -4360,6 +4572,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Swampert"],
 		eggGroups: ["Monster", "Water 1"],
+		tags: ["2nd Stage"],
 	},
 	swampert: {
 		num: 260,
@@ -4382,6 +4595,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster", "Water 1"],
 		otherFormes: ["Swampert-Mega"],
 		formeOrder: ["Swampert", "Swampert-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	poochyena: {
 		num: 261,
@@ -4400,6 +4614,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Mightyena"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	mightyena: {
 		num: 262,
@@ -4419,6 +4634,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Poochyena",
 		evoLevel: 18,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	lotad: {
 		num: 270,
@@ -4437,6 +4653,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Lombre"],
 		eggGroups: ["Water 1", "Grass"],
+		tags: ["1st Stage"],
 	},
 	lombre: {
 		num: 271,
@@ -4457,6 +4674,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 14,
 		evos: ["Ludicolo"],
 		eggGroups: ["Water 1", "Grass"],
+		tags: ["2nd Stage"],
 	},
 	ludicolo: {
 		num: 272,
@@ -4477,6 +4695,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Water Stone",
 		eggGroups: ["Water 1", "Grass"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	seedot: {
 		num: 273,
@@ -4495,6 +4714,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Nuzleaf"],
 		eggGroups: ["Field", "Grass"],
+		tags: ["1st Stage"],
 	},
 	nuzleaf: {
 		num: 274,
@@ -4515,6 +4735,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 14,
 		evos: ["Shiftry"],
 		eggGroups: ["Field", "Grass"],
+		tags: ["2nd Stage"],
 	},
 	shiftry: {
 		num: 275,
@@ -4535,6 +4756,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Leaf Stone",
 		eggGroups: ["Field", "Grass"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	wingull: {
 		num: 278,
@@ -4553,6 +4775,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Pelipper"],
 		eggGroups: ["Water 1", "Flying"],
+		tags: ["1st Stage"],
 	},
 	pelipper: {
 		num: 279,
@@ -4569,6 +4792,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Wingull",
 		evoLevel: 25,
 		eggGroups: ["Water 1", "Flying"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	ralts: {
 		num: 280,
@@ -4587,6 +4811,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Kirlia"],
 		eggGroups: ["Human-Like", "Amorphous"],
+		tags: ["1st Stage"],
 	},
 	kirlia: {
 		num: 281,
@@ -4607,6 +4832,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 20,
 		evos: ["Gardevoir", "Gallade"],
 		eggGroups: ["Human-Like", "Amorphous"],
+		tags: ["2nd Stage"],
 	},
 	gardevoir: {
 		num: 282,
@@ -4628,6 +4854,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Human-Like", "Amorphous"],
 		otherFormes: ["Gardevoir-Mega"],
 		formeOrder: ["Gardevoir", "Gardevoir-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	surskit: {
 		num: 283,
@@ -4643,6 +4870,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Masquerain"],
 		eggGroups: ["Water 1", "Bug"],
+		tags: ["1st Stage"],
 	},
 	masquerain: {
 		num: 284,
@@ -4662,6 +4890,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Surskit",
 		evoLevel: 22,
 		eggGroups: ["Water 1", "Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	shroomish: {
 		num: 285,
@@ -4680,6 +4909,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Breloom"],
 		eggGroups: ["Fairy", "Grass"],
+		tags: ["1st Stage"],
 	},
 	breloom: {
 		num: 286,
@@ -4699,6 +4929,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Shroomish",
 		evoLevel: 23,
 		eggGroups: ["Fairy", "Grass"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	slakoth: {
 		num: 287,
@@ -4717,6 +4948,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Vigoroth"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	vigoroth: {
 		num: 288,
@@ -4734,6 +4966,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 18,
 		evos: ["Slaking"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage"],
 	},
 	slaking: {
 		num: 289,
@@ -4753,6 +4986,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Vigoroth",
 		evoLevel: 36,
 		eggGroups: ["Field"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	makuhita: {
 		num: 296,
@@ -4772,6 +5006,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Hariyama"],
 		eggGroups: ["Human-Like"],
+		tags: ["1st Stage"],
 	},
 	hariyama: {
 		num: 297,
@@ -4792,6 +5027,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Makuhita",
 		evoLevel: 24,
 		eggGroups: ["Human-Like"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	azurill: {
 		num: 298,
@@ -4812,6 +5048,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Marill"],
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
+		tags: ["1st Stage"],
 	},
 	nosepass: {
 		num: 299,
@@ -4830,6 +5067,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Probopass"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	sableye: {
 		num: 302,
@@ -4849,6 +5087,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Human-Like"],
 		otherFormes: ["Sableye-Mega"],
 		formeOrder: ["Sableye", "Sableye-Mega"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	meditite: {
 		num: 307,
@@ -4864,6 +5103,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Medicham"],
 		eggGroups: ["Human-Like"],
+		tags: ["1st Stage"],
 	},
 	medicham: {
 		num: 308,
@@ -4882,6 +5122,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Human-Like"],
 		otherFormes: ["Medicham-Mega"],
 		formeOrder: ["Medicham", "Medicham-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	plusle: {
 		num: 311,
@@ -4896,6 +5137,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 4.2,
 		color: "Yellow",
 		eggGroups: ["Fairy"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	minun: {
 		num: 312,
@@ -4910,6 +5152,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 4.2,
 		color: "Yellow",
 		eggGroups: ["Fairy"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	volbeat: {
 		num: 313,
@@ -4929,6 +5172,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		eggGroups: ["Bug", "Human-Like"],
 		mother: 'illumise',
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	illumise: {
 		num: 314,
@@ -4947,6 +5191,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 17.7,
 		color: "Purple",
 		eggGroups: ["Bug", "Human-Like"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	gulpin: {
 		num: 316,
@@ -4965,6 +5210,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Swalot"],
 		eggGroups: ["Amorphous"],
+		tags: ["1st Stage"],
 	},
 	swalot: {
 		num: 317,
@@ -4984,6 +5230,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Gulpin",
 		evoLevel: 26,
 		eggGroups: ["Amorphous"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	numel: {
 		num: 322,
@@ -5002,6 +5249,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Camerupt"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	camerupt: {
 		num: 323,
@@ -5023,6 +5271,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Camerupt-Mega"],
 		formeOrder: ["Camerupt", "Camerupt-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	torkoal: {
 		num: 324,
@@ -5040,6 +5289,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 80.4,
 		color: "Brown",
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	spoink: {
 		num: 325,
@@ -5058,6 +5308,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		evos: ["Grumpig"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	grumpig: {
 		num: 326,
@@ -5077,6 +5328,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Spoink",
 		evoLevel: 32,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	trapinch: {
 		num: 328,
@@ -5095,6 +5347,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Vibrava"],
 		eggGroups: ["Bug", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	vibrava: {
 		num: 329,
@@ -5115,6 +5368,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 35,
 		evos: ["Flygon"],
 		eggGroups: ["Bug", "Dragon"],
+		tags: ["2nd Stage"],
 	},
 	flygon: {
 		num: 330,
@@ -5134,6 +5388,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Vibrava",
 		evoLevel: 45,
 		eggGroups: ["Bug", "Dragon"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	cacnea: {
 		num: 331,
@@ -5152,6 +5407,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Cacturne"],
 		eggGroups: ["Grass", "Human-Like"],
+		tags: ["1st Stage"],
 	},
 	cacturne: {
 		num: 332,
@@ -5171,6 +5427,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Cacnea",
 		evoLevel: 32,
 		eggGroups: ["Grass", "Human-Like"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	swablu: {
 		num: 333,
@@ -5189,6 +5446,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Altaria"],
 		eggGroups: ["Flying", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	altaria: {
 		num: 334,
@@ -5210,6 +5468,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Flying", "Dragon"],
 		otherFormes: ["Altaria-Mega"],
 		formeOrder: ["Altaria", "Altaria-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	zangoose: {
 		num: 335,
@@ -5227,6 +5486,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 40.3,
 		color: "White",
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	seviper: {
 		num: 336,
@@ -5244,6 +5504,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 52.5,
 		color: "Black",
 		eggGroups: ["Field", "Dragon"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	barboach: {
 		num: 339,
@@ -5262,6 +5523,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Whiscash"],
 		eggGroups: ["Water 2"],
+		tags: ["1st Stage"],
 	},
 	whiscash: {
 		num: 340,
@@ -5281,6 +5543,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Barboach",
 		evoLevel: 30,
 		eggGroups: ["Water 2"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	corphish: {
 		num: 341,
@@ -5299,6 +5562,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Crawdaunt"],
 		eggGroups: ["Water 1", "Water 3"],
+		tags: ["1st Stage"],
 	},
 	crawdaunt: {
 		num: 342,
@@ -5318,6 +5582,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Corphish",
 		evoLevel: 30,
 		eggGroups: ["Water 1", "Water 3"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	feebas: {
 		num: 349,
@@ -5336,6 +5601,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Milotic"],
 		eggGroups: ["Water 1", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	milotic: {
 		num: 350,
@@ -5356,6 +5622,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "trade",
 		evoItem: "Prism Scale",
 		eggGroups: ["Water 1", "Dragon"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	shuppet: {
 		num: 353,
@@ -5374,6 +5641,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		evos: ["Banette"],
 		eggGroups: ["Amorphous"],
+		tags: ["1st Stage"],
 	},
 	banette: {
 		num: 354,
@@ -5395,6 +5663,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Amorphous"],
 		otherFormes: ["Banette-Mega"],
 		formeOrder: ["Banette", "Banette-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	duskull: {
 		num: 355,
@@ -5413,6 +5682,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		evos: ["Dusclops"],
 		eggGroups: ["Amorphous"],
+		tags: ["1st Stage"],
 	},
 	dusclops: {
 		num: 356,
@@ -5433,6 +5703,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 37,
 		evos: ["Dusknoir"],
 		eggGroups: ["Amorphous"],
+		tags: ["2nd Stage"],
 	},
 	tropius: {
 		num: 357,
@@ -5450,6 +5721,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 100,
 		color: "Green",
 		eggGroups: ["Monster", "Grass"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	chimecho: {
 		num: 358,
@@ -5468,6 +5740,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoCondition: "at night",
 		eggGroups: ["Amorphous"],
 		canHatch: true,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	snorunt: {
 		num: 361,
@@ -5486,6 +5759,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Glalie", "Froslass"],
 		eggGroups: ["Fairy", "Mineral"],
+		tags: ["1st Stage"],
 	},
 	glalie: {
 		num: 362,
@@ -5507,6 +5781,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Fairy", "Mineral"],
 		otherFormes: ["Glalie-Mega"],
 		formeOrder: ["Glalie", "Glalie-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	luvdisc: {
 		num: 370,
@@ -5522,6 +5797,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 8.7,
 		color: "Pink",
 		eggGroups: ["Water 2"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	bagon: {
 		num: 371,
@@ -5540,6 +5816,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Shelgon"],
 		eggGroups: ["Dragon"],
+		tags: ["1st Stage"],
 	},
 	shelgon: {
 		num: 372,
@@ -5560,6 +5837,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 30,
 		evos: ["Salamence"],
 		eggGroups: ["Dragon"],
+		tags: ["2nd Stage"],
 	},
 	salamence: {
 		num: 373,
@@ -5581,6 +5859,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Dragon"],
 		otherFormes: ["Salamence-Mega"],
 		formeOrder: ["Salamence", "Salamence-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	beldum: {
 		num: 374,
@@ -5600,6 +5879,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Metang"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	metang: {
 		num: 375,
@@ -5621,6 +5901,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 20,
 		evos: ["Metagross"],
 		eggGroups: ["Mineral"],
+		tags: ["2nd Stage"],
 	},
 	metagross: {
 		num: 376,
@@ -5643,6 +5924,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Mineral"],
 		otherFormes: ["Metagross-Mega"],
 		formeOrder: ["Metagross", "Metagross-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	regirock: {
 		num: 377,
@@ -5660,7 +5942,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.7,
 		weightkg: 230,
 		color: "Brown",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	regice: {
@@ -5679,7 +5961,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.8,
 		weightkg: 175,
 		color: "Blue",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	registeel: {
@@ -5698,7 +5980,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.9,
 		weightkg: 205,
 		color: "Gray",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	latias: {
@@ -5717,7 +5999,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.4,
 		weightkg: 40,
 		color: "Red",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Latias-Mega"],
 		formeOrder: ["Latias", "Latias-Mega"],
@@ -5739,7 +6021,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 60,
 		color: "Blue",
 		eggGroups: ["Undiscovered"],
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Latios-Mega"],
 		formeOrder: ["Latios", "Latios-Mega"],
 	},
@@ -5756,7 +6038,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 4.5,
 		weightkg: 352,
 		color: "Blue",
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Kyogre-Primal"],
 		formeOrder: ["Kyogre", "Kyogre-Primal"],
@@ -5774,7 +6056,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 3.5,
 		weightkg: 950,
 		color: "Red",
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Groudon-Primal"],
 		formeOrder: ["Groudon", "Groudon-Primal"],
@@ -5792,7 +6074,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 7,
 		weightkg: 206.5,
 		color: "Green",
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Rayquaza-Mega"],
 		formeOrder: ["Rayquaza", "Rayquaza-Mega"],
@@ -5810,7 +6092,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.3,
 		weightkg: 1.1,
 		color: "Yellow",
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	deoxys: {
@@ -5828,7 +6110,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 60.8,
 		color: "Red",
 		eggGroups: ["Undiscovered"],
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Deoxys-Attack", "Deoxys-Defense", "Deoxys-Speed"],
 		formeOrder: ["Deoxys", "Deoxys-Attack", "Deoxys-Defense", "Deoxys-Speed"],
 	},
@@ -5849,6 +6131,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Deoxys",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	deoxysdefense: {
 		num: 386,
@@ -5867,6 +6150,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Deoxys",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	deoxysspeed: {
 		num: 386,
@@ -5885,6 +6169,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Deoxys",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 
 
@@ -5908,6 +6193,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Grotle"],
 		eggGroups: ["Monster", "Grass"],
+		tags: ["1st Stage"],
 	},
 	grotle: {
 		num: 388,
@@ -5929,6 +6215,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 18,
 		evos: ["Torterra"],
 		eggGroups: ["Monster", "Grass"],
+		tags: ["2nd Stage"],
 	},
 	torterra: {
 		num: 389,
@@ -5949,6 +6236,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Grotle",
 		evoLevel: 32,
 		eggGroups: ["Monster", "Grass"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	chimchar: {
 		num: 390,
@@ -5965,6 +6253,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Monferno"],
 		eggGroups: ["Field", "Human-Like"],
+		tags: ["1st Stage"],
 	},
 	monferno: {
 		num: 391,
@@ -5986,6 +6275,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 14,
 		evos: ["Infernape"],
 		eggGroups: ["Field", "Human-Like"],
+		tags: ["2nd Stage"],
 	},
 	infernape: {
 		num: 392,
@@ -6006,6 +6296,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Monferno",
 		evoLevel: 36,
 		eggGroups: ["Field", "Human-Like"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	piplup: {
 		num: 393,
@@ -6022,6 +6313,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Prinplup"],
 		eggGroups: ["Water 1", "Field"],
+		tags: ["1st Stage"],
 	},
 	prinplup: {
 		num: 394,
@@ -6040,6 +6332,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Empoleon"],
 		eggGroups: ["Water 1", "Field"],
+		tags: ["2nd Stage"],
 	},
 	empoleon: {
 		num: 395,
@@ -6060,6 +6353,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Prinplup",
 		evoLevel: 36,
 		eggGroups: ["Water 1", "Field"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	starly: {
 		num: 396,
@@ -6078,6 +6372,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Staravia"],
 		eggGroups: ["Flying"],
+		tags: ["1st Stage"],
 	},
 	staravia: {
 		num: 397,
@@ -6098,6 +6393,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 14,
 		evos: ["Staraptor"],
 		eggGroups: ["Flying"],
+		tags: ["2nd Stage"],
 	},
 	staraptor: {
 		num: 398,
@@ -6117,6 +6413,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Staravia",
 		evoLevel: 34,
 		eggGroups: ["Flying"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	kricketot: {
 		num: 401,
@@ -6135,6 +6432,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Kricketune"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	kricketune: {
 		num: 402,
@@ -6154,6 +6452,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Kricketot",
 		evoLevel: 10,
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	shinx: {
 		num: 403,
@@ -6172,6 +6471,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Luxio"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	luxio: {
 		num: 404,
@@ -6192,6 +6492,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 15,
 		evos: ["Luxray"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage"],
 	},
 	luxray: {
 		num: 405,
@@ -6211,6 +6512,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Luxio",
 		evoLevel: 30,
 		eggGroups: ["Field"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	cranidos: {
 		num: 408,
@@ -6230,6 +6532,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Rampardos"],
 		eggGroups: ["Monster"],
+		tags: ["1st Stage"],
 	},
 	rampardos: {
 		num: 409,
@@ -6250,6 +6553,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Cranidos",
 		evoLevel: 30,
 		eggGroups: ["Monster"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	shieldon: {
 		num: 410,
@@ -6269,6 +6573,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Bastiodon"],
 		eggGroups: ["Monster"],
+		tags: ["1st Stage"],
 	},
 	bastiodon: {
 		num: 411,
@@ -6289,6 +6594,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Shieldon",
 		evoLevel: 30,
 		eggGroups: ["Monster"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	combee: {
 		num: 415,
@@ -6305,6 +6611,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Vespiquen"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	vespiquen: {
 		num: 416,
@@ -6325,6 +6632,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Combee",
 		evoLevel: 21,
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	pachirisu: {
 		num: 417,
@@ -6342,6 +6650,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 3.9,
 		color: "White",
 		eggGroups: ["Field", "Fairy"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	buizel: {
 		num: 418,
@@ -6357,6 +6666,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Floatzel"],
 		eggGroups: ["Water 1", "Field"],
+		tags: ["1st Stage"],
 	},
 	floatzel: {
 		num: 419,
@@ -6373,6 +6683,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Buizel",
 		evoLevel: 26,
 		eggGroups: ["Water 1", "Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	shellos: {
 		num: 422,
@@ -6394,6 +6705,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1", "Amorphous"],
 		cosmeticFormes: ["Shellos-East"],
 		formeOrder: ["Shellos", "Shellos-East"],
+		tags: ["1st Stage"],
 	},
 	shelloseast: {
 		isCosmeticForme: true,
@@ -6401,6 +6713,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Shellos",
 		forme: "East",
 		color: "Blue",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	gastrodon: {
 		num: 423,
@@ -6423,6 +6736,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1", "Amorphous"],
 		cosmeticFormes: ["Gastrodon-East"],
 		formeOrder: ["Gastrodon", "Gastrodon-East"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	gastrodoneast: {
 		isCosmeticForme: true,
@@ -6430,6 +6744,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Gastrodon",
 		forme: "East",
 		color: "Blue",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	ambipom: {
 		num: 424,
@@ -6450,6 +6765,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelMove",
 		evoMove: "Double Hit",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	drifloon: {
 		num: 425,
@@ -6468,6 +6784,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Drifblim"],
 		eggGroups: ["Amorphous"],
+		tags: ["1st Stage"],
 	},
 	drifblim: {
 		num: 426,
@@ -6487,6 +6804,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Drifloon",
 		evoLevel: 28,
 		eggGroups: ["Amorphous"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	mismagius: {
 		num: 429,
@@ -6507,6 +6825,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Dusk Stone",
 		eggGroups: ["Amorphous"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	honchkrow: {
 		num: 430,
@@ -6527,6 +6846,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Dusk Stone",
 		eggGroups: ["Flying"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	chingling: {
 		num: 433,
@@ -6543,6 +6863,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Chimecho"],
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
+		tags: ["1st Stage"],
 	},
 	stunky: {
 		num: 434,
@@ -6561,6 +6882,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Skuntank"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	skuntank: {
 		num: 435,
@@ -6580,6 +6902,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Stunky",
 		evoLevel: 34,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	bronzor: {
 		num: 436,
@@ -6599,6 +6922,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Bronzong"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	bronzong: {
 		num: 437,
@@ -6619,6 +6943,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Bronzor",
 		evoLevel: 33,
 		eggGroups: ["Mineral"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	bonsly: {
 		num: 438,
@@ -6638,6 +6963,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Sudowoodo"],
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
+		tags: ["1st Stage"],
 	},
 	happiny: {
 		num: 440,
@@ -6655,6 +6981,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Chansey"],
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
+		tags: ["1st Stage"],
 	},
 	spiritomb: {
 		num: 442,
@@ -6672,6 +6999,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 108,
 		color: "Purple",
 		eggGroups: ["Amorphous"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	gible: {
 		num: 443,
@@ -6690,6 +7018,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Gabite"],
 		eggGroups: ["Monster", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	gabite: {
 		num: 444,
@@ -6710,6 +7039,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 24,
 		evos: ["Garchomp"],
 		eggGroups: ["Monster", "Dragon"],
+		tags: ["2nd Stage"],
 	},
 	garchomp: {
 		num: 445,
@@ -6731,6 +7061,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster", "Dragon"],
 		otherFormes: ["Garchomp-Mega"],
 		formeOrder: ["Garchomp", "Garchomp-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	munchlax: {
 		num: 446,
@@ -6748,6 +7079,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Snorlax"],
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
+		tags: ["1st Stage"],
 	},
 	riolu: {
 		num: 447,
@@ -6768,6 +7100,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Lucario"],
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
+		tags: ["1st Stage"],
 	},
 	lucario: {
 		num: 448,
@@ -6790,6 +7123,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field", "Human-Like"],
 		otherFormes: ["Lucario-Mega"],
 		formeOrder: ["Lucario", "Lucario-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	hippopotas: {
 		num: 449,
@@ -6808,6 +7142,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Hippowdon"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	hippowdon: {
 		num: 450,
@@ -6827,6 +7162,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Hippopotas",
 		evoLevel: 34,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	croagunk: {
 		num: 453,
@@ -6845,6 +7181,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Toxicroak"],
 		eggGroups: ["Human-Like"],
+		tags: ["1st Stage"],
 	},
 	toxicroak: {
 		num: 454,
@@ -6864,6 +7201,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Croagunk",
 		evoLevel: 37,
 		eggGroups: ["Human-Like"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	finneon: {
 		num: 456,
@@ -6882,6 +7220,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Lumineon"],
 		eggGroups: ["Water 2"],
+		tags: ["1st Stage"],
 	},
 	lumineon: {
 		num: 457,
@@ -6901,6 +7240,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Finneon",
 		evoLevel: 31,
 		eggGroups: ["Water 2"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	snover: {
 		num: 459,
@@ -6916,6 +7256,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Abomasnow"],
 		eggGroups: ["Monster", "Grass"],
+		tags: ["1st Stage"],
 	},
 	abomasnow: {
 		num: 460,
@@ -6937,6 +7278,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster", "Grass"],
 		otherFormes: ["Abomasnow-Mega"],
 		formeOrder: ["Abomasnow", "Abomasnow-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	weavile: {
 		num: 461,
@@ -6958,6 +7300,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoItem: "Razor Claw",
 		evoCondition: "at night",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	magnezone: {
 		num: 462,
@@ -6978,6 +7321,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Thunder Stone",
 		eggGroups: ["Mineral"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	rhyperior: {
 		num: 464,
@@ -6998,6 +7342,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "trade",
 		evoItem: "Protector",
 		eggGroups: ["Monster", "Field"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	electivire: {
 		num: 466,
@@ -7019,6 +7364,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "trade",
 		evoItem: "Electirizer",
 		eggGroups: ["Human-Like"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	magmortar: {
 		num: 467,
@@ -7040,6 +7386,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "trade",
 		evoItem: "Magmarizer",
 		eggGroups: ["Human-Like"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	yanmega: {
 		num: 469,
@@ -7060,6 +7407,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelMove",
 		evoMove: "Ancient Power",
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	leafeon: {
 		num: 470,
@@ -7081,6 +7429,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Leaf Stone",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	glaceon: {
 		num: 471,
@@ -7102,6 +7451,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Ice Stone",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	gliscor: {
 		num: 472,
@@ -7123,6 +7473,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoItem: "Razor Fang",
 		evoCondition: "at night",
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	mamoswine: {
 		num: 473,
@@ -7143,6 +7494,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelMove",
 		evoMove: "Ancient Power",
 		eggGroups: ["Field"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	porygonz: {
 		num: 474,
@@ -7164,6 +7516,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "trade",
 		evoItem: "Dubious Disc",
 		eggGroups: ["Mineral"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	gallade: {
 		num: 475,
@@ -7187,6 +7540,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Human-Like", "Amorphous"],
 		otherFormes: ["Gallade-Mega"],
 		formeOrder: ["Gallade", "Gallade-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	probopass: {
 		num: 476,
@@ -7207,6 +7561,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelExtra",
 		evoCondition: "near a special magnetic field",
 		eggGroups: ["Mineral"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	dusknoir: {
 		num: 477,
@@ -7227,6 +7582,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "trade",
 		evoItem: "Reaper Cloth",
 		eggGroups: ["Amorphous"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	froslass: {
 		num: 478,
@@ -7250,6 +7606,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Fairy", "Mineral"],
 		otherFormes: ["Froslass-Mega"],
 		formeOrder: ["Froslass", "Froslass-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	rotom: {
 		num: 479,
@@ -7267,6 +7624,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Amorphous"],
 		otherFormes: ["Rotom-Heat", "Rotom-Wash", "Rotom-Frost", "Rotom-Fan", "Rotom-Mow"],
 		formeOrder: ["Rotom", "Rotom-Heat", "Rotom-Wash", "Rotom-Frost", "Rotom-Fan", "Rotom-Mow"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	rotomheat: {
 		num: 479,
@@ -7285,6 +7643,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		eggGroups: ["Amorphous"],
 		changesFrom: "Rotom",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	rotomwash: {
 		num: 479,
@@ -7303,6 +7662,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		eggGroups: ["Amorphous"],
 		changesFrom: "Rotom",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	rotomfrost: {
 		num: 479,
@@ -7321,6 +7681,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		eggGroups: ["Amorphous"],
 		changesFrom: "Rotom",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	rotomfan: {
 		num: 479,
@@ -7339,6 +7700,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		eggGroups: ["Amorphous"],
 		changesFrom: "Rotom",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	rotommow: {
 		num: 479,
@@ -7357,6 +7719,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		eggGroups: ["Amorphous"],
 		changesFrom: "Rotom",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	uxie: {
 		num: 480,
@@ -7371,7 +7734,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.3,
 		weightkg: 0.3,
 		color: "Yellow",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	mesprit: {
@@ -7387,7 +7750,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.3,
 		weightkg: 0.3,
 		color: "Pink",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	azelf: {
@@ -7403,7 +7766,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.3,
 		weightkg: 0.3,
 		color: "Blue",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	dialga: {
@@ -7421,7 +7784,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
         },
 		heightm: 5.4,
 		weightkg: 683,
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		color: "White",
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Dialga-Origin"],
@@ -7449,6 +7812,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItem: "Adamant Crystal",
 		changesFrom: "Dialga",
 		gen: 8,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	palkia: {
 		num: 484,
@@ -7466,7 +7830,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 4.2,
 		weightkg: 336,
 		color: "Purple",
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Palkia-Origin"],
 		formeOrder: ["Palkia", "Palkia-Origin"],
@@ -7493,6 +7857,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItem: "Lustrous Globe",
 		changesFrom: "Palkia",
 		gen: 8,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	heatran: {
 		num: 485,
@@ -7506,7 +7871,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.7,
 		weightkg: 430,
 		color: "Brown",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	regigigas: {
@@ -7519,7 +7884,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 3.7,
 		weightkg: 420,
 		color: "White",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	giratina: {
@@ -7540,7 +7905,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 750,
 		color: "Black",
 		eggGroups: ["Undiscovered"],
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Giratina-Origin"],
 		formeOrder: ["Giratina", "Giratina-Origin"],
 	},
@@ -7565,6 +7930,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Griseous Core",
 		changesFrom: "Giratina",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	cresselia: {
 		num: 488,
@@ -7582,7 +7948,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.5,
 		weightkg: 85.6,
 		color: "Yellow",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	phione: {
@@ -7601,7 +7967,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.4,
 		weightkg: 3.1,
 		color: "Blue",
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Water 1", "Fairy"],
 	},
 	manaphy: {
@@ -7620,7 +7986,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.3,
 		weightkg: 1.4,
 		color: "Blue",
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Water 1", "Fairy"],
 	},
 	darkrai: {
@@ -7636,7 +8002,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.5,
 		weightkg: 50.5,
 		color: "Black",
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	shaymin: {
@@ -7657,7 +8023,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 2.1,
 		color: "Green",
 		eggGroups: ["Undiscovered"],
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Shaymin-Sky"],
 		formeOrder: ["Shaymin", "Shaymin-Sky"],
 	},
@@ -7681,6 +8047,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Shaymin",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arceus: {
 		num: 493,
@@ -7696,7 +8063,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 3.2,
 		weightkg: 320,
 		color: "White",
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Arceus-Bug", "Arceus-Dark", "Arceus-Dragon", "Arceus-Electric", "Arceus-Fairy", "Arceus-Fighting", "Arceus-Fire", "Arceus-Flying", "Arceus-Ghost", "Arceus-Grass", "Arceus-Ground", "Arceus-Ice", "Arceus-Poison", "Arceus-Psychic", "Arceus-Rock", "Arceus-Steel", "Arceus-Water"],
 		formeOrder: [
@@ -7722,6 +8089,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItems: ["Insect Plate", "Buginium Z"],
 		changesFrom: "Arceus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arceusdark: {
 		num: 493,
@@ -7741,6 +8109,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItems: ["Dread Plate", "Darkinium Z"],
 		changesFrom: "Arceus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arceusdragon: {
 		num: 493,
@@ -7760,6 +8129,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItems: ["Draco Plate", "Dragonium Z"],
 		changesFrom: "Arceus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arceuselectric: {
 		num: 493,
@@ -7779,6 +8149,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItems: ["Zap Plate", "Electrium Z"],
 		changesFrom: "Arceus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arceusfairy: {
 		num: 493,
@@ -7799,6 +8170,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItems: ["Pixie Plate", "Fairium Z"],
 		changesFrom: "Arceus",
 		gen: 6,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arceusfighting: {
 		num: 493,
@@ -7818,6 +8190,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItems: ["Fist Plate", "Fightinium Z"],
 		changesFrom: "Arceus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arceusfire: {
 		num: 493,
@@ -7837,6 +8210,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItems: ["Flame Plate", "Firium Z"],
 		changesFrom: "Arceus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arceusflying: {
 		num: 493,
@@ -7856,6 +8230,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItems: ["Sky Plate", "Flyinium Z"],
 		changesFrom: "Arceus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arceusghost: {
 		num: 493,
@@ -7875,6 +8250,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItems: ["Spooky Plate", "Ghostium Z"],
 		changesFrom: "Arceus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arceusgrass: {
 		num: 493,
@@ -7894,6 +8270,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItems: ["Meadow Plate", "Grassium Z"],
 		changesFrom: "Arceus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arceusground: {
 		num: 493,
@@ -7913,6 +8290,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItems: ["Earth Plate", "Groundium Z"],
 		changesFrom: "Arceus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arceusice: {
 		num: 493,
@@ -7932,6 +8310,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItems: ["Icicle Plate", "Icium Z"],
 		changesFrom: "Arceus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arceuspoison: {
 		num: 493,
@@ -7951,6 +8330,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItems: ["Toxic Plate", "Poisonium Z"],
 		changesFrom: "Arceus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arceuspsychic: {
 		num: 493,
@@ -7970,6 +8350,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItems: ["Mind Plate", "Psychium Z"],
 		changesFrom: "Arceus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arceusrock: {
 		num: 493,
@@ -7989,6 +8370,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItems: ["Stone Plate", "Rockium Z"],
 		changesFrom: "Arceus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arceussteel: {
 		num: 493,
@@ -8008,6 +8390,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItems: ["Iron Plate", "Steelium Z"],
 		changesFrom: "Arceus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arceuswater: {
 		num: 493,
@@ -8027,6 +8410,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItems: ["Splash Plate", "Waterium Z"],
 		changesFrom: "Arceus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 
 
@@ -8050,6 +8434,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Servine"],
 		eggGroups: ["Field", "Grass"],
+		tags: ["1st Stage"],
 	},
 	servine: {
 		num: 496,
@@ -8071,6 +8456,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 17,
 		evos: ["Serperior"],
 		eggGroups: ["Field", "Grass"],
+		tags: ["2nd Stage"],
 	},
 	serperior: {
 		num: 497,
@@ -8091,6 +8477,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Servine",
 		evoLevel: 36,
 		eggGroups: ["Field", "Grass"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	tepig: {
 		num: 498,
@@ -8107,6 +8494,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Pignite"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	pignite: {
 		num: 499,
@@ -8125,6 +8513,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 17,
 		evos: ["Emboar"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage"],
 	},
 	emboar: {
 		num: 500,
@@ -8147,6 +8536,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Emboar-Mega"],
 		formeOrder: ["Emboar", "Emboar-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	oshawott: {
 		num: 501,
@@ -8166,6 +8556,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Dewott"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	dewott: {
 		num: 502,
@@ -8187,6 +8578,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 17,
 		evos: ["Samurott", "Samurott-Hisui"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage"],
 	},
 	samurott: {
 		num: 503,
@@ -8209,6 +8601,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Samurott-Hisui"],
 		formeOrder: ["Samurott", "Samurott-Hisui"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	samurotthisui: {
 		num: 503,
@@ -8231,6 +8624,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Dewott",
 		evoLevel: 36,
 		eggGroups: ["Field"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	blitzle: {
 		num: 522,
@@ -8243,6 +8637,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		evos: ["Zebstrika"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	zebstrika: {
 		num: 523,
@@ -8256,6 +8651,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Blitzle",
 		evoLevel: 27,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	roggenrola: {
 		num: 524,
@@ -8268,6 +8664,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Boldore"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	boldore: {
 		num: 525,
@@ -8282,6 +8679,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 25,
 		evos: ["Gigalith"],
 		eggGroups: ["Mineral"],
+		tags: ["2nd Stage"],
 	},
 	gigalith: {
 		num: 526,
@@ -8295,6 +8693,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Boldore",
 		evoType: "trade",
 		eggGroups: ["Mineral"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	woobat: {
 		num: 527,
@@ -8307,6 +8706,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Swoobat"],
 		eggGroups: ["Flying", "Field"],
+		tags: ["1st Stage"],
 	},
 	swoobat: {
 		num: 528,
@@ -8320,6 +8720,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Woobat",
 		evoType: "levelFriendship",
 		eggGroups: ["Flying", "Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	drilbur: {
 		num: 529,
@@ -8332,6 +8733,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Excadrill"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	excadrill: {
 		num: 530,
@@ -8347,6 +8749,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Excadrill-Mega"],
 		formeOrder: ["Excadrill", "Excadrill-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	audino: {
 		num: 531,
@@ -8360,6 +8763,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Fairy"],
 		otherFormes: ["Audino-Mega"],
 		formeOrder: ["Audino", "Audino-Mega"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	timburr: {
 		num: 532,
@@ -8373,6 +8777,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Gurdurr"],
 		eggGroups: ["Human-Like"],
+		tags: ["1st Stage"],
 	},
 	gurdurr: {
 		num: 533,
@@ -8388,6 +8793,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 25,
 		evos: ["Conkeldurr"],
 		eggGroups: ["Human-Like"],
+		tags: ["2nd Stage"],
 	},
 	conkeldurr: {
 		num: 534,
@@ -8402,6 +8808,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Gurdurr",
 		evoType: "trade",
 		eggGroups: ["Human-Like"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	tympole: {
 		num: 535,
@@ -8414,6 +8821,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Palpitoad"],
 		eggGroups: ["Water 1"],
+		tags: ["1st Stage"],
 	},
 	palpitoad: {
 		num: 536,
@@ -8428,6 +8836,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 25,
 		evos: ["Seismitoad"],
 		eggGroups: ["Water 1"],
+		tags: ["2nd Stage"],
 	},
 	seismitoad: {
 		num: 537,
@@ -8441,6 +8850,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Palpitoad",
 		evoLevel: 36,
 		eggGroups: ["Water 1"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	throh: {
 		num: 538,
@@ -8453,6 +8863,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 55.5,
 		color: "Red",
 		eggGroups: ["Human-Like"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	sawk: {
 		num: 539,
@@ -8465,6 +8876,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 51,
 		color: "Blue",
 		eggGroups: ["Human-Like"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	sewaddle: {
 		num: 540,
@@ -8477,6 +8889,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Swadloon"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	swadloon: {
 		num: 541,
@@ -8491,6 +8904,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 20,
 		evos: ["Leavanny"],
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage"],
 	},
 	leavanny: {
 		num: 542,
@@ -8504,6 +8918,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Swadloon",
 		evoType: "levelFriendship",
 		eggGroups: ["Bug"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	venipede: {
 		num: 543,
@@ -8516,6 +8931,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Whirlipede"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	whirlipede: {
 		num: 544,
@@ -8530,6 +8946,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 22,
 		evos: ["Scolipede"],
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage"],
 	},
 	scolipede: {
 		num: 545,
@@ -8545,6 +8962,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Bug"],
 		otherFormes: ["Scolipede-Mega"],
 		formeOrder: ["Scolipede", "Scolipede-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	cottonee: {
 		num: 546,
@@ -8557,6 +8975,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Whimsicott"],
 		eggGroups: ["Fairy", "Grass"],
+		tags: ["1st Stage"],
 	},
 	whimsicott: {
 		num: 547,
@@ -8571,6 +8990,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Sun Stone",
 		eggGroups: ["Fairy", "Grass"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	petilil: {
 		num: 548,
@@ -8584,6 +9004,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Lilligant", "Lilligant-Hisui"],
 		eggGroups: ["Grass"],
+		tags: ["1st Stage"],
 	},
 	lilligant: {
 		num: 549,
@@ -8601,6 +9022,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Grass"],
 		otherFormes: ["Lilligant-Hisui"],
 		formeOrder: ["Lilligant", "Lilligant-Hisui"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	lilliganthisui: {
 		num: 549,
@@ -8618,6 +9040,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Sun Stone",
 		eggGroups: ["Grass"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	basculin: {
 		num: 550,
@@ -8632,6 +9055,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 2"],
 		otherFormes: ["Basculin-Blue-Striped", "Basculin-White-Striped"],
 		formeOrder: ["Basculin", "Basculin-Blue-Striped", "Basculin-White-Striped"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	basculinbluestriped: {
 		num: 550,
@@ -8645,6 +9069,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 18,
 		color: "Green",
 		eggGroups: ["Water 2"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	basculinwhitestriped: {
 		num: 550,
@@ -8660,6 +9085,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Basculegion", "Basculegion-F"],
 		eggGroups: ["Water 2"],
 		gen: 8,
+		tags: ["1st Stage"],
 	},
 	sandile: {
 		num: 551,
@@ -8672,6 +9098,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Krokorok"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	krokorok: {
 		num: 552,
@@ -8686,6 +9113,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 29,
 		evos: ["Krookodile"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage"],
 	},
 	krookodile: {
 		num: 553,
@@ -8699,6 +9127,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Krokorok",
 		evoLevel: 40,
 		eggGroups: ["Field"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	darumaka: {
 		num: 554,
@@ -8713,6 +9142,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Darumaka-Galar"],
 		formeOrder: ["Darumaka", "Darumaka-Galar"],
+		tags: ["1st Stage"],
 	},
 	darumakagalar: {
 		num: 554,
@@ -8727,6 +9157,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Darmanitan-Galar"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	darmanitan: {
 		num: 555,
@@ -8743,6 +9174,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Darmanitan-Zen", "Darmanitan-Galar", "Darmanitan-Galar-Zen"],
 		formeOrder: ["Darmanitan", "Darmanitan-Zen", "Darmanitan-Galar", "Darmanitan-Galar-Zen"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	darmanitanzen: {
 		num: 555,
@@ -8758,6 +9190,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		requiredAbility: "Zen Mode",
 		battleOnly: "Darmanitan",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	darmanitangalar: {
 		num: 555,
@@ -8774,6 +9207,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Ice Stone",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	darmanitangalarzen: {
 		num: 555,
@@ -8789,6 +9223,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		requiredAbility: "Zen Mode",
 		battleOnly: "Darmanitan-Galar",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	maractus: {
 		num: 556,
@@ -8800,6 +9235,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 28,
 		color: "Green",
 		eggGroups: ["Grass"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	dwebble: {
 		num: 557,
@@ -8812,6 +9248,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Crustle"],
 		eggGroups: ["Bug", "Mineral"],
+		tags: ["1st Stage"],
 	},
 	crustle: {
 		num: 558,
@@ -8825,6 +9262,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Dwebble",
 		evoLevel: 34,
 		eggGroups: ["Bug", "Mineral"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	scraggy: {
 		num: 559,
@@ -8837,6 +9275,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Scrafty"],
 		eggGroups: ["Field", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	scrafty: {
 		num: 560,
@@ -8852,6 +9291,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field", "Dragon"],
 		otherFormes: ["Scrafty-Mega"],
 		formeOrder: ["Scrafty", "Scrafty-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	sigilyph: {
 		num: 561,
@@ -8863,6 +9303,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 14,
 		color: "Black",
 		eggGroups: ["Flying"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	yamask: {
 		num: 562,
@@ -8877,6 +9318,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Mineral", "Amorphous"],
 		otherFormes: ["Yamask-Galar"],
 		formeOrder: ["Yamask", "Yamask-Galar"],
+		tags: ["1st Stage"],
 	},
 	yamaskgalar: {
 		num: 562,
@@ -8891,6 +9333,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		evos: ["Runerigus"],
 		eggGroups: ["Mineral", "Amorphous"],
+		tags: ["1st Stage"],
 	},
 	cofagrigus: {
 		num: 563,
@@ -8904,6 +9347,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Yamask",
 		evoLevel: 34,
 		eggGroups: ["Mineral", "Amorphous"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	tirtouga: {
 		num: 564,
@@ -8917,6 +9361,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Carracosta"],
 		eggGroups: ["Water 1", "Water 3"],
+		tags: ["1st Stage"],
 	},
 	carracosta: {
 		num: 565,
@@ -8931,6 +9376,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Tirtouga",
 		evoLevel: 37,
 		eggGroups: ["Water 1", "Water 3"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	archen: {
 		num: 566,
@@ -8944,6 +9390,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Archeops"],
 		eggGroups: ["Flying", "Water 3"],
+		tags: ["1st Stage"],
 	},
 	archeops: {
 		num: 567,
@@ -8958,6 +9405,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Archen",
 		evoLevel: 37,
 		eggGroups: ["Flying", "Water 3"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	trubbish: {
 		num: 568,
@@ -8970,6 +9418,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Garbodor"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	garbodor: {
 		num: 569,
@@ -8984,6 +9433,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 36,
 		eggGroups: ["Mineral"],
 		canGigantamax: "G-Max Malodor",
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	zorua: {
 		num: 570,
@@ -8999,6 +9449,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Zorua-Hisui"],
 		formeOrder: ["Zorua", "Zorua-Hisui"],
+		tags: ["1st Stage"],
 	},
 	zoruahisui: {
 		num: 570,
@@ -9014,6 +9465,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Zoroark-Hisui"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	zoroark: {
 		num: 571,
@@ -9030,6 +9482,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Zoroark-Hisui"],
 		formeOrder: ["Zoroark", "Zoroark-Hisui"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	zoroarkhisui: {
 		num: 571,
@@ -9046,6 +9499,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Zorua-Hisui",
 		evoLevel: 30,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	minccino: {
 		num: 572,
@@ -9059,6 +9513,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Cinccino"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	cinccino: {
 		num: 573,
@@ -9074,6 +9529,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Shiny Stone",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	gothita: {
 		num: 574,
@@ -9087,6 +9543,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Gothorita"],
 		eggGroups: ["Human-Like"],
+		tags: ["1st Stage"],
 	},
 	gothorita: {
 		num: 575,
@@ -9102,6 +9559,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 32,
 		evos: ["Gothitelle"],
 		eggGroups: ["Human-Like"],
+		tags: ["2nd Stage"],
 	},
 	gothitelle: {
 		num: 576,
@@ -9116,6 +9574,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Gothorita",
 		evoLevel: 41,
 		eggGroups: ["Human-Like"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	solosis: {
 		num: 577,
@@ -9128,6 +9587,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Duosion"],
 		eggGroups: ["Amorphous"],
+		tags: ["1st Stage"],
 	},
 	duosion: {
 		num: 578,
@@ -9142,6 +9602,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 32,
 		evos: ["Reuniclus"],
 		eggGroups: ["Amorphous"],
+		tags: ["2nd Stage"],
 	},
 	reuniclus: {
 		num: 579,
@@ -9155,6 +9616,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Duosion",
 		evoLevel: 41,
 		eggGroups: ["Amorphous"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	ducklett: {
 		num: 580,
@@ -9167,6 +9629,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Swanna"],
 		eggGroups: ["Water 1", "Flying"],
+		tags: ["1st Stage"],
 	},
 	swanna: {
 		num: 581,
@@ -9180,6 +9643,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Ducklett",
 		evoLevel: 35,
 		eggGroups: ["Water 1", "Flying"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	vanillite: {
 		num: 582,
@@ -9192,6 +9656,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Vanillish"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	vanillish: {
 		num: 583,
@@ -9206,6 +9671,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 35,
 		evos: ["Vanilluxe"],
 		eggGroups: ["Mineral"],
+		tags: ["2nd Stage"],
 	},
 	vanilluxe: {
 		num: 584,
@@ -9219,6 +9685,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Vanillish",
 		evoLevel: 47,
 		eggGroups: ["Mineral"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	deerling: {
 		num: 585,
@@ -9234,6 +9701,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		cosmeticFormes: ["Deerling-Summer", "Deerling-Autumn", "Deerling-Winter"],
 		formeOrder: ["Deerling", "Deerling-Summer", "Deerling-Autumn", "Deerling-Winter"],
+		tags: ["1st Stage"],
 	},
 	deerlingsummer: {
 		isCosmeticForme: true,
@@ -9241,6 +9709,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Deerling",
 		forme: "Summer",
 		color: "Green",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	deerlingautumn: {
 		isCosmeticForme: true,
@@ -9248,6 +9717,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Deerling",
 		forme: "Autumn",
 		color: "Red",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	deerlingwinter: {
 		isCosmeticForme: true,
@@ -9255,6 +9725,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Deerling",
 		forme: "Winter",
 		color: "Brown",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	sawsbuck: {
 		num: 586,
@@ -9271,6 +9742,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		cosmeticFormes: ["Sawsbuck-Summer", "Sawsbuck-Autumn", "Sawsbuck-Winter"],
 		formeOrder: ["Sawsbuck", "Sawsbuck-Summer", "Sawsbuck-Autumn", "Sawsbuck-Winter"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	emolga: {
 		num: 587,
@@ -9282,6 +9754,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 5,
 		color: "White",
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	karrablast: {
 		num: 588,
@@ -9294,6 +9767,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Escavalier"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	escavalier: {
 		num: 589,
@@ -9308,6 +9782,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "trade",
 		evoCondition: "with a Shelmet",
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	foongus: {
 		num: 590,
@@ -9320,6 +9795,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Amoonguss"],
 		eggGroups: ["Grass"],
+		tags: ["1st Stage"],
 	},
 	amoonguss: {
 		num: 591,
@@ -9333,6 +9809,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Foongus",
 		evoLevel: 39,
 		eggGroups: ["Grass"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	frillish: {
 		num: 592,
@@ -9345,6 +9822,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Jellicent"],
 		eggGroups: ["Amorphous"],
+		tags: ["1st Stage"],
 	},
 	jellicent: {
 		num: 593,
@@ -9358,6 +9836,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Frillish",
 		evoLevel: 40,
 		eggGroups: ["Amorphous"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	alomomola: {
 		num: 594,
@@ -9369,6 +9848,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 31.6,
 		color: "Pink",
 		eggGroups: ["Water 1", "Water 2"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	joltik: {
 		num: 595,
@@ -9381,6 +9861,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Galvantula"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	galvantula: {
 		num: 596,
@@ -9394,6 +9875,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Joltik",
 		evoLevel: 36,
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	ferroseed: {
 		num: 597,
@@ -9406,6 +9888,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Ferrothorn"],
 		eggGroups: ["Grass", "Mineral"],
+		tags: ["1st Stage"],
 	},
 	ferrothorn: {
 		num: 598,
@@ -9419,6 +9902,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Ferroseed",
 		evoLevel: 40,
 		eggGroups: ["Grass", "Mineral"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	klink: {
 		num: 599,
@@ -9432,6 +9916,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Klang"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	klang: {
 		num: 600,
@@ -9447,6 +9932,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 38,
 		evos: ["Klinklang"],
 		eggGroups: ["Mineral"],
+		tags: ["2nd Stage"],
 	},
 	klinklang: {
 		num: 601,
@@ -9461,6 +9947,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Klang",
 		evoLevel: 49,
 		eggGroups: ["Mineral"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	tynamo: {
 		num: 602,
@@ -9473,6 +9960,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Eelektrik"],
 		eggGroups: ["Amorphous"],
+		tags: ["1st Stage"],
 	},
 	eelektrik: {
 		num: 603,
@@ -9487,6 +9975,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 39,
 		evos: ["Eelektross"],
 		eggGroups: ["Amorphous"],
+		tags: ["2nd Stage"],
 	},
 	eelektross: {
 		num: 604,
@@ -9503,6 +9992,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Amorphous"],
 		otherFormes: ["Eelektross-Mega"],
 		formeOrder: ["Eelektross", "Eelektross-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	elgyem: {
 		num: 605,
@@ -9515,6 +10005,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Beheeyem"],
 		eggGroups: ["Human-Like"],
+		tags: ["1st Stage"],
 	},
 	beheeyem: {
 		num: 606,
@@ -9528,6 +10019,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Elgyem",
 		evoLevel: 42,
 		eggGroups: ["Human-Like"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	litwick: {
 		num: 607,
@@ -9540,6 +10032,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Lampent"],
 		eggGroups: ["Amorphous"],
+		tags: ["1st Stage"],
 	},
 	lampent: {
 		num: 608,
@@ -9554,6 +10047,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 41,
 		evos: ["Chandelure"],
 		eggGroups: ["Amorphous"],
+		tags: ["2nd Stage"],
 	},
 	chandelure: {
 		num: 609,
@@ -9570,6 +10064,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Amorphous"],
 		otherFormes: ["Chandelure-Mega"],
 		formeOrder: ["Chandelure", "Chandelure-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	axew: {
 		num: 610,
@@ -9582,6 +10077,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Fraxure"],
 		eggGroups: ["Monster", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	fraxure: {
 		num: 611,
@@ -9596,6 +10092,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 38,
 		evos: ["Haxorus"],
 		eggGroups: ["Monster", "Dragon"],
+		tags: ["2nd Stage"],
 	},
 	haxorus: {
 		num: 612,
@@ -9609,6 +10106,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Fraxure",
 		evoLevel: 48,
 		eggGroups: ["Monster", "Dragon"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	cubchoo: {
 		num: 613,
@@ -9621,6 +10119,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Beartic"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	beartic: {
 		num: 614,
@@ -9634,6 +10133,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Cubchoo",
 		evoLevel: 37,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	cryogonal: {
 		num: 615,
@@ -9646,6 +10146,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 148,
 		color: "Blue",
 		eggGroups: ["Mineral"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	shelmet: {
 		num: 616,
@@ -9658,6 +10159,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Accelgor"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	accelgor: {
 		num: 617,
@@ -9672,6 +10174,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "trade",
 		evoCondition: "with a Karrablast",
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	stunfisk: {
 		num: 618,
@@ -9685,6 +10188,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1", "Amorphous"],
 		otherFormes: ["Stunfisk-Galar"],
 		formeOrder: ["Stunfisk", "Stunfisk-Galar"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	stunfiskgalar: {
 		num: 618,
@@ -9698,6 +10202,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 20.5,
 		color: "Green",
 		eggGroups: ["Water 1", "Amorphous"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	mienfoo: {
 		num: 619,
@@ -9710,6 +10215,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Mienshao"],
 		eggGroups: ["Field", "Human-Like"],
+		tags: ["1st Stage"],
 	},
 	mienshao: {
 		num: 620,
@@ -9723,6 +10229,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Mienfoo",
 		evoLevel: 50,
 		eggGroups: ["Field", "Human-Like"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	druddigon: {
 		num: 621,
@@ -9734,6 +10241,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 139,
 		color: "Red",
 		eggGroups: ["Monster", "Dragon"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	golett: {
 		num: 622,
@@ -9747,6 +10255,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Golurk"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	golurk: {
 		num: 623,
@@ -9761,6 +10270,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Golett",
 		evoLevel: 43,
 		eggGroups: ["Mineral"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	pawniard: {
 		num: 624,
@@ -9773,6 +10283,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Bisharp"],
 		eggGroups: ["Human-Like"],
+		tags: ["1st Stage"],
 	},
 	bisharp: {
 		num: 625,
@@ -9787,6 +10298,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 52,
 		evos: ["Kingambit"],
 		eggGroups: ["Human-Like"],
+		tags: ["2nd Stage"],
 	},
 	bouffalant: {
 		num: 626,
@@ -9798,6 +10310,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 94.6,
 		color: "Brown",
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	rufflet: {
 		num: 627,
@@ -9811,6 +10324,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Braviary", "Braviary-Hisui"],
 		eggGroups: ["Flying"],
+		tags: ["1st Stage"],
 	},
 	braviary: {
 		num: 628,
@@ -9827,6 +10341,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Flying"],
 		otherFormes: ["Braviary-Hisui"],
 		formeOrder: ["Braviary", "Braviary-Hisui"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	braviaryhisui: {
 		num: 628,
@@ -9843,6 +10358,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Rufflet",
 		evoLevel: 54,
 		eggGroups: ["Flying"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	vullaby: {
 		num: 629,
@@ -9856,6 +10372,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Mandibuzz"],
 		eggGroups: ["Flying"],
+		tags: ["1st Stage"],
 	},
 	mandibuzz: {
 		num: 630,
@@ -9870,6 +10387,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Vullaby",
 		evoLevel: 54,
 		eggGroups: ["Flying"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	heatmor: {
 		num: 631,
@@ -9881,6 +10399,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 58,
 		color: "Red",
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	durant: {
 		num: 632,
@@ -9892,6 +10411,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 33,
 		color: "Gray",
 		eggGroups: ["Bug"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	deino: {
 		num: 633,
@@ -9904,6 +10424,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Zweilous"],
 		eggGroups: ["Dragon"],
+		tags: ["1st Stage"],
 	},
 	zweilous: {
 		num: 634,
@@ -9918,6 +10439,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 50,
 		evos: ["Hydreigon"],
 		eggGroups: ["Dragon"],
+		tags: ["2nd Stage"],
 	},
 	hydreigon: {
 		num: 635,
@@ -9931,6 +10453,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Zweilous",
 		evoLevel: 64,
 		eggGroups: ["Dragon"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	larvesta: {
 		num: 636,
@@ -9943,6 +10466,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Volcarona"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	volcarona: {
 		num: 637,
@@ -9956,6 +10480,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Larvesta",
 		evoLevel: 59,
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	cobalion: {
 		num: 638,
@@ -9967,7 +10492,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 2.1,
 		weightkg: 250,
 		color: "Blue",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	terrakion: {
@@ -9980,7 +10505,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.9,
 		weightkg: 260,
 		color: "Gray",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	virizion: {
@@ -9993,7 +10518,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 2,
 		weightkg: 200,
 		color: "Green",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	tornadus: {
@@ -10007,7 +10532,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.5,
 		weightkg: 63,
 		color: "Green",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Tornadus-Therian"],
 		formeOrder: ["Tornadus", "Tornadus-Therian"],
@@ -10026,6 +10551,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Tornadus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	thundurus: {
 		num: 642,
@@ -10038,7 +10564,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.5,
 		weightkg: 61,
 		color: "Blue",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Thundurus-Therian"],
 		formeOrder: ["Thundurus", "Thundurus-Therian"],
@@ -10057,6 +10583,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Thundurus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	reshiram: {
 		num: 643,
@@ -10068,7 +10595,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 3.2,
 		weightkg: 330,
 		color: "White",
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	zekrom: {
@@ -10081,7 +10608,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 2.9,
 		weightkg: 345,
 		color: "Black",
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	landorus: {
@@ -10095,7 +10622,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.5,
 		weightkg: 68,
 		color: "Brown",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Landorus-Therian"],
 		formeOrder: ["Landorus", "Landorus-Therian"],
@@ -10114,6 +10641,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Landorus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	kyurem: {
 		num: 646,
@@ -10126,7 +10654,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 325,
 		color: "Gray",
 		eggGroups: ["Undiscovered"],
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Kyurem-Black", "Kyurem-White"],
 		formeOrder: ["Kyurem", "Kyurem-White", "Kyurem-Black"],
 	},
@@ -10144,6 +10672,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Kyurem",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	kyuremwhite: {
 		num: 646,
@@ -10159,6 +10688,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Kyurem",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	keldeo: {
 		num: 647,
@@ -10172,7 +10702,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 48.5,
 		color: "Yellow",
 		eggGroups: ["Undiscovered"],
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Keldeo-Resolute"],
 		formeOrder: ["Keldeo", "Keldeo-Resolute"],
 	},
@@ -10191,6 +10721,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredMove: "Secret Sword",
 		changesFrom: "Keldeo",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	meloetta: {
 		num: 648,
@@ -10204,7 +10735,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 6.5,
 		color: "White",
 		eggGroups: ["Undiscovered"],
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Meloetta-Pirouette"],
 		formeOrder: ["Meloetta", "Meloetta-Pirouette"],
 	},
@@ -10223,6 +10754,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredMove: "Relic Song",
 		battleOnly: "Meloetta",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	genesect: {
 		num: 649,
@@ -10235,7 +10767,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 82.5,
 		color: "Purple",
 		eggGroups: ["Undiscovered"],
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Genesect-Douse", "Genesect-Shock", "Genesect-Burn", "Genesect-Chill"],
 		formeOrder: ["Genesect", "Genesect-Douse", "Genesect-Shock", "Genesect-Burn", "Genesect-Chill"],
 	},
@@ -10254,6 +10786,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Douse Drive",
 		changesFrom: "Genesect",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	genesectshock: {
 		num: 649,
@@ -10270,6 +10803,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Shock Drive",
 		changesFrom: "Genesect",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	genesectburn: {
 		num: 649,
@@ -10286,6 +10820,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Burn Drive",
 		changesFrom: "Genesect",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	genesectchill: {
 		num: 649,
@@ -10302,6 +10837,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Chill Drive",
 		changesFrom: "Genesect",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 
 
@@ -10319,6 +10855,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Quilladin"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	quilladin: {
 		num: 651,
@@ -10334,6 +10871,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Chesnaught"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage"],
 	},
 	chesnaught: {
 		num: 652,
@@ -10350,6 +10888,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Chesnaught-Mega"],
 		formeOrder: ["Chesnaught", "Chesnaught-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	fennekin: {
 		num: 653,
@@ -10363,6 +10902,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Braixen"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	braixen: {
 		num: 654,
@@ -10378,6 +10918,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Delphox"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage"],
 	},
 	delphox: {
 		num: 655,
@@ -10394,6 +10935,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Delphox-Mega"],
 		formeOrder: ["Delphox", "Delphox-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	froakie: {
 		num: 656,
@@ -10407,6 +10949,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Frogadier"],
 		eggGroups: ["Water 1"],
+		tags: ["1st Stage"],
 	},
 	frogadier: {
 		num: 657,
@@ -10422,6 +10965,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Greninja"],
 		eggGroups: ["Water 1"],
+		tags: ["2nd Stage"],
 	},
 	greninja: {
 		num: 658,
@@ -10438,6 +10982,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1"],
 		otherFormes: ["Greninja-Bond", "Greninja-Ash", "Greninja-Mega"],
 		formeOrder: ["Greninja", "Greninja-Bond", "Greninja-Ash", "Greninja-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	greninjabond: {
 		num: 658,
@@ -10453,6 +10998,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Undiscovered"],
 		gen: 7,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	greninjaash: {
 		num: 658,
@@ -10470,6 +11016,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredAbility: "Battle Bond",
 		battleOnly: "Greninja-Bond",
 		gen: 7,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	bunnelby: {
 		num: 659,
@@ -10482,6 +11029,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Diggersby"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	diggersby: {
 		num: 660,
@@ -10495,6 +11043,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Bunnelby",
 		evoLevel: 20,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	fletchling: {
 		num: 661,
@@ -10507,6 +11056,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Fletchinder"],
 		eggGroups: ["Flying"],
+		tags: ["1st Stage"],
 	},
 	fletchinder: {
 		num: 662,
@@ -10521,6 +11071,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 17,
 		evos: ["Talonflame"],
 		eggGroups: ["Flying"],
+		tags: ["2nd Stage"],
 	},
 	talonflame: {
 		num: 663,
@@ -10534,6 +11085,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Fletchinder",
 		evoLevel: 35,
 		eggGroups: ["Flying"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	scatterbug: {
 		num: 664,
@@ -10547,6 +11099,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Spewpa"],
 		eggGroups: ["Bug"],
 		// TODO: Scatterbug technically has the same number of formes as Vivillon
+		tags: ["1st Stage"],
 	},
 	spewpa: {
 		num: 665,
@@ -10562,6 +11115,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Vivillon", "Vivillon-Fancy"],
 		eggGroups: ["Bug"],
 		// TODO: Spewpa technically has the same number of formes as Vivillon
+		tags: ["2nd Stage"],
 	},
 	vivillon: {
 		num: 666,
@@ -10600,6 +11154,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 			"Vivillon-Fancy",
 			"Vivillon-Pokeball",
 		],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	vivillonicysnow: {
 		isCosmeticForme: true,
@@ -10607,6 +11162,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Vivillon",
 		forme: "Icy Snow",
 		color: "White",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	vivillonpolar: {
 		isCosmeticForme: true,
@@ -10614,6 +11170,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Vivillon",
 		forme: "Polar",
 		color: "Blue",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	vivillontundra: {
 		isCosmeticForme: true,
@@ -10621,6 +11178,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Vivillon",
 		forme: "Tundra",
 		color: "Blue",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	vivilloncontinental: {
 		isCosmeticForme: true,
@@ -10628,6 +11186,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Vivillon",
 		forme: "Continental",
 		color: "Yellow",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	vivillongarden: {
 		isCosmeticForme: true,
@@ -10635,6 +11194,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Vivillon",
 		forme: "Garden",
 		color: "Green",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	vivillonelegant: {
 		isCosmeticForme: true,
@@ -10642,6 +11202,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Vivillon",
 		forme: "Elegant",
 		color: "Purple",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	vivillonmodern: {
 		isCosmeticForme: true,
@@ -10649,6 +11210,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Vivillon",
 		forme: "Modern",
 		color: "Red",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	vivillonmarine: {
 		isCosmeticForme: true,
@@ -10656,6 +11218,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Vivillon",
 		forme: "Marine",
 		color: "Blue",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	vivillonarchipelago: {
 		isCosmeticForme: true,
@@ -10663,6 +11226,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Vivillon",
 		forme: "Archipelago",
 		color: "Brown",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	vivillonhighplains: {
 		isCosmeticForme: true,
@@ -10670,6 +11234,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Vivillon",
 		forme: "High Plains",
 		color: "Brown",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	vivillonsandstorm: {
 		isCosmeticForme: true,
@@ -10677,6 +11242,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Vivillon",
 		forme: "Sandstorm",
 		color: "Brown",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	vivillonriver: {
 		isCosmeticForme: true,
@@ -10684,6 +11250,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Vivillon",
 		forme: "River",
 		color: "Brown",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	vivillonmonsoon: {
 		isCosmeticForme: true,
@@ -10691,6 +11258,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Vivillon",
 		forme: "Monsoon",
 		color: "Gray",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	vivillonsavanna: {
 		isCosmeticForme: true,
@@ -10698,6 +11266,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Vivillon",
 		forme: "Savanna",
 		color: "Green",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	vivillonsun: {
 		isCosmeticForme: true,
@@ -10705,6 +11274,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Vivillon",
 		forme: "Sun",
 		color: "Red",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	vivillonocean: {
 		isCosmeticForme: true,
@@ -10712,6 +11282,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Vivillon",
 		forme: "Ocean",
 		color: "Red",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	vivillonjungle: {
 		isCosmeticForme: true,
@@ -10719,6 +11290,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Vivillon",
 		forme: "Jungle",
 		color: "Green",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	vivillonfancy: {
 		num: 666,
@@ -10734,6 +11306,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Spewpa",
 		evoLevel: 12,
 		eggGroups: ["Bug"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	vivillonpokeball: {
 		num: 666,
@@ -10747,6 +11320,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 17,
 		color: "Red",
 		eggGroups: ["Bug"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	litleo: {
 		num: 667,
@@ -10760,6 +11334,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Pyroar"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	pyroar: {
 		num: 668,
@@ -10776,6 +11351,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Pyroar-Mega"],
 		formeOrder: ["Pyroar", "Pyroar-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	flabebe: {
 		num: 669,
@@ -10792,6 +11368,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Fairy"],
 		cosmeticFormes: ["Flabe\u0301be\u0301-Blue", "Flabe\u0301be\u0301-Orange", "Flabe\u0301be\u0301-White", "Flabe\u0301be\u0301-Yellow"],
 		formeOrder: ["Flabe\u0301be\u0301", "Flabe\u0301be\u0301-Yellow", "Flabe\u0301be\u0301-Orange", "Flabe\u0301be\u0301-Blue", "Flabe\u0301be\u0301-White"],
+		tags: ["1st Stage"],
 	},
 	floette: {
 		num: 670,
@@ -10811,6 +11388,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Floette-Eternal", "Floette-Mega"],
 		cosmeticFormes: ["Floette-Blue", "Floette-Orange", "Floette-White", "Floette-Yellow"],
 		formeOrder: ["Floette", "Floette-Yellow", "Floette-Orange", "Floette-Blue", "Floette-White", "Floette-Eternal", "Floette-Mega"],
+		tags: ["2nd Stage"],
 	},
 	floetteeternal: {
 		num: 670,
@@ -10825,6 +11403,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 0.9,
 		color: "White",
 		eggGroups: ["Undiscovered"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	florges: {
 		num: 671,
@@ -10843,6 +11422,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Fairy"],
 		cosmeticFormes: ["Florges-Blue", "Florges-Orange", "Florges-White", "Florges-Yellow"],
 		formeOrder: ["Florges", "Florges-Yellow", "Florges-Orange", "Florges-Blue", "Florges-White"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	skiddo: {
 		num: 672,
@@ -10855,6 +11435,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Gogoat"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	gogoat: {
 		num: 673,
@@ -10868,6 +11449,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Skiddo",
 		evoLevel: 32,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	pancham: {
 		num: 674,
@@ -10880,6 +11462,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Pangoro"],
 		eggGroups: ["Field", "Human-Like"],
+		tags: ["1st Stage"],
 	},
 	pangoro: {
 		num: 675,
@@ -10894,6 +11477,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 32,
 		evoCondition: "with a Dark-type in the party",
 		eggGroups: ["Field", "Human-Like"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	furfrou: {
 		num: 676,
@@ -10919,6 +11503,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 			"Furfrou-Kabuki",
 			"Furfrou-Pharaoh",
 		],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	espurr: {
 		num: 677,
@@ -10931,6 +11516,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Meowstic", "Meowstic-F"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	meowstic: {
 		num: 678,
@@ -10948,6 +11534,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Meowstic-F"],
 		formeOrder: ["Meowstic", "Meowstic-F"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	meowsticf: {
 		num: 678,
@@ -10964,6 +11551,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Espurr",
 		evoLevel: 25,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	honedge: {
 		num: 679,
@@ -10976,6 +11564,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Doublade"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	doublade: {
 		num: 680,
@@ -10990,6 +11579,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 35,
 		evos: ["Aegislash"],
 		eggGroups: ["Mineral"],
+		tags: ["2nd Stage"],
 	},
 	aegislash: {
 		num: 681,
@@ -11007,6 +11597,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Mineral"],
 		otherFormes: ["Aegislash-Blade"],
 		formeOrder: ["Aegislash", "Aegislash-Blade"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	aegislashblade: {
 		num: 681,
@@ -11022,6 +11613,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Mineral"],
 		requiredAbility: "Stance Change",
 		battleOnly: "Aegislash",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	spritzee: {
 		num: 682,
@@ -11034,6 +11626,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		evos: ["Aromatisse"],
 		eggGroups: ["Fairy"],
+		tags: ["1st Stage"],
 	},
 	aromatisse: {
 		num: 683,
@@ -11048,6 +11641,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "trade",
 		evoItem: "Sachet",
 		eggGroups: ["Fairy"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	swirlix: {
 		num: 684,
@@ -11060,6 +11654,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Slurpuff"],
 		eggGroups: ["Fairy"],
+		tags: ["1st Stage"],
 	},
 	slurpuff: {
 		num: 685,
@@ -11074,6 +11669,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "trade",
 		evoItem: "Whipped Dream",
 		eggGroups: ["Fairy"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	inkay: {
 		num: 686,
@@ -11086,6 +11682,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Malamar"],
 		eggGroups: ["Water 1", "Water 2"],
+		tags: ["1st Stage"],
 	},
 	malamar: {
 		num: 687,
@@ -11102,6 +11699,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1", "Water 2"],
 		otherFormes: ["Malamar-Mega"],
 		formeOrder: ["Malamar", "Malamar-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	binacle: {
 		num: 688,
@@ -11114,6 +11712,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Barbaracle"],
 		eggGroups: ["Water 3"],
+		tags: ["1st Stage"],
 	},
 	barbaracle: {
 		num: 689,
@@ -11129,6 +11728,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 3"],
 		otherFormes: ["Barbaracle-Mega"],
 		formeOrder: ["Barbaracle", "Barbaracle-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	skrelp: {
 		num: 690,
@@ -11141,6 +11741,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Dragalge"],
 		eggGroups: ["Water 1", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	dragalge: {
 		num: 691,
@@ -11156,6 +11757,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1", "Dragon"],
 		otherFormes: ["Dragalge-Mega"],
 		formeOrder: ["Dragalge", "Dragalge-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	clauncher: {
 		num: 692,
@@ -11168,6 +11770,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Clawitzer"],
 		eggGroups: ["Water 1", "Water 3"],
+		tags: ["1st Stage"],
 	},
 	clawitzer: {
 		num: 693,
@@ -11181,6 +11784,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Clauncher",
 		evoLevel: 37,
 		eggGroups: ["Water 1", "Water 3"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	helioptile: {
 		num: 694,
@@ -11193,6 +11797,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Heliolisk"],
 		eggGroups: ["Monster", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	heliolisk: {
 		num: 695,
@@ -11207,6 +11812,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Sun Stone",
 		eggGroups: ["Monster", "Dragon"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	tyrunt: {
 		num: 696,
@@ -11220,6 +11826,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Tyrantrum"],
 		eggGroups: ["Monster", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	tyrantrum: {
 		num: 697,
@@ -11235,6 +11842,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 39,
 		evoCondition: "during the day",
 		eggGroups: ["Monster", "Dragon"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	amaura: {
 		num: 698,
@@ -11248,6 +11856,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Aurorus"],
 		eggGroups: ["Monster"],
+		tags: ["1st Stage"],
 	},
 	aurorus: {
 		num: 699,
@@ -11263,6 +11872,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 39,
 		evoCondition: "at night",
 		eggGroups: ["Monster"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	sylveon: {
 		num: 700,
@@ -11278,6 +11888,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelExtra",
 		evoCondition: "with a Fairy-type move and two levels of Affection",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	hawlucha: {
 		num: 701,
@@ -11291,6 +11902,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Flying", "Human-Like"],
 		otherFormes: ["Hawlucha-Mega"],
 		formeOrder: ["Hawlucha", "Hawlucha-Mega"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	dedenne: {
 		num: 702,
@@ -11302,6 +11914,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 2.2,
 		color: "Yellow",
 		eggGroups: ["Field", "Fairy"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	carbink: {
 		num: 703,
@@ -11314,6 +11927,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 5.7,
 		color: "Gray",
 		eggGroups: ["Fairy", "Mineral"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	goomy: {
 		num: 704,
@@ -11326,6 +11940,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Sliggoo", "Sliggoo-Hisui"],
 		eggGroups: ["Dragon"],
+		tags: ["1st Stage"],
 	},
 	sliggoo: {
 		num: 705,
@@ -11342,6 +11957,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Dragon"],
 		otherFormes: ["Sliggoo-Hisui"],
 		formeOrder: ["Sliggoo", "Sliggoo-Hisui"],
+		tags: ["2nd Stage"],
 	},
 	sliggoohisui: {
 		num: 705,
@@ -11358,6 +11974,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 40,
 		evos: ["Goodra-Hisui"],
 		eggGroups: ["Dragon"],
+		tags: ["2nd Stage"],
 	},
 	goodra: {
 		num: 706,
@@ -11374,6 +11991,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Dragon"],
 		otherFormes: ["Goodra-Hisui"],
 		formeOrder: ["Goodra", "Goodra-Hisui"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	goodrahisui: {
 		num: 706,
@@ -11390,6 +12008,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 50,
 		evoCondition: "during rain",
 		eggGroups: ["Dragon"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	klefki: {
 		num: 707,
@@ -11401,6 +12020,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 3,
 		color: "Gray",
 		eggGroups: ["Mineral"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	phantump: {
 		num: 708,
@@ -11413,6 +12033,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Trevenant"],
 		eggGroups: ["Grass", "Amorphous"],
+		tags: ["1st Stage"],
 	},
 	trevenant: {
 		num: 709,
@@ -11426,6 +12047,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Phantump",
 		evoType: "trade",
 		eggGroups: ["Grass", "Amorphous"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	pumpkaboo: {
 		num: 710,
@@ -11441,6 +12063,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Amorphous"],
 		otherFormes: ["Pumpkaboo-Small", "Pumpkaboo-Large", "Pumpkaboo-Super"],
 		formeOrder: ["Pumpkaboo", "Pumpkaboo-Small", "Pumpkaboo-Large", "Pumpkaboo-Super"],
+		tags: ["1st Stage"],
 	},
 	pumpkaboosmall: {
 		num: 710,
@@ -11455,6 +12078,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Gourgeist-Small"],
 		eggGroups: ["Amorphous"],
+		tags: ["1st Stage"],
 	},
 	pumpkaboolarge: {
 		num: 710,
@@ -11469,6 +12093,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Gourgeist-Large"],
 		eggGroups: ["Amorphous"],
+		tags: ["1st Stage"],
 	},
 	pumpkaboosuper: {
 		num: 710,
@@ -11483,6 +12108,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Gourgeist-Super"],
 		eggGroups: ["Amorphous"],
+		tags: ["1st Stage"],
 	},
 	gourgeist: {
 		num: 711,
@@ -11499,6 +12125,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Amorphous"],
 		otherFormes: ["Gourgeist-Small", "Gourgeist-Large", "Gourgeist-Super"],
 		formeOrder: ["Gourgeist", "Gourgeist-Small", "Gourgeist-Large", "Gourgeist-Super"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	gourgeistsmall: {
 		num: 711,
@@ -11514,6 +12141,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Pumpkaboo-Small",
 		evoType: "trade",
 		eggGroups: ["Amorphous"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	gourgeistlarge: {
 		num: 711,
@@ -11529,6 +12157,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Pumpkaboo-Large",
 		evoType: "trade",
 		eggGroups: ["Amorphous"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	gourgeistsuper: {
 		num: 711,
@@ -11544,6 +12173,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Pumpkaboo-Super",
 		evoType: "trade",
 		eggGroups: ["Amorphous"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	bergmite: {
 		num: 712,
@@ -11556,6 +12186,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Avalugg", "Avalugg-Hisui"],
 		eggGroups: ["Monster", "Mineral"],
+		tags: ["1st Stage"],
 	},
 	avalugg: {
 		num: 713,
@@ -11571,6 +12202,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster", "Mineral"],
 		otherFormes: ["Avalugg-Hisui"],
 		formeOrder: ["Avalugg", "Avalugg-Hisui"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	avalugghisui: {
 		num: 713,
@@ -11586,6 +12218,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Bergmite",
 		evoLevel: 37,
 		eggGroups: ["Monster", "Mineral"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	noibat: {
 		num: 714,
@@ -11598,6 +12231,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Noivern"],
 		eggGroups: ["Flying", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	noivern: {
 		num: 715,
@@ -11611,6 +12245,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Noibat",
 		evoLevel: 48,
 		eggGroups: ["Flying", "Dragon"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	xerneas: {
 		num: 716,
@@ -11624,7 +12259,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 215,
 		color: "Blue",
 		eggGroups: ["Undiscovered"],
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Xerneas-Neutral"],
 		formeOrder: ["Xerneas-Neutral", "Xerneas"],
 	},
@@ -11641,6 +12276,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 215,
 		color: "Blue",
 		eggGroups: ["Undiscovered"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	yveltal: {
 		num: 717,
@@ -11652,7 +12288,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 5.8,
 		weightkg: 203,
 		color: "Red",
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	zygarde: {
@@ -11666,7 +12302,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 5,
 		weightkg: 305,
 		color: "Green",
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Zygarde-10%", "Zygarde-Complete", "Zygarde-Mega"],
 		// forme 2 = 10% with Power Constructor ,forme 3 = 50% with Power Construct
@@ -11687,6 +12323,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Zygarde",
 		gen: 7,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	zygardecomplete: {
 		num: 718,
@@ -11704,6 +12341,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredAbility: "Power Construct",
 		battleOnly: ["Zygarde", "Zygarde-10%"],
 		gen: 7,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	diancie: {
 		num: 719,
@@ -11716,7 +12354,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 8.8,
 		color: "Pink",
 		eggGroups: ["Undiscovered"],
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Diancie-Mega"],
 		formeOrder: ["Diancie", "Diancie-Mega"],
 	},
@@ -11732,7 +12370,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 9,
 		color: "Purple",
 		eggGroups: ["Undiscovered"],
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Hoopa-Unbound"],
 		formeOrder: ["Hoopa", "Hoopa-Unbound"],
 	},
@@ -11750,6 +12388,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Hoopa",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	volcanion: {
 		num: 721,
@@ -11761,7 +12400,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.7,
 		weightkg: 195,
 		color: "Brown",
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 
@@ -11780,6 +12419,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Dartrix"],
 		eggGroups: ["Flying"],
+		tags: ["1st Stage"],
 	},
 	dartrix: {
 		num: 723,
@@ -11795,6 +12435,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 17,
 		evos: ["Decidueye", "Decidueye-Hisui"],
 		eggGroups: ["Flying"],
+		tags: ["2nd Stage"],
 	},
 	decidueye: {
 		num: 724,
@@ -11811,6 +12452,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Flying"],
 		otherFormes: ["Decidueye-Hisui"],
 		formeOrder: ["Decidueye", "Decidueye-Hisui"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	decidueyehisui: {
 		num: 724,
@@ -11827,6 +12469,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Dartrix",
 		evoLevel: 36,
 		eggGroups: ["Flying"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	litten: {
 		num: 725,
@@ -11840,6 +12483,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Torracat"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	torracat: {
 		num: 726,
@@ -11855,6 +12499,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 17,
 		evos: ["Incineroar"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage"],
 	},
 	incineroar: {
 		num: 727,
@@ -11869,6 +12514,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Torracat",
 		evoLevel: 34,
 		eggGroups: ["Field"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	popplio: {
 		num: 728,
@@ -11882,6 +12528,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Brionne"],
 		eggGroups: ["Water 1", "Field"],
+		tags: ["1st Stage"],
 	},
 	brionne: {
 		num: 729,
@@ -11897,6 +12544,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 17,
 		evos: ["Primarina"],
 		eggGroups: ["Water 1", "Field"],
+		tags: ["2nd Stage"],
 	},
 	primarina: {
 		num: 730,
@@ -11911,6 +12559,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Brionne",
 		evoLevel: 34,
 		eggGroups: ["Water 1", "Field"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	pikipek: {
 		num: 731,
@@ -11923,6 +12572,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		evos: ["Trumbeak"],
 		eggGroups: ["Flying"],
+		tags: ["1st Stage"],
 	},
 	trumbeak: {
 		num: 732,
@@ -11937,6 +12587,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 14,
 		evos: ["Toucannon"],
 		eggGroups: ["Flying"],
+		tags: ["2nd Stage"],
 	},
 	toucannon: {
 		num: 733,
@@ -11950,6 +12601,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Trumbeak",
 		evoLevel: 28,
 		eggGroups: ["Flying"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	yungoos: {
 		num: 734,
@@ -11962,6 +12614,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Gumshoos"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	gumshoos: {
 		num: 735,
@@ -11978,6 +12631,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Gumshoos-Totem"],
 		formeOrder: ["Gumshoos", "Gumshoos-Totem"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	gumshoostotem: {
 		num: 735,
@@ -11991,6 +12645,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 60,
 		color: "Brown",
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	grubbin: {
 		num: 736,
@@ -12003,6 +12658,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Charjabug"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	charjabug: {
 		num: 737,
@@ -12017,6 +12673,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 20,
 		evos: ["Vikavolt"],
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage"],
 	},
 	vikavolt: {
 		num: 738,
@@ -12033,6 +12690,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Bug"],
 		otherFormes: ["Vikavolt-Totem"],
 		formeOrder: ["Vikavolt", "Vikavolt-Totem"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	vikavolttotem: {
 		num: 738,
@@ -12046,6 +12704,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 147.5,
 		color: "Blue",
 		eggGroups: ["Bug"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	crabrawler: {
 		num: 739,
@@ -12058,6 +12717,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Crabominable"],
 		eggGroups: ["Water 3"],
+		tags: ["1st Stage"],
 	},
 	crabominable: {
 		num: 740,
@@ -12072,6 +12732,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Ice Stone",
 		eggGroups: ["Water 3"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	oricorio: {
 		num: 741,
@@ -12087,6 +12748,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Flying"],
 		otherFormes: ["Oricorio-Pom-Pom", "Oricorio-Pa'u", "Oricorio-Sensu"],
 		formeOrder: ["Oricorio", "Oricorio-Pom-Pom", "Oricorio-Pa'u", "Oricorio-Sensu"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	oricoriopompom: {
 		num: 741,
@@ -12102,6 +12764,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		eggGroups: ["Flying"],
 		changesFrom: "Oricorio",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	oricoriopau: {
 		num: 741,
@@ -12117,6 +12780,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		eggGroups: ["Flying"],
 		changesFrom: "Oricorio",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	oricoriosensu: {
 		num: 741,
@@ -12132,6 +12796,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		eggGroups: ["Flying"],
 		changesFrom: "Oricorio",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	cutiefly: {
 		num: 742,
@@ -12144,6 +12809,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Ribombee"],
 		eggGroups: ["Bug", "Fairy"],
+		tags: ["1st Stage"],
 	},
 	ribombee: {
 		num: 743,
@@ -12159,6 +12825,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Bug", "Fairy"],
 		otherFormes: ["Ribombee-Totem"],
 		formeOrder: ["Ribombee", "Ribombee-Totem"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	ribombeetotem: {
 		num: 743,
@@ -12172,6 +12839,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 2,
 		color: "Yellow",
 		eggGroups: ["Bug", "Fairy"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	rockruff: {
 		num: 744,
@@ -12187,6 +12855,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Rockruff-Dusk"],
 		formeOrder: ["Rockruff", "Rockruff-Dusk"],
+		tags: ["1st Stage"],
 	},
 	rockruffdusk: {
 		num: 744,
@@ -12201,6 +12870,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Lycanroc-Dusk"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	lycanroc: {
 		num: 745,
@@ -12218,6 +12888,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Lycanroc-Midnight", "Lycanroc-Dusk"],
 		formeOrder: ["Lycanroc", "Lycanroc-Midnight", "Lycanroc-Dusk"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	lycanrocmidnight: {
 		num: 745,
@@ -12234,6 +12905,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 25,
 		evoCondition: "at night",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	lycanrocdusk: {
 		num: 745,
@@ -12250,6 +12922,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 25,
 		evoCondition: "from a special Rockruff during the evening",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	wishiwashi: {
 		num: 746,
@@ -12264,6 +12937,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 2"],
 		otherFormes: ["Wishiwashi-School"],
 		formeOrder: ["Wishiwashi", "Wishiwashi-School"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	wishiwashischool: {
 		num: 746,
@@ -12279,6 +12953,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 2"],
 		requiredAbility: "Schooling",
 		battleOnly: "Wishiwashi",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	mareanie: {
 		num: 747,
@@ -12291,6 +12966,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Toxapex"],
 		eggGroups: ["Water 1"],
+		tags: ["1st Stage"],
 	},
 	toxapex: {
 		num: 748,
@@ -12304,6 +12980,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Mareanie",
 		evoLevel: 38,
 		eggGroups: ["Water 1"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	mudbray: {
 		num: 749,
@@ -12316,6 +12993,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Mudsdale"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	mudsdale: {
 		num: 750,
@@ -12329,6 +13007,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Mudbray",
 		evoLevel: 30,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	dewpider: {
 		num: 751,
@@ -12341,6 +13020,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Araquanid"],
 		eggGroups: ["Water 1", "Bug"],
+		tags: ["1st Stage"],
 	},
 	araquanid: {
 		num: 752,
@@ -12356,6 +13036,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1", "Bug"],
 		otherFormes: ["Araquanid-Totem"],
 		formeOrder: ["Araquanid", "Araquanid-Totem"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	araquanidtotem: {
 		num: 752,
@@ -12369,6 +13050,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 217.5,
 		color: "Green",
 		eggGroups: ["Water 1", "Bug"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	fomantis: {
 		num: 753,
@@ -12381,6 +13063,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		evos: ["Lurantis"],
 		eggGroups: ["Grass"],
+		tags: ["1st Stage"],
 	},
 	lurantis: {
 		num: 754,
@@ -12397,6 +13080,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Grass"],
 		otherFormes: ["Lurantis-Totem"],
 		formeOrder: ["Lurantis", "Lurantis-Totem"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	lurantistotem: {
 		num: 754,
@@ -12410,6 +13094,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 58,
 		color: "Pink",
 		eggGroups: ["Grass"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	morelull: {
 		num: 755,
@@ -12422,6 +13107,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Shiinotic"],
 		eggGroups: ["Grass"],
+		tags: ["1st Stage"],
 	},
 	shiinotic: {
 		num: 756,
@@ -12435,6 +13121,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Morelull",
 		evoLevel: 24,
 		eggGroups: ["Grass"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	salandit: {
 		num: 757,
@@ -12448,6 +13135,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		evos: ["Salazzle"],
 		eggGroups: ["Monster", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	salazzle: {
 		num: 758,
@@ -12464,6 +13152,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster", "Dragon"],
 		otherFormes: ["Salazzle-Totem"],
 		formeOrder: ["Salazzle", "Salazzle-Totem"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	salazzletotem: {
 		num: 758,
@@ -12478,6 +13167,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 81,
 		color: "Black",
 		eggGroups: ["Monster", "Dragon"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	stufful: {
 		num: 759,
@@ -12490,6 +13180,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		evos: ["Bewear"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	bewear: {
 		num: 760,
@@ -12503,6 +13194,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Stufful",
 		evoLevel: 27,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	bounsweet: {
 		num: 761,
@@ -12516,6 +13208,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Steenee"],
 		eggGroups: ["Grass"],
+		tags: ["1st Stage"],
 	},
 	steenee: {
 		num: 762,
@@ -12531,6 +13224,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 18,
 		evos: ["Tsareena"],
 		eggGroups: ["Grass"],
+		tags: ["2nd Stage"],
 	},
 	tsareena: {
 		num: 763,
@@ -12546,6 +13240,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelMove",
 		evoMove: "Stomp",
 		eggGroups: ["Grass"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	comfey: {
 		num: 764,
@@ -12558,6 +13253,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 0.3,
 		color: "Green",
 		eggGroups: ["Grass"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	oranguru: {
 		num: 765,
@@ -12569,6 +13265,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 76,
 		color: "White",
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	passimian: {
 		num: 766,
@@ -12580,6 +13277,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 82.8,
 		color: "White",
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	wimpod: {
 		num: 767,
@@ -12592,6 +13290,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Golisopod"],
 		eggGroups: ["Bug", "Water 3"],
+		tags: ["1st Stage"],
 	},
 	golisopod: {
 		num: 768,
@@ -12605,6 +13304,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Wimpod",
 		evoLevel: 30,
 		eggGroups: ["Bug", "Water 3"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	sandygast: {
 		num: 769,
@@ -12617,6 +13317,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Palossand"],
 		eggGroups: ["Amorphous"],
+		tags: ["1st Stage"],
 	},
 	palossand: {
 		num: 770,
@@ -12630,6 +13331,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Sandygast",
 		evoLevel: 42,
 		eggGroups: ["Amorphous"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	pyukumuku: {
 		num: 771,
@@ -12641,6 +13343,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 1.2,
 		color: "Black",
 		eggGroups: ["Water 1"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	typenull: {
 		num: 772,
@@ -12652,7 +13355,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.9,
 		weightkg: 120.5,
 		color: "Gray",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "1st Stage"],
 		evos: ["Silvally"],
 		eggGroups: ["Undiscovered"],
 	},
@@ -12667,7 +13370,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 2.3,
 		weightkg: 100.5,
 		color: "Gray",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "2nd Stage", "Fully Evolved"],
 		prevo: "Type: Null",
 		evoType: "levelFriendship",
 		eggGroups: ["Undiscovered"],
@@ -12692,6 +13395,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Bug Memory",
 		changesFrom: "Silvally",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	silvallydark: {
 		num: 773,
@@ -12708,6 +13412,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Dark Memory",
 		changesFrom: "Silvally",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	silvallydragon: {
 		num: 773,
@@ -12724,6 +13429,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Dragon Memory",
 		changesFrom: "Silvally",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	silvallyelectric: {
 		num: 773,
@@ -12740,6 +13446,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Electric Memory",
 		changesFrom: "Silvally",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	silvallyfairy: {
 		num: 773,
@@ -12756,6 +13463,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Fairy Memory",
 		changesFrom: "Silvally",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	silvallyfighting: {
 		num: 773,
@@ -12772,6 +13480,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Fighting Memory",
 		changesFrom: "Silvally",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	silvallyfire: {
 		num: 773,
@@ -12788,6 +13497,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Fire Memory",
 		changesFrom: "Silvally",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	silvallyflying: {
 		num: 773,
@@ -12804,6 +13514,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Flying Memory",
 		changesFrom: "Silvally",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	silvallyghost: {
 		num: 773,
@@ -12820,6 +13531,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Ghost Memory",
 		changesFrom: "Silvally",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	silvallygrass: {
 		num: 773,
@@ -12836,6 +13548,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Grass Memory",
 		changesFrom: "Silvally",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	silvallyground: {
 		num: 773,
@@ -12852,6 +13565,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Ground Memory",
 		changesFrom: "Silvally",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	silvallyice: {
 		num: 773,
@@ -12868,6 +13582,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Ice Memory",
 		changesFrom: "Silvally",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	silvallypoison: {
 		num: 773,
@@ -12884,6 +13599,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Poison Memory",
 		changesFrom: "Silvally",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	silvallypsychic: {
 		num: 773,
@@ -12900,6 +13616,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Psychic Memory",
 		changesFrom: "Silvally",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	silvallyrock: {
 		num: 773,
@@ -12916,6 +13633,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Rock Memory",
 		changesFrom: "Silvally",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	silvallysteel: {
 		num: 773,
@@ -12932,6 +13650,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Steel Memory",
 		changesFrom: "Silvally",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	silvallywater: {
 		num: 773,
@@ -12948,6 +13667,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Water Memory",
 		changesFrom: "Silvally",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	minior: {
 		num: 774,
@@ -12968,6 +13688,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 			"Minior-Meteor", "Minior-Meteor", "Minior-Meteor", "Minior-Meteor", "Minior-Meteor", "Minior-Meteor", "Minior-Meteor",
 			"Minior", "Minior-Orange", "Minior-Yellow", "Minior-Green", "Minior-Blue", "Minior-Indigo", "Minior-Violet",
 		],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	miniororange: {
 		isCosmeticForme: true,
@@ -12975,6 +13696,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Minior",
 		forme: "Orange",
 		color: "Red",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	minioryellow: {
 		isCosmeticForme: true,
@@ -12982,6 +13704,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Minior",
 		forme: "Yellow",
 		color: "Yellow",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	miniorgreen: {
 		isCosmeticForme: true,
@@ -12989,6 +13712,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Minior",
 		forme: "Green",
 		color: "Green",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	miniorblue: {
 		isCosmeticForme: true,
@@ -12996,6 +13720,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Minior",
 		forme: "Blue",
 		color: "Blue",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	miniorindigo: {
 		isCosmeticForme: true,
@@ -13003,6 +13728,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Minior",
 		forme: "Indigo",
 		color: "Blue",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	miniorviolet: {
 		isCosmeticForme: true,
@@ -13010,6 +13736,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Minior",
 		forme: "Violet",
 		color: "Purple",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	miniormeteor: {
 		num: 774,
@@ -13026,6 +13753,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Mineral"],
 		requiredAbility: "Shields Down",
 		battleOnly: "Minior",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	komala: {
 		num: 775,
@@ -13037,6 +13765,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 19.9,
 		color: "Blue",
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	turtonator: {
 		num: 776,
@@ -13048,6 +13777,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 212,
 		color: "Red",
 		eggGroups: ["Monster", "Dragon"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	togedemaru: {
 		num: 777,
@@ -13061,6 +13791,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field", "Fairy"],
 		otherFormes: ["Togedemaru-Totem"],
 		formeOrder: ["Togedemaru", "Togedemaru-Totem"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	togedemarutotem: {
 		num: 777,
@@ -13074,6 +13805,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 13,
 		color: "Gray",
 		eggGroups: ["Field", "Fairy"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	mimikyu: {
 		num: 778,
@@ -13088,6 +13820,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Amorphous"],
 		otherFormes: ["Mimikyu-Busted", "Mimikyu-Totem", "Mimikyu-Busted-Totem"],
 		formeOrder: ["Mimikyu", "Mimikyu-Busted", "Mimikyu-Totem", "Mimikyu-Busted-Totem"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	mimikyubusted: {
 		num: 778,
@@ -13103,6 +13836,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Amorphous"],
 		requiredAbility: "Disguise",
 		battleOnly: "Mimikyu",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	mimikyutotem: {
 		num: 778,
@@ -13116,6 +13850,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 2.8,
 		color: "Yellow",
 		eggGroups: ["Amorphous"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	mimikyubustedtotem: {
 		num: 778,
@@ -13131,6 +13866,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Amorphous"],
 		requiredAbility: "Disguise",
 		battleOnly: "Mimikyu-Totem",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	bruxish: {
 		num: 779,
@@ -13142,6 +13878,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 19,
 		color: "Pink",
 		eggGroups: ["Water 2"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	drampa: {
 		num: 780,
@@ -13155,6 +13892,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster", "Dragon"],
 		otherFormes: ["Drampa-Mega"],
 		formeOrder: ["Drampa", "Drampa-Mega"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	dhelmise: {
 		num: 781,
@@ -13167,6 +13905,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 210,
 		color: "Green",
 		eggGroups: ["Mineral"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	jangmoo: {
 		num: 782,
@@ -13179,6 +13918,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Hakamo-o"],
 		eggGroups: ["Dragon"],
+		tags: ["1st Stage"],
 	},
 	hakamoo: {
 		num: 783,
@@ -13193,6 +13933,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 35,
 		evos: ["Kommo-o"],
 		eggGroups: ["Dragon"],
+		tags: ["2nd Stage"],
 	},
 	kommoo: {
 		num: 784,
@@ -13208,6 +13949,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Dragon"],
 		otherFormes: ["Kommo-o-Totem"],
 		formeOrder: ["Kommo-o", "Kommo-o-Totem"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	kommoototem: {
 		num: 784,
@@ -13221,6 +13963,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 207.5,
 		color: "Gray",
 		eggGroups: ["Dragon"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	tapukoko: {
 		num: 785,
@@ -13232,7 +13975,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.8,
 		weightkg: 20.5,
 		color: "Yellow",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	tapulele: {
@@ -13245,7 +13988,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.2,
 		weightkg: 18.6,
 		color: "Pink",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	tapubulu: {
@@ -13258,7 +14001,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.9,
 		weightkg: 45.5,
 		color: "Red",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	tapufini: {
@@ -13271,7 +14014,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.3,
 		weightkg: 21.2,
 		color: "Purple",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	cosmog: {
@@ -13285,7 +14028,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 0.1,
 		color: "Blue",
 		evos: ["Cosmoem"],
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "1st Stage"],
 		eggGroups: ["Undiscovered"],
 	},
 	cosmoem: {
@@ -13298,7 +14041,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.1,
 		weightkg: 999.9,
 		color: "Blue",
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "2nd Stage"],
 		prevo: "Cosmog",
 		evoLevel: 43,
 		evos: ["Solgaleo", "Lunala"],
@@ -13314,7 +14057,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 3.4,
 		weightkg: 230,
 		color: "White",
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "3rd Stage", "Fully Evolved"],
 		prevo: "Cosmoem",
 		evoLevel: 53,
 		eggGroups: ["Undiscovered"],
@@ -13329,7 +14072,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 4,
 		weightkg: 120,
 		color: "Purple",
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "3rd Stage", "Fully Evolved"],
 		prevo: "Cosmoem",
 		evoLevel: 53,
 		eggGroups: ["Undiscovered"],
@@ -13344,7 +14087,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.2,
 		weightkg: 55.5,
 		color: "White",
-		tags: ["Ultra Beast"],
+		tags: ["Ultra Beast", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	buzzwole: {
@@ -13357,7 +14100,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 2.4,
 		weightkg: 333.6,
 		color: "Red",
-		tags: ["Ultra Beast"],
+		tags: ["Ultra Beast", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	pheromosa: {
@@ -13370,7 +14113,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.8,
 		weightkg: 25,
 		color: "White",
-		tags: ["Ultra Beast"],
+		tags: ["Ultra Beast", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	xurkitree: {
@@ -13383,7 +14126,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 3.8,
 		weightkg: 100,
 		color: "Black",
-		tags: ["Ultra Beast"],
+		tags: ["Ultra Beast", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	celesteela: {
@@ -13396,7 +14139,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 9.2,
 		weightkg: 999.9,
 		color: "Green",
-		tags: ["Ultra Beast"],
+		tags: ["Ultra Beast", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	kartana: {
@@ -13409,7 +14152,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.3,
 		weightkg: 0.1,
 		color: "White",
-		tags: ["Ultra Beast"],
+		tags: ["Ultra Beast", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	guzzlord: {
@@ -13422,7 +14165,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 5.5,
 		weightkg: 888,
 		color: "Black",
-		tags: ["Ultra Beast"],
+		tags: ["Ultra Beast", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	necrozma: {
@@ -13435,7 +14178,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 2.4,
 		weightkg: 230,
 		color: "Black",
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Necrozma-Dusk-Mane", "Necrozma-Dawn-Wings", "Necrozma-Ultra"],
 		formeOrder: ["Necrozma", "Necrozma-Dusk-Mane", "Necrozma-Dawn-Wings", "Necrozma-Ultra"],
@@ -13454,6 +14197,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Necrozma",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	necrozmadawnwings: {
 		num: 800,
@@ -13469,6 +14213,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Necrozma",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	necrozmaultra: {
 		num: 800,
@@ -13485,6 +14230,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Ultranecrozium Z",
 		battleOnly: ["Necrozma-Dawn-Wings", "Necrozma-Dusk-Mane"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	magearna: {
 		num: 801,
@@ -13497,7 +14243,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 80.5,
 		color: "Gray",
 		eggGroups: ["Undiscovered"],
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Magearna-Original"],
 		formeOrder: ["Magearna", "Magearna-Original"],
 	},
@@ -13514,6 +14260,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 80.5,
 		color: "Red",
 		eggGroups: ["Undiscovered"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	marshadow: {
 		num: 802,
@@ -13525,7 +14272,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.7,
 		weightkg: 22.2,
 		color: "Gray",
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	poipole: {
@@ -13538,7 +14285,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.6,
 		weightkg: 1.8,
 		color: "Purple",
-		tags: ["Ultra Beast"],
+		tags: ["Ultra Beast", "1st Stage"],
 		evos: ["Naganadel"],
 		eggGroups: ["Undiscovered"],
 	},
@@ -13552,7 +14299,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 3.6,
 		weightkg: 150,
 		color: "Purple",
-		tags: ["Ultra Beast"],
+		tags: ["Ultra Beast", "2nd Stage", "Fully Evolved"],
 		prevo: "Poipole",
 		evoType: "levelMove",
 		evoMove: "Dragon Pulse",
@@ -13568,7 +14315,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 5.5,
 		weightkg: 820,
 		color: "Gray",
-		tags: ["Ultra Beast"],
+		tags: ["Ultra Beast", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	blacephalon: {
@@ -13581,7 +14328,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.8,
 		weightkg: 13,
 		color: "White",
-		tags: ["Ultra Beast"],
+		tags: ["Ultra Beast", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	zeraora: {
@@ -13594,7 +14341,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.5,
 		weightkg: 44.5,
 		color: "Yellow",
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	meltan: {
@@ -13607,7 +14354,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.2,
 		weightkg: 8,
 		color: "Gray",
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	melmetal: {
@@ -13620,7 +14367,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 2.5,
 		weightkg: 800,
 		color: "Gray",
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 		canGigantamax: "G-Max Meltdown",
 	},
@@ -13640,6 +14387,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Thwackey"],
 		eggGroups: ["Field", "Grass"],
+		tags: ["1st Stage"],
 	},
 	thwackey: {
 		num: 811,
@@ -13655,6 +14403,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Rillaboom"],
 		eggGroups: ["Field", "Grass"],
+		tags: ["2nd Stage"],
 	},
 	rillaboom: {
 		num: 812,
@@ -13670,6 +14419,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 35,
 		eggGroups: ["Field", "Grass"],
 		canGigantamax: "G-Max Drum Solo",
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	scorbunny: {
 		num: 813,
@@ -13683,6 +14433,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Raboot"],
 		eggGroups: ["Field", "Human-Like"],
+		tags: ["1st Stage"],
 	},
 	raboot: {
 		num: 814,
@@ -13698,6 +14449,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Cinderace"],
 		eggGroups: ["Field", "Human-Like"],
+		tags: ["2nd Stage"],
 	},
 	cinderace: {
 		num: 815,
@@ -13713,6 +14465,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 35,
 		eggGroups: ["Field", "Human-Like"],
 		canGigantamax: "G-Max Fireball",
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	sobble: {
 		num: 816,
@@ -13726,6 +14479,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Drizzile"],
 		eggGroups: ["Water 1", "Field"],
+		tags: ["1st Stage"],
 	},
 	drizzile: {
 		num: 817,
@@ -13741,6 +14495,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Inteleon"],
 		eggGroups: ["Water 1", "Field"],
+		tags: ["2nd Stage"],
 	},
 	inteleon: {
 		num: 818,
@@ -13756,6 +14511,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 35,
 		eggGroups: ["Water 1", "Field"],
 		canGigantamax: "G-Max Hydrosnipe",
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	skwovet: {
 		num: 819,
@@ -13768,6 +14524,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Greedent"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	greedent: {
 		num: 820,
@@ -13781,6 +14538,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Skwovet",
 		evoLevel: 24,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	rookidee: {
 		num: 821,
@@ -13793,6 +14551,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Corvisquire"],
 		eggGroups: ["Flying"],
+		tags: ["1st Stage"],
 	},
 	corvisquire: {
 		num: 822,
@@ -13807,6 +14566,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 18,
 		evos: ["Corviknight"],
 		eggGroups: ["Flying"],
+		tags: ["2nd Stage"],
 	},
 	corviknight: {
 		num: 823,
@@ -13821,6 +14581,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 38,
 		eggGroups: ["Flying"],
 		canGigantamax: "G-Max Wind Rage",
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	blipbug: {
 		num: 824,
@@ -13833,6 +14594,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Dottler"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	dottler: {
 		num: 825,
@@ -13847,6 +14609,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 10,
 		evos: ["Orbeetle"],
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage"],
 	},
 	orbeetle: {
 		num: 826,
@@ -13861,6 +14624,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 30,
 		eggGroups: ["Bug"],
 		canGigantamax: "G-Max Gravitas",
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	nickit: {
 		num: 827,
@@ -13873,6 +14637,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Thievul"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	thievul: {
 		num: 828,
@@ -13886,6 +14651,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Nickit",
 		evoLevel: 18,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	gossifleur: {
 		num: 829,
@@ -13898,6 +14664,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Eldegoss"],
 		eggGroups: ["Grass"],
+		tags: ["1st Stage"],
 	},
 	eldegoss: {
 		num: 830,
@@ -13911,6 +14678,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Gossifleur",
 		evoLevel: 20,
 		eggGroups: ["Grass"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	wooloo: {
 		num: 831,
@@ -13923,6 +14691,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Dubwool"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	dubwool: {
 		num: 832,
@@ -13936,6 +14705,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Wooloo",
 		evoLevel: 24,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	chewtle: {
 		num: 833,
@@ -13948,6 +14718,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Drednaw"],
 		eggGroups: ["Monster", "Water 1"],
+		tags: ["1st Stage"],
 	},
 	drednaw: {
 		num: 834,
@@ -13962,6 +14733,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 22,
 		eggGroups: ["Monster", "Water 1"],
 		canGigantamax: "G-Max Stonesurge",
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	yamper: {
 		num: 835,
@@ -13974,6 +14746,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Boltund"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	boltund: {
 		num: 836,
@@ -13987,6 +14760,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Yamper",
 		evoLevel: 25,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	rolycoly: {
 		num: 837,
@@ -13999,6 +14773,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		evos: ["Carkol"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	carkol: {
 		num: 838,
@@ -14013,6 +14788,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 18,
 		evos: ["Coalossal"],
 		eggGroups: ["Mineral"],
+		tags: ["2nd Stage"],
 	},
 	coalossal: {
 		num: 839,
@@ -14027,6 +14803,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 34,
 		eggGroups: ["Mineral"],
 		canGigantamax: "G-Max Volcalith",
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	applin: {
 		num: 840,
@@ -14039,6 +14816,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Flapple", "Appletun", "Dipplin"],
 		eggGroups: ["Grass", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	flapple: {
 		num: 841,
@@ -14054,6 +14832,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoItem: "Tart Apple",
 		eggGroups: ["Grass", "Dragon"],
 		canGigantamax: "G-Max Tartness",
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	appletun: {
 		num: 842,
@@ -14069,6 +14848,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoItem: "Sweet Apple",
 		eggGroups: ["Grass", "Dragon"],
 		canGigantamax: "G-Max Sweetness",
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	silicobra: {
 		num: 843,
@@ -14081,6 +14861,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Sandaconda"],
 		eggGroups: ["Field", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	sandaconda: {
 		num: 844,
@@ -14095,6 +14876,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 36,
 		eggGroups: ["Field", "Dragon"],
 		canGigantamax: "G-Max Sandblast",
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	cramorant: {
 		num: 845,
@@ -14108,6 +14890,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1", "Flying"],
 		otherFormes: ["Cramorant-Gulping", "Cramorant-Gorging"],
 		formeOrder: ["Cramorant", "Cramorant-Gulping", "Cramorant-Gorging"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	cramorantgulping: {
 		num: 845,
@@ -14123,6 +14906,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1", "Flying"],
 		requiredAbility: "Gulp Missile",
 		battleOnly: "Cramorant",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	cramorantgorging: {
 		num: 845,
@@ -14138,6 +14922,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1", "Flying"],
 		requiredAbility: "Gulp Missile",
 		battleOnly: "Cramorant",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arrokuda: {
 		num: 846,
@@ -14150,6 +14935,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Barraskewda"],
 		eggGroups: ["Water 2"],
+		tags: ["1st Stage"],
 	},
 	barraskewda: {
 		num: 847,
@@ -14163,6 +14949,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Arrokuda",
 		evoLevel: 26,
 		eggGroups: ["Water 2"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	toxel: {
 		num: 848,
@@ -14176,6 +14963,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Toxtricity", "Toxtricity-Low-Key"],
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
+		tags: ["1st Stage"],
 	},
 	toxtricity: {
 		num: 849,
@@ -14193,6 +14981,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Toxtricity-Low-Key"],
 		formeOrder: ["Toxtricity", "Toxtricity-Low-Key"],
 		canGigantamax: "G-Max Stun Shock",
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	toxtricitylowkey: {
 		num: 849,
@@ -14209,6 +14998,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 30,
 		eggGroups: ["Human-Like"],
 		canGigantamax: "G-Max Stun Shock",
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	sizzlipede: {
 		num: 850,
@@ -14221,6 +15011,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Centiskorch"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	centiskorch: {
 		num: 851,
@@ -14235,6 +15026,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 28,
 		eggGroups: ["Bug"],
 		canGigantamax: "G-Max Centiferno",
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	clobbopus: {
 		num: 852,
@@ -14247,6 +15039,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Grapploct"],
 		eggGroups: ["Water 1", "Human-Like"],
+		tags: ["1st Stage"],
 	},
 	grapploct: {
 		num: 853,
@@ -14261,6 +15054,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelMove",
 		evoMove: "Taunt",
 		eggGroups: ["Water 1", "Human-Like"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	sinistea: {
 		num: 854,
@@ -14277,6 +15071,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Mineral", "Amorphous"],
 		otherFormes: ["Sinistea-Antique"],
 		formeOrder: ["Sinistea", "Sinistea-Antique"],
+		tags: ["1st Stage"],
 	},
 	sinisteaantique: {
 		num: 854,
@@ -14292,6 +15087,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Polteageist-Antique"],
 		eggGroups: ["Undiscovered"],
+		tags: ["1st Stage"],
 	},
 	polteageist: {
 		num: 855,
@@ -14310,6 +15106,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Mineral", "Amorphous"],
 		otherFormes: ["Polteageist-Antique"],
 		formeOrder: ["Polteageist", "Polteageist-Antique"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	polteageistantique: {
 		num: 855,
@@ -14327,6 +15124,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Chipped Pot",
 		eggGroups: ["Undiscovered"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	hatenna: {
 		num: 856,
@@ -14340,6 +15138,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		evos: ["Hattrem"],
 		eggGroups: ["Fairy"],
+		tags: ["1st Stage"],
 	},
 	hattrem: {
 		num: 857,
@@ -14355,6 +15154,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 32,
 		evos: ["Hatterene"],
 		eggGroups: ["Fairy"],
+		tags: ["2nd Stage"],
 	},
 	hatterene: {
 		num: 858,
@@ -14370,6 +15170,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 42,
 		eggGroups: ["Fairy"],
 		canGigantamax: "G-Max Smite",
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	impidimp: {
 		num: 859,
@@ -14383,6 +15184,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		evos: ["Morgrem"],
 		eggGroups: ["Fairy", "Human-Like"],
+		tags: ["1st Stage"],
 	},
 	morgrem: {
 		num: 860,
@@ -14398,6 +15200,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 32,
 		evos: ["Grimmsnarl"],
 		eggGroups: ["Fairy", "Human-Like"],
+		tags: ["2nd Stage"],
 	},
 	grimmsnarl: {
 		num: 861,
@@ -14413,6 +15216,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 42,
 		eggGroups: ["Fairy", "Human-Like"],
 		canGigantamax: "G-Max Snooze",
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	obstagoon: {
 		num: 862,
@@ -14427,6 +15231,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 35,
 		evoCondition: "at night",
 		eggGroups: ["Field"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	perrserker: {
 		num: 863,
@@ -14440,6 +15245,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Meowth-Galar",
 		evoLevel: 28,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	cursola: {
 		num: 864,
@@ -14454,6 +15260,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Corsola-Galar",
 		evoLevel: 38,
 		eggGroups: ["Water 1", "Water 3"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	sirfetchd: {
 		num: 865,
@@ -14468,6 +15275,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "other",
 		evoCondition: "Land 3 critical hits in 1 battle",
 		eggGroups: ["Flying", "Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	mrrime: {
 		num: 866,
@@ -14481,6 +15289,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Mr. Mime-Galar",
 		evoLevel: 42,
 		eggGroups: ["Human-Like"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	runerigus: {
 		num: 867,
@@ -14495,6 +15304,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "other",
 		evoCondition: "Have 49+ HP lost and walk under stone sculpture in Dusty Bowl",
 		eggGroups: ["Mineral", "Amorphous"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	milcery: {
 		num: 868,
@@ -14508,6 +15318,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Alcremie"],
 		eggGroups: ["Fairy", "Amorphous"],
+		tags: ["1st Stage"],
 	},
 	alcremie: {
 		num: 869,
@@ -14527,6 +15338,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		cosmeticFormes: ["Alcremie-Ruby-Cream", "Alcremie-Matcha-Cream", "Alcremie-Mint-Cream", "Alcremie-Lemon-Cream", "Alcremie-Salted-Cream", "Alcremie-Ruby-Swirl", "Alcremie-Caramel-Swirl", "Alcremie-Rainbow-Swirl"],
 		formeOrder: ["Alcremie", "Alcremie-Ruby-Cream", "Alcremie-Matcha-Cream", "Alcremie-Mint-Cream", "Alcremie-Lemon-Cream", "Alcremie-Salted-Cream", "Alcremie-Ruby-Swirl", "Alcremie-Caramel-Swirl", "Alcremie-Rainbow-Swirl"],
 		canGigantamax: "G-Max Finale",
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	alcremierubycream: {
 		isCosmeticForme: true,
@@ -14534,6 +15346,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Alcremie",
 		forme: "Ruby-Cream",
 		color: "Pink",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	alcremiematchacream: {
 		isCosmeticForme: true,
@@ -14541,6 +15354,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Alcremie",
 		forme: "Matcha-Cream",
 		color: "Green",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	alcremiemintcream: {
 		isCosmeticForme: true,
@@ -14548,6 +15362,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Alcremie",
 		forme: "Mint-Cream",
 		color: "Blue",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	alcremielemoncream: {
 		isCosmeticForme: true,
@@ -14555,6 +15370,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Alcremie",
 		forme: "Lemon-Cream",
 		color: "Yellow",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	alcremierubyswirl: {
 		isCosmeticForme: true,
@@ -14562,6 +15378,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Alcremie",
 		forme: "Ruby-Swirl",
 		color: "Yellow",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	alcremiecaramelswirl: {
 		isCosmeticForme: true,
@@ -14569,6 +15386,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Alcremie",
 		forme: "Caramel-Swirl",
 		color: "Yellow",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	alcremierainbowswirl: {
 		isCosmeticForme: true,
@@ -14576,6 +15394,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Alcremie",
 		forme: "Rainbow-Swirl",
 		color: "Yellow",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	falinks: {
 		num: 870,
@@ -14590,6 +15409,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Fairy", "Mineral"],
 		otherFormes: ["Falinks-Mega"],
 		formeOrder: ["Falinks", "Falinks-Mega"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pincurchin: {
 		num: 871,
@@ -14601,6 +15421,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 1,
 		color: "Purple",
 		eggGroups: ["Water 1", "Amorphous"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	snom: {
 		num: 872,
@@ -14613,6 +15434,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Frosmoth"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	frosmoth: {
 		num: 873,
@@ -14627,6 +15449,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelFriendship",
 		evoCondition: "at night",
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	stonjourner: {
 		num: 874,
@@ -14638,6 +15461,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 520,
 		color: "Gray",
 		eggGroups: ["Mineral"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	eiscue: {
 		num: 875,
@@ -14652,6 +15476,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1", "Field"],
 		otherFormes: ["Eiscue-Noice"],
 		formeOrder: ["Eiscue", "Eiscue-Noice"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	eiscuenoice: {
 		num: 875,
@@ -14667,6 +15492,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1", "Field"],
 		requiredAbility: "Ice Face",
 		battleOnly: "Eiscue",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	indeedee: {
 		num: 876,
@@ -14683,6 +15509,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Indeedee-F"],
 		formeOrder: ["Indeedee", "Indeedee-F"],
 		mother: 'indeedeef',
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	indeedeef: {
 		num: 876,
@@ -14697,6 +15524,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 28,
 		color: "Purple",
 		eggGroups: ["Fairy"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	morpeko: {
 		num: 877,
@@ -14711,6 +15539,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field", "Fairy"],
 		otherFormes: ["Morpeko-Hangry"],
 		formeOrder: ["Morpeko", "Morpeko-Hangry"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	morpekohangry: {
 		num: 877,
@@ -14726,6 +15555,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field", "Fairy"],
 		requiredAbility: "Hunger Switch",
 		battleOnly: "Morpeko",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	cufant: {
 		num: 878,
@@ -14738,6 +15568,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Copperajah"],
 		eggGroups: ["Field", "Mineral"],
+		tags: ["1st Stage"],
 	},
 	copperajah: {
 		num: 879,
@@ -14752,6 +15583,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 34,
 		eggGroups: ["Field", "Mineral"],
 		canGigantamax: "G-Max Steelsurge",
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	dracozolt: {
 		num: 880,
@@ -14764,6 +15596,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 190,
 		color: "Green",
 		eggGroups: ["Undiscovered"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arctozolt: {
 		num: 881,
@@ -14776,6 +15609,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 150,
 		color: "Blue",
 		eggGroups: ["Undiscovered"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	dracovish: {
 		num: 882,
@@ -14788,6 +15622,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 215,
 		color: "Green",
 		eggGroups: ["Undiscovered"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	arctovish: {
 		num: 883,
@@ -14800,6 +15635,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 175,
 		color: "Blue",
 		eggGroups: ["Undiscovered"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	duraludon: {
 		num: 884,
@@ -14813,6 +15649,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Archaludon"],
 		eggGroups: ["Mineral", "Dragon"],
 		canGigantamax: "G-Max Depletion",
+		tags: ["1st Stage"],
 	},
 	dreepy: {
 		num: 885,
@@ -14825,6 +15662,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Drakloak"],
 		eggGroups: ["Amorphous", "Dragon"],
+		tags: ["1st Stage"],
 	},
 	drakloak: {
 		num: 886,
@@ -14839,6 +15677,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 50,
 		evos: ["Dragapult"],
 		eggGroups: ["Amorphous", "Dragon"],
+		tags: ["2nd Stage"],
 	},
 	dragapult: {
 		num: 887,
@@ -14852,6 +15691,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Drakloak",
 		evoLevel: 60,
 		eggGroups: ["Amorphous", "Dragon"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	zacian: {
 		num: 888,
@@ -14865,7 +15705,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 110,
 		color: "Blue",
 		eggGroups: ["Undiscovered"],
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Zacian-Crowned"],
 		formeOrder: ["Zacian", "Zacian-Crowned"],
 		cannotDynamax: true,
@@ -14886,6 +15726,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItem: "Rusted Sword",
 		battleOnly: "Zacian",
 		cannotDynamax: true,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	zamazenta: {
 		num: 889,
@@ -14899,7 +15740,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 210,
 		color: "Red",
 		eggGroups: ["Undiscovered"],
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Zamazenta-Crowned"],
 		formeOrder: ["Zamazenta", "Zamazenta-Crowned"],
 		cannotDynamax: true,
@@ -14920,6 +15761,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItem: "Rusted Shield",
 		battleOnly: "Zamazenta",
 		cannotDynamax: true,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	eternatus: {
 		num: 890,
@@ -14932,7 +15774,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 950,
 		color: "Purple",
 		eggGroups: ["Undiscovered"],
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Eternatus-Eternamax"],
 		formeOrder: ["Eternatus", "Eternatus-Eternamax"],
 		cannotDynamax: true,
@@ -14951,6 +15793,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		eggGroups: ["Undiscovered"],
 		cannotDynamax: true,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	kubfu: {
 		num: 891,
@@ -14962,7 +15805,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.6,
 		weightkg: 12,
 		color: "Gray",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "1st Stage"],
 		evos: ["Urshifu", "Urshifu-Rapid-Strike"],
 		eggGroups: ["Undiscovered"],
 	},
@@ -14977,7 +15820,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.9,
 		weightkg: 105,
 		color: "Gray",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "2nd Stage", "Fully Evolved"],
 		prevo: "Kubfu",
 		evoType: "other",
 		evoCondition: "Defeat the Single Strike Tower",
@@ -15003,6 +15846,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoCondition: "Defeat the Rapid Strike Tower",
 		eggGroups: ["Undiscovered"],
 		canGigantamax: "G-Max Rapid Flow",
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	zarude: {
 		num: 893,
@@ -15015,7 +15859,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 70,
 		color: "Black",
 		eggGroups: ["Undiscovered"],
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Zarude-Dada"],
 		formeOrder: ["Zarude", "Zarude-Dada"],
 	},
@@ -15032,6 +15876,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 70,
 		color: "Black",
 		eggGroups: ["Undiscovered"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	regieleki: {
 		num: 894,
@@ -15043,7 +15888,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.2,
 		weightkg: 145,
 		color: "Yellow",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	regidrago: {
@@ -15056,7 +15901,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 2.1,
 		weightkg: 200,
 		color: "Green",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	glastrier: {
@@ -15069,7 +15914,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 2.2,
 		weightkg: 800,
 		color: "White",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	spectrier: {
@@ -15082,7 +15927,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 2,
 		weightkg: 44.5,
 		color: "Black",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	calyrex: {
@@ -15096,7 +15941,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 7.7,
 		color: "Green",
 		eggGroups: ["Undiscovered"],
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Calyrex-Ice", "Calyrex-Shadow"],
 		formeOrder: ["Calyrex", "Calyrex-Ice", "Calyrex-Shadow"],
 	},
@@ -15114,6 +15959,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Calyrex",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	calyrexshadow: {
 		num: 898,
@@ -15129,6 +15975,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Calyrex",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 
 
@@ -15147,6 +15994,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "other",
 		evoCondition: "Use Agile style Psyshield Bash 20 times",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	kleavor: {
 		num: 900,
@@ -15161,6 +16009,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoCondition: "Black Augurite",
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	ursaluna: {
 		num: 901,
@@ -15177,6 +16026,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Ursaluna-Bloodmoon"],
 		formeOrder: ["Ursaluna", "Ursaluna-Bloodmoon"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	ursalunabloodmoon: {
 		num: 901,
@@ -15192,6 +16042,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		eggGroups: ["Field"],
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	basculegion: {
 		num: 902,
@@ -15210,6 +16061,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 2"],
 		otherFormes: ["Basculegion-F"],
 		formeOrder: ["Basculegion", "Basculegion-F"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	basculegionf: {
 		num: 902,
@@ -15227,6 +16079,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "other",
 		evoCondition: "Receive 294+ recoil without fainting",
 		eggGroups: ["Water 2"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	sneasler: {
 		num: 903,
@@ -15242,6 +16095,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoItem: "Razor Claw",
 		evoCondition: "during the day",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	overqwil: {
 		num: 904,
@@ -15256,6 +16110,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "other",
 		evoCondition: "Use Strong style Barb Barrage 20 times",
 		eggGroups: ["Water 2"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	enamorus: {
 		num: 905,
@@ -15268,7 +16123,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.6,
 		weightkg: 48,
 		color: "Pink",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Enamorus-Therian"],
 		formeOrder: ["Enamorus", "Enamorus-Therian"],
@@ -15287,6 +16142,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Enamorus",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 
 
@@ -15316,6 +16172,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Floragato"],
 		eggGroups: ["Field", "Grass"],
+		tags: ["1st Stage"],
 	},
 	floragato: {
 		num: 907,
@@ -15331,6 +16188,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Meowscarada"],
 		eggGroups: ["Field", "Grass"],
+		tags: ["2nd Stage"],
 	},
 	meowscarada: {
 		num: 908,
@@ -15345,6 +16203,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Floragato",
 		evoLevel: 36,
 		eggGroups: ["Field", "Grass"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	fuecoco: {
 		num: 909,
@@ -15358,6 +16217,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Crocalor"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	crocalor: {
 		num: 910,
@@ -15373,6 +16233,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Skeledirge"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage"],
 	},
 	skeledirge: {
 		num: 911,
@@ -15387,6 +16248,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Crocalor",
 		evoLevel: 36,
 		eggGroups: ["Field"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	quaxly: {
 		num: 912,
@@ -15400,6 +16262,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Quaxwell"],
 		eggGroups: ["Flying", "Water 1"],
+		tags: ["1st Stage"],
 	},
 	quaxwell: {
 		num: 913,
@@ -15415,6 +16278,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Quaquaval"],
 		eggGroups: ["Flying", "Water 1"],
+		tags: ["2nd Stage"],
 	},
 	quaquaval: {
 		num: 914,
@@ -15429,6 +16293,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Quaxwell",
 		evoLevel: 36,
 		eggGroups: ["Flying", "Water 1"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	lechonk: {
 		num: 915,
@@ -15441,6 +16306,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Oinkologne", "Oinkologne-F"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	oinkologne: {
 		num: 916,
@@ -15458,6 +16324,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Oinkologne-F"],
 		formeOrder: ["Oinkologne", "Oinkologne-F"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	oinkolognef: {
 		num: 916,
@@ -15474,6 +16341,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Lechonk",
 		evoLevel: 18,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	tarountula: {
 		num: 917,
@@ -15486,6 +16354,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Spidops"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	spidops: {
 		num: 918,
@@ -15499,6 +16368,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Tarountula",
 		evoLevel: 15,
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	nymble: {
 		num: 919,
@@ -15511,6 +16381,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Lokix"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	lokix: {
 		num: 920,
@@ -15524,6 +16395,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Nymble",
 		evoLevel: 24,
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	pawmi: {
 		num: 921,
@@ -15536,6 +16408,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Pawmo"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	pawmo: {
 		num: 922,
@@ -15550,6 +16423,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 18,
 		evos: ["Pawmot"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage"],
 	},
 	pawmot: {
 		num: 923,
@@ -15564,6 +16438,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "other",
 		evoCondition: "walk 1000 steps in Let's Go",
 		eggGroups: ["Field"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	tandemaus: {
 		num: 924,
@@ -15577,6 +16452,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Maushold", "Maushold-Four"],
 		eggGroups: ["Field", "Fairy"],
+		tags: ["1st Stage"],
 	},
 	maushold: {
 		num: 925,
@@ -15594,6 +16470,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Maushold-Four"],
 		formeOrder: ["Maushold", "Maushold-Four"],
 		eggGroups: ["Field", "Fairy"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	mausholdfour: {
 		num: 925,
@@ -15610,6 +16487,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Tandemaus",
 		evoLevel: 25,
 		eggGroups: ["Field", "Fairy"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	fidough: {
 		num: 926,
@@ -15622,6 +16500,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Dachsbun"],
 		eggGroups: ["Field", "Mineral"],
+		tags: ["1st Stage"],
 	},
 	dachsbun: {
 		num: 927,
@@ -15635,6 +16514,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Fidough",
 		evoLevel: 26,
 		eggGroups: ["Field", "Mineral"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	smoliv: {
 		num: 928,
@@ -15647,6 +16527,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Dolliv"],
 		eggGroups: ["Grass"],
+		tags: ["1st Stage"],
 	},
 	dolliv: {
 		num: 929,
@@ -15661,6 +16542,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 25,
 		evos: ["Arboliva"],
 		eggGroups: ["Grass"],
+		tags: ["2nd Stage"],
 	},
 	arboliva: {
 		num: 930,
@@ -15674,6 +16556,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Dolliv",
 		evoLevel: 35,
 		eggGroups: ["Grass"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	squawkabilly: {
 		num: 931,
@@ -15688,6 +16571,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Squawkabilly-Blue", "Squawkabilly-Yellow", "Squawkabilly-White"],
 		formeOrder: ["Squawkabilly", "Squawkabilly-Blue", "Squawkabilly-Yellow", "Squawkabilly-White"],
 		eggGroups: ["Flying"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	squawkabillyblue: {
 		num: 931,
@@ -15701,6 +16585,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 2.4,
 		color: "Blue",
 		eggGroups: ["Flying"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	squawkabillyyellow: {
 		num: 931,
@@ -15714,6 +16599,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 2.4,
 		color: "Yellow",
 		eggGroups: ["Flying"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	squawkabillywhite: {
 		num: 931,
@@ -15727,6 +16613,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 2.4,
 		color: "White",
 		eggGroups: ["Flying"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	nacli: {
 		num: 932,
@@ -15739,6 +16626,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Naclstack"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	naclstack: {
 		num: 933,
@@ -15753,6 +16641,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 24,
 		evos: ["Garganacl"],
 		eggGroups: ["Mineral"],
+		tags: ["2nd Stage"],
 	},
 	garganacl: {
 		num: 934,
@@ -15766,6 +16655,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Naclstack",
 		evoLevel: 38,
 		eggGroups: ["Mineral"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	charcadet: {
 		num: 935,
@@ -15778,6 +16668,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Armarouge", "Ceruledge"],
 		eggGroups: ["Human-Like"],
+		tags: ["1st Stage"],
 	},
 	armarouge: {
 		num: 936,
@@ -15792,6 +16683,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Auspicious Armor",
 		eggGroups: ["Human-Like"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	ceruledge: {
 		num: 937,
@@ -15806,6 +16698,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Malicious Armor",
 		eggGroups: ["Human-Like"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	tadbulb: {
 		num: 938,
@@ -15818,6 +16711,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Bellibolt"],
 		eggGroups: ["Water 1"],
+		tags: ["1st Stage"],
 	},
 	bellibolt: {
 		num: 939,
@@ -15832,6 +16726,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Thunder Stone",
 		eggGroups: ["Water 1"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	wattrel: {
 		num: 940,
@@ -15844,6 +16739,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		evos: ["Kilowattrel"],
 		eggGroups: ["Water 1", "Flying"],
+		tags: ["1st Stage"],
 	},
 	kilowattrel: {
 		num: 941,
@@ -15857,6 +16753,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Wattrel",
 		evoLevel: 25,
 		eggGroups: ["Water 1", "Flying"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	maschiff: {
 		num: 942,
@@ -15869,6 +16766,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Mabosstiff"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	mabosstiff: {
 		num: 943,
@@ -15882,6 +16780,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Maschiff",
 		evoLevel: 30,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	shroodle: {
 		num: 944,
@@ -15894,6 +16793,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Grafaiai"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	grafaiai: {
 		num: 945,
@@ -15907,6 +16807,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Shroodle",
 		evoLevel: 28,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	bramblin: {
 		num: 946,
@@ -15919,6 +16820,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Brambleghast"],
 		eggGroups: ["Grass"],
+		tags: ["1st Stage"],
 	},
 	brambleghast: {
 		num: 947,
@@ -15933,6 +16835,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "other",
 		evoCondition: "Walk 1000 steps in Let's Go",
 		eggGroups: ["Grass"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	toedscool: {
 		num: 948,
@@ -15945,6 +16848,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Toedscruel"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	toedscruel: {
 		num: 949,
@@ -15958,6 +16862,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Toedscool",
 		evoLevel: 30,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	klawf: {
 		num: 950,
@@ -15969,6 +16874,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 79,
 		color: "Red",
 		eggGroups: ["Water 3"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	capsakid: {
 		num: 951,
@@ -15981,6 +16887,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Scovillain"],
 		eggGroups: ["Grass"],
+		tags: ["1st Stage"],
 	},
 	scovillain: {
 		num: 952,
@@ -15995,6 +16902,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Fire Stone",
 		eggGroups: ["Grass"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	rellor: {
 		num: 953,
@@ -16007,6 +16915,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Rabsca"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	rabsca: {
 		num: 954,
@@ -16021,6 +16930,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "other",
 		evoCondition: "walk 1000 steps in Let's Go",
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	flittle: {
 		num: 955,
@@ -16033,6 +16943,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		evos: ["Espathra"],
 		eggGroups: ["Flying"],
+		tags: ["1st Stage"],
 	},
 	espathra: {
 		num: 956,
@@ -16046,6 +16957,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Flittle",
 		evoLevel: 35,
 		eggGroups: ["Flying"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	tinkatink: {
 		num: 957,
@@ -16059,6 +16971,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		evos: ["Tinkatuff"],
 		eggGroups: ["Fairy"],
+		tags: ["1st Stage"],
 	},
 	tinkatuff: {
 		num: 958,
@@ -16074,6 +16987,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 24,
 		evos: ["Tinkaton"],
 		eggGroups: ["Fairy"],
+		tags: ["2nd Stage"],
 	},
 	tinkaton: {
 		num: 959,
@@ -16088,6 +17002,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Tinkatuff",
 		evoLevel: 38,
 		eggGroups: ["Fairy"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	wiglett: {
 		num: 960,
@@ -16100,6 +17015,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Wugtrio"],
 		eggGroups: ["Water 3"],
+		tags: ["1st Stage"],
 	},
 	wugtrio: {
 		num: 961,
@@ -16113,6 +17029,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Wiglett",
 		evoLevel: 26,
 		eggGroups: ["Water 3"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	bombirdier: {
 		num: 962,
@@ -16124,6 +17041,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 42.9,
 		color: "White",
 		eggGroups: ["Flying"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	finizen: {
 		num: 963,
@@ -16136,6 +17054,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Palafin"],
 		eggGroups: ["Field", "Water 2"],
+		tags: ["1st Stage"],
 	},
 	palafin: {
 		num: 964,
@@ -16152,6 +17071,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Palafin-Hero"],
 		formeOrder: ["Palafin", "Palafin-Hero"],
 		eggGroups: ["Field", "Water 2"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	palafinhero: {
 		num: 964,
@@ -16167,6 +17087,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field", "Water 2"],
 		requiredAbility: "Zero to Hero",
 		battleOnly: "Palafin",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	varoom: {
 		num: 965,
@@ -16179,6 +17100,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Revavroom"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	revavroom: {
 		num: 966,
@@ -16192,6 +17114,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Varoom",
 		evoLevel: 40,
 		eggGroups: ["Mineral"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	cyclizar: {
 		num: 967,
@@ -16203,6 +17126,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 63,
 		color: "Green",
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	orthworm: {
 		num: 968,
@@ -16214,6 +17138,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 310,
 		color: "Pink",
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	glimmet: {
 		num: 969,
@@ -16226,6 +17151,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Glimmora"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	glimmora: {
 		num: 970,
@@ -16239,6 +17165,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Glimmet",
 		evoLevel: 35,
 		eggGroups: ["Mineral"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	greavard: {
 		num: 971,
@@ -16251,6 +17178,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Houndstone"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	houndstone: {
 		num: 972,
@@ -16265,6 +17193,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 30,
 		evoCondition: "at night",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	flamigo: {
 		num: 973,
@@ -16276,6 +17205,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 37,
 		color: "Pink",
 		eggGroups: ["Flying"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	cetoddle: {
 		num: 974,
@@ -16288,6 +17218,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Cetitan"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	cetitan: {
 		num: 975,
@@ -16302,6 +17233,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Ice Stone",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	veluza: {
 		num: 976,
@@ -16313,6 +17245,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 90,
 		color: "Gray",
 		eggGroups: ["Water 2"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	dondozo: {
 		num: 977,
@@ -16324,6 +17257,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 220,
 		color: "Blue",
 		eggGroups: ["Water 2"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	tatsugiri: {
 		num: 978,
@@ -16338,6 +17272,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		cosmeticFormes: ["Tatsugiri-Droopy", "Tatsugiri-Stretchy"],
 		formeOrder: ["Tatsugiri", "Tatsugiri-Droopy", "Tatsugiri-Stretchy"],
 		eggGroups: ["Water 2"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	tatsugiridroopy: {
 		isCosmeticForme: true,
@@ -16345,6 +17280,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Tatsugiri",
 		forme: "Droopy",
 		color: "Pink",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	tatsugiristretchy: {
 		isCosmeticForme: true,
@@ -16352,6 +17288,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Tatsugiri",
 		forme: "Stretchy",
 		color: "Yellow",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	annihilape: {
 		num: 979,
@@ -16366,6 +17303,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "other",
 		evoCondition: "Use Rage Fist 20 times and level-up",
 		eggGroups: ["Field"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	clodsire: {
 		num: 980,
@@ -16379,6 +17317,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Wooper-Paldea",
 		evoLevel: 20,
 		eggGroups: ["Water 1", "Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	farigiraf: {
 		num: 981,
@@ -16393,6 +17332,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelMove",
 		evoMove: "Twin Beam",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	dudunsparce: {
 		num: 982,
@@ -16410,6 +17350,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Dudunsparce-Three-Segment"],
 		formeOrder: ["Dudunsparce", "Dudunsparce-Three-Segment"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	dudunsparcethreesegment: {
 		num: 982,
@@ -16426,6 +17367,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelMove",
 		evoMove: "Hyper Drill",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	kingambit: {
 		num: 983,
@@ -16440,6 +17382,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "other",
 		evoCondition: "Defeat 3 Bisharp leading Pawniard and level-up",
 		eggGroups: ["Human-Like"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	greattusk: {
 		num: 984,
@@ -16451,7 +17394,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 2.2,
 		weightkg: 320,
 		color: "Purple",
-		tags: ["Paradox"],
+		tags: ["Paradox", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	screamtail: {
@@ -16464,7 +17407,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.2,
 		weightkg: 8,
 		color: "Pink",
-		tags: ["Paradox"],
+		tags: ["Paradox", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	brutebonnet: {
@@ -16477,7 +17420,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.2,
 		weightkg: 21,
 		color: "White",
-		tags: ["Paradox"],
+		tags: ["Paradox", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	fluttermane: {
@@ -16490,7 +17433,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.4,
 		weightkg: 4,
 		color: "Gray",
-		tags: ["Paradox"],
+		tags: ["Paradox", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	slitherwing: {
@@ -16503,7 +17446,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 3.2,
 		weightkg: 92,
 		color: "White",
-		tags: ["Paradox"],
+		tags: ["Paradox", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	sandyshocks: {
@@ -16516,7 +17459,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 2.3,
 		weightkg: 60,
 		color: "Gray",
-		tags: ["Paradox"],
+		tags: ["Paradox", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	irontreads: {
@@ -16529,7 +17472,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.9,
 		weightkg: 240,
 		color: "Gray",
-		tags: ["Paradox"],
+		tags: ["Paradox", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	ironbundle: {
@@ -16542,7 +17485,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.6,
 		weightkg: 11,
 		color: "Red",
-		tags: ["Paradox"],
+		tags: ["Paradox", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	ironhands: {
@@ -16555,7 +17498,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.8,
 		weightkg: 380.7,
 		color: "Gray",
-		tags: ["Paradox"],
+		tags: ["Paradox", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	ironjugulis: {
@@ -16568,7 +17511,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.3,
 		weightkg: 111,
 		color: "Blue",
-		tags: ["Paradox"],
+		tags: ["Paradox", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	ironmoth: {
@@ -16581,7 +17524,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.2,
 		weightkg: 36,
 		color: "White",
-		tags: ["Paradox"],
+		tags: ["Paradox", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	ironthorns: {
@@ -16594,7 +17537,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.6,
 		weightkg: 303,
 		color: "Green",
-		tags: ["Paradox"],
+		tags: ["Paradox", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	frigibax: {
@@ -16608,6 +17551,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Arctibax"],
 		eggGroups: ["Dragon", "Mineral"],
+		tags: ["1st Stage"],
 	},
 	arctibax: {
 		num: 997,
@@ -16622,6 +17566,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 35,
 		evos: ["Baxcalibur"],
 		eggGroups: ["Dragon", "Mineral"],
+		tags: ["2nd Stage"],
 	},
 	baxcalibur: {
 		num: 998,
@@ -16635,6 +17580,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Arctibax",
 		evoLevel: 54,
 		eggGroups: ["Dragon", "Mineral"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	gimmighoul: {
 		num: 999,
@@ -16651,6 +17597,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Gimmighoul-Roaming"],
 		formeOrder: ["Gimmighoul", "Gimmighoul-Roaming"],
 		eggGroups: ["Undiscovered"],
+		tags: ["1st Stage"],
 	},
 	gimmighoulroaming: {
 		num: 999,
@@ -16666,6 +17613,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Gholdengo"],
 		eggGroups: ["Undiscovered"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	gholdengo: {
 		num: 1000,
@@ -16681,6 +17629,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "other",
 		evoCondition: "Level up with 999 Coins in the bag",
 		eggGroups: ["Undiscovered"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	wochien: {
 		num: 1001,
@@ -16692,7 +17641,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.5,
 		weightkg: 74.2,
 		color: "Brown",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	chienpao: {
@@ -16705,7 +17654,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.9,
 		weightkg: 152.2,
 		color: "White",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	tinglu: {
@@ -16718,7 +17667,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 2.7,
 		weightkg: 699.7,
 		color: "Brown",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	chiyu: {
@@ -16731,7 +17680,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.4,
 		weightkg: 4.9,
 		color: "Red",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	roaringmoon: {
@@ -16744,7 +17693,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 2,
 		weightkg: 380,
 		color: "Blue",
-		tags: ["Paradox"],
+		tags: ["Paradox", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	ironvaliant: {
@@ -16757,7 +17706,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.4,
 		weightkg: 35,
 		color: "White",
-		tags: ["Paradox"],
+		tags: ["Paradox", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	koraidon: {
@@ -16770,7 +17719,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 2.5,
 		weightkg: 303,
 		color: "Red",
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	miraidon: {
@@ -16783,7 +17732,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 3.5,
 		weightkg: 240,
 		color: "Purple",
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	walkingwake: {
@@ -16796,7 +17745,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 3.5,
 		weightkg: 280,
 		color: "Blue",
-		tags: ["Paradox"],
+		tags: ["Paradox", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	ironleaves: {
@@ -16809,7 +17758,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.5,
 		weightkg: 125,
 		color: "Green",
-		tags: ["Paradox"],
+		tags: ["Paradox", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	dipplin: {
@@ -16826,6 +17775,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Syrupy Apple",
 		eggGroups: ["Grass", "Dragon"],
+		tags: ["2nd Stage"],
 	},
 	poltchageist: {
 		num: 1012,
@@ -16842,6 +17792,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Mineral", "Amorphous"],
 		otherFormes: ["Poltchageist-Artisan"],
 		formeOrder: ["Poltchageist", "Poltchageist-Artisan"],
+		tags: ["1st Stage"],
 	},
 	poltchageistartisan: {
 		num: 1012,
@@ -16857,6 +17808,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Sinistcha-Masterpiece"],
 		eggGroups: ["Undiscovered"],
+		tags: ["1st Stage"],
 	},
 	sinistcha: {
 		num: 1013,
@@ -16875,6 +17827,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Mineral", "Amorphous"],
 		otherFormes: ["Sinistcha-Masterpiece"],
 		formeOrder: ["Sinistcha", "Sinistcha-Masterpiece"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	sinistchamasterpiece: {
 		num: 1013,
@@ -16892,6 +17845,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Masterpiece Teacup",
 		eggGroups: ["Undiscovered"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	okidogi: {
 		num: 1014,
@@ -16903,7 +17857,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.8,
 		weightkg: 92,
 		color: "Black",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	munkidori: {
@@ -16916,7 +17870,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1,
 		weightkg: 12.2,
 		color: "Black",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	fezandipiti: {
@@ -16929,7 +17883,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.4,
 		weightkg: 30.1,
 		color: "Black",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	ogerpon: {
@@ -16943,7 +17897,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 1.2,
 		weightkg: 39.8,
 		color: "Green",
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Ogerpon-Wellspring", "Ogerpon-Hearthflame", "Ogerpon-Cornerstone", "Ogerpon-Teal-Tera", "Ogerpon-Wellspring-Tera", "Ogerpon-Hearthflame-Tera", "Ogerpon-Cornerstone-Tera"],
 		formeOrder: ["Ogerpon", "Ogerpon-Wellspring", "Ogerpon-Hearthflame", "Ogerpon-Cornerstone", "Ogerpon-Teal-Tera", "Ogerpon-Wellspring-Tera", "Ogerpon-Hearthflame-Tera", "Ogerpon-Cornerstone-Tera"],
@@ -16965,6 +17919,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItem: "Wellspring Mask",
 		changesFrom: "Ogerpon",
 		requiredTeraType: "Water",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	ogerponhearthflame: {
 		num: 1017,
@@ -16982,6 +17937,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItem: "Hearthflame Mask",
 		changesFrom: "Ogerpon",
 		requiredTeraType: "Fire",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	ogerponcornerstone: {
 		num: 1017,
@@ -16999,6 +17955,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItem: "Cornerstone Mask",
 		changesFrom: "Ogerpon",
 		requiredTeraType: "Rock",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	ogerpontealtera: {
 		num: 1017,
@@ -17015,6 +17972,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		battleOnly: "Ogerpon",
 		requiredTeraType: "Grass",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	ogerponwellspringtera: {
 		num: 1017,
@@ -17032,6 +17990,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItem: "Wellspring Mask",
 		battleOnly: "Ogerpon-Wellspring",
 		requiredTeraType: "Water",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	ogerponhearthflametera: {
 		num: 1017,
@@ -17049,6 +18008,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItem: "Hearthflame Mask",
 		battleOnly: "Ogerpon-Hearthflame",
 		requiredTeraType: "Fire",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	ogerponcornerstonetera: {
 		num: 1017,
@@ -17066,6 +18026,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItem: "Cornerstone Mask",
 		battleOnly: "Ogerpon-Cornerstone",
 		requiredTeraType: "Rock",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	archaludon: {
 		num: 1018,
@@ -17080,6 +18041,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Metal Alloy",
 		eggGroups: ["Mineral", "Dragon"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	hydrapple: {
 		num: 1019,
@@ -17094,6 +18056,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelMove",
 		evoMove: "Dragon Cheer",
 		eggGroups: ["Grass", "Dragon"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	gougingfire: {
 		num: 1020,
@@ -17106,6 +18069,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 590,
 		color: "Brown",
 		eggGroups: ["Undiscovered"],
+		tags: ["Restricted Paradox", "Single Stage Pokemon", "Fully Evolved"],
 	},
 	ragingbolt: {
 		num: 1021,
@@ -17118,6 +18082,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 480,
 		color: "Yellow",
 		eggGroups: ["Undiscovered"],
+		tags: ["Restricted Paradox", "Single Stage Pokemon", "Fully Evolved"],
 	},
 	ironboulder: {
 		num: 1022,
@@ -17130,6 +18095,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 162.5,
 		color: "Gray",
 		eggGroups: ["Undiscovered"],
+		tags: ["Restricted Paradox", "Single Stage Pokemon", "Fully Evolved"],
 	},
 	ironcrown: {
 		num: 1023,
@@ -17142,6 +18108,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 156,
 		color: "Blue",
 		eggGroups: ["Undiscovered"],
+		tags: ["Restricted Paradox", "Single Stage Pokemon", "Fully Evolved"],
 	},
 	terapagos: {
 		num: 1024,
@@ -17152,7 +18119,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.2,
 		weightkg: 6.5,
 		color: "Blue",
-		tags: ["Restricted Legendary"],
+		tags: ["Restricted Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Terapagos-Terastal", "Terapagos-Stellar"],
 		formeOrder: ["Terapagos", "Terapagos-Terastal", "Terapagos-Stellar"],
@@ -17172,6 +18139,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		battleOnly: "Terapagos",
 		requiredTeraType: "Stellar",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	terapagosstellar: {
 		num: 1024,
@@ -17187,6 +18155,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		battleOnly: "Terapagos",
 		requiredTeraType: "Stellar",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pecharunt: {
 		num: 1025,
@@ -17198,7 +18167,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.3,
 		weightkg: 0.3,
 		color: "Purple",
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 
@@ -17217,6 +18186,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Metapod"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	metapod: {
 		num: 11,
@@ -17231,6 +18201,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 7,
 		evos: ["Butterfree"],
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage"],
 	},
 	butterfree: {
 		num: 12,
@@ -17245,6 +18216,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 10,
 		eggGroups: ["Bug"],
 		canGigantamax: "G-Max Befuddle",
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	weedle: {
 		num: 13,
@@ -17257,6 +18229,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Kakuna"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	kakuna: {
 		num: 14,
@@ -17271,6 +18244,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 7,
 		evos: ["Beedrill"],
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage"],
 	},
 	beedrill: {
 		num: 15,
@@ -17286,6 +18260,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Bug"],
 		otherFormes: ["Beedrill-Mega"],
 		formeOrder: ["Beedrill", "Beedrill-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	pidgey: {
 		num: 16,
@@ -17298,6 +18273,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Pidgeotto"],
 		eggGroups: ["Flying"],
+		tags: ["1st Stage"],
 	},
 	pidgeotto: {
 		num: 17,
@@ -17312,6 +18288,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 18,
 		evos: ["Pidgeot"],
 		eggGroups: ["Flying"],
+		tags: ["2nd Stage"],
 	},
 	pidgeot: {
 		num: 18,
@@ -17327,6 +18304,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Flying"],
 		otherFormes: ["Pidgeot-Mega"],
 		formeOrder: ["Pidgeot", "Pidgeot-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	rattata: {
 		num: 19,
@@ -17341,6 +18319,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Rattata-Alola"],
 		formeOrder: ["Rattata", "Rattata-Alola"],
+		tags: ["1st Stage"],
 	},
 	rattataalola: {
 		num: 19,
@@ -17355,6 +18334,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		evos: ["Raticate-Alola"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	raticate: {
 		num: 20,
@@ -17370,6 +18350,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Raticate-Alola", "Raticate-Alola-Totem"],
 		formeOrder: ["Raticate", "Raticate-Alola", "Raticate-Alola-Totem"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	raticatealola: {
 		num: 20,
@@ -17386,6 +18367,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 20,
 		evoCondition: "at night",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	raticatealolatotem: {
 		num: 20,
@@ -17399,6 +18381,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 105,
 		color: "Black",
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	spearow: {
 		num: 21,
@@ -17411,6 +18394,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Fearow"],
 		eggGroups: ["Flying"],
+		tags: ["1st Stage"],
 	},
 	fearow: {
 		num: 22,
@@ -17424,6 +18408,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Spearow",
 		evoLevel: 20,
 		eggGroups: ["Flying"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	pikachucosplay: {
 		num: 25,
@@ -17439,6 +18424,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		eggGroups: ["Undiscovered"],
 		gen: 6,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pikachurockstar: {
 		num: 25,
@@ -17455,6 +18441,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Pikachu-Cosplay",
 		gen: 6,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pikachubelle: {
 		num: 25,
@@ -17471,6 +18458,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Pikachu-Cosplay",
 		gen: 6,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pikachupopstar: {
 		num: 25,
@@ -17487,6 +18475,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Pikachu-Cosplay",
 		gen: 6,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pikachuphd: {
 		num: 25,
@@ -17503,6 +18492,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Pikachu-Cosplay",
 		gen: 6,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pikachulibre: {
 		num: 25,
@@ -17519,6 +18509,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Pikachu-Cosplay",
 		gen: 6,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pikachuoriginal: {
 		num: 25,
@@ -17534,6 +18525,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		eggGroups: ["Undiscovered"],
 		gen: 7,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pikachuhoenn: {
 		num: 25,
@@ -17549,6 +18541,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		eggGroups: ["Undiscovered"],
 		gen: 7,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pikachusinnoh: {
 		num: 25,
@@ -17564,6 +18557,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		eggGroups: ["Undiscovered"],
 		gen: 7,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pikachuunova: {
 		num: 25,
@@ -17579,6 +18573,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		eggGroups: ["Undiscovered"],
 		gen: 7,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pikachukalos: {
 		num: 25,
@@ -17594,6 +18589,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		eggGroups: ["Undiscovered"],
 		gen: 7,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pikachualola: {
 		num: 25,
@@ -17609,6 +18605,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		eggGroups: ["Undiscovered"],
 		gen: 7,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pikachupartner: {
 		num: 25,
@@ -17624,6 +18621,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		eggGroups: ["Undiscovered"],
 		gen: 7,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pikachustarter: {
 		num: 25,
@@ -17637,6 +18635,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 6,
 		color: "Yellow",
 		eggGroups: ["Undiscovered"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pikachuworld: {
 		num: 25,
@@ -17652,6 +18651,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		eggGroups: ["Undiscovered"],
 		gen: 8,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	nidoranf: {
 		num: 29,
@@ -17665,6 +18665,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Nidorina"],
 		eggGroups: ["Monster", "Field"],
+		tags: ["1st Stage"],
 	},
 	nidorina: {
 		num: 30,
@@ -17680,6 +18681,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Nidoqueen"],
 		eggGroups: ["Undiscovered"],
+		tags: ["2nd Stage"],
 	},
 	nidoqueen: {
 		num: 31,
@@ -17695,6 +18697,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Moon Stone",
 		eggGroups: ["Undiscovered"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	nidoranm: {
 		num: 32,
@@ -17709,6 +18712,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Nidorino"],
 		eggGroups: ["Monster", "Field"],
 		mother: 'nidoranf',
+		tags: ["1st Stage"],
 	},
 	nidorino: {
 		num: 33,
@@ -17724,6 +18728,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Nidoking"],
 		eggGroups: ["Monster", "Field"],
+		tags: ["2nd Stage"],
 	},
 	nidoking: {
 		num: 34,
@@ -17739,6 +18744,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Moon Stone",
 		eggGroups: ["Monster", "Field"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	zubat: {
 		num: 41,
@@ -17751,6 +18757,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Golbat"],
 		eggGroups: ["Flying"],
+		tags: ["1st Stage"],
 	},
 	golbat: {
 		num: 42,
@@ -17765,6 +18772,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 22,
 		evos: ["Crobat"],
 		eggGroups: ["Flying"],
+		tags: ["2nd Stage"],
 	},
 	paras: {
 		num: 46,
@@ -17777,6 +18785,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Parasect"],
 		eggGroups: ["Bug", "Grass"],
+		tags: ["1st Stage"],
 	},
 	parasect: {
 		num: 47,
@@ -17790,6 +18799,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Paras",
 		evoLevel: 24,
 		eggGroups: ["Bug", "Grass"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	abra: {
 		num: 63,
@@ -17803,6 +18813,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Kadabra"],
 		eggGroups: ["Human-Like"],
+		tags: ["1st Stage"],
 	},
 	kadabra: {
 		num: 64,
@@ -17818,6 +18829,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Alakazam"],
 		eggGroups: ["Human-Like"],
+		tags: ["2nd Stage"],
 	},
 	alakazam: {
 		num: 65,
@@ -17834,6 +18846,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Human-Like"],
 		otherFormes: ["Alakazam-Mega"],
 		formeOrder: ["Alakazam", "Alakazam-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	machop: {
 		num: 66,
@@ -17847,6 +18860,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Machoke"],
 		eggGroups: ["Human-Like"],
+		tags: ["1st Stage"],
 	},
 	machoke: {
 		num: 67,
@@ -17862,6 +18876,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 28,
 		evos: ["Machamp"],
 		eggGroups: ["Human-Like"],
+		tags: ["2nd Stage"],
 	},
 	machamp: {
 		num: 68,
@@ -17877,6 +18892,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "trade",
 		eggGroups: ["Human-Like"],
 		canGigantamax: "G-Max Chi Strike",
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	ponyta: {
 		num: 77,
@@ -17891,6 +18907,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Ponyta-Galar"],
 		formeOrder: ["Ponyta", "Ponyta-Galar"],
+		tags: ["1st Stage"],
 	},
 	ponytagalar: {
 		num: 77,
@@ -17905,6 +18922,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Rapidash-Galar"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	rapidash: {
 		num: 78,
@@ -17920,6 +18938,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Rapidash-Galar"],
 		formeOrder: ["Rapidash", "Rapidash-Galar"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	rapidashgalar: {
 		num: 78,
@@ -17935,6 +18954,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Ponyta-Galar",
 		evoLevel: 40,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	farfetchd: {
 		num: 83,
@@ -17948,6 +18968,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Flying", "Field"],
 		otherFormes: ["Farfetch\u2019d-Galar"],
 		formeOrder: ["Farfetch\u2019d", "Farfetch\u2019d-Galar"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	farfetchdgalar: {
 		num: 83,
@@ -17962,6 +18983,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Sirfetch\u2019d"],
 		eggGroups: ["Flying", "Field"],
+		tags: ["1st Stage"],
 	},
 	onix: {
 		num: 95,
@@ -17974,6 +18996,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Steelix"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	krabby: {
 		num: 98,
@@ -17986,6 +19009,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Kingler"],
 		eggGroups: ["Water 3"],
+		tags: ["1st Stage"],
 	},
 	kingler: {
 		num: 99,
@@ -18000,6 +19024,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 28,
 		eggGroups: ["Water 3"],
 		canGigantamax: "G-Max Foam Burst",
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	cubone: {
 		num: 104,
@@ -18012,6 +19037,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Marowak", "Marowak-Alola"],
 		eggGroups: ["Monster"],
+		tags: ["1st Stage"],
 	},
 	marowak: {
 		num: 105,
@@ -18027,6 +19053,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster"],
 		otherFormes: ["Marowak-Alola", "Marowak-Alola-Totem"],
 		formeOrder: ["Marowak", "Marowak-Alola", "Marowak-Alola-Totem"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	marowakalola: {
 		num: 105,
@@ -18044,6 +19071,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoCondition: "at night",
 		evoRegion: "Alola",
 		eggGroups: ["Monster"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	marowakalolatotem: {
 		num: 105,
@@ -18057,6 +19085,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 98,
 		color: "Purple",
 		eggGroups: ["Monster"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	lickitung: {
 		num: 108,
@@ -18069,6 +19098,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		evos: ["Lickilicky"],
 		eggGroups: ["Monster"],
+		tags: ["1st Stage"],
 	},
 	tangela: {
 		num: 114,
@@ -18081,6 +19111,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Tangrowth"],
 		eggGroups: ["Grass"],
+		tags: ["1st Stage"],
 	},
 	kangaskhan: {
 		num: 115,
@@ -18095,6 +19126,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster"],
 		otherFormes: ["Kangaskhan-Mega"],
 		formeOrder: ["Kangaskhan", "Kangaskhan-Mega"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	goldeen: {
 		num: 118,
@@ -18107,6 +19139,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Seaking"],
 		eggGroups: ["Water 2"],
+		tags: ["1st Stage"],
 	},
 	seaking: {
 		num: 119,
@@ -18120,6 +19153,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Goldeen",
 		evoLevel: 33,
 		eggGroups: ["Water 2"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	staryu: {
 		num: 120,
@@ -18133,6 +19167,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Starmie"],
 		eggGroups: ["Water 3"],
+		tags: ["1st Stage"],
 	},
 	starmie: {
 		num: 121,
@@ -18150,6 +19185,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 3"],
 		otherFormes: ["Starmie-Mega"],
 		formeOrder: ["Starmie", "Starmie-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	mrmime: {
 		num: 122,
@@ -18167,6 +19203,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		canHatch: true,
 		otherFormes: ["Mr. Mime-Galar"],
 		formeOrder: ["Mr. Mime", "Mr. Mime-Galar"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	mrmimegalar: {
 		num: 122,
@@ -18186,6 +19223,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Mr. Rime"],
 		eggGroups: ["Human-Like"],
 		canHatch: true,
+		tags: ["2nd Stage"],
 	},
 	jynx: {
 		num: 124,
@@ -18200,6 +19238,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Smoochum",
 		evoLevel: 30,
 		eggGroups: ["Human-Like"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	pinsir: {
 		num: 127,
@@ -18213,6 +19252,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Bug"],
 		otherFormes: ["Pinsir-Mega"],
 		formeOrder: ["Pinsir", "Pinsir-Mega"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	omanyte: {
 		num: 138,
@@ -18226,6 +19266,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Omastar"],
 		eggGroups: ["Water 1", "Water 3"],
+		tags: ["1st Stage"],
 	},
 	omastar: {
 		num: 139,
@@ -18240,6 +19281,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Omanyte",
 		evoLevel: 40,
 		eggGroups: ["Water 1", "Water 3"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	kabuto: {
 		num: 140,
@@ -18253,6 +19295,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Kabutops"],
 		eggGroups: ["Water 1", "Water 3"],
+		tags: ["1st Stage"],
 	},
 	kabutops: {
 		num: 141,
@@ -18267,6 +19310,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Kabuto",
 		evoLevel: 40,
 		eggGroups: ["Water 1", "Water 3"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	aerodactyl: {
 		num: 142,
@@ -18281,6 +19325,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Flying"],
 		otherFormes: ["Aerodactyl-Mega"],
 		formeOrder: ["Aerodactyl", "Aerodactyl-Mega"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 
 
@@ -18297,6 +19342,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Ledian"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	ledian: {
 		num: 166,
@@ -18310,6 +19356,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Ledyba",
 		evoLevel: 18,
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	crobat: {
 		num: 169,
@@ -18323,6 +19370,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Golbat",
 		evoType: "levelFriendship",
 		eggGroups: ["Flying"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	togepi: {
 		num: 175,
@@ -18337,6 +19385,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Togetic"],
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
+		tags: ["1st Stage"],
 	},
 	togetic: {
 		num: 176,
@@ -18352,6 +19401,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelFriendship",
 		evos: ["Togekiss"],
 		eggGroups: ["Flying", "Fairy"],
+		tags: ["2nd Stage"],
 	},
 	natu: {
 		num: 177,
@@ -18364,6 +19414,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Xatu"],
 		eggGroups: ["Flying"],
+		tags: ["1st Stage"],
 	},
 	xatu: {
 		num: 178,
@@ -18377,6 +19428,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Natu",
 		evoLevel: 25,
 		eggGroups: ["Flying"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	unown: {
 		num: 201,
@@ -18392,6 +19444,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		cosmeticFormes: ["Unown-B", "Unown-C", "Unown-D", "Unown-E", "Unown-F", "Unown-G", "Unown-H", "Unown-I", "Unown-J", "Unown-K", "Unown-L", "Unown-M", "Unown-N", "Unown-O", "Unown-P", "Unown-Q", "Unown-R", "Unown-S", "Unown-T", "Unown-U", "Unown-V", "Unown-W", "Unown-X", "Unown-Y", "Unown-Z", "Unown-Exclamation", "Unown-Question"],
 		formeOrder: ["Unown", "Unown-B", "Unown-C", "Unown-D", "Unown-E", "Unown-F", "Unown-G", "Unown-H", "Unown-I", "Unown-J", "Unown-K", "Unown-L", "Unown-M", "Unown-N", "Unown-O", "Unown-P", "Unown-Q", "Unown-R", "Unown-S", "Unown-T", "Unown-U", "Unown-V", "Unown-W", "Unown-X", "Unown-Y", "Unown-Z", "Unown-Exclamation", "Unown-Question"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	wobbuffet: {
 		num: 202,
@@ -18406,6 +19459,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 15,
 		eggGroups: ["Amorphous"],
 		canHatch: true,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	steelix: {
 		num: 208,
@@ -18422,6 +19476,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Mineral"],
 		otherFormes: ["Steelix-Mega"],
 		formeOrder: ["Steelix", "Steelix-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	shuckle: {
 		num: 213,
@@ -18433,6 +19488,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 20.5,
 		color: "Yellow",
 		eggGroups: ["Bug"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	corsola: {
 		num: 222,
@@ -18447,6 +19503,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1", "Water 3"],
 		otherFormes: ["Corsola-Galar"],
 		formeOrder: ["Corsola", "Corsola-Galar"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	corsolagalar: {
 		num: 222,
@@ -18462,6 +19519,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Cursola"],
 		eggGroups: ["Water 1", "Water 3"],
+		tags: ["1st Stage"],
 	},
 	remoraid: {
 		num: 223,
@@ -18474,6 +19532,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Octillery"],
 		eggGroups: ["Water 1", "Water 2"],
+		tags: ["1st Stage"],
 	},
 	octillery: {
 		num: 224,
@@ -18487,6 +19546,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Remoraid",
 		evoLevel: 25,
 		eggGroups: ["Water 1", "Water 2"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	mantine: {
 		num: 226,
@@ -18502,6 +19562,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoCondition: "with a Remoraid in party",
 		eggGroups: ["Water 1"],
 		canHatch: true,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	smoochum: {
 		num: 238,
@@ -18516,6 +19577,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Jynx"],
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
+		tags: ["1st Stage"],
 	},
 	miltank: {
 		num: 241,
@@ -18528,6 +19590,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 75.5,
 		color: "Pink",
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	celebi: {
 		num: 251,
@@ -18539,7 +19602,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.6,
 		weightkg: 5,
 		color: "Green",
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 
@@ -18560,6 +19623,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Zigzagoon-Galar"],
 		formeOrder: ["Zigzagoon", "Zigzagoon-Galar"],
+		tags: ["1st Stage"],
 	},
 	zigzagoongalar: {
 		num: 263,
@@ -18574,6 +19638,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		evos: ["Linoone-Galar"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	linoone: {
 		num: 264,
@@ -18589,6 +19654,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Linoone-Galar"],
 		formeOrder: ["Linoone", "Linoone-Galar"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	linoonegalar: {
 		num: 264,
@@ -18605,6 +19671,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 20,
 		evos: ["Obstagoon"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage"],
 	},
 	wurmple: {
 		num: 265,
@@ -18617,6 +19684,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Silcoon", "Cascoon"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	silcoon: {
 		num: 266,
@@ -18631,6 +19699,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 7,
 		evos: ["Beautifly"],
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage"],
 	},
 	beautifly: {
 		num: 267,
@@ -18644,6 +19713,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Silcoon",
 		evoLevel: 10,
 		eggGroups: ["Bug"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	cascoon: {
 		num: 268,
@@ -18658,6 +19728,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 7,
 		evos: ["Dustox"],
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage"],
 	},
 	dustox: {
 		num: 269,
@@ -18671,6 +19742,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Cascoon",
 		evoLevel: 10,
 		eggGroups: ["Bug"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	taillow: {
 		num: 276,
@@ -18683,6 +19755,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Swellow"],
 		eggGroups: ["Flying"],
+		tags: ["1st Stage"],
 	},
 	swellow: {
 		num: 277,
@@ -18696,6 +19769,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Taillow",
 		evoLevel: 22,
 		eggGroups: ["Flying"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	nincada: {
 		num: 290,
@@ -18708,6 +19782,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Ninjask", "Shedinja"],
 		eggGroups: ["Bug"],
+		tags: ["1st Stage"],
 	},
 	ninjask: {
 		num: 291,
@@ -18721,6 +19796,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Nincada",
 		evoLevel: 20,
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	shedinja: {
 		num: 292,
@@ -18736,6 +19812,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Nincada",
 		evoLevel: 20,
 		eggGroups: ["Mineral"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	whismur: {
 		num: 293,
@@ -18748,6 +19825,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		evos: ["Loudred"],
 		eggGroups: ["Monster", "Field"],
+		tags: ["1st Stage"],
 	},
 	loudred: {
 		num: 294,
@@ -18762,6 +19840,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 20,
 		evos: ["Exploud"],
 		eggGroups: ["Monster", "Field"],
+		tags: ["2nd Stage"],
 	},
 	exploud: {
 		num: 295,
@@ -18775,6 +19854,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Loudred",
 		evoLevel: 40,
 		eggGroups: ["Monster", "Field"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	skitty: {
 		num: 300,
@@ -18788,6 +19868,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		evos: ["Delcatty"],
 		eggGroups: ["Field", "Fairy"],
+		tags: ["1st Stage"],
 	},
 	delcatty: {
 		num: 301,
@@ -18803,6 +19884,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Moon Stone",
 		eggGroups: ["Field", "Fairy"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	mawile: {
 		num: 303,
@@ -18816,6 +19898,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field", "Fairy"],
 		otherFormes: ["Mawile-Mega"],
 		formeOrder: ["Mawile", "Mawile-Mega"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	aron: {
 		num: 304,
@@ -18828,6 +19911,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Lairon"],
 		eggGroups: ["Monster"],
+		tags: ["1st Stage"],
 	},
 	lairon: {
 		num: 305,
@@ -18842,6 +19926,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 32,
 		evos: ["Aggron"],
 		eggGroups: ["Monster"],
+		tags: ["2nd Stage"],
 	},
 	aggron: {
 		num: 306,
@@ -18857,6 +19942,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster"],
 		otherFormes: ["Aggron-Mega"],
 		formeOrder: ["Aggron", "Aggron-Mega"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	electrike: {
 		num: 309,
@@ -18869,6 +19955,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Manectric"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	manectric: {
 		num: 310,
@@ -18884,6 +19971,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Manectric-Mega"],
 		formeOrder: ["Manectric", "Manectric-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	roselia: {
 		num: 315,
@@ -18900,6 +19988,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Roserade"],
 		eggGroups: ["Fairy", "Grass"],
 		canHatch: true,
+		tags: ["2nd Stage"],
 	},
 	carvanha: {
 		num: 318,
@@ -18912,6 +20001,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Sharpedo"],
 		eggGroups: ["Water 2"],
+		tags: ["1st Stage"],
 	},
 	sharpedo: {
 		num: 319,
@@ -18927,6 +20017,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 2"],
 		otherFormes: ["Sharpedo-Mega"],
 		formeOrder: ["Sharpedo", "Sharpedo-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	wailmer: {
 		num: 320,
@@ -18939,6 +20030,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Wailord"],
 		eggGroups: ["Field", "Water 2"],
+		tags: ["1st Stage"],
 	},
 	wailord: {
 		num: 321,
@@ -18952,6 +20044,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Wailmer",
 		evoLevel: 40,
 		eggGroups: ["Field", "Water 2"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	spinda: {
 		num: 327,
@@ -18963,6 +20056,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 5,
 		color: "Brown",
 		eggGroups: ["Field", "Human-Like"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	lunatone: {
 		num: 337,
@@ -18975,6 +20069,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 168,
 		color: "Yellow",
 		eggGroups: ["Mineral"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	solrock: {
 		num: 338,
@@ -18987,6 +20082,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 154,
 		color: "Red",
 		eggGroups: ["Mineral"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	baltoy: {
 		num: 343,
@@ -19000,6 +20096,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Claydol"],
 		eggGroups: ["Mineral"],
+		tags: ["1st Stage"],
 	},
 	claydol: {
 		num: 344,
@@ -19014,6 +20111,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Baltoy",
 		evoLevel: 36,
 		eggGroups: ["Mineral"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	lileep: {
 		num: 345,
@@ -19027,6 +20125,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Cradily"],
 		eggGroups: ["Water 3"],
+		tags: ["1st Stage"],
 	},
 	cradily: {
 		num: 346,
@@ -19041,6 +20140,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Lileep",
 		evoLevel: 40,
 		eggGroups: ["Water 3"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	anorith: {
 		num: 347,
@@ -19054,6 +20154,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Armaldo"],
 		eggGroups: ["Water 3"],
+		tags: ["1st Stage"],
 	},
 	armaldo: {
 		num: 348,
@@ -19068,6 +20169,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Anorith",
 		evoLevel: 40,
 		eggGroups: ["Water 3"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	castform: {
 		num: 351,
@@ -19081,6 +20183,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Fairy", "Amorphous"],
 		otherFormes: ["Castform-Sunny", "Castform-Rainy", "Castform-Snowy"],
 		formeOrder: ["Castform", "Castform-Sunny", "Castform-Rainy", "Castform-Snowy"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	castformsunny: {
 		num: 351,
@@ -19096,6 +20199,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Fairy", "Amorphous"],
 		requiredAbility: "Forecast",
 		battleOnly: "Castform",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	castformrainy: {
 		num: 351,
@@ -19111,6 +20215,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Fairy", "Amorphous"],
 		requiredAbility: "Forecast",
 		battleOnly: "Castform",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	castformsnowy: {
 		num: 351,
@@ -19126,6 +20231,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Fairy", "Amorphous"],
 		requiredAbility: "Forecast",
 		battleOnly: "Castform",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	kecleon: {
 		num: 352,
@@ -19137,6 +20243,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 22,
 		color: "Green",
 		eggGroups: ["Field"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	absol: {
 		num: 359,
@@ -19150,6 +20257,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Absol-Mega"],
 		formeOrder: ["Absol", "Absol-Mega"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	wynaut: {
 		num: 360,
@@ -19163,6 +20271,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Wobbuffet"],
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
+		tags: ["1st Stage"],
 	},
 	spheal: {
 		num: 363,
@@ -19175,6 +20284,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Sealeo"],
 		eggGroups: ["Water 1", "Field"],
+		tags: ["1st Stage"],
 	},
 	sealeo: {
 		num: 364,
@@ -19189,6 +20299,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 32,
 		evos: ["Walrein"],
 		eggGroups: ["Water 1", "Field"],
+		tags: ["2nd Stage"],
 	},
 	walrein: {
 		num: 365,
@@ -19202,6 +20313,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Sealeo",
 		evoLevel: 44,
 		eggGroups: ["Water 1", "Field"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	clamperl: {
 		num: 366,
@@ -19214,6 +20326,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Huntail", "Gorebyss"],
 		eggGroups: ["Water 1"],
+		tags: ["1st Stage"],
 	},
 	huntail: {
 		num: 367,
@@ -19228,6 +20341,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "trade",
 		evoItem: "Deep Sea Tooth",
 		eggGroups: ["Water 1"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	gorebyss: {
 		num: 368,
@@ -19242,6 +20356,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "trade",
 		evoItem: "Deep Sea Scale",
 		eggGroups: ["Water 1"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	relicanth: {
 		num: 369,
@@ -19254,6 +20369,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 23.4,
 		color: "Gray",
 		eggGroups: ["Water 1", "Water 2"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	kyogreprimal: {
 		num: 382,
@@ -19269,6 +20385,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Blue Orb",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	groudonprimal: {
 		num: 383,
@@ -19284,6 +20401,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Red Orb",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 
 
@@ -19300,6 +20418,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Bibarel"],
 		eggGroups: ["Water 1", "Field"],
+		tags: ["1st Stage"],
 	},
 	bibarel: {
 		num: 400,
@@ -19313,6 +20432,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Bidoof",
 		evoLevel: 15,
 		eggGroups: ["Water 1", "Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	budew: {
 		num: 406,
@@ -19326,6 +20446,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Roselia"],
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
+		tags: ["1st Stage"],
 	},
 	roserade: {
 		num: 407,
@@ -19340,6 +20461,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Shiny Stone",
 		eggGroups: ["Fairy", "Grass"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	burmy: {
 		num: 412,
@@ -19355,6 +20477,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Bug"],
 		cosmeticFormes: ["Burmy-Sandy", "Burmy-Trash"],
 		formeOrder: ["Burmy", "Burmy-Sandy", "Burmy-Trash"],
+		tags: ["1st Stage"],
 	},
 	burmysandy: {
 		isCosmeticForme: true,
@@ -19362,6 +20485,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Burmy",
 		forme: "Sandy",
 		color: "Brown",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	burmytrash: {
 		isCosmeticForme: true,
@@ -19369,6 +20493,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Burmy",
 		forme: "Trash",
 		color: "Red",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	wormadam: {
 		num: 413,
@@ -19386,6 +20511,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Bug"],
 		otherFormes: ["Wormadam-Sandy", "Wormadam-Trash"],
 		formeOrder: ["Wormadam", "Wormadam-Sandy", "Wormadam-Trash"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	wormadamsandy: {
 		num: 413,
@@ -19402,6 +20528,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Burmy",
 		evoLevel: 20,
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	wormadamtrash: {
 		num: 413,
@@ -19418,6 +20545,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Burmy",
 		evoLevel: 20,
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	mothim: {
 		num: 414,
@@ -19432,6 +20560,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Burmy",
 		evoLevel: 20,
 		eggGroups: ["Bug"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	cherubi: {
 		num: 420,
@@ -19444,6 +20573,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		evos: ["Cherrim"],
 		eggGroups: ["Fairy", "Grass"],
+		tags: ["1st Stage"],
 	},
 	cherrim: {
 		num: 421,
@@ -19460,6 +20590,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Fairy", "Grass"],
 		otherFormes: ["Cherrim-Sunshine"],
 		formeOrder: ["Cherrim", "Cherrim-Sunshine"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	cherrimsunshine: {
 		num: 421,
@@ -19475,6 +20606,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Fairy", "Grass"],
 		requiredAbility: "Flower Gift",
 		battleOnly: "Cherrim",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	buneary: {
 		num: 427,
@@ -19487,6 +20619,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Lopunny"],
 		eggGroups: ["Field", "Human-Like"],
+		tags: ["1st Stage"],
 	},
 	lopunny: {
 		num: 428,
@@ -19502,6 +20635,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field", "Human-Like"],
 		otherFormes: ["Lopunny-Mega"],
 		formeOrder: ["Lopunny", "Lopunny-Mega"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	glameow: {
 		num: 431,
@@ -19515,6 +20649,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Purugly"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	purugly: {
 		num: 432,
@@ -19529,6 +20664,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Glameow",
 		evoLevel: 38,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	mimejr: {
 		num: 439,
@@ -19542,6 +20678,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Mr. Mime", "Mr. Mime-Galar"],
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
+		tags: ["1st Stage"],
 	},
 	chatot: {
 		num: 441,
@@ -19553,6 +20690,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 1.9,
 		color: "Black",
 		eggGroups: ["Flying"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	skorupi: {
 		num: 451,
@@ -19565,6 +20703,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Drapion"],
 		eggGroups: ["Bug", "Water 3"],
+		tags: ["1st Stage"],
 	},
 	drapion: {
 		num: 452,
@@ -19578,6 +20717,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Skorupi",
 		evoLevel: 40,
 		eggGroups: ["Bug", "Water 3"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	carnivine: {
 		num: 455,
@@ -19589,6 +20729,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 27,
 		color: "Green",
 		eggGroups: ["Grass"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	mantyke: {
 		num: 458,
@@ -19602,6 +20743,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Mantine"],
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
+		tags: ["1st Stage"],
 	},
 	lickilicky: {
 		num: 463,
@@ -19616,6 +20758,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelMove",
 		evoMove: "Rollout",
 		eggGroups: ["Monster"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	tangrowth: {
 		num: 465,
@@ -19630,6 +20773,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelMove",
 		evoMove: "Ancient Power",
 		eggGroups: ["Grass"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	togekiss: {
 		num: 468,
@@ -19645,6 +20789,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Shiny Stone",
 		eggGroups: ["Flying", "Fairy"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 
 
@@ -19660,7 +20805,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		heightm: 0.4,
 		weightkg: 4,
 		color: "Yellow",
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
 	patrat: {
@@ -19674,6 +20819,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Watchog"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	watchog: {
 		num: 505,
@@ -19687,6 +20833,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Patrat",
 		evoLevel: 20,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	lillipup: {
 		num: 506,
@@ -19699,6 +20846,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Herdier"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	herdier: {
 		num: 507,
@@ -19713,6 +20861,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Stoutland"],
 		eggGroups: ["Field"],
+		tags: ["2nd Stage"],
 	},
 	stoutland: {
 		num: 508,
@@ -19726,6 +20875,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Herdier",
 		evoLevel: 32,
 		eggGroups: ["Field"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	purrloin: {
 		num: 509,
@@ -19738,6 +20888,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		evos: ["Liepard"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	liepard: {
 		num: 510,
@@ -19751,6 +20902,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Purrloin",
 		evoLevel: 20,
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	pansage: {
 		num: 511,
@@ -19764,6 +20916,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Simisage"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	simisage: {
 		num: 512,
@@ -19779,6 +20932,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Leaf Stone",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	pansear: {
 		num: 513,
@@ -19792,6 +20946,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		evos: ["Simisear"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	simisear: {
 		num: 514,
@@ -19807,6 +20962,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Fire Stone",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	panpour: {
 		num: 515,
@@ -19820,6 +20976,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Simipour"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	simipour: {
 		num: 516,
@@ -19835,6 +20992,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Water Stone",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	munna: {
 		num: 517,
@@ -19847,6 +21005,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		evos: ["Musharna"],
 		eggGroups: ["Field"],
+		tags: ["1st Stage"],
 	},
 	musharna: {
 		num: 518,
@@ -19861,6 +21020,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "useItem",
 		evoItem: "Moon Stone",
 		eggGroups: ["Field"],
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	pidove: {
 		num: 519,
@@ -19873,6 +21033,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		evos: ["Tranquill"],
 		eggGroups: ["Flying"],
+		tags: ["1st Stage"],
 	},
 	tranquill: {
 		num: 520,
@@ -19887,6 +21048,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 21,
 		evos: ["Unfezant"],
 		eggGroups: ["Flying"],
+		tags: ["2nd Stage"],
 	},
 	unfezant: {
 		num: 521,
@@ -19900,6 +21062,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Tranquill",
 		evoLevel: 32,
 		eggGroups: ["Flying"],
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 
 
@@ -19934,6 +21097,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Syclant"],
 		eggGroups: ["Bug"],
 		gen: 4,
+		tags: ["1st Stage"],
 	},
 	syclant: {
 		num: -2,
@@ -19948,6 +21112,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 30,
 		eggGroups: ["Bug"],
 		gen: 4,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	revenankh: {
 		num: -3,
@@ -19960,6 +21125,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		eggGroups: ["Amorphous", "Human-Like"],
 		gen: 4,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	embirch: {
 		num: -4,
@@ -19973,6 +21139,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Flarelm"],
 		eggGroups: ["Monster", "Dragon"],
 		gen: 4,
+		tags: ["1st Stage"],
 	},
 	flarelm: {
 		num: -5,
@@ -19988,6 +21155,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Pyroak"],
 		eggGroups: ["Monster", "Dragon"],
 		gen: 4,
+		tags: ["2nd Stage"],
 	},
 	pyroak: {
 		num: -6,
@@ -20002,6 +21170,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 38,
 		eggGroups: ["Monster", "Dragon"],
 		gen: 4,
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	breezi: {
 		num: -7,
@@ -20015,6 +21184,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Fidgit"],
 		eggGroups: ["Field"],
 		gen: 4,
+		tags: ["1st Stage"],
 	},
 	fidgit: {
 		num: -8,
@@ -20029,6 +21199,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 33,
 		eggGroups: ["Field"],
 		gen: 4,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	rebble: {
 		num: -9,
@@ -20043,6 +21214,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Tactite"],
 		eggGroups: ["Mineral"],
 		gen: 4,
+		tags: ["1st Stage"],
 	},
 	tactite: {
 		num: -10,
@@ -20059,6 +21231,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Stratagem"],
 		eggGroups: ["Mineral"],
 		gen: 4,
+		tags: ["2nd Stage"],
 	},
 	stratagem: {
 		num: -11,
@@ -20074,6 +21247,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "trade",
 		eggGroups: ["Mineral"],
 		gen: 4,
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	privatyke: {
 		num: -12,
@@ -20087,6 +21261,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Arghonaut"],
 		eggGroups: ["Water 1", "Water 3"],
 		gen: 4,
+		tags: ["1st Stage"],
 	},
 	arghonaut: {
 		num: -13,
@@ -20101,6 +21276,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 37,
 		eggGroups: ["Water 1", "Water 3"],
 		gen: 4,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	kitsunoh: {
 		num: -14,
@@ -20116,6 +21292,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoItem: "Metal Coat",
 		eggGroups: ["Field"],
 		gen: 4,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	cyclohm: {
 		num: -15,
@@ -20130,6 +21307,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 43,
 		eggGroups: ["Dragon", "Monster"],
 		gen: 4,
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	colossoil: {
 		num: -16,
@@ -20144,6 +21322,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 39,
 		eggGroups: ["Water 2", "Field"],
 		gen: 4,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	krilowatt: {
 		num: -17,
@@ -20158,6 +21337,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 15,
 		eggGroups: ["Water 1", "Fairy"],
 		gen: 4,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	voodoll: {
 		num: -18,
@@ -20171,6 +21351,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Voodoom"],
 		eggGroups: ["Human-Like", "Field"],
 		gen: 4,
+		tags: ["1st Stage"],
 	},
 	voodoom: {
 		num: -19,
@@ -20185,6 +21366,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 32,
 		eggGroups: ["Human-Like", "Field"],
 		gen: 4,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	scratchet: {
 		num: -20,
@@ -20198,6 +21380,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Tomohawk"],
 		eggGroups: ["Field", "Flying"],
 		gen: 5,
+		tags: ["1st Stage"],
 	},
 	tomohawk: {
 		num: -21,
@@ -20212,6 +21395,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 23,
 		eggGroups: ["Field", "Flying"],
 		gen: 5,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	necturine: {
 		num: -22,
@@ -20226,6 +21410,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Necturna"],
 		eggGroups: ["Grass", "Field"],
 		gen: 5,
+		tags: ["1st Stage"],
 	},
 	necturna: {
 		num: -23,
@@ -20241,6 +21426,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 31,
 		eggGroups: ["Grass", "Field"],
 		gen: 5,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	mollux: {
 		num: -24,
@@ -20253,6 +21439,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		eggGroups: ["Fairy", "Field"],
 		gen: 5,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	cupra: {
 		num: -25,
@@ -20266,6 +21453,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Argalis"],
 		eggGroups: ["Bug"],
 		gen: 5,
+		tags: ["1st Stage"],
 	},
 	argalis: {
 		num: -26,
@@ -20281,6 +21469,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Aurumoth"],
 		eggGroups: ["Bug"],
 		gen: 5,
+		tags: ["2nd Stage"],
 	},
 	aurumoth: {
 		num: -27,
@@ -20295,6 +21484,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 50,
 		eggGroups: ["Bug"],
 		gen: 5,
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	brattler: {
 		num: -28,
@@ -20308,6 +21498,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Malaconda"],
 		eggGroups: ["Grass", "Dragon"],
 		gen: 5,
+		tags: ["1st Stage"],
 	},
 	malaconda: {
 		num: -29,
@@ -20322,6 +21513,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 33,
 		eggGroups: ["Grass", "Dragon"],
 		gen: 5,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	cawdet: {
 		num: -30,
@@ -20335,6 +21527,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Cawmodore"],
 		eggGroups: ["Flying"],
 		gen: 5,
+		tags: ["1st Stage"],
 	},
 	cawmodore: {
 		num: -31,
@@ -20349,6 +21542,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 33,
 		eggGroups: ["Flying"],
 		gen: 5,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	volkritter: {
 		num: -32,
@@ -20362,6 +21556,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Volkraken"],
 		eggGroups: ["Water 1", "Water 2"],
 		gen: 6,
+		tags: ["1st Stage"],
 	},
 	volkraken: {
 		num: -33,
@@ -20376,6 +21571,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 34,
 		eggGroups: ["Water 1", "Water 2"],
 		gen: 6,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	snugglow: {
 		num: -34,
@@ -20389,6 +21585,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Plasmanta"],
 		eggGroups: ["Water 1", "Water 2"],
 		gen: 6,
+		tags: ["1st Stage"],
 	},
 	plasmanta: {
 		num: -35,
@@ -20403,6 +21600,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 29,
 		eggGroups: ["Water 1", "Water 2"],
 		gen: 6,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	floatoy: {
 		num: -36,
@@ -20416,6 +21614,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Caimanoe"],
 		eggGroups: ["Water 1", "Field"],
 		gen: 6,
+		tags: ["1st Stage"],
 	},
 	caimanoe: {
 		num: -37,
@@ -20431,6 +21630,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Naviathan"],
 		eggGroups: ["Water 1", "Field"],
 		gen: 6,
+		tags: ["2nd Stage"],
 	},
 	naviathan: {
 		num: -38,
@@ -20445,6 +21645,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 40,
 		eggGroups: ["Water 1", "Field"],
 		gen: 6,
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	crucibelle: {
 		num: -39,
@@ -20460,6 +21661,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Crucibelle-Mega"],
 		formeOrder: ["Crucibelle", "Crucibelle-Mega"],
 		gen: 6,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pluffle: {
 		num: -40,
@@ -20473,6 +21675,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Kerfluffle"],
 		eggGroups: ["Fairy", "Human-Like"],
 		gen: 6,
+		tags: ["1st Stage"],
 	},
 	kerfluffle: {
 		num: -41,
@@ -20488,6 +21691,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoMove: "Play Rough",
 		eggGroups: ["Fairy", "Human-Like"],
 		gen: 6,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	pajantom: {
 		num: -42,
@@ -20500,6 +21704,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		eggGroups: ["Dragon", "Monster"],
 		gen: 7,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	mumbao: {
 		num: -43,
@@ -20513,6 +21718,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Jumbao"],
 		eggGroups: ["Grass"],
 		gen: 7,
+		tags: ["1st Stage"],
 	},
 	jumbao: {
 		num: -44,
@@ -20528,6 +21734,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoCondition: "during the day",
 		eggGroups: ["Grass"],
 		gen: 7,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	fawnifer: {
 		num: -45,
@@ -20542,6 +21749,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Electrelk"],
 		eggGroups: ["Field"],
 		gen: 7,
+		tags: ["1st Stage"],
 	},
 	electrelk: {
 		num: -46,
@@ -20558,6 +21766,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Caribolt"],
 		eggGroups: ["Field"],
 		gen: 7,
+		tags: ["2nd Stage"],
 	},
 	caribolt: {
 		num: -47,
@@ -20573,6 +21782,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 34,
 		eggGroups: ["Field"],
 		gen: 7,
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	smogecko: {
 		num: -48,
@@ -20587,6 +21797,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Smoguana"],
 		eggGroups: ["Field", "Monster"],
 		gen: 7,
+		tags: ["1st Stage"],
 	},
 	smoguana: {
 		num: -49,
@@ -20603,6 +21814,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Smokomodo"],
 		eggGroups: ["Field", "Monster"],
 		gen: 7,
+		tags: ["2nd Stage"],
 	},
 	smokomodo: {
 		num: -50,
@@ -20618,6 +21830,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 36,
 		eggGroups: ["Field", "Monster"],
 		gen: 7,
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	swirlpool: {
 		num: -51,
@@ -20632,6 +21845,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Coribalis"],
 		eggGroups: ["Water 1", "Fairy"],
 		gen: 7,
+		tags: ["1st Stage"],
 	},
 	coribalis: {
 		num: -52,
@@ -20648,6 +21862,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Snaelstrom"],
 		eggGroups: ["Water 1", "Fairy"],
 		gen: 7,
+		tags: ["2nd Stage"],
 	},
 	snaelstrom: {
 		num: -53,
@@ -20663,6 +21878,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 34,
 		eggGroups: ["Water 1", "Fairy"],
 		gen: 7,
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	justyke: {
 		num: -54,
@@ -20677,6 +21893,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Equilibra"],
 		eggGroups: ["Mineral"],
 		gen: 7,
+		tags: ["1st Stage"],
 	},
 	equilibra: {
 		num: -55,
@@ -20692,6 +21909,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 32,
 		eggGroups: ["Mineral"],
 		gen: 7,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	solotl: {
 		num: -56,
@@ -20705,6 +21923,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Astrolotl"],
 		eggGroups: ["Dragon", "Fairy"],
 		gen: 8,
+		tags: ["1st Stage"],
 	},
 	astrolotl: {
 		num: -57,
@@ -20719,6 +21938,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 35,
 		eggGroups: ["Dragon", "Fairy"],
 		gen: 8,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	miasmite: {
 		num: -58,
@@ -20732,6 +21952,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Miasmaw"],
 		eggGroups: ["Bug", "Dragon"],
 		gen: 8,
+		tags: ["1st Stage"],
 	},
 	miasmaw: {
 		num: -59,
@@ -20746,6 +21967,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 30,
 		eggGroups: ["Bug", "Dragon"],
 		gen: 8,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	chromera: {
 		num: -60,
@@ -20758,7 +21980,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 215,
 		color: "Purple",
 		eggGroups: ["Undiscovered"],
-		tags: ["Sub-Legendary"],
+		tags: ["Legendary", "Single Stage Pokemon", "Fully Evolved"],
 		gen: 8,
 	},
 	nohface: {
@@ -20773,6 +21995,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Kitsunoh"],
 		eggGroups: ["Field"],
 		gen: 4,
+		tags: ["1st Stage"],
 	},
 	monohm: {
 		num: -62,
@@ -20786,6 +22009,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Duohm"],
 		eggGroups: ["Dragon", "Monster"],
 		gen: 4,
+		tags: ["1st Stage"],
 	},
 	duohm: {
 		num: -63,
@@ -20801,6 +22025,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Cyclohm"],
 		eggGroups: ["Dragon", "Monster"],
 		gen: 4,
+		tags: ["2nd Stage"],
 	},
 	dorsoil: {
 		num: -64,
@@ -20814,6 +22039,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Colossoil"],
 		eggGroups: ["Water 2", "Field"],
 		gen: 4,
+		tags: ["1st Stage"],
 	},
 	protowatt: {
 		num: -65,
@@ -20827,6 +22053,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Krilowatt"],
 		eggGroups: ["Water 1", "Fairy"],
 		gen: 4,
+		tags: ["1st Stage"],
 	},
 	venomicon: {
 		num: -66,
@@ -20843,6 +22070,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Venomicon-Epilogue"],
 		formeOrder: ["Venomicon", "Venomicon-Epilogue"],
 		gen: 8,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	venomiconepilogue: {
 		num: -66,
@@ -20860,6 +22088,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItem: "Vile Vial",
 		changesFrom: "Venomicon",
 		gen: 8,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	saharascal: {
 		num: -67,
@@ -20873,6 +22102,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Saharaja"],
 		eggGroups: ["Field"],
 		gen: 8,
+		tags: ["1st Stage"],
 	},
 	saharaja: {
 		num: -68,
@@ -20888,6 +22118,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoItem: "Shiny Stone",
 		eggGroups: ["Field"],
 		gen: 8,
+		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	ababo: {
 		num: -69,
@@ -20903,6 +22134,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		canHatch: true,
 		gen: 9,
+		tags: ["1st Stage"],
 	},
 	scattervein: {
 		num: -70,
@@ -20920,6 +22152,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster", "Fairy"],
 		canHatch: true,
 		gen: 9,
+		tags: ["2nd Stage"],
 	},
 	hemogoblin: {
 		num: -71,
@@ -20936,6 +22169,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoItem: "Fire Stone",
 		eggGroups: ["Monster", "Fairy"],
 		gen: 9,
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	cresceidon: {
 		num: -72,
@@ -20948,6 +22182,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Amorphous", "Water 3"],
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	chuggon: {
 		num: -73,
@@ -20961,6 +22196,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Draggalong"],
 		eggGroups: ["Dragon", "Mineral"],
 		gen: 9,
+		tags: ["1st Stage"],
 	},
 	draggalong: {
 		num: -74,
@@ -20976,6 +22212,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evos: ["Chuggalong"],
 		eggGroups: ["Dragon", "Mineral"],
 		gen: 9,
+		tags: ["2nd Stage"],
 	},
 	chuggalong: {
 		num: -75,
@@ -20990,6 +22227,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 46,
 		eggGroups: ["Dragon", "Mineral"],
 		gen: 9,
+		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	shox: {
 		num: -77,
@@ -21002,6 +22240,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		eggGroups: ["Field"],
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	ramnarok: {
 		num: -78,
@@ -21015,7 +22254,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 250,
 		color: "Red",
 		eggGroups: ["Undiscovered"],
-		tags: ["Mythical"],
+		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		otherFormes: ["Ramnarok-Radiant"],
 		formeOrder: ["Ramnarok", "Ramnarok-Radiant"],
 		gen: 9,
@@ -21036,6 +22275,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredMove: "Polar Flare",
 		battleOnly: "Ramnarok",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 
 
@@ -21055,6 +22295,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		eggGroups: ["Monster", "Grass"],
 		requiredItem: "Venusaurite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	charizardmegax: {
 		num: 6,
@@ -21070,6 +22311,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		eggGroups: ["Monster", "Dragon"],
 		requiredItem: "Charizardite X",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	charizardmegay: {
 		num: 6,
@@ -21085,6 +22327,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		eggGroups: ["Monster", "Dragon"],
 		requiredItem: "Charizardite Y",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	blastoisemega: {
 		num: 9,
@@ -21100,6 +22343,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Monster", "Water 1"],
 		requiredItem: "Blastoisinite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	beedrillmega: {
 		num: 15,
@@ -21114,6 +22358,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		eggGroups: ["Bug"],
 		requiredItem: "Beedrillite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pidgeotmega: {
 		num: 18,
@@ -21128,6 +22373,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		eggGroups: ["Flying"],
 		requiredItem: "Pidgeotite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	clefablemega: {
 		num: 36,
@@ -21144,6 +22390,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		requiredItem: "Clefablite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	alakazammega: {
 		num: 65,
@@ -21159,6 +22406,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		eggGroups: ["Human-Like"],
 		requiredItem: "Alakazite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	victreebelmega: {
 		num: 71,
@@ -21174,6 +22422,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Grass"],
 		requiredItem: "Victreebelite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	slowbromega: {
 		num: 80,
@@ -21188,6 +22437,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		eggGroups: ["Monster", "Water 1"],
 		requiredItem: "Slowbronite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	gengarmega: {
 		num: 94,
@@ -21202,6 +22452,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		eggGroups: ["Amorphous"],
 		requiredItem: "Gengarite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	kangaskhanmega: {
 		num: 115,
@@ -21217,6 +22468,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		eggGroups: ["Monster"],
 		requiredItem: "Kangaskhanite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	starmiemega: {
 		num: 121,
@@ -21234,6 +22486,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 3"],
 		requiredItem: "Starminite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pinsirmega: {
 		num: 127,
@@ -21248,6 +22501,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		eggGroups: ["Bug"],
 		requiredItem: "Pinsirite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	gyaradosmega: {
 		num: 130,
@@ -21262,6 +22516,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Water 2", "Dragon"],
 		requiredItem: "Gyaradosite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	aerodactylmega: {
 		num: 142,
@@ -21277,6 +22532,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		eggGroups: ["Flying"],
 		requiredItem: "Aerodactylite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	dragonitemega: {
 		num: 149,
@@ -21292,6 +22548,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1", "Dragon"],
 		requiredItem: "Dragoninite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	mewtwomegax: {
 		num: 150,
@@ -21307,6 +22564,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Mewtwonite X",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	mewtwomegay: {
 		num: 150,
@@ -21322,6 +22580,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Mewtwonite Y",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	meganiummega: {
 		num: 154,
@@ -21338,6 +22597,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster", "Grass"],
 		requiredItem: "Meganiumite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	feraligatrmega: {
 		num: 160,
@@ -21354,6 +22614,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster", "Water 1"],
 		requiredItem: "Feraligite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	ampharosmega: {
 		num: 181,
@@ -21368,6 +22629,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		eggGroups: ["Monster", "Field"],
 		requiredItem: "Ampharosite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	steelixmega: {
 		num: 208,
@@ -21382,6 +22644,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		eggGroups: ["Mineral"],
 		requiredItem: "Steelixite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	scizormega: {
 		num: 212,
@@ -21396,6 +22659,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		eggGroups: ["Bug"],
 		requiredItem: "Scizorite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	heracrossmega: {
 		num: 214,
@@ -21410,6 +22674,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Bug"],
 		requiredItem: "Heracronite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	skarmorymega: {
 		num: 227,
@@ -21425,6 +22690,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Flying"],
 		requiredItem: "Skarmorite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	houndoommega: {
 		num: 229,
@@ -21439,6 +22705,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		eggGroups: ["Field"],
 		requiredItem: "Houndoominite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	tyranitarmega: {
 		num: 248,
@@ -21453,6 +22720,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		eggGroups: ["Monster"],
 		requiredItem: "Tyranitarite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	sceptilemega: {
 		num: 254,
@@ -21468,6 +22736,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		eggGroups: ["Monster", "Dragon"],
 		requiredItem: "Sceptilite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	blazikenmega: {
 		num: 257,
@@ -21483,6 +22752,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		eggGroups: ["Field"],
 		requiredItem: "Blazikenite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	swampertmega: {
 		num: 260,
@@ -21498,6 +22768,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Monster", "Water 1"],
 		requiredItem: "Swampertite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	gardevoirmega: {
 		num: 282,
@@ -21512,6 +22783,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		eggGroups: ["Amorphous"],
 		requiredItem: "Gardevoirite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	sableyemega: {
 		num: 302,
@@ -21526,6 +22798,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		eggGroups: ["Human-Like"],
 		requiredItem: "Sablenite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	mawilemega: {
 		num: 303,
@@ -21540,6 +22813,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		eggGroups: ["Field", "Fairy"],
 		requiredItem: "Mawilite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	aggronmega: {
 		num: 306,
@@ -21554,6 +22828,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		eggGroups: ["Monster"],
 		requiredItem: "Aggronite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	medichammega: {
 		num: 308,
@@ -21568,6 +22843,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		eggGroups: ["Human-Like"],
 		requiredItem: "Medichamite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	manectricmega: {
 		num: 310,
@@ -21582,6 +22858,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		eggGroups: ["Field"],
 		requiredItem: "Manectite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	sharpedomega: {
 		num: 319,
@@ -21596,6 +22873,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Water 2"],
 		requiredItem: "Sharpedonite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	cameruptmega: {
 		num: 323,
@@ -21610,6 +22888,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		eggGroups: ["Field"],
 		requiredItem: "Cameruptite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	altariamega: {
 		num: 334,
@@ -21624,6 +22903,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Flying", "Dragon"],
 		requiredItem: "Altarianite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	banettemega: {
 		num: 354,
@@ -21638,6 +22918,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		eggGroups: ["Amorphous"],
 		requiredItem: "Banettite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	absolmega: {
 		num: 359,
@@ -21652,6 +22933,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		eggGroups: ["Field"],
 		requiredItem: "Absolite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	glaliemega: {
 		num: 362,
@@ -21666,6 +22948,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		eggGroups: ["Fairy", "Mineral"],
 		requiredItem: "Glalitite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	salamencemega: {
 		num: 373,
@@ -21680,6 +22963,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Dragon"],
 		requiredItem: "Salamencite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	metagrossmega: {
 		num: 376,
@@ -21695,6 +22979,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Mineral"],
 		requiredItem: "Metagrossite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	latiasmega: {
 		num: 380,
@@ -21710,6 +22995,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Latiasite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	latiosmega: {
 		num: 381,
@@ -21725,6 +23011,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Latiosite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	rayquazamega: {
 		num: 384,
@@ -21740,6 +23027,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		eggGroups: ["Undiscovered"],
 		requiredMove: "Dragon Ascent",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	lopunnymega: {
 		num: 428,
@@ -21754,6 +23042,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		eggGroups: ["Field", "Human-Like"],
 		requiredItem: "Lopunnite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	garchompmega: {
 		num: 445,
@@ -21768,6 +23057,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Monster", "Dragon"],
 		requiredItem: "Garchompite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	lucariomega: {
 		num: 448,
@@ -21783,6 +23073,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Field", "Human-Like"],
 		requiredItem: "Lucarionite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	abomasnowmega: {
 		num: 460,
@@ -21797,6 +23088,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		eggGroups: ["Monster", "Grass"],
 		requiredItem: "Abomasite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	gallademega: {
 		num: 475,
@@ -21812,6 +23104,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		eggGroups: ["Amorphous"],
 		requiredItem: "Galladite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	froslassmega: {
 		num: 478,
@@ -21828,6 +23121,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Fairy", "Mineral"],
 		requiredItem: "Froslassite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	emboarmega: {
 		num: 500,
@@ -21844,6 +23138,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		requiredItem: "Emboarite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	excadrillmega: {
 		num: 530,
@@ -21859,6 +23154,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		requiredItem: "Excadrite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	audinomega: {
 		num: 531,
@@ -21873,6 +23169,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		eggGroups: ["Fairy"],
 		requiredItem: "Audinite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	scolipedemega: {
 		num: 545,
@@ -21888,6 +23185,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Bug"],
 		requiredItem: "Scolipite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	scraftymega: {
 		num: 560,
@@ -21903,6 +23201,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field", "Dragon"],
 		requiredItem: "Scraftinite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	eelektrossmega: {
 		num: 604,
@@ -21918,6 +23217,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Amorphous"],
 		requiredItem: "Eelektrossite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	chandeluremega: {
 		num: 609,
@@ -21933,6 +23233,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Amorphous"],
 		requiredItem: "Chandelurite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	chesnaughtmega: {
 		num: 652,
@@ -21949,6 +23250,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		requiredItem: "Chesnaughtite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	delphoxmega: {
 		num: 655,
@@ -21965,6 +23267,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		requiredItem: "Delphoxite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	greninjamega: {
 		num: 658,
@@ -21981,6 +23284,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1"],
 		requiredItem: "Greninjite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pyroarmega: {
 		num: 668,
@@ -21997,6 +23301,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		requiredItem: "Pyroarite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	floettemega: {
 		num: 670,
@@ -22014,6 +23319,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItem: "Floettite",
 		battleOnly: "Floette-Eternal",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	malamarmega: {
 		num: 687,
@@ -22029,6 +23335,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1", "Water 2"],
 		requiredItem: "Malamarite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	barbaraclemega: {
 		num: 689,
@@ -22044,6 +23351,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 3"],
 		requiredItem: "Barbaracite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	dragalgemega: {
 		num: 691,
@@ -22059,6 +23367,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Water 1", "Dragon"],
 		requiredItem: "Dragalgite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	hawluchamega: {
 		num: 701,
@@ -22074,6 +23383,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Flying", "Human-Like"],
 		requiredItem: "Hawluchanite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	zygardemega: {
 		num: 718,
@@ -22091,6 +23401,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItem: "Zygardite",
 		battleOnly: ["Zygarde", "Zygarde-10%"],
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	dianciemega: {
 		num: 719,
@@ -22106,6 +23417,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		eggGroups: ["Undiscovered"],
 		requiredItem: "Diancite",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	drampamega: {
 		num: 780,
@@ -22121,6 +23433,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Monster", "Dragon"],
 		requiredItem: "Drampanite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	falinksmega: {
 		num: 870,
@@ -22137,6 +23450,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Fairy", "Mineral"],
 		requiredItem: "Falinksite",
 		gen: 9,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	crucibellemega: {
 		num: -39,
@@ -22153,6 +23467,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Amorphous", "Mineral"],
 		requiredItem: "Crucibellite",
 		gen: 6,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 
 
@@ -22172,6 +23487,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		eggGroups: ["Monster", "Grass"],
 		changesFrom: "Venusaur",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	charizardgmax: {
 		num: 6,
@@ -22187,6 +23503,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		eggGroups: ["Monster", "Dragon"],
 		changesFrom: "Charizard",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	blastoisegmax: {
 		num: 9,
@@ -22202,6 +23519,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Monster", "Water 1"],
 		changesFrom: "Blastoise",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	butterfreegmax: {
 		num: 12,
@@ -22216,6 +23534,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		eggGroups: ["Bug"],
 		changesFrom: "Butterfree",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pikachugmax: {
 		num: 25,
@@ -22230,6 +23549,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		eggGroups: ["Field", "Fairy"],
 		changesFrom: "Pikachu",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	meowthgmax: {
 		num: 52,
@@ -22244,6 +23564,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		eggGroups: ["Field"],
 		changesFrom: "Meowth",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	machampgmax: {
 		num: 68,
@@ -22259,6 +23580,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		eggGroups: ["Human-Like"],
 		changesFrom: "Machamp",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	gengargmax: {
 		num: 94,
@@ -22273,6 +23595,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		eggGroups: ["Amorphous"],
 		changesFrom: "Gengar",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	kinglergmax: {
 		num: 99,
@@ -22287,6 +23610,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		eggGroups: ["Water 3"],
 		changesFrom: "Kingler",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	laprasgmax: {
 		num: 131,
@@ -22301,6 +23625,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Monster", "Water 1"],
 		changesFrom: "Lapras",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	eeveegmax: {
 		num: 133,
@@ -22316,6 +23641,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		eggGroups: ["Field"],
 		changesFrom: "Eevee",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	snorlaxgmax: {
 		num: 143,
@@ -22331,6 +23657,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		eggGroups: ["Monster"],
 		changesFrom: "Snorlax",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	garbodorgmax: {
 		num: 569,
@@ -22345,6 +23672,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		eggGroups: ["Mineral"],
 		changesFrom: "Garbodor",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	melmetalgmax: {
 		num: 809,
@@ -22360,6 +23688,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Melmetal",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	rillaboomgmax: {
 		num: 812,
@@ -22375,6 +23704,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		eggGroups: ["Field", "Grass"],
 		changesFrom: "Rillaboom",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	cinderacegmax: {
 		num: 815,
@@ -22390,6 +23720,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		eggGroups: ["Field", "Human-Like"],
 		changesFrom: "Cinderace",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	inteleongmax: {
 		num: 818,
@@ -22405,6 +23736,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		eggGroups: ["Water 1", "Field"],
 		changesFrom: "Inteleon",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	corviknightgmax: {
 		num: 823,
@@ -22419,6 +23751,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		eggGroups: ["Flying"],
 		changesFrom: "Corviknight",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	orbeetlegmax: {
 		num: 826,
@@ -22433,6 +23766,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		eggGroups: ["Bug"],
 		changesFrom: "Orbeetle",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	drednawgmax: {
 		num: 834,
@@ -22447,6 +23781,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		eggGroups: ["Monster", "Water 1"],
 		changesFrom: "Drednaw",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	coalossalgmax: {
 		num: 839,
@@ -22461,6 +23796,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Black",
 		eggGroups: ["Mineral"],
 		changesFrom: "Coalossal",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	flapplegmax: {
 		num: 841,
@@ -22475,6 +23811,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		eggGroups: ["Grass", "Dragon"],
 		changesFrom: "Flapple",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	appletungmax: {
 		num: 842,
@@ -22489,6 +23826,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		eggGroups: ["Grass", "Dragon"],
 		changesFrom: "Appletun",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	sandacondagmax: {
 		num: 844,
@@ -22503,6 +23841,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		eggGroups: ["Field", "Dragon"],
 		changesFrom: "Sandaconda",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	toxtricitygmax: {
 		num: 849,
@@ -22517,6 +23856,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		eggGroups: ["Human-Like"],
 		changesFrom: "Toxtricity",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	toxtricitylowkeygmax: {
 		num: 849,
@@ -22532,6 +23872,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Human-Like"],
 		battleOnly: "Toxtricity-Low-Key",
 		changesFrom: "Toxtricity-Low-Key",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	centiskorchgmax: {
 		num: 851,
@@ -22546,6 +23887,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Red",
 		eggGroups: ["Bug"],
 		changesFrom: "Centiskorch",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	hatterenegmax: {
 		num: 858,
@@ -22561,6 +23903,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Pink",
 		eggGroups: ["Fairy"],
 		changesFrom: "Hatterene",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	grimmsnarlgmax: {
 		num: 861,
@@ -22576,6 +23919,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Purple",
 		eggGroups: ["Fairy", "Human-Like"],
 		changesFrom: "Grimmsnarl",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	alcremiegmax: {
 		num: 869,
@@ -22591,6 +23935,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Yellow",
 		eggGroups: ["Fairy", "Amorphous"],
 		changesFrom: "Alcremie",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	copperajahgmax: {
 		num: 879,
@@ -22605,6 +23950,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		eggGroups: ["Field", "Mineral"],
 		changesFrom: "Copperajah",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	duraludongmax: {
 		num: 884,
@@ -22619,6 +23965,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		eggGroups: ["Mineral", "Dragon"],
 		changesFrom: "Duraludon",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	urshifugmax: {
 		num: 892,
@@ -22634,6 +23981,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Gray",
 		eggGroups: ["Undiscovered"],
 		changesFrom: "Urshifu",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	urshifurapidstrikegmax: {
 		num: 892,
@@ -22650,6 +23998,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		battleOnly: "Urshifu-Rapid-Strike",
 		changesFrom: "Urshifu-Rapid-Strike",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 
 
@@ -22666,6 +24015,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		eggGroups: ["Field"],
 		gen: 5,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pokestarufo: {
 		num: -5001,
@@ -22681,6 +24031,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		otherFormes: ["Pokestar UFO-2", "Pokestar UFO-PropU2"],
 		cosmeticFormes: ["Pokestar UFO-PropU1"],
 		gen: 5,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pokestarufo2: {
 		num: -5001,
@@ -22696,6 +24047,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		eggGroups: ["Undiscovered"],
 		gen: 5,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pokestarbrycenman: {
 		num: -5002,
@@ -22710,6 +24062,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		cosmeticFormes: ["Pokestar Brycen-Man-Prop"],
 		gen: 5,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pokestarmt: {
 		num: -5003,
@@ -22724,6 +24077,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		cosmeticFormes: ["Pokestar MT-Prop"],
 		gen: 5,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pokestarmt2: {
 		num: -5004,
@@ -22738,6 +24092,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		cosmeticFormes: ["Pokestar MT2-Prop"],
 		gen: 5,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pokestartransport: {
 		num: -5005,
@@ -22752,6 +24107,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		cosmeticFormes: ["Pokestar Transport-Prop"],
 		gen: 5,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pokestargiant: {
 		num: -5006,
@@ -22766,6 +24122,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		cosmeticFormes: ["Pokestar Giant-2", "Pokestar Giant-PropO1", "Pokestar Giant-PropO2"],
 		gen: 5,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pokestarhumanoid: {
 		num: -5007,
@@ -22779,6 +24136,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		cosmeticFormes: ["Pokestar Humanoid-Prop"],
 		gen: 5,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pokestarmonster: {
 		num: -5008,
@@ -22792,6 +24150,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		cosmeticFormes: ["Pokestar Monster-Prop"],
 		gen: 5,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pokestarf00: {
 		num: -5009,
@@ -22805,6 +24164,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		cosmeticFormes: ["Pokestar F-00-Prop"],
 		gen: 5,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pokestarf002: {
 		num: -5010,
@@ -22818,6 +24178,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		cosmeticFormes: ["Pokestar F-002-Prop"],
 		gen: 5,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pokestarspirit: {
 		num: -5011,
@@ -22831,6 +24192,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		cosmeticFormes: ["Pokestar Spirit-Prop"],
 		gen: 5,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pokestarblackdoor: {
 		num: -5012,
@@ -22845,6 +24207,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		cosmeticFormes: ["Pokestar Black Door-Prop"],
 		gen: 5,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pokestarwhitedoor: {
 		num: -5013,
@@ -22859,6 +24222,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		cosmeticFormes: ["Pokestar White Door-Prop"],
 		gen: 5,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pokestarblackbelt: {
 		num: -5014,
@@ -22873,6 +24237,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		cosmeticFormes: ["Pokestar Black Belt-Prop"],
 		gen: 5,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	pokestarufopropu2: {
 		num: -5001,
@@ -22888,6 +24253,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "White",
 		eggGroups: ["Undiscovered"],
 		gen: 5,
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 
 
@@ -22903,5 +24269,6 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 1590.8,
 		color: "Gray",
 		eggGroups: ["Undiscovered"],
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 };

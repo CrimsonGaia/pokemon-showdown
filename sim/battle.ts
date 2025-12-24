@@ -2333,7 +2333,7 @@ export class Battle {
 		const tr = this.trunc;
 		let stat = baseStats[statName];
 		if (statName === 'hp') {
-			return tr(tr(2 * stat + set.ivs[statName] + tr(set.evs[statName] / 4) + 150) * set.level / 100 + 10);
+			return tr(tr(2 * stat + set.ivs[statName] + tr(set.evs[statName] / 4) + 200) * set.level / 100 + 10);
 		}
 		stat = tr(tr(2 * stat + set.ivs[statName] + tr(set.evs[statName] / 4)) * set.level / 100 + 5);
 		const nature = this.dex.natures.get(set.nature);

@@ -3255,4 +3255,288 @@ export const Rulesets: import('../sim/dex-formats').FormatDataTable = {
 			this.add('rule', 'Indigo Starstorm Timer: 15s Team Preview, 20min Your Time, 30s per turn');
 		},
 	},
-};
+	limitrestrictedindigo: {
+		effectType: 'ValidatorRule',
+		name: 'Limit Restricted Indigo',
+		desc: "Limit the combined count of Restricted Legendary, Restricted Mythical, and Restricted Paradox Pokémon on a team (for Indigo Starstorm formats)",
+		hasValue: 'positive-integer',
+		onBegin() {
+			const limit = this.ruleTable.valueRules.get('limitrestrictedindigo');
+			this.add('rule', `Limit Restricted Indigo: Up to ${limit} Restricted Pokémon (Legendary/Mythical/Paradox combined)`);
+		},
+		onValidateRule(value) {
+			const num = Number(value);
+			if (num < 0 || num > this.ruleTable.maxTeamSize) {
+				throw new Error(`Limit Restricted Indigo must be between 0 and ${this.ruleTable.maxTeamSize}.`);
+			}
+			return value;
+		},
+		onValidateTeam(team) {
+			const restrictedPokemon = [];
+			for (const set of team) {
+				const species = this.dex.species.get(set.species);
+				const tags = species.tags || [];
+				if (tags.includes('Restricted Legendary') || tags.includes('Restricted Mythical') || tags.includes('Restricted Paradox')) {
+					restrictedPokemon.push(species.name);
+				}
+			}
+			const limit = Number(this.ruleTable.valueRules.get('limitrestrictedindigo') ?? 0);
+			if (restrictedPokemon.length > limit) {
+				return [
+					`You are limited to ${limit} Restricted Pokémon by Limit Restricted Indigo.`,
+					`(You have: ${restrictedPokemon.join(', ')})`,
+				];
+			}
+		},
+	},
+	indigowhitelistnotransfer: {
+		effectType: 'ValidatorRule',
+		name: 'Indigo Whitelist No Transfer',
+		desc: "Only allows Pokémon that are available in Scarlet/Violet (Paldea, Kitakami, or Blueberry dex) without transfer, or are Indigo Starstorm custom Pokémon",
+		onValidateSet(set) {
+			const species = this.dex.species.get(set.species || set.name);
+			
+			// Allow custom Pokémon (num >= 10000)
+			if (species.num >= 10000) return;
+			
+			// Combined S/V Pokédex (Paldea + Kitakami + Blueberry)
+			const svDex = [
+				// Paldea Dex
+				"Sprigatito", "Floragato", "Meowscarada", "Fuecoco", "Crocalor", "Skeledirge", "Quaxly", "Quaxwell", "Quaquaval", "Lechonk", "Oinkologne", "Tarountula", "Spidops", "Nymble", "Lokix", "Hoppip", "Skiploom", "Jumpluff", "Fletchling", "Fletchinder", "Talonflame", "Pawmi", "Pawmo", "Pawmot", "Houndour", "Houndoom", "Yungoos", "Gumshoos", "Skwovet", "Greedent", "Sunkern", "Sunflora", "Kricketot", "Kricketune", "Scatterbug", "Spewpa", "Vivillon", "Combee", "Vespiquen", "Rookidee", "Corvisquire", "Corviknight", "Happiny", "Chansey", "Blissey", "Azurill", "Marill", "Azumarill", "Surskit", "Masquerain", "Buizel", "Floatzel", "Wooper", "Clodsire", "Psyduck", "Golduck", "Chewtle", "Drednaw", "Igglybuff", "Jigglypuff", "Wigglytuff", "Ralts", "Kirlia", "Gardevoir", "Gallade", "Drowzee", "Hypno", "Gastly", "Haunter", "Gengar", "Tandemaus", "Maushold", "Pichu", "Pikachu", "Raichu", "Fidough", "Dachsbun", "Slakoth", "Vigoroth", "Slaking", "Bounsweet", "Steenee", "Tsareena", "Smoliv", "Dolliv", "Arboliva", "Bonsly", "Sudowoodo", "Rockruff", "Lycanroc", "Rolycoly", "Carkol", "Coalossal", "Shinx", "Luxio", "Luxray", "Starly", "Staravia", "Staraptor", "Oricorio", "Mareep", "Flaaffy", "Ampharos", "Petilil", "Lilligant", "Shroomish", "Breloom", "Applin", "Flapple", "Appletun", "Dipplin", "Spoink", "Grumpig", "Squawkabilly", "Misdreavus", "Mismagius", "Makuhita", "Hariyama", "Crabrawler", "Crabominable", "Salandit", "Salazzle", "Phanpy", "Donphan", "Cufant", "Copperajah", "Gible", "Gabite", "Garchomp", "Nacli", "Naclstack", "Garganacl", "Wingull", "Pelipper", "Magikarp", "Gyarados", "Arrokuda", "Barraskewda", "Basculin", "Gulpin", "Swalot", "Meowth", "Persian", "Drifloon", "Drifblim", "Flabébé", "Floette", "Florges", "Diglett", "Dugtrio", "Torkoal", "Numel", "Camerupt", "Bronzor", "Bronzong", "Axew", "Fraxure", "Haxorus", "Mankey", "Primeape", "Annihilape", "Meditite", "Medicham", "Riolu", "Lucario", "Charcadet", "Armarouge", "Ceruledge", "Barboach", "Whiscash", "Tadbulb", "Bellibolt", "Goomy", "Sliggoo", "Goodra", "Croagunk", "Toxicroak", "Wattrel", "Kilowattrel", "Eevee", "Vaporeon", "Jolteon", "Flareon", "Espeon", "Umbreon", "Leafeon", "Glaceon", "Sylveon", "Dunsparce", "Dudunsparce", "Deerling", "Sawsbuck", "Girafarig", "Farigiraf", "Grimer", "Muk", "Maschiff", "Mabosstiff", "Toxel", "Toxtricity", "Dedenne", "Pachirisu", "Shroodle", "Grafaiai", "Stantler", "Foongus", "Amoonguss", "Voltorb", "Electrode", "Magnemite", "Magneton", "Magnezone", "Ditto", "Growlithe", "Arcanine", "Teddiursa", "Ursaring", "Zangoose", "Seviper", "Swablu", "Altaria", "Skiddo", "Gogoat", "Tauros", "Litleo", "Pyroar", "Stunky", "Skuntank", "Zorua", "Zoroark", "Sneasel", "Weavile", "Murkrow", "Honchkrow", "Gothita", "Gothorita", "Gothitelle", "Sinistea", "Polteageist", "Mimikyu", "Klefki", "Indeedee", "Bramblin", "Brambleghast", "Toedscool", "Toedscruel", "Tropius", "Fomantis", "Lurantis", "Klawf", "Capsakid", "Scovillain", "Cacnea", "Cacturne", "Rellor", "Rabsca", "Venonat", "Venomoth", "Pineco", "Forretress", "Scyther", "Scizor", "Kleavor", "Heracross", "Flittle", "Espathra", "Hippopotas", "Hippowdon", "Sandile", "Krokorok", "Krookodile", "Silicobra", "Sandaconda", "Mudbray", "Mudsdale", "Larvesta", "Volcarona", "Bagon", "Shelgon", "Salamence", "Tinkatink", "Tinkatuff", "Tinkaton", "Hatenna", "Hattrem", "Hatterene", "Impidimp", "Morgrem", "Grimmsnarl", "Wiglett", "Wugtrio", "Bombirdier", "Finizen", "Palafin", "Varoom", "Revavroom", "Cyclizar", "Orthworm", "Sableye", "Shuppet", "Banette", "Falinks", "Hawlucha", "Spiritomb", "Noibat", "Noivern", "Dreepy", "Drakloak", "Dragapult", "Glimmet", "Glimmora", "Rotom", "Greavard", "Houndstone", "Oranguru", "Passimian", "Komala", "Larvitar", "Pupitar", "Tyranitar", "Stonjourner", "Eiscue", "Pincurchin", "Sandygast", "Palossand", "Slowpoke", "Slowbro", "Slowking", "Shellos", "Gastrodon", "Shellder", "Cloyster", "Qwilfish", "Luvdisc", "Finneon", "Lumineon", "Bruxish", "Alomomola", "Skrelp", "Dragalge", "Clauncher", "Clawitzer", "Tynamo", "Eelektrik", "Eelektross", "Mareanie", "Toxapex", "Flamigo", "Dratini", "Dragonair", "Dragonite", "Snom", "Frosmoth", "Snover", "Abomasnow", "Delibird", "Cubchoo", "Beartic", "Snorunt", "Glalie", "Froslass", "Cryogonal", "Cetoddle", "Cetitan", "Bergmite", "Avalugg", "Rufflet", "Braviary", "Pawniard", "Bisharp", "Kingambit", "Deino", "Zweilous", "Hydreigon", "Veluza", "Dondozo", "Tatsugiri", "Great Tusk", "Scream Tail", "Brute Bonnet", "Flutter Mane", "Slither Wing", "Sandy Shocks", "Iron Treads", "Iron Bundle", "Iron Hands", "Iron Jugulis", "Iron Moth", "Iron Thorns", "Frigibax", "Arctibax", "Baxcalibur", "Gimmighoul", "Gholdengo", "Wo-Chien", "Chien-Pao", "Ting-Lu", "Chi-Yu", "Roaring Moon", "Iron Valiant", "Koraidon", "Miraidon",
+				// Kitakami Dex additions
+				"Spinarak", "Ariados", "Yanma", "Yanmega", "Quagsire", "Poochyena", "Mightyena", "Volbeat", "Illumise", "Corphish", "Crawdaunt", "Sewaddle", "Swadloon", "Leavanny", "Cutiefly", "Ribombee", "Ekans", "Arbok", "Bellsprout", "Weepinbell", "Victreebel", "Sentret", "Furret", "Aipom", "Ambipom", "Swinub", "Piloswine", "Mamoswine", "Seedot", "Nuzleaf", "Shiftry", "Phantump", "Trevenant", "Timburr", "Gurdurr", "Conkeldurr", "Munchlax", "Snorlax", "Lotad", "Lombre", "Ludicolo", "Nosepass", "Probopass", "Grubbin", "Charjabug", "Vikavolt", "Sandshrew", "Sandslash", "Gligar", "Gliscor", "Vullaby", "Mandibuzz", "Jangmo-o", "Hakamo-o", "Kommo-o", "Koffing", "Weezing", "Mienfoo", "Mienshao", "Duskull", "Dusclops", "Dusknoir", "Chingling", "Chimecho", "Slugma", "Magcargo", "Litwick", "Lampent", "Chandelure", "Cleffa", "Clefairy", "Clefable", "Feebas", "Milotic", "Carbink", "Ducklett", "Swanna", "Cramorant", "Basculegion", "Ursaluna", "Okidogi", "Munkidori", "Fezandipiti", "Ogerpon", "Poltchageist", "Sinistcha", "Overqwil",
+				// Blueberry Dex additions
+				"Doduo", "Dodrio", "Exeggcute", "Exeggutor", "Rhyhorn", "Rhydon", "Rhyperior", "Elekid", "Electabuzz", "Electivire", "Magby", "Magmar", "Magmortar", "Blitzle", "Zebstrika", "Smeargle", "Milcery", "Alcremie", "Trapinch", "Vibrava", "Flygon", "Pikipek", "Trumbeak", "Toucannon", "Tentacool", "Tentacruel", "Horsea", "Seadra", "Kingdra", "Cottonee", "Whimsicott", "Comfey", "Oddish", "Gloom", "Vileplume", "Bellossom", "Inkay", "Malamar", "Dewpider", "Araquanid", "Tyrogue", "Hitmonlee", "Hitmonchan", "Hitmontop", "Geodude", "Graveler", "Golem", "Drilbur", "Excadrill", "Espurr", "Meowstic", "Minior", "Cranidos", "Rampardos", "Shieldon", "Bastiodon", "Minccino", "Cinccino", "Skarmory", "Plusle", "Minun", "Scraggy", "Scrafty", "Golett", "Golurk", "Porygon", "Porygon2", "Porygon-Z", "Joltik", "Galvantula", "Beldum", "Metang", "Metagross", "Seel", "Dewgong", "Lapras", "Solosis", "Duosion", "Reuniclus", "Snubbull", "Granbull", "Vulpix", "Ninetales", "Duraludon", "Archaludon", "Hydrapple", "Bulbasaur", "Ivysaur", "Venusaur", "Charmander", "Charmeleon", "Charizard", "Squirtle", "Wartortle", "Blastoise", "Chikorita", "Bayleef", "Meganium", "Cyndaquil", "Quilava", "Typhlosion", "Totodile", "Croconaw", "Feraligatr", "Treecko", "Grovyle", "Sceptile", "Torchic", "Combusken", "Blaziken", "Mudkip", "Marshtomp", "Swampert", "Turtwig", "Grotle", "Torterra", "Chimchar", "Monferno", "Infernape", "Piplup", "Prinplup", "Empoleon", "Snivy", "Servine", "Serperior", "Tepig", "Pignite", "Emboar", "Oshawott", "Dewott", "Samurott", "Chespin", "Quilladin", "Chesnaught", "Fennekin", "Braixen", "Delphox", "Froakie", "Frogadier", "Greninja", "Rowlet", "Dartrix", "Decidueye", "Litten", "Torracat", "Incineroar", "Popplio", "Brionne", "Primarina", "Grookey", "Thwackey", "Rillaboom", "Scorbunny", "Raboot", "Cinderace", "Sobble", "Drizzile", "Inteleon", "Gouging Fire", "Raging Bolt", "Iron Crown", "Iron Boulder", "Terapagos", "Walking Wake", "Iron Leaves",
+			];
+			
+			if (!svDex.includes(species.baseSpecies) && !svDex.includes(species.name)) {
+				return [set.species + " is not available in Pokémon Scarlet/Violet."];
+			}
+		},
+		onBegin() {
+			this.add('rule', 'Indigo Whitelist No Transfer: Only Scarlet/Violet and custom Pokémon allowed');
+		},
+	},
+	indigostarstormwhitelist: {
+		effectType: 'ValidatorRule',
+		name: 'Indigo Starstorm Whitelist',
+		desc: "Only allows Pokémon that are available in Scarlet/Violet (including HOME transfers) or are Indigo Starstorm custom Pokémon",
+		onValidateSet(set) {
+			const species = this.dex.species.get(set.species || set.name);
+			
+			// Allow custom Pokémon (num >= 10000 or negative numbers)
+			if (species.num >= 10000 || species.num < 0) return;
+			
+			// Complete S/V Pokédex (all 825 Pokémon available in Gen 9 including HOME transfers)
+			const svDex = [
+				"Abomasnow", "Aipom", "Alcremie", "Alomomola", "Altaria", "Ambipom", "Amoonguss", "Ampharos", "Annihilape", "Appletun", "Applin", "Araquanid", "Arbok", "Arboliva", "Arcanine", "Arceus", "Archaludon", "Arctibax", "Ariados", "Armarouge", "Arrokuda", "Articuno", "Avalugg", "Axew", "Azelf", "Azumarill", "Azurill", "Bagon", "Banette", "Barboach", "Barraskewda", "Basculegion", "Basculin", "Bastiodon", "Baxcalibur", "Bayleef", "Beartic", "Beldum", "Bellibolt", "Bellossom", "Bellsprout", "Bergmite", "Bisharp", "Blastoise", "Blaziken", "Blissey", "Blitzle", "Bombirdier", "Bonsly", "Bounsweet", "Braixen", "Brambleghast", "Bramblin", "Braviary", "Breloom", "Brionne", "Bronzong", "Bronzor", "Brute Bonnet", "Bruxish", "Buizel", "Bulbasaur", "Cacnea", "Cacturne", "Calyrex", "Camerupt", "Capsakid", "Carbink", "Carkol", "Ceruledge", "Cetitan", "Cetoddle", "Chandelure", "Chansey", "Charcadet", "Charizard", "Charjabug", "Charmander", "Charmeleon", "Chesnaught", "Chespin", "Chewtle", "Chien-Pao", "Chikorita", "Chimchar", "Chimecho", "Chinchou", "Chingling", "Chi-Yu", "Cinccino", "Cinderace", "Clauncher", "Clawitzer", "Clefable", "Clefairy", "Cleffa", "Clodsire", "Cloyster", "Coalossal", "Cobalion", "Combee", "Combusken", "Comfey", "Conkeldurr", "Copperajah", "Corphish", "Corviknight", "Corvisquire", "Cosmoem", "Cosmog", "Cottonee", "Crabominable", "Crabrawler", "Cramorant", "Cranidos", "Crawdaunt", "Cresselia", "Croagunk", "Crocalor", "Croconaw", "Cryogonal", "Cubchoo", "Cufant", "Cutiefly", "Cyclizar", "Cyndaquil", "Dachsbun", "Darkrai", "Dartrix", "Decidueye", "Dedenne", "Deerling", "Deino", "Delibird", "Delphox", "Deoxys", "Dewgong", "Dewott", "Dewpider", "Dialga", "Diancie", "Diglett", "Dipplin", "Ditto", "Dodrio", "Doduo", "Dolliv", "Dondozo", "Donphan", "Dragalge", "Dragapult", "Dragonair", "Dragonite", "Drakloak", "Dratini", "Drednaw", "Dreepy", "Drifblim", "Drifloon", "Drilbur", "Drizzile", "Drowzee", "Ducklett", "Dudunsparce", "Dugtrio", "Dunsparce", "Duosion", "Duraludon", "Dusclops", "Dusknoir", "Duskull", "Eelektrik", "Eelektross", "Eevee", "Eiscue", "Ekans", "Electabuzz", "Electivire", "Electrode", "Elekid", "Emboar", "Empoleon", "Enamorus", "Entei", "Espathra", "Espeon", "Espurr", "Eternatus", "Excadrill", "Exeggcute", "Exeggutor", "Falinks", "Farigiraf", "Feebas", "Fennekin", "Feraligatr", "Fezandipiti", "Fidough", "Finizen", "Finneon", "Flaaffy", "Flabébé", "Flamigo", "Flapple", "Flareon", "Fletchinder", "Fletchling", "Flittle", "Floatzel", "Floette", "Floragato", "Florges", "Flutter Mane", "Flygon", "Fomantis", "Foongus", "Forretress", "Fraxure", "Frigibax", "Froakie", "Frogadier", "Froslass", "Frosmoth", "Fuecoco", "Furret", "Gabite", "Gallade", "Galvantula", "Garchomp", "Gardevoir", "Garganacl", "Gastly", "Gastrodon", "Gengar", "Geodude", "Gholdengo", "Gible", "Gimmighoul", "Girafarig", "Giratina", "Glaceon", "Glalie", "Glastrier", "Gligar", "Glimmet", "Glimmora", "Gliscor", "Gloom", "Gogoat", "Golduck", "Golem", "Golett", "Golurk", "Goodra", "Goomy", "Gothita", "Gothitelle", "Gothorita", "Gouging Fire", "Grafaiai", "Granbull", "Graveler", "Great Tusk", "Greavard", "Greedent", "Greninja", "Grimer", "Grimmsnarl", "Grookey", "Grotle", "Groudon", "Grovyle", "Growlithe", "Grubbin", "Grumpig", "Gulpin", "Gumshoos", "Gurdurr", "Gyarados", "Hakamo-o", "Happiny", "Hariyama", "Hatenna", "Hatterene", "Hattrem", "Haunter", "Hawlucha", "Haxorus", "Heatran", "Heracross", "Hippopotas", "Hippowdon", "Hitmonchan", "Hitmonlee", "Hitmontop", "Honchkrow", "Ho-Oh", "Hoopa", "Hoothoot", "Hoppip", "Horsea", "Houndoom", "Houndour", "Houndstone", "Hydrapple", "Hydreigon", "Hypno", "Igglybuff", "Illumise", "Impidimp", "Incineroar", "Indeedee", "Infernape", "Inkay", "Inteleon", "Iron Boulder", "Iron Bundle", "Iron Crown", "Iron Hands", "Iron Jugulis", "Iron Leaves", "Iron Moth", "Iron Thorns", "Iron Treads", "Iron Valiant", "Ivysaur", "Jangmo-o", "Jigglypuff", "Jirachi", "Jolteon", "Joltik", "Jumpluff", "Keldeo", "Kilowattrel", "Kingambit", "Kingdra", "Kirlia", "Klawf", "Kleavor", "Klefki", "Koffing", "Komala", "Kommo-o", "Koraidon", "Kricketot", "Kricketune", "Krokorok", "Krookodile", "Kubfu", "Kyogre", "Kyurem", "Lampent", "Landorus", "Lanturn", "Lapras", "Larvesta", "Larvitar", "Latias", "Latios", "Leafeon", "Leavanny", "Lechonk", "Lilligant", "Litleo", "Litten", "Litwick", "Lokix", "Lombre", "Lotad", "Lucario", "Ludicolo", "Lugia", "Lumineon", "Lunala", "Lurantis", "Luvdisc", "Luxio", "Luxray", "Lycanroc", "Mabosstiff", "Magby", "Magcargo", "Magearna", "Magikarp", "Magmar", "Magmortar", "Magnemite", "Magneton", "Magnezone", "Makuhita", "Malamar", "Mamoswine", "Manaphy", "Mandibuzz", "Mankey", "Mareanie", "Mareep", "Marill", "Marshtomp", "Maschiff", "Masquerain", "Maushold", "Medicham", "Meditite", "Meganium", "Meloetta", "Meowscarada", "Meowstic", "Meowth", "Mesprit", "Metagross", "Metang", "Mew", "Mewtwo", "Mienfoo", "Mienshao", "Mightyena", "Milcery", "Milotic", "Mimikyu", "Minccino", "Minior", "Minun", "Miraidon", "Misdreavus", "Mismagius", "Moltres", "Monferno", "Morgrem", "Morpeko", "Mudbray", "Mudkip", "Mudsdale", "Muk", "Munchlax", "Munkidori", "Murkrow", "Nacli", "Naclstack", "Necrozma", "Ninetales", "Noctowl", "Noibat", "Noivern", "Nosepass", "Numel", "Nuzleaf", "Nymble", "Oddish", "Ogerpon", "Oinkologne", "Okidogi", "Oranguru", "Oricorio", "Orthworm", "Oshawott", "Overqwil", "Pachirisu", "Palafin", "Palkia", "Palossand", "Passimian", "Pawmi", "Pawmo", "Pawmot", "Pawniard", "Pecharunt", "Pelipper", "Perrserker", "Persian", "Petilil", "Phanpy", "Phantump", "Phione", "Pichu", "Pignite", "Pikachu", "Pikipek", "Piloswine", "Pincurchin", "Pineco", "Piplup", "Plusle", "Politoed", "Poliwag", "Poliwhirl", "Poliwrath", "Poltchageist", "Polteageist", "Poochyena", "Popplio", "Porygon", "Porygon2", "Porygon-Z", "Primarina", "Primeape", "Prinplup", "Probopass", "Psyduck", "Pupitar", "Pyroar", "Quagsire", "Quaquaval", "Quaxly", "Quaxwell", "Quilava", "Quilladin", "Qwilfish", "Raboot", "Rabsca", "Raging Bolt", "Raichu", "Raikou", "Ralts", "Rampardos", "Rayquaza", "Regice", "Regidrago", "Regieleki", "Regigigas", "Regirock", "Registeel", "Rellor", "Reshiram", "Reuniclus", "Revavroom", "Rhydon", "Rhyhorn", "Rhyperior", "Ribombee", "Rillaboom", "Riolu", "Roaring Moon", "Rockruff", "Rolycoly", "Rookidee", "Rotom", "Rowlet", "Rufflet", "Sableye", "Salamence", "Salandit", "Salazzle", "Samurott", "Sandaconda", "Sandile", "Sandshrew", "Sandslash", "Sandygast", "Sandy Shocks", "Sawsbuck", "Scatterbug", "Sceptile", "Scizor", "Scorbunny", "Scovillain", "Scrafty", "Scraggy", "Scream Tail", "Scyther", "Seadra", "Seedot", "Seel", "Sentret", "Serperior", "Servine", "Seviper", "Sewaddle", "Shaymin", "Shelgon", "Shellder", "Shellos", "Shieldon", "Shiftry", "Shinx", "Shroodle", "Shroomish", "Shuppet", "Silicobra", "Sinistcha", "Sinistea", "Skarmory", "Skeledirge", "Skiddo", "Skiploom", "Skrelp", "Skuntank", "Skwovet", "Slaking", "Slakoth", "Sliggoo", "Slither Wing", "Slowbro", "Slowking", "Slowpoke", "Slugma", "Smeargle", "Smoliv", "Sneasel", "Sneasler", "Snivy", "Snom", "Snorlax", "Snorunt", "Snover", "Snubbull", "Sobble", "Solgaleo", "Solosis", "Spectrier", "Spewpa", "Spidops", "Spinarak", "Spiritomb", "Spoink", "Sprigatito", "Squawkabilly", "Squirtle", "Stantler", "Staraptor", "Staravia", "Starly", "Steenee", "Stonjourner", "Stunky", "Sudowoodo", "Suicune", "Sunflora", "Sunkern", "Surskit", "Swablu", "Swadloon", "Swalot", "Swampert", "Swanna", "Swinub", "Sylveon", "Tadbulb", "Talonflame", "Tandemaus", "Tarountula", "Tatsugiri", "Tauros", "Teddiursa", "Tentacool", "Tentacruel", "Tepig", "Terapagos", "Terrakion", "Thundurus", "Thwackey", "Timburr", "Ting-Lu", "Tinkatink", "Tinkaton", "Tinkatuff", "Toedscool", "Toedscruel", "Torchic", "Torkoal", "Tornadus", "Torracat", "Torterra", "Totodile", "Toucannon", "Toxapex", "Toxel", "Toxicroak", "Toxtricity", "Trapinch", "Treecko", "Trevenant", "Tropius", "Trumbeak", "Tsareena", "Turtwig", "Tynamo", "Typhlosion", "Tyranitar", "Tyrogue", "Umbreon", "Ursaluna", "Ursaring", "Urshifu", "Uxie", "Vaporeon", "Varoom", "Veluza", "Venomoth", "Venonat", "Venusaur", "Vespiquen", "Vibrava", "Victreebel", "Vigoroth", "Vikavolt", "Vileplume", "Virizion", "Vivillon", "Volbeat", "Volcanion", "Volcarona", "Voltorb", "Vullaby", "Vulpix", "Walking Wake", "Wartortle", "Wattrel", "Weavile", "Weepinbell", "Weezing", "Whimsicott", "Whiscash", "Wigglytuff", "Wiglett", "Wingull", "Wo-Chien", "Wooper", "Wugtrio", "Wyrdeer", "Yanma", "Yanmega", "Yungoos", "Zacian", "Zamazenta", "Zangoose", "Zapdos", "Zarude", "Zebstrika", "Zekrom", "Zoroark", "Zorua", "Zweilous",
+			];
+			
+			if (!svDex.includes(species.baseSpecies) && !svDex.includes(species.name)) {
+				return [set.species + " is not available in Pokémon Scarlet/Violet."];
+			}
+		},
+		onBegin() {
+			this.add('rule', 'Indigo Starstorm Whitelist: Only Scarlet/Violet Pokémon allowed (including HOME transfers)');
+		},
+	},
+	firststageonly: {
+		effectType: 'ValidatorRule',
+		name: 'First Stage Only',
+		desc: "Only allows Pokémon that can evolve and are the first stage in their evolution line",
+		onValidateSet(set) {
+			const species = this.dex.species.get(set.species || set.name);
+			// Exclude CAP Pokémon
+			if (species.tags && species.tags.includes('CAP' as any)) {
+				return [set.species + " is not allowed (CAP Pokémon)."];
+			}
+			if (species.prevo && this.dex.species.get(species.prevo).gen <= this.gen) {
+				return [set.species + " isn't the first in its evolution family."];
+			}
+			// Check if species can evolve (has nfe property OR has evos array with entries)
+			const canEvolve = species.nfe || (species.evos && species.evos.length > 0);
+			if (!canEvolve) {
+				return [set.species + " doesn't have an evolution family."];
+			}
+		},
+		onBegin() {
+			this.add('rule', 'First Stage Only: Only first-stage Pokémon that can evolve are allowed');
+		},
+	},
+secondstageonly: {
+	effectType: 'ValidatorRule',
+	name: 'Second Stage Only',
+	desc: "Only allows Pokémon that are second stage and can still evolve further",
+	onValidateSet(set) {
+		const species = this.dex.species.get(set.species || set.name);
+		// Exclude CAP Pokémon
+		if (species.tags && species.tags.includes('CAP' as any)) {
+			return [set.species + " is not allowed (CAP Pokémon)."];
+		}
+		// Must have a pre-evolution
+		if (!species.prevo || this.dex.species.get(species.prevo).gen > this.gen) {
+			return [set.species + " is not a second stage Pokémon."];
+		}
+		// Must be able to evolve further
+		const canEvolve = species.nfe || (species.evos && species.evos.length > 0);
+		if (!canEvolve) {
+			return [set.species + " cannot evolve further."];
+		}
+	},
+	onBegin() {
+		this.add('rule', 'Second Stage Only: Only second-stage Pokémon that can still evolve are allowed');
+	},
+},
+allsecondstage: {
+	effectType: 'ValidatorRule',
+	name: 'All Second Stage',
+	desc: "Only allows Pokémon that are second stage (have a pre-evolution)",
+	onValidateSet(set) {
+		const species = this.dex.species.get(set.species || set.name);
+		// Exclude CAP Pokémon
+		if (species.tags && species.tags.includes('CAP' as any)) {
+			return [set.species + " is not allowed (CAP Pokémon)."];
+		}
+		// Exclude special categories (unless already allowed in other tiers)
+		if (species.tags) {
+			const specialTags = ['Restricted Legendary', 'Mythical', 'Paradox', 'Sub-Legendary'];
+			for (const tag of specialTags) {
+				if (species.tags.includes(tag as any)) {
+					return [set.species + " is not allowed (special category: " + tag + ")."];
+				}
+			}
+		}
+		// Must have a pre-evolution
+		if (!species.prevo || this.dex.species.get(species.prevo).gen > this.gen) {
+			return [set.species + " is not a second stage Pokémon."];
+		}
+	},
+	onBegin() {
+		this.add('rule', 'All Second Stage: Only second-stage Pokémon are allowed');
+	},
+},
+allthirdstage: {
+	effectType: 'ValidatorRule',
+	name: 'All Third Stage',
+	desc: "Only allows Pokémon that are third stage (have two pre-evolutions in their line)",
+	onValidateSet(set) {
+		const species = this.dex.species.get(set.species || set.name);
+		// Must have a pre-evolution
+		if (!species.prevo) return [set.species + " is not a third stage Pokémon."];
+		// That pre-evolution must also have a pre-evolution
+		const prevoSpecies = this.dex.species.get(species.prevo);
+		if (!prevoSpecies.prevo || prevoSpecies.prevo === species.name) {
+			return [set.species + " is not a third stage Pokémon."];
+		}
+	},
+	onBegin() {
+		this.add('rule', 'All Third Stage: Only third-stage Pokémon are allowed');
+	},
+},
+firstorsecondstage: {
+	effectType: 'ValidatorRule',
+	name: 'First or Second Stage',
+	desc: "Only allows Pokémon that are first or second stage and can still evolve",
+	onValidateSet(set) {
+		const species = this.dex.species.get(set.species || set.name);
+		// Exclude CAP Pokémon
+		if (species.tags && species.tags.includes('CAP' as any)) {
+			return [set.species + " is not allowed (CAP Pokémon)."];
+		}
+		// Special exception for Phione
+		if (species.name === 'Phione') return;
+		// Check if species can evolve (has nfe property OR has evos array with entries)
+		const canEvolve = species.nfe || (species.evos && species.evos.length > 0);
+		if (!canEvolve) {
+			return [set.species + " cannot evolve further."];
+		}
+	},
+	onBegin() {
+		this.add('rule', 'First or Second Stage: Only Pokémon that can still evolve are allowed');
+	},
+},
+singlestageonly: {
+	effectType: 'ValidatorRule',
+	name: 'Single Stage Only',
+	desc: "Only allows Pokémon that do not evolve and have no pre-evolutions, excluding special categories",
+	onValidateSet(set) {
+		const species = this.dex.species.get(set.species || set.name);
+		// Special exceptions for gender-locked Pokémon that cannot evolve
+		// Male Combee and Male Salandit cannot evolve (only females can)
+		if ((species.name === 'Combee' || species.name === 'Salandit') && set.gender === 'M') {
+			return; // Allow male Combee/Salandit
+		}
+		// Exclude special categories (Legendary, Mythical, Paradox, Sub-Legendary, CAP)
+		if (species.tags) {
+			const specialTags = ['Restricted Legendary', 'Mythical', 'Paradox', 'Sub-Legendary', 'CAP'];
+			for (const tag of specialTags) {
+				if (species.tags.includes(tag as any)) {
+					return [set.species + " is not allowed (special category: " + tag + ")."];
+				}
+			}
+		}
+		// Must not have a pre-evolution
+		if (species.prevo && this.dex.species.get(species.prevo).gen <= this.gen) {
+			return [set.species + " is not a single-stage Pokémon (has a pre-evolution)."];
+		}
+		// Must not be able to evolve (no nfe property and no evos array)
+		const canEvolve = species.nfe || (species.evos && species.evos.length > 0);
+		if (canEvolve) {
+			return [set.species + " is not a single-stage Pokémon (can evolve)."];
+		}
+	},
+	onBegin() {
+		this.add('rule', 'Single Stage Only: Only Pokémon that do not evolve are allowed (no special categories)');
+	},
+},
+paradoxallowed: {
+	effectType: 'ValidatorRule',
+	name: 'Paradox Allowed',
+	desc: "Allows Paradox Pokémon but excludes Restricted Paradox",
+	onValidateSet(set) {
+		const species = this.dex.species.get(set.species || set.name);
+		// Exclude Restricted Paradox only
+		if (species.tags && species.tags.includes('Restricted Paradox' as any)) {
+			return [set.species + " is not allowed (Restricted Paradox)."];
+		}
+	},
+	onBegin() {
+		this.add('rule', 'Paradox Allowed: Paradox Pokémon allowed except Restricted Paradox');
+	},
+},
+limitparadox: {
+	effectType: 'ValidatorRule',
+	name: 'Limit Paradox',
+	desc: "Limit the number of Paradox Pokémon on a team",
+	hasValue: 'positive-integer',
+	onBegin() {
+		const limit = this.ruleTable.valueRules.get('limitparadox');
+		this.add('rule', `Limit Paradox: Up to ${limit} Paradox Pokémon per team`);
+	},
+	onValidateRule(value) {
+		const num = Number(value);
+		if (num < 0 || num > this.ruleTable.maxTeamSize) {
+			throw new Error(`Limit Paradox must be between 0 and ${this.ruleTable.maxTeamSize}.`);
+		}
+		return value;
+	},
+	onValidateTeam(team) {
+		const paradoxPokemon = [];
+		for (const set of team) {
+			const species = this.dex.species.get(set.species);
+			const tags = species.tags || [];
+			if (tags.includes('Paradox' as any)) {
+				paradoxPokemon.push(species.name);
+			}
+		}
+		const limit = Number(this.ruleTable.valueRules.get('limitparadox') ?? 0);
+		if (paradoxPokemon.length > limit) {
+			return [
+				`You are limited to ${limit} Paradox Pokémon by Limit Paradox.`,
+				`(You have: ${paradoxPokemon.join(', ')})`,
+			];
+		}
+	},
+},
+}
+

@@ -722,6 +722,17 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 	},
 	proudtusks: {
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.pierce) { return this.chainModify(1.3); } },
+		onModifyMove(move, pokemon) {
+			// Improve pierce levels: Pierce3 -> Pierce2, Pierce2 -> Pierce1, Pierce1 stays Pierce1
+			if (move.pierce3) {
+				delete move.pierce3;
+				move.pierce2 = true;
+			} else if (move.pierce2 && !move.pierce1) {
+				delete move.pierce2;
+				move.pierce1 = true;
+			}
+			// Pierce1 remains unchanged (already strongest)
+		},
 		flags: {},
 		name: "Proud Tusks",
 		rating: 3,
@@ -6424,12 +6435,14 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 	},
 	terashell: {
 		onStart(pokemon) { if (!pokemon.teraShellUsedTypes) { pokemon.teraShellUsedTypes = []; } },
-		onTryHit(target, source, move) {
-			if (target.hp < target.maxhp) return;
+		onBasePower(basePower, attacker, defender, move) {
+			if (defender.hp < defender.maxhp) return;
 			if (move.category === 'Status') return;
-			if (!target.teraShellUsedTypes) { target.teraShellUsedTypes = []; }
+			if (!defender.teraShellUsedTypes) { defender.teraShellUsedTypes = []; }
+			// Check if already activated for this move
+			if (this.effectState.activatedFor === move.id) return;
 			const allTypes = ['Normal', 'Fire', 'Water', 'Electric', 'Grass', 'Ice', 'Fighting', 'Poison', 'Ground', 'Flying', 'Psychic', 'Bug', 'Rock', 'Ghost', 'Dragon', 'Dark', 'Steel', 'Fairy'];
-			const availableTypes = allTypes.filter(type => !target.teraShellUsedTypes.includes(type) && !target.hasType(type));
+			const availableTypes = allTypes.filter(type => !defender.teraShellUsedTypes.includes(type) && !defender.hasType(type));
 			if (availableTypes.length === 0) return;
 			// Find types by effectiveness
 			const resistTypes = availableTypes.filter(type => {
@@ -6454,10 +6467,11 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 			else if (neutralTypes.length > 0) { selectedType = this.sample(neutralTypes); } 
 			else if (weakTypes.length > 0) { selectedType = this.sample(weakTypes); } 
 			else { return; }
-			target.teraShellUsedTypes.push(selectedType);
-			this.add('-activate', target, 'ability: Tera Shell');
-			target.setType([target.getTypes()[0], selectedType]);
-			this.add('-start', target, 'typechange', target.getTypes().join('/'), '[from] ability: Tera Shell');
+			defender.teraShellUsedTypes.push(selectedType);
+			this.effectState.activatedFor = move.id;
+			this.add('-activate', defender, 'ability: Tera Shell');
+			defender.setType([defender.getTypes()[0], selectedType]);
+			this.add('-start', defender, 'typechange', defender.getTypes().join('/'), '[from] ability: Tera Shell');
 		},
 		flags: { failroleplay: 1, noreceiver: 1, noentrain: 1, notrace: 1, failskillswap: 1, breakable: 1 },
 		name: "Tera Shell",

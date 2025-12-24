@@ -1993,6 +1993,10 @@ export class BattleActions {
 		const type = pokemon.teraType;
 		this.battle.add('-terastallize', pokemon, type);
 		pokemon.terastallized = type;
+		// Reset Tera Shell type tracking when Terastallizing
+		if (pokemon.teraShellUsedTypes) {
+			pokemon.teraShellUsedTypes = [];
+		}
 		for (const ally of pokemon.side.pokemon) {
 			ally.canTerastallize = null;
 		}

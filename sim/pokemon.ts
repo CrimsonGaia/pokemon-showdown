@@ -284,6 +284,8 @@ export class Pokemon {
 	teraType: string;
 	baseTypes: string[];
 	terastallized?: string;
+	/** Track which types have been used by Tera Shell ability */
+	teraShellUsedTypes?: string[];
 
 	/** A Pokemon's currently 'staleness' with respect to the Endless Battle Clause. */
 	staleness?: 'internal' | 'external';

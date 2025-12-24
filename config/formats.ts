@@ -19,10 +19,163 @@ The column value will be ignored for repeat sections.
 
 export const Formats: import('../sim/dex-formats').FormatList = [
 
-	//#region INDIGO STARSTORM
+	//#region IS FORMATS
 
 	{
-		section: "Indigo Starstorm",
+		section: "ISL Formats",
+	},
+	{
+		name: "[Gen 9] ISL Regulation Set α (Baby League) Doubles",
+		mod: 'gen9indigostarstorm',
+		gameType: 'doubles',
+		desc: `Indigo Starstorm League Regulation Set α: First-stage Pokémon only (289 Pokémon). Includes not-fully-evolved legendaries (Cosmog, Kubfu). Level 20, Bring 10 Pick 6.`,
+		ruleset: [
+			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'First Stage Only', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 20',
+		],
+		unbanlist: ['Cosmog', 'Kubfu', 'Type: Null', 'Poipole'],
+	},
+	{
+		name: "[Gen 9] ISL Regulation Set Δ (NFE League) Doubles",
+		mod: 'gen9indigostarstorm',
+		gameType: 'doubles',
+		desc: `Indigo Starstorm League Regulation Set Δ: First-stage and second-stage Pokémon that can still evolve (380 Pokémon). Includes Cosmog, Cosmoem, Kubfu. Excludes fully evolved 2nd stage. Level 30, Bring 10 Pick 6.`,
+		ruleset: [
+			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'First or Second Stage', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 30',
+		],
+		unbanlist: ['Cosmog', 'Cosmoem', 'Kubfu', 'Type: Null', 'Poipole'],
+	},
+	{
+		name: "[Gen 9] ISL Regulation Set ι (Single-Stage Only League) Doubles",
+		mod: 'gen9indigostarstorm',
+		gameType: 'doubles',
+		desc: `Indigo Starstorm League Regulation Set ι: Single-stage Pokémon only (52 Pokémon) - those that don't evolve and have no pre-evolutions. Examples: Ditto, Heracross, Skarmory, Rotom. Level 40, Bring 10 Pick 6.`,
+		ruleset: [
+			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Single Stage Only', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 40',
+		],
+	},
+	{
+		name: "[Gen 9] ISL Regulation Set β (2nd stage League) Doubles",
+		mod: 'gen9indigostarstorm',
+		gameType: 'doubles',
+		desc: `Indigo Starstorm League Regulation Set β: First-stage, ALL second-stage (including fully evolved like Arbok, Houndoom), and single-stage Pokémon (545 Pokémon). Includes Cosmog, Cosmoem, Kubfu. Bans all 3rd stage and special categories. Level 50, Bring 10 Pick 6.`,
+		ruleset: [
+			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 50',
+		],
+		banlist: ['All Third Stage', 'Legendary', 'Mythical', 'Restricted Legendary', 'Restricted Mythical', 'Paradox', 'Restricted Paradox'],
+		unbanlist: ['Cosmog', 'Cosmoem', 'Kubfu', 'Type: Null', 'Poipole'],
+	},
+	{
+		name: "[Gen 9] ISL Regulation Set ζ (Beta + Paradox League) Doubles",
+		mod: 'gen9indigostarstorm',
+		gameType: 'doubles',
+		desc: `Indigo Starstorm League Regulation Set ζ: All Beta Pokémon plus non-Restricted Paradox (655 Pokémon). Limit 3 Paradox per team. Still bans 3rd stage, Legendary, Mythical, and Restricted Paradox. Level 60, Bring 10 Pick 6.`,
+		ruleset: [
+			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Paradox Allowed', 'Limit Paradox = 3', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 60',
+		],
+		banlist: ['All Third Stage', 'Legendary', 'Mythical', 'Restricted Legendary', 'Restricted Mythical'],
+	},
+	{
+		name: "[Gen 9] ISL Regulation Set γ (3rd stage League) Doubles",
+		mod: 'gen9indigostarstorm',
+		gameType: 'doubles',
+		desc: `Indigo Starstorm League Regulation Set γ: Full non-Restricted metagame (635 Pokémon). All evolution stages including 3rd stage (Venusaur, Charizard, Dragonite, etc.). Bans Restricted Legendary, Restricted Mythical, and Restricted Paradox. Level 70, Bring 10 Pick 6.`,
+		ruleset: [
+			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Paradox Allowed', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 70',
+		],
+	},
+	{
+		name: "[Gen 9] ISL Regulation Set Θ (no restricted Special League) Doubles",
+		mod: 'gen9indigostarstorm',
+		gameType: 'doubles',
+		desc: `Indigo Starstorm League Regulation Set Θ: All Gamma Pokémon plus regular Legendary, Mythical, and Paradox (705 Pokémon). Includes Articuno, Zapdos, Moltres, Raikou, Entei, Suicune, Mew, Celebi, etc. Bans Restricted categories. Level 80, Bring 10 Pick 6.`,
+		ruleset: [
+			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Paradox Allowed', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 80',
+		],
+		banlist: ['Restricted Legendary', 'Restricted Mythical'],
+		unbanlist: ['Legendary', 'Mythical', 'Paradox'],
+	},
+	{
+		name: "[Gen 9] ISL Regulation Set ε (Restricted Paradox League) Doubles",
+		mod: 'gen9indigostarstorm',
+		gameType: 'doubles',
+		desc: `Indigo Starstorm League Regulation Set ε: All Gamma Pokémon plus all 12 Restricted Paradox (709 Pokémon). Allows Flutter Mane, Iron Bundle, Roaring Moon, Iron Valiant, Koraidon, Miraidon, and DLC Paradox. Bans Restricted Legendary/Mythical. Level 90, Bring 10 Pick 6.`,
+		ruleset: [
+			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Paradox Allowed', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 90',
+		],
+		unbanlist: [
+			'Flutter Mane', 'Iron Bundle', 'Roaring Moon', 'Iron Valiant', 'Koraidon', 'Miraidon', 'Walking Wake', 'Iron Leaves',
+			'Gouging Fire', 'Raging Bolt', 'Iron Boulder', 'Iron Crown',
+		],
+	},
+	{
+		name: "[Gen 9] ISL Regulation Set λ (One Restricted Legend/Paradox League) Doubles",
+		mod: 'gen9indigostarstorm',
+		gameType: 'doubles',
+		desc: `Indigo Starstorm League Regulation Set λ: All non-Mythical Pokémon (717 Pokémon). Allows up to 1 Restricted Legendary or Restricted Paradox per team (Mewtwo, Lugia, Kyogre, Dialga, Zacian, Koraidon, etc.). Bans all Mythical. Level 100, Bring 10 Pick 6.`,
+		ruleset: [
+			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Limit Restricted Indigo = 1', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 100',
+		],
+		banlist: ['Restricted Mythical', 'Mythical'],
+		unbanlist: ['Legendary', 'Paradox', 'Restricted Legendary', 'Restricted Paradox'],
+	},
+	{
+		name: "[Gen 9] ISL Regulation Set ψ (Two Restricted Legend/Paradox League) Doubles",
+		mod: 'gen9indigostarstorm',
+		gameType: 'doubles',
+		desc: `Indigo Starstorm League Regulation Set ψ: Same as Lambda (717 Pokémon) but allows up to 2 Restricted Legendary or Restricted Paradox per team. The most powerful ISL format. Bans all Mythical. Level 100, Bring 10 Pick 6.`,
+		ruleset: [
+			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Limit Restricted Indigo = 2', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 100',
+		],
+		banlist: ['Restricted Mythical', 'Mythical'],
+		unbanlist: ['Legendary', 'Paradox', 'Restricted Legendary', 'Restricted Paradox'],
+	},
+	{
+		name: "[Gen 9] ISL Regulation Set ν (One Restricted + Mythical) Doubles",
+		mod: 'gen9indigostarstorm',
+		gameType: 'doubles',
+		desc: `Indigo Starstorm League Regulation Set ν: Like Lambda but allows all Mythical Pokémon (733 Pokémon). Allows up to 1 Restricted (Legendary, Paradox, or Mythical) per team. Includes Mew, Celebi, Jirachi, Deoxys, Darkrai, Shaymin, and all other Mythical. Level 100, Bring 10 Pick 6.`,
+		ruleset: [
+			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Limit Restricted Indigo = 1', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 100',
+		],
+		unbanlist: ['Legendary', 'Mythical', 'Paradox', 'Restricted Legendary', 'Restricted Paradox', 'Restricted Mythical'],
+	},
+	{
+		name: "[Gen 9] ISL Regulation Set φ (Two Restricted + Mythical) Doubles",
+		mod: 'gen9indigostarstorm',
+		gameType: 'doubles',
+		desc: `Indigo Starstorm League Regulation Set φ: Like Psi but allows all Mythical Pokémon (733 Pokémon). Allows up to 2 Restricted (Legendary, Paradox, or Mythical) per team. The ultimate ISL format with complete freedom. Includes all Mythical including Restricted ones. Level 100, Bring 10 Pick 6.`,
+		ruleset: [
+			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Limit Restricted Indigo = 2', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 100',
+		],
+		unbanlist: ['Legendary', 'Mythical', 'Paradox', 'Restricted Legendary', 'Restricted Paradox', 'Restricted Mythical'],
+	},
+	//region IS CUSTOM GAMES
+	{
+		section: "IS Custom Game",
 	},
 	{
 		name: "[Gen 9] Indigo Starstorm Singles",
@@ -43,139 +196,7 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 			'Freeze Clause', 'Item Clause', 'Level Clause', 'Species Clause', 'Tera Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
 		],
 	},
-
-	//#region S/V SINGLES
-
-	{
-		section: "S/V Singles",
-	},
-	{
-		name: "[Gen 9] Random Battle",
-		desc: `Randomized teams of Pok&eacute;mon with sets that are generated to be competitively viable.`,
-		mod: 'gen9',
-		team: 'random',
-		bestOfDefault: true,
-		ruleset: ['PotD', 'Obtainable', 'Species Clause', 'HP Percentage Mod', 'Cancel Mod', 'Sleep Clause Mod', 'Illusion Level Mod'],
-	},
-	{
-		name: "[Gen 9] OU",
-		mod: 'gen9',
-		ruleset: ['Standard', 'Evasion Abilities Clause', 'Sleep Moves Clause', '!Sleep Clause Mod'],
-		banlist: ['Uber', 'AG', 'Arena Trap', 'Moody', 'Shadow Tag', 'King\'s Rock', 'Razor Fang', 'Baton Pass', 'Last Respects', 'Shed Tail'],
-	},
-	{
-		name: "[Gen 9] UU",
-		mod: 'gen9',
-		ruleset: ['[Gen 9] OU'],
-		banlist: ['OU', 'UUBL'],
-	},
-	{
-		name: "[Gen 9] LC",
-		mod: 'gen9',
-		ruleset: ['Little Cup', 'Standard'],
-		banlist: [
-			'Aipom', 'Basculin-White-Striped', 'Cutiefly', 'Diglett-Base', 'Dunsparce', 'Duraludon', 'Flittle', 'Gastly', 'Girafarig', 'Gligar',
-			'Magby', 'Meditite', 'Misdreavus', 'Murkrow', 'Porygon', 'Qwilfish-Hisui', 'Rufflet', 'Scraggy', 'Scyther', 'Sneasel', 'Sneasel-Hisui',
-			'Snivy', 'Stantler', 'Torchic', 'Voltorb-Hisui', 'Vulpix', 'Vulpix-Alola', 'Yanma', 'Moody', 'Heat Rock', 'Baton Pass', 'Sticky Web',
-		],
-	},
-	{
-		name: "[Gen 9] Monotype",
-		mod: 'gen9',
-		ruleset: ['Standard', 'Evasion Abilities Clause', 'Same Type Clause', 'Terastal Clause'],
-		banlist: [
-			'Annihilape', 'Arceus', 'Baxcalibur', 'Calyrex-Ice', 'Calyrex-Shadow', 'Chi-Yu', 'Chien-Pao', 'Blaziken', 'Deoxys-Normal', 'Deoxys-Attack',
-			'Dialga', 'Dialga-Origin', 'Espathra', 'Eternatus', 'Giratina', 'Giratina-Origin', 'Gouging Fire', 'Groudon', 'Ho-Oh', 'Iron Bundle', 'Kingambit',
-			'Koraidon', 'Kyogre', 'Kyurem-Black', 'Kyurem-White', 'Lugia', 'Lunala', 'Magearna', 'Mewtwo', 'Miraidon', 'Necrozma-Dawn-Wings', 'Necrozma-Dusk-Mane',
-			'Palafin', 'Palkia', 'Palkia-Origin', 'Rayquaza', 'Reshiram', 'Shaymin-Sky', 'Solgaleo', 'Ursaluna-Bloodmoon', 'Urshifu-Single-Strike', 'Zacian',
-			'Zacian-Crowned', 'Zamazenta', 'Zamazenta-Crowned', 'Zekrom', 'Moody', 'Shadow Tag', 'Booster Energy', 'Damp Rock', 'Focus Band', 'King\'s Rock',
-			'Quick Claw', 'Razor Fang', 'Smooth Rock', 'Baton Pass', 'Last Respects', 'Shed Tail',
-		],
-	},
-	
-	//#region S/V DOUBLES
-	{
-		section: "S/V Doubles",
-	},
-	{
-		name: "[Gen 9] VGC 2023 Reg C",
-		mod: 'gen9predlc',
-		gameType: 'doubles',
-		searchShow: false,
-		bestOfDefault: true,
-		ruleset: ['Flat Rules', '!! Adjust Level = 50', 'Min Source Gen = 9', 'VGC Timer', 'Open Team Sheets', 'Paldea Pokedex'],
-	},
-	{
-		name: "[Gen 9] VGC 2023 Reg D",
-		mod: 'gen9predlc',
-		gameType: 'doubles',
-		searchShow: false,
-		bestOfDefault: true,
-		ruleset: ['Flat Rules', '!! Adjust Level = 50', 'Min Source Gen = 9', 'VGC Timer', 'Open Team Sheets'],
-		banlist: ['Walking Wake', 'Iron Leaves'],
-	},
-	{
-		name: "[Gen 9] VGC 2024 Reg G",
-		mod: 'gen9',
-		gameType: 'doubles',
-		searchShow: false,
-		bestOfDefault: true,
-		ruleset: ['Flat Rules', '!! Adjust Level = 50', 'Min Source Gen = 9', 'VGC Timer', 'Open Team Sheets', 'Limit One Restricted'],
-		restricted: ['Restricted Legendary'],
-	},
-	{
-		name: "[Gen 9] VGC 2025 Reg H",
-		mod: 'gen9',
-		gameType: 'doubles',
-		bestOfDefault: true,
-		ruleset: ['Flat Rules', '!! Adjust Level = 50', 'Min Source Gen = 9', 'VGC Timer', 'Open Team Sheets'],
-		banlist: ['Sub-Legendary', 'Paradox', 'Gouging Fire', 'Iron Boulder', 'Iron Crown', 'Raging Bolt'],
-	},
-	{
-		name: "[Gen 9] VGC 2025 Reg H (Bo3)",
-		mod: 'gen9',
-		gameType: 'doubles',
-		ruleset: ['Flat Rules', '!! Adjust Level = 50', 'Min Source Gen = 9', 'VGC Timer', 'Force Open Team Sheets', 'Best of = 3'],
-		banlist: ['Sub-Legendary', 'Paradox', 'Gouging Fire', 'Iron Boulder', 'Iron Crown', 'Raging Bolt'],
-	},
-	{
-		name: "[Gen 9] VGC 2025 Reg I",
-		mod: 'gen9',
-		gameType: 'doubles',
-		searchShow: false,
-		bestOfDefault: true,
-		ruleset: ['Flat Rules', '!! Adjust Level = 50', 'Min Source Gen = 9', 'VGC Timer', 'Open Team Sheets', 'Limit Two Restricted'],
-		restricted: ['Restricted Legendary'],
-	},
-	{
-		name: "[Gen 9] VGC 2025 Reg J",
-		mod: 'gen9',
-		gameType: 'doubles',
-		bestOfDefault: true,
-		ruleset: ['Flat Rules', '!! Adjust Level = 50', 'Min Source Gen = 9', 'VGC Timer', 'Limit Two Restricted'],
-		restricted: ['Restricted Legendary', 'Mythical'],
-	},
-	{
-		name: "[Gen 9] VGC 2025 Reg J (Bo3)",
-		mod: 'gen9',
-		gameType: 'doubles',
-		searchShow: false,
-		ruleset: ['Flat Rules', '!! Adjust Level = 50', 'Min Source Gen = 9', 'VGC Timer', 'Force Open Team Sheets', 'Best of = 3', 'Limit Two Restricted'],
-		restricted: ['Restricted Legendary', 'Mythical'],
-	},
-	{
-		name: "[Gen 9] Doubles Custom Game",
-		mod: 'gen9',
-		gameType: 'doubles',
-		searchShow: false,
-		battle: { trunc: Math.trunc },
-		debug: true,
-		// no restrictions, for serious (other than team preview)
-		ruleset: ['Team Preview', 'Cancel Mod', 'Max Team Size = 24', 'Max Move Count = 24', 'Max Level = 9999', 'Default Level = 100'],
-	},
-
 	//#region DRAFT
-
 	{
 		section: "Draft",
 		column: 1,
