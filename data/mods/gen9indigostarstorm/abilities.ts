@@ -5836,13 +5836,6 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		rating: 4.5,
 		num: 284,
 	},
-	chillingneigh: {
-		onSourceAfterFaint(length, target, source, effect) { if (effect && effect.effectType === 'Move') { this.boost({ atk: length }, source); } },
-		flags: {},
-		name: "Chilling Neigh",
-		rating: 3,
-		num: 264,
-	},
 	commander: {
 		onAnySwitchInPriority: -2,
 		onAnySwitchIn() { ((this.effect as any).onUpdate as (p: Pokemon) => void).call(this, this.effectState.target); },

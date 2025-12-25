@@ -43,6 +43,12 @@ export interface PokemonSet {
 	 */
 	ability2?: string;
 	/**
+	 * Which ability set is selected (1 or 2).
+	 * Set 1 uses abilities['0'] and abilities['1']
+	 * Set 2 uses abilities['H'] and abilities['S']
+	 */
+	abilitySet?: 1 | 2;
+	/**
 	 * Each move can be an id, e.g. "shellsmash" or a full name,
 	 * e.g. "Shell Smash"
 	 * These should always be converted to ids before use.
@@ -204,12 +210,14 @@ export const Teams = new class Teams {
 			}
 
 			if (set.pokeball || set.hpType || set.gigantamax ||
-				(set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10) || set.teraType) {
+				(set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10) || set.teraType || set.ability2 || set.abilitySet) {
 				buf += `,${set.hpType || ''}`;
 				buf += `,${this.packName(set.pokeball || '')}`;
 				buf += `,${set.gigantamax ? 'G' : ''}`;
 				buf += `,${set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10 ? set.dynamaxLevel : ''}`;
 				buf += `,${set.teraType || ''}`;
+				buf += `,${this.packName(set.ability2 || '')}`;
+				buf += `,${set.abilitySet || ''}`;
 			}
 		}
 
@@ -330,9 +338,9 @@ export const Teams = new class Teams {
 			j = buf.indexOf(']', i);
 			let misc;
 			if (j < 0) {
-				if (i < buf.length) misc = buf.substring(i).split(',', 6);
+				if (i < buf.length) misc = buf.substring(i).split(',', 8);
 			} else {
-				if (i !== j) misc = buf.substring(i, j).split(',', 6);
+				if (i !== j) misc = buf.substring(i, j).split(',', 8);
 			}
 			if (misc) {
 				set.happiness = (misc[0] ? Number(misc[0]) : 255);
@@ -341,6 +349,8 @@ export const Teams = new class Teams {
 				set.gigantamax = !!misc[3];
 				set.dynamaxLevel = (misc[4] ? Number(misc[4]) : 10);
 				set.teraType = misc[5];
+				set.ability2 = this.unpackName(misc[6] || '', Dex.abilities);
+				set.abilitySet = misc[7] ? Number(misc[7]) as 1 | 2 : undefined;
 			}
 			if (j < 0) break;
 			i = j + 1;
@@ -395,6 +405,12 @@ export const Teams = new class Teams {
 
 		if (set.ability) {
 			out += `Ability: ${set.ability}  \n`;
+		}
+		if (set.ability2) {
+			out += `Ability 2: ${set.ability2}  \n`;
+		}
+		if (set.abilitySet) {
+			out += `Ability Set: ${set.abilitySet}  \n`;
 		}
 
 		// details

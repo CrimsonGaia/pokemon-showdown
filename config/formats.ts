@@ -31,7 +31,7 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 		desc: `Indigo Starstorm League Regulation Set α: First-stage Pokémon only (289 Pokémon). Includes not-fully-evolved legendaries (Cosmog, Kubfu). Level 20, Bring 10 Pick 6.`,
 		ruleset: [
 			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'First Stage Only', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
-			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause Mod',
 			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 20',
 		],
 		unbanlist: ['Cosmog', 'Kubfu', 'Type: Null', 'Poipole'],
@@ -43,7 +43,7 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 		desc: `Indigo Starstorm League Regulation Set Δ: First-stage and second-stage Pokémon that can still evolve (380 Pokémon). Includes Cosmog, Cosmoem, Kubfu. Excludes fully evolved 2nd stage. Level 30, Bring 10 Pick 6.`,
 		ruleset: [
 			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'First or Second Stage', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
-			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause Mod',
 			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 30',
 		],
 		unbanlist: ['Cosmog', 'Cosmoem', 'Kubfu', 'Type: Null', 'Poipole'],
@@ -55,7 +55,7 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 		desc: `Indigo Starstorm League Regulation Set ι: Single-stage Pokémon only (52 Pokémon) - those that don't evolve and have no pre-evolutions. Examples: Ditto, Heracross, Skarmory, Rotom. Level 40, Bring 10 Pick 6.`,
 		ruleset: [
 			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Single Stage Only', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
-			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause Mod',
 			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 40',
 		],
 	},
@@ -66,7 +66,7 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 		desc: `Indigo Starstorm League Regulation Set β: First-stage, ALL second-stage (including fully evolved like Arbok, Houndoom), and single-stage Pokémon (545 Pokémon). Includes Cosmog, Cosmoem, Kubfu. Bans all 3rd stage and special categories. Level 50, Bring 10 Pick 6.`,
 		ruleset: [
 			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
-			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause Mod',
 			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 50',
 		],
 		banlist: ['All Third Stage', 'Legendary', 'Mythical', 'Restricted Legendary', 'Restricted Mythical', 'Paradox', 'Restricted Paradox'],
@@ -79,7 +79,7 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 		desc: `Indigo Starstorm League Regulation Set ζ: All Beta Pokémon plus non-Restricted Paradox (655 Pokémon). Limit 3 Paradox per team. Still bans 3rd stage, Legendary, Mythical, and Restricted Paradox. Level 60, Bring 10 Pick 6.`,
 		ruleset: [
 			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Paradox Allowed', 'Limit Paradox = 3', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
-			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause Mod',
 			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 60',
 		],
 		banlist: ['All Third Stage', 'Legendary', 'Mythical', 'Restricted Legendary', 'Restricted Mythical'],
@@ -91,7 +91,7 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 		desc: `Indigo Starstorm League Regulation Set γ: Full non-Restricted metagame (635 Pokémon). All evolution stages including 3rd stage (Venusaur, Charizard, Dragonite, etc.). Bans Restricted Legendary, Restricted Mythical, and Restricted Paradox. Level 70, Bring 10 Pick 6.`,
 		ruleset: [
 			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Paradox Allowed', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
-			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause Mod',
 			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 70',
 		],
 	},
@@ -102,7 +102,7 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 		desc: `Indigo Starstorm League Regulation Set Θ: All Gamma Pokémon plus regular Legendary, Mythical, and Paradox (705 Pokémon). Includes Articuno, Zapdos, Moltres, Raikou, Entei, Suicune, Mew, Celebi, etc. Bans Restricted categories. Level 80, Bring 10 Pick 6.`,
 		ruleset: [
 			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Paradox Allowed', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
-			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause Mod',
 			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 80',
 		],
 		banlist: ['Restricted Legendary', 'Restricted Mythical'],
@@ -115,7 +115,7 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 		desc: `Indigo Starstorm League Regulation Set ε: All Gamma Pokémon plus all 12 Restricted Paradox (709 Pokémon). Allows Flutter Mane, Iron Bundle, Roaring Moon, Iron Valiant, Koraidon, Miraidon, and DLC Paradox. Bans Restricted Legendary/Mythical. Level 90, Bring 10 Pick 6.`,
 		ruleset: [
 			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Paradox Allowed', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
-			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause Mod',
 			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 90',
 		],
 		unbanlist: [
@@ -130,7 +130,7 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 		desc: `Indigo Starstorm League Regulation Set λ: All non-Mythical Pokémon (717 Pokémon). Allows up to 1 Restricted Legendary or Restricted Paradox per team (Mewtwo, Lugia, Kyogre, Dialga, Zacian, Koraidon, etc.). Bans all Mythical. Level 100, Bring 10 Pick 6.`,
 		ruleset: [
 			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Limit Restricted Indigo = 1', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
-			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause Mod',
 			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 100',
 		],
 		banlist: ['Restricted Mythical', 'Mythical'],
@@ -143,7 +143,7 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 		desc: `Indigo Starstorm League Regulation Set ψ: Same as Lambda (717 Pokémon) but allows up to 2 Restricted Legendary or Restricted Paradox per team. The most powerful ISL format. Bans all Mythical. Level 100, Bring 10 Pick 6.`,
 		ruleset: [
 			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Limit Restricted Indigo = 2', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
-			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause Mod',
 			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 100',
 		],
 		banlist: ['Restricted Mythical', 'Mythical'],
@@ -156,7 +156,7 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 		desc: `Indigo Starstorm League Regulation Set ν: Like Lambda but allows all Mythical Pokémon (733 Pokémon). Allows up to 1 Restricted (Legendary, Paradox, or Mythical) per team. Includes Mew, Celebi, Jirachi, Deoxys, Darkrai, Shaymin, and all other Mythical. Level 100, Bring 10 Pick 6.`,
 		ruleset: [
 			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Limit Restricted Indigo = 1', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
-			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause Mod',
 			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 100',
 		],
 		unbanlist: ['Legendary', 'Mythical', 'Paradox', 'Restricted Legendary', 'Restricted Paradox', 'Restricted Mythical'],
@@ -168,7 +168,7 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 		desc: `Indigo Starstorm League Regulation Set φ: Like Psi but allows all Mythical Pokémon (733 Pokémon). Allows up to 2 Restricted (Legendary, Paradox, or Mythical) per team. The ultimate ISL format with complete freedom. Includes all Mythical including Restricted ones. Level 100, Bring 10 Pick 6.`,
 		ruleset: [
 			'Indigo Starstorm Timer', 'Indigo Starstorm Whitelist', 'Limit Restricted Indigo = 2', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
-			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Species Clause', 'Nickname Clause', 'Item Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause Mod',
 			'Max Team Size = 10', 'Picked Team Size = 6', 'Adjust Level = 100',
 		],
 		unbanlist: ['Legendary', 'Mythical', 'Paradox', 'Restricted Legendary', 'Restricted Paradox', 'Restricted Mythical'],
@@ -183,7 +183,7 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 		desc: `Singles format for the Indigo Starstorm mod with custom clauses.`,
 		ruleset: [
 			'Indigo Starstorm Timer', 'Item Reveal', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
-			'Freeze Clause', 'Item Clause', 'Level Clause', 'Species Clause', 'Tera Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Freeze Clause', 'Item Clause', 'Level Clause', 'Species Clause', 'Tera Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause Mod',
 		],
 	},
 	{
@@ -193,7 +193,7 @@ export const Formats: import('../sim/dex-formats').FormatList = [
 		desc: `Doubles format for the Indigo Starstorm mod with custom clauses.`,
 		ruleset: [
 			'Indigo Starstorm Timer', 'Item Reveal', 'Obtainable', 'Team Preview', 'HP Percentage Mod', 'Cancel Mod',
-			'Freeze Clause', 'Item Clause', 'Level Clause', 'Species Clause', 'Tera Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause',
+			'Freeze Clause', 'Item Clause', 'Level Clause', 'Species Clause', 'Tera Clause', 'OHKO Clause', 'Endless Battle Clause', 'Sleep Clause Mod',
 		],
 	},
 	//#region DRAFT
