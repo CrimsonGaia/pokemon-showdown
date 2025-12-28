@@ -5333,7 +5333,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 	trapinch: {
 		num: 328,
 		name: "Trapinch",
-		types: ["Ground"],
+		types: ["Bug", "Ground"],
 		baseStats: { hp: 45, atk: 100, def: 45, spa: 45, spd: 45, spe: 10 },
 		abilities: { // ABILITY SET 1
             0: "Arena Trap",
@@ -5352,7 +5352,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 	vibrava: {
 		num: 329,
 		name: "Vibrava",
-		types: ["Ground", "Dragon"],
+		types: ["Bug", "Dragon"],
 		baseStats: { hp: 50, atk: 70, def: 50, spa: 50, spd: 50, spe: 70 },
 		abilities: { // ABILITY SET 1
             0: "Levitate",
@@ -5373,7 +5373,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 	flygon: {
 		num: 330,
 		name: "Flygon",
-		types: ["Ground", "Dragon"],
+		types: ["Bug", "Dragon"],
 		baseStats: { hp: 80, atk: 108, def: 90, spa: 80, spd: 90, spe: 112 },
 		abilities: { // ABILITY SET 1
             0: "Sand Steam",

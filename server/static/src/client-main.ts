@@ -1974,11 +1974,17 @@ export const PS = new class extends PSModel {
 				width: 570,
 				maxWidth: 640,
 			};
+		case 'teambuilder':
+			return {
+				minWidth: 850,
+				width: 850,
+				maxWidth: 850,
+			};
 		case 'team':
 			return {
-				minWidth: 660,
-				width: 660,
-				maxWidth: 660,
+				minWidth: 850,
+				width: 850,
+				maxWidth: 850,
 			};
 		case 'battle':
 			return {

@@ -1,4 +1,4 @@
-(function (exports, $) {
+﻿(function (exports, $) {
 	// this is a useful global
 	var teams;
 	exports.TeambuilderRoom = exports.Room.extend({
@@ -17,8 +17,6 @@
 				this.curTeam.iconCache = '!';
 				this.curTeam.gen = this.getGen(this.curTeam.format);
 				this.curTeam.dex = Dex.forGen(this.curTeam.gen);
-				if (this.curTeam.format.includes('letsgo')) { this.curTeam.dex = Dex.mod('gen7letsgo'); }
-				if (this.curTeam.format.includes('bdsp')) { this.curTeam.dex = Dex.mod('gen8bdsp'); }
 				Storage.activeSetList = this.curSetList;
 			}
 		},
@@ -109,9 +107,7 @@
 		curTeamLoc: 0,
 		curSet: null,
 		curSetLoc: 0,
-		// curFolder will have '/' at the end if it's a folder, but
-		// it will be alphanumeric (so guaranteed no '/') if it's a
-		// format
+		// curFolder will have '/' at the end if it's a folder, but it will be alphanumeric (so guaranteed no '/') if it's a format
 		// Special values:
 		// '' -     show all
 		// 'gen9' - show teams with no format
@@ -130,7 +126,6 @@
 				if (this.curTeam.loaded === false || (this.curTeam.teamid && !this.curTeam.loaded)) { this.loadTeam();
 					return this.updateTeamView();
 				}
-				this.ignoreEVLimits = (this.curTeam.gen < 3 || ((this.curTeam.format.includes('hackmons') || this.curTeam.format.endsWith('bh')) && this.curTeam.gen !== 6) || this.curTeam.format.includes('metronomebattle'));
 				if (this.curSet) { return this.updateSetView(); }
 				return this.updateTeamView();
 			}
@@ -608,8 +603,6 @@
 			this.curTeam.iconCache = '!';
 			this.curTeam.gen = this.getGen(this.curTeam.format);
 			this.curTeam.dex = Dex.forGen(this.curTeam.gen);
-			if (this.curTeam.format.includes('letsgo')) { this.curTeam.dex = Dex.mod('gen7letsgo'); }
-			if (this.curTeam.format.includes('bdsp')) { this.curTeam.dex = Dex.mod('gen8bdsp'); }
 			Storage.activeSetList = this.curSetList = Storage.unpackTeam(this.curTeam.team);
 			this.curTeamIndex = i;
 			this.update();
@@ -1048,9 +1041,6 @@
 		//region teambuilder main panel
 		renderSet: function (set, i) {
 			var species = this.curTeam.dex.species.get(set.species);
-			var isLetsGo = this.curTeam.format.includes('letsgo');
-			var isBDSP = this.curTeam.format.includes('bdsp');
-			var isNatDex = this.curTeam.format.includes('nationaldex') || this.curTeam.format.includes('natdex');
 			var buf = '<li value="' + i + '">';
 			if (!set.species) {
 				if (this.deletedSet) { buf += '<div class="setmenu setmenu-left"><button name="undeleteSet" class="button"><i class="fa fa-undo"></i> Undo Delete</button></div>'; }
@@ -1063,14 +1053,7 @@
 			buf += '<div class="setchart-nickname">';
 			buf += '<label>Nickname</label><input type="text" name="nickname" class="textbox" value="' + BattleLog.escapeHTML(set.name || '') + '" placeholder="' + BattleLog.escapeHTML(species.baseSpecies) + '" />';
 			buf += '</div>';
-			buf += '<div class="setchart" style="' + Dex.getTeambuilderSprite(set, this.curTeam.dex) + '; position: relative;">';
-			// Shiny checkbox overlay
-			if (this.curTeam.gen > 1) {
-				buf += '<div style="position: absolute; top: 5px; left: 5px; z-index: 10; display: flex; align-items: center; background: rgba(255, 255, 255, 0.8); padding: 2px 5px; border-radius: 3px;">';
-				buf += '<input type="checkbox" name="shiny"' + (set.shiny ? ' checked' : '') + ' style="margin: 0; margin-right: 4px;" />';
-				buf += '<label style="margin: 0; font-size: 10px; cursor: pointer;">Shiny</label>';
-				buf += '</div>';
-			}
+			buf += '<div class="setchart" style="' + Dex.getTeambuilderSprite(set, this.curTeam.dex) + ';">';
 			// icon
 			buf += '<div class="setcol setcol-icon">';
 			if (species.cosmeticFormes) { buf += '<div class="setcell-sprite changeform"><i class="fa fa-caret-down"></i></div>'; } 
@@ -1091,13 +1074,14 @@
 			buf += '<label style="font-size: 10px;">Level</label><input type="number" name="level" class="textbox" value="' + (set.level || 100) + '" min="1" max="100" style="width: 40px;" />';
 			if (this.curTeam.gen > 1) {
 				buf += '<label style="font-size: 10px;">Gender</label><select name="gender" class="button" style="width: 60px;"><option value=""' + (!set.gender ? ' selected' : '') + '>Auto</option><option value="M"' + (set.gender === 'M' ? ' selected' : '') + '>Male</option><option value="F"' + (set.gender === 'F' ? ' selected' : '') + '>Female</option></select>';
+				buf += '<label style="font-size: 10px;">Shiny</label><input type="checkbox" name="shiny"' + (set.shiny ? ' checked' : '') + ' />';
 				if (isLetsGo) {
 					buf += '<label style="font-size: 10px;">Happiness</label><input type="number" name="happiness" class="textbox" value="' + (typeof set.happiness === 'number' ? set.happiness : 70) + '" min="0" max="255" style="width: 50px;" />';
 				} else if (this.curTeam.gen < 8 || isNatDex) {
 					buf += '<label style="font-size: 10px;">Happiness</label><input type="number" name="happiness" class="textbox" value="' + (typeof set.happiness === 'number' ? set.happiness : 255) + '" min="0" max="255" style="width: 50px;" />';
 				}
 			}
-			buf += '</div></div></div>';
+			buf += '</div></div></div></div>';
 		// Tera Type column
 		if (this.curTeam.gen === 9) {
 			var teraType = set.teraType || species.requiredTeraType || species.types[0];
@@ -1363,10 +1347,7 @@
 			this.curTeam.format = format;
 			this.curTeam.gen = this.getGen(this.curTeam.format);
 			this.curTeam.dex = Dex.forGen(this.curTeam.gen);
-			if (this.curTeam.format.includes('letsgo')) { this.curTeam.dex = Dex.mod('gen7letsgo'); }
-			if (this.curTeam.format.includes('bdsp')) { this.curTeam.dex = Dex.mod('gen8bdsp'); }
 			this.save();
-			if (this.curTeam.gen === 5 && !Dex.loadedSpriteData['bw']) Dex.loadSpriteData('bw');
 			this.update();
 		},
 		nicknameChange: function (e) {
@@ -2448,18 +2429,6 @@
 				buf += '<label class="checkbox inline"><input type="radio" name="shiny" value="yes"' + (set.shiny ? ' checked' : '') + ' /> Yes</label> ';
 				buf += '<label class="checkbox inline"><input type="radio" name="shiny" value="no"' + (!set.shiny ? ' checked' : '') + ' /> No</label>';
 				buf += '</div></div>';
-				if (this.curTeam.gen === 8 && !isBDSP) {
-					if (!species.cannotDynamax) { buf += '<div class="formrow"><label class="formlabel">Dmax Level:</label><div><input type="number" min="0" max="10" step="1" name="dynamaxlevel" value="' + (typeof set.dynamaxLevel === 'number' ? set.dynamaxLevel : 10) + '" class="textbox inputform numform" /></div></div>'; }
-					if (species.canGigantamax || species.forme === 'Gmax') {
-						buf += '<div class="formrow"><label class="formlabel">Gigantamax:</label><div>';
-						if (species.forme === 'Gmax') { buf += 'Yes'; } 
-						else {
-							buf += '<label class="checkbox inline"><input type="radio" name="gigantamax" value="yes"' + (set.gigantamax ? ' checked' : '') + ' /> Yes</label> ';
-							buf += '<label class="checkbox inline"><input type="radio" name="gigantamax" value="no"' + (!set.gigantamax ? ' checked' : '') + ' /> No</label>';
-						}
-						buf += '</div></div>';
-					}
-				}
 			}
 
 			if (this.curTeam.gen > 2) {
@@ -2467,14 +2436,6 @@
 				buf += '<option value=""' + (!set.pokeball ? ' selected="selected"' : '') + '></option>'; // unset
 				var balls = this.curTeam.dex.getPokeballs();
 				for (var i = 0; i < balls.length; i++) { buf += '<option value="' + balls[i] + '"' + (set.pokeball === balls[i] ? ' selected="selected"' : '') + '>' + balls[i] + '</option>'; }
-				buf += '</select></div></div>';
-			}
-
-			if (!isLetsGo && (this.curTeam.gen === 7 || isNatDex || (isBDSP && species.baseSpecies === 'Unown'))) {
-				buf += '<div class="formrow"><label class="formlabel" title="Hidden Power Type">Hidden Power:</label><div><select name="hptype" class="button">';
-				buf += '<option value=""' + (!set.hpType ? ' selected="selected"' : '') + '>(automatic type)</option>'; // unset
-				var types = Dex.types.all();
-				for (var i = 0; i < types.length; i++) { if (types[i].HPivs) { buf += '<option value="' + types[i].name + '"' + (set.hpType === types[i].name ? ' selected="selected"' : '') + '>' + types[i].name + '</option>'; } }
 				buf += '</select></div></div>';
 			}
 			if (this.curTeam.gen === 9) {

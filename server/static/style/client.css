@@ -374,13 +374,29 @@ summary:hover .expandbutton,
 	left: 0;
 	right: 0;
 	bottom: 0;
+	min-width: 850px;
 
 	border-left: 1px solid #AAAAAA;
 	margin-left: -1px;
 }
+.ps-room.ps-room-right,
+.ps-room[data-side="right"],
+.ps-room.ps-room-light {
+	left: 850px !important;
+	right: auto !important;
+}
+.ps-room.ps-room-left,
+.ps-room[data-side="left"] {
+	right: auto;
+	width: 850px;
+}
+/* Fallback: position even-indexed rooms to the right */
+.mainmenuwrapper > .ps-room:nth-child(even) {
+	left: 850px !important;
+	right: auto !important;
+}
 .scrollable {
 	overflow: auto;
-	-webkit-overflow-scrolling: touch;
 }
 .ps-room.ps-room-light {
 	background: rgba(242,247,250,.85);
@@ -401,7 +417,6 @@ summary:hover .expandbutton,
 	background: rgba(212, 212, 212, .5);
 
 	overflow: auto;
-	-webkit-overflow-scrolling: touch;
 	z-index: 20;
 }
 .ps-popup {
@@ -715,7 +730,6 @@ p.or:after {
 	border-bottom: 0;
 
 	overflow: auto;
-	-webkit-overflow-scrolling: touch;
 	word-wrap: break-word;
 }
 .pm-buttonbar {
@@ -1043,7 +1057,6 @@ p.or:after {
 
 	overflow: auto;
 	overflow-x: hidden;
-	-webkit-overflow-scrolling: touch;
 	word-wrap: break-word;
 }
 .chat-log-add {
@@ -1206,8 +1219,8 @@ p.or:after {
 	background-color: rgba(242, 247, 250, 0.85);
 	max-height: 0;
 	overflow: hidden;
-	transition: max-height 0.15s;
 	-webkit-transition: max-height 0.15s;
+	transition: max-height 0.15s;
 	touch-action: none;
 }
 
@@ -1433,7 +1446,6 @@ p.or:after {
 	border-right: 1px solid #AAAAAA;
 
 	overflow: auto;
-	-webkit-overflow-scrolling: touch;
 }
 .pm-buttonbar {
 	height: 21px;
@@ -1576,12 +1588,12 @@ p.or:after {
 	border-right: 0;
 	top: 0;
 	left: 0;
-	transform-origin: top left;
 	-webkit-transform-origin: top left;
+	transform-origin: top left;
 }
 .ps-room .foehint {
-	transform-origin: top left;
 	-webkit-transform-origin: top left;
+	transform-origin: top left;
 }
 .ps-room .battle-controls {
 	position: absolute;
@@ -2155,8 +2167,8 @@ p.or:after {
 	overflow: hidden;
 	text-align: left;
 	cursor: pointer;
-	user-select: none;
 	-webkit-user-select: none;
+	user-select: none;
 }
 .folder .selectFolder:hover {
 	background: #c7d3dc;
@@ -2221,7 +2233,7 @@ p.or:after {
 .teamlist .team {
 	display: inline-block;
 	white-space: nowrap;
-	width: 350px;
+	width: 360px;
 	height: 49px;
 	padding: 1px 6px 1px 6px;
 	font-size: 8pt;
@@ -2274,8 +2286,8 @@ p.or:after {
 }
 
 .teamwrapper {
-	transform-origin: top left;
 	-webkit-transform-origin: top left;
+	transform-origin: top left;
 }
 
 .teambar {
@@ -2482,8 +2494,8 @@ p.or:after {
 }
 .setdetails, .setstats {
 	display: block;
-	box-sizing: border-box;
 	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 	border: 1px solid #AAAAAA;
 	border-radius: 3px;
 	padding: 1px;
@@ -2674,11 +2686,11 @@ p.or:after {
 
 	border: 1px solid #999999;
 	border-radius: 5px;
-	background-image: linear-gradient(to bottom, rgb(218,229,240) 10%, rgb(203,214,225) 55%);
-	background-image: -o-linear-gradient(top, rgb(218,229,240) 10%, rgb(203,214,225) 55%);
-	background-image: -moz-linear-gradient(top, rgb(218,229,240) 10%, rgb(203,214,225) 55%);
 	background-image: -webkit-linear-gradient(top, rgb(218,229,240) 10%, rgb(203,214,225) 55%);
+	background-image: -moz-linear-gradient(top, rgb(218,229,240) 10%, rgb(203,214,225) 55%);
+	background-image: -o-linear-gradient(top, rgb(218,229,240) 10%, rgb(203,214,225) 55%);
 	background-image: -ms-linear-gradient(top, rgb(218,229,240) 10%, rgb(203,214,225) 55%);
+	background-image: linear-gradient(to bottom, rgb(218,229,240) 10%, rgb(203,214,225) 55%);
 	outline: none;
 
 	position: absolute;
@@ -2753,7 +2765,6 @@ p.or:after {
 	min-width: 640px;
 
 	overflow-y: scroll;
-	-webkit-overflow-scrolling: touch;
 }
 @media (max-height:410px) {
 	.teambuilder-results {
@@ -2789,7 +2800,6 @@ p.or:after {
 	border-top: 1px solid #AAAAAA;
 
 	overflow: auto;
-	-webkit-overflow-scrolling: touch;
 }
 .teamwrapper.scaled {
 	width: 640px;
@@ -3072,6 +3082,7 @@ p.or:after {
 .dark .pm-log {
 	background: rgba(0,0,0,.85);
 	color: #DDD;
+	-webkit-backdrop-filter: blur(4px);
 	backdrop-filter: blur(4px);
 }
 
@@ -3109,6 +3120,7 @@ p.or:after {
 .dark .chat-log {
 	background: rgba(0,0,0,.5);
 	color: #DDD;
+	-webkit-backdrop-filter: blur(4px);
 	backdrop-filter: blur(4px);
 }
 

@@ -3291,6 +3291,27 @@ export const Rulesets: import('../../../sim/dex-formats').FormatDataTable = {
 			if (!speciesMods.length) throw new Error('This format has no rules that modify base stats.');
 		},
 	},
+	freezeclause: {
+		effectType: 'ValidatorRule',
+		name: 'Freeze Clause',
+		desc: "Prevents players from freezing more than one opposing Pokémon at a time",
+		// Note: This is typically enforced in battle, not in validation
+		// Including it here for format compatibility
+	},
+	levelclause: {
+		effectType: 'ValidatorRule',
+		name: 'Level Clause',
+		desc: "Requires all Pokémon to be set to a specific level",
+		// Note: This is typically handled by the Adjust Level rule
+		// Including it here for format compatibility
+	},
+	teraclause: {
+		effectType: 'ValidatorRule',
+		name: 'Tera Clause',
+		desc: "Limits the use of Terastallization in battle",
+		// Note: This restricts terastallization usage
+		// Including it here for format compatibility
+	},
 
 	//#endregion
 };
