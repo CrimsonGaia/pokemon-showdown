@@ -1175,6 +1175,14 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		rating: 4,
 		num: 1073,
 	},
+	twominded: {
+		onBeforeMovePriority: 11,
+		onBeforeMove(pokemon, target, move) { if (pokemon.status === 'slp') { move.sleepUsable = true; } },
+		flags: {},
+		name: "Two Minded",
+		rating: 3,
+		num: 1067,
+	},
 	volvation: {
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.spin) { return this.chainModify(1.5); } },
 		onSourceModifyAtkPriority: 6,
