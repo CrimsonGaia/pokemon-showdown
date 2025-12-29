@@ -7,6 +7,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 // #region Berries
 	apicotberry: {
 		name: "Apicot Berry",
+		shortDesc: "Raises holder's Sp. Def by 1 when at 2/3 max HP or less. Fragile; if broken, raises Sp. Def by 1.",
 		spritenum: 10,
 		isBerry: true,
 		isFragile: true,
@@ -26,6 +27,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	aspearberry: {
 		name: "Aspear Berry",
+		shortDesc: "Holder is cured if it is frozen. If hit by Belch while frozen, cures freeze. Single use.",
 		spritenum: 13,
 		isBerry: true,
 		belch: { effect: function(target) { if (target.status === 'frz') { target.cureStatus(); } }, },
@@ -40,6 +42,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	babiriberry: {
 		name: "Babiri Berry",
+		shortDesc: "First supereffective Steel hit charges berry and halves damage. Second hit consumes berry, halves damage, and heals 75 HP. Volatile; if disturbed while charged, sets Steel Spikes on both sides and loses charge. If hit by Belch, 20% chance to burn target.",
 		spritenum: 17,
 		isBerry: true,
 		isMildlyFragile: true,
@@ -81,6 +84,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	belueberry: {
 		name: "Belue Berry",
+		shortDesc: "Cannot be eaten by the holder. Fragile. If hit by Belch, 20% chance to infatuate target.",
 		spritenum: 21,
 		isBerry: true,
 		isFragile: true,
@@ -98,6 +102,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	blukberry: {
 		name: "Bluk Berry",
+		shortDesc: "Cannot be eaten by the holder. Fragile.",
 		spritenum: 44,
 		isBerry: true,
 		isFragile: true,
@@ -112,6 +117,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	chartiberry: {
 		name: "Charti Berry",
+		shortDesc: "First supereffective Rock hit charges berry and halves damage. Second hit consumes berry, halves damage, and heals 75 HP. Volatile; if disturbed while charged, sets Stealth Rock on both sides and loses charge. If hit by Belch, Belch becomes 130 BP with 20% flinch chance.",
 		spritenum: 62,
 		isBerry: true,
 		isMildlyFragile: true,
@@ -154,6 +160,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	cheriberry: {
 		name: "Cheri Berry",
+		shortDesc: "Holder cures itself if it is paralyzed. Fragile; if broken while paralyzed, cures paralysis. If hit by Belch while paralyzed, cures target's paralysis. Single use.",
 		spritenum: 63,
 		isBerry: true,
 		isFragile: true,
@@ -170,6 +177,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	chestoberry: {
 		name: "Chesto Berry",
+		shortDesc: "Holder is cured if it is asleep or drowsy. If hit by Belch while asleep/drowsy, cures target. Single use.",
 		spritenum: 65,
 		isBerry: true,
 		belch: {
@@ -186,6 +194,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	chilanberry: {
 		name: "Chilan Berry",
+		shortDesc: "Halves damage from a Normal-type attack. Fragile. If hit by Belch, Belch becomes 140 BP. Single use.",
 		spritenum: 66,
 		isBerry: true,
 		isFragile: true,
@@ -212,6 +221,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	chopleberry: {
 		name: "Chople Berry",
+		shortDesc: "First supereffective Fighting hit charges berry and halves damage. Second hit consumes berry, halves damage, and heals 75 HP. Fragile; if broken, burns holder. If broken while charged, also grants Focus Energy. If hit by Belch, 10% chance to burn target.",
 		spritenum: 71,
 		isBerry: true,
 		isFragile: true,
@@ -249,6 +259,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	cobaberry: {
 		name: "Coba Berry",
+		shortDesc: "First supereffective Flying hit charges berry and halves damage. Second hit consumes berry, halves damage, and heals 75 HP. Fragile; if broken while charged, holder gains Wind Burst.",
 		spritenum: 76,
 		isBerry: true,
 		isFragile: true,
@@ -279,6 +290,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	colburberry: {
 		name: "Colbur Berry",
+		shortDesc: "First supereffective Dark hit charges berry and halves damage. Second hit consumes berry, halves damage, and heals 75 HP. Volatile; if disturbed while charged, sets Spikes on both sides and loses charge. If hit by Belch, 20% chance to lower target's Attack by 1. If hit by contact move while holding, transfers to attacker.",
 		spritenum: 78,
 		isBerry: true,
 		isMildlyFragile: true,
@@ -327,6 +339,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	cornnberry: {
 		name: "Cornn Berry",
+		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 81,
 		isBerry: true,
 		naturalGift: {
@@ -340,6 +353,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	custapberry: {
 		name: "Custap Berry",
+		shortDesc: "Holder moves first in its priority bracket when at 1/3 max HP or less (or 2/3 with Gluttony), heals 30 HP. Fragile; if broken, heals 20 HP and grants Pepped status. If hit by Belch, target gains Lagging status. Single use.",
 		spritenum: 86,
 		isBerry: true,
 		belch: { effect: function(target) { target.addVolatile('lagging'); }, },
@@ -373,6 +387,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	durinberry: {
 		name: "Durin Berry",
+		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 114,
 		isBerry: true,
 		naturalGift: {
@@ -386,6 +401,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	figyberry: {
 		name: "Figy Berry",
+		shortDesc: "Restores 1/3 max HP at 1/3 max HP or less (or 2/3 with Gluttony); confuses if holder is Dark, Fairy, Grass, or Psychic type. Fragile; if broken, restores 1/4 max HP. If hit by Belch, target heals 1/16 max HP. Single use.",
 		spritenum: 140,
 		isBerry: true,
 		belch: { effect: function(target) { target.heal(target.maxhp / 16); }, },
@@ -413,6 +429,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ganlonberry: {
 		name: "Ganlon Berry",
+		shortDesc: "Raises holder's Defense by 1 when at 1/4 max HP or less (or 1/2 with Gluttony). Single use.",
 		spritenum: 158,
 		isBerry: true,
 		naturalGift: {
@@ -432,6 +449,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	grepaberry: {
 		name: "Grepa Berry",
+		shortDesc: "Cannot be eaten by the holder. Fragile. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 178,
 		isBerry: true,
 		isFragile: true,
@@ -445,6 +463,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	habanberry: {
 		name: "Haban Berry",
+		shortDesc: "Halves damage from first supereffective Dragon-type attack. Volatile; if disturbed while charged, inflicts Dragonblight on holder and loses charge. If hit by Belch, 30% chance to inflict Dragonblight on target.",
 		spritenum: 185,
 		isBerry: true,
 		isMildlyFragile: true,
@@ -480,6 +499,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	hondewberry: {
 		name: "Hondew Berry",
+		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 213,
 		isBerry: true,
 		naturalGift: {
@@ -492,6 +512,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	iapapaberry: {
 		name: "Iapapa Berry",
+		shortDesc: "Restores 1/3 max HP at 1/3 max HP or less (or 2/3 with Gluttony); confuses if holder is Electric, Fairy, Ghost, or Psychic type. Fragile; if broken, restores 1/4 max HP. If hit by Belch, target heals 1/16 max HP. Single use.",
 		spritenum: 217,
 		isBerry: true,
 		belch: { effect: function(target) { target.heal(target.maxhp / 16); }, },
@@ -519,6 +540,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	jabocaberry: {
 		name: "Jaboca Berry",
+		shortDesc: "If holder is hit by a physical move, attacker loses HP equal to the damage dealt. Fragile; if broken, holder loses 1/10 max HP. If hit by Belch, 20% chance to inflict Dragonblight on target. Single use.",
 		spritenum: 230,
 		isBerry: true,
 		isFragile: true,
@@ -540,6 +562,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	kasibberry: {
 		name: "Kasib Berry",
+		shortDesc: "Halves damage from first supereffective Ghost-type attack. Grants immunity to Curse status. Volatile; if disturbed, holder gains Focus Energy; if disturbed while charged, also inflicts Curse and loses charge. If hit by Belch, cures target's Curse. Single use.",
 		spritenum: 233,
 		isBerry: true,
 		isMildlyFragile: true,
@@ -601,6 +624,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	kebiaberry: {
 		name: "Kebia Berry",
+		shortDesc: "First supereffective Poison hit charges berry and halves damage. Second hit consumes berry, halves damage, and heals 75 HP. Fragile; if broken, inflicts poison; if broken while charged, inflicts bad poison and sets Toxic Spikes on both sides. If hit by Belch, 20% chance each to inflict bad poison or regular poison on target.",
 		spritenum: 234,
 		isBerry: true,
 		isFragile: true,
@@ -643,6 +667,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	keeberry: {
 		name: "Kee Berry",
+		shortDesc: "Raises holder's Defense by 1 if hit by a physical attack. If hit by Belch, 30% chance to badly poison target. Single use.",
 		spritenum: 593,
 		isBerry: true,
 		belch: {
@@ -665,6 +690,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	kelpsyberry: {
 		name: "Kelpsy Berry",
+		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 235,
 		isBerry: true,
 		belch: {},
@@ -678,6 +704,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	lansatberry: {
 		name: "Lansat Berry",
+		shortDesc: "While held, grants Luck Effect. Raises holder's critical hit ratio by 2 stages and grants Rainbow Effect when at 2/3 max HP or less (or 100% with Gluttony). Fragile; if broken, raises critical hit ratio by 2 stages. If hit by Belch, target's critical hit ratio is raised by 2 stages. Single use.",
 		spritenum: 238,
 		isBerry: true,
 		isFragile: true,
@@ -703,6 +730,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	leppaberry: {
 		name: "Leppa Berry",
+		shortDesc: "Restores 10 PP to a move that reaches 0 PP. Fragile. Single use.",
 		spritenum: 244,
 		isBerry: true,
 		isFragile: true,
@@ -726,6 +754,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	liechiberry: {
 		name: "Liechi Berry",
+		shortDesc: "Raises holder's Attack by 1 when at 2/3 max HP or less (or 100% with Gluttony). Fragile; if broken, raises Attack by 1.",
 		spritenum: 248,
 		isBerry: true,
 		isFragile: true,
@@ -747,6 +776,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	lumberry: {
 		name: "Lum Berry",
+		shortDesc: "Holder cures itself if it is statused or confused. Fragile. Single use.",
 		spritenum: 262,
 		isBerry: true,
 		isFragile: true,
@@ -784,6 +814,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	magostberry: {
 		name: "Magost Berry",
+		shortDesc: "Cannot be eaten by the holder. Fragile. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 275,
 		isBerry: true,
 		isFragile: true,
@@ -799,6 +830,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	marangaberry: {
 		name: "Maranga Berry",
+		shortDesc: "Raises holder's Sp. Def by 1 if hit by a special attack. If hit by contact move while holding, transfers to attacker.",
 		spritenum: 597,
 		isBerry: true,
 		belch: { },
@@ -820,6 +852,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	micleberry: {
 		name: "Micle Berry",
+		shortDesc: "Raises holder's accuracy by 3 stages, heals 75 HP, and raises critical hit ratio by 3 stages when at 1/2 max HP or less (or 100% with Gluttony). Fragile; if broken, same effects apply. Single use.",
 		spritenum: 290,
 		isBerry: true,
 		isFragile: true,
@@ -848,6 +881,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	nanabberry: {
 		name: "Nanab Berry",
+		shortDesc: "Cannot be eaten by the holder. Fragile. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 302,
 		isBerry: true,
 		isFragile: true,
@@ -863,6 +897,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	nomelberry: {
 		name: "Nomel Berry",
+		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 306,
 		isBerry: true,
 		belch: { },
@@ -942,6 +977,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	pamtreberry: {
 		name: "Pamtre Berry",
+		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 323,
 		isBerry: true,
 		belch: { },
@@ -1061,6 +1097,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	petayaberry: {
 		name: "Petaya Berry",
+		shortDesc: "Raises holder's Sp. Atk by 1 when at 1/4 max HP or less (or 1/2 with Gluttony). Single use.",
 		spritenum: 335,
 		isBerry: true,
 		belch: { },
@@ -1075,6 +1112,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	pinapberry: {
 		name: "Pinap Berry",
+		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 337,
 		isBerry: true,
 		belch: { },
@@ -1089,6 +1127,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	pomegberry: {
 		name: "Pomeg Berry",
+		shortDesc: "Cannot be eaten by the holder. Fragile. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 351,
 		isBerry: true,
 		isFragile: true,
@@ -1103,6 +1142,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	qualotberry: {
 		name: "Qualot Berry",
+		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 371,
 		isBerry: true,
 		belch: { },
@@ -1116,6 +1156,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	rabutaberry: {
 		name: "Rabuta Berry",
+		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 375,
 		isBerry: true,
 		belch: { },
@@ -1284,6 +1325,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	salacberry: {
 		name: "Salac Berry",
+		shortDesc: "Raises holder's Speed by 1 when at 1/4 max HP or less (or 1/2 with Gluttony). Single use.",
 		spritenum: 426,
 		isBerry: true,
 		naturalGift: {
@@ -1303,6 +1345,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	shucaberry: {
 		name: "Shuca Berry",
+		shortDesc: "First supereffective Ground hit charges berry and halves damage. Second hit consumes berry, halves damage, and heals 75 HP. Fragile.",
 		spritenum: 443,
 		isBerry: true,
 		isFragile: true,
@@ -1333,6 +1376,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	sitrusberry: {
 		name: "Sitrus Berry",
+		shortDesc: "Restores 1/4 max HP at 1/2 max HP or less. Fragile; if broken, heals 1/8 max HP. If hit by Belch, target heals 1/24 max HP. Single use.",
 		spritenum: 448,
 		isBerry: true,
 		isFragile: true,
@@ -1350,6 +1394,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	spelonberry: {
 		name: "Spelon Berry",
+		shortDesc: "Cannot be eaten by the holder. Fragile; if broken, burns holder. If hit by Belch, 30% chance to burn target and Belch becomes Poison/Fire type that can hit Steel types.",
 		spritenum: 462,
 		isBerry: true,
 		isFragile: true,
@@ -1383,6 +1428,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	starfberry: {
 		name: "Starf Berry",
+		shortDesc: "Raises a random stat by 2 stages when at 1/4 max HP or less (or 1/2 with Gluttony). Single use.",
 		spritenum: 472,
 		isBerry: true,
 		naturalGift: {
@@ -1412,6 +1458,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	tamatoberry: {
 		name: "Tamato Berry",
+		shortDesc: "Cannot be eaten by the holder. Fragile. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 486,
 		isBerry: true,
 		isFragile: true,
@@ -1465,6 +1512,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	wacanberry: {
 		name: "Wacan Berry",
+		shortDesc: "First supereffective Electric hit charges berry and negates all damage. Second hit consumes berry, halves damage, and heals 75 HP. Fragile; if broken, paralyzes holder; if broken while charged, holder also loses 1/3 max HP from explosion. If hit by Belch, 10% chance to paralyze target.",
 		spritenum: 526,
 		isBerry: true,
 		isFragile: true,
@@ -1506,6 +1554,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	watmelberry: {
 		name: "Watmel Berry",
+		shortDesc: "Cannot be eaten by the holder. Fragile. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 530,
 		isBerry: true,
 		isFragile: true,
@@ -1521,6 +1570,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	wepearberry: {
 		name: "Wepear Berry",
+		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 533,
 		isBerry: true,
 		belch: { },
@@ -1535,6 +1585,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	wikiberry: {
 		name: "Wiki Berry",
+		shortDesc: "Restores 1/3 max HP at 1/4 max HP or less (or 1/2 with Gluttony); confuses if -Sp. Atk Nature. Single use.",
 		spritenum: 538,
 		isBerry: true,
 		belch: { },
@@ -1559,6 +1610,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	yacheberry: {
 		name: "Yache Berry",
+		shortDesc: "First supereffective Ice hit charges berry and halves damage. Second hit consumes berry, halves damage, and heals 75 HP. Fragile; if broken, freezes holder; if broken while charged, holder also loses 1/3 max HP from explosion. If hit by Belch, 10% chance to freeze target.",
 		spritenum: 567,
 		isBerry: true,
 		isFragile: true,
@@ -1630,6 +1682,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	absorbbulb: {
 		name: "Absorb Bulb",
+		shortDesc: "Holder's draining moves have 1.5x power. Immune to Water-type damage; when hit by Water moves, heals 1/8 max HP. After absorbing 2 Water moves, grants Aqua Ring and is consumed.",
 		spritenum: 2,
 		fling: { basePower: 30, },
 		onBasePowerPriority: 23,
@@ -1663,6 +1716,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	bigroot: {
 		name: "Big Root",
+		shortDesc: "Holder gains 1.5x HP from draining moves, Leech Seed, Ingrain, Aqua Ring, and Strength Sap.",
 		spritenum: 29,
 		fling: { basePower: 10, },
 		onTryHealPriority: 1,
@@ -1675,6 +1729,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	bindingband: { // implemented in conditions.ts
 		name: "Binding Band",
+		shortDesc: "Holder's binding moves deal 1.2x damage.",
 		spritenum: 31,
 		fling: { basePower: 30, },
 		num: 544,
@@ -1683,6 +1738,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	blacksludge: {
 		name: "Black Sludge",
+		shortDesc: "At the end of every turn, holder restores 1/16 max HP if Poison type, loses 1/8 max HP otherwise.",
 		spritenum: 34,
 		fling: { basePower: 30, },
 		onResidualOrder: 5,
@@ -1703,6 +1759,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	boosterenergy: {
 		name: "Booster Energy",
+		shortDesc: "Activates Protosynthesis outside of sun or Quark Drive outside of Electric Terrain. Single use. Paradox Pokemon cannot lose this item.",
 		spritenum: 745,
 		fling: { basePower: 30, },
 		onSwitchInPriority: -2,
@@ -1720,6 +1777,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	brightpowder: {
 		name: "Bright Powder",
+		shortDesc: "Holder's evasiveness is 1.1x.",
 		spritenum: 51,
 		fling: { basePower: 10, },
 		onModifyAccuracyPriority: -2,
@@ -1733,6 +1791,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	cellbattery: {
 		name: "Cell Battery",
+		shortDesc: "First Electric hit raises holder's Attack, Sp. Atk, and Sp. Def by 1, grants Charge, and charges battery. Second Electric hit causes 40 BP Electric explosion hitting all Pokemon and consumes item. Charged battery grants Charge status at end of turn.",
 		spritenum: 60,
 		fling: { basePower: 30, },
 		onResidual(pokemon) {
@@ -1829,6 +1888,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	clearamulet: {
 		name: "Clear Amulet",
+		shortDesc: "Prevents other Pokemon from lowering the holder's stat stages.",
 		spritenum: 747,
 		fling: { basePower: 30, },
 		onTryBoostPriority: 1,
@@ -1844,6 +1904,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	covertcloak: {
 		name: "Covert Cloak",
+		shortDesc: "Holder is not affected by the secondary effect of another Pokemon's attack.",
 		spritenum: 750,
 		fling: { basePower: 30, },
 		onModifySecondaries(secondaries) {
@@ -1855,6 +1916,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	destinyknot: {
 		name: "Destiny Knot",
+		shortDesc: "If holder becomes infatuated, the other Pokemon also becomes infatuated.",
 		spritenum: 95,
 		fling: { basePower: 10, },
 		onAttractPriority: -100,
@@ -1868,6 +1930,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ejectbutton: {
 		name: "Eject Button",
+		shortDesc: "If holder is hit by an attack, it immediately switches out. Single use.",
 		spritenum: 118,
 		fling: { basePower: 30, },
 		onAfterMoveSecondaryPriority: 2,
@@ -1886,6 +1949,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ejectpack: {
 		name: "Eject Pack",
+		shortDesc: "If holder's stats are lowered, it switches out. Single use.",
 		spritenum: 714,
 		fling: { basePower: 50, },
 		onAfterBoost(boost, pokemon) {
@@ -1915,6 +1979,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	eviolite: {
 		name: "Eviolite",
+		shortDesc: "If holder's species can evolve, its Defense and Sp. Def are 1.5x.",
 		spritenum: 130,
 		fling: { basePower: 40, },
 		onModifyDefPriority: 2,
@@ -1926,6 +1991,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	expertbelt: {
 		name: "Expert Belt",
+		shortDesc: "Holder's attacks that are super effective have 1.3x power.",
 		spritenum: 132,
 		fling: { basePower: 10, },
 		onModifyDamage(damage, source, target, move) { if (move && target.getMoveHitData(move).typeMod > 0) { return this.chainModify([5325, 4096]); } },
@@ -1934,6 +2000,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	flameorb: {
 		name: "Flame Orb",
+		shortDesc: "At the end of every turn, holder becomes burned.",
 		spritenum: 145,
 		fling: {
 			basePower: 30,
@@ -1947,6 +2014,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	floatstone: {
 		name: "Float Stone",
+		shortDesc: "Holder's weight is halved and Speed is 1.2x. Crash and launch moves against holder deal 1.2x damage.",
 		spritenum: 147,
 		fling: { basePower: 30, },
 		onModifyWeight(weighthg) { return this.trunc(weighthg / 2); },
@@ -1957,6 +2025,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	focusband: {
 		name: "Focus Band",
+		shortDesc: "Holder has a 10% chance to survive a hit that would KO it with 1 HP.",
 		spritenum: 150,
 		fling: { basePower: 10, },
 		onDamagePriority: -40,
@@ -1971,6 +2040,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	focussash: {
 		name: "Focus Sash",
+		shortDesc: "If holder is at full HP and is hit by an attack that would KO it, it survives with 1 HP. Single use.",
 		spritenum: 151,
 		fling: { basePower: 10, },
 		onDamagePriority: -40,
@@ -1980,6 +2050,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	gripclaw: {
 		name: "Grip Claw",
+		shortDesc: "At the end of every turn, holder loses 1/6 max HP. Holder's claw moves have 1.2x power.",
 		spritenum: 179,
 		fling: { basePower: 90, },
 		onResidualOrder: 5,
@@ -1991,6 +2062,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	heavydutyboots: { // Hazard Immunity implemented in moves.ts
 		name: "Heavy-Duty Boots",
+		shortDesc: "Holder is immune to hazards on its side.",
 		spritenum: 715,
 		fling: { basePower: 80, },
 		num: 1120,
@@ -1998,6 +2070,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	laggingtail: {
 		name: "Lagging Tail",
+		shortDesc: "Holder moves last in its priority bracket.",
 		spritenum: 237,
 		fling: { basePower: 10, },
 		onFractionalPriority: -0.1,
@@ -2006,6 +2079,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	leftovers: {
 		name: "Leftovers",
+		shortDesc: "At the end of every turn, holder restores 1/16 max HP.",
 		spritenum: 242,
 		fling: { basePower: 10, },
 		onResidualOrder: 5,
@@ -2016,6 +2090,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	lifeorb: {
 		name: "Life Orb",
+		shortDesc: "Holder's attacks have 1.3x power, and it loses 1/10 its max HP after the attack.",
 		spritenum: 249,
 		fling: { basePower: 30, },
 		onModifyDamage(damage, source, target, move) { return this.chainModify([5324, 4096]); },
@@ -2025,6 +2100,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ironball: { // airborneness negation implemented in sim/pokemon.js:Pokemon#isGrounded
 		name: "Iron Ball",
+		shortDesc: "Holder's weight increases by 35 kg. Holder becomes grounded. Speed reduction varies by weight ratio and type (100%-50% based on species weight; Bug types carry 4x weight, Fighting/Dragon 2x, Flying 0.5x).",
 		spritenum: 224,
 		fling: { basePower: 130, },
 		onEffectiveness(typeMod, target, type, move) {
@@ -2056,6 +2132,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	lightclay: { // implemented in the corresponding thing
 		name: "Light Clay",
+		shortDesc: "Holder's use of Light Screen or Reflect lasts 8 turns instead of 5.",
 		spritenum: 252,
 		fling: { basePower: 30, },
 		num: 269,
@@ -2063,6 +2140,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	loadeddice: { // partially implemented in sim/battle-actions.ts:BattleActions#hitStepMoveHitLoop
 		name: "Loaded Dice",
+		shortDesc: "Holder's multi-hit moves always hit the maximum number of times. No accuracy checks on multi-hit moves.",
 		spritenum: 751,
 		fling: { basePower: 30, },
 		onModifyMove(move) { if (move.multiaccuracy) { delete move.multiaccuracy; } },
@@ -2071,6 +2149,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	luminousmoss: {
 		name: "Luminous Moss",
+		shortDesc: "Holder's light moves have 1.2x power. If hit by Water-type move or in rain, raises Sp. Def by 1 and is consumed; if already charged by light move, raises Sp. Def by 2. Light moves charge the moss without consuming it.",
 		spritenum: 595,
 		fling: { basePower: 30, },
 		onBasePowerPriority: 23,
@@ -2092,6 +2171,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	mentalherb: {
 		name: "Mental Herb",
+		shortDesc: "Holder cures itself if it is infatuated, taunted, encored, tormented, disabled, or heal blocked. Single use.",
 		spritenum: 285,
 		fling: {
 			basePower: 10,
@@ -2122,6 +2202,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	metronome: {
 		name: "Metronome",
+		shortDesc: "Damage of moves used on consecutive turns is increased by 30% per use, up to 150% (5 consecutive uses). Resets when a different move is used.",
 		spritenum: 289,
 		fling: { basePower: 30, },
 		onStart(pokemon) { pokemon.addVolatile('metronome'); },
@@ -2158,6 +2239,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	mirrorherb: {
 		name: "Mirror Herb",
+		shortDesc: "When an opponent raises its stats, holder copies all positive stat boosts. Single use.",
 		spritenum: 748,
 		fling: { basePower: 30, },
 		onFoeAfterBoost(boost, target, source, effect) {
@@ -2187,6 +2269,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	muscleband: {
 		name: "Muscle Band",
+		shortDesc: "Holder's physical attacks have 1.1x power.",
 		spritenum: 297,
 		fling: { basePower: 10, },
 		onBasePowerPriority: 16,
@@ -2204,6 +2287,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			}
 		},
 		name: "Power Herb",
+		shortDesc: "Holder's two-turn moves complete in one turn. Single use.",
 		spritenum: 358,
 		fling: { basePower: 10, },
 		num: 271,
@@ -2211,6 +2295,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	protectivepads: { // protective effect handled in Battle#checkMoveMakesContact
 		name: "Protective Pads",
+		shortDesc: "Holder's contact moves do not activate contact effects. Recoil and crash damage is halved. Immune to protection-breaking effects.",
 		spritenum: 663,
 		fling: { basePower: 30, },
 		onDamagePriority: -40,
@@ -2225,6 +2310,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	punchingglove: {
 		name: "Punching Glove",
+		shortDesc: "Holder's punch moves have 1.2x power and do not make contact. Damage taken from punch moves is halved. Immune to protection-breaking effects.",
 		spritenum: 749,
 		fling: { basePower: 30, },
 		onBasePowerPriority: 23,
@@ -2253,6 +2339,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			}
 		},
 		name: "Quick Claw",
+		shortDesc: "Holder has a 20% chance to move first in its priority bracket.",
 		spritenum: 373,
 		fling: { basePower: 80, },
 		num: 217,
@@ -2260,6 +2347,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	redcard: {
 		name: "Red Card",
+		shortDesc: "If holder is hit by an attack, the attacker is forced to switch out. Single use.",
 		spritenum: 387,
 		fling: { basePower: 10, },
 		onAfterMoveSecondary(target, source, move) {
@@ -2273,6 +2361,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ringtarget: {
 		name: "Ring Target",
+		shortDesc: "Holder's type immunities are negated.",
 		spritenum: 410,
 		fling: { basePower: 10, },
 		onNegateImmunity: false,
@@ -2281,6 +2370,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	rockyhelmet: {
 		name: "Rocky Helmet",
+		shortDesc: "If holder is hit by a contact move, the attacker loses 1/6 max HP.",
 		spritenum: 417,
 		fling: { basePower: 60, },
 		onDamagingHitOrder: 2,
@@ -2290,6 +2380,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	roomservice: {
 		name: "Room Service",
+		shortDesc: "While Trick Room, Magic Room, or Wonder Room is active, holder moves first in its priority bracket; otherwise moves last. While room is active, heals ally 1/16 max HP each turn.",
 		spritenum: 717,
 		fling: { basePower: 100, },
 		onFractionalPriorityPriority: -2,
@@ -2312,6 +2403,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	safetygoggles: {
 		name: "Safety Goggles",
+		shortDesc: "Holder is immune to powder moves and damage from Sandstorm or Hail.",
 		spritenum: 604,
 		fling: { basePower: 80, },
 		onImmunity(type, pokemon) { if (type === 'sandstorm' || type === 'hail' || type === 'powder') return false; },
@@ -2324,6 +2416,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	scopelens: {
 		name: "Scope Lens",
+		shortDesc: "Holder's critical hit ratio is raised by 1 stage.",
 		spritenum: 429,
 		fling: { basePower: 30, },
 		onModifyCritRatio(critRatio) { return critRatio + 1; },
@@ -2332,6 +2425,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	shedshell: {
 		name: "Shed Shell",
+		shortDesc: "Holder may switch out even when trapped.",
 		spritenum: 437,
 		fling: { basePower: 10, },
 		onTrapPokemonPriority: -10,
@@ -2343,6 +2437,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	shellbell: {
 		name: "Shell Bell",
+		shortDesc: "After an attack, holder restores 1/8 of the damage dealt in HP.",
 		spritenum: 438,
 		fling: { basePower: 30, },
 		onAfterMoveSecondarySelfPriority: -1,
@@ -2352,6 +2447,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	stickybarb: {
 		name: "Sticky Barb",
+		shortDesc: "At the end of every turn, holder loses 1/8 max HP. If hit by a contact move, attacker loses 1/6 max HP and receives the barb if it has no item.",
 		spritenum: 476,
 		fling: { basePower: 80, },
 		onResidualOrder: 28,
@@ -2372,6 +2468,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	throatspray: {
 		name: "Throat Spray",
+		shortDesc: "Raises holder's Sp. Atk by 1 if it uses a sound move. Single use.",
 		spritenum: 713,
 		fling: { basePower: 30, },
 		onAfterMoveSecondarySelf(target, source, move) { if (move.flags['sound']) { target.useItem(); } },
@@ -2381,6 +2478,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	toxicorb: {
 		name: "Toxic Orb",
+		shortDesc: "At the end of every turn, holder becomes badly poisoned.",
 		spritenum: 515,
 		fling: {
 			basePower: 30,
@@ -2394,6 +2492,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	utilityumbrella: {
 		name: "Utility Umbrella",
+		shortDesc: "Holder is immune to weather effects. Beam, breath, and pulse moves against holder deal 0.8x damage. If hit by launch move, holder becomes airborne. Breaks if hit by a critical beam, breath, or pulse move.",
 		spritenum: 718,
 		fling: { basePower: 60, },
 		// Partially implemented in Pokemon.effectiveWeather() in sim/pokemon.ts
@@ -2425,6 +2524,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	weaknesspolicy: {
 		name: "Weakness Policy",
+		shortDesc: "If holder is hit by a super effective attack, its Attack and Sp. Atk raise by 2. Single use.",
 		spritenum: 609,
 		fling: { basePower: 80, },
 		onDamagingHit(damage, target, source, move) { if (!move.damage && !move.damageCallback && target.getMoveHitData(move).typeMod > 0) { target.useItem(); } },
@@ -2437,6 +2537,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	whiteherb: {
 		name: "White Herb",
+		shortDesc: "Restores all lowered stats to 0 when any stat is lowered. Single use.",
 		spritenum: 535,
 		fling: {
 			basePower: 10,
@@ -2484,6 +2585,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	widelens: {
 		name: "Wide Lens",
+		shortDesc: "Holder's move accuracy is 1.1x.",
 		spritenum: 537,
 		fling: { basePower: 10, },
 		onSourceModifyAccuracyPriority: -2,
@@ -2493,6 +2595,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	wiseglasses: {
 		name: "Wise Glasses",
+		shortDesc: "Holder's special attacks have 1.1x power.",
 		spritenum: 539,
 		fling: { basePower: 10, },
 		onBasePowerPriority: 16,
@@ -2502,6 +2605,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	zoomlens: {
 		name: "Zoom Lens",
+		shortDesc: "Holder's move accuracy is 1.2x if holder moves after target.",
 		spritenum: 574,
 		fling: { basePower: 10, },
 		onSourceModifyAccuracyPriority: -2,
@@ -2517,6 +2621,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	// #region Weather Items
 	damprock: {
 		name: "Damp Rock",
+		shortDesc: "Holder's use of Rain Dance lasts 8 turns instead of 5.",
 		spritenum: 88,
 		fling: { basePower: 60, },
 		num: 285,
@@ -2524,6 +2629,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	heatrock: {
 		name: "Heat Rock",
+		shortDesc: "Holder's use of Sunny Day lasts 8 turns instead of 5.",
 		spritenum: 193,
 		fling: { basePower: 60, },
 		num: 284,
@@ -2531,6 +2637,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	icyrock: {
 		name: "Icy Rock",
+		shortDesc: "Holder's use of Hail lasts 8 turns instead of 5.",
 		spritenum: 221,
 		fling: { basePower: 40, },
 		num: 282,
@@ -2538,6 +2645,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	smoothrock: {
 		name: "Smooth Rock",
+		shortDesc: "Holder's use of Sandstorm lasts 8 turns instead of 5.",
 		spritenum: 453,
 		fling: {
 			basePower: 10,
@@ -2558,6 +2666,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	// #region Terrain Seeds + TE
 	terrainextender: { // implemented in conditions.t9ol
 		name: "Terrain Extender",
+		shortDesc: "Holder's use of terrain moves lasts 8 turns instead of 5. Fragile.",
 		spritenum: 662,
 		fling: { basePower: 60, },
 		isFragile: true,
@@ -2567,6 +2676,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	electricseed: {
 		name: "Electric Seed",
+		shortDesc: "Raises holder's Defense by 1 when Electric Terrain is active. Single use.",
 		spritenum: 664,
 		fling: { basePower: 10, },
 		onSwitchInPriority: -1,
@@ -2578,6 +2688,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	grassyseed: {
 		name: "Grassy Seed",
+		shortDesc: "Raises holder's Defense by 1 when Grassy Terrain is active. Single use.",
 		spritenum: 667,
 		fling: { basePower: 10, },
 		onSwitchInPriority: -1,
@@ -2589,6 +2700,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	mistyseed: {
 		name: "Misty Seed",
+		shortDesc: "Raises holder's Sp. Def by 1 when Misty Terrain is active. Single use.",
 		spritenum: 666,
 		fling: { basePower: 10,},
 		onSwitchInPriority: -1,
@@ -2600,6 +2712,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	psychicseed: {
 		name: "Psychic Seed",
+		shortDesc: "Raises holder's Sp. Def by 1 when Psychic Terrain is active. Single use.",
 		spritenum: 665,
 		fling: { basePower: 10, },
 		onSwitchInPriority: -1,
@@ -2611,6 +2724,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	toxicseed: {
 		name: "Toxic Seed",
+		shortDesc: "Raises holder's Sp. Def by 1 when Toxic Terrain is active. Single use.",
 		spritenum: 0,
 		fling: { basePower: 10, },
 		onSwitchInPriority: -1,
@@ -2623,6 +2737,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	// #region Signature Items
 	adamantcrystal: {
 		name: "Adamant Crystal",
+		shortDesc: "If held by Dialga, its Steel- and Dragon-type attacks have 1.35x power.",
 		spritenum: 741,
 		onBasePowerPriority: 15,
 		onBasePower(basePower, user, target, move) {
@@ -2643,6 +2758,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	adamantorb: {
 		name: "Adamant Orb",
+		shortDesc: "If held by Dialga, its Steel- and Dragon-type attacks have 1.35x power.",
 		spritenum: 4,
 		fling: { basePower: 60, },
 		onBasePowerPriority: 15,
@@ -2667,6 +2783,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	griseouscore: {
 		name: "Griseous Core",
+		shortDesc: "If held by Giratina, its Ghost- and Dragon-type attacks have 1.35x power.",
 		spritenum: 743,
 		onBasePowerPriority: 15,
 		onBasePower(basePower, user, target, move) { if (user.baseSpecies.num === 487 && (move.type === 'Ghost' || move.type === 'Dragon')) { return this.chainModify([5529, 4096]); } },
@@ -2680,6 +2797,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	griseousorb: {
 		name: "Griseous Orb",
+		shortDesc: "If held by Giratina, its Ghost- and Dragon-type attacks have 1.35x power.",
 		spritenum: 180,
 		fling: { basePower: 60, },
 		onBasePowerPriority: 15,
@@ -2704,6 +2822,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	lustrousglobe: {
 		name: "Lustrous Globe",
+		shortDesc: "If held by Palkia, its Water- and Dragon-type attacks have 1.35x power.",
 		spritenum: 742,
 		onBasePowerPriority: 15,
 		onBasePower(basePower, user, target, move) { if (user.baseSpecies.num === 484 && (move.type === 'Water' || move.type === 'Dragon')) { return this.chainModify([5529, 4096]); } },
@@ -2718,6 +2837,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	lustrousorb: {
 		name: "Lustrous Orb",
+		shortDesc: "If held by Palkia, its Water- and Dragon-type attacks have 1.35x power.",
 		spritenum: 265,
 		fling: { basePower: 60, },
 		onBasePowerPriority: 15,
@@ -2728,6 +2848,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	lightball: {
 		name: "Light Ball",
+		shortDesc: "If held by Pikachu, its Attack and Sp. Atk are doubled. Boosts light moves by 1.5x.",
 		spritenum: 251,
 		fling: {
 			basePower: 30,
@@ -2745,6 +2866,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	rustedshield: {
 		name: "Rusted Shield",
+		shortDesc: "If held by Zamazenta, this item transforms it into its Crowned Forme.",
 		spritenum: 699,
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 889) || pokemon.baseSpecies.num === 889) { return false; }
 			return true;
@@ -2755,6 +2877,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	rustedsword: {
 		name: "Rusted Sword",
+		shortDesc: "If held by Zacian, this item transforms it into its Crowned Forme.",
 		spritenum: 698,
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 888) || pokemon.baseSpecies.num === 888) { return false; }
 			return true;
@@ -2765,6 +2888,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	souldew: {
 		name: "Soul Dew",
+		shortDesc: "Latios/Latias: 1.35x power for Psychic/Dragon/aura moves. Protects their Ability.",
 		spritenum: 459,
 		fling: { basePower: 30, },
 		onBasePowerPriority: 15,
@@ -2800,6 +2924,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 
 	blueorb: {
 		name: "Blue Orb",
+		shortDesc: "If held by Kyogre, this item triggers its Primal Reversion.",
 		spritenum: 41,
 		onSwitchInPriority: -1,
 		onSwitchIn(pokemon) { if (pokemon.isActive && pokemon.baseSpecies.name === 'Kyogre' && !pokemon.transformed) { pokemon.formeChange('Kyogre-Primal', this.effect, true); } },
@@ -2814,6 +2939,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	leek: {
 		name: "Leek",
+		shortDesc: "If held by Farfetch'd or Sirfetch'd, its critical hit ratio is raised by 2 stages.",
 		fling: { basePower: 60, },
 		spritenum: 475,
 		onModifyCritRatio(critRatio, user) { if (["farfetchd", "sirfetchd"].includes(this.toID(user.baseSpecies.baseSpecies))) { return critRatio + 2; } },
@@ -2824,6 +2950,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	luckypunch: {
 		name: "Lucky Punch",
+		shortDesc: "If held by Chansey, its critical hit ratio is raised by 2 stages.",
 		spritenum: 261,
 		fling: { basePower: 40, },
 		onModifyCritRatio(critRatio, user) { if (user.baseSpecies.name === 'Chansey') { return critRatio + 2; } },
@@ -2834,6 +2961,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	deepseascale: {
 		name: "Deep Sea Scale",
+		shortDesc: "If held by Clamperl, its Sp. Def is doubled.",
 		spritenum: 93,
 		fling: { basePower: 30, },
 		onModifySpDPriority: 2,
@@ -2845,6 +2973,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	deepseatooth: {
 		name: "Deep Sea Tooth",
+		shortDesc: "If held by Clamperl, its Sp. Atk is doubled.",
 		spritenum: 94,
 		fling: { basePower: 90, },
 		onModifySpAPriority: 1,
@@ -2856,6 +2985,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	redorb: {
 		name: "Red Orb",
+		shortDesc: "If held by Groudon, this item triggers its Primal Reversion.",
 		spritenum: 390,
 		onSwitchInPriority: -1,
 		onSwitchIn(pokemon) { if (pokemon.isActive && pokemon.baseSpecies.name === 'Groudon' && !pokemon.transformed) { pokemon.formeChange('Groudon-Primal', this.effect, true); } },
@@ -2870,6 +3000,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	stick: {
 		name: "Stick",
+		shortDesc: "If held by Farfetch'd, its critical hit ratio is raised by 2 stages.",
 		fling: { basePower: 60, },
 		spritenum: 475,
 		onModifyCritRatio(critRatio, user) { if (this.toID(user.baseSpecies.baseSpecies) === 'farfetchd') { return critRatio + 2; } },
@@ -2880,6 +3011,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	thickclub: {
 		name: "Thick Club",
+		shortDesc: "If held by Cubone or Marowak, its Attack is doubled.",
 		spritenum: 491,
 		fling: { basePower: 90, },
 		onModifyAtkPriority: 1,
@@ -2893,6 +3025,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	// #region Evolution Stones
 	dawnstone: {
 		name: "Dawn Stone",
+		shortDesc: "Boosts light/solar moves by 1.2x. Reduces Dark/lunar/shadow damage by 20% and blocks those moves.",
 		spritenum: 92,
 		fling: { basePower: 80, },
 		onBasePowerPriority: 15,
@@ -2909,6 +3042,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	duskstone: {
 		name: "Dusk Stone",
+		shortDesc: "Boosts Dark/shadow moves by 1.2x. Reduces light/solar damage by 20% and blocks those moves.",
 		spritenum: 116,
 		fling: { basePower: 80, },
 		onBasePowerPriority: 15,
@@ -2925,6 +3059,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	firestone: {
 		name: "Fire Stone",
+		shortDesc: "Boosts Fire moves by 1.2x, reduces Ice damage by 20%. Immune to freeze. Dulls in rain/water.",
 		spritenum: 142,
 		fling: { basePower: 30, },
 		onStart(pokemon) {
@@ -2962,6 +3097,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	icestone: {
 		name: "Ice Stone",
+		shortDesc: "Boosts Ice moves by 1.2x, reduces Fire damage by 20%. Immune to freeze. Dulls in heat.",
 		spritenum: 693,
 		fling: { basePower: 30, },
 		onStart(pokemon) {
@@ -2999,6 +3135,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	leafstone: {
 		name: "Leaf Stone",
+		shortDesc: "Boosts Grass moves by 1.2x, reduces Water damage by 20%. Heals/cures in sun. Dulls in cold/ice.",
 		spritenum: 241,
 		fling: { basePower: 30, },
 		onStart(pokemon) {
@@ -3040,6 +3177,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	moonstone: {
 		name: "Moon Stone",
+		shortDesc: "Boosts light/lunar/shadow moves by 1.2x (1.4x in sun). Reduces solar/magic damage. Dulls in weather.",
 		spritenum: 295,
 		fling: { basePower: 30, },
 		onStart(pokemon) {
@@ -3085,6 +3223,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	shinystone: {
 		name: "Shiny Stone",
+		shortDesc: "Boosts light/pulse moves by 1.2x. Reduces Dark/shadow damage by 20% and blocks those moves.",
 		spritenum: 439,
 		fling: { basePower: 80, },
 		onBasePowerPriority: 15,
@@ -3103,6 +3242,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	sunstone: {
 		name: "Sun Stone",
+		shortDesc: "Boosts Fire/explosive/light/solar moves by 1.2x (1.3x in sun). Reduces damage from several types. Dulls in weather.",
 		spritenum: 480,
 		fling: { basePower: 30, },
 		onStart(pokemon) {
@@ -3156,6 +3296,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	thunderstone: {
 		name: "Thunder Stone",
+		shortDesc: "Boosts Electric moves by 1.2x. Immune to sleep. Dulls when hitting Ground-types.",
 		spritenum: 492,
 		fling: { basePower: 30, },
 		onStart(pokemon) {
@@ -3185,6 +3326,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	waterstone: {
 		name: "Water Stone",
+		shortDesc: "Boosts Water/sweep/pulse moves by 1.2x, reduces Fire damage by 20%. Immune to burn. Dulls on certain terrain/hits.",
 		spritenum: 529,
 		fling: { basePower: 30, },
 		onStart(pokemon) {
@@ -3227,6 +3369,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	// #region Unique Evo Items
 	auspiciousarmor: {
 	name: "Auspicious Armor",
+	shortDesc: "Evolves Charcadet into Armarouge when used.",
 	spritenum: 753,
 	fling: { basePower: 30, },
 	num: 2344,
@@ -3234,6 +3377,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	berryjuice: {
 		name: "Berry Juice",
+		shortDesc: "Restores 20 HP when the holder's HP is at 50% or less. Single use.",
 		spritenum: 22,
 		fling: { basePower: 30, },
 		onUpdate(pokemon) { if (pokemon.hp <= pokemon.maxhp / 2) { if (this.runEvent('TryHeal', pokemon, null, this.effect, 20) && pokemon.useItem()) { this.heal(20); } } },
@@ -3243,6 +3387,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	chippedpot: {
 		name: "Chipped Pot",
+		shortDesc: "Evolves Poltchageist into Sinistcha when used.",
 		spritenum: 720,
 		fling: { basePower: 80, },
 		num: 1254,
@@ -3250,6 +3395,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	crackedpot: {
 		name: "Cracked Pot",
+		shortDesc: "Evolves Sinistea into Polteageist when used.",
 		spritenum: 719,
 		fling: { basePower: 80, },
 		num: 1253,
@@ -3257,6 +3403,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	galaricacuff: {
 		name: "Galarica Cuff",
+		shortDesc: "Evolves Galarian Slowpoke into Galarian Slowbro when used.",
 		spritenum: 739,
 		fling: { basePower: 30, },
 		num: 1582,
@@ -3264,6 +3411,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	galaricawreath: {
 		name: "Galarica Wreath",
+		shortDesc: "Evolves Galarian Slowpoke into Galarian Slowking when used.",
 		spritenum: 740,
 		fling: { basePower: 30, },
 		num: 1592,
@@ -3271,6 +3419,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	maliciousarmor: {
 		name: "Malicious Armor",
+		shortDesc: "Evolves Charcadet into Ceruledge when used.",
 		spritenum: 744,
 		fling: { basePower: 30, },
 		num: 1861,
@@ -3278,6 +3427,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	masterpieceteacup: {
 		name: "Masterpiece Teacup",
+		shortDesc: "Evolves Poltchageist into Sinistcha-Masterpiece when used.",
 		spritenum: 757,
 		fling: { basePower: 80, },
 		num: 2404,
@@ -3285,6 +3435,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	metalalloy: {
 		name: "Metal Alloy",
+		shortDesc: "Boosts Steel moves by 1.2x. Reduces Fire damage by 20%, increases Electric damage by 20%.",
 		spritenum: 761,
 		num: 2482,
 		fling: { basePower: 30, },
@@ -3298,6 +3449,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	sweetapple: {
 		name: "Sweet Apple",
+		shortDesc: "Evolves Applin into Appletun when used.",
 		spritenum: 711,
 		fling: { basePower: 30, },
 		num: 1116,
@@ -3305,6 +3457,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	syrupyapple: {
 		name: "Syrupy Apple",
+		shortDesc: "Evolves Applin into Dipplin when used.",
 		spritenum: 755,
 		fling: { basePower: 30, },
 		num: 2402,
@@ -3312,6 +3465,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	tartapple: {
 		name: "Tart Apple",
+		shortDesc: "Evolves Applin into Flapple when used.",
 		spritenum: 712,
 		fling: { basePower: 30, },
 		num: 1117,
@@ -3319,6 +3473,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	unremarkableteacup: {
 		name: "Unremarkable Teacup",
+		shortDesc: "Evolves Poltchageist into Sinistcha when used.",
 		spritenum: 756,
 		fling: { basePower: 80, },
 		num: 2403,
@@ -3327,6 +3482,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 // #region Held Evolution Items
 	dragonscale: {
 		name: "Dragon Scale",
+		shortDesc: "Evolves Seadra into Kingdra when traded.",
 		spritenum: 108,
 		fling: { basePower: 30, },
 		num: 235,
@@ -3334,6 +3490,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	dubiousdisc: {
 		name: "Dubious Disc",
+		shortDesc: "Evolves Porygon2 into Porygon-Z when traded.",
 		spritenum: 113,
 		fling: { basePower: 50, },
 		num: 324,
@@ -3348,6 +3505,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	kingsrock: {
 		name: "King's Rock",
+		shortDesc: "Holder's attacks without a chance to make the target flinch gain a 10% chance to flinch.",
 		spritenum: 236,
 		fling: {
 			basePower: 30,
@@ -3369,6 +3527,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	magmarizer: {
 		name: "Magmarizer",
+		shortDesc: "Evolves Magmar into Magmortar when traded.",
 		spritenum: 272,
 		fling: { basePower: 80, },
 		num: 323,
@@ -3376,6 +3535,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ovalstone: {
 		name: "Oval Stone",
+		shortDesc: "Evolves Happiny into Chansey when leveled up during the day.",
 		spritenum: 321,
 		fling: { basePower: 80, },
 		num: 110,
@@ -3383,6 +3543,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	prismscale: {
 		name: "Prism Scale",
+		shortDesc: "Holder's critical hit ratio is raised by 2 stages.",
 		spritenum: 365,
 		fling: { basePower: 30, },
 		onModifyCritRatio(critRatio) { return critRatio + 2; },
@@ -3391,6 +3552,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	protector: {
 		name: "Protector",
+		shortDesc: "Holder's Defense is 1.2x, weight +100kg. Speed reduced based on effective weight. Ignores Feint.",
 		spritenum: 367,
 		fling: { basePower: 80, },
 		onModifyDefPriority: 1,
@@ -3419,6 +3581,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	razorclaw: {
 		name: "Razor Claw",
+		shortDesc: "Holder's critical hit ratio is raised by 1 stage.",
 		spritenum: 382,
 		fling: { basePower: 80,},
 		onModifyCritRatio(critRatio) { return critRatio + 1; },
@@ -3427,6 +3590,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	razorfang: {
 		name: "Razor Fang",
+		shortDesc: "Holder's attacks without a chance to make the target flinch gain a 10% chance to flinch.",
 		spritenum: 383,
 		fling: {
 			basePower: 30,
@@ -3448,6 +3612,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	reapercloth: {
 		name: "Reaper Cloth",
+		shortDesc: "Boosts Ghost/aura moves by 1.2x, increases aura/magic damage taken by 20%. Curses non-Ghosts. Torn by slicing/claw moves.",
 		spritenum: 385,
 		fling: { basePower: 10, },
 		onBasePowerPriority: 15,
@@ -3468,6 +3633,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	sachet: {
 		name: "Sachet",
+		shortDesc: "Evolves Spritzee into Aromatisse when traded.",
 		spritenum: 691,
 		fling: { basePower: 80, },
 		num: 647,
@@ -3476,6 +3642,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	upgrade: {
 		name: "Up-Grade",
+		shortDesc: "Evolves Porygon into Porygon2 when traded.",
 		spritenum: 523,
 		fling: { basePower: 30, },
 		num: 252,
@@ -3483,6 +3650,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	whippeddream: {
 		name: "Whipped Dream",
+		shortDesc: "Evolves Swirlix into Slurpuff when traded.",
 		spritenum: 692,
 		fling: { basePower: 80, },
 		num: 646,
@@ -3492,6 +3660,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	// #region Type Boosting Items
 	blackbelt: {
 		name: "Black Belt",
+		shortDesc: "Holder's Fighting/punch/kick/sweep/throw attacks have 1.2x power.",
 		spritenum: 32,
 		fling: { basePower: 30, },
 		onBasePowerPriority: 15,
@@ -3504,6 +3673,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	blackglasses: {
 		name: "Black Glasses",
+		shortDesc: "Holder's Dark/aura attacks have 1.2x power. Reduces light damage by 20%.",
 		spritenum: 35,
 		fling: { basePower: 30, },
 		onBasePowerPriority: 15,
@@ -3514,6 +3684,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	charcoal: {
 		name: "Charcoal",
+		shortDesc: "Holder's Fire attacks have 1.2x power. Reduces Dark/Ghost damage by 20%. Hurts Dark/Ghost holders.",
 		spritenum: 61,
 		fling: { basePower: 30, },
 		onBasePowerPriority: 15,
@@ -3527,6 +3698,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	dragonfang: {
 		name: "Dragon Fang",
+		shortDesc: "Holder's Dragon/bite attacks have 1.2x power. Bite moves have 10% chance to inflict Dragon Blight.",
 		spritenum: 106,
 		fling: { basePower: 70, },
 		onBasePowerPriority: 15,
@@ -3545,6 +3717,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	fairyfeather: {
 		name: "Fairy Feather",
+		shortDesc: "Holder's Fairy/wind attacks have 1.2x power.",
 		spritenum: 754,
 		fling: { basePower: 10, },
 		onBasePowerPriority: 15,
@@ -3554,6 +3727,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	hardstone: {
 		name: "Hard Stone",
+		shortDesc: "Holder's Rock/throw attacks have 1.2x power.",
 		spritenum: 187,
 		fling: { basePower: 100, },
 		onBasePowerPriority: 15,
@@ -3563,6 +3737,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	magnet: {
 		name: "Magnet",
+		shortDesc: "Holder's Electric attacks have 1.2x power. Attracts Electric/Steel moves.",
 		spritenum: 273,
 		fling: { basePower: 30, },
 		onBasePowerPriority: 15,
@@ -3573,6 +3748,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	metalcoat: {
 		name: "Metal Coat",
+		shortDesc: "Holder's Steel attacks have 1.2x power. Reduces Water damage by 20%, increases Electric damage by 20%.",
 		spritenum: 286,
 		fling: { basePower: 30, },
 		onBasePowerPriority: 15,
@@ -3586,6 +3762,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	miracleseed: {
 		name: "Miracle Seed",
+		shortDesc: "Holder's Grass attacks have 1.2x power. Holder recovers 1/24 max HP each turn.",
 		fling: { basePower: 30, },
 		spritenum: 292,
 		onBasePowerPriority: 15,
@@ -3598,6 +3775,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	mysticwater: {
 		name: "Mystic Water",
+		shortDesc: "Holder's Water attacks have 1.2x power. Charges when hit by Water; grants Aqua Ring and Magic immunity.",
 		spritenum: 300,
 		fling: { basePower: 30, },
 		onBasePowerPriority: 15,
@@ -3624,6 +3802,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	nevermeltice: {
 		name: "Never-Melt Ice",
+		shortDesc: "Holder's Ice attacks have 1.2x power. Reduces Fire damage by 30%. Ice-types immune to sun.",
 		spritenum: 305,
 		fling: { basePower: 30, },
 		onBasePowerPriority: 15,
@@ -3635,6 +3814,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	poisonbarb: {
 		name: "Poison Barb",
+		shortDesc: "Holder's Poison/pierce attacks have 1.2x power. Damages and poisons attackers on contact.",
 		spritenum: 343,
 		fling: {
 			basePower: 70,
@@ -3653,6 +3833,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	sharpbeak: {
 		name: "Sharp Beak",
+		shortDesc: "Holder's Flying/pierce attacks have 1.2x power. Bite moves consume opponent's berries.",
 		spritenum: 436,
 		fling: { basePower: 50, },
 		onBasePowerPriority: 15,
@@ -3669,6 +3850,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	silkscarf: {
 		name: "Silk Scarf",
+		shortDesc: "Holder's Normal attacks and attacks without secondaries have 1.2x power. Binding moves deal 1/7 damage.",
 		spritenum: 444,
 		fling: { basePower: 10, },
 		onBasePowerPriority: 15,
@@ -3679,6 +3861,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	silverpowder: {
 		name: "Silver Powder",
+		shortDesc: "Holder's Bug attacks have 1.2x power. Takes 10% more damage from Dark/Fairy/Ghost, 20% less from light.",
 		spritenum: 447,
 		fling: { basePower: 10, },
 		onBasePowerPriority: 15,
@@ -3690,6 +3873,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	softsand: {
 		name: "Soft Sand",
+		shortDesc: "Holder's Ground attacks have 1.2x power. Reduces Water damage by 30%.",
 		spritenum: 456,
 		fling: { basePower: 10, },
 		onBasePowerPriority: 15,
@@ -3700,6 +3884,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	spelltag: {
 		name: "Spell Tag",
+		shortDesc: "Holder's Ghost attacks have 1.2x power. Immune to magic moves. Ignores abilities. Suppresses magic abilities. Hurts Dragon/Fairy holders.",
 		spritenum: 461,
 		fling: { basePower: 30, },
 		onBasePowerPriority: 15,
@@ -3723,6 +3908,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	snowball: {
 		name: "Snowball",
+		shortDesc: "Holder's Ice/throw attacks have 1.2x power (1.5x in snow). Melts in sun.",
 		spritenum: 606,
 		fling: { basePower: 30, },
 		onBasePowerPriority: 15,
@@ -3739,6 +3925,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	twistedspoon: {
 		name: "Twisted Spoon",
+		shortDesc: "Holder's Psychic/beam/pulse attacks have 1.2x power. Takes 20% more damage from Steel-types.",
 		spritenum: 520,
 		fling: { basePower: 30, },
 		onBasePowerPriority: 15,
@@ -3750,6 +3937,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	// #region Type Plates
 	dracoplate: {
 		name: "Draco Plate",
+		shortDesc: "Holder's Dragon-type attacks have 1.2x power. Judgment is Dragon type.",
 		spritenum: 105,
 		onPlate: 'Dragon',
 		onBasePowerPriority: 15,
@@ -3763,6 +3951,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	dreadplate: {
 		name: "Dread Plate",
+		shortDesc: "Holder's Dark-type attacks have 1.2x power. Judgment is Dark type.",
 		spritenum: 110,
 		onPlate: 'Dark',
 		onBasePowerPriority: 15,
@@ -3776,6 +3965,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	earthplate: {
 		name: "Earth Plate",
+		shortDesc: "Holder's Ground-type attacks have 1.2x power. Judgment is Ground type.",
 		spritenum: 117,
 		onPlate: 'Ground',
 		onBasePowerPriority: 15,
@@ -3789,6 +3979,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	fistplate: {
 		name: "Fist Plate",
+		shortDesc: "Holder's Fighting-type attacks have 1.2x power. Judgment is Fighting type.",
 		spritenum: 143,
 		onPlate: 'Fighting',
 		onBasePowerPriority: 15,
@@ -3802,6 +3993,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	flameplate: {
 		name: "Flame Plate",
+		shortDesc: "Holder's Fire-type attacks have 1.2x power. Judgment is Fire type.",
 		spritenum: 146,
 		onPlate: 'Fire',
 		onBasePowerPriority: 15,
@@ -3815,6 +4007,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	icicleplate: {
 		name: "Icicle Plate",
+		shortDesc: "Holder's Ice-type attacks have 1.2x power. Judgment is Ice type.",
 		spritenum: 220,
 		onPlate: 'Ice',
 		onBasePowerPriority: 15,
@@ -3828,6 +4021,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	insectplate: {
 		name: "Insect Plate",
+		shortDesc: "Holder's Bug-type attacks have 1.2x power. Judgment is Bug type.",
 		spritenum: 223,
 		onPlate: 'Bug',
 		onBasePowerPriority: 15,
@@ -3841,6 +4035,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ironplate: {
 		name: "Iron Plate",
+		shortDesc: "Holder's Steel-type attacks have 1.2x power. Judgment is Steel type.",
 		spritenum: 225,
 		onPlate: 'Steel',
 		onBasePowerPriority: 15,
@@ -3854,6 +4049,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	meadowplate: {
 		name: "Meadow Plate",
+		shortDesc: "Holder's Grass-type attacks have 1.2x power. Judgment is Grass type.",
 		spritenum: 282,
 		onPlate: 'Grass',
 		onBasePowerPriority: 15,
@@ -3867,6 +4063,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	mindplate: {
 		name: "Mind Plate",
+		shortDesc: "Holder's Psychic-type attacks have 1.2x power. Judgment is Psychic type.",
 		spritenum: 291,
 		onPlate: 'Psychic',
 		onBasePowerPriority: 15,
@@ -3880,6 +4077,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	pixieplate: {
 		name: "Pixie Plate",
+		shortDesc: "Holder's Fairy-type attacks have 1.2x power. Judgment is Fairy type.",
 		spritenum: 610,
 		onPlate: 'Fairy',
 		onBasePowerPriority: 15,
@@ -3893,6 +4091,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	skyplate: {
 		name: "Sky Plate",
+		shortDesc: "Holder's Flying-type attacks have 1.2x power. Judgment is Flying type.",
 		spritenum: 450,
 		onPlate: 'Flying',
 		onBasePowerPriority: 15,
@@ -3906,6 +4105,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	splashplate: {
 		name: "Splash Plate",
+		shortDesc: "Holder's Water-type attacks have 1.2x power. Judgment is Water type.",
 		spritenum: 463,
 		onPlate: 'Water',
 		onBasePowerPriority: 15,
@@ -3919,6 +4119,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	spookyplate: {
 		name: "Spooky Plate",
+		shortDesc: "Holder's Ghost-type attacks have 1.2x power. Judgment is Ghost type.",
 		spritenum: 464,
 		onPlate: 'Ghost',
 		onBasePowerPriority: 15,
@@ -3932,6 +4133,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	stoneplate: {
 		name: "Stone Plate",
+		shortDesc: "Holder's Rock-type attacks have 1.2x power. Judgment is Rock type.",
 		spritenum: 477,
 		onPlate: 'Rock',
 		onBasePowerPriority: 15,
@@ -3945,6 +4147,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	toxicplate: {
 		name: "Toxic Plate",
+		shortDesc: "Holder's Poison-type attacks have 1.2x power. Judgment is Poison type.",
 		spritenum: 516,
 		onPlate: 'Poison',
 		onBasePowerPriority: 15,
@@ -3958,6 +4161,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	zapplate: {
 		name: "Zap Plate",
+		shortDesc: "Holder's Electric-type attacks have 1.2x power. Judgment is Electric type.",
 		spritenum: 572,
 		onPlate: 'Electric',
 		onBasePowerPriority: 15,
@@ -4172,6 +4376,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 // #region Silvally Memories
 	bugmemory: {
 		name: "Bug Memory",
+		shortDesc: "Holder's type changes to Bug. Multi-Attack is Bug type.",
 		spritenum: 673,
 		onMemory: 'Bug',
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 773) || pokemon.baseSpecies.num === 773) { return false; }
@@ -4185,6 +4390,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	darkmemory: {
 		name: "Dark Memory",
+		shortDesc: "Holder's type changes to Dark. Multi-Attack is Dark type.",
 		spritenum: 683,
 		onMemory: 'Dark',
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 773) || pokemon.baseSpecies.num === 773) { return false; }
@@ -4198,6 +4404,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	dragonmemory: {
 		name: "Dragon Memory",
+		shortDesc: "Holder's type changes to Dragon. Multi-Attack is Dragon type.",
 		spritenum: 682,
 		onMemory: 'Dragon',
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 773) || pokemon.baseSpecies.num === 773) { return false; }
@@ -4211,6 +4418,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	electricmemory: {
 		name: "Electric Memory",
+		shortDesc: "Holder's type changes to Electric. Multi-Attack is Electric type.",
 		spritenum: 679,
 		onMemory: 'Electric',
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 773) || pokemon.baseSpecies.num === 773) { return false; }
@@ -4224,6 +4432,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	fairymemory: {
 		name: "Fairy Memory",
+		shortDesc: "Holder's type changes to Fairy. Multi-Attack is Fairy type.",
 		spritenum: 684,
 		onMemory: 'Fairy',
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 773) || pokemon.baseSpecies.num === 773) { return false; }
@@ -4237,6 +4446,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	fightingmemory: {
 		name: "Fighting Memory",
+		shortDesc: "Holder's type changes to Fighting. Multi-Attack is Fighting type.",
 		spritenum: 668,
 		onMemory: 'Fighting',
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 773) || pokemon.baseSpecies.num === 773) { return false; }
@@ -4250,6 +4460,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	firememory: {
 		name: "Fire Memory",
+		shortDesc: "Holder's type changes to Fire. Multi-Attack is Fire type.",
 		spritenum: 676,
 		onMemory: 'Fire',
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 773) || pokemon.baseSpecies.num === 773) { return false; }
@@ -4263,6 +4474,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	flyingmemory: {
 		name: "Flying Memory",
+		shortDesc: "Holder's type changes to Flying. Multi-Attack is Flying type.",
 		spritenum: 669,
 		onMemory: 'Flying',
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 773) || pokemon.baseSpecies.num === 773) { return false; }
@@ -4276,6 +4488,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ghostmemory: {
 		name: "Ghost Memory",
+		shortDesc: "Holder's type changes to Ghost. Multi-Attack is Ghost type.",
 		spritenum: 674,
 		onMemory: 'Ghost',
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 773) || pokemon.baseSpecies.num === 773) { return false; }
@@ -4289,6 +4502,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	grassmemory: {
 		name: "Grass Memory",
+		shortDesc: "Holder's type changes to Grass. Multi-Attack is Grass type.",
 		spritenum: 678,
 		onMemory: 'Grass',
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 773) || pokemon.baseSpecies.num === 773) { return false }
@@ -4302,6 +4516,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	groundmemory: {
 		name: "Ground Memory",
+		shortDesc: "Holder's type changes to Ground. Multi-Attack is Ground type.",
 		spritenum: 671,
 		onMemory: 'Ground',
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 773) || pokemon.baseSpecies.num === 773) { return false; }
@@ -4315,6 +4530,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	icememory: {
 		name: "Ice Memory",
+		shortDesc: "Holder's type changes to Ice. Multi-Attack is Ice type.",
 		spritenum: 681,
 		onMemory: 'Ice',
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 773) || pokemon.baseSpecies.num === 773) { return false; }
@@ -4328,6 +4544,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	poisonmemory: {
 		name: "Poison Memory",
+		shortDesc: "Holder's type changes to Poison. Multi-Attack is Poison type.",
 		spritenum: 670,
 		onMemory: 'Poison',
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 773) || pokemon.baseSpecies.num === 773) { return false; }
@@ -4341,6 +4558,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	psychicmemory: {
 		name: "Psychic Memory",
+		shortDesc: "Holder's type changes to Psychic. Multi-Attack is Psychic type.",
 		spritenum: 680,
 		onMemory: 'Psychic',
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 773) || pokemon.baseSpecies.num === 773) { return false; }
@@ -4354,6 +4572,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	rockmemory: {
 		name: "Rock Memory",
+		shortDesc: "Holder's type changes to Rock. Multi-Attack is Rock type.",
 		spritenum: 672,
 		onMemory: 'Rock',
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 773) || pokemon.baseSpecies.num === 773) { return false; }
@@ -4367,6 +4586,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	steelmemory: {
 		name: "Steel Memory",
+		shortDesc: "Holder's type changes to Steel. Multi-Attack is Steel type.",
 		spritenum: 675,
 		onMemory: 'Steel',
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 773) || pokemon.baseSpecies.num === 773) { return false; }
@@ -4380,6 +4600,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	watermemory: {
 		name: "Water Memory",
+		shortDesc: "Holder's type changes to Water. Multi-Attack is Water type.",
 		spritenum: 677,
 		onMemory: 'Water',
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 773) || pokemon.baseSpecies.num === 773) { return false; }
@@ -4394,6 +4615,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 // #region Genesect Drives
 	burndrive: {
 		name: "Burn Drive",
+		shortDesc: "Holder's Techno Blast is Fire type.",
 		spritenum: 54,
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 649) || pokemon.baseSpecies.num === 649) { return false; }
 			return true;
@@ -4407,6 +4629,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	chilldrive: {
 		name: "Chill Drive",
+		shortDesc: "Holder's Techno Blast is Ice type.",
 		spritenum: 67,
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 649) || pokemon.baseSpecies.num === 649) { return false; }
 			return true;
@@ -4420,6 +4643,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	dousedrive: {
 		name: "Douse Drive",
+		shortDesc: "Holder's Techno Blast is Water type.",
 		spritenum: 103,
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 649) || pokemon.baseSpecies.num === 649) { return false; }
 			return true;
@@ -4433,6 +4657,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	shockdrive: {
 		name: "Shock Drive",
+		shortDesc: "Holder's Techno Blast is Electric type.",
 		spritenum: 442,
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 649) || pokemon.baseSpecies.num === 649) { return false; }
 			return true;
