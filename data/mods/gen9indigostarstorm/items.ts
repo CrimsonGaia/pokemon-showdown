@@ -7,6 +7,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 // #region Berries
 	apicotberry: {
 		name: "Apicot Berry",
+		itemClass: 'Berries',
 		shortDesc: "Raises holder's Sp. Def by 1 when at 2/3 max HP or less. Fragile; if broken, raises Sp. Def by 1.",
 		spritenum: 10,
 		isBerry: true,
@@ -27,6 +28,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	aspearberry: {
 		name: "Aspear Berry",
+		itemClass: 'Berries',
 		shortDesc: "Holder is cured if it is frozen. If hit by Belch while frozen, cures freeze. Single use.",
 		spritenum: 13,
 		isBerry: true,
@@ -42,6 +44,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	babiriberry: {
 		name: "Babiri Berry",
+		itemClass: 'Berries',
 		shortDesc: "First supereffective Steel hit charges berry and halves damage. Second hit consumes berry, halves damage, and heals 75 HP. Volatile; if disturbed while charged, sets Steel Spikes on both sides and loses charge. If hit by Belch, 20% chance to burn target.",
 		spritenum: 17,
 		isBerry: true,
@@ -84,6 +87,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	belueberry: {
 		name: "Belue Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. Fragile. If hit by Belch, 20% chance to infatuate target.",
 		spritenum: 21,
 		isBerry: true,
@@ -102,6 +106,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	blukberry: {
 		name: "Bluk Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. Fragile.",
 		spritenum: 44,
 		isBerry: true,
@@ -117,6 +122,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	chartiberry: {
 		name: "Charti Berry",
+		itemClass: 'Berries',
 		shortDesc: "First supereffective Rock hit charges berry and halves damage. Second hit consumes berry, halves damage, and heals 75 HP. Volatile; if disturbed while charged, sets Stealth Rock on both sides and loses charge. If hit by Belch, Belch becomes 130 BP with 20% flinch chance.",
 		spritenum: 62,
 		isBerry: true,
@@ -160,6 +166,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	cheriberry: {
 		name: "Cheri Berry",
+		itemClass: 'Berries',
 		shortDesc: "Holder cures itself if it is paralyzed. Fragile; if broken while paralyzed, cures paralysis. If hit by Belch while paralyzed, cures target's paralysis. Single use.",
 		spritenum: 63,
 		isBerry: true,
@@ -177,6 +184,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	chestoberry: {
 		name: "Chesto Berry",
+		itemClass: 'Berries',
 		shortDesc: "Holder is cured if it is asleep or drowsy. If hit by Belch while asleep/drowsy, cures target. Single use.",
 		spritenum: 65,
 		isBerry: true,
@@ -194,6 +202,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	chilanberry: {
 		name: "Chilan Berry",
+		itemClass: 'Berries',
 		shortDesc: "Halves damage from a Normal-type attack. Fragile. If hit by Belch, Belch becomes 140 BP. Single use.",
 		spritenum: 66,
 		isBerry: true,
@@ -221,6 +230,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	chopleberry: {
 		name: "Chople Berry",
+		itemClass: 'Berries',
 		shortDesc: "First supereffective Fighting hit charges berry and halves damage. Second hit consumes berry, halves damage, and heals 75 HP. Fragile; if broken, burns holder. If broken while charged, also grants Focus Energy. If hit by Belch, 10% chance to burn target.",
 		spritenum: 71,
 		isBerry: true,
@@ -259,6 +269,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	cobaberry: {
 		name: "Coba Berry",
+		itemClass: 'Berries',
 		shortDesc: "First supereffective Flying hit charges berry and halves damage. Second hit consumes berry, halves damage, and heals 75 HP. Fragile; if broken while charged, holder gains Wind Burst.",
 		spritenum: 76,
 		isBerry: true,
@@ -290,6 +301,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	colburberry: {
 		name: "Colbur Berry",
+		itemClass: 'Berries',
 		shortDesc: "First supereffective Dark hit charges berry and halves damage. Second hit consumes berry, halves damage, and heals 75 HP. Volatile; if disturbed while charged, sets Spikes on both sides and loses charge. If hit by Belch, 20% chance to lower target's Attack by 1. If hit by contact move while holding, transfers to attacker.",
 		spritenum: 78,
 		isBerry: true,
@@ -339,6 +351,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	cornnberry: {
 		name: "Cornn Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 81,
 		isBerry: true,
@@ -353,6 +366,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	custapberry: {
 		name: "Custap Berry",
+		itemClass: 'Berries',
 		shortDesc: "Holder moves first in its priority bracket when at 1/3 max HP or less (or 2/3 with Gluttony), heals 30 HP. Fragile; if broken, heals 20 HP and grants Pepped status. If hit by Belch, target gains Lagging status. Single use.",
 		spritenum: 86,
 		isBerry: true,
@@ -387,6 +401,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	durinberry: {
 		name: "Durin Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 114,
 		isBerry: true,
@@ -401,6 +416,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	figyberry: {
 		name: "Figy Berry",
+		itemClass: 'Berries',
 		shortDesc: "Restores 1/3 max HP at 1/3 max HP or less (or 2/3 with Gluttony); confuses if holder is Dark, Fairy, Grass, or Psychic type. Fragile; if broken, restores 1/4 max HP. If hit by Belch, target heals 1/16 max HP. Single use.",
 		spritenum: 140,
 		isBerry: true,
@@ -429,6 +445,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ganlonberry: {
 		name: "Ganlon Berry",
+		itemClass: 'Berries',
 		shortDesc: "Raises holder's Defense by 1 when at 1/4 max HP or less (or 1/2 with Gluttony). Single use.",
 		spritenum: 158,
 		isBerry: true,
@@ -449,6 +466,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	grepaberry: {
 		name: "Grepa Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. Fragile. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 178,
 		isBerry: true,
@@ -463,6 +481,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	habanberry: {
 		name: "Haban Berry",
+		itemClass: 'Berries',
 		shortDesc: "Halves damage from first supereffective Dragon-type attack. Volatile; if disturbed while charged, inflicts Dragonblight on holder and loses charge. If hit by Belch, 30% chance to inflict Dragonblight on target.",
 		spritenum: 185,
 		isBerry: true,
@@ -499,6 +518,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	hondewberry: {
 		name: "Hondew Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 213,
 		isBerry: true,
@@ -512,6 +532,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	iapapaberry: {
 		name: "Iapapa Berry",
+		itemClass: 'Berries',
 		shortDesc: "Restores 1/3 max HP at 1/3 max HP or less (or 2/3 with Gluttony); confuses if holder is Electric, Fairy, Ghost, or Psychic type. Fragile; if broken, restores 1/4 max HP. If hit by Belch, target heals 1/16 max HP. Single use.",
 		spritenum: 217,
 		isBerry: true,
@@ -540,6 +561,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	jabocaberry: {
 		name: "Jaboca Berry",
+		itemClass: 'Berries',
 		shortDesc: "If holder is hit by a physical move, attacker loses HP equal to the damage dealt. Fragile; if broken, holder loses 1/10 max HP. If hit by Belch, 20% chance to inflict Dragonblight on target. Single use.",
 		spritenum: 230,
 		isBerry: true,
@@ -562,6 +584,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	kasibberry: {
 		name: "Kasib Berry",
+		itemClass: 'Berries',
 		shortDesc: "Halves damage from first supereffective Ghost-type attack. Grants immunity to Curse status. Volatile; if disturbed, holder gains Focus Energy; if disturbed while charged, also inflicts Curse and loses charge. If hit by Belch, cures target's Curse. Single use.",
 		spritenum: 233,
 		isBerry: true,
@@ -624,6 +647,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	kebiaberry: {
 		name: "Kebia Berry",
+		itemClass: 'Berries',
 		shortDesc: "First supereffective Poison hit charges berry and halves damage. Second hit consumes berry, halves damage, and heals 75 HP. Fragile; if broken, inflicts poison; if broken while charged, inflicts bad poison and sets Toxic Spikes on both sides. If hit by Belch, 20% chance each to inflict bad poison or regular poison on target.",
 		spritenum: 234,
 		isBerry: true,
@@ -667,6 +691,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	keeberry: {
 		name: "Kee Berry",
+		itemClass: 'Berries',
 		shortDesc: "Raises holder's Defense by 1 if hit by a physical attack. If hit by Belch, 30% chance to badly poison target. Single use.",
 		spritenum: 593,
 		isBerry: true,
@@ -690,6 +715,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	kelpsyberry: {
 		name: "Kelpsy Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 235,
 		isBerry: true,
@@ -704,6 +730,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	lansatberry: {
 		name: "Lansat Berry",
+		itemClass: 'Berries',
 		shortDesc: "While held, grants Luck Effect. Raises holder's critical hit ratio by 2 stages and grants Rainbow Effect when at 2/3 max HP or less (or 100% with Gluttony). Fragile; if broken, raises critical hit ratio by 2 stages. If hit by Belch, target's critical hit ratio is raised by 2 stages. Single use.",
 		spritenum: 238,
 		isBerry: true,
@@ -730,6 +757,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	leppaberry: {
 		name: "Leppa Berry",
+		itemClass: 'Berries',
 		shortDesc: "Restores 10 PP to a move that reaches 0 PP. Fragile. Single use.",
 		spritenum: 244,
 		isBerry: true,
@@ -754,6 +782,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	liechiberry: {
 		name: "Liechi Berry",
+		itemClass: 'Berries',
 		shortDesc: "Raises holder's Attack by 1 when at 2/3 max HP or less (or 100% with Gluttony). Fragile; if broken, raises Attack by 1.",
 		spritenum: 248,
 		isBerry: true,
@@ -776,6 +805,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	lumberry: {
 		name: "Lum Berry",
+		itemClass: 'Berries',
 		shortDesc: "Holder cures itself if it is statused or confused. Fragile. Single use.",
 		spritenum: 262,
 		isBerry: true,
@@ -796,6 +826,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	magoberry: {
 		name: "Mago Berry",
+		itemClass: 'Berries',
 		spritenum: 274,
 		isBerry: true,
 		   belch: { basePower: 35 },
@@ -814,6 +845,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	magostberry: {
 		name: "Magost Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. Fragile. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 275,
 		isBerry: true,
@@ -830,6 +862,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	marangaberry: {
 		name: "Maranga Berry",
+		itemClass: 'Berries',
 		shortDesc: "Raises holder's Sp. Def by 1 if hit by a special attack. If hit by contact move while holding, transfers to attacker.",
 		spritenum: 597,
 		isBerry: true,
@@ -852,6 +885,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	micleberry: {
 		name: "Micle Berry",
+		itemClass: 'Berries',
 		shortDesc: "Raises holder's accuracy by 3 stages, heals 75 HP, and raises critical hit ratio by 3 stages when at 1/2 max HP or less (or 100% with Gluttony). Fragile; if broken, same effects apply. Single use.",
 		spritenum: 290,
 		isBerry: true,
@@ -881,6 +915,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	nanabberry: {
 		name: "Nanab Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. Fragile. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 302,
 		isBerry: true,
@@ -897,6 +932,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	nomelberry: {
 		name: "Nomel Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 306,
 		isBerry: true,
@@ -912,6 +948,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	occaberry: {
 		name: "Occa Berry",
+		itemClass: 'Berries',
 		spritenum: 311,
 		isBerry: true,
 		isMildlyFragile: true,
@@ -957,6 +994,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	oranberry: {
 		name: "Oran Berry",
+		itemClass: 'Berries',
 		spritenum: 319,
 		isBerry: true,
 		isFragile: true,
@@ -977,6 +1015,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	pamtreberry: {
 		name: "Pamtre Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 323,
 		isBerry: true,
@@ -992,6 +1031,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	passhoberry: {
 		name: "Passho Berry",
+		itemClass: 'Berries',
 		spritenum: 329,
 		isBerry: true,
 		isFragile: true,
@@ -1026,6 +1066,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	payapaberry: {
 		name: "Payapa Berry",
+		itemClass: 'Berries',
 		spritenum: 330,
 		isBerry: true,
 		isFragile: true,
@@ -1065,6 +1106,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	pechaberry: {
 		name: "Pecha Berry",
+		itemClass: 'Berries',
 		spritenum: 333,
 		isBerry: true,
 		isFragile: true,
@@ -1081,6 +1123,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	persimberry: {
 		name: "Persim Berry",
+		itemClass: 'Berries',
 		spritenum: 334,
 		isBerry: true,
 		isFragile: true,
@@ -1097,6 +1140,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	petayaberry: {
 		name: "Petaya Berry",
+		itemClass: 'Berries',
 		shortDesc: "Raises holder's Sp. Atk by 1 when at 1/4 max HP or less (or 1/2 with Gluttony). Single use.",
 		spritenum: 335,
 		isBerry: true,
@@ -1112,6 +1156,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	pinapberry: {
 		name: "Pinap Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 337,
 		isBerry: true,
@@ -1127,6 +1172,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	pomegberry: {
 		name: "Pomeg Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. Fragile. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 351,
 		isBerry: true,
@@ -1142,6 +1188,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	qualotberry: {
 		name: "Qualot Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 371,
 		isBerry: true,
@@ -1156,6 +1203,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	rabutaberry: {
 		name: "Rabuta Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 375,
 		isBerry: true,
@@ -1171,6 +1219,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	rawstberry: {
 		name: "Rawst Berry",
+		itemClass: 'Berries',
 		spritenum: 381,
 		isBerry: true,
 		isFragile: true,
@@ -1187,6 +1236,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	razzberry: {
 		name: "Razz Berry",
+		itemClass: 'Berries',
 		spritenum: 384,
 		isBerry: true,
 		isFragile: true,
@@ -1203,6 +1253,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	rindoberry: {
 		name: "Rindo Berry",
+		itemClass: 'Berries',
 		spritenum: 409,
 		isBerry: true,
 		isFragile: true,
@@ -1247,6 +1298,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	roseliberry: {
 		name: "Roseli Berry",
+		itemClass: 'Berries',
 		spritenum: 603,
 		isBerry: true,
 		isFragile: true,
@@ -1296,6 +1348,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	rowapberry: {
 		name: "Rowap Berry",
+		itemClass: 'Berries',
 		spritenum: 420,
 		isBerry: true,
 		isFragile: true,
@@ -1325,6 +1378,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	salacberry: {
 		name: "Salac Berry",
+		itemClass: 'Berries',
 		shortDesc: "Raises holder's Speed by 1 when at 1/4 max HP or less (or 1/2 with Gluttony). Single use.",
 		spritenum: 426,
 		isBerry: true,
@@ -1345,6 +1399,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	shucaberry: {
 		name: "Shuca Berry",
+		itemClass: 'Berries',
 		shortDesc: "First supereffective Ground hit charges berry and halves damage. Second hit consumes berry, halves damage, and heals 75 HP. Fragile.",
 		spritenum: 443,
 		isBerry: true,
@@ -1376,6 +1431,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	sitrusberry: {
 		name: "Sitrus Berry",
+		itemClass: 'Berries',
 		shortDesc: "Restores 1/4 max HP at 1/2 max HP or less. Fragile; if broken, heals 1/8 max HP. If hit by Belch, target heals 1/24 max HP. Single use.",
 		spritenum: 448,
 		isBerry: true,
@@ -1394,6 +1450,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	spelonberry: {
 		name: "Spelon Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. Fragile; if broken, burns holder. If hit by Belch, 30% chance to burn target and Belch becomes Poison/Fire type that can hit Steel types.",
 		spritenum: 462,
 		isBerry: true,
@@ -1428,6 +1485,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	starfberry: {
 		name: "Starf Berry",
+		itemClass: 'Berries',
 		shortDesc: "Raises a random stat by 2 stages when at 1/4 max HP or less (or 1/2 with Gluttony). Single use.",
 		spritenum: 472,
 		isBerry: true,
@@ -1458,6 +1516,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	tamatoberry: {
 		name: "Tamato Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. Fragile. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 486,
 		isBerry: true,
@@ -1472,6 +1531,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	tangaberry: {
 		name: "Tanga Berry",
+		itemClass: 'Berries',
 		spritenum: 487,
 		isBerry: true,
 		isMildlyFragile: true,
@@ -1512,6 +1572,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	wacanberry: {
 		name: "Wacan Berry",
+		itemClass: 'Berries',
 		shortDesc: "First supereffective Electric hit charges berry and negates all damage. Second hit consumes berry, halves damage, and heals 75 HP. Fragile; if broken, paralyzes holder; if broken while charged, holder also loses 1/3 max HP from explosion. If hit by Belch, 10% chance to paralyze target.",
 		spritenum: 526,
 		isBerry: true,
@@ -1554,6 +1615,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	watmelberry: {
 		name: "Watmel Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. Fragile. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 530,
 		isBerry: true,
@@ -1570,6 +1632,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	wepearberry: {
 		name: "Wepear Berry",
+		itemClass: 'Berries',
 		shortDesc: "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
 		spritenum: 533,
 		isBerry: true,
@@ -1585,6 +1648,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	wikiberry: {
 		name: "Wiki Berry",
+		itemClass: 'Berries',
 		shortDesc: "Restores 1/3 max HP at 1/4 max HP or less (or 1/2 with Gluttony); confuses if -Sp. Atk Nature. Single use.",
 		spritenum: 538,
 		isBerry: true,
@@ -1610,6 +1674,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	yacheberry: {
 		name: "Yache Berry",
+		itemClass: 'Berries',
 		shortDesc: "First supereffective Ice hit charges berry and halves damage. Second hit consumes berry, halves damage, and heals 75 HP. Fragile; if broken, freezes holder; if broken while charged, holder also loses 1/3 max HP from explosion. If hit by Belch, 10% chance to freeze target.",
 		spritenum: 567,
 		isBerry: true,
@@ -1759,6 +1824,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	boosterenergy: {
 		name: "Booster Energy",
+		itemClass: 'Consumable',
 		shortDesc: "Activates Protosynthesis outside of sun or Quark Drive outside of Electric Terrain. Single use. Paradox Pokemon cannot lose this item.",
 		spritenum: 745,
 		fling: { basePower: 30, },
@@ -1930,6 +1996,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ejectbutton: {
 		name: "Eject Button",
+		itemClass: 'Consumable',
 		shortDesc: "If holder is hit by an attack, it immediately switches out. Single use.",
 		spritenum: 118,
 		fling: { basePower: 30, },
@@ -1949,6 +2016,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ejectpack: {
 		name: "Eject Pack",
+		itemClass: 'Consumable',
 		shortDesc: "If holder's stats are lowered, it switches out. Single use.",
 		spritenum: 714,
 		fling: { basePower: 50, },
@@ -2040,6 +2108,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	focussash: {
 		name: "Focus Sash",
+		itemClass: 'Consumable',
 		shortDesc: "If holder is at full HP and is hit by an attack that would KO it, it survives with 1 HP. Single use.",
 		spritenum: 151,
 		fling: { basePower: 10, },
@@ -2171,6 +2240,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	mentalherb: {
 		name: "Mental Herb",
+		itemClass: 'Consumable',
 		shortDesc: "Holder cures itself if it is infatuated, taunted, encored, tormented, disabled, or heal blocked. Single use.",
 		spritenum: 285,
 		fling: {
@@ -2239,6 +2309,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	mirrorherb: {
 		name: "Mirror Herb",
+		itemClass: 'Consumable',
 		shortDesc: "When an opponent raises its stats, holder copies all positive stat boosts. Single use.",
 		spritenum: 748,
 		fling: { basePower: 30, },
@@ -2347,6 +2418,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	redcard: {
 		name: "Red Card",
+		itemClass: 'Consumable',
 		shortDesc: "If holder is hit by an attack, the attacker is forced to switch out. Single use.",
 		spritenum: 387,
 		fling: { basePower: 10, },
@@ -2468,6 +2540,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	throatspray: {
 		name: "Throat Spray",
+		itemClass: 'Consumable',
 		shortDesc: "Raises holder's Sp. Atk by 1 if it uses a sound move. Single use.",
 		spritenum: 713,
 		fling: { basePower: 30, },
@@ -2524,6 +2597,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	weaknesspolicy: {
 		name: "Weakness Policy",
+		itemClass: 'Consumable',
 		shortDesc: "If holder is hit by a super effective attack, its Attack and Sp. Atk raise by 2. Single use.",
 		spritenum: 609,
 		fling: { basePower: 80, },
@@ -2537,6 +2611,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	whiteherb: {
 		name: "White Herb",
+		itemClass: 'Consumable',
 		shortDesc: "Restores all lowered stats to 0 when any stat is lowered. Single use.",
 		spritenum: 535,
 		fling: {
@@ -2676,6 +2751,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	electricseed: {
 		name: "Electric Seed",
+		itemClass: 'Consumable',
 		shortDesc: "Raises holder's Defense by 1 when Electric Terrain is active. Single use.",
 		spritenum: 664,
 		fling: { basePower: 10, },
@@ -2688,6 +2764,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	grassyseed: {
 		name: "Grassy Seed",
+		itemClass: 'Consumable',
 		shortDesc: "Raises holder's Defense by 1 when Grassy Terrain is active. Single use.",
 		spritenum: 667,
 		fling: { basePower: 10, },
@@ -2700,6 +2777,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	mistyseed: {
 		name: "Misty Seed",
+		itemClass: 'Consumable',
 		shortDesc: "Raises holder's Sp. Def by 1 when Misty Terrain is active. Single use.",
 		spritenum: 666,
 		fling: { basePower: 10,},
@@ -2712,6 +2790,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	psychicseed: {
 		name: "Psychic Seed",
+		itemClass: 'Consumable',
 		shortDesc: "Raises holder's Sp. Def by 1 when Psychic Terrain is active. Single use.",
 		spritenum: 665,
 		fling: { basePower: 10, },
@@ -2724,6 +2803,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	toxicseed: {
 		name: "Toxic Seed",
+		itemClass: 'Consumable',
 		shortDesc: "Raises holder's Sp. Def by 1 when Toxic Terrain is active. Single use.",
 		spritenum: 0,
 		fling: { basePower: 10, },
@@ -3025,6 +3105,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	// #region Evolution Stones
 	dawnstone: {
 		name: "Dawn Stone",
+		itemClass: 'Evolution',
 		shortDesc: "Boosts light/solar moves by 1.2x. Reduces Dark/lunar/shadow damage by 20% and blocks those moves.",
 		spritenum: 92,
 		fling: { basePower: 80, },
@@ -3042,6 +3123,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	duskstone: {
 		name: "Dusk Stone",
+		itemClass: 'Evolution',
 		shortDesc: "Boosts Dark/shadow moves by 1.2x. Reduces light/solar damage by 20% and blocks those moves.",
 		spritenum: 116,
 		fling: { basePower: 80, },
@@ -3059,6 +3141,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	firestone: {
 		name: "Fire Stone",
+		itemClass: 'Evolution',
 		shortDesc: "Boosts Fire moves by 1.2x, reduces Ice damage by 20%. Immune to freeze. Dulls in rain/water.",
 		spritenum: 142,
 		fling: { basePower: 30, },
@@ -3097,6 +3180,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	icestone: {
 		name: "Ice Stone",
+		itemClass: 'Evolution',
 		shortDesc: "Boosts Ice moves by 1.2x, reduces Fire damage by 20%. Immune to freeze. Dulls in heat.",
 		spritenum: 693,
 		fling: { basePower: 30, },
@@ -3135,6 +3219,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	leafstone: {
 		name: "Leaf Stone",
+		itemClass: 'Evolution',
 		shortDesc: "Boosts Grass moves by 1.2x, reduces Water damage by 20%. Heals/cures in sun. Dulls in cold/ice.",
 		spritenum: 241,
 		fling: { basePower: 30, },
@@ -3177,6 +3262,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	moonstone: {
 		name: "Moon Stone",
+		itemClass: 'Evolution',
 		shortDesc: "Boosts light/lunar/shadow moves by 1.2x (1.4x in sun). Reduces solar/magic damage. Dulls in weather.",
 		spritenum: 295,
 		fling: { basePower: 30, },
@@ -3223,6 +3309,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	shinystone: {
 		name: "Shiny Stone",
+		itemClass: 'Evolution',
 		shortDesc: "Boosts light/pulse moves by 1.2x. Reduces Dark/shadow damage by 20% and blocks those moves.",
 		spritenum: 439,
 		fling: { basePower: 80, },
@@ -3242,6 +3329,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	sunstone: {
 		name: "Sun Stone",
+		itemClass: 'Evolution',
 		shortDesc: "Boosts Fire/explosive/light/solar moves by 1.2x (1.3x in sun). Reduces damage from several types. Dulls in weather.",
 		spritenum: 480,
 		fling: { basePower: 30, },
@@ -3296,6 +3384,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	thunderstone: {
 		name: "Thunder Stone",
+		itemClass: 'Evolution',
 		shortDesc: "Boosts Electric moves by 1.2x. Immune to sleep. Dulls when hitting Ground-types.",
 		spritenum: 492,
 		fling: { basePower: 30, },
@@ -3326,6 +3415,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	waterstone: {
 		name: "Water Stone",
+		itemClass: 'Evolution',
 		shortDesc: "Boosts Water/sweep/pulse moves by 1.2x, reduces Fire damage by 20%. Immune to burn. Dulls on certain terrain/hits.",
 		spritenum: 529,
 		fling: { basePower: 30, },
@@ -3377,6 +3467,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	berryjuice: {
 		name: "Berry Juice",
+		itemClass: 'Consumable',
 		shortDesc: "Restores 20 HP when the holder's HP is at 50% or less. Single use.",
 		spritenum: 22,
 		fling: { basePower: 30, },
@@ -3482,6 +3573,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 // #region Held Evolution Items
 	dragonscale: {
 		name: "Dragon Scale",
+		itemClass: 'Trade Evo',
 		shortDesc: "Evolves Seadra into Kingdra when traded.",
 		spritenum: 108,
 		fling: { basePower: 30, },
@@ -3490,6 +3582,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	dubiousdisc: {
 		name: "Dubious Disc",
+		itemClass: 'Trade Evo',
 		shortDesc: "Evolves Porygon2 into Porygon-Z when traded.",
 		spritenum: 113,
 		fling: { basePower: 50, },
@@ -3527,6 +3620,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	magmarizer: {
 		name: "Magmarizer",
+		itemClass: 'Trade Evo',
 		shortDesc: "Evolves Magmar into Magmortar when traded.",
 		spritenum: 272,
 		fling: { basePower: 80, },
@@ -3535,6 +3629,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ovalstone: {
 		name: "Oval Stone",
+		itemClass: 'Evolution',
 		shortDesc: "Evolves Happiny into Chansey when leveled up during the day.",
 		spritenum: 321,
 		fling: { basePower: 80, },
@@ -3633,6 +3728,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	sachet: {
 		name: "Sachet",
+		itemClass: 'Trade Evo',
 		shortDesc: "Evolves Spritzee into Aromatisse when traded.",
 		spritenum: 691,
 		fling: { basePower: 80, },
@@ -3642,6 +3738,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	upgrade: {
 		name: "Up-Grade",
+		itemClass: 'Trade Evo',
 		shortDesc: "Evolves Porygon into Porygon2 when traded.",
 		spritenum: 523,
 		fling: { basePower: 30, },
@@ -3650,6 +3747,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	whippeddream: {
 		name: "Whipped Dream",
+		itemClass: 'Trade Evo',
 		shortDesc: "Evolves Swirlix into Slurpuff when traded.",
 		spritenum: 692,
 		fling: { basePower: 80, },
@@ -3833,6 +3931,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	sharpbeak: {
 		name: "Sharp Beak",
+		itemClass: 'Berries',
 		shortDesc: "Holder's Flying/pierce attacks have 1.2x power. Bite moves consume opponent's berries.",
 		spritenum: 436,
 		fling: { basePower: 50, },
@@ -4176,6 +4275,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	// #region Poké Balls
 	beastball: {
 		name: "Beast Ball",
+		itemClass: 'Pokéball',
 		spritenum: 661,
 		num: 851,
 		gen: 7,
@@ -4183,6 +4283,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	cherishball: {
 		name: "Cherish Ball",
+		itemClass: 'Pokéball',
 		spritenum: 64,
 		num: 16,
 		gen: 4,
@@ -4191,6 +4292,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	diveball: {
 		name: "Dive Ball",
+		itemClass: 'Pokéball',
 		spritenum: 101,
 		num: 7,
 		gen: 3,
@@ -4198,6 +4300,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},	
 	dreamball: {
 		name: "Dream Ball",
+		itemClass: 'Pokéball',
 		spritenum: 111,
 		num: 576,
 		gen: 5,
@@ -4205,6 +4308,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	duskball: {
 		name: "Dusk Ball",
+		itemClass: 'Pokéball',
 		spritenum: 115,
 		num: 13,
 		gen: 4,
@@ -4212,6 +4316,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	fastball: {
 		name: "Fast Ball",
+		itemClass: 'Pokéball',
 		spritenum: 137,
 		num: 492,
 		gen: 2,
@@ -4219,6 +4324,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	friendball: {
 		name: "Friend Ball",
+		itemClass: 'Pokéball',
 		spritenum: 153,
 		num: 497,
 		gen: 2,
@@ -4226,6 +4332,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	greatball: {
 		name: "Great Ball",
+		itemClass: 'Pokéball',
 		spritenum: 174,
 		num: 3,
 		gen: 1,
@@ -4233,6 +4340,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	healball: {
 		name: "Heal Ball",
+		itemClass: 'Pokéball',
 		spritenum: 188,
 		num: 14,
 		gen: 4,
@@ -4240,6 +4348,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	heavyball: {
 		name: "Heavy Ball",
+		itemClass: 'Pokéball',
 		spritenum: 194,
 		num: 495,
 		gen: 2,
@@ -4247,6 +4356,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	levelball: {
 		name: "Level Ball",
+		itemClass: 'Pokéball',
 		spritenum: 246,
 		num: 493,
 		gen: 2,
@@ -4254,6 +4364,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	loveball: {
 		name: "Love Ball",
+		itemClass: 'Pokéball',
 		spritenum: 258,
 		num: 496,
 		gen: 2,
@@ -4261,6 +4372,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	lureball: {
 		name: "Lure Ball",
+		itemClass: 'Pokéball',
 		spritenum: 264,
 		num: 494,
 		gen: 2,
@@ -4268,6 +4380,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	luxuryball: {
 		name: "Luxury Ball",
+		itemClass: 'Pokéball',
 		spritenum: 266,
 		num: 11,
 		gen: 3,
@@ -4275,6 +4388,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	masterball: {
 		name: "Master Ball",
+		itemClass: 'Pokéball',
 		spritenum: 276,
 		num: 1,
 		gen: 1,
@@ -4282,6 +4396,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	moonball: {
 		name: "Moon Ball",
+		itemClass: 'Pokéball',
 		spritenum: 294,
 		num: 498,
 		gen: 2,
@@ -4289,6 +4404,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	nestball: {
 		name: "Nest Ball",
+		itemClass: 'Pokéball',
 		spritenum: 303,
 		num: 8,
 		gen: 3,
@@ -4296,6 +4412,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	netball: {
 		name: "Net Ball",
+		itemClass: 'Pokéball',
 		spritenum: 304,
 		num: 6,
 		gen: 3,
@@ -4303,6 +4420,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	parkball: {
 		name: "Park Ball",
+		itemClass: 'Pokéball',
 		spritenum: 325,
 		num: 500,
 		gen: 4,
@@ -4311,6 +4429,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	pokeball: {
 		name: "Poke Ball",
+		itemClass: 'Pokéball',
 		spritenum: 345,
 		num: 4,
 		gen: 1,
@@ -4318,6 +4437,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	premierball: {
 		name: "Premier Ball",
+		itemClass: 'Pokéball',
 		spritenum: 363,
 		num: 12,
 		gen: 3,
@@ -4325,6 +4445,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	quickball: {
 		name: "Quick Ball",
+		itemClass: 'Pokéball',
 		spritenum: 372,
 		num: 15,
 		gen: 4,
@@ -4332,6 +4453,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	repeatball: {
 		name: "Repeat Ball",
+		itemClass: 'Pokéball',
 		spritenum: 401,
 		num: 9,
 		gen: 3,
@@ -4339,6 +4461,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	safariball: {
 		name: "Safari Ball",
+		itemClass: 'Pokéball',
 		spritenum: 425,
 		num: 5,
 		gen: 1,
@@ -4346,6 +4469,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	sportball: {
 		name: "Sport Ball",
+		itemClass: 'Pokéball',
 		spritenum: 465,
 		num: 499,
 		gen: 2,
@@ -4353,6 +4477,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	strangeball: {
 		name: "Strange Ball",
+		itemClass: 'Pokéball',
 		spritenum: 308,
 		num: 1785,
 		gen: 8,
@@ -4361,6 +4486,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	timerball: {
 		name: "Timer Ball",
+		itemClass: 'Pokéball',
 		spritenum: 494,
 		num: 10,
 		gen: 3,
@@ -4368,6 +4494,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ultraball: {
 		name: "Ultra Ball",
+		itemClass: 'Pokéball',
 		spritenum: 521,
 		num: 2,
 		gen: 1,

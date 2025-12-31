@@ -5819,6 +5819,12 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		priority: 0,
 		critRatio: 8,
 		flags: { wind: 1, protect: 1, mirror: 1, distance: 1, metronome: 1 },
+		onHit(target, source, move) {
+			this.field.setWeather('turbulentwinds', source, move);
+			if (this.field.weatherState) {
+				this.field.weatherState.duration = 2;
+			}
+		},
 		secondary: null,
 		target: "any",
 	},

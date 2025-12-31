@@ -35,7 +35,7 @@ Config.customcolors = {
 	'crimson gaia' : 'aeo'
 };
 /*** Begin automatically generated configuration ***/
-Config.version = "0.11.2 (2f9254d2/adb6b7fc)";
+Config.version = "0.11.2 (filterfix123)";
 
 Config.routes = {
 	root: 'pokemonshowdown.com',

@@ -58,7 +58,7 @@ export class PSSearchResults extends preact.Component<{
 	</div></li>;
 	}
 
-	renderPokemonRow(id: ID, matchStart: number, matchEnd: number, errorMessage?: preact.ComponentChildren) {
+	renderPokemonRow(id: ID, matchStart: number, matchEnd: number, errorMessage?: preact.ComponentChildren, isFilter?: boolean) {
 		const search = this.props.search;
 		const pokemon = search.dex.species.get(id);
 		if (!pokemon) return <li class="result">Unrecognized pokemon</li>;
@@ -71,7 +71,7 @@ export class PSSearchResults extends preact.Component<{
 		if (search.dex.gen < 2) bst -= stats['spd'];
 
 		if (errorMessage) {
-			return <li class="result"><a
+			return <li class={`result${isFilter ? ' filter-result' : ''}`}><a
 				href={`${this.URL_ROOT}pokemon/${id}`} class={id === this.speciesId ? 'cur' : ''}
 				data-target="push" data-entry={`pokemon|${pokemon.name}`}
 			>
@@ -87,7 +87,7 @@ export class PSSearchResults extends preact.Component<{
 			</a></li>;
 		}
 
-		return <li class="result">
+		return <li class={`result${isFilter ? ' filter-result' : ''}`}>
 			<a
 				href={`${this.URL_ROOT}pokemon/${id}`} class={id === this.speciesId ? 'cur' : ''}
 				data-target="push" data-entry={`pokemon|${pokemon.name}`}
@@ -170,33 +170,47 @@ export class PSSearchResults extends preact.Component<{
 		return output;
 	}
 
-	renderItemRow(id: ID, matchStart: number, matchEnd: number, errorMessage?: preact.ComponentChildren) {
+	renderItemRow(id: ID, matchStart: number, matchEnd: number, errorMessage?: preact.ComponentChildren, isFilter?: boolean) {
 		const search = this.props.search;
 		const item = search.dex.items.get(id);
 		if (!item) return <li class="result">Unrecognized item</li>;
 
-		return <li class="result"><a
+		// Determine item classification
+		let classification = '';
+		let classificationClass = '';
+		if (item.isFragile) {
+			classification = 'Fragile';
+			classificationClass = 'fragile';
+		} else if (item.isMildlyFragile) {
+			classification = 'Volatile';
+			classificationClass = 'volatile';
+		}
+		
+		// Debug: Log ALL items to see what's happening
+		console.log(`[ITEM] ${id}: fragile=${!!item.isFragile} volatile=${!!item.isMildlyFragile} class="${classificationClass}" text="${classification}"`);
+
+		return <li class={`result${isFilter ? ' filter-result' : ''}`}><a
 			href={`${this.URL_ROOT}items/${id}`} class={id === this.itemId ? 'cur' : ''}
 			data-target="push" data-entry={`item|${item.name}`}
 		>
 			<span class="col itemiconcol">
-				<span class="pixelated" style={Dex.getItemIcon(item)}></span>
-			</span>
+		<span class="pixelated" style={Dex.getItemIcon(item)}></span>
+		</span>
 
-			<span class="col namecol">{id ? this.renderName(item.name, matchStart, matchEnd) : <i>(no item)</i>}</span>
+		<span class="col namecol">{id ? this.renderName(item.name, matchStart, matchEnd) : <i>(no item)</i>}</span>
+		<span class={`col itemclasscol ${classificationClass}`}>{classification || '—'}</span>
 
-			{!!id && errorMessage}
+		{!!id && errorMessage}
 
-			{!errorMessage && <span class="col itemdesccol">{item.shortDesc}</span>}
-		</a></li>;
-	}
-
-	renderAbilityRow(id: ID, matchStart: number, matchEnd: number, errorMessage?: preact.ComponentChildren) {
+		{!errorMessage && <span class="col itemdesccol">{item.shortDesc || ''}</span>}
+	</a></li>;
+}
+	renderAbilityRow(id: ID, matchStart: number, matchEnd: number, errorMessage?: preact.ComponentChildren, isFilter?: boolean) {
 		const search = this.props.search;
 		const ability = search.dex.abilities.get(id);
 		if (!ability) return <li class="result">Unrecognized ability</li>;
 
-		return <li class="result">
+		return <li class={`result${isFilter ? ' filter-result' : ''}`}>
 			<a
 				href={`${this.URL_ROOT}abilities/${id}`} class={id === this.abilityId ? 'cur' : ''}
 				data-target="push" data-entry={`ability|${ability.name}`}
@@ -210,7 +224,7 @@ export class PSSearchResults extends preact.Component<{
 		</li>;
 	}
 
-	renderMoveRow(id: ID, matchStart: number, matchEnd: number, errorMessage?: preact.ComponentChildren) {
+	renderMoveRow(id: ID, matchStart: number, matchEnd: number, errorMessage?: preact.ComponentChildren, isFilter?: boolean) {
 		let slot = null;
 		if (id.startsWith('_')) {
 			[slot, id] = id.slice(1).split('_') as [string, ID];
@@ -232,7 +246,7 @@ export class PSSearchResults extends preact.Component<{
 		const tagStart = (move.name.startsWith('Hidden Power') ? 12 : 0);
 
 		if (errorMessage) {
-			return <li class="result"><a
+			return <li class={`result${isFilter ? ' filter-result' : ''}`}><a
 				href={`${this.URL_ROOT}moves/${id}`} class={this.moveIds.includes(id) ? 'cur' : ''}
 				data-target="push" data-entry={entry}
 			>
@@ -244,7 +258,7 @@ export class PSSearchResults extends preact.Component<{
 
 		let pp = (move.pp === 1 || move.noPPBoosts ? move.pp : move.pp * 8 / 5);
 		if (search.dex.gen < 3) pp = Math.min(61, pp);
-		return <li class="result"><a
+		return <li class={`result${isFilter ? ' filter-result' : ''}`}><a
 			href={`${this.URL_ROOT}moves/${id}`} class={this.moveIds.includes(id) ? 'cur' : ''}
 			data-target="push" data-entry={entry}
 		>
@@ -402,7 +416,8 @@ export class PSSearchResults extends preact.Component<{
 
 		let errorMessage: preact.ComponentChild = null;
 		let label;
-		if ((label = search.filterLabel(type))) {
+		const isFilter = !!(label = search.filterLabel(type));
+		if (isFilter) {
 			errorMessage = <span class="col filtercol"><em>{label}</em></span>;
 		} else if ((label = search.illegalLabel(id as ID))) {
 			errorMessage = <span class="col illegalcol"><em>{label}</em></span>;
@@ -423,13 +438,13 @@ export class PSSearchResults extends preact.Component<{
 		case 'sortmove':
 			return this.renderMoveSortRow();
 		case 'pokemon':
-			return this.renderPokemonRow(id, matchStart, matchEnd, errorMessage);
+			return this.renderPokemonRow(id, matchStart, matchEnd, errorMessage, isFilter);
 		case 'move':
-			return this.renderMoveRow(id, matchStart, matchEnd, errorMessage);
+			return this.renderMoveRow(id, matchStart, matchEnd, errorMessage, isFilter);
 		case 'item':
-			return this.renderItemRow(id, matchStart, matchEnd, errorMessage);
+			return this.renderItemRow(id, matchStart, matchEnd, errorMessage, isFilter);
 		case 'ability':
-			return this.renderAbilityRow(id, matchStart, matchEnd, errorMessage);
+			return this.renderAbilityRow(id, matchStart, matchEnd, errorMessage, isFilter);
 	case 'type':
 		return this.renderTypeRow(id, matchStart, matchEnd, errorMessage);
 	case 'egggroup':

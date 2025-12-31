@@ -491,6 +491,21 @@
 		}
 		buf += '<span class="col namecol">' + name + '</span> ';
 
+		// classification
+		var classification = '';
+		var classificationClass = '';
+		if (id === 'airballoon' || id === 'assaultvest') {
+			console.log('[ITEM DEBUG]', id, 'keys:', Object.keys(item), 'isFragile:', item.isFragile, 'isMildlyFragile:', item.isMildlyFragile);
+		}
+		if (item.isFragile) {
+			classification = 'Fragile';
+			classificationClass = 'fragile';
+		} else if (item.isMildlyFragile) {
+			classification = 'Volatile';
+			classificationClass = 'volatile';
+		}
+		buf += '<span class="col itemclasscol ' + classificationClass + '">' + (classification || '—') + '</span> ';
+
 		// error
 		if (errorMessage) {
 			buf += errorMessage + '</a></li>';
