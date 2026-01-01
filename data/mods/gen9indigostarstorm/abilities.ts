@@ -2246,6 +2246,8 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Run Away",
 		rating: 0,
 		num: 50,
+		desc: "This Pokemon cannot be trapped by any means, including trapping moves, abilities, and items.",
+		shortDesc: "This Pokemon cannot be trapped by any means.",
 	},
 	sandstream: {
 		onImmunity(type, pokemon) { if (type === 'sandstorm') return false; },
@@ -6402,6 +6404,8 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Sword of Ruin",
 		rating: 4.5,
 		num: 285,
+		desc: "Active Pokemon without this Ability have their Defense multiplied by 0.75.",
+		shortDesc: "Active Pokemon without this Ability have their Defense multiplied by 0.75.",
 	},
 	tabletsofruin: {
 		onStart(pokemon) {
