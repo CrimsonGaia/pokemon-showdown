@@ -234,6 +234,11 @@ export class DexSearch {
 	}
 
 	textSearch(query: string): SearchRow[] {
+		// Ensure baseResults and illegalReasons are populated
+		if (this.typedSearch && !this.typedSearch.baseResults) {
+			this.typedSearch.getResults(null, null);
+		}
+		
 		query = toID(query);
 
 		this.exactMatch = false;
@@ -483,6 +488,21 @@ export class DexSearch {
 		}
 
 		this.results = Array.prototype.concat.apply(topbuf, bufs);
+		
+		// Filter results against baseResults for format legality
+		if (this.typedSearch && this.typedSearch.baseResults) {
+			const legalSet = new Set<string>();
+			for (const [type, id] of this.typedSearch.baseResults) {
+				if (type !== 'header') {
+					legalSet.add(id);
+				}
+			}
+			this.results = this.results.filter(([type, id]) => {
+				if (type === 'header' || type === 'html') return true;
+				return legalSet.has(id);
+			});
+		}
+		
 		return this.results;
 	}
 	private instafilter(searchType: SearchType | '', fType: SearchType, fId: ID): SearchRow[] {
@@ -981,6 +1001,7 @@ abstract class BattleTypedSearch<T extends SearchType> {
 			this.formatType === 'svdlc1natdex' ? 'gen9dlc1natdex' :
 			this.formatType === 'natdex' ? `gen${gen}natdex` :
 			this.formatType === 'stadium' ? `gen${gen}stadium${gen > 1 ? gen : ''}` :
+			this.formatType === 'indigostarstorm' ? 'gen9indigostarstorm' :
 			`gen${gen}`;
 		if (table?.[tableKey]) {
 			table = table[tableKey];
@@ -1087,7 +1108,8 @@ class BattlePokemonSearch extends BattleTypedSearch<'pokemon'> {
 			table[`gen${dex.gen}doubles`] && dex.gen > 4 &&
 			this.formatType !== 'letsgo' && this.formatType !== 'bdspdoubles' &&
 			this.formatType !== 'ssdlc1doubles' && this.formatType !== 'predlcdoubles' &&
-			this.formatType !== 'svdlc1doubles' && !this.formatType?.includes('natdex') &&
+			this.formatType !== 'svdlc1doubles' && this.formatType !== 'indigostarstorm' &&
+			!this.formatType?.includes('natdex') &&
 			(
 				format.includes('doubles') || format.includes('triples') ||
 				format === 'freeforall' || format.startsWith('ffa') ||
@@ -1138,6 +1160,8 @@ class BattlePokemonSearch extends BattleTypedSearch<'pokemon'> {
 			}
 		} else if (this.formatType === 'stadium') {
 			table = table[`gen${dex.gen}stadium${dex.gen > 1 ? dex.gen : ''}`];
+		} else if (this.formatType === 'indigostarstorm') {
+			table = table['gen9indigostarstorm'];
 		}
 
 		if (!table.tierSet) {
@@ -1202,6 +1226,30 @@ class BattlePokemonSearch extends BattleTypedSearch<'pokemon'> {
 		else if (format === 'doublesou' && dex.gen > 4) tierSet = tierSet.slice(slices.DOU);
 		else if (format === 'doublesuu') tierSet = tierSet.slice(slices.DUU);
 		else if (format === 'doublesnu') tierSet = tierSet.slice(slices.DNU || slices.DUU);
+		else if (this.formatType === 'indigostarstorm') {
+			// ISL regulation sets - slice based on format name
+			if (format.includes('babyleague')) {
+				tierSet = tierSet.slice(slices['Reg α'], slices['Reg Δ']).reverse();
+			} else if (format.includes('nfeleague')) {
+				tierSet = tierSet.slice(slices['Reg α'], slices['Reg ι']).reverse();
+			} else if (format.includes('singlestageonly')) {
+				tierSet = tierSet.slice(slices['Reg ι'], slices['Reg β']).reverse();
+			} else if (format.includes('2ndstageleague')) {
+				tierSet = tierSet.slice(slices['Reg α'], slices['Reg ζ']).reverse();
+			} else {
+				tierSet = tierSet.slice(slices['Reg α']).reverse();
+			}
+			
+			// Filter out Past and Gigantamax Pokemon
+			tierSet = tierSet.filter(([type, id]) => {
+				if (type !== 'pokemon') return true;
+				// Check the base Gen 9 dex to see if Pokemon is actually available
+				const baseGen9Species = Dex.forGen(9).species.get(id);
+				return baseGen9Species.isNonstandard !== 'Past' && 
+					baseGen9Species.isNonstandard !== 'Gigantamax' && 
+					baseGen9Species.isNonstandard !== 'CAP';
+			});
+		}
 		else if (this.formatType?.startsWith('bdsp') || this.formatType === 'letsgo' || this.formatType === 'stadium') {
 			tierSet = tierSet.slice(slices.Uber);
 		} else if (this.formatType === 'rs') {
@@ -1291,6 +1339,11 @@ class BattlePokemonSearch extends BattleTypedSearch<'pokemon'> {
 				break;
 			case 'move':
 				if (!this.canLearn(species.id, value as ID)) return false;
+				break;
+			case 'flag':
+				// Check Pokemon tags (Legendary, Mythical, Paradox, etc.)
+				if (!species.tags || !species.tags.includes(value)) return false;
+				break;
 			}
 		}
 		return true;
