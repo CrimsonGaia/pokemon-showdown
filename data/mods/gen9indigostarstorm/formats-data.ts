@@ -1,5621 +1,6350 @@
 export const FormatsData: import('../../../sim/dex-species').ModdedSpeciesFormatsDataTable = {
 	bulbasaur: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	ivysaur: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	venusaur: {
-		tier: "UU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	venusaurmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "UUBL",
 	},
 	venusaurgmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	charmander: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	charmeleon: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	charizard: {
-		tier: "PU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	charizardmegax: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "OU",
 	},
 	charizardmegay: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "OU",
 	},
 	charizardgmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	squirtle: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	wartortle: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	blastoise: {
-		tier: "NUBL",
+		tier: "Reg γ",
 		doublesTier: "DUU",
 		natDexTier: "RU",
 	},
 	blastoisemega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "Uber",
 	},
 	blastoisegmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	caterpie: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	metapod: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	butterfree: {
-		tier: "ZU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	butterfreegmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	weedle: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	kakuna: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	beedrill: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	beedrillmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "UU",
 	},
 	pidgey: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	pidgeotto: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	pidgeot: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	pidgeotmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "UU",
 	},
 	rattata: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	rattataalola: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	raticate: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	raticatealola: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	raticatealolatotem: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	spearow: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	fearow: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	ekans: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	arbok: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	pichu: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	pichuspikyeared: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pikachu: {
-		tier: "ZU",
+		tier: "Reg Δ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	pikachucosplay: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pikachurockstar: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pikachubelle: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pikachupopstar: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pikachuphd: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pikachulibre: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pikachuoriginal: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	pikachuhoenn: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	pikachusinnoh: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	pikachuunova: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	pikachukalos: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	pikachualola: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	pikachupartner: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	pikachustarter: {
 		isNonstandard: "LGPE",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pikachugmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	pikachuworld: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	raichu: {
-		tier: "ZU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	raichualola: {
-		tier: "PUBL",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	sandshrew: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	sandshrewalola: {
-		tier: "NUBL",
+		tier: "Reg α",
 		doublesTier: "LC",
 		natDexTier: "LC",
 	},
 	sandslash: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	sandslashalola: {
-		tier: "NUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	nidoranf: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	nidorina: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	nidoqueen: {
-		tier: "RU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	nidoranm: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	nidorino: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	nidoking: {
-		tier: "UU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "UU",
 	},
 	cleffa: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	clefairy: {
-		tier: "ZU",
+		tier: "Reg Δ",
 		doublesTier: "NFE",
 		natDexTier: "NFE",
 	},
 	clefable: {
-		tier: "OU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "OU",
 	},
 	vulpix: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	vulpixalola: {
-		tier: "NFE",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	ninetales: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "DUU",
 		natDexTier: "RU",
 	},
 	ninetalesalola: {
-		tier: "OU",
+		tier: "Reg β",
 		doublesTier: "DOU",
 		natDexTier: "RU",
 	},
 	igglybuff: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	jigglypuff: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	wigglytuff: {
-		tier: "ZU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	zubat: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	golbat: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	crobat: {
-		tier: "RU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	oddish: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	gloom: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	vileplume: {
-		tier: "NU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	bellossom: {
-		tier: "ZU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	paras: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	parasect: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	venonat: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	venomoth: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RUBL",
 	},
 	diglett: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	diglettalola: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	dugtrio: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	dugtrioalola: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	meowth: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	meowthalola: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	meowthgalar: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	meowthgmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	persian: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	persianalola: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	perrserker: {
-		tier: "ZUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	psyduck: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	golduck: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	mankey: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	primeape: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "RU",
 	},
 	growlithe: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	growlithehisui: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg α",
 	},
 	arcanine: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "DUU",
 		natDexTier: "RU",
 	},
 	arcaninehisui: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg β",
 	},
 	poliwag: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	poliwhirl: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	poliwrath: {
-		tier: "ZU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	politoed: {
-		tier: "ZU",
+		tier: "Reg γ",
 		doublesTier: "DUU",
 		natDexTier: "RU",
 	},
 	abra: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	kadabra: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	alakazam: {
-		tier: "UUBL",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "UUBL",
 	},
 	alakazammega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "Uber",
 	},
 	machop: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	machoke: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	machamp: {
-		tier: "NUBL",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	machampgmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	bellsprout: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	weepinbell: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	victreebel: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	tentacool: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	tentacruel: {
-		tier: "RU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	geodude: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	geodudealola: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	graveler: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	graveleralola: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	golem: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	golemalola: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	ponyta: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	ponytagalar: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	rapidash: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	rapidashgalar: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	slowpoke: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	slowpokegalar: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	slowbro: {
-		tier: "OU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "OU",
 	},
 	slowbromega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "UUBL",
 	},
 	slowbrogalar: {
-		tier: "RUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RUBL",
 	},
 	slowking: {
-		tier: "UU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "UU",
 	},
 	slowkinggalar: {
-		tier: "OU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "UUBL",
 	},
 	magnemite: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	magneton: {
-		tier: "PU",
+		tier: "Reg Δ",
 		doublesTier: "NFE",
 		natDexTier: "NFE",
 	},
 	magnezone: {
-		tier: "OU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "OU",
 	},
 	farfetchd: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	farfetchdgalar: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	sirfetchd: {
-		tier: "NUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	doduo: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	dodrio: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	seel: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	dewgong: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	grimer: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	grimeralola: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	muk: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	mukalola: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	shellder: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	cloyster: {
-		tier: "RU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	gastly: {
-		tier: "NFE",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	haunter: {
-		tier: "ZUBL",
+		tier: "Reg Δ",
 		doublesTier: "NFE",
 		natDexTier: "NFE",
 	},
 	gengar: {
-		tier: "UUBL",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "UUBL",
 	},
 	gengarmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "Uber",
 	},
 	gengargmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	onix: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	steelix: {
-		tier: "RU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	steelixmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	drowzee: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	hypno: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	krabby: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	kingler: {
-		tier: "PUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	kinglergmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	voltorb: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	voltorbhisui: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg α",
 	},
 	electrode: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	electrodehisui: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg β",
 	},
 	exeggcute: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	exeggutor: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	exeggutoralola: {
-		tier: "PUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	cubone: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	marowak: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	marowakalola: {
-		tier: "RU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	marowakalolatotem: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	tyrogue: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	hitmonlee: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	hitmonchan: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	hitmontop: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "DUU",
 		natDexTier: "RU",
 	},
 	lickitung: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	lickilicky: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	koffing: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	weezing: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	weezinggalar: {
-		tier: "RU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	rhyhorn: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	rhydon: {
-		tier: "ZU",
+		tier: "Reg Δ",
 		doublesTier: "NFE",
 		natDexTier: "NFE",
 	},
 	rhyperior: {
-		tier: "RU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	happiny: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	chansey: {
-		tier: "UU",
+		tier: "Reg Δ",
 		doublesTier: "NFE",
 		natDexTier: "OU",
 	},
 	blissey: {
-		tier: "OU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "OU",
 	},
 	tangela: {
-		tier: "NFE",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	tangrowth: {
-		tier: "UU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RUBL",
 	},
 	kangaskhan: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	kangaskhanmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "Uber",
 	},
 	horsea: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	seadra: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	kingdra: {
-		tier: "PUBL",
+		tier: "Reg γ",
 		doublesTier: "DUU",
 		natDexTier: "RU",
 	},
 	goldeen: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	seaking: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	staryu: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	starmie: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	mimejr: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	mrmime: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	mrmimegalar: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	mrrime: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	scyther: {
-		tier: "PUBL",
+		tier: "Reg α",
 		doublesTier: "NFE",
 		natDexTier: "LC",
 	},
 	scizor: {
-		tier: "UU",
+		tier: "Reg β",
 		doublesTier: "DUU",
 		natDexTier: "UU",
 	},
 	scizormega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "OU",
 	},
 	smoochum: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	jynx: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	elekid: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	electabuzz: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	electivire: {
-		tier: "ZU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	magby: {
-		tier: "NFE",
+		tier: "Reg α",
 	},
 	magmar: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	magmortar: {
-		tier: "ZUBL",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	pinsir: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	pinsirmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "UUBL",
 	},
 	tauros: {
-		tier: "NU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	magikarp: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	gyarados: {
-		tier: "UU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "UUBL",
 	},
 	gyaradosmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "UUBL",
 	},
 	lapras: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	laprasgmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	ditto: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	eevee: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	eeveestarter: {
 		isNonstandard: "LGPE",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	eeveegmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	vaporeon: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	jolteon: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	flareon: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	espeon: {
-		tier: "PUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	umbreon: {
-		tier: "RU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	leafeon: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	glaceon: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	sylveon: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "DUU",
 		natDexTier: "RU",
 	},
 	porygon: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	porygon2: {
-		tier: "RU",
+		tier: "Reg Δ",
 		doublesTier: "DOU",
 		natDexTier: "NFE",
 	},
 	porygonz: {
-		tier: "NUBL",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "UUBL",
 	},
 	omanyte: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	omastar: {
-		tier: "PUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	kabuto: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	kabutops: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	aerodactyl: {
-		tier: "NU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	aerodactylmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "UUBL",
 	},
 	munchlax: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	snorlax: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	snorlaxgmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	articuno: {
-		tier: "ZU",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	articunogalar: {
-		tier: "PU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	zapdos: {
-		tier: "OU",
+		tier: "Reg Θ",
 		doublesTier: "DOU",
 		natDexTier: "OU",
 	},
 	zapdosgalar: {
-		tier: "UUBL",
+		tier: "Reg ι",
 		doublesTier: "DUU",
 		natDexTier: "UUBL",
 	},
 	moltres: {
-		tier: "UU",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "UU",
 	},
 	moltresgalar: {
-		tier: "UUBL",
+		tier: "Reg ι",
 		doublesTier: "DUU",
 		natDexTier: "UUBL",
 	},
 	dratini: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	dragonair: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	dragonite: {
-		tier: "OU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "UU",
 	},
 	mewtwo: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	mewtwomegax: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "Uber",
 	},
 	mewtwomegay: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "Uber",
 	},
 	mew: {
-		tier: "OU",
+		tier: "Reg ν",
 		doublesTier: "DOU",
 		natDexTier: "UUBL",
 	},
 	chikorita: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	bayleef: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	meganium: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	cyndaquil: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	quilava: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	typhlosion: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	typhlosionhisui: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg γ",
 	},
 	totodile: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	croconaw: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	feraligatr: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	sentret: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	furret: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	hoothoot: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	noctowl: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	ledyba: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	ledian: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	spinarak: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	ariados: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	chinchou: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	lanturn: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	togepi: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	togetic: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	togekiss: {
-		tier: "RU",
+		tier: "Reg γ",
 		doublesTier: "DUU",
 		natDexTier: "RU",
 	},
 	natu: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	xatu: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	mareep: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	flaaffy: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	ampharos: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	ampharosmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	azurill: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	marill: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	azumarill: {
-		tier: "UU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RUBL",
 	},
 	bonsly: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	sudowoodo: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	hoppip: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	skiploom: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	jumpluff: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	aipom: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	ambipom: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	sunkern: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	sunflora: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	yanma: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	yanmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	wooper: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	quagsire: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	murkrow: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	honchkrow: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	misdreavus: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	mismagius: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	unown: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	wynaut: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	wobbuffet: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	girafarig: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "RU",
 	},
 	pineco: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	forretress: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	dunsparce: {
-		tier: "ZU",
+		tier: "Reg α",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	gligar: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	gliscor: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "OU",
 	},
 	snubbull: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	granbull: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	qwilfish: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	qwilfishhisui: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg α",
 	},
 	shuckle: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	heracross: {
-		tier: "RU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RUBL",
 	},
 	heracrossmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "UUBL",
 	},
 	sneasel: {
-		tier: "ZUBL",
+		tier: "Reg α",
 		doublesTier: "NFE",
 		natDexTier: "LC",
 	},
 	sneaselhisui: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg α",
 	},
 	weavile: {
-		tier: "OU",
+		tier: "Reg β",
 		doublesTier: "DUU",
 		natDexTier: "OU",
 	},
 	teddiursa: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	ursaring: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "RU",
 	},
 	slugma: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	magcargo: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	swinub: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	piloswine: {
-		tier: "ZU",
+		tier: "Reg Δ",
 		doublesTier: "NFE",
 		natDexTier: "NFE",
 	},
 	mamoswine: {
-		tier: "UU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "UU",
 	},
 	corsola: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	corsolagalar: {
-		tier: "NFE",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	cursola: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	remoraid: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	octillery: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	delibird: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	mantyke: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	mantine: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	skarmory: {
-		tier: "UU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "UU",
 	},
 	houndour: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	houndoom: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	houndoommega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	phanpy: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	donphan: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "UU",
 	},
 	stantler: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "RU",
 	},
 	smeargle: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	miltank: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	raikou: {
-		tier: "RU",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	entei: {
-		tier: "NUBL",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	suicune: {
-		tier: "RU",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	larvitar: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	pupitar: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	tyranitar: {
-		tier: "OU",
+		tier: "Reg γ",
 		doublesTier: "DOU",
 		natDexTier: "OU",
 	},
 	tyranitarmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "(OU)",
 	},
 	lugia: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	hooh: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	celebi: {
-		tier: "RU",
+		tier: "Reg ν",
 		doublesTier: "(DUU)",
 	},
 	treecko: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	grovyle: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	sceptile: {
-		tier: "PUBL",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	sceptilemega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	torchic: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	combusken: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	blaziken: {
-		tier: "UUBL",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "UUBL",
 	},
 	blazikenmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "Uber",
 	},
 	mudkip: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	marshtomp: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	swampert: {
-		tier: "UU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "UU",
 	},
 	swampertmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "OU",
 	},
 	poochyena: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	mightyena: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	zigzagoon: {
-		tier: "NFE",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	zigzagoongalar: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	linoone: {
-		tier: "NUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	linoonegalar: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	obstagoon: {
-		tier: "RUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	wurmple: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	silcoon: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	beautifly: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	cascoon: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	dustox: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	lotad: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	lombre: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	ludicolo: {
-		tier: "ZU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	seedot: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	nuzleaf: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	shiftry: {
-		tier: "ZU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	taillow: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	swellow: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	wingull: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	pelipper: {
-		tier: "OU",
+		tier: "Reg β",
 		doublesTier: "DOU",
 		natDexTier: "OU",
 	},
 	ralts: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	kirlia: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	gardevoir: {
-		tier: "RU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	gardevoirmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "UUBL",
 	},
 	gallade: {
-		tier: "PU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	gallademega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "UUBL",
 	},
 	surskit: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	masquerain: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	shroomish: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	breloom: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "UU",
 	},
 	slakoth: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	vigoroth: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	slaking: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	nincada: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	ninjask: {
-		tier: "ZUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	shedinja: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	whismur: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	loudred: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	exploud: {
-		tier: "NU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	makuhita: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	hariyama: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	nosepass: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	probopass: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	skitty: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	delcatty: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	sableye: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	sableyemega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "UUBL",
 	},
 	mawile: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	mawilemega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "OU",
 	},
 	aron: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	lairon: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	aggron: {
-		tier: "PU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	aggronmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RUBL",
 	},
 	meditite: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	medicham: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	medichammega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "UUBL",
 	},
 	electrike: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	manectric: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	manectricmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "UU",
 	},
 	plusle: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	minun: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	volbeat: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	illumise: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	budew: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	roselia: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	roserade: {
-		tier: "RU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	gulpin: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	swalot: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	carvanha: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	sharpedo: {
-		tier: "RU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	sharpedomega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RUBL",
 	},
 	wailmer: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	wailord: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	numel: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	camerupt: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	cameruptmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	torkoal: {
-		tier: "UU",
+		tier: "Reg ι",
 		doublesTier: "DOU",
 		natDexTier: "RU",
 	},
 	spoink: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	grumpig: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	spinda: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	trapinch: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	vibrava: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	flygon: {
-		tier: "RU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	cacnea: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	cacturne: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	swablu: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	altaria: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	altariamega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "UU",
 	},
 	zangoose: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	seviper: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	lunatone: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	solrock: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	barboach: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	whiscash: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	corphish: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	crawdaunt: {
-		tier: "UU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RUBL",
 	},
 	baltoy: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	claydol: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	lileep: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	cradily: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	anorith: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	armaldo: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	feebas: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	milotic: {
-		tier: "RU",
+		tier: "Reg β",
 		doublesTier: "DUU",
 		natDexTier: "RU",
 	},
 	castform: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	castformsunny: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	castformrainy: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	castformsnowy: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	kecleon: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	shuppet: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	banette: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	banettemega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	duskull: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	dusclops: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	dusknoir: {
-		tier: "ZU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	tropius: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	chingling: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	chimecho: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	absol: {
-		tier: "PU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	absolmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RUBL",
 	},
 	snorunt: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	glalie: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	glaliemega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	froslass: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	spheal: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	sealeo: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	walrein: {
-		tier: "ZU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	clamperl: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	huntail: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	gorebyss: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	relicanth: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	luvdisc: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	bagon: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	shelgon: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	salamence: {
-		tier: "UU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "UU",
 	},
 	salamencemega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "Uber",
 	},
 	beldum: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	metang: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	metagross: {
-		tier: "RU",
+		tier: "Reg γ",
 		doublesTier: "DOU",
 		natDexTier: "RU",
 	},
 	metagrossmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "Uber",
 	},
 	regirock: {
-		tier: "PU",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	regice: {
-		tier: "ZU",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	registeel: {
-		tier: "RU",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	latias: {
-		tier: "UUBL",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "UUBL",
 	},
 	latiasmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "UUBL",
 	},
 	latios: {
-		tier: "UUBL",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "UUBL",
 	},
 	latiosmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "UUBL",
 	},
 	kyogre: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	kyogreprimal: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "Uber",
 	},
 	groudon: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	groudonprimal: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "Uber",
 	},
 	rayquaza: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	rayquazamega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "Uber",
 	},
 	jirachi: {
-		tier: "UU",
+		tier: "Reg ν",
 		doublesTier: "DUber",
 		natDexTier: "UUBL",
 	},
 	deoxys: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ν",
 		natDexTier: "Uber",
 	},
 	deoxysattack: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "Uber",
 	},
 	deoxysdefense: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RUBL",
 	},
 	deoxysspeed: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "Uber",
 	},
 	turtwig: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	grotle: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	torterra: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	chimchar: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	monferno: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	infernape: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "UU",
 	},
 	piplup: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	prinplup: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	empoleon: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	starly: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	staravia: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	staraptor: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RUBL",
 	},
 	bidoof: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	bibarel: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	kricketot: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	kricketune: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	shinx: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	luxio: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	luxray: {
-		tier: "ZU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	cranidos: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	rampardos: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	shieldon: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	bastiodon: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	burmy: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	wormadam: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	wormadamsandy: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	wormadamtrash: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	mothim: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	combee: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	vespiquen: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	pachirisu: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	buizel: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	floatzel: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	cherubi: {
-		tier: "NFE",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	cherrim: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	cherrimsunshine: {
+		tier: "Reg ι",
+
 	},
 	shellos: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	gastrodon: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "DOU",
 		natDexTier: "RU",
 	},
 	drifloon: {
-		tier: "NFE",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	drifblim: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	buneary: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	lopunny: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	lopunnymega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "OU",
 	},
 	glameow: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	purugly: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	stunky: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	skuntank: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	bronzor: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	bronzong: {
-		tier: "RU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	chatot: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	spiritomb: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	gible: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	gabite: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	garchomp: {
-		tier: "OU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "OU",
 	},
 	garchompmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "(OU)",
 	},
 	riolu: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	lucario: {
-		tier: "RU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	lucariomega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "Uber",
 	},
 	hippopotas: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	hippowdon: {
-		tier: "UU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "UU",
 	},
 	skorupi: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	drapion: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	croagunk: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	toxicroak: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	carnivine: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	finneon: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	lumineon: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	snover: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	abomasnow: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	abomasnowmega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	rotom: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	rotomheat: {
-		tier: "UU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "UU",
 	},
 	rotomwash: {
-		tier: "UU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "UU",
 	},
 	rotomfrost: {
-		tier: "ZUBL",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	rotomfan: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	rotommow: {
-		tier: "NU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	uxie: {
-		tier: "ZU",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	mesprit: {
-		tier: "PU",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	azelf: {
-		tier: "UU",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	dialga: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	dialgaorigin: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	palkia: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	palkiaorigin: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	heatran: {
-		tier: "OU",
+		tier: "Reg Θ",
 		doublesTier: "DOU",
 		natDexTier: "OU",
 	},
 	regigigas: {
-		tier: "ZU",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	giratina: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	giratinaorigin: {
-		tier: "Uber",
+		tier: "Reg ι",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	cresselia: {
-		tier: "NUBL",
+		tier: "Reg Θ",
 		doublesTier: "DUU",
 		natDexTier: "RU",
 	},
 	phione: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ν",
 		natDexTier: "RU",
 	},
 	manaphy: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ν",
 		natDexTier: "UUBL",
 	},
 	darkrai: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ν",
 		natDexTier: "Uber",
 	},
 	shaymin: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ν",
 		natDexTier: "RU",
 	},
 	shayminsky: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "Uber",
 	},
 	arceus: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ν",
 		natDexTier: "Uber",
 	},
 	arceusbug: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	arceusdark: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	arceusdragon: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	arceuselectric: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	arceusfairy: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	arceusfighting: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	arceusfire: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	arceusflying: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	arceusghost: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	arceusgrass: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	arceusground: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	arceusice: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	arceuspoison: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	arceuspsychic: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	arceusrock: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	arceussteel: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	arceuswater: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	victini: {
-		tier: "OU",
+		tier: "Reg ν",
 		doublesTier: "DUU",
 		natDexTier: "OU",
 	},
 	snivy: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	servine: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	serperior: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "OU",
 	},
 	tepig: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	pignite: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	emboar: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	oshawott: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	dewott: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	samurott: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	samurotthisui: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg γ",
 	},
 	patrat: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	watchog: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	lillipup: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	herdier: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	stoutland: {
-		tier: "ZU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	purrloin: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	liepard: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	pansage: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	simisage: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	pansear: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	simisear: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	panpour: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	simipour: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	munna: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	musharna: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	pidove: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	tranquill: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	unfezant: {
-		tier: "ZU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	blitzle: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	zebstrika: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	roggenrola: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	boldore: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	gigalith: {
-		tier: "PU",
+		tier: "Reg γ",
 		doublesTier: "DUU",
 		natDexTier: "RU",
 	},
 	woobat: {
-		tier: "NFE",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	swoobat: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	drilbur: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	excadrill: {
-		tier: "UU",
+		tier: "Reg β",
 		doublesTier: "DUU",
 		natDexTier: "OU",
 	},
 	audino: {
-		tier: "PU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	audinomega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	timburr: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	gurdurr: {
-		tier: "ZU",
+		tier: "Reg Δ",
 		doublesTier: "NFE",
 		natDexTier: "NFE",
 	},
 	conkeldurr: {
-		tier: "UU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RUBL",
 	},
 	tympole: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	palpitoad: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	seismitoad: {
-		tier: "RU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	throh: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	sawk: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	sewaddle: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	swadloon: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	leavanny: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	venipede: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	whirlipede: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	scolipede: {
-		tier: "RUBL",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RUBL",
 	},
 	cottonee: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	whimsicott: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "DOU",
 		natDexTier: "RU",
 	},
 	petilil: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	lilligant: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	lilliganthisui: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg β",
 	},
 	basculin: {
-		tier: "ZUBL",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	basculinbluestriped: {
-		tier: "ZUBL",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	basculinwhitestriped: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg α",
 	},
 	sandile: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	krokorok: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	krookodile: {
-		tier: "UU",
+		tier: "Reg γ",
 		doublesTier: "DUU",
 		natDexTier: "UU",
 	},
 	darumaka: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	darumakagalar: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	darmanitan: {
-		tier: "UU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	darmanitanzen: {
-		tier: "UU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	darmanitangalar: {
-		tier: "Uber",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "Uber",
 	},
 	darmanitangalarzen: {
-		tier: "Uber",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "Uber",
 	},
 	maractus: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	dwebble: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	crustle: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	scraggy: {
-		tier: "NFE",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	scrafty: {
-		tier: "PUBL",
+		tier: "Reg β",
 		doublesTier: "DUU",
 		natDexTier: "RU",
 	},
 	sigilyph: {
-		tier: "NUBL",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	yamask: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	yamaskgalar: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	cofagrigus: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	runerigus: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	tirtouga: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	carracosta: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	archen: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	archeops: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	trubbish: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	garbodor: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	garbodorgmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	zorua: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	zoruahisui: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg α",
 	},
 	zoroark: {
-		tier: "PUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	zoroarkhisui: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg β",
 	},
 	minccino: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	cinccino: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	gothita: {
-		tier: "NFE",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	gothorita: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	gothitelle: {
-		tier: "ZU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	solosis: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	duosion: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	reuniclus: {
-		tier: "RU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RUBL",
 	},
 	ducklett: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	swanna: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	vanillite: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	vanillish: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	vanilluxe: {
-		tier: "PUBL",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	deerling: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	sawsbuck: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	emolga: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	karrablast: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	escavalier: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	foongus: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	amoonguss: {
-		tier: "UU",
+		tier: "Reg β",
 		doublesTier: "DOU",
 		natDexTier: "UU",
 	},
 	frillish: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	jellicent: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	alomomola: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	joltik: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	galvantula: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	ferroseed: {
-		tier: "PU",
+		tier: "Reg α",
 		doublesTier: "NFE",
 		natDexTier: "LC",
 	},
 	ferrothorn: {
-		tier: "OU",
+		tier: "Reg β",
 		doublesTier: "DUU",
 		natDexTier: "OU",
 	},
 	klink: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	klang: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	klinklang: {
-		tier: "ZU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	tynamo: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	eelektrik: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	eelektross: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	elgyem: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	beheeyem: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	litwick: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	lampent: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	chandelure: {
-		tier: "RU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "UU",
 	},
 	axew: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	fraxure: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	haxorus: {
-		tier: "RUBL",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RUBL",
 	},
 	cubchoo: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	beartic: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	cryogonal: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	shelmet: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	accelgor: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	stunfisk: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	stunfiskgalar: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	mienfoo: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	mienshao: {
-		tier: "UUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "UU",
 	},
 	druddigon: {
-		tier: "PU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	golett: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	golurk: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	pawniard: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	bisharp: {
-		tier: "OU",
+		tier: "Reg Δ",
 		doublesTier: "(DUU)",
 		natDexTier: "RUBL",
 	},
 	bouffalant: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	rufflet: {
-		tier: "NFE",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	braviary: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	braviaryhisui: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg β",
 	},
 	vullaby: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	mandibuzz: {
-		tier: "UU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "UU",
 	},
 	heatmor: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	durant: {
-		tier: "RUBL",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RUBL",
 	},
 	deino: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	zweilous: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	hydreigon: {
-		tier: "UU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "UU",
 	},
 	larvesta: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	volcarona: {
-		tier: "OU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "OU",
 	},
 	cobalion: {
-		tier: "UU",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	terrakion: {
-		tier: "UUBL",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "RUBL",
 	},
 	virizion: {
-		tier: "PUBL",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	tornadus: {
-		tier: "NUBL",
+		tier: "Reg Θ",
 		doublesTier: "DUU",
 		natDexTier: "RUBL",
 	},
 	tornadustherian: {
-		tier: "OU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "Uber",
 	},
 	thundurus: {
-		tier: "UUBL",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "UUBL",
 	},
 	thundurustherian: {
-		tier: "UU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "UUBL",
 	},
 	reshiram: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	zekrom: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	landorus: {
-		tier: "Uber",
+		tier: "Reg Θ",
 		doublesTier: "DOU",
 		natDexTier: "Uber",
 	},
 	landorustherian: {
-		tier: "OU",
+		tier: "Reg ι",
 		doublesTier: "DOU",
 		natDexTier: "OU",
 	},
 	kyurem: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "(DUU)",
 		natDexTier: "OU",
 	},
 	kyuremblack: {
-		tier: "Uber",
+		tier: "Reg ι",
 		doublesTier: "DOU",
 		natDexTier: "Uber",
 	},
 	kyuremwhite: {
-		tier: "Uber",
+		tier: "Reg ι",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	keldeo: {
-		tier: "UU",
+		tier: "Reg ν",
 		doublesTier: "(DUU)",
 		natDexTier: "RUBL",
 	},
 	keldeoresolute: {
+		tier: "Reg ι",
+
 	},
 	meloetta: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ν",
 		natDexTier: "RU",
 	},
 	meloettapirouette: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	genesect: {
-		tier: "Uber",
+		tier: "Reg ν",
 		doublesTier: "DOU",
 		natDexTier: "Uber",
 	},
 	genesectburn: {
-		tier: "Uber",
+		tier: "Reg ι",
 		doublesTier: "DOU",
 		natDexTier: "Uber",
 	},
 	genesectchill: {
-		tier: "Uber",
+		tier: "Reg ι",
 		doublesTier: "DOU",
 		natDexTier: "Uber",
 	},
 	genesectdouse: {
-		tier: "Uber",
+		tier: "Reg ι",
 		doublesTier: "DOU",
 		natDexTier: "Uber",
 	},
 	genesectshock: {
-		tier: "Uber",
+		tier: "Reg ι",
 		doublesTier: "DOU",
 		natDexTier: "Uber",
 	},
 	chespin: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	quilladin: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	chesnaught: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	fennekin: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	braixen: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	delphox: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	froakie: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	frogadier: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	greninja: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "OU",
 	},
 	greninjabond: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "OU",
 	},
 	greninjaash: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	bunnelby: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	diggersby: {
-		tier: "RUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RUBL",
 	},
 	fletchling: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	fletchinder: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	talonflame: {
-		tier: "NU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	scatterbug: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	spewpa: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	vivillon: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	vivillonfancy: {
+		tier: "Reg γ",
+
 		isNonstandard: "Past",
 	},
 	vivillonpokeball: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	litleo: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	pyroar: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	flabebe: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	floette: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	floetteeternal: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	florges: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	skiddo: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	gogoat: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	pancham: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	pangoro: {
-		tier: "NUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	furfrou: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	espurr: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	meowstic: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	meowsticf: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	honedge: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	doublade: {
-		tier: "PU",
+		tier: "Reg Δ",
 		doublesTier: "NFE",
 		natDexTier: "NFE",
 	},
 	aegislash: {
-		tier: "UUBL",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "UU",
 	},
 	aegislashblade: {
-		tier: "UUBL",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "UU",
 	},
 	spritzee: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	aromatisse: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	swirlix: {
-		tier: "NFE",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	slurpuff: {
-		tier: "NUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	inkay: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	malamar: {
-		tier: "ZUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	binacle: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	barbaracle: {
-		tier: "NUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	skrelp: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	dragalge: {
-		tier: "NUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	clauncher: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	clawitzer: {
-		tier: "PUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	helioptile: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	heliolisk: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	tyrunt: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	tyrantrum: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	amaura: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	aurorus: {
-		tier: "ZUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	hawlucha: {
-		tier: "UUBL",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "UUBL",
 	},
 	dedenne: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	carbink: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	goomy: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	sliggoo: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	sliggoohisui: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg Δ",
 	},
 	goodra: {
-		tier: "NUBL",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	goodrahisui: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg β",
 	},
 	klefki: {
-		tier: "RU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	phantump: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	trevenant: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	pumpkaboo: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	pumpkaboosmall: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	pumpkaboolarge: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	pumpkaboosuper: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	gourgeist: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	gourgeistsmall: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	gourgeistlarge: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	gourgeistsuper: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	bergmite: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	avalugg: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	avalugghisui: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg β",
 	},
 	noibat: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	noivern: {
-		tier: "RU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	xerneas: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	xerneasneutral: {
 		isNonstandard: "Custom", // can't be used in battle
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	yveltal: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	zygarde: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "DOU",
 		natDexTier: "Uber",
 	},
 	zygarde10: {
-		tier: "UU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	zygardecomplete: {
-		tier: "Uber",
+		tier: "Reg ι",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	diancie: {
-		tier: "NU",
+		tier: "Reg ν",
 		doublesTier: "DOU",
 		natDexTier: "RU",
 	},
 	dianciemega: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "OU",
 	},
 	hoopa: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ν",
 		natDexTier: "RU",
 	},
 	hoopaunbound: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "UUBL",
 	},
 	volcanion: {
-		tier: "OU",
+		tier: "Reg ν",
 		doublesTier: "DOU",
 		natDexTier: "RU",
 	},
 	rowlet: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	dartrix: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	decidueye: {
-		tier: "NU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	decidueyehisui: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg γ",
 	},
 	litten: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	torracat: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	incineroar: {
-		tier: "RU",
+		tier: "Reg γ",
 		doublesTier: "DOU",
 		natDexTier: "RU",
 	},
 	popplio: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	brionne: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	primarina: {
-		tier: "UU",
+		tier: "Reg γ",
 		doublesTier: "DUU",
 		natDexTier: "RUBL",
 	},
 	pikipek: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	trumbeak: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg Δ",
 		natDexTier: "NFE",
 	},
 	toucannon: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg γ",
 		natDexTier: "RU",
 	},
 	yungoos: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	gumshoos: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	gumshoostotem: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	grubbin: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	charjabug: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	vikavolt: {
-		tier: "ZUBL",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	vikavolttotem: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	crabrawler: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	crabominable: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg β",
 		natDexTier: "RU",
 	},
 	oricorio: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	oricoriopompom: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	oricoriopau: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	oricoriosensu: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	cutiefly: {
-		tier: "NFE",
+		tier: "Reg α",
 		natDexTier: "LC",
 	},
 	ribombee: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	ribombeetotem: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	rockruff: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	rockruffdusk: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	lycanroc: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	lycanrocmidnight: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	lycanrocdusk: {
-		tier: "UU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RUBL",
 	},
 	wishiwashi: {
-		tier: "PU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	wishiwashischool: {
+		tier: "Reg ι",
+
 	},
 	mareanie: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	toxapex: {
-		tier: "OU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "OU",
 	},
 	mudbray: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	mudsdale: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	dewpider: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	araquanid: {
-		tier: "PUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	araquanidtotem: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	fomantis: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	lurantis: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	lurantistotem: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	morelull: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	shiinotic: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	salandit: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	salazzle: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	salazzletotem: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	stufful: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	bewear: {
-		tier: "NUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	bounsweet: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	steenee: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	tsareena: {
-		tier: "NU",
+		tier: "Reg γ",
 		doublesTier: "DOU",
 		natDexTier: "RU",
 	},
 	comfey: {
-		tier: "PU",
+		tier: "Reg ι",
 		doublesTier: "DUU",
 		natDexTier: "RU",
 	},
 	oranguru: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	passimian: {
-		tier: "NU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	wimpod: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	golisopod: {
-		tier: "RU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	sandygast: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	palossand: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	pyukumuku: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	typenull: {
-		tier: "NFE",
+		tier: "Reg α",
 	},
 	silvally: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	silvallybug: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	silvallydark: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	silvallydragon: {
-		tier: "ZUBL",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	silvallyelectric: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	silvallyfairy: {
-		tier: "PU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	silvallyfighting: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	silvallyfire: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	silvallyflying: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	silvallyghost: {
-		tier: "PU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	silvallygrass: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	silvallyground: {
-		tier: "NU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	silvallyice: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	silvallypoison: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	silvallypsychic: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	silvallyrock: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	silvallysteel: {
-		tier: "PU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	silvallywater: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	minior: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	miniormeteor: {
+		tier: "Reg ι",
+
 		isNonstandard: "Past",
 	},
 	komala: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	turtonator: {
-		tier: "ZUBL",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	togedemaru: {
-		tier: "PU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	togedemarutotem: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	mimikyu: {
-		tier: "RU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	mimikyutotem: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	mimikyubustedtotem: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	bruxish: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "RU",
 	},
 	drampa: {
-		tier: "PUBL",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	dhelmise: {
-		tier: "NU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	jangmoo: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	hakamoo: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	kommoo: {
-		tier: "UUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "OU",
 	},
 	kommoototem: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "OU",
 	},
 	tapukoko: {
-		tier: "OU",
+		tier: "Reg Θ",
 		doublesTier: "DOU",
 		natDexTier: "OU",
 	},
 	tapulele: {
-		tier: "OU",
+		tier: "Reg Θ",
 		doublesTier: "DOU",
 		natDexTier: "OU",
 	},
 	tapubulu: {
-		tier: "UU",
+		tier: "Reg Θ",
 		doublesTier: "DUU",
 		natDexTier: "RUBL",
 	},
 	tapufini: {
-		tier: "OU",
+		tier: "Reg Θ",
 		doublesTier: "DOU",
 		natDexTier: "OU",
 	},
 	cosmog: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	cosmoem: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	solgaleo: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	lunala: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	nihilego: {
-		tier: "UU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "UU",
 	},
 	buzzwole: {
-		tier: "OU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RUBL",
 	},
 	pheromosa: {
-		tier: "Uber",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "Uber",
 	},
 	xurkitree: {
-		tier: "RU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "UUBL",
 	},
 	celesteela: {
-		tier: "UU",
+		tier: "Reg ι",
 		doublesTier: "DOU",
 		natDexTier: "UU",
 	},
 	kartana: {
-		tier: "OU",
+		tier: "Reg ι",
 		doublesTier: "DUber",
 		natDexTier: "OU",
 	},
 	guzzlord: {
-		tier: "PUBL",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	necrozma: {
-		tier: "RUBL",
+		tier: "Reg λ",
 		doublesTier: "DOU",
 		natDexTier: "RUBL",
 	},
 	necrozmaduskmane: {
-		tier: "Uber",
+		tier: "Reg ι",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	necrozmadawnwings: {
-		tier: "Uber",
+		tier: "Reg ι",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	necrozmaultra: {
 		isNonstandard: "Past",
-		tier: "Illegal",
+		tier: "Reg ι",
 		natDexTier: "Uber",
 	},
 	magearna: {
-		tier: "Uber",
+		tier: "Reg ν",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	magearnaoriginal: {
+		tier: "Reg ι",
+
 	},
 	marshadow: {
-		tier: "Uber",
+		tier: "Reg ν",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	poipole: {
-		tier: "NFE",
+		tier: "Reg α",
 	},
 	naganadel: {
-		tier: "Uber",
+		tier: "Reg β",
 		doublesTier: "DUU",
 		natDexTier: "Uber",
 	},
 	stakataka: {
-		tier: "NU",
+		tier: "Reg ι",
 		doublesTier: "DOU",
 		natDexTier: "RU",
 	},
 	blacephalon: {
-		tier: "OU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "UUBL",
 	},
 	zeraora: {
-		tier: "OU",
+		tier: "Reg ν",
 		doublesTier: "DOU",
 		natDexTier: "UU",
 	},
 	meltan: {
-		tier: "ZU",
+		tier: "Reg ν",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	melmetal: {
-		tier: "OU",
+		tier: "Reg ν",
 		doublesTier: "DUber",
 		natDexTier: "UUBL",
 	},
 	melmetalgmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	grookey: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	thwackey: {
-		tier: "ZU",
+		tier: "Reg Δ",
 		doublesTier: "NFE",
 		natDexTier: "NFE",
 	},
 	rillaboom: {
-		tier: "OU",
+		tier: "Reg γ",
 		doublesTier: "DOU",
 		natDexTier: "OU",
 	},
 	rillaboomgmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	scorbunny: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	raboot: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	cinderace: {
-		tier: "Uber",
+		tier: "Reg γ",
 		doublesTier: "DUU",
 		natDexTier: "Uber",
 	},
 	cinderacegmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	sobble: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	drizzile: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	inteleon: {
-		tier: "PUBL",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	inteleongmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	skwovet: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	greedent: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	rookidee: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	corvisquire: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	corviknight: {
-		tier: "OU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "OU",
 	},
 	corviknightgmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	blipbug: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	dottler: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	orbeetle: {
-		tier: "ZU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	orbeetlegmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	nickit: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	thievul: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	gossifleur: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	eldegoss: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	wooloo: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	dubwool: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	chewtle: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	drednaw: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	drednawgmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	yamper: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	boltund: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	rolycoly: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	carkol: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	coalossal: {
-		tier: "ZU",
+		tier: "Reg γ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	coalossalgmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	applin: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	flapple: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	flapplegmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	appletun: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	appletungmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	silicobra: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	sandaconda: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	sandacondagmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	cramorant: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	cramorantgulping: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	cramorantgorging: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	arrokuda: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	barraskewda: {
-		tier: "OU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	toxel: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	toxtricity: {
-		tier: "RU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	toxtricitylowkey: {
-		tier: "RU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	toxtricitygmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	toxtricitylowkeygmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	sizzlipede: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	centiskorch: {
-		tier: "ZUBL",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	centiskorchgmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	clobbopus: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	grapploct: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	sinistea: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	sinisteaantique: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	polteageist: {
-		tier: "RU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RUBL",
 	},
 	hatenna: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	hattrem: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	hatterene: {
-		tier: "UU",
+		tier: "Reg γ",
 		doublesTier: "DOU",
 		natDexTier: "UU",
 	},
 	hatterenegmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	impidimp: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	morgrem: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	grimmsnarl: {
-		tier: "NU",
+		tier: "Reg γ",
 		doublesTier: "DUU",
 		natDexTier: "RU",
 	},
 	grimmsnarlgmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	milcery: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	alcremie: {
-		tier: "ZU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	alcremiegmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	falinks: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	pincurchin: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	snom: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	frosmoth: {
-		tier: "PU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	stonjourner: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	eiscue: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	indeedee: {
-		tier: "NUBL",
+		tier: "Reg ι",
 		doublesTier: "DUU",
 		natDexTier: "RU",
 	},
 	indeedeef: {
-		tier: "NUBL",
+		tier: "Reg ι",
 		doublesTier: "DOU",
 		natDexTier: "RU",
 	},
 	morpeko: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	morpekohangry: {
-		tier: "ZU",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	cufant: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	copperajah: {
-		tier: "NU",
+		tier: "Reg β",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	copperajahgmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	dracozolt: {
-		tier: "UUBL",
+		tier: "Reg ι",
 		doublesTier: "DUU",
 		natDexTier: "RUBL",
 	},
 	arctozolt: {
-		tier: "UUBL",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	dracovish: {
-		tier: "Uber",
+		tier: "Reg ι",
 		doublesTier: "DOU",
 		natDexTier: "Uber",
 	},
 	arctovish: {
-		tier: "ZUBL",
+		tier: "Reg ι",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	duraludon: {
-		tier: "PUBL",
+		tier: "Reg α",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	duraludongmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	dreepy: {
-		tier: "LC",
+		tier: "Reg α",
 	},
 	drakloak: {
-		tier: "NFE",
+		tier: "Reg Δ",
 	},
 	dragapult: {
-		tier: "OU",
+		tier: "Reg γ",
 		doublesTier: "DOU",
 		natDexTier: "Uber",
 	},
 	zacian: {
-		tier: "AG",
+		tier: "Reg λ",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	zaciancrowned: {
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	zamazenta: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	zamazentacrowned: {
-		tier: "Uber",
+		tier: "Reg ι",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	eternatus: {
-		tier: "Uber",
+		tier: "Reg λ",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	eternatuseternamax: {
 		isNonstandard: "Unobtainable",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	kubfu: {
-		tier: "NFE",
+		tier: "Reg α",
 	},
 	urshifu: {
-		tier: "Uber",
+		tier: "Reg β",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	urshifurapidstrike: {
-		tier: "OU",
+		tier: "Reg β",
 		doublesTier: "DOU",
 		natDexTier: "UU",
 	},
 	urshifugmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	urshifurapidstrikegmax: {
 		isNonstandard: "Gigantamax",
-		tier: "AG",
+		tier: "Reg ι",
 		doublesTier: "(DUber)",
 		natDexTier: "(Uber)",
 	},
 	zarude: {
-		tier: "UU",
+		tier: "Reg ν",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	zarudedada: {
+		tier: "Reg ι",
+
 	},
 	regieleki: {
-		tier: "UU",
+		tier: "Reg Θ",
 		doublesTier: "DOU",
 		natDexTier: "UU",
 	},
 	regidrago: {
-		tier: "NUBL",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	glastrier: {
-		tier: "ZUBL",
+		tier: "Reg Θ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	spectrier: {
-		tier: "Uber",
+		tier: "Reg Θ",
 		doublesTier: "DUU",
 		natDexTier: "Uber",
 	},
 	calyrex: {
-		tier: "ZU",
+		tier: "Reg λ",
 		doublesTier: "(DUU)",
 		natDexTier: "RU",
 	},
 	calyrexice: {
-		tier: "Uber",
+		tier: "Reg ι",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	calyrexshadow: {
-		tier: "Uber",
+		tier: "Reg ι",
 		doublesTier: "DUber",
 		natDexTier: "Uber",
 	},
 	wyrdeer: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg β",
 	},
 	kleavor: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg β",
 	},
 	ursaluna: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg γ",
 	},
 	basculegion: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg β",
 	},
 	basculegionf: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg β",
 	},
 	sneasler: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg β",
 	},
 	overqwil: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg β",
 	},
 	enamorus: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg Θ",
 	},
 	enamorustherian: {
 		isNonstandard: "Future",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	missingno: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	syclar: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	syclant: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	revenankh: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg ι",
 	},
 	embirch: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	flarelm: {
 		isNonstandard: "CAP",
-		tier: "CAP NFE",
+		tier: "Reg Δ",
 	},
 	pyroak: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg γ",
 	},
 	breezi: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	fidgit: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	rebble: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	tactite: {
 		isNonstandard: "CAP",
-		tier: "CAP NFE",
+		tier: "Reg Δ",
 	},
 	stratagem: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg γ",
 	},
 	privatyke: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	arghonaut: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	nohface: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	kitsunoh: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	monohm: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	duohm: {
 		isNonstandard: "CAP",
-		tier: "CAP NFE",
+		tier: "Reg Δ",
 	},
 	cyclohm: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg γ",
 	},
 	dorsoil: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	colossoil: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	protowatt: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	krilowatt: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	voodoll: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	voodoom: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	scratchet: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	tomohawk: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	necturine: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	necturna: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	mollux: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg ι",
 	},
 	cupra: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	argalis: {
 		isNonstandard: "CAP",
-		tier: "CAP NFE",
+		tier: "Reg Δ",
 	},
 	aurumoth: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg γ",
 	},
 	brattler: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	malaconda: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	cawdet: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	cawmodore: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	volkritter: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	volkraken: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	snugglow: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	plasmanta: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	floatoy: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	caimanoe: {
 		isNonstandard: "CAP",
-		tier: "CAP NFE",
+		tier: "Reg Δ",
 	},
 	naviathan: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg γ",
 	},
 	crucibelle: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg ι",
 	},
 	crucibellemega: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg ι",
 	},
 	pluffle: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	kerfluffle: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	pajantom: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg ι",
 	},
 	mumbao: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	jumbao: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	fawnifer: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	electrelk: {
 		isNonstandard: "CAP",
-		tier: "CAP NFE",
+		tier: "Reg Δ",
 	},
 	caribolt: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg γ",
 	},
 	smogecko: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	smoguana: {
 		isNonstandard: "CAP",
-		tier: "CAP NFE",
+		tier: "Reg Δ",
 	},
 	smokomodo: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg γ",
 	},
 	swirlpool: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	coribalis: {
 		isNonstandard: "CAP",
-		tier: "CAP NFE",
+		tier: "Reg Δ",
 	},
 	snaelstrom: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg γ",
 	},
 	justyke: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	equilibra: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	solotl: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	astrolotl: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	miasmite: {
 		isNonstandard: "CAP",
-		tier: "CAP LC",
+		tier: "Reg α",
 	},
 	miasmaw: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	chromera: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg Θ",
 	},
 	venomicon: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg ι",
 	},
 	venomiconepilogue: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg ι",
 	},
 	saharaja: {
 		isNonstandard: "CAP",
-		tier: "CAP",
+		tier: "Reg β",
 	},
 	pokestarsmeargle: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pokestarufo: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pokestarufo2: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pokestarbrycenman: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pokestarmt: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pokestarmt2: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pokestartransport: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pokestargiant: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pokestargiant2: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg γ",
 	},
 	pokestarhumanoid: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pokestarmonster: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pokestarf00: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pokestarf002: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pokestarspirit: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pokestarblackdoor: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pokestarwhitedoor: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pokestarblackbelt: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg ι",
 	},
 	pokestargiantpropo2: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg γ",
 	},
 	pokestarufopropu2: {
 		isNonstandard: "Custom",
-		tier: "Illegal",
+		tier: "Reg ι",
+	},
+	ababo: {
+		tier: "Reg α",
+	},
+	alcremiecaramelswirl: {
+		tier: "Reg ι",
+	},
+	alcremielemoncream: {
+		tier: "Reg ι",
+	},
+	alcremiematchacream: {
+		tier: "Reg ι",
+	},
+	alcremiemintcream: {
+		tier: "Reg ι",
+	},
+	alcremierainbowswirl: {
+		tier: "Reg ι",
+	},
+	alcremierubycream: {
+		tier: "Reg ι",
+	},
+	alcremierubyswirl: {
+		tier: "Reg ι",
+	},
+	annihilape: {
+		tier: "Reg γ",
+	},
+	arboliva: {
+		tier: "Reg γ",
+	},
+	archaludon: {
+		tier: "Reg β",
+	},
+	arctibax: {
+		tier: "Reg Δ",
+	},
+	armarouge: {
+		tier: "Reg β",
+	},
+	barbaraclemega: {
+		tier: "Reg ι",
+	},
+	baxcalibur: {
+		tier: "Reg γ",
+	},
+	bellibolt: {
+		tier: "Reg β",
+	},
+	bombirdier: {
+		tier: "Reg ι",
+	},
+	brambleghast: {
+		tier: "Reg β",
+	},
+	bramblin: {
+		tier: "Reg α",
+	},
+	brutebonnet: {
+		tier: "Reg ζ",
+	},
+	burmysandy: {
+		tier: "Reg ι",
+	},
+	burmytrash: {
+		tier: "Reg ι",
+	},
+	capsakid: {
+		tier: "Reg α",
+	},
+	ceruledge: {
+		tier: "Reg β",
+	},
+	cetitan: {
+		tier: "Reg β",
+	},
+	cetoddle: {
+		tier: "Reg α",
+	},
+	chandeluremega: {
+		tier: "Reg ι",
+	},
+	charcadet: {
+		tier: "Reg α",
+	},
+	chesnaughtmega: {
+		tier: "Reg ι",
+	},
+	chienpao: {
+		tier: "Reg Θ",
+	},
+	chiyu: {
+		tier: "Reg Θ",
+	},
+	chuggalong: {
+		tier: "Reg γ",
+	},
+	chuggon: {
+		tier: "Reg α",
+	},
+	clefablemega: {
+		tier: "Reg ι",
+	},
+	clodsire: {
+		tier: "Reg β",
+	},
+	cresceidon: {
+		tier: "Reg ι",
+	},
+	crocalor: {
+		tier: "Reg Δ",
+	},
+	cyclizar: {
+		tier: "Reg ι",
+	},
+	dachsbun: {
+		tier: "Reg β",
+	},
+	deerlingautumn: {
+		tier: "Reg ι",
+	},
+	deerlingsummer: {
+		tier: "Reg ι",
+	},
+	deerlingwinter: {
+		tier: "Reg ι",
+	},
+	delphoxmega: {
+		tier: "Reg ι",
+	},
+	dipplin: {
+		tier: "Reg Δ",
+	},
+	dolliv: {
+		tier: "Reg Δ",
+	},
+	dondozo: {
+		tier: "Reg ι",
+	},
+	dragalgemega: {
+		tier: "Reg ι",
+	},
+	draggalong: {
+		tier: "Reg Δ",
+	},
+	dragonitemega: {
+		tier: "Reg ι",
+	},
+	drampamega: {
+		tier: "Reg ι",
+	},
+	dudunsparce: {
+		tier: "Reg β",
+	},
+	dudunsparcethreesegment: {
+		tier: "Reg β",
+	},
+	eelektrossmega: {
+		tier: "Reg ι",
+	},
+	eiscuenoice: {
+		tier: "Reg ι",
+	},
+	emboarmega: {
+		tier: "Reg ι",
+	},
+	espathra: {
+		tier: "Reg β",
+	},
+	excadrillmega: {
+		tier: "Reg ι",
+	},
+	falinksmega: {
+		tier: "Reg ι",
+	},
+	farigiraf: {
+		tier: "Reg β",
+	},
+	feraligatrmega: {
+		tier: "Reg ι",
+	},
+	fezandipiti: {
+		tier: "Reg Θ",
+	},
+	fidough: {
+		tier: "Reg α",
+	},
+	finizen: {
+		tier: "Reg α",
+	},
+	flamigo: {
+		tier: "Reg ι",
+	},
+	flittle: {
+		tier: "Reg α",
+	},
+	floettemega: {
+		tier: "Reg ι",
+	},
+	floragato: {
+		tier: "Reg Δ",
+	},
+	fluttermane: {
+		tier: "Reg ε",
+	},
+	frigibax: {
+		tier: "Reg α",
+	},
+	froslassmega: {
+		tier: "Reg ι",
+	},
+	fuecoco: {
+		tier: "Reg α",
+	},
+	garganacl: {
+		tier: "Reg γ",
+	},
+	gastrodoneast: {
+		tier: "Reg ι",
+	},
+	gholdengo: {
+		tier: "Reg β",
+	},
+	gimmighoul: {
+		tier: "Reg α",
+	},
+	gimmighoulroaming: {
+		tier: "Reg α",
+	},
+	glimmet: {
+		tier: "Reg α",
+	},
+	glimmora: {
+		tier: "Reg β",
+	},
+	gougingfire: {
+		tier: "Reg ε",
+	},
+	grafaiai: {
+		tier: "Reg β",
+	},
+	greattusk: {
+		tier: "Reg ζ",
+	},
+	greavard: {
+		tier: "Reg α",
+	},
+	greninjamega: {
+		tier: "Reg ι",
+	},
+	hawluchamega: {
+		tier: "Reg ι",
+	},
+	hemogoblin: {
+		tier: "Reg γ",
+	},
+	houndstone: {
+		tier: "Reg β",
+	},
+	hydrapple: {
+		tier: "Reg γ",
+	},
+	ironboulder: {
+		tier: "Reg ε",
+	},
+	ironbundle: {
+		tier: "Reg ε",
+	},
+	ironcrown: {
+		tier: "Reg ε",
+	},
+	ironhands: {
+		tier: "Reg ζ",
+	},
+	ironjugulis: {
+		tier: "Reg ζ",
+	},
+	ironleaves: {
+		tier: "Reg ε",
+	},
+	ironmoth: {
+		tier: "Reg ζ",
+	},
+	ironthorns: {
+		tier: "Reg ζ",
+	},
+	irontreads: {
+		tier: "Reg ζ",
+	},
+	ironvaliant: {
+		tier: "Reg ε",
+	},
+	kilowattrel: {
+		tier: "Reg β",
+	},
+	kingambit: {
+		tier: "Reg γ",
+	},
+	klawf: {
+		tier: "Reg ι",
+	},
+	koraidon: {
+		tier: "Reg ε",
+	},
+	lechonk: {
+		tier: "Reg α",
+	},
+	lokix: {
+		tier: "Reg β",
+	},
+	mabosstiff: {
+		tier: "Reg β",
+	},
+	malamarmega: {
+		tier: "Reg ι",
+	},
+	maschiff: {
+		tier: "Reg α",
+	},
+	maushold: {
+		tier: "Reg β",
+	},
+	mausholdfour: {
+		tier: "Reg β",
+	},
+	meganiummega: {
+		tier: "Reg ι",
+	},
+	meowscarada: {
+		tier: "Reg γ",
+	},
+	mimikyubusted: {
+		tier: "Reg ι",
+	},
+	miniorblue: {
+		tier: "Reg ι",
+	},
+	miniorgreen: {
+		tier: "Reg ι",
+	},
+	miniorindigo: {
+		tier: "Reg ι",
+	},
+	miniororange: {
+		tier: "Reg ι",
+	},
+	miniorviolet: {
+		tier: "Reg ι",
+	},
+	minioryellow: {
+		tier: "Reg ι",
+	},
+	miraidon: {
+		tier: "Reg ε",
+	},
+	munkidori: {
+		tier: "Reg Θ",
+	},
+	nacli: {
+		tier: "Reg α",
+	},
+	naclstack: {
+		tier: "Reg Δ",
+	},
+	nymble: {
+		tier: "Reg α",
+	},
+	ogerpon: {
+		tier: "Reg Θ",
+	},
+	ogerponcornerstone: {
+		tier: "Reg ι",
+	},
+	ogerponcornerstonetera: {
+		tier: "Reg ι",
+	},
+	ogerponhearthflame: {
+		tier: "Reg ι",
+	},
+	ogerponhearthflametera: {
+		tier: "Reg ι",
+	},
+	ogerpontealtera: {
+		tier: "Reg ι",
+	},
+	ogerponwellspring: {
+		tier: "Reg ι",
+	},
+	ogerponwellspringtera: {
+		tier: "Reg ι",
+	},
+	oinkologne: {
+		tier: "Reg β",
+	},
+	oinkolognef: {
+		tier: "Reg β",
+	},
+	okidogi: {
+		tier: "Reg Θ",
+	},
+	orthworm: {
+		tier: "Reg ι",
+	},
+	palafin: {
+		tier: "Reg β",
+	},
+	palafinhero: {
+		tier: "Reg ι",
+	},
+	pawmi: {
+		tier: "Reg α",
+	},
+	pawmo: {
+		tier: "Reg Δ",
+	},
+	pawmot: {
+		tier: "Reg γ",
+	},
+	pecharunt: {
+		tier: "Reg ν",
+	},
+	poltchageist: {
+		tier: "Reg α",
+	},
+	poltchageistartisan: {
+		tier: "Reg α",
+	},
+	polteageistantique: {
+		tier: "Reg β",
+	},
+	pyroarmega: {
+		tier: "Reg ι",
+	},
+	quaquaval: {
+		tier: "Reg γ",
+	},
+	quaxly: {
+		tier: "Reg α",
+	},
+	quaxwell: {
+		tier: "Reg Δ",
+	},
+	rabsca: {
+		tier: "Reg β",
+	},
+	ragingbolt: {
+		tier: "Reg ε",
+	},
+	ramnarok: {
+		tier: "Reg ν",
+	},
+	ramnarokradiant: {
+		tier: "Reg ι",
+	},
+	rellor: {
+		tier: "Reg α",
+	},
+	revavroom: {
+		tier: "Reg β",
+	},
+	roaringmoon: {
+		tier: "Reg ε",
+	},
+	saharascal: {
+		tier: "Reg α",
+	},
+	sandyshocks: {
+		tier: "Reg ζ",
+	},
+	scattervein: {
+		tier: "Reg Δ",
+	},
+	scolipedemega: {
+		tier: "Reg ι",
+	},
+	scovillain: {
+		tier: "Reg β",
+	},
+	scraftymega: {
+		tier: "Reg ι",
+	},
+	screamtail: {
+		tier: "Reg ζ",
+	},
+	shelloseast: {
+		tier: "Reg ι",
+	},
+	shox: {
+		tier: "Reg ι",
+	},
+	shroodle: {
+		tier: "Reg α",
+	},
+	sinistcha: {
+		tier: "Reg β",
+	},
+	sinistchamasterpiece: {
+		tier: "Reg β",
+	},
+	skarmorymega: {
+		tier: "Reg ι",
+	},
+	skeledirge: {
+		tier: "Reg γ",
+	},
+	slitherwing: {
+		tier: "Reg ζ",
+	},
+	smoliv: {
+		tier: "Reg α",
+	},
+	spidops: {
+		tier: "Reg β",
+	},
+	sprigatito: {
+		tier: "Reg α",
+	},
+	squawkabilly: {
+		tier: "Reg ι",
+	},
+	squawkabillyblue: {
+		tier: "Reg ι",
+	},
+	squawkabillywhite: {
+		tier: "Reg ι",
+	},
+	squawkabillyyellow: {
+		tier: "Reg ι",
+	},
+	starmiemega: {
+		tier: "Reg ι",
+	},
+	tadbulb: {
+		tier: "Reg α",
+	},
+	tandemaus: {
+		tier: "Reg α",
+	},
+	tarountula: {
+		tier: "Reg α",
+	},
+	tatsugiri: {
+		tier: "Reg ι",
+	},
+	tatsugiridroopy: {
+		tier: "Reg ι",
+	},
+	tatsugiristretchy: {
+		tier: "Reg ι",
+	},
+	taurospaldeaaqua: {
+		tier: "Reg ι",
+	},
+	taurospaldeablaze: {
+		tier: "Reg ι",
+	},
+	taurospaldeacombat: {
+		tier: "Reg ι",
+	},
+	terapagos: {
+		tier: "Reg λ",
+	},
+	terapagosstellar: {
+		tier: "Reg ι",
+	},
+	terapagosterastal: {
+		tier: "Reg ι",
+	},
+	tinglu: {
+		tier: "Reg Θ",
+	},
+	tinkatink: {
+		tier: "Reg α",
+	},
+	tinkaton: {
+		tier: "Reg γ",
+	},
+	tinkatuff: {
+		tier: "Reg Δ",
+	},
+	toedscool: {
+		tier: "Reg α",
+	},
+	toedscruel: {
+		tier: "Reg β",
+	},
+	ursalunabloodmoon: {
+		tier: "Reg ι",
+	},
+	varoom: {
+		tier: "Reg α",
+	},
+	veluza: {
+		tier: "Reg ι",
+	},
+	victreebelmega: {
+		tier: "Reg ι",
+	},
+	vivillonarchipelago: {
+		tier: "Reg ι",
+	},
+	vivilloncontinental: {
+		tier: "Reg ι",
+	},
+	vivillonelegant: {
+		tier: "Reg ι",
+	},
+	vivillongarden: {
+		tier: "Reg ι",
+	},
+	vivillonhighplains: {
+		tier: "Reg ι",
+	},
+	vivillonicysnow: {
+		tier: "Reg ι",
+	},
+	vivillonjungle: {
+		tier: "Reg ι",
+	},
+	vivillonmarine: {
+		tier: "Reg ι",
+	},
+	vivillonmodern: {
+		tier: "Reg ι",
+	},
+	vivillonmonsoon: {
+		tier: "Reg ι",
+	},
+	vivillonocean: {
+		tier: "Reg ι",
+	},
+	vivillonpolar: {
+		tier: "Reg ι",
+	},
+	vivillonriver: {
+		tier: "Reg ι",
+	},
+	vivillonsandstorm: {
+		tier: "Reg ι",
+	},
+	vivillonsavanna: {
+		tier: "Reg ι",
+	},
+	vivillonsun: {
+		tier: "Reg ι",
+	},
+	vivillontundra: {
+		tier: "Reg ι",
+	},
+	walkingwake: {
+		tier: "Reg ε",
+	},
+	wattrel: {
+		tier: "Reg α",
+	},
+	wiglett: {
+		tier: "Reg α",
+	},
+	wochien: {
+		tier: "Reg Θ",
+	},
+	wooperpaldea: {
+		tier: "Reg α",
+	},
+	wugtrio: {
+		tier: "Reg β",
+	},
+	zygardemega: {
+		tier: "Reg ι",
 	},
 };

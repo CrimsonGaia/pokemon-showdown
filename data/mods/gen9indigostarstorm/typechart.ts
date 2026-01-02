@@ -228,6 +228,7 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			heal: 5,
 			lunar: 5,
 			magic: 5,
+			powder: 5,
 			wing: 5,
 		},
 		aversion: {
