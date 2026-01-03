@@ -1982,9 +1982,9 @@ export const PS = new class extends PSModel {
 			};
 		case 'team':
 			return {
-				minWidth: 850,
-				width: 850,
-				maxWidth: 850,
+				minWidth: 1050,
+				width: 1050,
+				maxWidth: 1050,
 			};
 		case 'battle':
 			return {

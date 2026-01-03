@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Teambuilder team editor, extracted from the rest of the Preact
  * client so that it can be used in isolation.
  *
@@ -125,7 +125,9 @@ class TeamEditorState extends PSModel {
 	}
 	setSearchType(type: SearchType, i: number, value?: string) {
 		const set = this.sets[i];
+		console.log('[DEBUG] setSearchType called:', { type, format: this.format, species: set.species, dex_modid: this.dex.modid });
 		this.search.setType(type, this.format, set);
+		console.log('[DEBUG] after setType, search.dex.modid:', this.search.dex.modid);
 		this.originalSpecies = null;
 		this.search.prependResults = null;
 		if (type === 'move') {
@@ -1647,7 +1649,7 @@ class TeamTextbox extends preact.Component<{
 					placeholder=" Paste exported teams, pokepaste URLs, or JSON here" readOnly={editor.readonly}
 				/>
 				<textarea
-					class="textbox teamtextbox heighttester" tabIndex={-1} aria-hidden title="Team text height tester"
+					class="textbox teamtextbox heighttester" tabIndex={-1} aria-hidden
 					style={`padding-left:${editor.narrow ? '50px' : '100px'};visibility:hidden;left:-15px`}
 				/>
 				<div class="teamoverlays">
@@ -2390,7 +2392,7 @@ class StatForm extends preact.Component<{
 		const autoSpread = set.ivs && editor.defaultIVs(set, false);
 		const autoSpreadValue = autoSpread && Object.values(autoSpread).join('/');
 		if (!hpIVdata) {
-			return <select name="ivspread" class="button" onChange={this.changeIVSpread} title="IV spreads">
+			return <select name="ivspread" class="button" onChange={this.changeIVSpread}>
 				<option value="" selected>IV spreads</option>
 				{autoSpreadValue && <option value="auto">Auto ({autoSpreadValue})</option>}
 				<optgroup label="min Atk">
@@ -2410,7 +2412,7 @@ class StatForm extends preact.Component<{
 		const minStat = editor.gen >= 6 ? 0 : 2;
 		const hpIVs = hpIVdata.map(ivs => ivs.split('').map(iv => parseInt(iv)));
 
-		return <select name="ivspread" class="button" onChange={this.changeIVSpread} title="IV spreads">
+		return <select name="ivspread" class="button" onChange={this.changeIVSpread}>
 			<option value="" selected>Hidden Power {hpType} IVs</option>
 			{autoSpreadValue && <option value="auto">Auto ({autoSpreadValue})</option>}
 			<optgroup label="min Atk">
@@ -2813,7 +2815,7 @@ class StatForm extends preact.Component<{
 						/></td>
 						<td><input
 							name={`evslider-${statID}`} value={set.evs?.[statID] ?? defaultEV} min="0" max={maxEV} step={stepEV}
-							type="range" class="evslider" tabIndex={-1} aria-hidden title={`${statID} EV slider`}
+							type="range" class="evslider" tabIndex={-1} aria-hidden
 							onInput={this.changeEV} onChange={this.changeEV}
 						/></td>
 						<td><input
@@ -2830,7 +2832,7 @@ class StatForm extends preact.Component<{
 					</tr>
 				</table>
 				{editor.gen >= 3 && <p>
-					Nature: <select name="nature" class="button" onChange={this.changeNature} title="Nature">
+					Nature: <select name="nature" class="button" onChange={this.changeNature}>
 						{Object.entries(BattleNatures).map(([natureName, curNature]) => (
 							<option value={natureName} selected={curNature === nature}>
 								{natureName}

@@ -288,6 +288,9 @@ export const Dex = new class implements ModdedDex {
 		if (dex.gen === 8 && formatid.includes('bdsp')) {
 			dex = Dex.mod('gen8bdsp' as ID);
 		}
+		if (dex.gen === 9 && (formatid.includes('indigostarstorm') || formatid.includes('isl'))) {
+			dex = Dex.mod('gen9indigostarstorm' as ID);
+		}
 		return dex;
 	}
 
@@ -1010,6 +1013,7 @@ export const Dex = new class implements ModdedDex {
 			break;
 		}
 		const flagText = sanitizedFlag.charAt(0).toUpperCase() + sanitizedFlag.slice(1);
+		// Always return icon HTML - preference checking is done by the caller (moves list only)
 		return `<img src="sprites/flagicons/${sanitizedFlag}.png" alt="${flagText}" height="32" width="132" class="pixelated" onerror="this.style.display='none'; this.nextSibling.style.display='inline';" /><span style="display: none;">${flagText}</span>`;
 	}
 

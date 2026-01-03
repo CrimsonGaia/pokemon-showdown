@@ -38,7 +38,7 @@ class PSTextarea extends preact.Component<{ initialValue?: string, name?: string
 		return <div style="position:relative">
 			<textarea
 				name={this.props.name} class="textbox" onInput={this.updateSize} onKeyUp={this.updateSize}
-				style="box-sizing:border-box;width:100%;resize:none" title={this.props.name || 'text input'}
+				style="box-sizing:border-box;width:100%;resize:none"
 			/>
 			<div><textarea
 				class="textbox heighttester"

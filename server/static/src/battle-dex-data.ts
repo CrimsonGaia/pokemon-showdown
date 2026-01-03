@@ -1118,8 +1118,8 @@ export class Item implements Effect {
 	readonly naturalGift: { basePower: number, type: TypeName };
 	readonly isPokeball: boolean;
 	readonly itemUser?: readonly string[];
-	readonly isFragile: boolean;
-	readonly isMildlyFragile: boolean;
+	readonly isFragile?: boolean;
+	readonly isMildlyFragile?: boolean;
 
 	constructor(id: ID, name: string, data: any) {
 		if (!data || typeof data !== 'object') data = {};
@@ -1149,6 +1149,8 @@ export class Item implements Effect {
 		this.itemUser = data.itemUser;
 		this.isFragile = !!data.isFragile;
 		this.isMildlyFragile = !!data.isMildlyFragile;
+		this.isFragile = data.isFragile;
+		this.isMildlyFragile = data.isMildlyFragile;
 
 		if (!this.gen) {
 			if (this.num >= 577) {

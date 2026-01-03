@@ -108,7 +108,7 @@ export class DexSearch {
 
 	find(query: string) {
 		query = toID(query);
-		if (this.query === query && this.results) {
+		if (this.query === query && this.results && this.results.length > 0) {
 			return false;
 		}
 		this.query = query;
@@ -193,6 +193,19 @@ export class DexSearch {
 			this.filters.push(entry.slice(0, 2) as SearchFilter);
 			this.results = null;
 			return true;
+		} else if (this.typedSearch.searchType === 'item') {
+			if (type === this.sortCol) this.sortCol = null;
+			if (!['itemclass'].includes(type)) return false;
+			if (type === 'itemclass') entry[1] = this.capitalizeFirst(entry[1]);
+			if (!this.filters) this.filters = [];
+			this.results = null;
+			for (const filter of this.filters) {
+				if (filter[0] === type && filter[1] === entry[1]) {
+					return true;
+				}
+			}
+			this.filters.push(entry.slice(0, 2) as SearchFilter);
+			return true;
 		}
 		return false;
 	}
@@ -252,6 +265,9 @@ export class DexSearch {
 		// Ensure baseResults and illegalReasons are populated
 		if (this.typedSearch && !this.typedSearch.baseResults) {
 			this.typedSearch.getResults(null, null);
+		}
+		if (this.typedSearch?.illegalReasons) {
+			console.log('[DEBUG] illegalReasons count:', Object.keys(this.typedSearch.illegalReasons).length);
 		}
 		
 		query = toID(query);
@@ -614,6 +630,7 @@ export class DexSearch {
 					fragile: 'Fragile',
 					volatile: 'Volatile',
 					consumable: 'Consumable',
+					berry: 'Berry',
 					pokeball: 'Pokéball',
 					evolution: 'Evolution',
 					tradeevo: 'Trade Evo',
@@ -627,7 +644,8 @@ export class DexSearch {
 					if (item.isFragile) itemClass = 'Fragile';
 					else if (item.isMildlyFragile) itemClass = 'Volatile';
 					else if (item.isPokeball) itemClass = 'Pokéball';
-					else if (item.isBerry || item.isGem) itemClass = 'Consumable';
+					else if (BattleItemSearch.berryItems.has(item.id)) itemClass = 'Berry';
+					else if (BattleItemSearch.consumableItems.has(item.id)) itemClass = 'Consumable';
 					else {
 						const desc = item.desc || item.shortDesc || '';
 						if (desc.includes('Single use') || desc.includes('Holder\'s use of') || desc.includes('One-time use')) {
@@ -805,10 +823,9 @@ abstract class BattleTypedSearch<T extends SearchType> {
 			this.dex = Dex.mod('gen7letsgo' as ID);
 		}
 		if (format.includes('indigostarstorm') || format.includes('isl')) {
-			console.log('[DEBUG] ISL format detected in search:', format);
+			console.log('[DEBUG] ISL format detected, original format:', format);
 			this.formatType = 'indigostarstorm';
 			this.dex = Dex.mod('gen9indigostarstorm' as ID);
-			console.log('[DEBUG] Set dex to gen9indigostarstorm, dex.modid:', this.dex.modid);
 		}
 		if (format.includes('nationaldex') || format.startsWith('nd') || format.includes('natdex')) {
 			format = (format.startsWith('nd') ? format.slice(2) :
@@ -935,7 +952,7 @@ abstract class BattleTypedSearch<T extends SearchType> {
 		if (this.formatType === 'letsgo') table = table['gen7letsgo'];
 		if (this.formatType === 'bw1') table = table['gen5bw1'];
 		if (this.formatType === 'rs') table = table['gen3rs'];
-		if (this.formatType === 'indigostarstorm') table = table['gen9indigostarstorm'];
+		if (this.formatType === 'indigostarstorm') table = table['gen9indigostarstorm'] || table;
 		if (table && table.learnsets && speciesid in table.learnsets) return speciesid;
 		const species = this.dex.species.get(speciesid);
 		if (!species.exists) return '' as ID;
@@ -944,7 +961,7 @@ abstract class BattleTypedSearch<T extends SearchType> {
 		if (typeof species.battleOnly === 'string' && species.battleOnly !== species.baseSpecies) {
 			baseLearnsetid = toID(species.battleOnly);
 		}
-		if (baseLearnsetid in table.learnsets) return baseLearnsetid;
+		if (table && table.learnsets && baseLearnsetid in table.learnsets) return baseLearnsetid;
 		return '' as ID;
 	}
 	protected nextLearnsetid(learnsetid: ID, speciesid: ID, checkingMoves = false) {
@@ -998,15 +1015,25 @@ abstract class BattleTypedSearch<T extends SearchType> {
 				genChar = 'p';
 			}
 		}
+		console.log('[DEBUG canLearn]', {speciesid, moveid, gen, genChar, formatType: this.formatType});
 		let learnsetid = this.firstLearnsetid(speciesid);
+		console.log('[DEBUG canLearn] firstLearnsetid:', learnsetid);
 		while (learnsetid) {
 			let table = BattleTeambuilderTable;
 			if (this.formatType?.startsWith('bdsp')) table = table['gen8bdsp'];
 			if (this.formatType === 'letsgo') table = table['gen7letsgo'];
 			if (this.formatType === 'bw1') table = table['gen5bw1'];
 			if (this.formatType === 'rs') table = table['gen3rs'];
-			if (this.formatType === 'indigostarstorm') table = table['gen9indigostarstorm'];
+			if (this.formatType === 'indigostarstorm') table = table['gen9indigostarstorm'] || table;
+			if (!table || !table.learnsets) {
+				console.log('[DEBUG canLearn] No table or learnsets');
+				break;
+			}
 			let learnset = table.learnsets[learnsetid];
+			console.log('[DEBUG canLearn] learnset for', learnsetid, ':', learnset ? Object.keys(learnset).slice(0, 5) : 'undefined');
+			if (learnset && moveid in learnset) {
+				console.log('[DEBUG canLearn] Move found!', moveid, 'data:', learnset[moveid], 'checking for genChar:', genChar);
+			}
 			const eggMovesOnly = this.eggMovesOnly(learnsetid, speciesid);
 			if (learnset && (moveid in learnset) && (!this.format.startsWith('tradebacks') ? learnset[moveid].includes(genChar) :
 				learnset[moveid].includes(genChar) || (learnset[moveid].includes(`${gen + 1}`) && move.gen === gen)) &&
@@ -1204,14 +1231,27 @@ class BattlePokemonSearch extends BattleTypedSearch<'pokemon'> {
 			table = table[`gen${dex.gen}stadium${dex.gen > 1 ? dex.gen : ''}`];
 		} else if (this.formatType === 'indigostarstorm') {
 			table = table['gen9indigostarstorm'];
+			console.log('[DEBUG] Loading gen9indigostarstorm table, table exists:', !!table, 'has tiers:', !!table?.tiers, 'has formatSlices:', !!table?.formatSlices, 'slice keys:', Object.keys(table?.formatSlices || {}));
+			// Fallback to gen9 if gen9indigostarstorm doesn't exist
+			if (!table) {
+				console.log('[DEBUG] gen9indigostarstorm table not found, falling back to gen9');
+				table = tableData['gen9'];
+			}
 		}
 
-		if (!table.tierSet) {
-			table.tierSet = table.tiers.map((r: any) => {
-				if (typeof r === 'string') return ['pokemon', r];
-				return [r[0], r[1]];
-			});
-			table.tiers = null;
+		if (!table || !table.tierSet) {
+			if (table && table.tiers) {
+				table.tierSet = table.tiers.map((r: any) => {
+					if (typeof r === 'string') return ['pokemon', r];
+					return [r[0], r[1]];
+				});
+				table.tiers = null;
+			} else {
+				// If table doesn't have tiers, create an empty tierSet
+				console.log('[DEBUG] Table has no tiers, creating empty tierSet');
+				if (!table) table = {};
+				table.tierSet = [];
+			}
 		}
 		let tierSet: SearchRow[] = table.tierSet;
 		let slices: { [k: string]: number } = table.formatSlices;
@@ -1270,27 +1310,48 @@ class BattlePokemonSearch extends BattleTypedSearch<'pokemon'> {
 		else if (format === 'doublesnu') tierSet = tierSet.slice(slices.DNU || slices.DUU);
 		else if (this.formatType === 'indigostarstorm') {
 			// ISL regulation sets - slice based on format name
+			console.log('[DEBUG] ISL format detected. Format string:', format, 'Available slices:', Object.keys(slices));
 			if (format.includes('babyleague')) {
+				// Reg α: Only first-stage
 				tierSet = tierSet.slice(slices['Reg α'], slices['Reg Δ']).reverse();
 			} else if (format.includes('nfeleague')) {
+				// Reg Δ: Only Reg α and Reg Δ
 				tierSet = tierSet.slice(slices['Reg α'], slices['Reg ι']).reverse();
 			} else if (format.includes('singlestageonly')) {
+				// Reg ι: Single-stage only
 				tierSet = tierSet.slice(slices['Reg ι'], slices['Reg β']).reverse();
 			} else if (format.includes('2ndstageleague')) {
+				// Reg β: Reg α, Reg Δ, Reg ι, and Reg β
 				tierSet = tierSet.slice(slices['Reg α'], slices['Reg ζ']).reverse();
 			} else {
+				// Reg γ and higher: All Pokemon
 				tierSet = tierSet.slice(slices['Reg α']).reverse();
 			}
+			console.log('[DEBUG] ISL tierSet sliced, remaining Pokemon:', tierSet.filter(([t]) => t === 'pokemon').length);
 			
 			// Filter out Past and Gigantamax Pokemon
+			let beforeFilter = tierSet.filter(([t]) => t === 'pokemon').length;
+			console.log('[DEBUG] About to filter ISL tierSet, before count:', beforeFilter);
+			console.log('[DEBUG] Sample Pokemon before filter:', tierSet.filter(([t]) => t === 'pokemon').slice(0, 10).map(([, id]) => id));
+			console.log('[DEBUG] Checking a few Pokemon isNonstandard values:');
+			for (const [type, id] of tierSet.filter(([t]) => t === 'pokemon').slice(0, 5)) {
+				const species = this.dex.species.get(id);
+				console.log(`  ${id}: isNonstandard=${species.isNonstandard}, gen=${species.gen}, exists=${species.exists}`);
+			}
 			tierSet = tierSet.filter(([type, id]) => {
 				if (type !== 'pokemon') return true;
-				// Check the base Gen 9 dex to see if Pokemon is actually available
+				const species = this.dex.species.get(id);
+				// Check the species data from the base Gen 9 dex to see if it's actually available
 				const baseGen9Species = Dex.forGen(9).species.get(id);
-				return baseGen9Species.isNonstandard !== 'Past' && 
+				const isAvailableInGen9 = baseGen9Species.isNonstandard !== 'Past' && 
 					baseGen9Species.isNonstandard !== 'Gigantamax' && 
 					baseGen9Species.isNonstandard !== 'CAP';
+				if (!isAvailableInGen9) console.log('[DEBUG] Filtering out:', id, 'base gen9 isNonstandard:', baseGen9Species.isNonstandard);
+				return isAvailableInGen9;
 			});
+			let afterFilter = tierSet.filter(([t]) => t === 'pokemon').length;
+			console.log('[DEBUG] ISL tierSet filtered, after count:', afterFilter, 'removed:', beforeFilter - afterFilter);
+			console.log('[DEBUG] Sample Pokemon after filter:', tierSet.filter(([t]) => t === 'pokemon').slice(0, 10).map(([, id]) => id));
 		}
 		else if (this.formatType?.startsWith('bdsp') || this.formatType === 'letsgo' || this.formatType === 'stadium') {
 			tierSet = tierSet.slice(slices.Uber);
@@ -1541,8 +1602,8 @@ class BattleItemSearch extends BattleTypedSearch<'item'> {
 		} else if (this.dex.gen < 9) {
 			table = table[`gen${this.dex.gen}`];
 		}
-		console.log('[DEBUG] BattleItemSearch final check - table:', !!table, 'items:', !!table?.items, 'formatType:', this.formatType);
-		if (!table || !table.items) return [];
+		console.log('[DEBUG] BattleItemSearch final check - table:', !!table, 'items:', !!table?.items, 'itemSet:', !!table?.itemSet, 'formatType:', this.formatType);
+		if (!table || (!table.items && !table.itemSet)) return [];
 		if (!table.itemSet) {
 			table.itemSet = table.items.map((r: any) => {
 				if (typeof r === 'string') {
@@ -1596,30 +1657,33 @@ class BattleItemSearch extends BattleTypedSearch<'item'> {
 		}
 		return results;
 	}
+	
+	// Static item classification lists
+	static fragileItems = new Set(['airballoon', 'focussash', 'powerherb', 'electricseed', 'grassyseed', 'mistyseed', 'psychicseed', 'snowball', 'weaknesspolicy', 'absorbbulb', 'cellbattery', 'luminousmoss', 'mentalherb', 'whiteherb', 'redcard']);
+	
+	static volatileItems = new Set(['boosterenergy']);
+	
+	static berryItems = new Set(['aguavberry', 'apicotberry', 'aspearberry', 'babiriberry', 'belueberry', 'blukberry', 'chartiberry', 'cherimberry', 'chestoberry', 'chilanberry', 'chopleberry', 'cobaberry', 'colburberry', 'cornnberry', 'custapberry', 'durinberry', 'enigmaberry', 'figyberry', 'ganlonberry', 'grepaberry', 'habanberry', 'hondewberry', 'iapapaberry', 'jabocaberry', 'kasibberry', 'kebiaberry', 'kelpsyberry', 'lansatberry', 'leppaberry', 'liechiberry', 'lumberry', 'magoberry', 'magostberry', 'micleberry', 'nanabberry', 'nomelberry', 'occaberry', 'oranberry', 'pamtreberry', 'passhoberry', 'payapaberry', 'pechaberry', 'persimberry', 'petayaberry', 'pinapberry', 'pomegberry', 'qualotberry', 'rabutaberry', 'rawstberry', 'razzberry', 'rindoberry', 'rowapberry', 'salacberry', 'shucaberry', 'sitrusberry', 'spelonberry', 'starfberry', 'tamatoberry', 'tangaberry', 'wacanberry', 'watmelberry', 'wepearberry', 'wikiberry', 'yacheberry']);
+	
+	static pokeballItems = new Set(['pokeball', 'greatball', 'ultraball', 'masterball', 'safariball', 'fastball', 'levelball', 'lureball', 'heavyball', 'loveball', 'friendball', 'moonball', 'sportball', 'netball', 'diveball', 'nestball', 'repeatball', 'timerball', 'luxuryball', 'premierball', 'duskball', 'healball', 'quickball', 'cherishball', 'parkball', 'dreamball', 'beastball']);
+	
+	static evolutionItems = new Set(['firestone', 'waterstone', 'thunderstone', 'leafstone', 'moonstone', 'sunstone', 'shinystone', 'duskstone', 'dawnstone', 'everstone', 'linkingcord', 'ovalstone', 'icestone']);
+	
+	static tradeEvoItems = new Set(['deepseatooth', 'deepseascale', 'dragonscale', 'electirizer', 'magmarizer', 'metalcoat', 'prismscale', 'protector', 'reapercloth', 'sachet', 'upgrade', 'whippeddream']);
+	
+	static consumableItems = new Set(['normalgem', 'fightinggem', 'flyinggem', 'poisongem', 'groundgem', 'rockgem', 'buggem', 'ghostgem', 'steelgem', 'firegem', 'watergem', 'grassgem', 'electricgem', 'psychicgem', 'icegem', 'dragongem', 'darkgem', 'fairygem', 'focusband', 'kingsrock', 'razorclaw', 'razorfang']);
+	
 	getItemClass(item: any) {
-		// Check item properties to determine classification
-		if (item.isFragile) return 'Fragile';
-		if (item.isMildlyFragile) return 'Volatile';
-		if (item.isPokeball) return 'Pokéball';
+		const id = item.id;
 		
-		// Check for consumables (berries, gems, single-use items)
-		if (item.isBerry || item.isGem) return 'Consumable';
-		const desc = item.desc || item.shortDesc || '';
-		if (desc.includes('Single use') || desc.includes('Holder\'s use of') || desc.includes('One-time use')) {
-			return 'Consumable';
-		}
-		
-		// Check for evolution items
-		const evolutionStones = ['firestone', 'waterstone', 'thunderstone', 'leafstone', 'moonstone', 'sunstone',
-			'shinystone', 'duskstone', 'dawnstone', 'everstone', 'linkingcord', 'ovalstone', 'icestone'];
-		if (evolutionStones.includes(item.id) || desc.includes('Evolves')) {
-			return 'Evolution';
-		}
-		
-		// Check for trade evolution items
-		if (desc.includes('when traded')) {
-			return 'Trade Evo';
-		}
+		// Check static lists in priority order
+		if (BattleItemSearch.fragileItems.has(id)) return 'Fragile';
+		if (BattleItemSearch.volatileItems.has(id)) return 'Volatile';
+		if (BattleItemSearch.pokeballItems.has(id)) return 'Pokéball';
+		if (BattleItemSearch.berryItems.has(id)) return 'Berry';
+		if (BattleItemSearch.tradeEvoItems.has(id)) return 'Trade Evo';
+		if (BattleItemSearch.evolutionItems.has(id)) return 'Evolution';
+		if (BattleItemSearch.consumableItems.has(id)) return 'Consumable';
 		
 		return '';
 	}
@@ -1957,11 +2021,14 @@ class BattleMoveSearch extends BattleTypedSearch<'move'> {
 		if (this.formatType === 'letsgo') lsetTable = lsetTable['gen7letsgo'];
 		if (this.formatType === 'bw1') lsetTable = lsetTable['gen5bw1'];
 		if (this.formatType === 'rs') lsetTable = lsetTable['gen3rs'];
+		if (this.formatType === 'indigostarstorm') lsetTable = lsetTable['gen9indigostarstorm'] || lsetTable;
 		if (this.formatType?.startsWith('ssdlc1')) lsetTable = lsetTable['gen8dlc1'];
 		if (this.formatType?.startsWith('predlc')) lsetTable = lsetTable['gen9predlc'];
 		if (this.formatType?.startsWith('svdlc1')) lsetTable = lsetTable['gen9dlc1'];
+		console.log('[DEBUG getMovesList] formatType:', this.formatType, 'has learnsets?', !!lsetTable?.learnsets);
 		while (learnsetid) {
 			let learnset = lsetTable.learnsets[learnsetid];
+			console.log('[DEBUG getMovesList] learnsetid:', learnsetid, 'has learnset?', !!learnset, 'move count:', learnset ? Object.keys(learnset).length : 0);
 			if (learnset) {
 				for (let moveid in learnset) {
 					let learnsetEntry = learnset[moveid];
