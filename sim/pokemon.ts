@@ -1379,7 +1379,16 @@ export class Pokemon {
 		this.apparentType = rawSpecies.types.join('/');
 		this.addedType = species.addedType || '';
 		this.knownType = true;
-		this.weighthg = species.weighthg;
+		
+		// Apply size modifier to weight
+		const sizeWeightModifier = species.sizeWeightModifier || 0.1;
+		let sizeTiers = 0;
+		const size = this.set.size || 'M';
+		if (size === 'XS') sizeTiers = -2;
+		else if (size === 'S') sizeTiers = -1;
+		else if (size === 'L') sizeTiers = 1;
+		else if (size === 'XL') sizeTiers = 2;
+		this.weighthg = Math.round(species.weighthg * (1 + (sizeTiers * sizeWeightModifier)));
 
 		const stats = this.battle.spreadModify(this.species.baseStats, this.set);
 		if (this.species.maxHP) stats.hp = this.species.maxHP;

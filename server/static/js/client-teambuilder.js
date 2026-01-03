@@ -135,6 +135,7 @@
 			'blur input[name=level]': 'detailsChange',
 			'change input[name=happiness]': 'detailsChange',
 			'blur input[name=happiness]': 'detailsChange',
+			'change select[name=size]': 'sizeChange',
 			'change input.shiny-checkbox': 'shinyChange',
 			'click .changeform': 'altForm',
 			'click .altform': 'altForm',
@@ -1357,11 +1358,22 @@
 			
 			buf += '<div class="setcol setcol-ability" style="align-content: end; position: relative; top: -5px;">'; ;
 			// level
-			buf += '<div class="setcell" style="position: relative; top: -6px; left: 2px; display: inline-block;"><label style="font-size: 9px;">Level</label><input type="number" name="level" class="textbox" value="' + (set.level || 100) + '" min="1" max="100" style="width: 30px; height: 16px; font-size: 9px;" /></div>';
+			buf += '<div class="setcell" style="position: relative; top: -6px; left: 40px; display: inline-block;"><label style="font-size: 9px;">Level</label><input type="number" name="level" class="textbox" value="' + (set.level || 100) + '" min="1" max="100" style="width: 30px; height: 16px; font-size: 9px;" /></div>';
 			// size
-			buf += '<div class="setcell" style="position: relative; top: -6px; left: 2px; display: inline-block; margin-left: 13px;"><label style="font-size: 9px;">Size</label><select name="size" class="textbox" style="width: 24px; height: 19px; padding-left: 2px; font-size: 9px; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding-right: 2px; text-align: center;"><option value="XS"' + (set.size === 'XS' ? ' selected' : '') + '>XS</option><option value="S"' + (set.size === 'S' ? ' selected' : '') + '>S</option><option value="M"' + (!set.size || set.size === 'M' ? ' selected' : '') + '>M</option><option value="L"' + (set.size === 'L' ? ' selected' : '') + '>L</option><option value="XL"' + (set.size === 'XL' ? ' selected' : '') + '>XL</option></select></div>';
+			buf += '<div class="setcell" style="position: relative; top: -6px; left: 30px; display: inline-block; margin-left: 13px;"><label style="font-size: 9px;">Size</label><select name="size" class="textbox" style="width: 24px; height: 19px; padding-left: 2px; font-size: 9px; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding-right: 2px; text-align: center;"><option value="XS"' + (set.size === 'XS' ? ' selected' : '') + '>XS</option><option value="S"' + (set.size === 'S' ? ' selected' : '') + '>S</option><option value="M"' + (!set.size || set.size === 'M' ? ' selected' : '') + '>M</option><option value="L"' + (set.size === 'L' ? ' selected' : '') + '>L</option><option value="XL"' + (set.size === 'XL' ? ' selected' : '') + '>XL</option></select></div>';
 			// height/weight
-			buf += '<div class="setcell" style="position: relative; top: -4px; left: 2px; display: inline-block; margin-left: 13px;"><div style="font-size: 9px; display: flex; gap: 8px;"><span>' + (species.heightm || 0) + ' m</span><span>' + (species.weightkg || 0) + ' kg</span></div></div>';
+			var baseWeight = species.weightkg || 0;
+			var baseHeight = species.heightm || 0;
+			var sizeWeightModifier = species.sizeWeightModifier !== undefined ? species.sizeWeightModifier : 0.1;
+			var sizeTiers = 0;
+			var size = set.size || 'M';
+			if (size === 'XS') sizeTiers = -2;
+			else if (size === 'S') sizeTiers = -1;
+			else if (size === 'L') sizeTiers = 1;
+			else if (size === 'XL') sizeTiers = 2;
+			var modifiedWeight = baseWeight * (1 + (sizeTiers * sizeWeightModifier));
+			var modifiedHeight = baseHeight * (1 + (sizeTiers * sizeWeightModifier));
+			buf += '<div class="setcell" style="position: relative; top: -4px; left: 30px; display: inline-block; margin-left: 13px;"><div style="font-size: 9px; display: flex; gap: 8px;"><span class="height-display">' + modifiedHeight.toFixed(1) + ' m</span><span class="weight-display">' + modifiedWeight.toFixed(1) + ' kg</span></div></div>';
 			//ability set
 			buf += '<div class="setcell">';
 			buf += '<div style="display: flex; align-items: end; gap: 6px;"><label style="margin: 0;">Ability Set</label><button type="button" class="textbox' + buttonClass + '"' + buttonName + ' data-value="' + abilitySet + '" style="' + buttonStyle + '">' + buttonText + '</button></div>';
@@ -1710,6 +1722,34 @@
 			// Update the sprite to show shiny status
 			var $setchart = $li.find('.setchart');
 			$setchart.attr('style', Dex.getTeambuilderSprite(set, this.curTeam.dex));
+		},
+		sizeChange: function (e) {
+			var $li = $(e.currentTarget).closest('li');
+			var i = +$li.attr('value');
+			var set = this.curSetList[i];
+			
+			if (!set) return;
+			
+			var size = $(e.currentTarget).val();
+			if (size && ['XS', 'S', 'M', 'L', 'XL'].includes(size)) {
+				if (size !== 'M') {
+					set.size = size;
+				} else {
+					delete set.size;
+				}
+				this.save();
+				
+				// Update height and weight display
+				var species = this.curTeam.dex.species.get(set.species);
+				var baseWeight = species.weightkg || 0;
+				var baseHeight = species.heightm || 0;
+				var sizeWeightModifier = species.sizeWeightModifier !== undefined ? species.sizeWeightModifier : 0.1;
+				var sizeTiers = {'XS': -2, 'S': -1, 'M': 0, 'L': 1, 'XL': 2}[size] || 0;
+				var modifiedWeight = baseWeight * (1 + (sizeTiers * sizeWeightModifier));
+				var modifiedHeight = baseHeight * (1 + (sizeTiers * sizeWeightModifier));
+				$li.find('.height-display').text(modifiedHeight.toFixed(1) + ' m');
+				$li.find('.weight-display').text(modifiedWeight.toFixed(1) + ' kg');
+			}
 		},
 		// clipboard
 		clipboard: [],
@@ -3029,6 +3069,27 @@
 			var teraType = $container.find('select[name=teratype]').val();
 			if (Dex.types.isName(teraType) && teraType !== species.types[0]) { set.teraType = teraType; } 
 			else { delete set.teraType; }
+			
+			// Size
+			var size = $container.find('select[name=size]').val();
+			if (size && ['XS', 'S', 'M', 'L', 'XL'].includes(size)) { 
+				if (size !== 'M') set.size = size; 
+				else delete set.size;
+			} else { delete set.size; }
+			
+			// Update weight display when size changes
+			if (fieldName === 'size') {
+				var baseWeight = species.weightkg || 0;
+				var sizeWeightModifier = species.sizeWeightModifier !== undefined ? species.sizeWeightModifier : 0.1;
+				var sizeTiers = 0;
+				var selectedSize = size || 'M';
+				if (selectedSize === 'XS') sizeTiers = -2;
+				else if (selectedSize === 'S') sizeTiers = -1;
+				else if (selectedSize === 'L') sizeTiers = 1;
+				else if (selectedSize === 'XL') sizeTiers = 2;
+				var modifiedWeight = baseWeight * (1 + (sizeTiers * sizeWeightModifier));
+				$container.find('.weight-display').text(modifiedWeight.toFixed(1) + ' kg');
+			}
 			
 			// Only set curSet if we're already viewing a specific Pokemon
 			// Don't set it when editing from team view to preserve focus behavior

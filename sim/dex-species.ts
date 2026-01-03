@@ -36,6 +36,7 @@ export interface SpeciesData extends Partial<Species> {
 	baseStats: StatsTable;
 	eggGroups: string[];
 	weightkg: number;
+	sizeWeightModifier?: number;
 }
 export interface CosmeticFormeData {
 	isCosmeticForme: boolean;
@@ -224,6 +225,8 @@ export class Species extends BasicEffect implements Readonly<BasicEffect & Speci
 	readonly weightkg: number;
 	/** Weight (in integer multiples of 0.1kg). */
 	readonly weighthg: number;
+	/** Size weight modifier - percentage change per size tier (default 0.1 = 10%) */
+	readonly sizeWeightModifier: number;
 	/** Height (in m). */
 	readonly heightm: number;
 	/** Color. */
@@ -337,6 +340,7 @@ export class Species extends BasicEffect implements Readonly<BasicEffect & Speci
 			this.baseStats.spa + this.baseStats.spd + this.baseStats.spe;
 		this.weightkg = data.weightkg || 0;
 		this.weighthg = this.weightkg * 10;
+		this.sizeWeightModifier = data.sizeWeightModifier !== undefined ? data.sizeWeightModifier : 0.1;
 		this.heightm = data.heightm || 0;
 		this.color = data.color || '';
 		this.isCosmeticForme = data.isCosmeticForme || undefined;
