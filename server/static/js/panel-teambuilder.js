@@ -38,7 +38,7 @@ render=function render(){
 return preact.h("div",{style:"position:relative"},
 preact.h("textarea",{
 name:this.props.name,"class":"textbox",onInput:this.updateSize,onKeyUp:this.updateSize,
-style:"box-sizing:border-box;width:100%;resize:none"}
+style:"box-sizing:border-box;width:100%;resize:none",title:this.props.name||'text input'}
 ),
 preact.h("div",null,preact.h("textarea",{
 "class":"textbox heighttester",

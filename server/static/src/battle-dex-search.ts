@@ -146,7 +146,22 @@ export class DexSearch {
 			if (!['type', 'move', 'flag', 'ability', 'tier'].includes(type)) return false;
 			if (type === 'type') entry[1] = this.capitalizeFirst(entry[1]);
 			if (type === 'move') entry[1] = toID(entry[1]);
-			if (type === 'flag') entry[1] = this.dex.flags.get(entry[1]).name;
+			if (type === 'flag') {
+				// Map flag IDs to tag names for Pokemon
+				const tagMap: {[id: string]: string} = {
+					'legendary': 'Legendary',
+					'restrictedlegendary': 'Restricted Legendary',
+					'mythical': 'Mythical',
+					'restrictedmythical': 'Restricted Mythical',
+					'paradox': 'Paradox',
+					'restrictedparadox': 'Restricted Paradox',
+					'sublegendary': 'Sub-Legendary',
+					'mega': 'Mega',
+					'powerhouse': 'Powerhouse',
+				};
+				const id = toID(entry[1]);
+				entry[1] = tagMap[id] || this.capitalizeFirst(entry[1]);
+			}
 			if (type === 'ability') entry[1] = this.dex.abilities.get(entry[1]).name;
 			if (type === 'tier') {
 				// very hardcode
@@ -392,8 +407,8 @@ export class DexSearch {
 			// For performance, with a query length of 1, we only fill the first bucket
 			if (query.length === 1 && typeIndex !== (searchType ? searchTypeIndex : 1)) continue;
 
-			// For pokemon queries, accept types/tier/abilities/moves/eggroups as filters
-			if (searchType === 'pokemon' && (typeIndex === 5 || typeIndex > 7)) continue;
+			// For pokemon queries, accept types/tier/abilities/moves/eggroups/flags as filters
+			if (searchType === 'pokemon' && (typeIndex === 5 || (typeIndex > 7 && typeIndex !== 10))) continue;
 			// For move queries, accept types/categories/flags as filters
 			if (searchType === 'move' && ((typeIndex !== 8 && typeIndex !== 10 && typeIndex > 4) || typeIndex === 3)) continue;
 			// For move queries in the teambuilder, don't accept pokemon as filters
@@ -490,6 +505,7 @@ export class DexSearch {
 		this.results = Array.prototype.concat.apply(topbuf, bufs);
 		
 		// Filter results against baseResults for format legality
+		// Only filter Pokemon, not other types like flags, types, abilities, etc.
 		if (this.typedSearch && this.typedSearch.baseResults) {
 			const legalSet = new Set<string>();
 			for (const [type, id] of this.typedSearch.baseResults) {
@@ -499,7 +515,9 @@ export class DexSearch {
 			}
 			this.results = this.results.filter(([type, id]) => {
 				if (type === 'header' || type === 'html') return true;
-				return legalSet.has(id);
+				// Only apply legality filtering to Pokemon, not to filters like flags
+				if (type === 'pokemon') return legalSet.has(id);
+				return true;
 			});
 		}
 		
@@ -527,6 +545,30 @@ export class DexSearch {
 				for (let id in BattlePokedex) {
 					if (!BattlePokedex[id].abilities) continue;
 					if (Dex.hasAbility(this.dex.species.get(id), ability)) {
+						(illegal && id in illegal ? illegalBuf : buf).push(['pokemon', id as ID]);
+					}
+				}
+				break;
+			case 'flag':
+				// Map flag IDs to tag names (Pokemon tags)
+				const tagMap: {[id: string]: string} = {
+					'legendary': 'Legendary',
+					'restrictedlegendary': 'Restricted Legendary',
+					'mythical': 'Mythical',
+					'restrictedmythical': 'Restricted Mythical',
+					'paradox': 'Paradox',
+					'restrictedparadox': 'Restricted Paradox',
+					'sublegendary': 'Sub-Legendary',
+					'mega': 'Mega',
+					'powerhouse': 'Powerhouse',
+				};
+				let flagName = tagMap[fId] || fId.charAt(0).toUpperCase() + fId.slice(1);
+				buf.push(['header', `${flagName} Pok\u00e9mon`]);
+				for (let id in BattlePokedex) {
+					const species = this.dex.species.get(id);
+					// Check tags array or special properties like isMega
+					if ((species.tags && species.tags.includes(flagName)) ||
+						(flagName === 'Mega' && species.isMega)) {
 						(illegal && id in illegal ? illegalBuf : buf).push(['pokemon', id as ID]);
 					}
 				}
@@ -1342,7 +1384,12 @@ class BattlePokemonSearch extends BattleTypedSearch<'pokemon'> {
 				break;
 			case 'flag':
 				// Check Pokemon tags (Legendary, Mythical, Paradox, etc.)
-				if (!species.tags || !species.tags.includes(value)) return false;
+				if (value === 'Mega') {
+					// Special case for Mega since it uses isMega property
+					if (!species.isMega) return false;
+				} else {
+					if (!species.tags || !species.tags.includes(value)) return false;
+				}
 				break;
 			}
 		}

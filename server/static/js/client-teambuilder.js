@@ -1,9 +1,98 @@
-﻿(function (exports, $) {
+(function (exports, $) {
 	// this is a useful global
 	var teams;
+	
+	// TypeChart data for affinity/aversion calculations
+	var TypeAffinityAversion = {
+		bug: {
+			affinity: { binding: 5, bite: 5, claw: 5, dance: 5, drain: 5, sound: 5 },
+			aversion: { aura: 6, beam: 6, kick: 6 }
+		},
+		dark: {
+			affinity: { aura: 5, magic: 5, pulse: 5, shadow: 5, weapon: 5 },
+			aversion: { beam: 6, heal: 6, light: 6, solar: 6 }
+		},
+		dragon: {
+			affinity: { aura: 5, bite: 5, bomb: 5, breath: 5, bullet: 5, claw: 5, magic: 5 },
+			aversion: { kick: 6, lunar: 6, weapon: 6 }
+		},
+		electric: {
+			affinity: { beam: 5, explosive: 5, drain: 5, light: 5, pulse: 5, sound: 5 },
+			aversion: { bomb: 6, powder: 6, slice: 6 }
+		},
+		fairy: {
+			affinity: { heal: 5, lunar: 5, magic: 5, wing: 5 },
+			aversion: { beam: 6, bite: 6, breath: 6, claw: 6, crash: 6, shadow: 6, solar: 6 }
+		},
+		fighting: {
+			affinity: { aura: 5, binding: 5, dance: 5, kick: 5, punch: 5, sweep: 5, throw: 5 },
+			aversion: { bite: 6, magic: 6, weapon: 6 }
+		},
+		fire: {
+			affinity: { aura: 5, bomb: 5, breath: 5, explosive: 5, light: 5, wind: 5 },
+			aversion: { airborne: 6, beam: 6, crash: 6, pierce: 6, pulse: 6, shadow: 6, spin: 6, weapon: 6 }
+		},
+		flying: {
+			affinity: { airborne: 5, bomb: 5, claw: 5, pierce: 5, wind: 5, wing: 5 },
+			aversion: { binding: 6, crush: 6, kick: 6, punch: 6, sweep: 6, weapon: 6 }
+		},
+		ghost: {
+			affinity: { airborne: 5, magic: 5, shadow: 5, weapon: 5, wind: 5 },
+			aversion: { aura: 6, contact: 6, crash: 6, drain: 6, explosive: 6, heal: 6, pierce: 6, pulse: 6 }
+		},
+		grass: {
+			affinity: { aura: 5, drain: 5, heal: 5, pierce: 5, solar: 5 },
+			aversion: { bite: 6, claw: 6, spin: 6, weapon: 6 }
+		},
+		ground: {
+			affinity: { binding: 5, drain: 5, kick: 5, spin: 5 },
+			aversion: { airborne: 6, spin: 6, throw: 6, wind: 6, wing: 6 }
+		},
+		ice: {
+			affinity: { beam: 5, light: 5, pierce: 5, spin: 5 },
+			aversion: { slice: 6, weapon: 6 }
+		},
+		normal: {
+			affinity: { contact: 5, heal: 5, sound: 5, weapon: 5 },
+			aversion: { aura: 6, dance: 6, kick: 6, magic: 6, punch: 6, shadow: 6 }
+		},
+		poison: {
+			affinity: { binding: 5, breath: 5, contact: 5, drain: 5, explosive: 5 },
+			aversion: { heal: 6 }
+		},
+		psychic: {
+			affinity: { aura: 5, beam: 5, binding: 5, explosive: 5, heal: 5, light: 5, pulse: 5, throw: 5, weapon: 5 },
+			aversion: { dance: 6, kick: 6, punch: 6, sweep: 6 }
+		},
+		rock: {
+			affinity: { airborne: 5, binding: 5, bomb: 5, bullet: 5, crash: 5, crush: 5, magic: 5, spin: 5, throw: 5, weapon: 5 },
+			aversion: { aura: 6, bite: 6, dance: 6, pierce: 6 }
+		},
+		steel: {
+			affinity: { beam: 5, bullet: 5, crash: 5, crush: 5, pierce: 5, slice: 5, weapon: 5 },
+			aversion: { aura: 6, dance: 6, explosive: 6, heal: 6, magic: 6, pulse: 6 }
+		},
+		stellar: {
+			affinity: { aura: 5, beam: 5, light: 5, lunar: 5, magic: 5, solar: 5, spin: 5 },
+			aversion: {}
+		},
+		water: {
+			affinity: { beam: 5, bomb: 5, heal: 5, magic: 5, wind: 5 },
+			aversion: { breath: 6, crash: 6, drain: 6, explosive: 6, pierce: 6, slice: 6, weapon: 6 }
+		}
+	};
+	
+	// Indigo Starstorm type overrides
+	var IndigoStarstormTypes = {
+		flygon: ["Bug", "Dragon"]
+	};
+	
 	exports.TeambuilderRoom = exports.Room.extend({
 		type: 'teambuilder',
 		title: 'Teambuilder',
+		bestWidth: 850,
+		minWidth: 850,
+		maxWidth: 850,
 		initialize: function () {
 			teams = Storage.teams;
 			// left menu
@@ -17,6 +106,9 @@
 				this.curTeam.iconCache = '!';
 				this.curTeam.gen = this.getGen(this.curTeam.format);
 				this.curTeam.dex = Dex.forGen(this.curTeam.gen);
+				if (this.curTeam.format.includes('letsgo')) { this.curTeam.dex = Dex.mod('gen7letsgo'); }
+				if (this.curTeam.format.includes('bdsp')) { this.curTeam.dex = Dex.mod('gen8bdsp'); }
+				if (this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.includes('ISL')) { this.curTeam.dex = Dex.mod('gen9indigostarstorm'); }
 				Storage.activeSetList = this.curSetList;
 			}
 		},
@@ -38,9 +130,16 @@
 			'change .detailsform input': 'detailsChange',
 			'change .detailsform select': 'detailsChange',
 			'submit .detailsform': 'detailsChange',
+			'blur .detailsform input[type=number]': 'detailsChange',
+			'change input[name=level]': 'detailsChange',
+			'blur input[name=level]': 'detailsChange',
+			'change input[name=happiness]': 'detailsChange',
+			'blur input[name=happiness]': 'detailsChange',
+			'change input.shiny-checkbox': 'shinyChange',
 			'click .changeform': 'altForm',
 			'click .altform': 'altForm',
 			'click button.teratype': 'teraTypeSelect',
+			'click button[name=genderToggle]': 'genderToggleChange',
 			// stats
 			'keyup .statform input.numform': 'statChange',
 			'input .statform input[type=number].numform': 'statChange',
@@ -50,6 +149,9 @@
 			'input .evslider': 'statSlide',
 			// ability set
 			'click button[name=abilitySetToggle]': 'abilitySetChange',
+			// affinity/aversion
+			'click .affinity-flag-icon': 'affinityFlagClick',
+			'click .aversion-flag-icon': 'aversionFlagClick',
 			// teambuilder events
 			'click .utilichart a': 'chartClick',
 			'keydown .chartinput': 'chartKeydown',
@@ -107,7 +209,9 @@
 		curTeamLoc: 0,
 		curSet: null,
 		curSetLoc: 0,
-		// curFolder will have '/' at the end if it's a folder, but it will be alphanumeric (so guaranteed no '/') if it's a format
+		// curFolder will have '/' at the end if it's a folder, but
+		// it will be alphanumeric (so guaranteed no '/') if it's a
+		// format
 		// Special values:
 		// '' -     show all
 		// 'gen9' - show teams with no format
@@ -126,6 +230,7 @@
 				if (this.curTeam.loaded === false || (this.curTeam.teamid && !this.curTeam.loaded)) { this.loadTeam();
 					return this.updateTeamView();
 				}
+				this.ignoreEVLimits = (this.curTeam.gen < 3 || ((this.curTeam.format.includes('hackmons') || this.curTeam.format.endsWith('bh')) && this.curTeam.gen !== 6) || this.curTeam.format.includes('metronomebattle'));
 				if (this.curSet) { return this.updateSetView(); }
 				return this.updateTeamView();
 			}
@@ -603,7 +708,17 @@
 			this.curTeam.iconCache = '!';
 			this.curTeam.gen = this.getGen(this.curTeam.format);
 			this.curTeam.dex = Dex.forGen(this.curTeam.gen);
-			Storage.activeSetList = this.curSetList = Storage.unpackTeam(this.curTeam.team);
+			if (this.curTeam.format.includes('letsgo')) { this.curTeam.dex = Dex.mod('gen7letsgo'); }
+			if (this.curTeam.format.includes('bdsp')) { this.curTeam.dex = Dex.mod('gen8bdsp'); }
+		// Update capacity for Indigo Starstorm if needed
+		if (this.curTeam.capacity !== 24 && this.curTeam.capacity !== 50) {
+			if ((this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.includes('isl')) && this.curTeam.capacity !== 10) {
+				this.curTeam.capacity = 10;
+			} else if (!(this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.includes('isl')) && this.curTeam.capacity !== 6) {
+				this.curTeam.capacity = 6;
+			}
+		}
+		Storage.activeSetList = this.curSetList = Storage.unpackTeam(this.curTeam.team);
 			this.curTeamIndex = i;
 			this.update();
 		},
@@ -701,7 +816,7 @@
 					name: (isBox ? 'Box ' : 'Untitled ') + (teams.length + 1),
 					format: format,
 					team: '',
-					capacity: isBox ? 24 : 6,
+					capacity: isBox ? 24 : (format && (format.includes('indigostarstorm') || format.includes('isl')) ? 10 : 6),
 					folder: folder,
 					iconCache: ''
 				};
@@ -948,8 +1063,10 @@
 						if (format && format.endsWith('-box')) {
 							format = format.slice(0, -4);
 							capacity = 50;
-						}
-						name = $.trim(name.substr(bracketIndex + 1));
+					} else if (format && (format.includes('indigostarstorm') || format.includes('isl'))) {
+						capacity = 10;
+					}
+					name = $.trim(name.substr(bracketIndex + 1));
 					}
 					Storage.teams.push({
 						name: name,
@@ -1039,8 +1156,55 @@
 			if ($(window).width() < 640) this.show();
 		},
 		//region teambuilder main panel
+		getAffinityAversionFlags: function (types) {
+			var flagCounts = {};
+			
+			// Count affinity and aversion for each type
+			for (var i = 0; i < types.length; i++) {
+				var typeID = types[i].toLowerCase();
+				var typeData = TypeAffinityAversion[typeID];
+				if (!typeData) continue;
+				
+				// Add affinity flags (+1)
+				if (typeData.affinity) {
+					for (var flag in typeData.affinity) {
+						flagCounts[flag] = (flagCounts[flag] || 0) + 1;
+					}
+				}
+				
+				// Subtract aversion flags (-1)
+				if (typeData.aversion) {
+					for (var flag in typeData.aversion) {
+						flagCounts[flag] = (flagCounts[flag] || 0) - 1;
+					}
+				}
+			}
+			
+			// Separate into affinity (positive) and aversion (negative) arrays with their counts
+			var affinityFlags = [];
+			var aversionFlags = [];
+			for (var flag in flagCounts) {
+				if (flagCounts[flag] > 0) {
+					affinityFlags.push({flag: flag, count: flagCounts[flag]});
+				} else if (flagCounts[flag] < 0) {
+					aversionFlags.push({flag: flag, count: Math.abs(flagCounts[flag])});
+				}
+			}
+			
+			// Sort alphabetically for consistent display
+			affinityFlags.sort(function(a, b) { return a.flag.localeCompare(b.flag); });
+			aversionFlags.sort(function(a, b) { return a.flag.localeCompare(b.flag); });
+			
+			return {
+				affinity: affinityFlags,
+				aversion: aversionFlags
+			};
+		},
 		renderSet: function (set, i) {
 			var species = this.curTeam.dex.species.get(set.species);
+			var isLetsGo = this.curTeam.format.includes('letsgo');
+			var isBDSP = this.curTeam.format.includes('bdsp');
+			var isNatDex = this.curTeam.format.includes('nationaldex') || this.curTeam.format.includes('natdex');
 			var buf = '<li value="' + i + '">';
 			if (!set.species) {
 				if (this.deletedSet) { buf += '<div class="setmenu setmenu-left"><button name="undeleteSet" class="button"><i class="fa fa-undo"></i> Undo Delete</button></div>'; }
@@ -1053,70 +1217,165 @@
 			buf += '<div class="setchart-nickname">';
 			buf += '<label>Nickname</label><input type="text" name="nickname" class="textbox" value="' + BattleLog.escapeHTML(set.name || '') + '" placeholder="' + BattleLog.escapeHTML(species.baseSpecies) + '" />';
 			buf += '</div>';
-			buf += '<div class="setchart" style="' + Dex.getTeambuilderSprite(set, this.curTeam.dex) + ';">';
+			buf += '<div class="setchart" style="' + Dex.getTeambuilderSprite(set, this.curTeam.dex) + 'background-position-x: 20px; background-size: 96px 96px;">';
 			// icon
-			buf += '<div class="setcol setcol-icon">';
-			if (species.cosmeticFormes) { buf += '<div class="setcell-sprite changeform"><i class="fa fa-caret-down"></i></div>'; } 
-			else { buf += '<div class="setcell-sprite"></div>'; }
+			buf += '<div class="setcol setcol-icon" style="position: relative;">';
+
+			// Shiny checkbox overlay on sprite
+			if (this.curTeam.gen > 1) {
+				buf += '<div style="position: absolute; top: 17px; z-index: 10; border-radius: 3px; display: flex; align-items: center; gap: 3px;">';
+				buf += '<input type="checkbox" name="shiny" class="shiny-checkbox"' + (set.shiny ? ' checked' : '') + ' style="margin: 0; cursor: pointer; width: 12px; height: 12px;" /><label style="font-size: 10px; margin: 0; cursor: pointer; position: relative; top: -1px;">Shiny</label>';
+				buf += '</div>';
+			}
+
+			if (species.cosmeticFormes) { buf += '<div class="setcell-sprite changeform" style="margin-left: 10px;"><i class="fa fa-caret-down"></i></div>'; } 
+			else { buf += '<div class="setcell-sprite" style="margin-left: 10px;"></div>'; }
 			buf += '<div class="setcell setcell-pokemon"><label>Pok&eacute;mon</label><input type="text" name="pokemon" class="textbox chartinput" value="' + BattleLog.escapeHTML(set.species) + '" autocomplete="off" /></div></div>';
+			
 			// details
 			buf += '<div class="setcol setcol-details"><div class="setrow">';
-			buf += '<div class="setcell setcell-details"><label>Details';
+			buf += '<div class="setcell setcell-details"><label>Type';
+			
 			// Type icons 
 			var types = species.types;
+			// Apply Indigo Starstorm type overrides
+			var isIndigoStarstorm = this.curTeam.format && (this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.includes('ISL'));
+			if (isIndigoStarstorm && IndigoStarstormTypes[toID(species.name)]) {
+				types = IndigoStarstormTypes[toID(species.name)];
+			}
 			if (types) {
-				buf += '<span style="margin-left: 8px; vertical-align: middle; position: relative; top: -1px;">';
+				buf += '<span style="margin-left: 8px; vertical-align: middle; position: relative;">';
 				for (var i = 0; i < types.length; i++) buf += Dex.getTypeIcon(types[i]);
 				buf += '</span>';
+				
+				// Tera Type icon below type icons
+				if (this.curTeam.gen === 9) {
+					var teraType = set.teraType || species.requiredTeraType || species.types[0];
+					buf += '<br><button type="button" class="teratype" name="teraType" value="' + BattleLog.escapeHTML(teraType) + '" style="background: none; border: none; padding: 0; cursor: pointer; width: 20px; height: 20px; margin-left: 8px; position: relative; top: 6px;">';
+					buf += '<img src="' + Dex.resourcePrefix + 'sprites/types/Tera' + teraType + '.png" alt="' + teraType + '" style="width: 20px; height: 20px; object-fit: contain; display: block; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5));" />';
+					buf += '</button>';
+					buf += '<span style="position: absolute; left: 159px; top: 64px; pointer-events: none; display: flex; flex-direction: column; align-items: flex-end; width: 60px;">';
+					buf += '<span style="font-size: 9px; margin-right: 2px;"></span>';
+					buf += '<span style="font-size: 9px;"></span>';
+					buf += '</span>';
 				}
+			}
+			
 			buf += '</label>';
-			buf += '<div class="detailsform" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">';
-			buf += '<label style="font-size: 10px;">Level</label><input type="number" name="level" class="textbox" value="' + (set.level || 100) + '" min="1" max="100" style="width: 40px;" />';
+			buf += '<div style="display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap;">';
+			buf += '<div style="display: flex; flex-direction: column;">';
 			if (this.curTeam.gen > 1) {
-				buf += '<label style="font-size: 10px;">Gender</label><select name="gender" class="button" style="width: 60px;"><option value=""' + (!set.gender ? ' selected' : '') + '>Auto</option><option value="M"' + (set.gender === 'M' ? ' selected' : '') + '>Male</option><option value="F"' + (set.gender === 'F' ? ' selected' : '') + '>Female</option></select>';
-				buf += '<label style="font-size: 10px;">Shiny</label><input type="checkbox" name="shiny"' + (set.shiny ? ' checked' : '') + ' />';
+				// Gender button
+				var speciesGender = species.gender; // 'M', 'F', 'N', or undefined
+				var currentGender = set.gender || '';
+				var genderButton = '';
+				
+				if (speciesGender === 'N') {
+					// Genderless - grey button with em dash
+					genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="" style="width: 40px; font-weight: bold; font-size: 12px; pointer-events: none; padding: 1.5px 0; height: 18px; background: rgba(128, 128, 128, 0.3); text-align: center;"><span style="position: relative; top: -2px;">—</span></button>';
+				} else if (speciesGender === 'M') {
+					// 100% Male - centered blue button
+					genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="M" style="width: 40px; font-weight: bold; font-size: 12px; pointer-events: none; padding: 1.5px 0; height: 18px; background: rgba(0, 150, 255, 0.3); text-align: center;"><span style="position: relative; top: -0.75px; left: -1px; color: #0004ffff;">♂</span></button>';
+				} else if (speciesGender === 'F') {
+					// 100% Female - centered pink button
+					genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="F" style="width: 40px; font-weight: bold; font-size: 12px; pointer-events: none; padding: 1.5px 0; height: 18px; background: rgba(255, 100, 150, 0.3); text-align: center;"><span style="position: relative; top: -2px; left: -1px; color: #ff0055ff;">♀</span></button>';
+				} else {
+					// Can be Male or Female - toggle button (default to Male if not set)
+					var isMale = currentGender === 'M' || !currentGender;
+					if (isMale) {
+						genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="M" style="width: 40px; font-weight: bold; font-size: 12px; cursor: pointer; padding: 1.5px 0; height: 18px; background: linear-gradient(to right, rgba(0, 150, 255, 0.3) 50%, transparent 50%); text-align: left; padding-left: 6px;"><span style="position: relative; top: -0.75px; right: 2px; color: #0004ffff;">♂</span></button>';
+					} else {
+						genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="F" style="width: 40px; font-weight: bold; font-size: 12px; cursor: pointer; padding: 1.5px 0; height: 18px; background: linear-gradient(to left, rgba(255, 100, 150, 0.3) 50%, transparent 50%); text-align: right; padding-right: 6px;"><span style="position: relative; top: -1.5px; left: 1px; color: #ff0055ff;">♀</span></button>';
+					}
+				}
+				buf += '<div style="display: flex; align-items: center; gap: 7px; position: relative; top: 14px; left: 1px;"><label style="font-size: 10px;">Gender</label>' + genderButton + '</div>';
+			}
+			buf += '</div>';
+			if (this.curTeam.gen > 1) {
 				if (isLetsGo) {
 					buf += '<label style="font-size: 10px;">Happiness</label><input type="number" name="happiness" class="textbox" value="' + (typeof set.happiness === 'number' ? set.happiness : 70) + '" min="0" max="255" style="width: 50px;" />';
 				} else if (this.curTeam.gen < 8 || isNatDex) {
 					buf += '<label style="font-size: 10px;">Happiness</label><input type="number" name="happiness" class="textbox" value="' + (typeof set.happiness === 'number' ? set.happiness : 255) + '" min="0" max="255" style="width: 50px;" />';
 				}
 			}
-			buf += '</div></div></div></div>';
-		// Tera Type column
-		if (this.curTeam.gen === 9) {
-			var teraType = set.teraType || species.requiredTeraType || species.types[0];
-			buf += '<div class="setcol" style="width: 30px; display: flex; align-items: flex-start; justify-content: center; padding-top: 20px;">';
-			buf += '<button type="button" class="select teratype" name="teraType" value="' + BattleLog.escapeHTML(teraType) + '" style="background: none; border: none; padding: 0; cursor: pointer; width: 20px; height: 20px;">';
-			buf += '<img src="' + Dex.resourcePrefix + 'sprites/types/Tera' + teraType + '.png" alt="' + teraType + '" style="width: 20px; height: 20px; object-fit: contain; display: block;" />';
-			buf += '</button>';
-			buf += '</div>';
-		}
+			buf += '</div></div></div>';
 		// item icon
 		buf += '<div class="setrow setrow-icons">';
-		buf += '<div class="setcell">';
+		buf += '<div class="setcell" style="position: relative; left: 95px; top: 20px;">';
 		var itemicon = '<span class="itemicon"></span>';
+		var itemName = '';
 		if (set.item) {
-			var item = this.curTeam.dex.items.get(set.item);
-			itemicon = '<span class="itemicon" style="' + Dex.getItemIcon(item) + '"></span>';
+			var itemId = toID(set.item);
+			if (itemId in BattleItems) {
+				var item = BattleItems[itemId];
+				itemicon = '<span class="itemicon" style="' + Dex.getItemIcon(item) + '"></span>';
+				itemName = item.name;
+			} else {
+				itemName = set.item;
+			}
 		}
 		buf += itemicon;
 		buf += '</div></div>';
 		buf += '<div class="setrow">';
-		if (this.curTeam.gen > 1 && !isLetsGo) buf += '<div class="setcell setcell-item"><label>Item</label><input type="text" name="item" class="textbox chartinput" value="' + BattleLog.escapeHTML(set.item) + '" autocomplete="off" /></div>';
-		// Ability Set selector
+		if (this.curTeam.gen > 1 && !isLetsGo) buf += '<div class="setcell setcell-item"><label>Item</label><input type="text" name="item" class="textbox chartinput" value="' + BattleLog.escapeHTML(itemName) + '" autocomplete="off" /></div>';
+		buf += '</div>';
+		buf += '</div>';
+		
+		// Ability Set column
 		if (this.curTeam.gen > 2 && !isLetsGo) {
 			var abilitySet = set.abilitySet || 1;
-			var buttonStyle = abilitySet === 1 
-				? 'width: 40px; font-weight: bold; font-size: 14px; cursor: pointer; padding: 2px 0; height: 24px; background: linear-gradient(to right, rgba(0, 255, 0, 0.3) 50%, transparent 50%); text-align: left; padding-left: 8px;'
-				: 'width: 40px; font-weight: bold; font-size: 14px; cursor: pointer; padding: 2px 0; height: 24px; background: linear-gradient(to left, rgba(0, 100, 255, 0.3) 50%, transparent 50%); text-align: right; padding-right: 8px;';
-			buf += '<div class="setcell setcell-ability" style="display: flex; flex-direction: column; gap: 4px; position: relative; top: -41px; left: 1px;">';
-			buf += '<div style="display: flex; align-items: end; gap: 6px;"><label style="margin: 0;">Ability Set</label><button type="button" class="textbox abilitySetToggle" name="abilitySetToggle" data-value="' + abilitySet + '" style="' + buttonStyle + '">' + abilitySet + '</button></div>';
+			// Check if Pokemon has H or S abilities
+			var hasHiddenOrS = !!(species.abilities['H'] || species.abilities['S']);
+			
+			// Always sync abilities with the current ability set
+			if (!set.abilitySet || set.abilitySet === 1) {
+				// Set 1: Regular abilities (slot 0 and 1)
+				set.ability = species.abilities['0'] || '';
+				set.ability2 = species.abilities['1'] || '';
+			} else {
+				// Set 2: Hidden ability and S ability
+				set.ability = species.abilities['H'] || '';
+				set.ability2 = species.abilities['S'] || '';
+			}
+			
+			var buttonStyle, buttonClass, buttonName, buttonText;
+			if (!hasHiddenOrS) {
+				// No H or S ability - show centered gold button, not toggleable
+				buttonStyle = 'width: 36px; font-weight: bold; font-size: 10.5px; padding: 1.5px 0; height: 18px; background: rgba(218, 165, 32, 0.4); text-align: center; pointer-events: none; text-indent: -1px;';
+				buttonClass = '';
+				buttonName = '';
+				buttonText = '1';
+			} else {
+				// Has H or S ability - show toggleable button
+				buttonStyle = abilitySet === 1 
+					? 'width: 36px; font-weight: bold; font-size: 10.5px; cursor: pointer; padding: 1.5px 0; height: 18px; background: linear-gradient(to right, rgba(0, 255, 0, 0.3) 50%, transparent 50%); text-align: left; padding-left: 5.4px;'
+					: 'width: 36px; font-weight: bold; font-size: 10.5px; cursor: pointer; padding: 1.5px 0; height: 18px; background: linear-gradient(to left, rgba(0, 100, 255, 0.3) 50%, transparent 50%); text-align: right; padding-right: 5.4px;';
+				buttonClass = ' abilitySetToggle';
+				buttonName = ' name="abilitySetToggle"';
+				buttonText = abilitySet;
+			}
+			
+			buf += '<div class="setcol setcol-ability" style="align-content: end; position: relative; top: -5px;">'; ;
+			// level
+			buf += '<div class="setcell" style="position: relative; top: -6px; left: 2px; display: inline-block;"><label style="font-size: 9px;">Level</label><input type="number" name="level" class="textbox" value="' + (set.level || 100) + '" min="1" max="100" style="width: 30px; height: 16px; font-size: 9px;" /></div>';
+			// size
+			buf += '<div class="setcell" style="position: relative; top: -6px; left: 2px; display: inline-block; margin-left: 13px;"><label style="font-size: 9px;">Size</label><select name="size" class="textbox" style="width: 24px; height: 19px; padding-left: 2px; font-size: 9px; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding-right: 2px; text-align: center;"><option value="XS"' + (set.size === 'XS' ? ' selected' : '') + '>XS</option><option value="S"' + (set.size === 'S' ? ' selected' : '') + '>S</option><option value="M"' + (!set.size || set.size === 'M' ? ' selected' : '') + '>M</option><option value="L"' + (set.size === 'L' ? ' selected' : '') + '>L</option><option value="XL"' + (set.size === 'XL' ? ' selected' : '') + '>XL</option></select></div>';
+			// height/weight
+			buf += '<div class="setcell" style="position: relative; top: -4px; left: 2px; display: inline-block; margin-left: 13px;"><div style="font-size: 9px; display: flex; gap: 8px;"><span>' + (species.heightm || 0) + ' m</span><span>' + (species.weightkg || 0) + ' kg</span></div></div>';
+			//ability set
+			buf += '<div class="setcell">';
+			buf += '<div style="display: flex; align-items: end; gap: 6px;"><label style="margin: 0;">Ability Set</label><button type="button" class="textbox' + buttonClass + '"' + buttonName + ' data-value="' + abilitySet + '" style="' + buttonStyle + '">' + buttonText + '</button></div>';
+			buf += '</div>';
+			buf += '<div class="setcell">';
 			buf += '<input type="text" name="ability" class="textbox chartinput" value="' + BattleLog.escapeHTML(set.ability) + '" autocomplete="off" style="margin: 0;" />';
+			buf += '</div>';
+			buf += '<div class="setcell">';
 			buf += '<input type="text" name="ability2" class="textbox chartinput" value="' + BattleLog.escapeHTML(set.ability2 || '') + '" autocomplete="off" style="margin: 0;" />';
 			buf += '</div>';
+			buf += '</div>';
 		}
-		buf += '</div>';
-		buf += '</div>';
+		
+
 			if (!set.moves) set.moves = [];
 			buf += '<div class="setcol setcol-moves"><div class="setcell"><label>Moves</label>';
 			buf += '<input type="text" name="move1" class="textbox chartinput" value="' + BattleLog.escapeHTML(set.moves[0]) + '" autocomplete="off" /></div>';
@@ -1124,6 +1383,65 @@
 			buf += '<div class="setcell"><input type="text" name="move3" class="textbox chartinput" value="' + BattleLog.escapeHTML(set.moves[2]) + '" autocomplete="off" /></div>';
 			buf += '<div class="setcell"><input type="text" name="move4" class="textbox chartinput" value="' + BattleLog.escapeHTML(set.moves[3]) + '" autocomplete="off" /></div>';
 			buf += '</div>';
+
+			// Affinity/Aversion column
+			var affinityAversion = this.getAffinityAversionFlags(types);
+			if (affinityAversion.affinity.length > 0 || affinityAversion.aversion.length > 0) {
+				buf += '<div class="setcol setcol-affinity">';
+				
+				if (affinityAversion.affinity.length > 0) {
+					buf += '<div class="setcell"><label style="font-size: 8px;">Affinity - <span style="background: rgba(0,0,0,0.8); padding: 1px 3px; border-radius: 2px;"><span style="color: #5BA3FF; font-weight: bold;">1.1x</span> - <span style="color: #00CED1; font-weight: bold;">1.2x</span></span></label>';
+					buf += '<div style="display: inline-block; background: rgba(94, 161, 114, 0.4); padding: 3px 6px 3px 0px; border-radius: 3px; vertical-align: top; height: 46px; width: 164px;">';
+					buf += '<div style="display: flex; flex-direction: row; flex-wrap: wrap; align-content: flex-start; gap: 10.5px; width: 417px; height: 128px; transform: scale(0.38); transform-origin: left top; line-height: 0;">';
+					for (var i = 0; i < affinityAversion.affinity.length; i++) {
+						var flagData = affinityAversion.affinity[i];
+						var filter = '';
+						// 2x affinity: cyan, 1x affinity: blue
+						if (flagData.count >= 2) {
+							filter = 'filter: sepia(100%) saturate(300%) hue-rotate(140deg) brightness(1.1);';
+						} else {
+							filter = 'filter: sepia(100%) saturate(400%) hue-rotate(180deg) brightness(0.9);';
+						}
+						var style = 'position: relative;';
+						if (i >= 9) style += ' top: -31px; left: 26px;';
+						else if (i >= 6) style += ' top: -21px;';
+						else if (i >= 3) style += ' top: -10px; left: 26px;';
+						style += ' ' + filter + ' cursor: pointer;';
+						
+						buf += Dex.getFlagIcon(flagData.flag).replace('<img', '<img class="affinity-flag-icon" data-flag="' + BattleLog.escapeHTML(flagData.flag) + '" style="' + style + '"');
+					}
+					buf += '</div></div>';
+					buf += '</div>';
+				}
+				
+				if (affinityAversion.aversion.length > 0) {
+					buf += '<div class="setcell"><label style="font-size: 8px;">Aversion - <span style="background: rgba(0,0,0,0.8); padding: 1px 3px; border-radius: 2px;"><span style="color: #FFD700; font-weight: bold;">0.9x</span> - <span style="color: #FF6B6B; font-weight: bold;">0.8x</span></span></label>';
+					buf += '<div style="display: inline-block; background: rgba(161, 94, 94, 0.4); padding: 3px 6px 3px 0px; border-radius: 3px; vertical-align: top; height: 46px; width: 164px;">';
+					buf += '<div style="display: flex; flex-direction: row; flex-wrap: wrap; align-content: flex-start; gap: 10.5px; width: 417px; height: 128px; transform: scale(0.38); transform-origin: left top; line-height: 0;">';
+					for (var i = 0; i < affinityAversion.aversion.length; i++) {
+						var flagData = affinityAversion.aversion[i];
+						var filter = '';
+						// 2x aversion: red, 1x aversion: orange
+						if (flagData.count >= 2) {
+							filter = 'filter: sepia(100%) saturate(1000%) hue-rotate(-50deg) brightness(0.9);';
+						} else {
+							filter = 'filter: sepia(100%) saturate(800%) hue-rotate(-5deg) brightness(1.1);';
+						}
+						var style = 'position: relative;';
+						if (i >= 9) style += ' top: -31px; left: 26px;';
+						else if (i >= 6) style += ' top: -21px;';
+						else if (i >= 3) style += ' top: -10px; left: 26px;';
+						style += ' ' + filter + ' cursor: pointer;';
+						
+						buf += Dex.getFlagIcon(flagData.flag).replace('<img', '<img class="aversion-flag-icon" data-flag="' + BattleLog.escapeHTML(flagData.flag) + '" style="' + style + '"');
+					}
+					buf += '</div></div>';
+					buf += '</div>';
+				}
+				
+				buf += '</div>';
+			}
+
 			// stats
 			buf += '<div class="setcol setcol-stats"><div class="setrow"><label>Stats</label><button class="textbox setstats" name="stats">';
 			buf += '<span class="statrow statrow-head"><label></label><span class="statgraph"></span><ma>' + '</ma><ma>' + 'Base' + '</ma><em>' + '</em><em>' + '</em><ma>' + '</ma><ma>' + '</ma><ma>' + '</ma><ma>' +  '</ma><ma>' + (!isLetsGo ? 'EV' : 'AV') + '</ma><ma>' + '</ma><ma>' + '</ma></em>' + 'IV' + '</em></span>';
@@ -1347,7 +1665,18 @@
 			this.curTeam.format = format;
 			this.curTeam.gen = this.getGen(this.curTeam.format);
 			this.curTeam.dex = Dex.forGen(this.curTeam.gen);
-			this.save();
+			if (this.curTeam.format.includes('letsgo')) { this.curTeam.dex = Dex.mod('gen7letsgo'); }
+			if (this.curTeam.format.includes('bdsp')) { this.curTeam.dex = Dex.mod('gen8bdsp'); }
+		// Update capacity for Indigo Starstorm
+		if (this.curTeam.capacity !== 24 && this.curTeam.capacity !== 50) {
+			if (format.includes('indigostarstorm') || format.includes('isl')) {
+				this.curTeam.capacity = 10;
+			} else {
+				this.curTeam.capacity = 6;
+			}
+		}
+		this.save();
+			if (this.curTeam.gen === 5 && !Dex.loadedSpriteData['bw']) Dex.loadSpriteData('bw');
 			this.update();
 		},
 		nicknameChange: function (e) {
@@ -1356,6 +1685,31 @@
 			var name = $.trim(e.currentTarget.value).replace(/\|/g, '');
 			e.currentTarget.value = set.name = name;
 			this.save();
+		},
+		shinyChange: function (e) {
+			console.log('shinyChange called!', e);
+			// Always get the set from the list item to ensure we're updating the correct Pokemon
+			var $li = $(e.currentTarget).closest('li');
+			var i = +$li.attr('value');
+			var set = this.curSetList[i];
+			
+			if (!set) {
+				console.log('No set found in shinyChange');
+				return;
+			}
+			
+			var isChecked = $(e.currentTarget).is(':checked');
+			console.log('Shiny checked:', isChecked, 'for pokemon at index:', i);
+			if (isChecked) {
+				set.shiny = true;
+			} else {
+				delete set.shiny;
+			}
+			
+			this.save();
+			// Update the sprite to show shiny status
+			var $setchart = $li.find('.setchart');
+			$setchart.attr('style', Dex.getTeambuilderSprite(set, this.curTeam.dex));
 		},
 		// clipboard
 		clipboard: [],
@@ -1644,7 +1998,7 @@
 			// but don't step outside the array bounds (obviously)
 			var start = 0;
 			var end = this.curSetList.length;
-			if (end > 6 || (end === 6 && this.curTeam.capacity > 6)) {
+			if (end > 10 || (end > 6 && this.curTeam.capacity > 10)) {
 				start = this.curSetLoc - 2;
 				if (start < 0) start = 0;
 				if (start + 5 > end) start = end - 5;
@@ -1777,6 +2131,12 @@
 				this.updateDetailsForm();
 				return;
 			}
+			if (type === 'ability') {
+				this.search.qType = null;
+				this.search.qName = null;
+				this.updateAbilitySetsForm();
+				return;
+			}
 			var $inputEl = this.$('input[name=' + this.curChartName + ']');
 			var q = $inputEl.val();
 			if (pokemonChanged || this.search.qName !== this.curChartName) {
@@ -1885,6 +2245,73 @@
 			else if (format === 'anythinggoes') { smogdexid += '/ag'; } 
 			else if (format === 'nationaldexag') {  smogdexid += '/national-dex-ag'; }
 			return 'http://smogon.com/dex/' + generation + '/pokemon/' + smogdexid + '/';
+		},
+		abilityDescriptions: {
+			teravolt: "Moves ignore abilities. Electric moves 1.2x. With Turboblaze: Overdrive mode - Electric 1.5x, Fire immunity/+Atk, suppress all abilities except Teravolt/Turboblaze.",
+			turboblaze: "Moves ignore abilities. Fire moves 1.2x. With Teravolt: Overdrive mode - Fire 1.5x, Electric immunity/+SpA, other Pokemon consume 2 PP per move.",
+			aquaring: "On switch-in, the user surrounds itself with Aqua Ring.",
+			mimickry: "Copies ally's ability on faint. Resists magic moves (0.75x damage).",
+		},
+		updateAbilitySetsForm: function () {
+			console.log('updateAbilitySetsForm called');
+			var buf = '';
+			var set = this.curSet;
+			var species = this.curTeam.dex.species.get(this.curSet.species);
+			var abilitySet = set.abilitySet || 1;
+			console.log('[DEBUG] set.abilitySet:', set.abilitySet, 'abilitySet:', abilitySet, 'species:', species.name);
+			
+			buf += '<div class="resultheader"><h3>Abilities</h3></div>';
+			buf += '<ul class="utilichart">';
+			
+			// Show abilities based on current ability set
+			if (abilitySet === 1) {
+				// Ability Set 1: Show slot 0 and slot 1
+				console.log('[DEBUG ABILITIES] Set 1 - abilities[0]:', species.abilities['0'], 'abilities[1]:', species.abilities['1']);
+				if (species.abilities['0']) {
+					var ability0 = this.curTeam.dex.abilities.get(species.abilities['0']);
+					var abilityId0 = toID(species.abilities['0']);
+					console.log('Ability 0 ID:', abilityId0, 'Available:', abilityId0 in BattleAbilities);
+					var abilityName0 = (ability0.name || species.abilities['0']).split(' ').map(function(w) { return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(); }).join(' ');
+					var desc0 = (BattleAbilities[abilityId0] && BattleAbilities[abilityId0].shortDesc) || ability0.shortDesc || '';
+					var curClass0 = (toID(set.ability) === abilityId0 || toID(set.ability2) === abilityId0) ? 'cur' : '';
+					console.log('[DEBUG] Ability 0 cur class:', curClass0, 'set.ability:', set.ability, 'set.ability2:', set.ability2);
+					buf += '<li class="result abilityrow"><a class="' + curClass0 + '" data-entry="ability|' + BattleLog.escapeHTML(species.abilities['0']) + '" data-slot="ability"><span class="col namecol">' + abilityName0 + '</span> <span class="col abilitydesccol">' + BattleLog.escapeHTML(desc0) + '</span></a></li>';
+				}
+				
+				console.log('[DEBUG ABILITIES] Checking ability 1 - exists:', !!species.abilities['1'], 'different:', species.abilities['1'] !== species.abilities['0']);
+				if (species.abilities['1'] && species.abilities['1'] !== species.abilities['0']) {
+					var ability1 = this.curTeam.dex.abilities.get(species.abilities['1']);
+					var abilityId1 = toID(species.abilities['1']);
+					console.log('[DEBUG ABILITIES] Adding ability 1:', species.abilities['1'], 'abilityId1:', abilityId1);
+					var abilityName1 = (ability1.name || species.abilities['1']).split(' ').map(function(w) { return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(); }).join(' ');
+					var desc1 = (BattleAbilities[abilityId1] && BattleAbilities[abilityId1].shortDesc) || ability1.shortDesc || '';
+					var curClass1 = (toID(set.ability) === abilityId1 || toID(set.ability2) === abilityId1) ? 'cur' : '';
+					console.log('[DEBUG] Ability 1 cur class:', curClass1, 'set.ability:', set.ability, 'set.ability2:', set.ability2);
+					buf += '<li class="result abilityrow"><a class="' + curClass1 + '" data-entry="ability|' + BattleLog.escapeHTML(species.abilities['1']) + '" data-slot="ability2"><span class="col namecol">' + abilityName1 + '</span> <span class="col abilitydesccol">' + BattleLog.escapeHTML(desc1) + '</span></a></li>';
+				}
+			} else {
+				// Ability Set 2: Show slot H and slot S
+				if (species.abilities['H']) {
+					var abilityH = this.curTeam.dex.abilities.get(species.abilities['H']);
+					var abilityIdH = toID(species.abilities['H']);
+					var abilityNameH = (abilityH.name || species.abilities['H']).split(' ').map(function(w) { return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(); }).join(' ');
+					var descH = (BattleAbilities[abilityIdH] && BattleAbilities[abilityIdH].shortDesc) || abilityH.shortDesc || '';
+					var curClassH = (toID(set.ability) === abilityIdH || toID(set.ability2) === abilityIdH) ? ' cur' : '';
+					buf += '<li class="result abilityrow"><a class="' + curClassH + '" data-entry="ability|' + BattleLog.escapeHTML(species.abilities['H']) + '" data-slot="ability"><span class="col namecol">' + abilityNameH + '</span> <span class="col abilitydesccol">' + BattleLog.escapeHTML(descH) + '</span></a></li>';
+				}
+				
+				if (species.abilities['S'] && species.abilities['S'] !== species.abilities['H']) {
+					var abilityS = this.curTeam.dex.abilities.get(species.abilities['S']);
+					var abilityIdS = toID(species.abilities['S']);
+					var abilityNameS = (abilityS.name || species.abilities['S']).split(' ').map(function(w) { return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(); }).join(' ');
+					var descS = (BattleAbilities[abilityIdS] && BattleAbilities[abilityIdS].shortDesc) || abilityS.shortDesc || '';
+					var curClassS = (toID(set.ability) === abilityIdS || toID(set.ability2) === abilityIdS) ? ' cur' : '';
+					buf += '<li class="result abilityrow"><a class="' + curClassS + '" data-entry="ability|' + BattleLog.escapeHTML(species.abilities['S']) + '" data-slot="ability2"><span class="col namecol">' + abilityNameS + '</span> <span class="col abilitydesccol">' + BattleLog.escapeHTML(descS) + '</span></a></li>';
+				}
+			}
+			
+			buf += '</ul>';
+			this.$chart.html(buf);
 		},
 		updateStatForm: function (setGuessed) {
 			var buf = '';
@@ -2339,13 +2766,74 @@
 			this.save();
 			this.updateStatGraph();
 		},
+		genderToggleChange: function (e) {
+			console.log('genderToggleChange called!');
+			var $btn = $(e.currentTarget);
+			var currentGender = $btn.attr('data-value');
+			console.log('Current gender:', currentGender);
+			
+			// Get set from list item
+			var $li = $btn.closest('li');
+			var i = +$li.attr('value');
+			var set = this.curSetList[i];
+			if (!set) {
+				console.log('No set found');
+				return;
+			}
+			
+			// Get species to check gender
+			var species = this.curTeam.dex.species.get(set.species);
+			var speciesGender = species.gender; // 'M', 'F', 'N', or undefined
+			console.log('Species gender:', speciesGender);
+			
+			// Only toggle if pokemon can be both genders
+			if (speciesGender) {
+				// Fixed gender (M, F, or N) - don't toggle
+				console.log('Fixed gender - not toggling');
+				return;
+			}
+			
+			// Toggle between M and F
+			var newGender = currentGender === 'M' ? 'F' : 'M';
+			set.gender = newGender;
+			console.log('New gender:', newGender);
+			
+			// Update button display and styling
+			$btn.attr('data-value', newGender);
+			if (newGender === 'M') {
+				$btn.html('<span style="position: relative; top: -0.75px; right: 2px; color: #0004ffff;">♂</span>').css({
+					'background': 'linear-gradient(to right, rgba(0, 150, 255, 0.3) 50%, transparent 50%)',
+					'text-align': 'left',
+					'padding-left': '6px',
+					'padding-right': '0'
+				});
+			} else {
+				$btn.html('<span style="position: relative; top: -1.5px; left: 1px; color: #ff0055ff;">♀</span>').css({
+					'background': 'linear-gradient(to left, rgba(255, 100, 150, 0.3) 50%, transparent 50%)',
+					'text-align': 'right',
+					'padding-right': '6px',
+					'padding-left': '0'
+				});
+			}
+			
+			this.save();
+		},
 		abilitySetChange: function (e) {
-			var set = this.curSet;
+			// Get set from the list item context for team view
+			var $li = $(e.currentTarget).closest('li');
+			var i = +$li.attr('value');
+			var set = this.curSetList[i];
+			
+			console.log('[DEBUG TOGGLE] Before - i:', i, 'set:', set, 'set.abilitySet:', set ? set.abilitySet : 'null');
+			
 			if (!set) return;
 			// Toggle between 1 and 2
 			var currentSet = set.abilitySet || 1;
 			var newSet = currentSet === 1 ? 2 : 1;
 			set.abilitySet = newSet;
+			
+			console.log('[DEBUG TOGGLE] After - currentSet:', currentSet, 'newSet:', newSet, 'set.abilitySet:', set.abilitySet);
+			console.log('[DEBUG TOGGLE] this.curSet === set:', this.curSet === set, 'this.curSet:', this.curSet);
 
 			// Update button display and styling
 			var $btn = $(e.currentTarget);
@@ -2354,14 +2842,14 @@
 				$btn.css({
 					'background': 'linear-gradient(to right, rgba(0, 255, 0, 0.3) 50%, transparent 50%)',
 					'text-align': 'left',
-					'padding-left': '8px',
+					'padding-left': '6px',
 					'padding-right': '0'
 				});
 			} else {
 				$btn.css({
 					'background': 'linear-gradient(to left, rgba(0, 100, 255, 0.3) 50%, transparent 50%)',
 					'text-align': 'right',
-					'padding-right': '8px',
+					'padding-right': '6px',
 					'padding-left': '0'
 				});
 			}
@@ -2378,8 +2866,16 @@
 				set.ability2 = species.abilities['S'] || '';
 			}
 
+			// Update ability input fields
+			$li.find('input[name=ability]').val(set.ability);
+			$li.find('input[name=ability2]').val(set.ability2);
+
+			// Update the ability display panel if this is the current set
+			if (this.curSet === set) {
+				this.updateAbilitySetsForm();
+			}
+
 			this.save();
-			this.update();
 		},
 		ivSpreadChange: function (e) {
 			var set = this.curSet;
@@ -2429,6 +2925,18 @@
 				buf += '<label class="checkbox inline"><input type="radio" name="shiny" value="yes"' + (set.shiny ? ' checked' : '') + ' /> Yes</label> ';
 				buf += '<label class="checkbox inline"><input type="radio" name="shiny" value="no"' + (!set.shiny ? ' checked' : '') + ' /> No</label>';
 				buf += '</div></div>';
+				if (this.curTeam.gen === 8 && !isBDSP) {
+					if (!species.cannotDynamax) { buf += '<div class="formrow"><label class="formlabel">Dmax Level:</label><div><input type="number" min="0" max="10" step="1" name="dynamaxlevel" value="' + (typeof set.dynamaxLevel === 'number' ? set.dynamaxLevel : 10) + '" class="textbox inputform numform" /></div></div>'; }
+					if (species.canGigantamax || species.forme === 'Gmax') {
+						buf += '<div class="formrow"><label class="formlabel">Gigantamax:</label><div>';
+						if (species.forme === 'Gmax') { buf += 'Yes'; } 
+						else {
+							buf += '<label class="checkbox inline"><input type="radio" name="gigantamax" value="yes"' + (set.gigantamax ? ' checked' : '') + ' /> Yes</label> ';
+							buf += '<label class="checkbox inline"><input type="radio" name="gigantamax" value="no"' + (!set.gigantamax ? ' checked' : '') + ' /> No</label>';
+						}
+						buf += '</div></div>';
+					}
+				}
 			}
 
 			if (this.curTeam.gen > 2) {
@@ -2436,6 +2944,14 @@
 				buf += '<option value=""' + (!set.pokeball ? ' selected="selected"' : '') + '></option>'; // unset
 				var balls = this.curTeam.dex.getPokeballs();
 				for (var i = 0; i < balls.length; i++) { buf += '<option value="' + balls[i] + '"' + (set.pokeball === balls[i] ? ' selected="selected"' : '') + '>' + balls[i] + '</option>'; }
+				buf += '</select></div></div>';
+			}
+
+			if (!isLetsGo && (this.curTeam.gen === 7 || isNatDex || (isBDSP && species.baseSpecies === 'Unown'))) {
+				buf += '<div class="formrow"><label class="formlabel" title="Hidden Power Type">Hidden Power:</label><div><select name="hptype" class="button">';
+				buf += '<option value=""' + (!set.hpType ? ' selected="selected"' : '') + '>(automatic type)</option>'; // unset
+				var types = Dex.types.all();
+				for (var i = 0; i < types.length; i++) { if (types[i].HPivs) { buf += '<option value="' + types[i].name + '"' + (set.hpType === types[i].name ? ' selected="selected"' : '') + '>' + types[i].name + '</option>'; } }
 				buf += '</select></div></div>';
 			}
 			if (this.curTeam.gen === 9) {
@@ -2451,52 +2967,78 @@
 			this.$chart.html(buf);
 		},
 		detailsChange: function (e) {
+			console.log('detailsChange called, target:', e.currentTarget.name, 'value:', e.currentTarget.value);
 			e.preventDefault();
 			e.stopPropagation();
 			var set = this.curSet;
-			if (!set) return;
+			var i = 0;
+			var fieldName = e.currentTarget.name;
+			if (!set) {
+				i = +$(e.currentTarget).closest('li').attr('value');
+				set = this.curSetList[i];
+				console.log('Getting set from list, index:', i, 'set:', set);
+				// Don't set curSet or update when editing level/happiness from team view
+				// This prevents focusing the Pokemon field
+			}
+			if (!set) {
+				console.log('No set found in detailsChange');
+				return;
+			}
 			var species = this.curTeam.dex.species.get(set.species);
 			var isLetsGo = this.curTeam.format.includes('letsgo');
 			var isBDSP = this.curTeam.format.includes('bdsp');
 			var isNatDex = this.curTeam.format.includes('nationaldex') || this.curTeam.format.includes('natdex');
 			// level
-			var level = parseInt(this.$chart.find('input[name=level]').val(), 10);
+			var $container = $(e.currentTarget).closest('li');
+			console.log('Container found:', $container.length, 'Level input found:', $container.find('input[name=level]').length);
+			var level = parseInt($container.find('input[name=level]').val(), 10);
+			console.log('Level value:', level, 'from input:', $container.find('input[name=level]').val());
 			if (!level || level > 100 || level < 1) level = 100;
 			if (level !== 100 || set.level) set.level = level;
 			// happiness
-			var happiness = parseInt(this.$chart.find('input[name=happiness]').val(), 10);
+			var happiness = parseInt($container.find('input[name=happiness]').val(), 10);
 			if (isNaN(happiness) || happiness > 255 || happiness < 0) happiness = 255;
 			set.happiness = happiness;
 			if (set.happiness === 255) delete set.happiness;
 			// shiny
-			var shiny = this.$chart.find('input[name=shiny]').is(':checked') || (this.$chart.find('input[name=shiny]:checked').val() === 'yes');
+			var shiny = $container.find('input[name=shiny]').is(':checked') || ($container.find('input[name=shiny]:checked').val() === 'yes');
 			if (shiny) { set.shiny = true; } 
 			else { delete set.shiny; }
 			// dynamax level
-			var dynamaxLevel = parseInt(this.$chart.find('input[name=dynamaxlevel]').val(), 10);
+			var dynamaxLevel = parseInt($container.find('input[name=dynamaxlevel]').val(), 10);
 			if (isNaN(dynamaxLevel) || dynamaxLevel > 10 || dynamaxLevel < 0) dynamaxLevel = 10;
 			set.dynamaxLevel = dynamaxLevel;
 			if (set.dynamaxLevel === 10) delete set.dynamaxLevel;
 			// gigantamax
-			var gmax = (this.$chart.find('input[name=gigantamax]:checked').val() === 'yes');
+			var gmax = ($container.find('input[name=gigantamax]:checked').val() === 'yes');
 			if (gmax) { set.gigantamax = true; } 
 			else { delete set.gigantamax; }
 			// gender
-			var gender = this.$chart.find('select[name=gender]').val() || this.$chart.find('input[name=gender]:checked').val();
+			var gender = $container.find('select[name=gender]').val() || $container.find('input[name=gender]:checked').val();
 			if (gender === 'M' || gender === 'F') { set.gender = gender; } 
 			else { delete set.gender; }
 			// pokeball
-			var pokeball = this.$chart.find('select[name=pokeball]').val();
+			var pokeball = $container.find('select[name=pokeball]').val();
 			if (pokeball && this.curTeam.dex.items.get(pokeball).isPokeball) { set.pokeball = pokeball; } 
 			else { delete set.pokeball; }
 			// HP type
-			var hpType = this.$chart.find('select[name=hptype]').val();
+			var hpType = $container.find('select[name=hptype]').val();
 			if (Dex.types.isName(hpType)) { set.hpType = hpType; } 
 			else { delete set.hpType; }
 			// Tera type
-			var teraType = this.$chart.find('select[name=teratype]').val();
+			var teraType = $container.find('select[name=teratype]').val();
 			if (Dex.types.isName(teraType) && teraType !== species.types[0]) { set.teraType = teraType; } 
 			else { delete set.teraType; }
+			
+			// Only set curSet if we're already viewing a specific Pokemon
+			// Don't set it when editing from team view to preserve focus behavior
+			if (this.curSet) {
+				this.curSet = set;
+			}
+			this.curSetList[i] = set;
+			this.save();
+			// Don't call this.update() - it causes re-rendering and focus issues
+			// Instead, just update the details display
 			// update details cell
 			var buf = '';
 			var GenderChart = {
@@ -2519,7 +3061,10 @@
 			}
 			this.$('button[name=details]').html(buf);
 			this.save();
-			this.updatePokemonSprite();
+			// Update only the specific pokemon's sprite
+			var $li = $container;
+			var $setchart = $li.find('.setchart');
+			$setchart.attr('style', Dex.getTeambuilderSprite(set, this.curTeam.dex));
 		},
 		altForm: function (e) {
 			var set = this.curSet;
@@ -2531,11 +3076,67 @@
 			app.addPopup(AltFormPopup, { curSet: set, index: i, room: this });
 		},
 		teraTypeSelect: function (e) {
-			var button = e.currentTarget;
-			var i = $(button).closest('li').attr('value');
-			this.curChartType = 'type';
-			this.curChartName = 'teraType';
-			this.updateChart();
+			var set = this.curSet;
+			var i = 0;
+			if (!set) {
+				i = +$(e.currentTarget).closest('li').attr('value');
+				set = this.curSetList[i];
+			}
+			if (!set) return;
+			app.addPopup(TeraTypePopup, { curSet: set, index: i, room: this });
+		},
+		affinityFlagClick: function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			var flagId = $(e.currentTarget).data('flag');
+			if (!flagId) return;
+			this.filterMovesByFlag(flagId);
+		},
+		aversionFlagClick: function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			var flagId = $(e.currentTarget).data('flag');
+			if (!flagId) return;
+			this.filterMovesByFlag(flagId);
+		},
+		filterMovesByFlag: function (flagId) {
+			// Find the first empty move slot, or use move1 if all are filled
+			var $moveInput = null;
+			for (var i = 1; i <= 4; i++) {
+				var $input = this.$('input[name=move' + i + ']');
+				if (!$input.val() || $input.val().trim() === '') {
+					$moveInput = $input;
+					break;
+				}
+			}
+			// If all slots are filled, use move1
+			if (!$moveInput) {
+				$moveInput = this.$('input[name=move1]');
+			}
+			
+			// Focus the move input
+			$moveInput.focus();
+			
+			// Wait for the chart to update, then add the filter
+			var self = this;
+			setTimeout(function () {
+				// Remove any existing flag filters first
+				if (self.search.engine.filters) {
+					var newFilters = [];
+					for (var i = 0; i < self.search.engine.filters.length; i++) {
+						if (self.search.engine.filters[i][0] !== 'flag') {
+							newFilters.push(self.search.engine.filters[i]);
+						}
+					}
+					self.search.engine.filters = newFilters;
+					self.search.filters = newFilters;
+				}
+				
+				// Add the new flag filter
+				self.search.engine.addFilter(['flag', flagId]);
+				self.search.filters = self.search.engine.filters;
+				self.search.find('');
+			}, 50);
 		},
 		/*********************************************************
 		 * Set charts
@@ -2544,6 +3145,7 @@
 			pokemon: 'pokemon',
 			item: 'item',
 			ability: 'ability',
+			ability2: 'ability',
 			move1: 'move',
 			move2: 'move',
 			move3: 'move',
@@ -2553,6 +3155,7 @@
 			teraType: 'type'
 		},
 		chartClick: function (e) {
+			console.log('[CHART CLICK] Starting, target:', e.currentTarget);
 			if (this.search.addFilter(e.currentTarget)) {
 				var curChart = this.$('input[name=' + this.curChartName + ']');
 				// if we were searching for the filter, remove it
@@ -2563,6 +3166,28 @@
 			}
 			var entry = $(e.currentTarget).data('entry');
 			var val = entry.slice(entry.indexOf("|") + 1);
+			console.log('[CHART CLICK] Entry:', entry, 'Val:', val);
+			
+			// Check if this is an ability with a specific slot
+			var slot = $(e.currentTarget).data('slot');
+			console.log('[CHART CLICK] Slot:', slot);
+			if (slot === 'ability' || slot === 'ability2') {
+				// Set the ability in the correct slot
+				console.log('[CHART CLICK] Setting ability slot:', slot, 'to value:', val);
+				console.log('[CHART CLICK] Before - set.ability:', this.curSet.ability, 'set.ability2:', this.curSet.ability2);
+				if (slot === 'ability') {
+					this.curSet.ability = val;
+					this.$('input[name=ability]').val(val);
+				} else {
+					this.curSet.ability2 = val;
+					this.$('input[name=ability2]').val(val);
+				}
+				console.log('[CHART CLICK] After - set.ability:', this.curSet.ability, 'set.ability2:', this.curSet.ability2);
+				this.updateAbilitySetsForm();
+				this.save();
+				return;
+			}
+			
 			if (this.curChartType === 'move' && e.currentTarget.className === 'cur') {
 				// clicked a move, remove it if we already have it
 				var moves = [];
@@ -2646,13 +3271,18 @@
 		chartFocus: function (e) {
 			var $target = $(e.currentTarget);
 			var name = e.currentTarget.name;
+			// Only allow focus for pokemon, item, ability, and move fields
+			if (name !== 'pokemon' && name !== 'item' && name !== 'ability' && name !== 'ability2' && name !== 'move1' && name !== 'move2' && name !== 'move3' && name !== 'move4') {
+				return;
+			}
 			var type = this.chartTypes[name];
 			var wasIncomplete = false;
 			if ($target.hasClass('incomplete')) {
 				wasIncomplete = true;
 				$target.removeClass('incomplete');
 			}
-			if (this.curChartName === name) return;
+			// Always update chart to refresh results, even if same field
+			// Remove early return that prevents refresh
 			if (!this.curSet) {
 				var i = +$target.closest('li').prop('value');
 				this.curSet = this.curSetList[i];
@@ -2669,6 +3299,8 @@
 		chartChange: function (e, selectNext) {
 			var name = e.currentTarget.name;
 			if (this.curChartName !== name) return;
+			// Clear qName on blur to force refresh when refocusing
+			this.search.qName = null;
 			var id = toID(e.currentTarget.value);
 			if (id in BattleAliases) id = toID(BattleAliases[id]);
 			var val = '';
@@ -2796,6 +3428,10 @@
 				break;
 			case 'ability':
 				this.curSet.ability = val;
+				if (selectNext) this.$('input[name=move1]').select();
+				break;
+			case 'ability2':
+				this.curSet.ability2 = val;
 				if (selectNext) this.$('input[name=move1]').select();
 				break;
 			case 'move1':
@@ -3110,5 +3746,52 @@
 			Storage.saveTeam(this.room.curTeam);
 		}
 	});
+
+	var TeraTypePopup = this.TeraTypePopup = Popup.extend({
+		type: 'semimodal',
+		initialize: function (data) {
+			this.room = data.room;
+			this.curSet = data.curSet;
+			this.chartIndex = data.index;
+			var species = this.room.curTeam.dex.species.get(this.curSet.species);
+			var currentTeraType = this.curSet.teraType || species.requiredTeraType || species.types[0];
+			var types = Dex.types.all();
+			
+			var buf = '';
+			buf += '<p>Select Tera Type or <button name="close" class="button">Cancel</button></p>';
+			buf += '<div style="display: grid; grid-template-columns: repeat(5, 1fr);">';
+			
+			for (var i = 0; i < types.length; i++) {
+				var type = types[i];
+				var isSelected = (currentTeraType === type.name);
+				buf += '<button name="selectType" value="' + type.name + '" style="';
+				buf += 'border: 2px solid ' + (isSelected ? '#4CAF50' : '#ddd') + '; ';
+				buf += 'border-radius: 4px; cursor: pointer; display: flex; flex-direction: column; align-items: center;';
+				buf += '" title="' + type.name + '">';
+				buf += '<img src="' + Dex.resourcePrefix + 'sprites/types/Tera' + type.name + '.png" alt="' + type.name + '" style="width: 32px; height: 32px; object-fit: contain;" />';
+				buf += '<span style="font-size: 10px; text-align: center;">' + type.name + '</span>';
+				buf += '</button>';
+			}
+			
+			buf += '</div>';
+			this.$el.html(buf).appendTo('body');
+		},
+		selectType: function (value) {
+			var species = this.room.curTeam.dex.species.get(this.curSet.species);
+			if (value === species.types[0]) {
+				delete this.curSet.teraType;
+			} else {
+				this.curSet.teraType = value;
+			}
+			this.close();
+			this.room.save();
+			// Update the tera type icon without focusing/updating the whole view
+			var teraType = this.curSet.teraType || species.requiredTeraType || species.types[0];
+			var $teamchart = this.room.$('.teamchart li[value="' + this.chartIndex + '"]');
+			$teamchart.find('button.teratype').attr('value', teraType);
+			$teamchart.find('button.teratype img').attr('src', Dex.resourcePrefix + 'sprites/types/Tera' + teraType + '.png').attr('alt', teraType);
+		}
+	});
+
 
 })(window, jQuery);

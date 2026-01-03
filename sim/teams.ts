@@ -124,6 +124,11 @@ export interface PokemonSet {
 	 * Tera Type
 	 */
 	teraType?: string;
+	/**
+	 * Pokemon size (XXS, XS, S, M, L, XL, XXL).
+	 * This is a cosmetic property with no direct competitive effect.
+	 */
+	size?: string;
 }
 
 export const Teams = new class Teams {
@@ -210,7 +215,7 @@ export const Teams = new class Teams {
 			}
 
 			if (set.pokeball || set.hpType || set.gigantamax ||
-				(set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10) || set.teraType || set.ability2 || set.abilitySet) {
+				(set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10) || set.teraType || set.ability2 || set.abilitySet || set.size) {
 				buf += `,${set.hpType || ''}`;
 				buf += `,${this.packName(set.pokeball || '')}`;
 				buf += `,${set.gigantamax ? 'G' : ''}`;
@@ -218,6 +223,7 @@ export const Teams = new class Teams {
 				buf += `,${set.teraType || ''}`;
 				buf += `,${this.packName(set.ability2 || '')}`;
 				buf += `,${set.abilitySet || ''}`;
+				buf += `,${set.size || ''}`;
 			}
 		}
 
@@ -338,9 +344,9 @@ export const Teams = new class Teams {
 			j = buf.indexOf(']', i);
 			let misc;
 			if (j < 0) {
-				if (i < buf.length) misc = buf.substring(i).split(',', 8);
+				if (i < buf.length) misc = buf.substring(i).split(',', 9);
 			} else {
-				if (i !== j) misc = buf.substring(i, j).split(',', 8);
+				if (i !== j) misc = buf.substring(i, j).split(',', 9);
 			}
 			if (misc) {
 				set.happiness = (misc[0] ? Number(misc[0]) : 255);
@@ -351,6 +357,7 @@ export const Teams = new class Teams {
 				set.teraType = misc[5];
 				set.ability2 = this.unpackName(misc[6] || '', Dex.abilities);
 				set.abilitySet = misc[7] ? Number(misc[7]) as 1 | 2 : undefined;
+				set.size = misc[8] || undefined;
 			}
 			if (j < 0) break;
 			i = j + 1;
@@ -438,6 +445,9 @@ export const Teams = new class Teams {
 		if (set.teraType) {
 			out += `Tera Type: ${set.teraType}  \n`;
 		}
+		if (set.size) {
+			out += `Size: ${set.size}  \n`;
+		}
 
 		// stats
 		if (!hideStats) {
@@ -522,6 +532,9 @@ export const Teams = new class Teams {
 		} else if (line.startsWith('Tera Type: ')) {
 			line = line.slice(11);
 			set.teraType = aggressive ? line.replace(/[^a-zA-Z0-9]/g, '') : line;
+		} else if (line.startsWith('Size: ')) {
+			line = line.slice(6);
+			set.size = line;
 		} else if (line === 'Gigantamax: Yes') {
 			set.gigantamax = true;
 		} else if (line.startsWith('EVs: ')) {

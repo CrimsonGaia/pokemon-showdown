@@ -325,10 +325,27 @@ export class PSSearchResults extends preact.Component<{
 		</li>;
 	}
 
+	renderPokemonTagRow(id: ID, matchStart: number, matchEnd: number, errorMessage?: preact.ComponentChildren) {
+		const name = id.charAt(0).toUpperCase() + id.slice(1);
+
+		return <li class="result">
+			<a href={`${this.URL_ROOT}categories/${id}`} data-target="push" data-entry={`flag|${name}`}>
+				<span class="col namecol">{this.renderName(name, matchStart, matchEnd)}</span>
+				{errorMessage}
+			</a>
+		</li>;
+	}
+
 	renderFlagRow(id: ID, matchStart: number, matchEnd: number, errorMessage?: preact.ComponentChildren) {
 		const name = id.charAt(0).toUpperCase() + id.slice(1);
 		
-		// Map flag IDs to icon filenames
+		// Pokemon tags don't have icons
+		const pokemonTags = ['legendary', 'restrictedlegendary', 'mythical', 'restrictedmythical', 'paradox', 'restrictedparadox', 'sublegendary', 'mega', 'powerhouse'];
+		if (pokemonTags.includes(id)) {
+			return this.renderPokemonTagRow(id, matchStart, matchEnd, errorMessage);
+		}
+		
+		// Map flag IDs to icon filenames (for move flags)
 		let iconName = name;
 		if (id === 'binding') iconName = 'Bind';
 		else if (id === 'fist') iconName = 'Punch';
