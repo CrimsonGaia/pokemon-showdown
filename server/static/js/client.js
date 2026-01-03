@@ -3026,6 +3026,50 @@ function toId() {
 			buf += '<p class="buttonbar"><button type="submit" class="button"><strong>Submit</strong></button> <button type="button" name="close" class="button">Cancel</button></p>';
 			buf += '</form>';
 			this.$el.html(buf).css('min-width', 500);
+
+			// Auto-extract and submit data from iframe
+			var self = this;
+			setTimeout(function() {
+				try {
+					var iframe = document.getElementById('overlay_iframe');
+					if (iframe) {
+						var extractData = function() {
+							try {
+								// Try to access iframe content
+								var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+								var iframeText = iframeDoc.body.textContent || iframeDoc.body.innerText;
+								
+								// Clean up the text and look for JSON
+								iframeText = iframeText.trim();
+								
+								// The data should be JSON starting with { or [
+								if (iframeText && (iframeText[0] === '{' || iframeText[0] === '[')) {
+									// Found the data! Auto-fill it
+									var resultInput = self.$('input[name="result"]')[0];
+									if (resultInput) {
+										resultInput.value = iframeText;
+										console.log('Auto-extracted assertion data, auto-submitting...');
+										// Auto-submit after a brief delay
+										setTimeout(function() {
+											self.$('form').submit();
+										}, 300);
+									}
+								}
+							} catch (e) {
+								// Cross-origin restriction, can't access iframe
+								console.log('Could not auto-extract data (cross-origin):', e.message);
+							}
+						};
+						
+						// Wait for iframe to load
+						iframe.addEventListener('load', extractData);
+						// Also try immediately in case it's already loaded
+						setTimeout(extractData, 500);
+					}
+				} catch (e) {
+					console.log('Auto-extraction failed:', e.message);
+				}
+			}, 100);
 		},
 		submit: function (data) {
 			this.close();
