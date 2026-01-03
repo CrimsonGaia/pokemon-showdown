@@ -1402,8 +1402,14 @@
 				buf += '<div class="setcol setcol-affinity">';
 				
 				if (affinityAversion.affinity.length > 0) {
+					var affinityHeight = 16;
+					if (affinityAversion.affinity.length >= 16) affinityHeight = 66;
+					else if (affinityAversion.affinity.length >= 13) affinityHeight = 56;
+					else if (affinityAversion.affinity.length >= 10) affinityHeight = 46;
+					else if (affinityAversion.affinity.length >= 7) affinityHeight = 36;
+					else if (affinityAversion.affinity.length >= 4) affinityHeight = 26;
 					buf += '<div class="setcell"><label style="font-size: 8px;">Affinity - <span style="background: rgba(0,0,0,0.8); padding: 1px 3px; border-radius: 2px;"><span style="color: #5BA3FF; font-weight: bold;">1.1x</span> - <span style="color: #00CED1; font-weight: bold;">1.2x</span></span></label>';
-					buf += '<div style="display: inline-block; background: rgba(94, 161, 114, 0.4); padding: 3px 6px 3px 0px; border-radius: 3px; vertical-align: top; height: 46px; width: 164px;">';
+					buf += '<div style="display: inline-block; background: rgba(94, 161, 114, 0.4); padding: 3px 6px 3px 0px; border-radius: 3px; vertical-align: top; height: ' + affinityHeight + 'px; width: 164px;">';
 					buf += '<div style="display: flex; flex-direction: row; flex-wrap: wrap; align-content: flex-start; gap: 10.5px; width: 417px; height: 128px; transform: scale(0.38); transform-origin: left top; line-height: 0;">';
 					for (var i = 0; i < affinityAversion.affinity.length; i++) {
 						var flagData = affinityAversion.affinity[i];
@@ -1415,7 +1421,9 @@
 							filter = 'filter: sepia(100%) saturate(400%) hue-rotate(180deg) brightness(0.9);';
 						}
 						var style = 'position: relative;';
-						if (i >= 9) style += ' top: -31px; left: 26px;';
+						if (i >= 15) style += ' top: -52px; left: 26px;';
+						else if (i >= 12) style += ' top: -42px;';
+						else if (i >= 9) style += ' top: -31px; left: 26px;';
 						else if (i >= 6) style += ' top: -21px;';
 						else if (i >= 3) style += ' top: -10px; left: 26px;';
 						style += ' ' + filter + ' cursor: pointer;';
@@ -1427,8 +1435,14 @@
 				}
 				
 				if (affinityAversion.aversion.length > 0) {
-					buf += '<div class="setcell"><label style="font-size: 8px;">Aversion - <span style="background: rgba(0,0,0,0.8); padding: 1px 3px; border-radius: 2px;"><span style="color: #FFD700; font-weight: bold;">0.9x</span> - <span style="color: #FF6B6B; font-weight: bold;">0.8x</span></span></label>';
-					buf += '<div style="display: inline-block; background: rgba(161, 94, 94, 0.4); padding: 3px 6px 3px 0px; border-radius: 3px; vertical-align: top; height: 46px; width: 164px;">';
+					var aversionHeight = 16;
+					if (affinityAversion.aversion.length >= 16) aversionHeight = 66;
+					else if (affinityAversion.aversion.length >= 13) aversionHeight = 56;
+					else if (affinityAversion.aversion.length >= 10) aversionHeight = 46;
+					else if (affinityAversion.aversion.length >= 7) aversionHeight = 36;
+					else if (affinityAversion.aversion.length >= 4) aversionHeight = 26;
+					buf += '<div class="setcell" style="margin-top: 3px;"><label style="font-size: 8px;">Aversion - <span style="background: rgba(0,0,0,0.8); padding: 1px 3px; border-radius: 2px;"><span style="color: #FFD700; font-weight: bold;">0.9x</span> - <span style="color: #FF6B6B; font-weight: bold;">0.8x</span></span></label>';
+					buf += '<div style="display: inline-block; background: rgba(161, 94, 94, 0.4); padding: 3px 6px 3px 0px; border-radius: 3px; vertical-align: top; height: ' + aversionHeight + 'px; width: 164px;">';
 					buf += '<div style="display: flex; flex-direction: row; flex-wrap: wrap; align-content: flex-start; gap: 10.5px; width: 417px; height: 128px; transform: scale(0.38); transform-origin: left top; line-height: 0;">';
 					for (var i = 0; i < affinityAversion.aversion.length; i++) {
 						var flagData = affinityAversion.aversion[i];
@@ -1440,7 +1454,9 @@
 							filter = 'filter: sepia(100%) saturate(800%) hue-rotate(-5deg) brightness(1.1);';
 						}
 						var style = 'position: relative;';
-						if (i >= 9) style += ' top: -31px; left: 26px;';
+						if (i >= 15) style += ' top: -52px; left: 26px;';
+						else if (i >= 12) style += ' top: -42px;';
+						else if (i >= 9) style += ' top: -31px; left: 26px;';
 						else if (i >= 6) style += ' top: -21px;';
 						else if (i >= 3) style += ' top: -10px; left: 26px;';
 						style += ' ' + filter + ' cursor: pointer;';
