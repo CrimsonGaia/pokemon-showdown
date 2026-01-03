@@ -168,6 +168,7 @@ export const Rulesets: import('../../../sim/dex-formats').FormatDataTable = {
 		desc: "Makes sure the team is possible to obtain in-game.",
 		ruleset: ['Obtainable Moves', 'Obtainable Abilities', 'Obtainable Formes', 'EV Limit = Auto', 'Obtainable Misc'],
 		banlist: ['Unreleased', 'Unobtainable', 'Nonexistent'],
+		unbanlist: ['Past'], // Allow transfer Pokemon from previous generations
 		// Mostly hardcoded in team-validator.ts
 		onValidateTeam(team, format) {
 			let kyuremCount = 0;
