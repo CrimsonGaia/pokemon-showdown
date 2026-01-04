@@ -278,6 +278,11 @@ export const Scripts: ModdedBattleScriptsData = {
 				if (pokemon.side.totalFainted < 100) pokemon.side.totalFainted++;
 				this.runEvent('Faint', pokemon, faintData.source, faintData.effect);
 				this.singleEvent('End', pokemon.getAbility(), pokemon.abilityState1, pokemon);
+				// Trigger End event for ability2 if it exists
+				if (pokemon.ability2 && pokemon.abilityState2) {
+					const ability2 = this.dex.abilities.get(pokemon.ability2);
+					this.singleEvent('End', ability2, pokemon.abilityState2, pokemon);
+				}
 				pokemon.clearVolatile(false);
 				pokemon.fainted = true;
 				pokemon.illusion = null;
@@ -346,9 +351,31 @@ export const Scripts: ModdedBattleScriptsData = {
 
 			this.add('start');
 
-			// Change Zacian/Zamazenta into their Crowned formes
+			// Initialize ability sets for all Pokemon in ISL format
+			console.log('[ISL] Initializing ability sets for all Pokemon');
 			for (const pokemon of this.getAllPokemon()) {
-				let rawSpecies: Species | null = null;
+				const abilities = pokemon.species.abilities;
+				if (abilities) {
+					// Check if abilitySet was specified in the team data
+					const abilitySet = (pokemon.set as any).abilitySet;
+					const useSet2 = abilitySet === 2;
+					
+					if (useSet2) {
+						// Use Ability Set 2 (H + S)
+						(pokemon as any).ability1 = abilities['H'] || abilities['0'];
+						(pokemon as any).ability2 = abilities['S'] || abilities['1'];
+					} else {
+						// Use Ability Set 1 (0 + 1) - default
+						(pokemon as any).ability1 = abilities['0'];
+						(pokemon as any).ability2 = abilities['1'];
+					}
+					
+					// Don't set pokemon.ability - ISL uses custom ability set system only
+					console.log(`[ISL] ${pokemon.name}: ability1=${(pokemon as any).ability1}, ability2=${(pokemon as any).ability2} (abilitySet=${abilitySet || 1})`);
+				}
+
+				// Change Zacian/Zamazenta into their Crowned formes
+				let rawSpecies = null;
 				if (pokemon.species.id === 'zacian' && pokemon.item === 'rustedsword') {
 					rawSpecies = this.dex.species.get('Zacian-Crowned');
 				} else if (pokemon.species.id === 'zamazenta' && pokemon.item === 'rustedshield') {
@@ -917,6 +944,11 @@ export const Scripts: ModdedBattleScriptsData = {
 
 				oldActive.illusion = null;
 				this.battle.singleEvent('End', oldActive.getAbility(), oldActive.abilityState1, oldActive);
+				// Trigger End event for ability2 if it exists
+				if (oldActive.ability2 && oldActive.abilityState2) {
+					const ability2 = this.battle.dex.abilities.get(oldActive.ability2);
+					this.battle.singleEvent('End', ability2, oldActive.abilityState2, oldActive);
+				}
 
 				// if a pokemon is forced out by Whirlwind/etc or Eject Button/Pack, it can't use its chosen move
 				this.battle.queue.cancelAction(oldActive);
@@ -958,7 +990,27 @@ export const Scripts: ModdedBattleScriptsData = {
 			} else {
 				this.battle.add(isDrag ? 'drag' : 'switch', pokemon, pokemon.getFullDetails);
 			}
+			// Initialize ability set for ISL
+			console.log(`[ISL] Switching in ${pokemon.name}, has initAbilitySet:`, typeof (pokemon as any).initAbilitySet);
+			if ((pokemon as any).initAbilitySet) {
+				(pokemon as any).initAbilitySet();
+			} else {
+				console.log(`[ISL] ERROR: initAbilitySet not found on pokemon`);
+			}
+			console.log(`[ISL] After init: ability1=${(pokemon as any).ability1}, ability2=${(pokemon as any).ability2}`);
+			
+			// Set pokemon.ability to ability1 so base game can trigger its Start event
+			pokemon.ability = toID((pokemon as any).ability1);
+			console.log(`[ISL] Set pokemon.ability to ${pokemon.ability} for base game compatibility`);
+			
+			// Initialize both abilities for ability set system
 			pokemon.abilityState1 = this.battle.initEffectState({ id: pokemon.ability1, target: pokemon });
+			// Set pokemon.abilityState to point to abilityState1 for base game compatibility
+			pokemon.abilityState = pokemon.abilityState1;
+			if (pokemon.ability2) {
+				pokemon.abilityState2 = this.battle.initEffectState({ id: pokemon.ability2, target: pokemon });
+				console.log(`[ISL] Initialized abilityState2 for ${pokemon.ability2}`);
+			}
 			pokemon.itemState = this.battle.initEffectState({ id: pokemon.item, target: pokemon });
 			if (isDrag && this.battle.gen === 2) pokemon.draggedIn = this.battle.turn;
 			pokemon.previouslySwitchedIn++;
@@ -970,6 +1022,40 @@ export const Scripts: ModdedBattleScriptsData = {
 				this.battle.queue.insertChoice({ choice: 'runSwitch', pokemon });
 			}
 
+			return true;
+		},
+		runSwitch(pokemon) {
+			// ISL ability set system: Don't call parent, handle both abilities directly
+			const switchersIn = [pokemon];
+			while (this.battle.queue.peek()?.choice === 'runSwitch') {
+				const nextSwitch = this.battle.queue.shift();
+				switchersIn.push(nextSwitch!.pokemon!);
+			}
+			const allActive = this.battle.getAllActive(true);
+			this.battle.speedSort(allActive);
+			this.battle.speedOrder = allActive.map(a => a.side.n * a.battle.sides.length + a.position);
+			
+			// Trigger SwitchIn field event
+			this.battle.fieldEvent('SwitchIn', switchersIn);
+
+			for (const poke of switchersIn) {
+				if (!poke.hp) continue;
+				poke.isStarted = true;
+				poke.draggedIn = null;
+				
+				// ISL: Manually trigger Start events for both abilities
+				if (poke.ability1 && poke.abilityState1) {
+					const ability1 = this.battle.dex.abilities.get(poke.ability1);
+					console.log(`[ISL] Triggering Start for ability1: ${ability1.name}`);
+					this.battle.singleEvent('Start', ability1, poke.abilityState1, poke);
+				}
+				if (poke.ability2 && poke.abilityState2) {
+					const ability2 = this.battle.dex.abilities.get(poke.ability2);
+					console.log(`[ISL] Triggering Start for ability2: ${ability2.name}`);
+					this.battle.singleEvent('Start', ability2, poke.abilityState2, poke);
+				}
+			}
+			
 			return true;
 		},
 		canTerastallize(pokemon) {
@@ -2089,6 +2175,106 @@ export const Scripts: ModdedBattleScriptsData = {
 			}
 
 			return totalTypeMod;
+		},
+		// Initialize ability set (both ability1 and ability2) from species data
+		initAbilitySet() {
+			const abilities = this.species.abilities;
+			if (!abilities) return;
+			
+			console.log(`[ISL] Initializing ability set for ${this.name}:`, abilities);
+			
+			// Check if abilitySet was specified in the team data
+			const abilitySet = (this as any).set ? (this as any).set.abilitySet : undefined;
+			const useSet2 = abilitySet === 2;
+			
+			if (useSet2) {
+				// Use Ability Set 2 (H + S)
+				(this as any).ability1 = abilities['H'] || abilities['0'];
+				(this as any).ability2 = abilities['S'] || abilities['1'];
+			} else {
+				// Use Ability Set 1 (0 + 1) - default
+				(this as any).ability1 = abilities['0'];
+				(this as any).ability2 = abilities['1'];
+			}
+			
+			console.log(`[ISL] Set ability1=${(this as any).ability1}, ability2=${(this as any).ability2} (abilitySet=${abilitySet || 1})`);
+		},
+		// Check if Pokemon has an ability (checks both ability slots)
+		hasAbility(ability: string | string[]) {
+			if (this.ignoringAbility()) return false;
+			const abilityid = Array.isArray(ability) ? ability.map(toID) : toID(ability);
+			
+			// Check both ability slots
+			const ability1 = (this as any).ability1;
+			const ability2 = (this as any).ability2;
+			
+			const hasAbility1 = ability1 && (Array.isArray(abilityid) ? 
+				abilityid.includes(toID(ability1)) : 
+				toID(ability1) === abilityid);
+			const hasAbility2 = ability2 && (Array.isArray(abilityid) ? 
+				abilityid.includes(toID(ability2)) : 
+				toID(ability2) === abilityid);
+				
+			return hasAbility1 || hasAbility2;
+		},
+		// Override getRequestData to include ability2 in the request
+		getRequestData() {
+			console.log(`[ISL] getRequestData called for ${this.name}`);
+			const data = this.constructor.prototype.getRequestData.call(this) as any;
+			console.log(`[ISL] Base data:`, { ability: data.ability, baseAbility: data.baseAbility });
+			
+			// Initialize ability sets if not already done
+			const abilities = this.species.abilities;
+			console.log(`[ISL] Species abilities:`, abilities);
+			if (abilities && !(this as any).ability1) {
+				// Check if abilitySet was specified in the team data
+				const abilitySet = (this as any).set ? (this as any).set.abilitySet : undefined;
+				const useSet2 = abilitySet === 2;
+				
+				console.log(`[ISL] abilitySet=${abilitySet || 1}, useSet2=${useSet2}`);
+				
+				if (useSet2) {
+					(this as any).ability1 = abilities['H'] || abilities['0'];
+					(this as any).ability2 = abilities['S'] || abilities['1'];
+				} else {
+					(this as any).ability1 = abilities['0'];
+					(this as any).ability2 = abilities['1'];
+				}
+				
+				console.log(`[ISL] Set ability1=${(this as any).ability1}, ability2=${(this as any).ability2}`);
+			}
+			
+			// Add ability2 fields to the request data
+			const ability2Val = (this as any).ability2;
+			if (ability2Val) {
+				data.baseAbility2 = ability2Val;
+				data.ability2 = ability2Val;
+				console.log(`[ISL] Added to data: ability2=${data.ability2}`);
+			} else {
+				data.baseAbility2 = '';
+				data.ability2 = '';
+				console.log(`[ISL] No ability2, setting empty`);
+			}
+			
+			return data;
+		},
+		// Override setAbility to also update pokemon.ability and pokemon.abilityState for slot 1
+		setAbility(
+			ability: string | Ability, source?: Pokemon | null, sourceEffect?: Effect | null,
+			isFromFormeChange = false, isTransform = false, slot: 1 | 2 = 1,
+		) {
+			// Call parent setAbility
+			const result = this.constructor.prototype.setAbility.call(
+				this, ability, source, sourceEffect, isFromFormeChange, isTransform, slot
+			);
+			
+			// If setting slot 1, also update pokemon.ability and pokemon.abilityState for base game compatibility
+			if (slot === 1) {
+				this.ability = this.ability1;
+				this.abilityState = this.abilityState1;
+			}
+			
+			return result;
 		},
 	},
 	//#region Side
