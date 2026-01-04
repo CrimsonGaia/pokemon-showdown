@@ -269,6 +269,9 @@ interface ModdedBattleSide {
 }
 
 interface ModdedBattlePokemon {
+	ability: any;
+	name: any;
+	species: any;
 	inherit?: true;
 	lostItemForDelibird?: Item | null;
 	boostBy?: (this: Pokemon, boost: SparseBoostsTable) => boolean | number;
