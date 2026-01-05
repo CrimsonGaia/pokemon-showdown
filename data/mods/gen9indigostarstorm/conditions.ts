@@ -935,6 +935,16 @@ export const Conditions = {
 			return this.chainModify([5325, 4096]);
 		},
 	},
+	windswept: {
+		name: 'windswept',
+		effectType: 'Volatile',
+		onStart(pokemon) {
+			this.add('-start', pokemon, 'Windswept');
+		},
+		onEnd(pokemon) {
+			this.add('-end', pokemon, 'Windswept');
+		},
+	},
 
 	// #region Weather 
 	hail: {
@@ -1277,14 +1287,62 @@ export const Conditions = {
 			let dispelled = false;
 			for (const side of this.sides) { if (side.removeSideCondition('tailwind')) { dispelled = true; } }
 			if (dispelled) { this.add('-message', 'Turbulent Winds rage, dispelling all Tailwinds!'); }
-			for (const pokemon of this.getAllActive()) { pokemon.addVolatile('windburst'); }
+			for (const pokemon of this.getAllActive()) {
+				// Trigger Wind Rider and Wind Power when weather starts - check both ability slots
+				const ability1 = this.toID((pokemon as any).ability1);
+				const ability2 = this.toID((pokemon as any).ability2);
+				
+				this.add('-message', `[DEBUG START] ${pokemon.name}: ability1=${ability1}, ability2=${ability2}`);
+				
+				if (ability1 === 'windrider' || ability2 === 'windrider') {
+					this.add('-message', `${pokemon.name}'s Wind Rider is triggered by Turbulent Winds!`);
+					if (this.boost({ atk: 1 }, pokemon, pokemon)) {
+						this.add('-activate', pokemon, 'ability: Wind Rider', '[from] Turbulent Winds');
+					}
+				}
+				if (ability1 === 'windpower' || ability2 === 'windpower') {
+					this.add('-message', `${pokemon.name}'s Wind Power is triggered by Turbulent Winds!`);
+					if (!pokemon.volatiles['charge']) {
+						pokemon.addVolatile('charge');
+						this.add('-activate', pokemon, 'ability: Wind Power', '[from] Turbulent Winds');
+					}
+				}
+				// Make Bug types airborne with windswept volatile
+				if (pokemon.hasType('Bug')) {
+					pokemon.addVolatile('windswept');
+				}
+			}
 		},
 		onFieldResidualOrder: 1,
 		onFieldResidual() {
 			if (this.field.getPseudoWeather('timebreak')) return;
 			this.add('-weather', 'TurbulentWinds', '[upkeep]');
 			this.eachEvent('Weather');
-			for (const pokemon of this.getAllActive()) { pokemon.addVolatile('windburst'); }
+			for (const pokemon of this.getAllActive()) {
+				// Trigger Wind Rider and Wind Power - check both ability slots
+				const ability1 = this.toID((pokemon as any).ability1);
+				const ability2 = this.toID((pokemon as any).ability2);
+				
+				this.add('-message', `[DEBUG] ${pokemon.name}: ability1=${ability1}, ability2=${ability2}`);
+				
+				if (ability1 === 'windrider' || ability2 === 'windrider') {
+					this.add('-message', `${pokemon.name}'s Wind Rider is triggered by Turbulent Winds!`);
+					if (this.boost({ atk: 1 }, pokemon, pokemon)) {
+						this.add('-activate', pokemon, 'ability: Wind Rider', '[from] Turbulent Winds');
+					}
+				}
+				if (ability1 === 'windpower' || ability2 === 'windpower') {
+					this.add('-message', `${pokemon.name}'s Wind Power is triggered by Turbulent Winds!`);
+					if (!pokemon.volatiles['charge']) {
+						pokemon.addVolatile('charge');
+						this.add('-activate', pokemon, 'ability: Wind Power', '[from] Turbulent Winds');
+					}
+				}
+				// Check for any Bug types that just switched in
+				if (pokemon.hasType('Bug') && !pokemon.volatiles['windswept']) {
+					pokemon.addVolatile('windswept');
+				}
+			}
 		},
 		onWeather(target) { if (target.hasType('Fire')) { this.damage(target.baseMaxhp / 16); } },
 		onFieldEnd() {
@@ -1835,9 +1893,12 @@ export const Conditions = {
 		name: 'Arceus',
 		onTypePriority: 1,
 		onType(types, pokemon) {
-			if (pokemon.transformed || pokemon.ability !== 'multitype' && this.gen >= 8) return types;
+			const ability1 = this.toID((pokemon as any).ability1);
+			const ability2 = this.toID((pokemon as any).ability2);
+			const hasMultitype = ability1 === 'multitype' || ability2 === 'multitype';
+			if (pokemon.transformed || !hasMultitype && this.gen >= 8) return types;
 			let type: string | undefined = 'Normal';
-			if (pokemon.ability === 'multitype') {
+			if (hasMultitype) {
 				type = pokemon.getItem().onPlate;
 				if (!type) { type = 'Normal'; }
 			}
@@ -1848,9 +1909,12 @@ export const Conditions = {
 		name: 'Silvally',
 		onTypePriority: 1,
 		onType(types, pokemon) {
-			if (pokemon.transformed || pokemon.ability !== 'rkssystem' && this.gen >= 8) return types;
+			const ability1 = this.toID((pokemon as any).ability1);
+			const ability2 = this.toID((pokemon as any).ability2);
+			const hasRKS = ability1 === 'rkssystem' || ability2 === 'rkssystem';
+			if (pokemon.transformed || !hasRKS && this.gen >= 8) return types;
 			let type: string | undefined = 'Normal';
-			if (pokemon.ability === 'rkssystem') {
+			if (hasRKS) {
 				type = pokemon.getItem().onMemory;
 				if (!type) { type = 'Normal'; }
 			}
@@ -1900,44 +1964,42 @@ export const Conditions = {
 			}
 		},
 	},
-};
-export const electricterrainairborne: ModdedConditionData = {
-	name: 'electricterrainairborne',
-	effectType: 'Volatile',
-	onImmunity(type, pokemon) {
-		// Steel types are airborne for all grounded effects except Electric Terrain effects
-		const ignoreEffects = ['gravity', 'ingrain', 'smackdown', 'ironball', 'gastroacid', 'terrain'];
-		if (ignoreEffects.includes(type) && type !== 'terrain') { return false; }
+	electricterrainairborne: {
+		name: 'electricterrainairborne',
+		effectType: 'Volatile',
+		onImmunity(type, pokemon) {
+			// Steel types are airborne for all grounded effects except Electric Terrain effects
+			const ignoreEffects = ['gravity', 'ingrain', 'smackdown', 'ironball', 'gastroacid', 'terrain'];
+			if (ignoreEffects.includes(type) && type !== 'terrain') { return false; }
+		},
 	},
-};
-export const Lagging: ModdedConditionData = {
-    name: 'lagging',
-    effectType: 'Volatile',
-    onStart(target) { this.add('-start', target, 'lagging'); },
-    onFractionalPriority(priority, pokemon) { return (typeof priority === 'number' ? priority : 0) - 0.1; },
-    onEnd(target) { this.add('-end', target, 'lagging'); },
-	onEndOfTurn(pokemon) { pokemon.removeVolatile('lagging'); },
-};
-export const Pepped: ModdedConditionData = {
-    name: 'pepped',
-    effectType: 'Volatile',
-    onStart(target) { this.add('-start', target, 'pepped'); },
-    onFractionalPriority(priority, pokemon) { return (typeof priority === 'number' ? priority : 0) + 0.1; },
-    onEnd(target) { this.add('-end', target, 'pepped'); },
-    onEndOfTurn(pokemon) { pokemon.removeVolatile('pepped'); },
-};
-export const Windburst: ModdedConditionData = {
-    name: 'windburst',
-    effectType: 'Volatile',
-    duration: 1,
-    onStart(pokemon) {
-        const ability = pokemon.getAbility();
-        if (ability.id === 'windrider') { this.boost({atk: 1}, pokemon, pokemon); } 
-		else if (ability.id === 'windpower') { pokemon.addVolatile('charge'); }
-    },
-    onEnd(pokemon) { pokemon.removeVolatile('windburst'); },
-};
-export const nightdazelock: ModdedConditionData = {
+	lagging: {
+		name: 'lagging',
+		effectType: 'Volatile',
+		onStart(target) { this.add('-start', target, 'lagging'); },
+		onFractionalPriority(priority, pokemon) { return (typeof priority === 'number' ? priority : 0) - 0.1; },
+		onEnd(target) { this.add('-end', target, 'lagging'); },
+		onEndOfTurn(pokemon) { pokemon.removeVolatile('lagging'); },
+	},
+	pepped: {
+		name: 'pepped',
+		effectType: 'Volatile',
+		onStart(target) { this.add('-start', target, 'pepped'); },
+		onFractionalPriority(priority, pokemon) { return (typeof priority === 'number' ? priority : 0) + 0.1; },
+		onEnd(target) { this.add('-end', target, 'pepped'); },
+		onEndOfTurn(pokemon) { pokemon.removeVolatile('pepped'); },
+	},
+	windburst: {
+		name: 'windburst',
+		effectType: 'Volatile',
+		duration: 1,
+		onStart(pokemon) {
+			const ability = pokemon.getAbility();
+			if (ability.id === 'windrider') { this.boost({atk: 1}, pokemon, pokemon); } 
+			else if (ability.id === 'windpower') { pokemon.addVolatile('charge'); }
+		},
+	},
+	nightdazelock: {
 		name: 'Night Daze Lock',
 		duration: 2,
 		effectType: 'Volatile',
@@ -1949,60 +2011,61 @@ export const nightdazelock: ModdedConditionData = {
 				return false;
 			}
 		},
-	};
-export const discombobulated: ModdedConditionData = {
-	name: 'Discombobulated',
-	duration: 2,
-	effectType: 'Volatile',
-	onStart(target) {
-		this.add('-start', target, 'Discombobulated');
-		this.add('-message', `${target.name} was launched into the air and is now discombobulated!`);
 	},
-	onEnd(target) {
-		this.add('-end', target, 'Discombobulated');
+	discombobulated: {
+		name: 'Discombobulated',
+		duration: 2,
+		effectType: 'Volatile',
+		onStart(target) {
+			this.add('-start', target, 'Discombobulated');
+			this.add('-message', `${target.name} was launched into the air and is now discombobulated!`);
+		},
+		onEnd(target) {
+			this.add('-end', target, 'Discombobulated');
+		},
+		onModifyAccuracy(accuracy, target, source, move) {
+			// Target cannot dodge moves (moves always have perfect accuracy against them)
+			if (typeof accuracy !== 'number') return;
+			return true; // Always hit
+		},
+		onBeforeMovePriority: 10,
+		onBeforeMove(pokemon, target, move) {
+			// Prevent using Ground-type moves
+			if (move.type === 'Ground') {
+				this.add('cant', pokemon, 'Discombobulated', move);
+				this.add('-message', `${pokemon.name} can't use Ground-type moves while airborne!`);
+				return false;
+			}
+		},
+		// Target is treated as airborne (like being under Magnet Rise or having Levitate)
+		// This is handled in battle.engine.js:BattlePokemon#isGrounded
 	},
-	onModifyAccuracy(accuracy, target, source, move) {
-		// Target cannot dodge moves (moves always have perfect accuracy against them)
-		if (typeof accuracy !== 'number') return;
-		return true; // Always hit
+	roundhousekick: {
+		name: 'Roundhouse Kick',
+		duration: 1,
+		effectType: 'Volatile',
+		onStart(target) {
+			this.add('-singleturn', target, 'Roundhouse Kick');
+			this.add('-message', `${target.name} is focusing to counter incoming attacks!`);
+		},
+		onSourceModifyDamage(damage, source, target, move) {
+			if (move.category !== 'Status') {
+				this.add('-activate', target, 'Roundhouse Kick');
+				return this.chainModify(0.125);
+			}
+		},
+		onAfterMoveSecondary(target, source, move) {
+			if (!source || source === target || !source.hp || !target.hp) return;
+			if (move.category !== 'Status') {
+				this.add('-message', `${target.name} counters with a kick!`);
+				this.actions.useMove('roundhousekickcounter', target, source);
+			}
+		},
 	},
-	onBeforeMovePriority: 10,
-	onBeforeMove(pokemon, target, move) {
-		// Prevent using Ground-type moves
-		if (move.type === 'Ground') {
-			this.add('cant', pokemon, 'Discombobulated', move);
-			this.add('-message', `${pokemon.name} can't use Ground-type moves while airborne!`);
-			return false;
-		}
+	stellaroriginal: {
+		name: 'stellaroriginal',
+		effectType: 'Volatile',
+		noCopy: true,
+		// Stores the original types before Stellar Terastallization for STAB calculation
 	},
-	// Target is treated as airborne (like being under Magnet Rise or having Levitate)
-	// This is handled in battle.engine.js:BattlePokemon#isGrounded
-};
-export const roundhousekick: ModdedConditionData = {
-	name: 'Roundhouse Kick',
-	duration: 1,
-	effectType: 'Volatile',
-	onStart(target) {
-		this.add('-singleturn', target, 'Roundhouse Kick');
-		this.add('-message', `${target.name} is focusing to counter incoming attacks!`);
-	},
-	onSourceModifyDamage(damage, source, target, move) {
-		if (move.category !== 'Status') {
-			this.add('-activate', target, 'Roundhouse Kick');
-			return this.chainModify(0.125);
-		}
-	},
-	onAfterMoveSecondary(target, source, move) {
-		if (!source || source === target || !source.hp || !target.hp) return;
-		if (move.category !== 'Status') {
-			this.add('-message', `${target.name} counters with a kick!`);
-			this.actions.useMove('roundhousekickcounter', target, source);
-		}
-	},
-};
-export const stellaroriginal: ModdedConditionData = {
-	name: 'stellaroriginal',
-	effectType: 'Volatile',
-	noCopy: true,
-	// Stores the original types before Stellar Terastallization for STAB calculation
 };

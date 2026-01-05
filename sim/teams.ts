@@ -515,6 +515,12 @@ export const Teams = new class Teams {
 		} else if (line.startsWith('Ability: ')) {
 			line = line.slice(9);
 			set.ability = aggressive ? toID(line) : line;
+		} else if (line.startsWith('Ability 2: ')) {
+			line = line.slice(11);
+			set.ability2 = aggressive ? toID(line) : line;
+		} else if (line.startsWith('Ability Set: ')) {
+			line = line.slice(13);
+			set.abilitySet = +line as 1 | 2;
 		} else if (line === 'Shiny: Yes') {
 			set.shiny = true;
 		} else if (line.startsWith('Level: ')) {
