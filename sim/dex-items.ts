@@ -20,6 +20,7 @@ interface FlingData {
 export interface ItemData extends Partial<Item>, PokemonEventMethods {
 	name: string;
 	/** If true, this item is considered fragile and may break/disappear under certain conditions. */
+	itemClass?: string;
 	isFragile?: boolean;
 	/** If true, this item is considered mildly fragile and will trigger its effect when disturbed, but will not break. */
 	isMildlyFragile?: boolean;

@@ -1,25 +1,12 @@
 "use strict";function _inheritsLoose(t,o){t.prototype=Object.create(o.prototype),t.prototype.constructor=t,_setPrototypeOf(t,o);}function _setPrototypeOf(t,e){return _setPrototypeOf=Object.setPrototypeOf?Object.setPrototypeOf.bind():function(t,e){return t.__proto__=e,t;},_setPrototypeOf(t,e);}/**
  * Pokemon Showdown Battle Animations
- *
  * There are the specific resource files and scripts for misc animations
- *
  * Licensing note: PS's client has complicated licensing:
  * - The client as a whole is AGPLv3
  * - The battle replay/animation engine (battle-*.ts) by itself is MIT
- *
  * @author Guangcong Luo <guangcongluo@gmail.com>
  * @license MIT
  */var
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -90,17 +77,8 @@ BattleScene=function(){
 
 
 
-
-
-
-
-
-
-
-
-function BattleScene(battle,$frame,$logFrame){this.battle=void 0;this.animating=true;this.acceleration=1;this.gen=7;this.mod='';this.activeCount=1;this.numericId=0;this.$frame=void 0;this.$battle=null;this.$options=null;this.log=void 0;this.$terrain=null;this.$weather=null;this.$bgEffect=null;this.$bg=null;this.$sprite=null;this.$sprites=[null,null];this.$spritesFront=[null,null];this.$stat=null;this.$fx=null;this.$leftbar=null;this.$rightbar=null;this.$turn=null;this.$messagebar=null;this.$delay=null;this.$hiddenMessage=null;this.$tooltips=null;this.tooltips=void 0;this.sideConditions=[{},{}];this.preloadDone=0;this.preloadNeeded=0;this.bgm=null;this.backdropImage='';this.bgmNum=0;this.preloadCache={};this.messagebarOpen=false;this.customControls=false;this.interruptionCount=1;this.curWeather='';this.curTerrain='';this.timeOffset=0;this.pokemonTimeOffset=0;this.minDelay=0;this.activeAnimations=$();
+function BattleScene(battle,$frame,$logFrame){this.battle=void 0;this.animating=true;this.acceleration=1;this.gen=7;this.mod='';this.activeCount=1;this.numericId=0;this.$frame=void 0;this.$battle=null;this.$options=null;this.log=void 0;this.$terrain=null;this.$weather=null;this.$bgEffect=null;this.$bg=null;this.$sprite=null;this.$sprites=[null,null];this.$spritesFront=[null,null];this.$stat=null;this.$fx=null;this.$leftbar=null;this.$rightbar=null;this.$battleteambar=null;this.$turn=null;this.$messagebar=null;this.$delay=null;this.$hiddenMessage=null;this.$tooltips=null;this.tooltips=void 0;this.sideConditions=[{},{}];this.preloadDone=0;this.preloadNeeded=0;this.bgm=null;this.backdropImage='';this.bgmNum=0;this.preloadCache={};this.messagebarOpen=false;this.customControls=false;this.interruptionCount=1;this.curWeather='';this.curTerrain='';this.timeOffset=0;this.pokemonTimeOffset=0;this.minDelay=0;this.activeAnimations=$();
 this.battle=battle;
-
 $frame.addClass('battle');
 this.$frame=$frame;
 this.log=new BattleLog($logFrame[0],this);
@@ -115,58 +93,44 @@ if(pokemonId.charAt(3)===':')return BattleTextParser.escapeReplace(pokemonId.sli
 if(pokemonId.charAt(2)===':')return BattleTextParser.escapeReplace(pokemonId.slice(3).trim());
 return'???pokemon:'+pokemonId+'???';
 };
-
 var numericId=0;
 if(battle.id){
 numericId=parseInt(battle.id.slice(battle.id.lastIndexOf('-')+1),10);
 if(this.battle.id.includes('digimon'))this.mod='digimon';
 }
-if(!numericId){
-numericId=Math.floor(Math.random()*1000000);
-}
+if(!numericId){numericId=Math.floor(Math.random()*1000000);}
 this.numericId=numericId;
 this.tooltips=new BattleTooltips(battle);
 this.tooltips.listen($frame[0]);
-
 this.preloadEffects();
 
 }var _proto=BattleScene.prototype;_proto.
-
 reset=function reset(){
 this.updateGen();
 
-
-
-
-if(this.$options){
-this.log.reset();
-}else{
+if(this.$options){this.log.reset();}else
+{
 this.$options=$('<div class="battle-options"></div>');
 $(this.log.elem).prepend(this.$options);
 }
 
-
-
-
 this.$frame.empty();
+this.$battleteambar=$('<div class="battleteambar" role="complementary" aria-label="Team Preview"></div>');
 this.$battle=$('<div class="innerbattle"></div>');
+this.$frame.append(this.$battleteambar);
 this.$frame.append(this.$battle);
-
 this.$bg=$('<div class="backdrop" style="background-image:url('+Dex.resourcePrefix+this.backdropImage+');display:block;opacity:0.8"></div>');
 this.$terrain=$('<div class="weather"></div>');
 this.$weather=$('<div class="weather"></div>');
 this.$bgEffect=$('<div></div>');
 this.$sprite=$('<div></div>');
-
 this.$sprites=[$('<div></div>'),$('<div></div>')];
 this.$spritesFront=[$('<div></div>'),$('<div></div>')];
 this.sideConditions=[{},{}];
-
 this.$sprite.append(this.$sprites[1]);
 this.$sprite.append(this.$spritesFront[1]);
 this.$sprite.append(this.$spritesFront[0]);
 this.$sprite.append(this.$sprites[0]);
-
 this.$stat=$('<div role="complementary" aria-label="Active Pokemon"></div>');
 this.$fx=$('<div></div>');
 this.$leftbar=$('<div class="leftbar" role="complementary" aria-label="Your Team"></div>');
@@ -176,7 +140,6 @@ this.$messagebar=$('<div class="messagebar message"></div>');
 this.$delay=$('<div></div>');
 this.$hiddenMessage=$('<div class="message" style="position:absolute;display:block;visibility:hidden"></div>');
 this.$tooltips=$('<div class="tooltips"></div>');
-
 this.$battle.append(this.$bg);
 this.$battle.append(this.$terrain);
 this.$battle.append(this.$weather);
@@ -191,27 +154,19 @@ this.$battle.append(this.$messagebar);
 this.$battle.append(this.$delay);
 this.$battle.append(this.$hiddenMessage);
 this.$battle.append(this.$tooltips);
-
-if(!this.animating){
-this.$battle.append('<div class="seeking"><strong>seeking...</strong></div>');
-}
-
+if(!this.animating){this.$battle.append('<div class="seeking"><strong>seeking...</strong></div>');}
 this.messagebarOpen=false;
 this.timeOffset=0;
 this.pokemonTimeOffset=0;
 this.curTerrain='';
 this.curWeather='';
-
 this.log.battleParser.perspective=this.battle.mySide.sideid;
-
 this.resetSides(true);
 };_proto.
-
 animationOff=function animationOff(){
 this.$battle.append('<div class="seeking"><strong>seeking...</strong></div>');
 this.$frame.find('div.playbutton').remove();
 this.stopAnimation();
-
 this.animating=false;
 this.$messagebar.empty().css({
 opacity:0,
@@ -229,11 +184,7 @@ $.fx.off=false;
 this.animating=true;
 this.$battle.find('.seeking').remove();
 this.updateSidebars();for(var _i2=0,_this$battle$sides2=
-this.battle.sides;_i2<_this$battle$sides2.length;_i2++){var side=_this$battle$sides2[_i2];for(var _i4=0,_side$pokemon2=
-side.pokemon;_i4<_side$pokemon2.length;_i4++){var pokemon=_side$pokemon2[_i4];
-pokemon.sprite.reset(pokemon);
-}
-}
+this.battle.sides;_i2<_this$battle$sides2.length;_i2++){var side=_this$battle$sides2[_i2];for(var _i4=0,_side$pokemon2=side.pokemon;_i4<_side$pokemon2.length;_i4++){var pokemon=_side$pokemon2[_i4];pokemon.sprite.reset(pokemon);}}
 this.updateWeather(true);
 this.resetTurn();
 this.resetSideConditions();
@@ -254,31 +205,22 @@ resume=function resume(){
 this.$frame.find('div.playbutton').remove();
 this.updateBgm();
 };_proto.
-setMute=function setMute(muted){
-BattleSound.setMute(muted);
-};_proto.
+setMute=function setMute(muted){BattleSound.setMute(muted);};_proto.
 wait=function wait(time){
 if(!this.animating)return;
 this.timeOffset+=time;
 };_proto.
 
-
-
-
-addSprite=function addSprite(sprite){
-if(sprite.$el)this.$sprites[+sprite.isFrontSprite].append(sprite.$el);
-};_proto.
+addSprite=function addSprite(sprite){if(sprite.$el)this.$sprites[+sprite.isFrontSprite].append(sprite.$el);};_proto.
 showEffect=function showEffect(
 effect,start,end,
 transition,after,additionalCss)
 {
 if(typeof effect==='string')effect=BattleEffects[effect];
-
 var $effect=$("<img src=\""+effect.url+"\" style=\"display:block;position:absolute\" />");
 this.$fx.append($effect);
 if(additionalCss)$effect.css(additionalCss);
 $effect=this.$fx.children().last();
-
 return this.animateEffect($effect,effect,start,end,transition,after);
 };_proto.
 animateEffect=function animateEffect(
@@ -286,7 +228,6 @@ $effect,effect,start,end,
 transition,after,additionalCss)
 {
 if(typeof effect==='string')effect=BattleEffects[effect];
-
 if(!start.time)start.time=0;
 if(!end.time)end.time=start.time+500;
 start.time+=this.timeOffset;
@@ -295,26 +236,15 @@ if(!end.scale&&end.scale!==0&&start.scale)end.scale=start.scale;
 if(!end.xscale&&end.xscale!==0&&start.xscale)end.xscale=start.xscale;
 if(!end.yscale&&end.yscale!==0&&start.yscale)end.yscale=start.yscale;
 end=Object.assign({},start,end);
-
 var startpos=this.pos(start,effect);
 var endpos=this.posT(end,effect,transition,start);
-
 if(start.time){
 $effect.css(Object.assign({},startpos,{opacity:0}));
-$effect.delay(start.time).animate({
-opacity:startpos.opacity
-},1);
-}else if($effect.queue().length){
-$effect.animate(startpos,0);
-}else{
-$effect.css(startpos);
-}
+$effect.delay(start.time).animate({opacity:startpos.opacity},1);
+}else if($effect.queue().length){$effect.animate(startpos,0);}else
+{$effect.css(startpos);}
 $effect.animate(endpos,end.time-start.time);
-if(after==='fade'){
-$effect.animate({
-opacity:0
-},100);
-}
+if(after==='fade'){$effect.animate({opacity:0},100);}
 if(after==='explode'){
 if(end.scale)end.scale*=3;
 if(end.xscale)end.xscale*=3;
@@ -324,7 +254,6 @@ var endendpos=this.pos(end,effect);
 $effect.animate(endendpos,200);
 }
 this.waitFor($effect);
-
 return $effect;
 };_proto.
 backgroundEffect=function backgroundEffect(bg,duration){var opacity=arguments.length>2&&arguments[2]!==undefined?arguments[2]:1;var delay=arguments.length>3&&arguments[3]!==undefined?arguments[3]:0;
@@ -335,19 +264,10 @@ display:'block',
 opacity:0
 });
 this.$bgEffect.append($effect);
-$effect.delay(delay).animate({
-opacity:opacity
-},250).delay(duration-250);
-$effect.animate({
-opacity:0
-},250);
+$effect.delay(delay).animate({opacity:opacity},
+250).delay(duration-250);
+$effect.animate({opacity:0},250);
 };_proto.
-
-
-
-
-
-
 
 pos=function pos(loc,obj){
 loc=Object.assign({
@@ -360,14 +280,12 @@ loc);
 
 if(!loc.xscale&&loc.xscale!==0)loc.xscale=loc.scale;
 if(!loc.yscale&&loc.yscale!==0)loc.yscale=loc.scale;
-
 var left=210;
 var top=245;
 var scale=obj.gen===5?
 2.0-loc.z/200:
 1.5-0.5*(loc.z/200);
 if(scale<0.1)scale=0.1;
-
 left+=(410-190)*(loc.z/200);
 top+=(135-245)*(loc.z/200);
 left+=Math.floor(loc.x*scale);
@@ -377,7 +295,6 @@ var height=Math.floor(obj.h*scale*loc.yscale);
 var hoffset=Math.floor((obj.h-(obj.y||0)*2)*scale*loc.yscale);
 left-=Math.floor(width/2);
 top-=Math.floor(hoffset/2);
-
 var pos={
 left:left,
 top:top,
@@ -389,39 +306,15 @@ if(loc.display)pos.display=loc.display;
 return pos;
 };_proto.
 
-
-
-
-
 posT=function posT(loc,obj,transition,oldLoc){
 var pos=this.pos(loc,obj);
 var oldPos=oldLoc?this.pos(oldLoc,obj):null;
-var transitionMap={
-left:'linear',
-top:'linear',
-width:'linear',
-height:'linear',
-opacity:'linear'
-};
-if(transition==='ballistic'){
-transitionMap.top=pos.top<oldPos.top?'ballisticUp':'ballisticDown';
-}
-if(transition==='ballisticUnder'){
-transitionMap.top=pos.top<oldPos.top?'ballisticDown':'ballisticUp';
-}
-if(transition==='ballistic2'){
-transitionMap.top=pos.top<oldPos.top?'quadUp':'quadDown';
-}
-if(transition==='ballistic2Back'){
-
-
-
-
-transitionMap.top=loc.z>0?'quadUp':'quadDown';
-}
-if(transition==='ballistic2Under'){
-transitionMap.top=pos.top<oldPos.top?'quadDown':'quadUp';
-}
+var transitionMap={left:'linear',top:'linear',width:'linear',height:'linear',opacity:'linear'};
+if(transition==='ballistic'){transitionMap.top=pos.top<oldPos.top?'ballisticUp':'ballisticDown';}
+if(transition==='ballisticUnder'){transitionMap.top=pos.top<oldPos.top?'ballisticDown':'ballisticUp';}
+if(transition==='ballistic2'){transitionMap.top=pos.top<oldPos.top?'quadUp':'quadDown';}
+if(transition==='ballistic2Back'){transitionMap.top=loc.z>0?'quadUp':'quadDown';}
+if(transition==='ballistic2Under'){transitionMap.top=pos.top<oldPos.top?'quadDown':'quadUp';}
 if(transition==='swing'){
 transitionMap.left='swing';
 transitionMap.top='swing';
@@ -448,18 +341,13 @@ height:[pos.height,transitionMap.height],
 opacity:[pos.opacity,transitionMap.opacity]
 };
 };_proto.
-
-waitFor=function waitFor(elem){
-this.activeAnimations=this.activeAnimations.add(elem);
-};_proto.
-
+waitFor=function waitFor(elem){this.activeAnimations=this.activeAnimations.add(elem);};_proto.
 startAnimations=function startAnimations(){
 this.$fx.empty();
 this.activeAnimations=$();
 this.timeOffset=0;
 this.minDelay=0;
 };_proto.
-
 finishAnimations=function finishAnimations(){
 if(this.minDelay||this.timeOffset){
 this.$delay.delay(Math.max(this.minDelay,this.timeOffset));
@@ -469,12 +357,7 @@ if(!this.activeAnimations.length)return undefined;
 return this.activeAnimations.promise();
 };_proto.
 
-
-
-
-preemptCatchup=function preemptCatchup(){
-this.log.preemptCatchup();
-};_proto.
+preemptCatchup=function preemptCatchup(){this.log.preemptCatchup();};_proto.
 message=function message(_message){var _this2=this;
 if(!this.messagebarOpen){
 this.log.addSpacer();
@@ -485,14 +368,11 @@ display:'block',
 opacity:0,
 height:'auto'
 });
-this.$messagebar.animate({
-opacity:1
-},this.battle.messageFadeTime/this.acceleration);
+this.$messagebar.animate({opacity:1},
+this.battle.messageFadeTime/this.acceleration);
 }
 }
-if(this.battle.hardcoreMode&&_message.startsWith('<small>(')){
-_message='';
-}
+if(this.battle.hardcoreMode&&_message.startsWith('<small>(')){_message='';}
 if(_message&&this.animating){
 this.$hiddenMessage.append('<p></p>');
 var $message=this.$hiddenMessage.children().last();
@@ -501,9 +381,8 @@ $message.css({
 display:'block',
 opacity:0
 });
-$message.animate({
-height:'hide'
-},1,function(){
+$message.animate({height:'hide'},
+1,function(){
 $message.appendTo(_this2.$messagebar);
 $message.animate({
 height:'show',
@@ -527,18 +406,14 @@ closeMessagebar=function closeMessagebar(){
 if(this.messagebarOpen){
 this.messagebarOpen=false;
 if(this.animating){
-this.$messagebar.delay(this.battle.messageShownTime/this.acceleration).animate({
-opacity:0
-},this.battle.messageFadeTime/this.acceleration);
+this.$messagebar.delay(this.battle.messageShownTime/this.acceleration).animate({opacity:0},
+this.battle.messageFadeTime/this.acceleration);
 this.waitFor(this.$messagebar);
 }
 return true;
 }
 return false;
 };_proto.
-
-
-
 
 runMoveAnim=function runMoveAnim(moveid,participants){
 if(!this.animating)return;
@@ -547,41 +422,33 @@ if(this.acceleration>=3){
 var targetsSelf=!participants[1]||participants[0]===participants[1];
 var isSpecial=!targetsSelf&&this.battle.dex.moves.get(moveid).category==='Special';
 animEntry=BattleOtherAnims[targetsSelf?'fastanimself':isSpecial?'fastanimspecial':'fastanimattack'];
-}else if(!animEntry){
-animEntry=BattleMoveAnims['tackle'];
-}
+}else if(!animEntry){animEntry=BattleMoveAnims['tackle'];}
 animEntry.anim(this,participants.map(function(p){return p.sprite;}));
 };_proto.
-
 runOtherAnim=function runOtherAnim(moveid,participants){
 if(!this.animating)return;
 BattleOtherAnims[moveid].anim(this,participants.map(function(p){return p.sprite;}));
 };_proto.
-
 runStatusAnim=function runStatusAnim(moveid,participants){
 if(!this.animating)return;
 BattleStatusAnims[moveid].anim(this,participants.map(function(p){return p.sprite;}));
 };_proto.
-
 runResidualAnim=function runResidualAnim(moveid,pokemon){
 if(!this.animating)return;
 BattleMoveAnims[moveid].residualAnim(this,[pokemon.sprite]);
 };_proto.
-
 runPrepareAnim=function runPrepareAnim(moveid,attacker,defender){
 if(!this.animating||this.acceleration>=3)return;
 var moveAnim=BattleMoveAnims[moveid];
 if(!moveAnim.prepareAnim)return;
 moveAnim.prepareAnim(this,[attacker.sprite,defender.sprite]);
 };_proto.
-
 updateGen=function updateGen(){var _this$battle$nearSide;
 var gen=this.battle.gen;
 if(Dex.prefs('nopastgens'))gen=6;
 if(Dex.prefs('bwgfx')&&gen>5)gen=5;
 this.gen=gen;
 this.activeCount=((_this$battle$nearSide=this.battle.nearSide)==null?void 0:_this$battle$nearSide.active.length)||1;
-
 var rated=this.battle.rated;
 var bg;
 if(typeof rated==='string'&&rated.startsWith("Smogon Premier League")){
@@ -605,103 +472,93 @@ if(gen<=4)bg="fx/"+BattleBackdropsFour[this.numericId%BattleBackdropsFour.length
 if(gen<=5)bg="fx/"+BattleBackdropsFive[this.numericId%BattleBackdropsFive.length];else
 bg="sprites/gen6bgs/"+BattleBackdrops[this.numericId%BattleBackdrops.length];
 }
-
 this.backdropImage=bg;
-if(this.$bg){
-this.$bg.css('background-image',"url("+Dex.resourcePrefix+this.backdropImage+")");
-}
+if(this.$bg){this.$bg.css('background-image',"url("+Dex.resourcePrefix+this.backdropImage+")");}
 };_proto.
-
 getDetailsText=function getDetailsText(pokemon){var _pokemon$side;
-var name=(_pokemon$side=pokemon.side)!=null&&_pokemon$side.isFar&&(
-this.battle.ignoreOpponent||this.battle.ignoreNicks)?pokemon.speciesForme:pokemon.name;
-if(name!==pokemon.speciesForme){
-name+=' ('+pokemon.speciesForme+')';
-}
-if(pokemon===pokemon.side.active[0]){
-name+=' (active)';
-}else if(pokemon.fainted){
-name+=' (fainted)';
-}else{
+var name=(_pokemon$side=pokemon.side)!=null&&_pokemon$side.isFar&&(this.battle.ignoreOpponent||this.battle.ignoreNicks)?pokemon.speciesForme:pokemon.name;
+if(name!==pokemon.speciesForme){name+=' ('+pokemon.speciesForme+')';}
+if(pokemon===pokemon.side.active[0]){name+=' (active)';}else
+if(pokemon.fainted){name+=' (fainted)';}else
+{
 var statustext='';
-if(pokemon.hp!==pokemon.maxhp){
-statustext+=pokemon.getHPText();
-}
+if(pokemon.hp!==pokemon.maxhp){statustext+=pokemon.getHPText();}
 if(pokemon.status){
 if(statustext)statustext+='|';
 statustext+=pokemon.status;
 }
-if(statustext){
-name+=' ('+statustext+')';
-}
+if(statustext){name+=' ('+statustext+')';}
 }
 return BattleLog.escapeHTML(name);
 };_proto.
-getSidebarHTML=function getSidebarHTML(side,posStr){
+getTeamBarHTML=function getTeamBarHTML(side,isP1){
+var html='';
+for(var i=0;i<side.pokemon.length;i++){
+var pokemon=side.pokemon[i];
+var status=pokemon.fainted?' fainted':pokemon.status?' status':'';
+var iconStyle=Dex.getPokemonIcon(pokemon);
+
+var itemIconHTML='';
+if(pokemon.item&&pokemon.item!=='(exists)'){
+var itemIconStyle=Dex.getItemIcon(pokemon.item);
+itemIconHTML="<span class=\"itemicon\" style=\""+itemIconStyle+"\"></span>";
+}
+html+="<span class=\"picon battleteambar-sprite"+status+"\" style=\""+iconStyle+"\">"+itemIconHTML+"</span>";
+}
+return html;
+};_proto.
+getSidebarHTML=function getSidebarHTML(side,posStr){var _this$battle$tier,_this$battle$tier2;
 var noShow=this.battle.hardcoreMode&&this.battle.gen<7;
 
-var speciesOverage=this.battle.speciesClause?Infinity:Math.max(side.pokemon.length-side.totalPokemon,0);
-var sidebarIcons=
+var isISLFormat=((_this$battle$tier=this.battle.tier)==null?void 0:_this$battle$tier.toLowerCase().includes('indigostarstorm'))||((_this$battle$tier2=this.battle.tier)==null?void 0:_this$battle$tier2.toLowerCase().includes('isl'));
 
-[];
+var revealedPokemon=side.pokemon.filter(function(p){return p.ident;});
+
+var pokemonToShow=isISLFormat?revealedPokemon:side.pokemon;
+var speciesOverage=this.battle.speciesClause?Infinity:Math.max(pokemonToShow.length-side.totalPokemon,0);
+var sidebarIcons=[];
 var speciesTable=[];
 var zoroarkRevealed=false;
 var hasIllusion=false;
+
 if(speciesOverage){
-for(var i=0;i<side.pokemon.length;i++){
-var species=side.pokemon[i].getBaseSpecies().baseSpecies;
+for(var i=0;i<pokemonToShow.length;i++){
+var species=pokemonToShow[i].getBaseSpecies().baseSpecies;
 if(speciesOverage&&speciesTable.includes(species)){for(var _i6=0;_i6<
-sidebarIcons.length;_i6++){var sidebarIcon=sidebarIcons[_i6];
-if(side.pokemon[sidebarIcon[1]].getBaseSpecies().baseSpecies===species){
-sidebarIcon[0]='pokemon-illusion';
-}
-}
+sidebarIcons.length;_i6++){var sidebarIcon=sidebarIcons[_i6];if(pokemonToShow[sidebarIcon[1]].getBaseSpecies().baseSpecies===species){sidebarIcon[0]='pokemon-illusion';}}
 hasIllusion=true;
 speciesOverage--;
 }else{
-sidebarIcons.push(['pokemon',i]);
-speciesTable.push(species);
-if(['Zoroark','Zorua'].includes(species)){
-zoroarkRevealed=true;
-}
-}
-}
-}else{
-for(var _i7=0;_i7<side.pokemon.length;_i7++){
-sidebarIcons.push(['pokemon',_i7]);
-}
-}
-if(!zoroarkRevealed&&hasIllusion&&sidebarIcons.length<side.totalPokemon){
-sidebarIcons.push(['pseudo-zoroark',null]);
-}
-while(sidebarIcons.length<side.totalPokemon){
-sidebarIcons.push(['unrevealed',null]);
-}
-while(sidebarIcons.length<6){
-sidebarIcons.push(['empty',null]);
-}
 
+var actualIndex=side.pokemon.indexOf(pokemonToShow[i]);
+sidebarIcons.push(['pokemon',actualIndex]);
+speciesTable.push(species);
+if(['Zoroark','Zorua'].includes(species)){zoroarkRevealed=true;}
+}
+}
+}else{for(var _i7=0;_i7<pokemonToShow.length;_i7++){
+var _actualIndex=side.pokemon.indexOf(pokemonToShow[_i7]);
+sidebarIcons.push(['pokemon',_actualIndex]);
+}
+}
+if(!zoroarkRevealed&&hasIllusion&&sidebarIcons.length<side.totalPokemon){sidebarIcons.push(['pseudo-zoroark',null]);}
+
+
+while(sidebarIcons.length<side.totalPokemon){sidebarIcons.push(['unrevealed',null]);}
+while(sidebarIcons.length<6){sidebarIcons.push(['empty',null]);}
 var pokemonhtml='';
 for(var _i8=0;_i8<sidebarIcons.length;_i8++){
 var _sidebarIcons$_i=sidebarIcons[_i8],iconType=_sidebarIcons$_i[0],pokeIndex=_sidebarIcons$_i[1];
 var poke=pokeIndex!==null?side.pokemon[pokeIndex]:null;
 var tooltipCode=" class=\"picon has-tooltip\" data-tooltip=\"pokemon|"+side.n+"|"+pokeIndex+(iconType==='pokemon-illusion'?'|illusion':'')+"\"";
-if(iconType==='empty'){
-pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('pokeball-none')+"\"></span>";
-}else if(noShow){
-if(poke!=null&&poke.fainted){
-pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon('pokeball-fainted')+"\" aria-label=\"Fainted\"></span>";
-}else if(poke!=null&&poke.status){
-pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon('pokeball-statused')+"\" aria-label=\"Statused\"></span>";
-}else{
-pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon('pokeball')+"\" aria-label=\"Non-statused\"></span>";
-}
-}else if(iconType==='pseudo-zoroark'){
-pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('zoroark')+"\" title=\"Unrevealed Illusion user\" aria-label=\"Unrevealed Illusion user\"></span>";
-}else if(!poke){
-pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('pokeball')+"\" title=\"Not revealed\" aria-label=\"Not revealed\"></span>";
+if(iconType==='empty'){pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('pokeball-none')+"\"></span>";}else
+if(noShow){
+if(poke!=null&&poke.fainted){pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon('pokeball-fainted')+"\" aria-label=\"Fainted\"></span>";}else
+if(poke!=null&&poke.status){pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon('pokeball-statused')+"\" aria-label=\"Statused\"></span>";}else
+{pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon('pokeball')+"\" aria-label=\"Non-statused\"></span>";}
+}else if(iconType==='pseudo-zoroark'){pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('zoroark')+"\" title=\"Unrevealed Illusion user\" aria-label=\"Unrevealed Illusion user\"></span>";}else
+if(!poke){pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('pokeball')+"\" title=\"Not revealed\" aria-label=\"Not revealed\"></span>";
 }else if(!poke.ident&&this.battle.teamPreviewCount&&this.battle.teamPreviewCount<side.pokemon.length){
-
 
 var details=this.getDetailsText(poke);
 pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon(poke,!side.isFar)+";opacity:0.6\" aria-label=\""+details+"\"></span>";
@@ -718,21 +575,15 @@ var badgehtml='';
 if(side.badges.length){
 badgehtml='<span class="badges">';for(var _i10=0,_side$badges$slice2=
 
-
-
 side.badges.slice(0,3);_i10<_side$badges$slice2.length;_i10++){var badgeData=_side$badges$slice2[_i10];
 
 var _badgeData$split=badgeData.split('|'),type=_badgeData$split[0],format=_badgeData$split[1],_details2=_badgeData$split[2];
 
-
 var _details2$split=_details2.split('-'),threshold=_details2$split[0];
 var hover="User is Top "+threshold+" on the "+format+" Ladder";
 
-
 var formatType=format.split(/gen\d+/)[1]||'none';
-if(!['ou','randombattle'].includes(formatType)){
-formatType='rotating';
-}
+if(!['ou','randombattle'].includes(formatType)){formatType='rotating';}
 badgehtml+="<img src=\""+Dex.resourcePrefix+"/sprites/misc/"+formatType+"_"+type+".png\" style=\"padding: 0px 1px 0px 1px\" width=\"16px\" height=\"16px\" title=\""+hover+"\" />";
 }
 badgehtml+='</span>';
@@ -747,60 +598,47 @@ updateSidebar=function updateSidebar(side){
 if(this.battle.gameType==='freeforall'){
 this.updateLeftSidebar();
 this.updateRightSidebar();
-}else if(side===this.battle.nearSide||side===this.battle.nearSide.ally){
-this.updateLeftSidebar();
-}else{
-this.updateRightSidebar();
-}
+}else if(side===this.battle.nearSide||side===this.battle.nearSide.ally){this.updateLeftSidebar();}else
+{this.updateRightSidebar();}
 };_proto.
 updateLeftSidebar=function updateLeftSidebar(){
 var side=this.battle.nearSide;
-
 if(side.ally){
 var side2=side.ally;
 this.$leftbar.html(this.getSidebarHTML(side,'near2')+this.getSidebarHTML(side2,'near'));
 }else if(this.battle.sides.length>2){
 var _side=this.battle.sides[side.n===0?3:2];
 this.$leftbar.html(this.getSidebarHTML(_side,'near2')+this.getSidebarHTML(side,'near'));
-}else{
-this.$leftbar.html(this.getSidebarHTML(side,'near'));
-}
+}else{this.$leftbar.html(this.getSidebarHTML(side,'near'));}
 };_proto.
 updateRightSidebar=function updateRightSidebar(){
 var side=this.battle.farSide;
-
 if(side.ally){
 var side2=side.ally;
 this.$rightbar.html(this.getSidebarHTML(side,'far2')+this.getSidebarHTML(side2,'far'));
 }else if(this.battle.sides.length>2){
 var _side2=this.battle.sides[side.n===0?3:2];
 this.$rightbar.html(this.getSidebarHTML(_side2,'far2')+this.getSidebarHTML(side,'far'));
-}else{
-this.$rightbar.html(this.getSidebarHTML(side,'far'));
-}
+}else{this.$rightbar.html(this.getSidebarHTML(side,'far'));}
 };_proto.
 updateSidebars=function updateSidebars(){
 this.updateLeftSidebar();
 this.updateRightSidebar();
+this.updateTeamBar();
 };_proto.
-updateStatbars=function updateStatbars(){for(var _i12=0,_this$battle$sides4=
-this.battle.sides;_i12<_this$battle$sides4.length;_i12++){var side=_this$battle$sides4[_i12];for(var _i14=0,_side$active2=
-side.active;_i14<_side$active2.length;_i14++){var active=_side$active2[_i14];
-if(active)active.sprite.updateStatbar(active);
-}
-}
+updateTeamBar=function updateTeamBar(){
+var p1Side=this.battle.nearSide;
+var p2Side=this.battle.farSide;
+var p1HTML=this.getTeamBarHTML(p1Side,true);
+var p2HTML=this.getTeamBarHTML(p2Side,false);
+this.$battleteambar.html("<div class=\"battleteambar-p1\">"+p1HTML+"</div>"+("<div class=\"battleteambar-p2\">"+p2HTML+"</div>"));
 };_proto.
-
+updateStatbars=function updateStatbars(){for(var _i12=0,_this$battle$sides4=this.battle.sides;_i12<_this$battle$sides4.length;_i12++){var side=_this$battle$sides4[_i12];for(var _i14=0,_side$active2=side.active;_i14<_side$active2.length;_i14++){var active=_side$active2[_i14];if(active)active.sprite.updateStatbar(active);}}};_proto.
 resetSides=function resetSides(skipEmpty){
-if(!skipEmpty){for(var _i16=0,_this$$sprites2=
-this.$sprites;_i16<_this$$sprites2.length;_i16++){var $spritesContainer=_this$$sprites2[_i16];
-$spritesContainer.empty();
-}
-}for(var _i18=0,_this$battle$sides6=
+if(!skipEmpty){for(var _i16=0,_this$$sprites2=this.$sprites;_i16<_this$$sprites2.length;_i16++){var $spritesContainer=_this$$sprites2[_i16];$spritesContainer.empty();}}for(var _i18=0,_this$battle$sides6=
 this.battle.sides;_i18<_this$battle$sides6.length;_i18++){var _side$missedPokemon;var side=_this$battle$sides6[_i18];
 side.z=side.isFar?200:0;
 (_side$missedPokemon=side.missedPokemon)==null||(_side$missedPokemon=_side$missedPokemon.sprite)==null||_side$missedPokemon.destroy();
-
 side.missedPokemon={
 sprite:new PokemonSprite(null,{
 x:side.leftof(this.battle.gameType==='freeforall'?-50:-100),
@@ -809,18 +647,14 @@ z:side.z,
 opacity:0
 },this,side.isFar)
 };
-
 side.missedPokemon.sprite.isMissedPokemon=true;
 }
-if(this.battle.sides.length>2&&this.sideConditions.length===2){
-this.sideConditions.push({},{});
-}
+if(this.battle.sides.length>2&&this.sideConditions.length===2){this.sideConditions.push({},{});}
 this.rebuildTooltips();
 };_proto.
 rebuildTooltips=function rebuildTooltips(){
 var tooltipBuf='';
 var tooltips=this.battle.gameType==='freeforall'?{
-
 
 p2b:{top:70,left:250,width:80,height:100,tooltip:'activepokemon|1|1'},
 p2a:{top:90,left:390,width:100,height:100,tooltip:'activepokemon|1|0'},
@@ -842,7 +676,6 @@ tooltipBuf+="\" data-id=\""+id+"\" data-tooltip=\""+layout.tooltip+"\" data-ownh
 }
 this.$tooltips.html(tooltipBuf);
 };_proto.
-
 teamPreview=function teamPreview(){
 var newBGNum=0;
 for(var siden=0;siden<2||this.battle.gameType==='multi'&&siden<4;siden++){
@@ -852,17 +685,13 @@ var textBuf='';
 var buf='';
 var buf2='';
 this.$sprites[spriteIndex].empty();
-
 var ludicoloCount=0;
 var lombreCount=0;
 for(var i=0;i<side.pokemon.length;i++){
 var pokemon=side.pokemon[i];
-if(pokemon.speciesForme==='Xerneas-*'){
-pokemon.speciesForme='Xerneas-Neutral';
-}
+if(pokemon.speciesForme==='Xerneas-*'){pokemon.speciesForme='Xerneas-Neutral';}
 if(pokemon.speciesForme==='Ludicolo')ludicoloCount++;
 if(pokemon.speciesForme==='Lombre')lombreCount++;
-
 var spriteData=Dex.getSpriteData(pokemon,!!spriteIndex,{
 gen:this.gen,
 noScale:true,
@@ -884,17 +713,10 @@ var url=spriteData.url;
 buf+="<img src=\""+url+"\" width=\""+spriteData.w+"\" height=\""+spriteData.h+"\" style=\"position:absolute;top:"+Math.floor(y-spriteData.h/2)+"px;left:"+Math.floor(x-spriteData.w/2)+"px\" />";
 buf2+="<div style=\"position:absolute;top:"+(y+45)+"px;left:"+(x-40)+"px;width:80px;font-size:10px;text-align:center;color:#FFF;\">";
 var gender=pokemon.gender;
-if(gender==='M'||gender==='F'){
-buf2+="<img src=\""+Dex.fxPrefix+"gender-"+gender.toLowerCase()+".png\" alt=\""+gender+"\" width=\"7\" height=\"10\" class=\"pixelated\" style=\"margin-bottom:-1px\" /> ";
-}
-if(pokemon.level!==100){
-buf2+="<span style=\"text-shadow:#000 1px 1px 0,#000 1px -1px 0,#000 -1px 1px 0,#000 -1px -1px 0\"><small>L</small>"+pokemon.level+"</span>";
-}
-if(pokemon.item==='(mail)'){
-buf2+=" <img src=\""+Dex.resourcePrefix+"fx/mail.png\" width=\"8\" height=\"10\" alt=\"F\" style=\"margin-bottom:-1px\" />";
-}else if(pokemon.item){
-buf2+=" <img src=\""+Dex.resourcePrefix+"fx/item.png\" width=\"8\" height=\"10\" alt=\"F\" style=\"margin-bottom:-1px\" />";
-}
+if(gender==='M'||gender==='F'){buf2+="<img src=\""+Dex.fxPrefix+"gender-"+gender.toLowerCase()+".png\" alt=\""+gender+"\" width=\"7\" height=\"10\" class=\"pixelated\" style=\"margin-bottom:-1px\" /> ";}
+if(pokemon.level!==100){buf2+="<span style=\"text-shadow:#000 1px 1px 0,#000 1px -1px 0,#000 -1px 1px 0,#000 -1px -1px 0\"><small>L</small>"+pokemon.level+"</span>";}
+if(pokemon.item==='(mail)'){buf2+=" <img src=\""+Dex.resourcePrefix+"fx/mail.png\" width=\"8\" height=\"10\" alt=\"F\" style=\"margin-bottom:-1px\" />";
+}else if(pokemon.item){buf2+=" <img src=\""+Dex.resourcePrefix+"fx/item.png\" width=\"8\" height=\"10\" alt=\"F\" style=\"margin-bottom:-1px\" />";}
 buf2+='</div>';
 }
 side.totalPokemon=side.pokemon.length;
@@ -904,31 +726,20 @@ BattleLog.escapeHTML(side.name)+"'s team:</strong> <em style=\"color:#445566;dis
 );
 }
 this.$sprites[spriteIndex].html(buf+buf2);
-
 if(!newBGNum){
-if(ludicoloCount>=2){
-newBGNum=-3;
-}else if(ludicoloCount+lombreCount>=2){
-newBGNum=-2;
+if(ludicoloCount>=2){newBGNum=-3;}else
+if(ludicoloCount+lombreCount>=2){newBGNum=-2;}
 }
 }
-}
-if(newBGNum!==0){
-this.setBgm(newBGNum);
-}
+if(newBGNum!==0){this.setBgm(newBGNum);}
 this.wait(1000);
 this.updateSidebars();
 };_proto.
-
 showJoinButtons=function showJoinButtons(){
 if(!this.battle.joinButtons)return;
 if(this.battle.ended||this.battle.rated)return;
-if(!this.battle.p1.name){
-this.$battle.append('<div class="playbutton1"><button name="joinBattle">Join Battle</button></div>');
-}
-if(!this.battle.p2.name){
-this.$battle.append('<div class="playbutton2"><button name="joinBattle">Join Battle</button></div>');
-}
+if(!this.battle.p1.name){this.$battle.append('<div class="playbutton1"><button name="joinBattle">Join Battle</button></div>');}
+if(!this.battle.p2.name){this.$battle.append('<div class="playbutton2"><button name="joinBattle">Join Battle</button></div>');}
 };_proto.
 hideJoinButtons=function hideJoinButtons(){
 if(!this.battle.joinButtons)return;
@@ -942,34 +753,25 @@ pWeather[1]=pWeather[2];
 pWeather[2]=0;
 }
 if(this.battle.gen<7&&this.battle.hardcoreMode)return buf;
-if(pWeather[2]){
-return buf+" <small>("+pWeather[1]+" or "+pWeather[2]+" turns)</small>";
-}
-if(pWeather[1]){
-return buf+" <small>("+pWeather[1]+" turn"+(pWeather[1]===1?'':'s')+")</small>";
-}
+if(pWeather[2]){return buf+" <small>("+pWeather[1]+" or "+pWeather[2]+" turns)</small>";}
+if(pWeather[1]){return buf+" <small>("+pWeather[1]+" turn"+(pWeather[1]===1?'':'s')+")</small>";}
 return buf;
 };_proto.
 sideConditionLeft=function sideConditionLeft(cond,isFoe,all){
 if(!cond[2]&&!cond[3]&&!all)return'';
 var buf="<br />"+(isFoe&&!all?"Foe's ":"")+Dex.moves.get(cond[0]).name;
 if(this.battle.gen<7&&this.battle.hardcoreMode)return buf;
-
 if(!cond[2]&&!cond[3])return buf;
 if(!cond[2]&&cond[3]){
 cond[2]=cond[3];
 cond[3]=0;
 }
-if(!cond[3]){
-return buf+" <small>("+cond[2]+" turn"+(cond[2]===1?'':'s')+")</small>";
-}
+if(!cond[3]){return buf+" <small>("+cond[2]+" turn"+(cond[2]===1?'':'s')+")</small>";}
 return buf+" <small>("+cond[2]+" or "+cond[3]+" turns)</small>";
 };_proto.
 weatherLeft=function weatherLeft(){
 if(this.battle.gen<7&&this.battle.hardcoreMode)return'';
-
 var weatherhtml="";
-
 if(this.battle.weather){
 var weatherNameTable={
 sunnyday:'Sun',
@@ -979,62 +781,60 @@ primordialsea:'Heavy Rain',
 sandstorm:'Sandstorm',
 hail:'Hail',
 snowscape:'Snow',
-deltastream:'Strong Winds'
+deltastream:'Strong Winds',
+turbulentwinds:'Turbulent Winds'
 };
 weatherhtml=""+(weatherNameTable[this.battle.weather]||this.battle.weather);
-if(this.battle.weatherMinTimeLeft!==0){
-weatherhtml+=" <small>("+this.battle.weatherMinTimeLeft+" or "+this.battle.weatherTimeLeft+" turns)</small>";
-}else if(this.battle.weatherTimeLeft!==0){
-weatherhtml+=" <small>("+this.battle.weatherTimeLeft+" turn"+(this.battle.weatherTimeLeft===1?'':'s')+")</small>";
-}
+if(this.battle.weatherMinTimeLeft!==0){weatherhtml+=" <small>("+this.battle.weatherMinTimeLeft+" or "+this.battle.weatherTimeLeft+" turns)</small>";}else
+if(this.battle.weatherTimeLeft!==0){weatherhtml+=" <small>("+this.battle.weatherTimeLeft+" turn"+(this.battle.weatherTimeLeft===1?'':'s')+")</small>";}
 var nullifyWeather=this.battle.abilityActive(['Air Lock','Cloud Nine']);
 weatherhtml=""+(nullifyWeather?'<s>':'')+weatherhtml+(nullifyWeather?'</s>':'');
 }for(var _i20=0,_this$battle$pseudoWe2=
-
-this.battle.pseudoWeather;_i20<_this$battle$pseudoWe2.length;_i20++){var pseudoWeather=_this$battle$pseudoWe2[_i20];
-weatherhtml+=this.pseudoWeatherLeft(pseudoWeather);
-}
-
+this.battle.pseudoWeather;_i20<_this$battle$pseudoWe2.length;_i20++){var pseudoWeather=_this$battle$pseudoWe2[_i20];weatherhtml+=this.pseudoWeatherLeft(pseudoWeather);}
 return weatherhtml;
 };_proto.
 sideConditionsLeft=function sideConditionsLeft(side,all){
 var buf="";
-for(var id in side.sideConditions){
-buf+=this.sideConditionLeft(side.sideConditions[id],side.isFar,all);
-}
+for(var id in side.sideConditions){buf+=this.sideConditionLeft(side.sideConditions[id],side.isFar,all);}
 return buf;
 };_proto.
 upkeepWeather=function upkeepWeather(){
-var isIntense=['desolateland','primordialsea','deltastream'].includes(this.curWeather);
-this.$weather.animate({
-opacity:1.0
-},300).animate({
-opacity:isIntense?0.9:0.5
-},300);
+var isIntense=['desolateland','primordialsea','deltastream','turbulentwinds'].includes(this.curWeather);
+this.$weather.animate({opacity:1.0},300).
+animate({opacity:isIntense?0.9:0.5},300);
 };_proto.
 updateWeather=function updateWeather(instant){var _this3=this;
 if(!this.animating)return;
 var isIntense=false;
 var weather=this.battle.weather;
-if(this.battle.abilityActive(['Air Lock','Cloud Nine'])){
-weather='';
-}
-var terrain='';for(var _i22=0,_this$battle$pseudoWe4=
+if(this.battle.abilityActive(['Air Lock','Cloud Nine'])){weather='';}
+var terrain='';
+var terrainTurns=0;for(var _i22=0,_this$battle$pseudoWe4=
 this.battle.pseudoWeather;_i22<_this$battle$pseudoWe4.length;_i22++){var pseudoWeatherData=_this$battle$pseudoWe4[_i22];
 terrain=toID(pseudoWeatherData[0]);
+if(pseudoWeatherData[1])terrainTurns=pseudoWeatherData[1];
 }
-if(weather==='desolateland'||weather==='primordialsea'||weather==='deltastream'){
-isIntense=true;
-}
-
+if(weather==='desolateland'||weather==='primordialsea'||weather==='deltastream'||weather==='turbulentwinds'){isIntense=true;}
 var weatherhtml=this.weatherLeft();for(var _i24=0,_this$battle$sides8=
-this.battle.sides;_i24<_this$battle$sides8.length;_i24++){var side=_this$battle$sides8[_i24];
-weatherhtml+=this.sideConditionsLeft(side);
-}
+this.battle.sides;_i24<_this$battle$sides8.length;_i24++){var side=_this$battle$sides8[_i24];weatherhtml+=this.sideConditionsLeft(side);}
 if(weatherhtml)weatherhtml="<br />"+weatherhtml;
 
+var terrainNameTable={
+electricterrain:'Electric Terrain',
+grassyterrain:'Grassy Terrain',
+mistyterrain:'Misty Terrain',
+psychicterrain:'Psychic Terrain',
+toxicterrain:'Toxic Terrain'
+};
+var terrainhtml='';
+if(terrain){
+terrainhtml=""+(terrainNameTable[terrain]||terrain);
+if(terrainTurns){terrainhtml+=" <small>("+terrainTurns+" turn"+(terrainTurns===1?'':'s')+")</small>";}
+}
+if(terrainhtml)terrainhtml="<br />"+terrainhtml;
 if(instant){
 this.$weather.html('<em>'+weatherhtml+'</em>');
+this.$terrain.html('<em>'+terrainhtml+'</em>');
 if(this.curWeather===weather&&this.curTerrain===terrain)return;
 this.$terrain.attr('class',terrain?'weather '+terrain+'weather':'weather');
 this.curTerrain=terrain;
@@ -1043,26 +843,22 @@ this.$weather.css('opacity',isIntense||!weather?0.9:0.5);
 this.curWeather=weather;
 return;
 }
-
 if(weather!==this.curWeather){
-this.$weather.animate({
-opacity:0
-},this.curWeather?300:100,function(){
+this.$weather.animate({opacity:0},
+this.curWeather?300:100,function(){
 _this3.$weather.html('<em>'+weatherhtml+'</em>');
 _this3.$weather.attr('class',weather?'weather '+weather+'weather':'weather');
 _this3.$weather.animate({opacity:isIntense||!weather?0.9:0.5},300);
 });
 this.curWeather=weather;
-}else{
-this.$weather.html('<em>'+weatherhtml+'</em>');
-}
-
+}else{this.$weather.html('<em>'+weatherhtml+'</em>');}
 if(terrain!==this.curTerrain){
 this.$terrain.animate({
 top:360,
 opacity:0
 },this.curTerrain?400:1,function(){
 _this3.$terrain.attr('class',terrain?'weather '+terrain+'weather':'weather');
+_this3.$terrain.html('<em>'+terrainhtml+'</em>');
 _this3.$terrain.animate({top:0,opacity:1},400);
 });
 this.curTerrain=terrain;
@@ -1077,7 +873,6 @@ this.$turn.html("<div class=\"turn has-tooltip\" data-tooltip=\"field\" data-own
 };_proto.
 incrementTurn=function incrementTurn(){
 if(!this.animating)return;
-
 var turn=this.battle.turn;
 if(turn<=0)return;
 var $prevTurn=this.$turn.children();
@@ -1096,16 +891,13 @@ opacity:0.4
 $prevTurn.animate({
 opacity:0,
 left:60
-},500,function(){
-$prevTurn.remove();
-});
+},500,function(){$prevTurn.remove();});
 this.updateAcceleration();
 this.wait(500/this.acceleration);
 };_proto.
 updateAcceleration=function updateAcceleration(){
-if(this.battle.turnsSinceMoved>2){
-this.acceleration=(this.battle.messageFadeTime<150?2:1)*Math.min(this.battle.turnsSinceMoved-1,3);
-}else{
+if(this.battle.turnsSinceMoved>2){this.acceleration=(this.battle.messageFadeTime<150?2:1)*Math.min(this.battle.turnsSinceMoved-1,3);}else
+{
 this.acceleration=this.battle.messageFadeTime<150?2:1;
 if(this.battle.messageFadeTime<50)this.acceleration=3;
 }
@@ -1124,7 +916,6 @@ opacity:0
 if(sprite.$el)this.$sprites[+pokemon.side.isFar].append(sprite.$el);
 return sprite;
 };_proto.
-
 addSideCondition=function addSideCondition(siden,id,instant){
 if(!this.animating)return;
 var side=this.battle.sides[siden];
@@ -1138,18 +929,9 @@ x+=side.isFar?-140:140;
 y+=side.isFar?14:-20;
 }
 }
-
 switch(id){
 case'auroraveil':
-var auroraveil=new Sprite(BattleEffects.auroraveil,{
-display:'block',
-x:x,
-y:y,
-z:side.behind(-14),
-xscale:1,
-yscale:0,
-opacity:0.1
-},this);
+var auroraveil=new Sprite(BattleEffects.auroraveil,{display:'block',x:x,y:y,z:side.behind(-14),xscale:1,yscale:0,opacity:0.1},this);
 this.$spritesFront[spriteIndex].append(auroraveil.$el);
 this.sideConditions[siden][id]=[auroraveil];
 auroraveil.anim({
@@ -1161,15 +943,7 @@ time:instant?0:300
 });
 break;
 case'reflect':
-var reflect=new Sprite(BattleEffects.reflect,{
-display:'block',
-x:x,
-y:y,
-z:side.behind(-17),
-xscale:1,
-yscale:0,
-opacity:0.1
-},this);
+var reflect=new Sprite(BattleEffects.reflect,{display:'block',x:x,y:y,z:side.behind(-17),xscale:1,yscale:0,opacity:0.1},this);
 this.$spritesFront[spriteIndex].append(reflect.$el);
 this.sideConditions[siden][id]=[reflect];
 reflect.anim({
@@ -1181,15 +955,7 @@ time:instant?0:300
 });
 break;
 case'safeguard':
-var safeguard=new Sprite(BattleEffects.safeguard,{
-display:'block',
-x:x,
-y:y,
-z:side.behind(-20),
-xscale:1,
-yscale:0,
-opacity:0.1
-},this);
+var safeguard=new Sprite(BattleEffects.safeguard,{display:'block',x:x,y:y,z:side.behind(-20),xscale:1,yscale:0,opacity:0.1},this);
 this.$spritesFront[spriteIndex].append(safeguard.$el);
 this.sideConditions[siden][id]=[safeguard];
 safeguard.anim({
@@ -1201,15 +967,7 @@ time:instant?0:300
 });
 break;
 case'lightscreen':
-var lightscreen=new Sprite(BattleEffects.lightscreen,{
-display:'block',
-x:x,
-y:y,
-z:side.behind(-23),
-xscale:1,
-yscale:0,
-opacity:0.1
-},this);
+var lightscreen=new Sprite(BattleEffects.lightscreen,{display:'block',x:x,y:y,z:side.behind(-23),xscale:1,yscale:0,opacity:0.1},this);
 this.$spritesFront[spriteIndex].append(lightscreen.$el);
 this.sideConditions[siden][id]=[lightscreen];
 lightscreen.anim({
@@ -1221,15 +979,7 @@ time:instant?0:300
 });
 break;
 case'mist':
-var mist=new Sprite(BattleEffects.mist,{
-display:'block',
-x:x,
-y:y,
-z:side.behind(-27),
-xscale:1,
-yscale:0,
-opacity:0.1
-},this);
+var mist=new Sprite(BattleEffects.mist,{display:'block',x:x,y:y,z:side.behind(-27),xscale:1,yscale:0,opacity:0.1},this);
 this.$spritesFront[spriteIndex].append(mist.$el);
 this.sideConditions[siden][id]=[mist];
 mist.anim({
@@ -1241,42 +991,10 @@ time:instant?0:300
 });
 break;
 case'stealthrock':
-var rock1=new Sprite(BattleEffects.rock1,{
-display:'block',
-x:x+side.leftof(-40),
-y:y-10,
-z:side.z,
-opacity:0.5,
-scale:0.2
-},this);
-
-var rock2=new Sprite(BattleEffects.rock2,{
-display:'block',
-x:x+side.leftof(-20),
-y:y-40,
-z:side.z,
-opacity:0.5,
-scale:0.2
-},this);
-
-var rock3=new Sprite(BattleEffects.rock1,{
-display:'block',
-x:x+side.leftof(30),
-y:y-20,
-z:side.z,
-opacity:0.5,
-scale:0.2
-},this);
-
-var rock4=new Sprite(BattleEffects.rock2,{
-display:'block',
-x:x+side.leftof(10),
-y:y-30,
-z:side.z,
-opacity:0.5,
-scale:0.2
-},this);
-
+var rock1=new Sprite(BattleEffects.rock1,{display:'block',x:x+side.leftof(-40),y:y-10,z:side.z,opacity:0.5,scale:0.2},this);
+var rock2=new Sprite(BattleEffects.rock2,{display:'block',x:x+side.leftof(-20),y:y-40,z:side.z,opacity:0.5,scale:0.2},this);
+var rock3=new Sprite(BattleEffects.rock1,{display:'block',x:x+side.leftof(30),y:y-20,z:side.z,opacity:0.5,scale:0.2},this);
+var rock4=new Sprite(BattleEffects.rock2,{display:'block',x:x+side.leftof(10),y:y-30,z:side.z,opacity:0.5,scale:0.2},this);
 this.$spritesFront[spriteIndex].append(rock1.$el);
 this.$spritesFront[spriteIndex].append(rock2.$el);
 this.$spritesFront[spriteIndex].append(rock3.$el);
@@ -1284,31 +1002,9 @@ this.$spritesFront[spriteIndex].append(rock4.$el);
 this.sideConditions[siden][id]=[rock1,rock2,rock3,rock4];
 break;
 case'gmaxsteelsurge':
-var surge1=new Sprite(BattleEffects.greenmetal1,{
-display:'block',
-x:x+side.leftof(-30),
-y:y-20,
-z:side.z,
-opacity:0.5,
-scale:0.8
-},this);
-var surge2=new Sprite(BattleEffects.greenmetal2,{
-display:'block',
-x:x+side.leftof(35),
-y:y-15,
-z:side.z,
-opacity:0.5,
-scale:0.8
-},this);
-var surge3=new Sprite(BattleEffects.greenmetal1,{
-display:'block',
-x:x+side.leftof(50),
-y:y-10,
-z:side.z,
-opacity:0.5,
-scale:0.8
-},this);
-
+var surge1=new Sprite(BattleEffects.greenmetal1,{display:'block',x:x+side.leftof(-30),y:y-20,z:side.z,opacity:0.5,scale:0.8},this);
+var surge2=new Sprite(BattleEffects.greenmetal2,{display:'block',x:x+side.leftof(35),y:y-15,z:side.z,opacity:0.5,scale:0.8},this);
+var surge3=new Sprite(BattleEffects.greenmetal1,{display:'block',x:x+side.leftof(50),y:y-10,z:side.z,opacity:0.5,scale:0.8},this);
 this.$spritesFront[spriteIndex].append(surge1.$el);
 this.$spritesFront[spriteIndex].append(surge2.$el);
 this.$spritesFront[spriteIndex].append(surge3.$el);
@@ -1322,35 +1018,17 @@ this.sideConditions[siden]['spikes']=spikeArray;
 }
 var levels=this.battle.sides[siden].sideConditions['spikes'][1];
 if(spikeArray.length<1&&levels>=1){
-var spike1=new Sprite(BattleEffects.caltrop,{
-display:'block',
-x:x-25,
-y:y-40,
-z:side.z,
-scale:0.3
-},this);
+var spike1=new Sprite(BattleEffects.caltrop,{display:'block',x:x-25,y:y-40,z:side.z,scale:0.3},this);
 this.$spritesFront[spriteIndex].append(spike1.$el);
 spikeArray.push(spike1);
 }
 if(spikeArray.length<2&&levels>=2){
-var spike2=new Sprite(BattleEffects.caltrop,{
-display:'block',
-x:x+30,
-y:y-45,
-z:side.z,
-scale:0.3
-},this);
+var spike2=new Sprite(BattleEffects.caltrop,{display:'block',x:x+30,y:y-45,z:side.z,scale:0.3},this);
 this.$spritesFront[spriteIndex].append(spike2.$el);
 spikeArray.push(spike2);
 }
 if(spikeArray.length<3&&levels>=3){
-var spike3=new Sprite(BattleEffects.caltrop,{
-display:'block',
-x:x+50,
-y:y-40,
-z:side.z,
-scale:0.3
-},this);
+var spike3=new Sprite(BattleEffects.caltrop,{display:'block',x:x+50,y:y-40,z:side.z,scale:0.3},this);
 this.$spritesFront[spriteIndex].append(spike3.$el);
 spikeArray.push(spike3);
 }
@@ -1363,37 +1041,18 @@ this.sideConditions[siden]['toxicspikes']=tspikeArray;
 }
 var tspikeLevels=this.battle.sides[siden].sideConditions['toxicspikes'][1];
 if(tspikeArray.length<1&&tspikeLevels>=1){
-var tspike1=new Sprite(BattleEffects.poisoncaltrop,{
-display:'block',
-x:x+5,
-y:y-40,
-z:side.z,
-scale:0.3
-},this);
+var tspike1=new Sprite(BattleEffects.poisoncaltrop,{display:'block',x:x+5,y:y-40,z:side.z,scale:0.3},this);
 this.$spritesFront[spriteIndex].append(tspike1.$el);
 tspikeArray.push(tspike1);
 }
 if(tspikeArray.length<2&&tspikeLevels>=2){
-var tspike2=new Sprite(BattleEffects.poisoncaltrop,{
-display:'block',
-x:x-15,
-y:y-35,
-z:side.z,
-scale:0.3
-},this);
+var tspike2=new Sprite(BattleEffects.poisoncaltrop,{display:'block',x:x-15,y:y-35,z:side.z,scale:0.3},this);
 this.$spritesFront[spriteIndex].append(tspike2.$el);
 tspikeArray.push(tspike2);
 }
 break;
 case'stickyweb':
-var web=new Sprite(BattleEffects.web,{
-display:'block',
-x:x+15,
-y:y-35,
-z:side.z,
-opacity:0.4,
-scale:0.7
-},this);
+var web=new Sprite(BattleEffects.web,{display:'block',x:x+15,y:y-35,z:side.z,opacity:0.4,scale:0.7},this);
 this.$spritesFront[spriteIndex].append(web.$el);
 this.sideConditions[siden][id]=[web];
 break;
@@ -1406,14 +1065,9 @@ this.sideConditions[siden][id];_i26<_this$sideConditions$2.length;_i26++){var sp
 delete this.sideConditions[siden][id];
 }
 };_proto.
-resetSideConditions=function resetSideConditions(){
-for(var siden=0;siden<this.sideConditions.length;siden++){
-for(var id in this.sideConditions[siden]){
-this.removeSideCondition(siden,id);
-}
-for(var _id in this.battle.sides[siden].sideConditions){
-this.addSideCondition(siden,_id,true);
-}
+resetSideConditions=function resetSideConditions(){for(var siden=0;siden<this.sideConditions.length;siden++){
+for(var id in this.sideConditions[siden]){this.removeSideCondition(siden,id);}
+for(var _id in this.battle.sides[siden].sideConditions){this.addSideCondition(siden,_id,true);}
 }
 };_proto.
 
@@ -1432,9 +1086,7 @@ display:'block',
 opacity:0,
 top:pokemon.sprite.top-5,
 left:pokemon.sprite.left-75
-}).animate({
-opacity:1
-},1);
+}).animate({opacity:1},1);
 $effect.animate({
 opacity:0,
 top:pokemon.sprite.top-65
@@ -1452,12 +1104,8 @@ display:'block',
 opacity:0,
 top:pokemon.sprite.top+15,
 left:pokemon.sprite.left-75
-}).animate({
-opacity:1
-},1);
-$effect.delay(800).animate({
-opacity:0
-},400,'swing');
+}).animate({opacity:1},1);
+$effect.delay(800).animate({opacity:0},400,'swing');
 this.wait(100);
 pokemon.sprite.updateStatbar(pokemon);
 if(this.acceleration<3)this.waitFor($effect);
@@ -1466,21 +1114,14 @@ damageAnim=function damageAnim(pokemon,damage){
 if(!this.animating)return;
 if(!pokemon.sprite.$statbar)return;
 pokemon.sprite.updateHPText(pokemon);
-
 var $hp=pokemon.sprite.$statbar.find('div.hp');
 var w=pokemon.hpWidth(150);
 var hpcolor=BattleScene.getHPColor(pokemon);
 var callback;
-if(hpcolor==='y'){
-callback=function(){$hp.addClass('hp-yellow');};
-}
-if(hpcolor==='r'){
-callback=function(){$hp.addClass('hp-yellow hp-red');};
-}
-
+if(hpcolor==='y'){callback=function(){$hp.addClass('hp-yellow');};}
+if(hpcolor==='r'){callback=function(){$hp.addClass('hp-yellow hp-red');};}
 if(damage==='100%'&&pokemon.hp>0)damage='99%';
 this.resultAnim(pokemon,this.battle.hardcoreMode?'Damage':"&minus;"+damage,'bad');
-
 $hp.animate({
 width:w,
 'border-right-width':w?1:0
@@ -1490,83 +1131,36 @@ healAnim=function healAnim(pokemon,damage){
 if(!this.animating)return;
 if(!pokemon.sprite.$statbar)return;
 pokemon.sprite.updateHPText(pokemon);
-
 var $hp=pokemon.sprite.$statbar.find('div.hp');
 var w=pokemon.hpWidth(150);
 var hpcolor=BattleScene.getHPColor(pokemon);
 var callback;
-if(hpcolor==='g'){
-callback=function(){$hp.removeClass('hp-yellow hp-red');};
-}
-if(hpcolor==='y'){
-callback=function(){$hp.removeClass('hp-red');};
-}
-
+if(hpcolor==='g'){callback=function(){$hp.removeClass('hp-yellow hp-red');};}
+if(hpcolor==='y'){callback=function(){$hp.removeClass('hp-red');};}
 this.resultAnim(pokemon,this.battle.hardcoreMode?'Heal':"+"+damage,'good');
-
 $hp.animate({
 width:w,
 'border-right-width':w?1:0
 },350,callback);
 };_proto.
 
-
-
-
-removeEffect=function removeEffect(pokemon,id,instant){
-return pokemon.sprite.removeEffect(id,instant);
-};_proto.
-addEffect=function addEffect(pokemon,id,instant){
-return pokemon.sprite.addEffect(id,instant);
-};_proto.
-animSummon=function animSummon(pokemon,slot,instant){
-return pokemon.sprite.animSummon(pokemon,slot,instant);
-};_proto.
-animUnsummon=function animUnsummon(pokemon,instant){
-return pokemon.sprite.animUnsummon(pokemon,instant);
-};_proto.
-animDragIn=function animDragIn(pokemon,slot){
-return pokemon.sprite.animDragIn(pokemon,slot);
-};_proto.
-animDragOut=function animDragOut(pokemon){
-return pokemon.sprite.animDragOut(pokemon);
-};_proto.
-resetStatbar=function resetStatbar(pokemon,startHidden){
-return pokemon.sprite.resetStatbar(pokemon,startHidden);
-};_proto.
-updateStatbar=function updateStatbar(pokemon,updatePrevhp,updateHp){
-return pokemon.sprite.updateStatbar(pokemon,updatePrevhp,updateHp);
-};_proto.
-updateStatbarIfExists=function updateStatbarIfExists(pokemon,updatePrevhp,updateHp){
-return pokemon.sprite.updateStatbarIfExists(pokemon,updatePrevhp,updateHp);
-};_proto.
-animTransform=function animTransform(pokemon,useSpeciesAnim,isPermanent){
-return pokemon.sprite.animTransform(pokemon,useSpeciesAnim,isPermanent);
-};_proto.
-clearEffects=function clearEffects(pokemon){
-return pokemon.sprite.clearEffects();
-};_proto.
-removeTransform=function removeTransform(pokemon){
-return pokemon.sprite.removeTransform();
-};_proto.
-animFaint=function animFaint(pokemon){
-return pokemon.sprite.animFaint(pokemon);
-};_proto.
-animReset=function animReset(pokemon){
-return pokemon.sprite.animReset();
-};_proto.
-anim=function anim(pokemon,end,transition){
-return pokemon.sprite.anim(end,transition);
-};_proto.
-beforeMove=function beforeMove(pokemon){
-return pokemon.sprite.beforeMove();
-};_proto.
-afterMove=function afterMove(pokemon){
-return pokemon.sprite.afterMove();
-};_proto.
-
-
-
+removeEffect=function removeEffect(pokemon,id,instant){return pokemon.sprite.removeEffect(id,instant);};_proto.
+addEffect=function addEffect(pokemon,id,instant){return pokemon.sprite.addEffect(id,instant);};_proto.
+animSummon=function animSummon(pokemon,slot,instant){return pokemon.sprite.animSummon(pokemon,slot,instant);};_proto.
+animUnsummon=function animUnsummon(pokemon,instant){return pokemon.sprite.animUnsummon(pokemon,instant);};_proto.
+animDragIn=function animDragIn(pokemon,slot){return pokemon.sprite.animDragIn(pokemon,slot);};_proto.
+animDragOut=function animDragOut(pokemon){return pokemon.sprite.animDragOut(pokemon);};_proto.
+resetStatbar=function resetStatbar(pokemon,startHidden){return pokemon.sprite.resetStatbar(pokemon,startHidden);};_proto.
+updateStatbar=function updateStatbar(pokemon,updatePrevhp,updateHp){return pokemon.sprite.updateStatbar(pokemon,updatePrevhp,updateHp);};_proto.
+updateStatbarIfExists=function updateStatbarIfExists(pokemon,updatePrevhp,updateHp){return pokemon.sprite.updateStatbarIfExists(pokemon,updatePrevhp,updateHp);};_proto.
+animTransform=function animTransform(pokemon,useSpeciesAnim,isPermanent){return pokemon.sprite.animTransform(pokemon,useSpeciesAnim,isPermanent);};_proto.
+clearEffects=function clearEffects(pokemon){return pokemon.sprite.clearEffects();};_proto.
+removeTransform=function removeTransform(pokemon){return pokemon.sprite.removeTransform();};_proto.
+animFaint=function animFaint(pokemon){return pokemon.sprite.animFaint(pokemon);};_proto.
+animReset=function animReset(pokemon){return pokemon.sprite.animReset();};_proto.
+anim=function anim(pokemon,end,transition){return pokemon.sprite.anim(end,transition);};_proto.
+beforeMove=function beforeMove(pokemon){return pokemon.sprite.beforeMove();};_proto.
+afterMove=function afterMove(pokemon){return pokemon.sprite.afterMove();};_proto.
 
 setFrameHTML=function setFrameHTML(html){
 this.customControls=true;
@@ -1577,17 +1171,12 @@ this.customControls=true;
 var $controls=this.$frame.parent().children('.battle-controls');
 $controls.html(html);
 };_proto.
-
 preloadImage=function preloadImage(url){var _this4=this;
 var token=url.replace(/\.(gif|png)$/,'').replace(/\//g,'-');
-if(this.preloadCache[token]){
-return;
-}
+if(this.preloadCache[token]){return;}
 this.preloadNeeded++;
 this.preloadCache[token]=new Image();
-this.preloadCache[token].onload=function(){
-_this4.preloadDone++;
-};
+this.preloadCache[token].onload=function(){_this4.preloadDone++;};
 this.preloadCache[token].src=url;
 };_proto.
 preloadEffects=function preloadEffects(){
@@ -1599,74 +1188,51 @@ if(url)this.preloadImage(url);
 this.preloadImage(Dex.resourcePrefix+'sprites/ani/substitute.gif');
 this.preloadImage(Dex.resourcePrefix+'sprites/ani-back/substitute.gif');
 };_proto.
-rollBgm=function rollBgm(){
-this.setBgm(1+this.numericId%15);
-};_proto.
+rollBgm=function rollBgm(){this.setBgm(1+this.numericId%15);};_proto.
 setBgm=function setBgm(bgmNum){
 if(this.bgmNum===bgmNum)return;
 this.bgmNum=bgmNum;
-
 switch(bgmNum){
-case-1:
-this.bgm=BattleSound.loadBgm('audio/bw2-homika-dogars.mp3',1661,68131,this.bgm);
+case-1:this.bgm=BattleSound.loadBgm('audio/bw2-homika-dogars.mp3',1661,68131,this.bgm);
 break;
-case-2:
-this.bgm=BattleSound.loadBgm('audio/xd-miror-b.mp3',9000,57815,this.bgm);
+case-2:this.bgm=BattleSound.loadBgm('audio/xd-miror-b.mp3',9000,57815,this.bgm);
 break;
-case-3:
-this.bgm=BattleSound.loadBgm('audio/colosseum-miror-b.mp3',896,47462,this.bgm);
+case-3:this.bgm=BattleSound.loadBgm('audio/colosseum-miror-b.mp3',896,47462,this.bgm);
 break;
-case 1:
-this.bgm=BattleSound.loadBgm('audio/dpp-trainer.mp3',13440,96959,this.bgm);
+case 1:this.bgm=BattleSound.loadBgm('audio/dpp-trainer.mp3',13440,96959,this.bgm);
 break;
-case 2:
-this.bgm=BattleSound.loadBgm('audio/dpp-rival.mp3',13888,66352,this.bgm);
+case 2:this.bgm=BattleSound.loadBgm('audio/dpp-rival.mp3',13888,66352,this.bgm);
 break;
-case 3:
-this.bgm=BattleSound.loadBgm('audio/hgss-johto-trainer.mp3',23731,125086,this.bgm);
+case 3:this.bgm=BattleSound.loadBgm('audio/hgss-johto-trainer.mp3',23731,125086,this.bgm);
 break;
-case 4:
-this.bgm=BattleSound.loadBgm('audio/hgss-kanto-trainer.mp3',13003,94656,this.bgm);
+case 4:this.bgm=BattleSound.loadBgm('audio/hgss-kanto-trainer.mp3',13003,94656,this.bgm);
 break;
-case 5:
-this.bgm=BattleSound.loadBgm('audio/bw-trainer.mp3',14629,110109,this.bgm);
+case 5:this.bgm=BattleSound.loadBgm('audio/bw-trainer.mp3',14629,110109,this.bgm);
 break;
-case 6:
-this.bgm=BattleSound.loadBgm('audio/bw-rival.mp3',19180,57373,this.bgm);
+case 6:this.bgm=BattleSound.loadBgm('audio/bw-rival.mp3',19180,57373,this.bgm);
 break;
-case 7:
-this.bgm=BattleSound.loadBgm('audio/bw-subway-trainer.mp3',15503,110984,this.bgm);
+case 7:this.bgm=BattleSound.loadBgm('audio/bw-subway-trainer.mp3',15503,110984,this.bgm);
 break;
-case 8:
-this.bgm=BattleSound.loadBgm('audio/bw2-kanto-gym-leader.mp3',14626,58986,this.bgm);
+case 8:this.bgm=BattleSound.loadBgm('audio/bw2-kanto-gym-leader.mp3',14626,58986,this.bgm);
 break;
-case 9:
-this.bgm=BattleSound.loadBgm('audio/bw2-rival.mp3',7152,68708,this.bgm);
+case 9:this.bgm=BattleSound.loadBgm('audio/bw2-rival.mp3',7152,68708,this.bgm);
 break;
-case 10:
-this.bgm=BattleSound.loadBgm('audio/xy-trainer.mp3',7802,82469,this.bgm);
+case 10:this.bgm=BattleSound.loadBgm('audio/xy-trainer.mp3',7802,82469,this.bgm);
 break;
-case 11:
-this.bgm=BattleSound.loadBgm('audio/xy-rival.mp3',7802,58634,this.bgm);
+case 11:this.bgm=BattleSound.loadBgm('audio/xy-rival.mp3',7802,58634,this.bgm);
 break;
-case 12:
-this.bgm=BattleSound.loadBgm('audio/oras-trainer.mp3',13579,91548,this.bgm);
+case 12:this.bgm=BattleSound.loadBgm('audio/oras-trainer.mp3',13579,91548,this.bgm);
 break;
-case 13:
-this.bgm=BattleSound.loadBgm('audio/oras-rival.mp3',14303,69149,this.bgm);
+case 13:this.bgm=BattleSound.loadBgm('audio/oras-rival.mp3',14303,69149,this.bgm);
 break;
-case 14:
-this.bgm=BattleSound.loadBgm('audio/sm-trainer.mp3',8323,89230,this.bgm);
+case 14:this.bgm=BattleSound.loadBgm('audio/sm-trainer.mp3',8323,89230,this.bgm);
 break;
-case-101:
-this.bgm=BattleSound.loadBgm('audio/spl-elite4.mp3',3962,152509,this.bgm);
+case-101:this.bgm=BattleSound.loadBgm('audio/spl-elite4.mp3',3962,152509,this.bgm);
 break;
 case 15:
-default:
-this.bgm=BattleSound.loadBgm('audio/sm-rival.mp3',11389,62158,this.bgm);
+default:this.bgm=BattleSound.loadBgm('audio/sm-rival.mp3',11389,62158,this.bgm);
 break;
 }
-
 this.updateBgm();
 };_proto.
 updateBgm=function updateBgm(){
@@ -1679,19 +1245,13 @@ updateBgm=function updateBgm(){
 
 
 
-var nowPlaying=
-this.battle.turn>=0&&!this.battle.ended&&!this.battle.paused;
-
+var nowPlaying=this.battle.turn>=0&&!this.battle.ended&&!this.battle.paused;
 if(nowPlaying){
 if(!this.bgm)this.rollBgm();
 this.bgm.resume();
-}else if(this.bgm){
-this.bgm.pause();
-}
+}else if(this.bgm){this.bgm.pause();}
 };_proto.
-resetBgm=function resetBgm(){
-if(this.bgm)this.bgm.stop();
-};_proto.
+resetBgm=function resetBgm(){if(this.bgm)this.bgm.stop();};_proto.
 destroy=function destroy(){
 this.log.destroy();
 if(this.$frame){
@@ -1737,8 +1297,6 @@ return'r';
 
 
 
-
-
 Sprite=function(){
 
 
@@ -1751,8 +1309,7 @@ this.scene=scene;
 var sp=null;
 if(spriteData){
 sp=spriteData;
-var rawHTML=sp.rawHTML||"<img src=\""+
-sp.url+"\" style=\"display:none;position:absolute\""+(sp.pixelated?' class="pixelated"':'')+" />";
+var rawHTML=sp.rawHTML||"<img src=\""+sp.url+"\" style=\"display:none;position:absolute\""+(sp.pixelated?' class="pixelated"':'')+" />";
 this.$el=$(rawHTML);
 }else{
 sp={
@@ -1762,18 +1319,15 @@ url:''
 };
 }
 this.sp=sp;
-
 this.x=pos.x;
 this.y=pos.y;
 this.z=pos.z;
 if(pos.opacity!==0&&spriteData)this.$el.css(scene.pos(pos,sp));
-
 if(!spriteData){
 this.delay=function(){return this;};
 this.anim=function(){return this;};
 }
 }var _proto2=Sprite.prototype;_proto2.
-
 destroy=function destroy(){
 if(this.$el)this.$el.remove();
 this.$el=null;
@@ -1938,11 +1492,6 @@ PokemonSprite=function(_Sprite2){
 
 
 
-
-
-
-
-
 function PokemonSprite(spriteData,pos,scene,isFrontSprite){var _this5;
 _this5=_Sprite2.call(this,spriteData,pos,scene)||this;_this5.forme='';_this5.cryurl=undefined;_this5.subsp=null;_this5.$sub=null;_this5.isSubActive=false;_this5.$statbar=null;_this5.isFrontSprite=void 0;_this5.isMissedPokemon=false;_this5.oldsp=null;_this5.statbarLeft=0;_this5.statbarTop=0;_this5.left=0;_this5.top=0;_this5.effects={};
 _this5.cryurl=_this5.sp.cryurl;
@@ -1957,7 +1506,6 @@ if(this.$sub)this.$sub.remove();
 this.$sub=null;
 this.scene=null;
 };_proto3.
-
 delay=function delay(time){
 this.$el.delay(time);
 if(this.$sub)this.$sub.delay(time);
@@ -1978,19 +1526,10 @@ $el.animate(this.scene.posT(end,sp,transition,this),end.time);
 return this;
 };_proto3.
 
-behindx=function behindx(offset){
-return this.x+(this.isFrontSprite?1:-1)*offset;
-};_proto3.
-behindy=function behindy(offset){
-return this.y+(this.isFrontSprite?-1:1)*offset;
-};_proto3.
-leftof=function leftof(offset){
-return this.x+(this.isFrontSprite?1:-1)*offset;
-};_proto3.
-behind=function behind(offset){
-return this.z+(this.isFrontSprite?1:-1)*offset;
-};_proto3.
-
+behindx=function behindx(offset){return this.x+(this.isFrontSprite?1:-1)*offset;};_proto3.
+behindy=function behindy(offset){return this.y+(this.isFrontSprite?-1:1)*offset;};_proto3.
+leftof=function leftof(offset){return this.x+(this.isFrontSprite?1:-1)*offset;};_proto3.
+behind=function behind(offset){return this.z+(this.isFrontSprite?1:-1)*offset;};_proto3.
 removeTransform=function removeTransform(){
 if(!this.scene.animating)return;
 if(!this.oldsp)return;
@@ -1998,7 +1537,6 @@ var sp=this.oldsp;
 this.cryurl=sp.cryurl;
 this.sp=sp;
 this.oldsp=null;
-
 var $el=this.isSubActive?this.$sub:this.$el;
 $el.attr('src',sp.url);
 $el.css(this.scene.pos({
@@ -2061,7 +1599,6 @@ y:this.y-50,
 z:this.z,
 opacity:0
 },this.subsp),500);
-
 this.$sub=null;
 this.anim({time:500});
 if(this.scene.animating)this.scene.waitFor(this.$el);
@@ -2077,16 +1614,9 @@ y:this.y,
 z:this.z,
 opacity:0.5
 },this.subsp),300);for(var _i28=0,_this$scene$battle$si2=
-this.scene.battle.sides;_i28<_this$scene$battle$si2.length;_i28++){var side=_this$scene$battle$si2[_i28];for(var _i30=0,_side$active4=
-side.active;_i30<_side$active4.length;_i30++){var active=_side$active4[_i30];
-if(active&&active.sprite!==this){
-active.sprite.delay(300);
-}
-}
-}
+this.scene.battle.sides;_i28<_this$scene$battle$si2.length;_i28++){var side=_this$scene$battle$si2[_i28];for(var _i30=0,_side$active4=side.active;_i30<_side$active4.length;_i30++){var active=_side$active4[_i30];if(active&&active.sprite!==this){active.sprite.delay(300);}}}
 this.scene.wait(300);
 this.scene.waitFor(this.$el);
-
 return true;
 };_proto3.
 afterMove=function afterMove(){var _this6=this;
@@ -2109,21 +1639,16 @@ return false;
 removeSub=function removeSub(){
 if(!this.$sub)return;
 this.isSubActive=false;
-if(!this.scene.animating){
-this.$sub.remove();
-}else{
+if(!this.scene.animating){this.$sub.remove();}else
+{
 var $sub=this.$sub;
-$sub.animate({
-opacity:0
-},function(){
-$sub.remove();
-});
+$sub.animate({opacity:0},
+function(){$sub.remove();});
 }
 this.$sub=null;
 };_proto3.
 reset=function reset(pokemon){
 this.clearEffects();
-
 if(pokemon.volatiles.formechange||pokemon.volatiles.dynamax||pokemon.volatiles.terastallize){
 if(!this.oldsp)this.oldsp=this.sp;
 this.sp=Dex.getSpriteData(pokemon,this.isFrontSprite,{
@@ -2140,18 +1665,12 @@ this.oldsp=null;
 
 
 
-
-
-
-
-
 if(this.$el){
 this.$el.stop(true,false);
 this.$el.remove();
 var $newEl=$("<img src=\""+this.sp.url+"\" style=\"display:none;position:absolute\""+(this.sp.pixelated?' class="pixelated"':'')+" />");
 this.$el=$newEl;
 }
-
 if(!pokemon.isActive()){
 if(this.$statbar){
 this.$statbar.remove();
@@ -2159,7 +1678,6 @@ this.$statbar=null;
 }
 return;
 }
-
 if(this.$el)this.scene.$sprites[+this.isFrontSprite].append(this.$el);
 this.recalculatePos(pokemon.slot);
 this.resetStatbar(pokemon);
@@ -2169,7 +1687,6 @@ x:this.x,
 y:this.y,
 z:this.z
 },this.sp));
-
 for(var id in pokemon.volatiles)this.addEffect(id,true);
 for(var _id2 in pokemon.turnstatuses)this.addEffect(_id2,true);
 for(var _id3 in pokemon.movestatuses)this.addEffect(_id3,true);
@@ -2220,11 +1737,8 @@ case 0:
 this.x=0;
 break;
 case 1:
-if(this.sp.pixelated){
-this.x=(slot*-100+18)*(this.isFrontSprite?1:-1);
-}else{
-this.x=(slot*-75+18)*(this.isFrontSprite?1:-1);
-}
+if(this.sp.pixelated){this.x=(slot*-100+18)*(this.isFrontSprite?1:-1);}else
+{this.x=(slot*-75+18)*(this.isFrontSprite?1:-1);}
 break;
 case 2:
 this.x=(slot*-70+20)*(this.isFrontSprite?1:-1);
@@ -2236,14 +1750,10 @@ if(this.isFrontSprite&&!moreActive&&this.sp.pixelated)statbarOffset=15;
 if(!this.isFrontSprite)statbarOffset=-7*slot;
 if(this.isFrontSprite&&moreActive===2)statbarOffset=14*slot-10;
 }
-if(this.scene.gen<=2){
-statbarOffset+=this.isFrontSprite?20:1;
-}else if(this.scene.gen<=3){
-statbarOffset+=this.isFrontSprite?30:5;
-}else if(this.scene.gen!==5){
-statbarOffset+=this.isFrontSprite?30:20;
-}
-
+if(this.scene.gen<=2){statbarOffset+=this.isFrontSprite?20:1;
+}else
+if(this.scene.gen<=3){statbarOffset+=this.isFrontSprite?30:5;}else
+if(this.scene.gen!==5){statbarOffset+=this.isFrontSprite?30:20;}
 var pos=this.scene.pos({
 x:this.x,
 y:this.y,
@@ -2253,27 +1763,21 @@ w:0,
 h:96
 });
 pos.top+=40;
-
 this.left=pos.left;
 this.top=pos.top;
 this.statbarLeft=pos.left-80;
 this.statbarTop=pos.top-73-statbarOffset;
 if(this.statbarTop<-4)this.statbarTop=-4;
-
 if(moreActive){
 
-if(!!slot===this.isFrontSprite){
-this.$el.prependTo(this.$el.parent());
-}else{
-this.$el.appendTo(this.$el.parent());
-}
+if(!!slot===this.isFrontSprite){this.$el.prependTo(this.$el.parent());}else
+{this.$el.appendTo(this.$el.parent());}
 }
 };_proto3.
 animSummon=function animSummon(pokemon,slot,instant){
 if(!this.scene.animating)return;
 this.scene.$sprites[+this.isFrontSprite].append(this.$el);
 this.recalculatePos(slot);
-
 
 if(instant){
 this.$el.css('display','block');
@@ -2282,9 +1786,7 @@ this.resetStatbar(pokemon);
 if(pokemon.hasVolatile('substitute'))this.animSub(true);
 return;
 }
-if(this.cryurl){
-BattleSound.playEffect(this.cryurl);
-}
+if(this.cryurl){BattleSound.playEffect(this.cryurl);}
 this.$el.css(this.scene.pos({
 display:'block',
 x:this.x,
@@ -2328,7 +1830,6 @@ time:300/this.scene.acceleration
 }
 if(this.sp.shiny&&this.scene.acceleration<2)BattleOtherAnims.shiny.anim(this.scene,[this]);
 this.scene.waitFor(this.$el);
-
 if(pokemon.hasVolatile('substitute')){
 this.animSub(true,true);
 this.$sub.css(this.scene.pos({
@@ -2343,7 +1844,6 @@ z:this.behind(30),
 opacity:0.3
 },this.sp),300);
 }
-
 this.resetStatbar(pokemon,true);
 this.scene.updateSidebar(pokemon.side);
 this.$statbar.css({
@@ -2356,14 +1856,12 @@ this.$statbar.delay(300/this.scene.acceleration).animate({
 top:this.statbarTop,
 opacity:1
 },400/this.scene.acceleration);
-
 this.dogarsCheck(pokemon);
 };_proto3.
 animDragIn=function animDragIn(pokemon,slot){
 if(!this.scene.animating)return;
 this.scene.$sprites[+this.isFrontSprite].append(this.$el);
 this.recalculatePos(slot);
-
 
 this.$el.css(this.scene.pos({
 display:'block',
@@ -2381,7 +1879,6 @@ time:400
 if(!!this.scene.animating&&this.sp.shiny)BattleOtherAnims.shiny.anim(this.scene,[this]);
 this.scene.waitFor(this.$el);
 this.scene.timeOffset=700;
-
 this.resetStatbar(pokemon,true);
 this.scene.updateSidebar(pokemon.side);
 this.$statbar.css({
@@ -2394,7 +1891,6 @@ this.$statbar.delay(300).animate({
 left:this.statbarLeft,
 opacity:1
 },400);
-
 this.dogarsCheck(pokemon);
 };_proto3.
 animDragOut=function animDragOut(pokemon){
@@ -2408,9 +1904,7 @@ y:this.y,
 z:this.z,
 opacity:0,
 time:400
-},this.subsp),function(){
-$sub.remove();
-});
+},this.subsp),function(){$sub.remove();});
 this.$sub=null;
 }
 this.anim({
@@ -2420,7 +1914,6 @@ z:this.z,
 opacity:0,
 time:400
 },'accel');
-
 this.updateStatbar(pokemon,true);
 var $statbar=this.$statbar;
 if($statbar){
@@ -2428,9 +1921,7 @@ this.$statbar=null;
 $statbar.animate({
 left:this.statbarLeft-(this.isFrontSprite?-100:100),
 opacity:0
-},300/this.scene.acceleration,function(){
-$statbar.remove();
-});
+},300/this.scene.acceleration,function(){$statbar.remove();});
 }
 };_proto3.
 animUnsummon=function animUnsummon(pokemon,instant){
@@ -2477,17 +1968,12 @@ z:this.behind(50),
 time:700/this.scene.acceleration
 },'ballistic2');
 if(this.scene.acceleration<3)this.scene.wait(600/this.scene.acceleration);
-
 this.updateStatbar(pokemon,true);
 var $statbar=this.$statbar;
 if($statbar){
 this.$statbar=null;
-$statbar.animate({
-left:this.statbarLeft+(this.isFrontSprite?50:-50),
-opacity:0
-},300/this.scene.acceleration,function(){
-$statbar.remove();
-});
+$statbar.animate({left:this.statbarLeft+(this.isFrontSprite?50:-50),opacity:0},
+300/this.scene.acceleration,function(){$statbar.remove();});
 }
 };_proto3.
 animFaint=function animFaint(pokemon){var _this7=this;
@@ -2502,26 +1988,18 @@ return;
 }
 this.updateStatbar(pokemon,false,true);
 this.scene.updateSidebar(pokemon.side);
-if(this.cryurl){
-BattleSound.playEffect(this.cryurl);
-}
+if(this.cryurl){BattleSound.playEffect(this.cryurl);}
 this.anim({
 y:this.y-80,
 opacity:0
 },'accel');
 this.scene.waitFor(this.$el);
-this.$el.promise().done(function(){
-_this7.$el.remove();
-});
-
+this.$el.promise().done(function(){_this7.$el.remove();});
 var $statbar=this.$statbar;
 if($statbar){
 this.$statbar=null;
-$statbar.animate({
-opacity:0
-},300,function(){
-$statbar.remove();
-});
+$statbar.animate({opacity:0},
+300,function(){$statbar.remove();});
 }
 };_proto3.
 
@@ -2544,15 +2022,10 @@ gen:this.scene.gen,
 mod:this.scene.mod,
 dynamax:false
 });
-}else{
-this.oldsp=null;
-}
-}else if(!this.oldsp){
-this.oldsp=oldsp;
-}
+}else{this.oldsp=null;}
+}else if(!this.oldsp){this.oldsp=oldsp;}
 this.sp=sp;
 this.cryurl=sp.cryurl;
-
 if(!this.scene.animating)return;
 var speciesid=toID(pokemon.getSpeciesForme());
 var doCry=false;
@@ -2568,18 +2041,12 @@ doCry=true;
 }else if(speciesid==='necrozmaultra'){
 BattleOtherAnims.ultraburst.anim(scene,[this]);
 doCry=true;
-}else if(speciesid==='zygardecomplete'){
-BattleOtherAnims.powerconstruct.anim(scene,[this]);
-}else if(speciesid==='wishiwashischool'||speciesid==='greninjaash'){
-BattleOtherAnims.schoolingin.anim(scene,[this]);
-}else if(speciesid==='wishiwashi'){
-BattleOtherAnims.schoolingout.anim(scene,[this]);
-}else if(speciesid==='mimikyubusted'||speciesid==='mimikyubustedtotem'||
-speciesid==='aegislash'||speciesid==='aegislashblade'){
-
-}else if(speciesid==='palafinhero'){
-skipAnim=true;
-}else{
+}else if(speciesid==='zygardecomplete'){BattleOtherAnims.powerconstruct.anim(scene,[this]);}else
+if(speciesid==='wishiwashischool'||speciesid==='greninjaash'){BattleOtherAnims.schoolingin.anim(scene,[this]);}else
+if(speciesid==='wishiwashi'){BattleOtherAnims.schoolingout.anim(scene,[this]);}else
+if(speciesid==='mimikyubusted'||speciesid==='mimikyubustedtotem'||speciesid==='aegislash'||speciesid==='aegislashblade'){}else
+if(speciesid==='palafinhero'){skipAnim=true;}else
+{
 BattleOtherAnims.megaevo.anim(scene,[this]);
 doCry=true;
 }
@@ -2607,9 +2074,7 @@ yscale:0,
 xscale:0,
 opacity:0.3
 },oldsp),300,function(){
-if(_this8.cryurl&&doCry){
-BattleSound.playEffect(_this8.cryurl);
-}
+if(_this8.cryurl&&doCry){BattleSound.playEffect(_this8.cryurl);}
 _this8.$el.replaceWith($newEl);
 _this8.$el=$newEl;
 _this8.$el.animate(scene.pos({
@@ -2621,15 +2086,10 @@ opacity:1
 });
 this.scene.wait(500);
 }
-
 this.scene.updateSidebar(pokemon.side);
-if(isPermanent){
-this.resetStatbar(pokemon);
-}else{
-this.updateStatbar(pokemon);
-}
+if(isPermanent){this.resetStatbar(pokemon);}else
+{this.updateStatbar(pokemon);}
 };_proto3.
-
 pokeEffect=function pokeEffect(id){
 if(id==='protect'||id==='magiccoat'){
 this.effects[id][0].anim({
@@ -2648,9 +2108,8 @@ this.pokeEffect(id);
 return;
 }
 var spriten=+this.isFrontSprite;
-if(id==='substitute'||id==='shedtail'){
-this.animSub(instant);
-}else if(id==='leechseed'){
+if(id==='substitute'||id==='shedtail'){this.animSub(instant);}else
+if(id==='leechseed'){
 var pos1={
 display:'block',
 x:this.x-30,
@@ -2675,7 +2134,6 @@ z:this.z,
 scale:0.2,
 opacity:0.6
 };
-
 var leechseed1=new Sprite(BattleEffects.energyball,pos1,this.scene);
 var leechseed2=new Sprite(BattleEffects.energyball,pos2,this.scene);
 var leechseed3=new Sprite(BattleEffects.energyball,pos3,this.scene);
@@ -2704,7 +2162,6 @@ time:instant?0:300
 });
 }
 };_proto3.
-
 removeEffect=function removeEffect(id,instant){
 if(id==='formechange')this.removeTransform();
 if(id==='substitute')this.animSubFade(instant);
@@ -2718,18 +2175,11 @@ for(var id in this.effects)this.removeEffect(id,true);
 this.animSubFade(true);
 this.removeTransform();
 };_proto3.
-
 dogarsCheck=function dogarsCheck(pokemon){
 if(pokemon.side.isFar)return;
-
-if(pokemon.speciesForme==='Koffing'&&/dogars/i.exec(pokemon.name)){
-this.scene.setBgm(-1);
-}else if(this.scene.bgmNum===-1){
-this.scene.rollBgm();
-}
+if(pokemon.speciesForme==='Koffing'&&/dogars/i.exec(pokemon.name)){this.scene.setBgm(-1);}else
+if(this.scene.bgmNum===-1){this.scene.rollBgm();}
 };_proto3.
-
-
 
 
 getClassForPosition=function getClassForPosition(slot){
@@ -2742,33 +2192,23 @@ this.scene.activeCount===3?' centerstatbar':' rightstatbar',
 
 return position[slot];
 };_proto3.
-
 getStatbarHTML=function getStatbarHTML(pokemon){
 var buf='<div class="statbar'+(this.isFrontSprite?' lstatbar':' rstatbar')+this.getClassForPosition(pokemon.slot)+'" style="display: none">';
 var ignoreNick=this.isFrontSprite&&(this.scene.battle.ignoreOpponent||this.scene.battle.ignoreNicks);
 buf+="<strong>"+BattleLog.escapeHTML(ignoreNick?pokemon.speciesForme:pokemon.name);
 var gender=pokemon.gender;
-if(gender==='M'||gender==='F'){
-buf+=" <img src=\""+Dex.fxPrefix+"gender-"+gender.toLowerCase()+".png\" alt=\""+gender+"\" width=\"7\" height=\"10\" class=\"pixelated\" />";
-}
+if(gender==='M'||gender==='F'){buf+=" <img src=\""+Dex.fxPrefix+"gender-"+gender.toLowerCase()+".png\" alt=\""+gender+"\" width=\"7\" height=\"10\" class=\"pixelated\" />";}
 buf+=pokemon.level===100?"":" <small>L"+pokemon.level+"</small>";
-
 var symbol='';
 if(pokemon.speciesForme.includes('-Mega'))symbol='mega';else
 if(pokemon.speciesForme==='Kyogre-Primal')symbol='alpha';else
 if(pokemon.speciesForme==='Groudon-Primal')symbol='omega';
-if(symbol){
-buf+=" <img src=\""+Dex.resourcePrefix+"sprites/misc/"+symbol+".png\" alt=\""+symbol+"\" style=\"vertical-align:text-bottom;\" />";
-}
-if(pokemon.terastallized){
-buf+=" <img src=\""+Dex.resourcePrefix+"sprites/types/Tera"+pokemon.terastallized+".png\" alt=\"Tera-"+pokemon.terastallized+"\" style=\"vertical-align:text-bottom;\" height=\"16\" width=\"16\" />";
-}
-
+if(symbol){buf+=" <img src=\""+Dex.resourcePrefix+"sprites/misc/"+symbol+".png\" alt=\""+symbol+"\" style=\"vertical-align:text-bottom;\" />";}
+if(pokemon.terastallized){buf+=" <img src=\""+Dex.resourcePrefix+"sprites/types/Tera"+pokemon.terastallized+".png\" alt=\"Tera-"+pokemon.terastallized+"\" style=\"vertical-align:text-bottom;\" height=\"16\" width=\"16\" />";}
 buf+="</strong><div class=\"hpbar\"><div class=\"hptext\"></div><div class=\"hptextborder\"></div><div class=\"prevhp\"><div class=\"hp\"></div></div><div class=\"status\"></div>";
 buf+="</div>";
 return buf;
 };_proto3.
-
 resetStatbar=function resetStatbar(pokemon,startHidden){
 if(this.$statbar){
 this.$statbar.remove();
@@ -2784,13 +2224,7 @@ opacity:1
 });
 }
 };_proto3.
-
-updateStatbarIfExists=function updateStatbarIfExists(pokemon,updatePrevhp,updateHp){
-if(this.$statbar){
-this.updateStatbar(pokemon,updatePrevhp,updateHp);
-}
-};_proto3.
-
+updateStatbarIfExists=function updateStatbarIfExists(pokemon,updatePrevhp,updateHp){if(this.$statbar){this.updateStatbar(pokemon,updatePrevhp,updateHp);}};_proto3.
 updateStatbar=function updateStatbar(pokemon,updatePrevhp,updateHp){
 if(!this.scene.animating)return;
 if(!pokemon.isActive()){
@@ -2824,47 +2258,28 @@ if(hpcolor==='y')$prevhp.removeClass('prevhp-red').addClass('prevhp-yellow');els
 $prevhp.addClass('prevhp-yellow prevhp-red');
 }
 var status='';
-if(pokemon.status==='brn'){
-status+='<span class="brn">BRN</span> ';
-}else if(pokemon.status==='psn'){
-status+='<span class="psn">PSN</span> ';
-}else if(pokemon.status==='tox'){
-status+='<span class="psn">TOX</span> ';
-}else if(pokemon.status==='slp'){
-status+='<span class="slp">SLP</span> ';
-}else if(pokemon.status==='par'){
-status+='<span class="par">PAR</span> ';
-}else if(pokemon.status==='frz'){
-status+='<span class="frz">FRZ</span> ';
-}
-if(pokemon.terastallized){
-status+="<img src=\""+Dex.resourcePrefix+"sprites/types/"+encodeURIComponent(pokemon.terastallized)+".png\" alt=\""+pokemon.terastallized+"\" class=\"pixelated\" /> ";
-}else if(pokemon.volatiles.typechange&&pokemon.volatiles.typechange[1]){
+if(pokemon.status==='brn'){status+='<span class="brn">BRN</span> ';}else
+if(pokemon.status==='psn'){status+='<span class="psn">PSN</span> ';}else
+if(pokemon.status==='tox'){status+='<span class="psn">TOX</span> ';}else
+if(pokemon.status==='slp'){status+='<span class="slp">SLP</span> ';}else
+if(pokemon.status==='par'){status+='<span class="par">PAR</span> ';}else
+if(pokemon.status==='frz'){status+='<span class="frz">FRZ</span> ';}
+if(pokemon.terastallized){status+="<img src=\""+Dex.resourcePrefix+"sprites/types/"+encodeURIComponent(pokemon.terastallized)+".png\" alt=\""+pokemon.terastallized+"\" class=\"pixelated\" /> ";}else
+if(pokemon.volatiles.typechange&&pokemon.volatiles.typechange[1]){
 var types=pokemon.volatiles.typechange[1].split('/');for(var _i34=0;_i34<
-types.length;_i34++){var type=types[_i34];
-status+='<img src="'+Dex.resourcePrefix+'sprites/types/'+encodeURIComponent(type)+'.png" alt="'+type+'" class="pixelated" /> ';
-}
+types.length;_i34++){var type=types[_i34];status+='<img src="'+Dex.resourcePrefix+'sprites/types/'+encodeURIComponent(type)+'.png" alt="'+type+'" class="pixelated" /> ';}
 }
 if(pokemon.volatiles.typeadd){
 var _type=pokemon.volatiles.typeadd[1];
 status+='+<img src="'+Dex.resourcePrefix+'sprites/types/'+_type+'.png" alt="'+_type+'" class="pixelated" /> ';
 }
-for(var stat in pokemon.boosts){
-if(pokemon.boosts[stat]){
-status+='<span class="'+pokemon.getBoostType(stat)+'">'+pokemon.getBoost(stat)+'</span> ';
-}
-}
-
-for(var i in pokemon.volatiles){
-status+=PokemonSprite.getEffectTag(i);
-}
+for(var stat in pokemon.boosts){if(pokemon.boosts[stat]){status+='<span class="'+pokemon.getBoostType(stat)+'">'+pokemon.getBoost(stat)+'</span> ';}}
+for(var i in pokemon.volatiles){status+=PokemonSprite.getEffectTag(i);}
 for(var _i35 in pokemon.turnstatuses){
 if(_i35==='roost'&&!pokemon.getTypeList().includes('Flying'))continue;
 status+=PokemonSprite.getEffectTag(_i35);
 }
-for(var _i36 in pokemon.movestatuses){
-status+=PokemonSprite.getEffectTag(_i36);
-}
+for(var _i36 in pokemon.movestatuses){status+=PokemonSprite.getEffectTag(_i36);}
 var statusbar=this.$statbar.find('.status');
 statusbar.html(status);
 };PokemonSprite.
@@ -2875,22 +2290,15 @@ if(typeof effect==='string')return effect;
 if(effect===null)return PokemonSprite.statusTable[id]='';
 if(effect===undefined){
 var label="[["+id+"]]";
-if(Dex.species.get(id).exists){
-label=Dex.species.get(id).name;
-}else if(Dex.items.get(id).exists){
-label=Dex.items.get(id).name;
-}else if(Dex.moves.get(id).exists){
-label=Dex.moves.get(id).name;
-}else if(Dex.abilities.get(id).exists){
-label=Dex.abilities.get(id).name;
-}else if(BattleNatures[id.substr(0,1).toUpperCase()+id.substr(1).toLowerCase()]){
-label=id.substr(0,1).toUpperCase()+id.substr(1).toLowerCase();
-}
+if(Dex.species.get(id).exists){label=Dex.species.get(id).name;}else
+if(Dex.items.get(id).exists){label=Dex.items.get(id).name;}else
+if(Dex.moves.get(id).exists){label=Dex.moves.get(id).name;}else
+if(Dex.abilities.get(id).exists){label=Dex.abilities.get(id).name;}else
+if(BattleNatures[id.substr(0,1).toUpperCase()+id.substr(1).toLowerCase()]){label=id.substr(0,1).toUpperCase()+id.substr(1).toLowerCase();}
 effect=[label,'neutral'];
 }
 return PokemonSprite.statusTable[id]="<span class=\""+effect[1]+"\">"+effect[0].replace(/ /g,'&nbsp;')+"</span> ";
 };_proto3.
-
 updateHPText=function updateHPText(pokemon){
 if(!this.$statbar)return;
 var $hptext=this.$statbar.find('.hptext');
@@ -2915,12 +2323,8 @@ $hptextborder.show();
 
 
 
-
-
 Object.assign($.easing,{
-ballisticUp:function(x,t,b,c,d){
-return-3*x*x+4*x;
-},
+ballisticUp:function(x,t,b,c,d){return-3*x*x+4*x;},
 ballisticDown:function(x,t,b,c,d){
 x=1-x;
 return 1-(-3*x*x+4*x);
@@ -2929,9 +2333,7 @@ quadUp:function(x,t,b,c,d){
 x=1-x;
 return 1-x*x;
 },
-quadDown:function(x,t,b,c,d){
-return x*x;
-}
+quadDown:function(x,t,b,c,d){return x*x;}
 });
 
 
@@ -2940,262 +2342,197 @@ return x*x;
 
 
 
-
 var BattleEffects={
-wisp:{
-url:'wisp.png',
+wisp:{url:'wisp.png',
 w:100,h:100
 },
-poisonwisp:{
-url:'poisonwisp.png',
+poisonwisp:{url:'poisonwisp.png',
 w:100,h:100
 },
-waterwisp:{
-url:'waterwisp.png',
+waterwisp:{url:'waterwisp.png',
 w:100,h:100
 },
-mudwisp:{
-url:'mudwisp.png',
+mudwisp:{url:'mudwisp.png',
 w:100,h:100
 },
-blackwisp:{
-url:'blackwisp.png',
+blackwisp:{url:'blackwisp.png',
 w:100,h:100
 },
-fireball:{
-url:'fireball.png',
+fireball:{url:'fireball.png',
 w:64,h:64
 },
-bluefireball:{
-url:'bluefireball.png',
+bluefireball:{url:'bluefireball.png',
 w:64,h:64
 },
-icicle:{
-url:'icicle.png',
+icicle:{url:'icicle.png',
 w:80,h:60
 },
-pinkicicle:{
-url:'icicle-pink.png',
+pinkicicle:{url:'icicle-pink.png',
 w:80,h:60
 },
-lightning:{
-url:'lightning.png',
+lightning:{url:'lightning.png',
 w:41,h:229
 },
-rocks:{
-url:'rocks.png',
+rocks:{url:'rocks.png',
 w:100,h:100
 },
-rock1:{
-url:'rock1.png',
+rock1:{url:'rock1.png',
 w:64,h:80
 },
-rock2:{
-url:'rock2.png',
+rock2:{url:'rock2.png',
 w:66,h:72
 },
-rock3:{
-url:'rock3.png',
+rock3:{url:'rock3.png',
 w:66,h:72
 },
-leaf1:{
-url:'leaf1.png',
+leaf1:{url:'leaf1.png',
 w:32,h:26
 },
-leaf2:{
-url:'leaf2.png',
+leaf2:{url:'leaf2.png',
 w:40,h:26
 },
-bone:{
-url:'bone.png',
+bone:{url:'bone.png',
 w:29,h:29
 },
-caltrop:{
-url:'caltrop.png',
+caltrop:{url:'caltrop.png',
 w:80,h:80
 },
-greenmetal1:{
-url:'greenmetal1.png',
+greenmetal1:{url:'greenmetal1.png',
 w:45,h:45
 },
-greenmetal2:{
-url:'greenmetal2.png',
+greenmetal2:{url:'greenmetal2.png',
 w:45,h:45
 },
-poisoncaltrop:{
-url:'poisoncaltrop.png',
+poisoncaltrop:{url:'poisoncaltrop.png',
 w:80,h:80
 },
-shadowball:{
-url:'shadowball.png',
+shadowball:{url:'shadowball.png',
 w:100,h:100
 },
-energyball:{
-url:'energyball.png',
+energyball:{url:'energyball.png',
 w:100,h:100
 },
-electroball:{
-url:'electroball.png',
+electroball:{url:'electroball.png',
 w:100,h:100
 },
-mistball:{
-url:'mistball.png',
+mistball:{url:'mistball.png',
 w:100,h:100
 },
-iceball:{
-url:'iceball.png',
+iceball:{url:'iceball.png',
 w:100,h:100
 },
-flareball:{
-url:'flareball.png',
+flareball:{url:'flareball.png',
 w:100,h:100
 },
-moon:{
-url:'moon.png',
+moon:{url:'moon.png',
 w:100,h:100
 },
-pokeball:{
-url:'pokeball.png',
+pokeball:{url:'pokeball.png',
 w:24,h:24
 },
-fist:{
-url:'fist.png',
+fist:{url:'fist.png',
 w:55,h:49
 },
-fist1:{
-url:'fist1.png',
+fist1:{url:'fist1.png',
 w:49,h:55
 },
-foot:{
-url:'foot.png',
+foot:{url:'foot.png',
 w:50,h:75
 },
-topbite:{
-url:'topbite.png',
+topbite:{url:'topbite.png',
 w:108,h:64
 },
-bottombite:{
-url:'bottombite.png',
+bottombite:{url:'bottombite.png',
 w:108,h:64
 },
-web:{
-url:'web.png',
+web:{url:'web.png',
 w:120,h:122
 },
-leftclaw:{
-url:'leftclaw.png',
+leftclaw:{url:'leftclaw.png',
 w:44,h:60
 },
-rightclaw:{
-url:'rightclaw.png',
+rightclaw:{url:'rightclaw.png',
 w:44,h:60
 },
-leftslash:{
-url:'leftslash.png',
+leftslash:{url:'leftslash.png',
 w:57,h:56
 },
-rightslash:{
-url:'rightslash.png',
+rightslash:{url:'rightslash.png',
 w:57,h:56
 },
-leftchop:{
-url:'leftchop.png',
+leftchop:{url:'leftchop.png',
 w:100,h:130
 },
-rightchop:{
-url:'rightchop.png',
+rightchop:{url:'rightchop.png',
 w:100,h:130
 },
-angry:{
-url:'angry.png',
+angry:{url:'angry.png',
 w:30,h:30
 },
-heart:{
-url:'heart.png',
+heart:{url:'heart.png',
 w:30,h:30
 },
-pointer:{
-url:'pointer.png',
+pointer:{url:'pointer.png',
 w:100,h:100
 },
-sword:{
-url:'sword.png',
+sword:{url:'sword.png',
 w:48,h:100
 },
-impact:{
-url:'impact.png',
+impact:{url:'impact.png',
 w:127,h:119
 },
-stare:{
-url:'stare.png',
+stare:{url:'stare.png',
 w:100,h:35
 },
-shine:{
-url:'shine.png',
+shine:{url:'shine.png',
 w:127,h:119
 },
-feather:{
-url:'feather.png',
+feather:{url:'feather.png',
 w:100,h:38
 },
-shell:{
-url:'shell.png',
+shell:{url:'shell.png',
 w:100,h:91.5
 },
-petal:{
-url:'petal.png',
+petal:{url:'petal.png',
 w:60,h:60
 },
-gear:{
-url:'gear.png',
+gear:{url:'gear.png',
 w:100,h:100
 },
-alpha:{
-url:'alpha.png',
+alpha:{url:'alpha.png',
 w:80,h:80
 },
-omega:{
-url:'omega.png',
+omega:{url:'omega.png',
 w:80,h:80
 },
-rainbow:{
-url:'rainbow.png',
+rainbow:{url:'rainbow.png',
 w:128,h:128
 },
-zsymbol:{
-url:'z-symbol.png',
+zsymbol:{url:'z-symbol.png',
 w:150,h:100
 },
-ultra:{
-url:'ultra.png',
+ultra:{url:'ultra.png',
 w:113,h:165
 },
-hitmark:{
-url:'hitmarker.png',
+hitmark:{url:'hitmarker.png',
 w:100,h:100
 },
-protect:{
-rawHTML:'<div class="turnstatus-protect" style="display:none;position:absolute" />',
+protect:{rawHTML:'<div class="turnstatus-protect" style="display:none;position:absolute" />',
 w:100,h:70
 },
-auroraveil:{
-rawHTML:'<div class="sidecondition-auroraveil" style="display:none;position:absolute" />',
+auroraveil:{rawHTML:'<div class="sidecondition-auroraveil" style="display:none;position:absolute" />',
 w:100,h:50
 },
-reflect:{
-rawHTML:'<div class="sidecondition-reflect" style="display:none;position:absolute" />',
+reflect:{rawHTML:'<div class="sidecondition-reflect" style="display:none;position:absolute" />',
 w:100,h:50
 },
-safeguard:{
-rawHTML:'<div class="sidecondition-safeguard" style="display:none;position:absolute" />',
+safeguard:{rawHTML:'<div class="sidecondition-safeguard" style="display:none;position:absolute" />',
 w:100,h:50
 },
-lightscreen:{
-rawHTML:'<div class="sidecondition-lightscreen" style="display:none;position:absolute" />',
+lightscreen:{rawHTML:'<div class="sidecondition-lightscreen" style="display:none;position:absolute" />',
 w:100,h:50
 },
-mist:{
-rawHTML:'<div class="sidecondition-mist" style="display:none;position:absolute" />',
+mist:{rawHTML:'<div class="sidecondition-mist" style="display:none;position:absolute" />',
 w:100,h:50
 }
 };
@@ -3263,1024 +2600,341 @@ var BattleBackdrops=[
 var BattleOtherAnims={
 hitmark:{
 anim:function(scene,_ref2){var attacker=_ref2[0];
-scene.showEffect('hitmark',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:1
-},{
-opacity:0.5,
-time:250
-},'linear','fade');
+scene.showEffect('hitmark',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.5,opacity:1},
+{opacity:0.5,time:250},'linear','fade');
 }
 },
 attack:{
 anim:function(scene,_ref3){var attacker=_ref3[0],defender=_ref3[1];
-scene.showEffect('wisp',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.1,
-opacity:1
-},{
-x:defender.x,
-y:defender.y,
-z:defender.behind(40),
-scale:1,
-opacity:0.5
-},'linear');
+scene.showEffect('wisp',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.1,opacity:1},
+{x:defender.x,y:defender.y,z:defender.behind(40),scale:1,opacity:0.5},'linear');
 }
 },
 contactattack:{
 anim:function(scene,_ref4){var attacker=_ref4[0],defender=_ref4[1];
-attacker.anim({
-x:defender.x,
-y:defender.y+80,
-z:defender.behind(-30),
-time:400
-},'ballistic');
-attacker.anim({
-x:defender.x,
-y:defender.y+5,
-z:defender.z,
-time:100
-});
-attacker.anim({
-time:500
-},'ballistic2Back');
+attacker.anim({x:defender.x,y:defender.y+80,z:defender.behind(-30),time:400},'ballistic');
+attacker.anim({x:defender.x,y:defender.y+5,z:defender.z,time:100});
+attacker.anim({time:500},'ballistic2Back');
 defender.delay(450);
-defender.anim({
-z:defender.behind(20),
-time:100
-},'swing');
-defender.anim({
-time:300
-},'swing');
+defender.anim({z:defender.behind(20),time:100},'swing');
+defender.anim({time:300},'swing');
 scene.wait(500);
 }
 },
 xattack:{
 anim:function(scene,_ref5){var attacker=_ref5[0],defender=_ref5[1];
-scene.showEffect('wisp',{
-x:defender.x,
-y:defender.y,
-z:defender.z,
-scale:0,
-opacity:1,
-time:400
-},{
-x:defender.leftof(-20),
-y:defender.y,
-z:defender.behind(20),
-scale:3,
-opacity:0,
-time:700
-},'linear');
-scene.showEffect('wisp',{
-x:defender.x,
-y:defender.y,
-z:defender.z,
-scale:0,
-opacity:1,
-time:700
-},{
-x:defender.leftof(-20),
-y:defender.y,
-z:defender.behind(20),
-scale:3,
-opacity:0,
-time:1000
-},'linear');
+scene.showEffect('wisp',
+{x:defender.x,y:defender.y,z:defender.z,scale:0,opacity:1,time:400},
+{x:defender.leftof(-20),y:defender.y,z:defender.behind(20),scale:3,opacity:0,time:700},'linear');
+scene.showEffect('wisp',{x:defender.x,y:defender.y,z:defender.z,scale:0,opacity:1,time:700},
+{x:defender.leftof(-20),y:defender.y,z:defender.behind(20),scale:3,opacity:0,time:1000},'linear');
 defender.delay(480);
-defender.anim({
-z:defender.behind(20),
-time:100
-},'swing');
-defender.anim({
-time:200
-},'swing');
-defender.anim({
-z:defender.behind(20),
-time:100
-},'swing');
-defender.anim({
-time:300
-},'swing');
-attacker.anim({
-x:defender.leftof(-30),
-y:defender.y+80,
-z:defender.behind(-30),
-time:400
-},'ballistic');
-attacker.anim({
-x:defender.leftof(30),
-y:defender.y+5,
-z:defender.z,
-time:100
-});
-attacker.anim({
-x:defender.leftof(30),
-y:defender.y+80,
-z:defender.behind(-30),
-time:200
-},'ballisticUp');
-attacker.anim({
-x:defender.leftof(-30),
-y:defender.y+5,
-z:defender.z,
-time:100
-});
-attacker.anim({
-time:500
-},'ballistic2Back');
+defender.anim({z:defender.behind(20),time:100},'swing');
+defender.anim({time:200},'swing');
+defender.anim({z:defender.behind(20),time:100},'swing');
+defender.anim({time:300},'swing');
+attacker.anim({x:defender.leftof(-30),y:defender.y+80,z:defender.behind(-30),time:400},'ballistic');
+attacker.anim({x:defender.leftof(30),y:defender.y+5,z:defender.z,time:100});
+attacker.anim({x:defender.leftof(30),y:defender.y+80,z:defender.behind(-30),time:200},'ballisticUp');
+attacker.anim({x:defender.leftof(-30),y:defender.y+5,z:defender.z,time:100});
+attacker.anim({time:500},'ballistic2Back');
 }
 },
 slashattack:{
 anim:function(scene,_ref6){var attacker=_ref6[0],defender=_ref6[1];
-attacker.anim({
-x:defender.x,
-y:defender.y+80,
-z:defender.behind(-30),
-time:400
-},'ballistic');
-attacker.anim({
-x:defender.x,
-y:defender.y+5,
-z:defender.z,
-time:100
-});
-attacker.anim({
-time:500
-},'ballistic2Back');
+attacker.anim({x:defender.x,y:defender.y+80,z:defender.behind(-30),time:400},'ballistic');
+attacker.anim({x:defender.x,y:defender.y+5,z:defender.z,time:100});
+attacker.anim({time:500},'ballistic2Back');
 defender.delay(450);
-defender.anim({
-z:defender.behind(20),
-time:100
-},'swing');
-defender.anim({
-time:300
-},'swing');
-
-scene.showEffect('rightslash',{
-x:defender.x,
-y:defender.y,
-z:defender.z,
-scale:1,
-opacity:1,
-time:500
-},{
-scale:3,
-opacity:0,
-time:800
-},'linear','fade');
+defender.anim({z:defender.behind(20),time:100},'swing');
+defender.anim({time:300},'swing');
+scene.showEffect('rightslash',
+{x:defender.x,y:defender.y,z:defender.z,scale:1,opacity:1,time:500},
+{scale:3,opacity:0,time:800},
+'linear','fade');
 }
 },
 clawattack:{
 anim:function(scene,_ref7){var attacker=_ref7[0],defender=_ref7[1];
-attacker.anim({
-x:defender.leftof(-30),
-y:defender.y+80,
-z:defender.behind(-30),
-time:400
-},'ballistic');
-attacker.anim({
-x:defender.leftof(30),
-y:defender.y+5,
-z:defender.z,
-time:100
-});
-attacker.anim({
-x:defender.leftof(30),
-y:defender.y+80,
-z:defender.behind(-30),
-time:200
-},'ballisticUp');
-attacker.anim({
-x:defender.leftof(-30),
-y:defender.y+5,
-z:defender.z,
-time:100
-});
-attacker.anim({
-time:500
+attacker.anim({x:defender.leftof(-30),y:defender.y+80,z:defender.behind(-30),time:400},'ballistic');
+attacker.anim({x:defender.leftof(30),y:defender.y+5,z:defender.z,time:100});
+attacker.anim({x:defender.leftof(30),y:defender.y+80,z:defender.behind(-30),time:200},'ballisticUp');
+attacker.anim({x:defender.leftof(-30),y:defender.y+5,z:defender.z,time:100});
+attacker.anim({time:500
 },'ballistic2Back');
 defender.delay(450);
-defender.anim({
-z:defender.behind(20),
-time:100
-},'swing');
-defender.anim({
-time:200
-},'swing');
-defender.anim({
-z:defender.behind(20),
-time:100
-},'swing');
-defender.anim({
-time:300
-},'swing');
-
-scene.showEffect('leftclaw',{
-x:defender.x-20,
-y:defender.y+20,
-z:defender.z,
-scale:0,
-opacity:1,
-time:400
-},{
-x:defender.x-20,
-y:defender.y+20,
-z:defender.z,
-scale:3,
-opacity:0,
-time:700
-},'linear','fade');
-scene.showEffect('leftclaw',{
-x:defender.x-20,
-y:defender.y-20,
-z:defender.z,
-scale:0,
-opacity:1,
-time:400
-},{
-x:defender.x-20,
-y:defender.y-20,
-z:defender.z,
-scale:3,
-opacity:0,
-time:700
-},'linear','fade');
-scene.showEffect('rightclaw',{
-x:defender.x+20,
-y:defender.y+20,
-z:defender.z,
-scale:0,
-opacity:1,
-time:700
-},{
-x:defender.x+20,
-y:defender.y+20,
-z:defender.z,
-scale:3,
-opacity:0,
-time:1000
-},'linear','fade');
-scene.showEffect('rightclaw',{
-x:defender.x+20,
-y:defender.y-20,
-z:defender.z,
-scale:0,
-opacity:1,
-time:700
-},{
-x:defender.x+20,
-y:defender.y-20,
-z:defender.z,
-scale:3,
-opacity:0,
-time:1000
-},'linear','fade');
+defender.anim({z:defender.behind(20),time:100},'swing');
+defender.anim({time:200},'swing');
+defender.anim({z:defender.behind(20),time:100},'swing');
+defender.anim({time:300},'swing');
+scene.showEffect('leftclaw',
+{x:defender.x-20,y:defender.y+20,z:defender.z,scale:0,opacity:1,time:400},
+{x:defender.x-20,y:defender.y+20,z:defender.z,scale:3,opacity:0,time:700},
+'linear','fade');
+scene.showEffect('leftclaw',
+{x:defender.x-20,y:defender.y-20,z:defender.z,scale:0,opacity:1,time:400},
+{x:defender.x-20,y:defender.y-20,z:defender.z,scale:3,opacity:0,time:700},
+'linear','fade');
+scene.showEffect('rightclaw',
+{x:defender.x+20,y:defender.y+20,z:defender.z,scale:0,opacity:1,time:700},
+{x:defender.x+20,y:defender.y+20,z:defender.z,scale:3,opacity:0,time:1000},
+'linear','fade');
+scene.showEffect('rightclaw',
+{x:defender.x+20,y:defender.y-20,z:defender.z,scale:0,opacity:1,time:700},
+{x:defender.x+20,y:defender.y-20,z:defender.z,scale:3,opacity:0,time:1000},
+'linear','fade');
 }
 },
 punchattack:{
 anim:function(scene,_ref8){var attacker=_ref8[0],defender=_ref8[1];
-scene.showEffect('wisp',{
-x:defender.x,
-y:defender.y,
-z:defender.z,
-scale:0,
-opacity:1,
-time:400
-},{
-x:defender.leftof(-20),
-y:defender.y,
-z:defender.behind(20),
-scale:3,
-opacity:0,
-time:700
-},'linear');
-scene.showEffect('wisp',{
-x:defender.x,
-y:defender.y,
-z:defender.z,
-scale:0,
-opacity:1,
-time:500
-},{
-x:defender.leftof(-20),
-y:defender.y,
-z:defender.behind(20),
-scale:3,
-opacity:0,
-time:800
-},'linear');
-scene.showEffect('fist',{
-x:defender.x,
-y:defender.y,
-z:defender.z,
-scale:1,
-opacity:1,
-time:400
-},{
-x:defender.leftof(-20),
-y:defender.y,
-z:defender.behind(20),
-scale:2,
-opacity:0,
-time:800
-},'linear');
-attacker.anim({
-x:defender.leftof(20),
-y:defender.y,
-z:defender.behind(-20),
-time:400
-},'ballistic2Under');
-attacker.anim({
-x:defender.x,
-y:defender.y,
-z:defender.z,
-time:50
-});
-attacker.anim({
-time:500
-},'ballistic2');
+scene.showEffect('wisp',
+{x:defender.x,y:defender.y,z:defender.z,scale:0,opacity:1,time:400},
+{x:defender.leftof(-20),y:defender.y,z:defender.behind(20),scale:3,opacity:0,time:700},
+'linear');
+scene.showEffect('wisp',
+{x:defender.x,y:defender.y,z:defender.z,scale:0,opacity:1,time:500},
+{x:defender.leftof(-20),y:defender.y,z:defender.behind(20),scale:3,opacity:0,time:800},
+'linear');
+scene.showEffect('fist',
+{x:defender.x,y:defender.y,z:defender.z,scale:1,opacity:1,time:400},
+{x:defender.leftof(-20),y:defender.y,z:defender.behind(20),scale:2,opacity:0,time:800},
+'linear');
+attacker.anim({x:defender.leftof(20),y:defender.y,z:defender.behind(-20),time:400},'ballistic2Under');
+attacker.anim({x:defender.x,y:defender.y,z:defender.z,time:50});
+attacker.anim({time:500},'ballistic2');
 defender.delay(425);
-defender.anim({
-x:defender.leftof(-15),
-y:defender.y,
-z:defender.behind(15),
-time:50
-},'swing');
-defender.anim({
-time:300
-},'swing');
+defender.anim({x:defender.leftof(-15),y:defender.y,z:defender.behind(15),time:50},'swing');
+defender.anim({time:300},'swing');
 }
 },
 bite:{
 anim:function(scene,_ref9){var attacker=_ref9[0],defender=_ref9[1];
-scene.showEffect('topbite',{
-x:defender.x,
-y:defender.y+50,
-z:defender.z,
-scale:0.5,
-opacity:0,
-time:370
-},{
-x:defender.x,
-y:defender.y+10,
-z:defender.z,
-scale:0.5,
-opacity:1,
-time:500
-},'linear','fade');
-scene.showEffect('bottombite',{
-x:defender.x,
-y:defender.y-50,
-z:defender.z,
-scale:0.5,
-opacity:0,
-time:370
-},{
-x:defender.x,
-y:defender.y-10,
-z:defender.z,
-scale:0.5,
-opacity:1,
-time:500
-},'linear','fade');
+scene.showEffect('topbite',
+{x:defender.x,y:defender.y+50,z:defender.z,scale:0.5,opacity:0,time:370},
+{x:defender.x,y:defender.y+10,z:defender.z,scale:0.5,opacity:1,time:500},
+'linear','fade');
+scene.showEffect('bottombite',
+{x:defender.x,y:defender.y-50,z:defender.z,scale:0.5,opacity:0,time:370},
+{x:defender.x,y:defender.y-10,z:defender.z,scale:0.5,opacity:1,time:500},
+'linear','fade');
 }
 },
 kick:{
 anim:function(scene,_ref10){var attacker=_ref10[0],defender=_ref10[1];
-scene.showEffect('foot',{
-x:defender.x,
-y:defender.y,
-z:defender.z,
-scale:1,
-opacity:1,
-time:400
-},{
-x:defender.x,
-y:defender.y-20,
-z:defender.behind(15),
-scale:2,
-opacity:0,
-time:800
-},'linear');
+scene.showEffect('foot',
+{x:defender.x,y:defender.y,z:defender.z,scale:1,opacity:1,time:400},
+{x:defender.x,y:defender.y-20,z:defender.behind(15),scale:2,opacity:0,time:800},
+'linear');
 }
 },
 fastattack:{
 anim:function(scene,_ref11){var attacker=_ref11[0],defender=_ref11[1];
-scene.showEffect('wisp',{
-x:defender.x,
-y:defender.y,
-z:defender.z,
-scale:0,
-opacity:0.5,
-time:260
-},{
-scale:2,
-opacity:0,
-time:560
-},'linear');
-scene.showEffect('wisp',{
-x:defender.x,
-y:defender.y,
-z:defender.z,
-scale:0,
-opacity:0.5,
-time:310
-},{
-scale:2,
-opacity:0,
-time:610
-},'linear');
-scene.showEffect(attacker.sp,{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-opacity:0.3,
-time:50
-},{
-x:defender.x,
-y:defender.y,
-z:defender.behind(70),
-time:350
-},'accel','fade');
-scene.showEffect(attacker.sp,{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-opacity:0.3,
-time:100
-},{
-x:defender.x,
-y:defender.y,
-z:defender.behind(70),
-time:400
-},'accel','fade');
-attacker.anim({
-x:defender.x,
-y:defender.y,
-z:defender.behind(70),
-time:300,
-opacity:0.5
-},'accel');
-attacker.anim({
-x:defender.x,
-y:defender.x,
-z:defender.behind(100),
-opacity:0,
-time:100
-},'linear');
-attacker.anim({
-x:attacker.x,
-y:attacker.y,
-z:attacker.behind(70),
-opacity:0,
-time:1
-},'linear');
-attacker.anim({
-opacity:1,
-time:500
-},'decel');
+scene.showEffect('wisp',
+{x:defender.x,y:defender.y,z:defender.z,scale:0,opacity:0.5,time:260},
+{scale:2,opacity:0,time:560},
+'linear');
+scene.showEffect('wisp',
+{x:defender.x,y:defender.y,z:defender.z,scale:0,opacity:0.5,time:310},
+{scale:2,opacity:0,time:610},
+'linear');
+scene.showEffect(attacker.sp,
+{x:attacker.x,y:attacker.y,z:attacker.z,opacity:0.3,time:50},
+{x:defender.x,y:defender.y,z:defender.behind(70),time:350},
+'accel','fade');
+scene.showEffect(attacker.sp,
+{x:attacker.x,y:attacker.y,z:attacker.z,opacity:0.3,time:100},
+{x:defender.x,y:defender.y,z:defender.behind(70),time:400},
+'accel','fade');
+attacker.anim({x:defender.x,y:defender.y,z:defender.behind(70),time:300,opacity:0.5},'accel');
+attacker.anim({x:defender.x,y:defender.x,z:defender.behind(100),opacity:0,time:100},'linear');
+attacker.anim({x:attacker.x,y:attacker.y,z:attacker.behind(70),opacity:0,time:1},'linear');
+attacker.anim({opacity:1,time:500},'decel');
 defender.delay(260);
-defender.anim({
-z:defender.behind(30),
-time:100
-},'swing');
-defender.anim({
-time:300
-},'swing');
+defender.anim({z:defender.behind(30),time:100},'swing');
+defender.anim({time:300},'swing');
 }
 },
 fastanimattack:{
 anim:function(scene,_ref12){var attacker=_ref12[0],defender=_ref12[1];
-attacker.anim({
-z:attacker.behind(-70),
-time:50,
-opacity:1
-},'decel');
-attacker.anim({
-opacity:1,
-time:150
-},'accel');
-defender.anim({
-z:defender.behind(30),
-time:70
-},'decel');
-defender.anim({
-time:170
-},'accel');
+attacker.anim({z:attacker.behind(-70),time:50,opacity:1},'decel');
+attacker.anim({opacity:1,time:150},'accel');
+defender.anim({z:defender.behind(30),time:70},'decel');
+defender.anim({time:170},'accel');
 }
 },
 fastanimspecial:{
 anim:function(scene,_ref13){var attacker=_ref13[0],defender=_ref13[1];
-scene.showEffect('shadowball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:0.8,
-time:0
-},{
-x:defender.x,
-y:defender.y,
-z:defender.z,
-time:100
-},'decel');
-scene.showEffect('shadowball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:0.8,
-time:70
-},{
-x:defender.x,
-y:defender.y,
-z:defender.z,
-time:170
-},'decel');
-defender.anim({
-z:defender.behind(30),
-time:70
-},'decel');
-defender.anim({
-time:170
-},'accel');
+scene.showEffect('shadowball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.5,opacity:0.8,time:0},
+{x:defender.x,y:defender.y,z:defender.z,time:100},'decel');
+scene.showEffect('shadowball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.5,opacity:0.8,time:70},
+{x:defender.x,y:defender.y,z:defender.z,time:170},'decel');
+defender.anim({z:defender.behind(30),time:70},'decel');
+defender.anim({time:170},'accel');
 }
 },
 fastanimself:{
 anim:function(scene,_ref14){var attacker=_ref14[0],defender=_ref14[1];
-attacker.anim({
-scale:1.5,
-time:50
-},'decel');
-attacker.anim({
-time:170
-},'accel');
+attacker.anim({scale:1.5,time:50},'decel');
+attacker.anim({time:170},'accel');
 }
 },
 sneakattack:{
 anim:function(scene,_ref15){var attacker=_ref15[0],defender=_ref15[1];
-attacker.anim({
-x:attacker.leftof(-20),
-y:attacker.y,
-z:attacker.behind(-20),
-opacity:0,
-time:200
-},'linear');
-attacker.anim({
-x:defender.x,
-y:defender.y,
-z:defender.behind(-120),
-opacity:0,
-time:1
-},'linear');
-attacker.anim({
-x:defender.x,
-y:defender.y,
-z:defender.behind(40),
-opacity:1,
-time:250
-},'linear');
-attacker.anim({
-x:defender.x,
-y:defender.y,
-z:defender.behind(-5),
-opacity:0,
-time:300
-},'linear');
-attacker.anim({
-opacity:0,
-time:1
-},'linear');
-attacker.anim({
-time:300,
-opacity:1
-},'linear');
+attacker.anim({x:attacker.leftof(-20),y:attacker.y,z:attacker.behind(-20),opacity:0,time:200},'linear');
+attacker.anim({x:defender.x,y:defender.y,z:defender.behind(-120),opacity:0,time:1},'linear');
+attacker.anim({x:defender.x,y:defender.y,z:defender.behind(40),opacity:1,time:250},'linear');
+attacker.anim({x:defender.x,y:defender.y,z:defender.behind(-5),opacity:0,time:300},'linear');
+attacker.anim({opacity:0,time:1},'linear');
+attacker.anim({time:300,opacity:1},'linear');
 defender.delay(330);
-defender.anim({
-z:defender.behind(20),
-time:100
-},'swing');
-defender.anim({
-time:300
-},'swing');
+defender.anim({z:defender.behind(20),time:100},'swing');
+defender.anim({time:300},'swing');
 }
 },
 spinattack:{
 anim:function(scene,_ref16){var attacker=_ref16[0],defender=_ref16[1];
-attacker.anim({
-x:defender.x,
-y:defender.y+60,
-z:defender.behind(-30),
-time:400
-},'ballistic2');
-attacker.anim({
-x:defender.x,
-y:defender.y+5,
-z:defender.z,
-time:100
-});
-attacker.anim({
-time:500
-},'ballistic2');
+attacker.anim({x:defender.x,y:defender.y+60,z:defender.behind(-30),time:400},'ballistic2');
+attacker.anim({x:defender.x,y:defender.y+5,z:defender.z,time:100});
+attacker.anim({time:500},'ballistic2');
 defender.delay(450);
-defender.anim({
-z:defender.behind(20),
-time:100
-},'swing');
-defender.anim({
-time:300
-},'swing');
+defender.anim({z:defender.behind(20),time:100},'swing');
+defender.anim({time:300},'swing');
 scene.wait(500);
 }
 },
 bound:{
 anim:function(scene,_ref17){var attacker=_ref17[0];
-scene.showEffect('iceball',{
-x:attacker.x,
-y:attacker.y+15,
-z:attacker.z,
-scale:0.7,
-xscale:2,
-opacity:0.3,
-time:0
-},{
-scale:0.4,
-xscale:1,
-opacity:0.1,
-time:500
-},'decel','fade');
-scene.showEffect('iceball',{
-x:attacker.x,
-y:attacker.y-5,
-z:attacker.z,
-scale:0.7,
-xscale:2,
-opacity:0.3,
-time:50
-},{
-scale:0.4,
-xscale:1,
-opacity:0.1,
-time:550
-},'decel','fade');
-scene.showEffect('iceball',{
-x:attacker.x,
-y:attacker.y-20,
-z:attacker.z,
-scale:0.7,
-xscale:2,
-opacity:0.3,
-time:100
-},{
-scale:0.4,
-xscale:1,
-opacity:0.1,
-time:600
-},'decel','fade');
-attacker.anim({
-y:attacker.y+15,
-z:attacker.behind(10),
-yscale:1.3,
-time:200
-},'swing');
-attacker.anim({
-time:200
-},'swing');
+scene.showEffect('iceball',
+{x:attacker.x,y:attacker.y+15,z:attacker.z,scale:0.7,xscale:2,opacity:0.3,time:0},
+{scale:0.4,xscale:1,opacity:0.1,time:500},
+'decel','fade');
+scene.showEffect('iceball',
+{x:attacker.x,y:attacker.y-5,z:attacker.z,scale:0.7,xscale:2,opacity:0.3,time:50},
+{scale:0.4,xscale:1,opacity:0.1,time:550},
+'decel','fade');
+scene.showEffect('iceball',
+{x:attacker.x,y:attacker.y-20,z:attacker.z,scale:0.7,xscale:2,opacity:0.3,time:100},
+{scale:0.4,xscale:1,opacity:0.1,time:600},
+'decel','fade');
+attacker.anim({y:attacker.y+15,z:attacker.behind(10),yscale:1.3,time:200},'swing');
+attacker.anim({time:200},'swing');
 attacker.delay(25);
-attacker.anim({
-x:attacker.leftof(-10),
-y:attacker.y+15,
-z:attacker.behind(5),
-yscale:1.3,
-time:200
-},'swing');
-attacker.anim({
-time:200
-},'swing');
+attacker.anim({x:attacker.leftof(-10),y:attacker.y+15,z:attacker.behind(5),yscale:1.3,time:200},'swing');
+attacker.anim({time:200},'swing');
 }
 },
 selfstatus:{
 anim:function(scene,_ref18){var attacker=_ref18[0];
-scene.showEffect('wisp',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:2,
-opacity:0.2,
-time:0
-},{
-scale:0,
-opacity:1,
-time:300
-},'linear');
-scene.showEffect('wisp',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:2,
-opacity:0.2,
-time:200
-},{
-scale:0,
-opacity:1,
-time:500
-},'linear');
+scene.showEffect('wisp',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:2,opacity:0.2,time:0},
+{scale:0,opacity:1,time:300},
+'linear');
+scene.showEffect('wisp',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:2,opacity:0.2,time:200},
+{scale:0,opacity:1,time:500},
+'linear');
 }
 },
 lightstatus:{
 anim:function(scene,_ref19){var attacker=_ref19[0];
-scene.showEffect('electroball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:2,
-opacity:0.1,
-time:0
-},{
-scale:0,
-opacity:0.5,
-time:600
-},'linear');
+scene.showEffect('electroball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:2,opacity:0.1,time:0},
+{scale:0,opacity:0.5,time:600},
+'linear');
 }
 },
 chargestatus:{
 anim:function(scene,_ref20){var attacker=_ref20[0];
-scene.showEffect('electroball',{
-x:attacker.x-60,
-y:attacker.y+40,
-z:attacker.z,
-scale:0.7,
-opacity:0.7,
-time:0
-},{
-x:attacker.x,
-y:attacker.y,
-scale:0.2,
-opacity:0.2,
-time:300
-},'linear','fade');
-scene.showEffect('electroball',{
-x:attacker.x+60,
-y:attacker.y-5,
-z:attacker.z,
-scale:0.7,
-opacity:0.7,
-time:100
-},{
-x:attacker.x,
-y:attacker.y,
-scale:0.2,
-opacity:0.2,
-time:300
-},'linear','fade');
-scene.showEffect('electroball',{
-x:attacker.x-30,
-y:attacker.y+60,
-z:attacker.z,
-scale:0.7,
-opacity:0.7,
-time:100
-},{
-x:attacker.x,
-y:attacker.y,
-scale:0.2,
-opacity:0.2,
-time:400
-},'linear','fade');
-scene.showEffect('electroball',{
-x:attacker.x+20,
-y:attacker.y-50,
-z:attacker.z,
-scale:0.7,
-opacity:0.7,
-time:100
-},{
-x:attacker.x,
-y:attacker.y,
-scale:0.2,
-opacity:0.2,
-time:400
-},'linear','fade');
-scene.showEffect('electroball',{
-x:attacker.x-70,
-y:attacker.y-50,
-z:attacker.z,
-scale:0.7,
-opacity:0.7,
-time:200
-},{
-x:attacker.x,
-y:attacker.y,
-scale:0.2,
-opacity:0.2,
-time:500
-},'linear','fade');
+scene.showEffect('electroball',
+{x:attacker.x-60,y:attacker.y+40,z:attacker.z,scale:0.7,opacity:0.7,time:0},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:300},
+'linear','fade');
+scene.showEffect('electroball',
+{x:attacker.x+60,y:attacker.y-5,z:attacker.z,scale:0.7,opacity:0.7,time:100},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:300},
+'linear','fade');
+scene.showEffect('electroball',
+{x:attacker.x-30,y:attacker.y+60,z:attacker.z,scale:0.7,opacity:0.7,time:100},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:400},
+'linear','fade');
+scene.showEffect('electroball',
+{x:attacker.x+20,y:attacker.y-50,z:attacker.z,scale:0.7,opacity:0.7,time:100},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:400},
+'linear','fade');
+scene.showEffect('electroball',
+{x:attacker.x-70,y:attacker.y-50,z:attacker.z,scale:0.7,opacity:0.7,time:200},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:500},
+'linear','fade');
 }
 },
 heal:{
 anim:function(scene,_ref21){var attacker=_ref21[0];
-scene.showEffect('iceball',{
-x:attacker.x+30,
-y:attacker.y+5,
-z:attacker.z,
-scale:0.1,
-opacity:0.7,
-time:200
-},{
-x:attacker.x+40,
-y:attacker.y+10,
-opacity:0,
-time:600
-},'accel');
-scene.showEffect('iceball',{
-x:attacker.x-30,
-y:attacker.y-10,
-z:attacker.z,
-scale:0.1,
-opacity:0.7,
-time:300
-},{
-x:attacker.x-40,
-y:attacker.y-20,
-opacity:0,
-time:700
-},'accel');
-scene.showEffect('iceball',{
-x:attacker.x+15,
-y:attacker.y+10,
-z:attacker.z,
-scale:0.1,
-opacity:0.7,
-time:400
-},{
-x:attacker.x+25,
-y:attacker.y+20,
-opacity:0,
-time:800
-},'accel');
-scene.showEffect('iceball',{
-x:attacker.x-15,
-y:attacker.y-30,
-z:attacker.z,
-scale:0.1,
-opacity:0.7,
-time:500
-},{
-x:attacker.x-25,
-y:attacker.y-40,
-opacity:0,
-time:900
-},'accel');
+scene.showEffect('iceball',
+{x:attacker.x+30,y:attacker.y+5,z:attacker.z,scale:0.1,opacity:0.7,time:200},
+{x:attacker.x+40,y:attacker.y+10,opacity:0,time:600},
+'accel');
+scene.showEffect('iceball',
+{x:attacker.x-30,y:attacker.y-10,z:attacker.z,scale:0.1,opacity:0.7,time:300},
+{x:attacker.x-40,y:attacker.y-20,opacity:0,time:700},
+'accel');
+scene.showEffect('iceball',
+{x:attacker.x+15,y:attacker.y+10,z:attacker.z,scale:0.1,opacity:0.7,time:400},
+{x:attacker.x+25,y:attacker.y+20,opacity:0,time:800},
+'accel');
+scene.showEffect('iceball',
+{x:attacker.x-15,y:attacker.y-30,z:attacker.z,scale:0.1,opacity:0.7,time:500},
+{x:attacker.x-25,y:attacker.y-40,opacity:0,time:900},
+'accel');
 }
 },
 shiny:{
 anim:function(scene,_ref22){var attacker=_ref22[0];
 scene.backgroundEffect('#000000',800,0.3,100);
-scene.showEffect('shine',{
-x:attacker.x+5,
-y:attacker.y+20,
-z:attacker.z,
-scale:0.1,
-opacity:0.7,
-time:450
-},{
-y:attacker.y+35,
-opacity:0,
-time:675
-},'decel');
-scene.showEffect('shine',{
-x:attacker.x+15,
-y:attacker.y+20,
-z:attacker.z,
-scale:0.2,
-opacity:0.7,
-time:475
-},{
-x:attacker.x+25,
-y:attacker.y+30,
-opacity:0,
-time:700
-},'decel');
-scene.showEffect('shine',{
-x:attacker.x-15,
-y:attacker.y+20,
-z:attacker.z,
-scale:0.2,
-opacity:0.7,
-time:500
-},{
-x:attacker.x-25,
-y:attacker.y+30,
-opacity:0,
-time:725
-},'decel');
-scene.showEffect('shine',{
-x:attacker.x-20,
-y:attacker.y+5,
-z:attacker.z,
-scale:0.2,
-opacity:0.7,
-time:550
-},{
-x:attacker.x-30,
-y:attacker.y-5,
-opacity:0,
-time:775
-},'decel');
-scene.showEffect('shine',{
-x:attacker.x+15,
-y:attacker.y+10,
-z:attacker.z,
-scale:0.2,
-opacity:0.7,
-time:650
-},{
-x:attacker.x+35,
-y:attacker.y-5,
-opacity:0,
-time:875
-},'decel');
-scene.showEffect('shine',{
-x:attacker.x+5,
-y:attacker.y-5,
-z:attacker.z,
-scale:0.2,
-opacity:0.7,
-time:675
-},{
-y:attacker.y-20,
-opacity:0,
-time:900
-},'decel');
+scene.showEffect('shine',
+{x:attacker.x+5,y:attacker.y+20,z:attacker.z,scale:0.1,opacity:0.7,time:450},
+{y:attacker.y+35,opacity:0,time:675},
+'decel');
+scene.showEffect('shine',
+{x:attacker.x+15,y:attacker.y+20,z:attacker.z,scale:0.2,opacity:0.7,time:475},
+{x:attacker.x+25,y:attacker.y+30,opacity:0,time:700},
+'decel');
+scene.showEffect('shine',
+{x:attacker.x-15,y:attacker.y+20,z:attacker.z,scale:0.2,opacity:0.7,time:500},
+{x:attacker.x-25,y:attacker.y+30,opacity:0,time:725},
+'decel');
+scene.showEffect('shine',
+{x:attacker.x-20,y:attacker.y+5,z:attacker.z,scale:0.2,opacity:0.7,time:550},
+{x:attacker.x-30,y:attacker.y-5,opacity:0,time:775},
+'decel');
+scene.showEffect('shine',
+{x:attacker.x+15,y:attacker.y+10,z:attacker.z,scale:0.2,opacity:0.7,time:650},
+{x:attacker.x+35,y:attacker.y-5,opacity:0,time:875},
+'decel');
+scene.showEffect('shine',
+{x:attacker.x+5,y:attacker.y-5,z:attacker.z,scale:0.2,opacity:0.7,time:675},
+{y:attacker.y-20,opacity:0,time:900},
+'decel');
 }
 },
 flight:{
 anim:function(scene,_ref23){var attacker=_ref23[0],defender=_ref23[1];
-attacker.anim({
-x:attacker.leftof(-200),
-y:attacker.y+80,
-z:attacker.z,
-opacity:0,
-time:350
-},'accel');
-attacker.anim({
-x:defender.leftof(-200),
-y:defender.y+80,
-z:defender.z,
-time:1
-},'linear');
-attacker.anim({
-x:defender.x,
-y:defender.y,
-z:defender.z,
-opacity:1,
-time:350
-},'accel');
-scene.showEffect('wisp',{
-x:defender.x,
-y:defender.y,
-z:defender.z,
-scale:0,
-opacity:0.5,
-time:700
-},{
-scale:2,
-opacity:0,
-time:900
-},'linear');
-attacker.anim({
-x:defender.leftof(100),
-y:defender.y-40,
-z:defender.z,
-opacity:0,
-time:175
-});
-attacker.anim({
-x:attacker.x,
-y:attacker.y+40,
-z:attacker.behind(40),
-time:1
-});
-attacker.anim({
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-time:250
-},'decel');
+attacker.anim({x:attacker.leftof(-200),y:attacker.y+80,z:attacker.z,opacity:0,time:350},'accel');
+attacker.anim({x:defender.leftof(-200),y:defender.y+80,z:defender.z,time:1},'linear');
+attacker.anim({x:defender.x,y:defender.y,z:defender.z,opacity:1,time:350},'accel');
+scene.showEffect('wisp',
+{x:defender.x,y:defender.y,z:defender.z,scale:0,opacity:0.5,time:700},
+{scale:2,opacity:0,time:900},
+'linear');
+attacker.anim({x:defender.leftof(100),y:defender.y-40,z:defender.z,opacity:0,time:175});
+attacker.anim({x:attacker.x,y:attacker.y+40,z:attacker.behind(40),time:1});
+attacker.anim({x:attacker.x,y:attacker.y,z:attacker.z,time:250},'decel');
 defender.delay(700);
-defender.anim({
-z:defender.behind(20),
-time:100
-},'swing');
-defender.anim({
-time:300
-},'swing');
+defender.anim({z:defender.behind(20),time:100},'swing');
+defender.anim({time:300},'swing');
 }
 },
 shake:{
@@ -4299,1234 +2953,442 @@ attacker.anim({x:attacker.x});
 },
 consume:{
 anim:function(scene,_ref26){var defender=_ref26[0];
-scene.showEffect('wisp',{
-x:defender.leftof(-25),
-y:defender.y+40,
-z:defender.behind(-20),
-scale:0.5,
-opacity:1
-},{
-x:defender.leftof(-15),
-y:defender.y+35,
-z:defender.z,
-scale:0,
-opacity:0.2,
-time:500
-},'swing','fade');
-
+scene.showEffect('wisp',
+{x:defender.leftof(-25),y:defender.y+40,z:defender.behind(-20),scale:0.5,opacity:1},
+{x:defender.leftof(-15),y:defender.y+35,z:defender.z,scale:0,opacity:0.2,time:500},
+'swing','fade');
 defender.delay(400);
-defender.anim({
-y:defender.y+5,
-yscale:1.1,
-time:200
-},'swing');
-defender.anim({
-time:200
-},'swing');
-defender.anim({
-y:defender.y+5,
-yscale:1.1,
-time:200
-},'swing');
-defender.anim({
-time:200
-},'swing');
+defender.anim({y:defender.y+5,yscale:1.1,time:200},'swing');
+defender.anim({time:200},'swing');
+defender.anim({y:defender.y+5,yscale:1.1,time:200},'swing');
+defender.anim({time:200},'swing');
 }
 },
 leech:{
 anim:function(scene,_ref27){var attacker=_ref27[0],defender=_ref27[1];
-scene.showEffect('energyball',{
-x:defender.x-30,
-y:defender.y-40,
-z:defender.z,
-scale:0.2,
-opacity:0.7,
-time:0
-},{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-time:500,
-opacity:0.1
-},'ballistic2','fade');
-scene.showEffect('energyball',{
-x:defender.x+40,
-y:defender.y-35,
-z:defender.z,
-scale:0.2,
-opacity:0.7,
-time:50
-},{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-time:550,
-opacity:0.1
-},'linear','fade');
-scene.showEffect('energyball',{
-x:defender.x+20,
-y:defender.y-25,
-z:defender.z,
-scale:0.2,
-opacity:0.7,
-time:100
-},{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-time:600,
-opacity:0.1
-},'ballistic2Under','fade');
+scene.showEffect('energyball',
+{x:defender.x-30,y:defender.y-40,z:defender.z,scale:0.2,opacity:0.7,time:0},
+{x:attacker.x,y:attacker.y,z:attacker.z,time:500,opacity:0.1},
+'ballistic2','fade');
+scene.showEffect('energyball',
+{x:defender.x+40,y:defender.y-35,z:defender.z,scale:0.2,opacity:0.7,time:50},
+{x:attacker.x,y:attacker.y,z:attacker.z,time:550,opacity:0.1},'linear','fade');
+scene.showEffect('energyball',
+{x:defender.x+20,y:defender.y-25,z:defender.z,scale:0.2,opacity:0.7,time:100},
+{x:attacker.x,y:attacker.y,z:attacker.z,time:600,opacity:0.1},
+'ballistic2Under','fade');
 }
 },
 drain:{
 anim:function(scene,_ref28){var attacker=_ref28[0],defender=_ref28[1];
-scene.showEffect('energyball',{
-x:defender.x,
-y:defender.y,
-z:defender.z,
-scale:0.6,
-opacity:0.6,
-time:0
-},{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-time:500,
-opacity:0
-},'ballistic2');
-scene.showEffect('energyball',{
-x:defender.x,
-y:defender.y,
-z:defender.z,
-scale:0.6,
-opacity:0.6,
-time:50
-},{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-time:550,
-opacity:0
-},'linear');
-scene.showEffect('energyball',{
-x:defender.x,
-y:defender.y,
-z:defender.z,
-scale:0.6,
-opacity:0.6,
-time:100
-},{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-time:600,
-opacity:0
-},'ballistic2Under');
+scene.showEffect('energyball',
+{x:defender.x,y:defender.y,z:defender.z,scale:0.6,opacity:0.6,time:0},
+{x:attacker.x,y:attacker.y,z:attacker.z,time:500,opacity:0},
+'ballistic2');
+scene.showEffect('energyball',
+{x:defender.x,y:defender.y,z:defender.z,scale:0.6,opacity:0.6,time:50},
+{x:attacker.x,y:attacker.y,z:attacker.z,time:550,opacity:0},
+'linear');
+scene.showEffect('energyball',
+{x:defender.x,y:defender.y,z:defender.z,scale:0.6,opacity:0.6,time:100},
+{x:attacker.x,y:attacker.y,z:attacker.z,time:600,opacity:0},
+'ballistic2Under');
 }
 },
 hydroshot:{
 anim:function(scene,_ref29){var attacker=_ref29[0],defender=_ref29[1];
-scene.showEffect('waterwisp',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.4,
-opacity:0.3
-},{
-x:defender.x+10,
-y:defender.y+5,
-z:defender.behind(30),
-scale:1,
-opacity:0.6
-},'decel','explode');
-scene.showEffect('waterwisp',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.4,
-opacity:0.3,
-time:75
-},{
-x:defender.x-10,
-y:defender.y-5,
-z:defender.behind(30),
-scale:1,
-opacity:0.6
-},'decel','explode');
-scene.showEffect('waterwisp',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.4,
-opacity:0.3,
-time:150
-},{
-x:defender.x,
-y:defender.y+5,
-z:defender.behind(30),
-scale:1,
-opacity:0.6
-},'decel','explode');
+scene.showEffect('waterwisp',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.4,opacity:0.3},
+{x:defender.x+10,y:defender.y+5,z:defender.behind(30),scale:1,opacity:0.6},
+'decel','explode');
+scene.showEffect('waterwisp',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.4,opacity:0.3,time:75},
+{x:defender.x-10,y:defender.y-5,z:defender.behind(30),scale:1,opacity:0.6},
+'decel','explode');
+scene.showEffect('waterwisp',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.4,opacity:0.3,time:150},
+{x:defender.x,y:defender.y+5,z:defender.behind(30),scale:1,opacity:0.6},
+'decel','explode');
 }
 },
 sound:{
 anim:function(scene,_ref30){var attacker=_ref30[0];
-scene.showEffect('wisp',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0,
-opacity:0.7,
-time:0
-},{
-z:attacker.behind(-50),
-scale:5,
-opacity:0,
-time:400
-},'linear');
-scene.showEffect('wisp',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0,
-opacity:0.7,
-time:150
-},{
-z:attacker.behind(-50),
-scale:5,
-opacity:0,
-time:600
-},'linear');
-scene.showEffect('wisp',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0,
-opacity:0.7,
-time:300
-},{
-z:attacker.behind(-50),
-scale:5,
-opacity:0,
-time:800
-},'linear');
+scene.showEffect('wisp',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0,opacity:0.7,time:0},
+{z:attacker.behind(-50),scale:5,opacity:0,time:400},
+'linear');
+scene.showEffect('wisp',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0,opacity:0.7,time:150},
+{z:attacker.behind(-50),scale:5,opacity:0,time:600},
+'linear');
+scene.showEffect('wisp',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0,opacity:0.7,time:300},
+{z:attacker.behind(-50),scale:5,opacity:0,time:800},
+'linear');
 }
 },
 gravity:{
 anim:function(scene,_ref31){var attacker=_ref31[0];
-attacker.anim({
-y:attacker.y-20,
-yscale:0.5,
-time:300
-},'decel');
+attacker.anim({y:attacker.y-20,yscale:0.5,time:300},'decel');
 attacker.delay(200);
-attacker.anim({
-time:300
-});
+attacker.anim({time:300});
 }
 },
 futuresighthit:{
 anim:function(scene,_ref32){var defender=_ref32[0];
 scene.backgroundEffect('#AA44BB',250,0.6);
 scene.backgroundEffect('#AA44FF',250,0.6,400);
-defender.anim({
-scale:1.2,
-time:100
-});
-defender.anim({
-scale:1,
-time:100
-});
-defender.anim({
-scale:1.4,
-time:150
-});
-defender.anim({
-scale:1,
-time:150
-});
+defender.anim({scale:1.2,time:100});
+defender.anim({scale:1,time:100});
+defender.anim({scale:1.4,time:150});
+defender.anim({scale:1,time:150});
 scene.wait(700);
 }
 },
 doomdesirehit:{
 anim:function(scene,_ref33){var defender=_ref33[0];
 scene.backgroundEffect('#ffffff',600,0.6);
-scene.showEffect('fireball',{
-x:defender.x+40,
-y:defender.y,
-z:defender.z,
-scale:0,
-opacity:0.6
-},{
-scale:6,
-opacity:0
-},'linear');
-scene.showEffect('fireball',{
-x:defender.x-40,
-y:defender.y-20,
-z:defender.z,
-scale:0,
-opacity:0.6,
-time:150
-},{
-scale:6,
-opacity:0
-},'linear');
-scene.showEffect('fireball',{
-x:defender.x+10,
-y:defender.y+20,
-z:defender.z,
-scale:0,
-opacity:0.6,
-time:300
-},{
-scale:6,
-opacity:0
-},'linear');
-
+scene.showEffect('fireball',
+{x:defender.x+40,y:defender.y,z:defender.z,scale:0,opacity:0.6},
+{scale:6,opacity:0},
+'linear');
+scene.showEffect('fireball',
+{x:defender.x-40,y:defender.y-20,z:defender.z,scale:0,opacity:0.6,time:150},
+{scale:6,opacity:0},
+'linear');
+scene.showEffect('fireball',
+{x:defender.x+10,y:defender.y+20,z:defender.z,scale:0,opacity:0.6,time:300},
+{scale:6,opacity:0},
+'linear');
 defender.delay(100);
-defender.anim({
-x:defender.x-30,
-time:75
-});
-defender.anim({
-x:defender.x+30,
-time:100
-});
-defender.anim({
-x:defender.x-30,
-time:100
-});
-defender.anim({
-x:defender.x+30,
-time:100
-});
-defender.anim({
-x:defender.x,
-time:100
-});
+defender.anim({x:defender.x-30,time:75});
+defender.anim({x:defender.x+30,time:100});
+defender.anim({x:defender.x-30,time:100});
+defender.anim({x:defender.x+30,time:100});
+defender.anim({x:defender.x,time:100});
 }
 },
 itemoff:{
 anim:function(scene,_ref34){var defender=_ref34[0];
-scene.showEffect('pokeball',{
-x:defender.x,
-y:defender.y,
-z:defender.z,
-scale:1,
-opacity:1
-},{
-x:defender.x,
-y:defender.y+40,
-z:defender.behind(70),
-opacity:0,
-time:400
-},'ballistic2');
+scene.showEffect('pokeball',
+{x:defender.x,y:defender.y,z:defender.z,scale:1,opacity:1},
+{x:defender.x,y:defender.y+40,z:defender.behind(70),opacity:0,time:400},
+'ballistic2');
 }
 },
 anger:{
 anim:function(scene,_ref35){var attacker=_ref35[0];
-scene.showEffect('angry',{
-x:attacker.x+20,
-y:attacker.y+20,
-z:attacker.z,
-scale:0.5,
-opacity:0.5,
-time:0
-},{
-scale:1,
-opacity:1,
-time:300
-},'ballistic2Under','fade');
-scene.showEffect('angry',{
-x:attacker.x-20,
-y:attacker.y+10,
-z:attacker.z,
-scale:0.5,
-opacity:0.5,
-time:100
-},{
-scale:1,
-opacity:1,
-time:400
-},'ballistic2Under','fade');
-scene.showEffect('angry',{
-x:attacker.x,
-y:attacker.y+40,
-z:attacker.z,
-scale:0.5,
-opacity:0.5,
-time:200
-},{
-scale:1,
-opacity:1,
-time:500
-},'ballistic2Under','fade');
+scene.showEffect('angry',
+{x:attacker.x+20,y:attacker.y+20,z:attacker.z,scale:0.5,opacity:0.5,time:0},
+{scale:1,opacity:1,time:300},
+'ballistic2Under','fade');
+scene.showEffect('angry',
+{x:attacker.x-20,y:attacker.y+10,z:attacker.z,scale:0.5,opacity:0.5,time:100},
+{scale:1,opacity:1,time:400},
+'ballistic2Under','fade');
+scene.showEffect('angry',
+{x:attacker.x,y:attacker.y+40,z:attacker.z,scale:0.5,opacity:0.5,time:200},
+{scale:1,opacity:1,time:500},
+'ballistic2Under','fade');
 }
 },
 bidecharge:{
 anim:function(scene,_ref36){var attacker=_ref36[0];
-scene.showEffect('wisp',{
-x:attacker.x+30,
-y:attacker.y,
-z:attacker.z,
-scale:1,
-opacity:1,
-time:0
-},{
-y:attacker.y+60,
-opacity:0.2,
-time:400
-},'linear','fade');
-scene.showEffect('wisp',{
-x:attacker.x-30,
-y:attacker.y,
-z:attacker.z,
-scale:1,
-opacity:1,
-time:100
-},{
-y:attacker.y+60,
-opacity:0.2,
-time:500
-},'linear','fade');
-scene.showEffect('wisp',{
-x:attacker.x+15,
-y:attacker.y,
-z:attacker.z,
-scale:1,
-opacity:1,
-time:200
-},{
-y:attacker.y+60,
-opacity:0.2,
-time:600
-},'linear','fade');
-scene.showEffect('wisp',{
-x:attacker.x-15,
-y:attacker.y,
-z:attacker.z,
-scale:1,
-opacity:1,
-time:300
-},{
-y:attacker.y+60,
-opacity:0.2,
-time:700
-},'linear','fade');
-
-attacker.anim({
-x:attacker.x-2.5,
-time:75
-},'swing');
-attacker.anim({
-x:attacker.x+2.5,
-time:75
-},'swing');
-attacker.anim({
-x:attacker.x-2.5,
-time:75
-},'swing');
-attacker.anim({
-x:attacker.x+2.5,
-time:75
-},'swing');
-attacker.anim({
-x:attacker.x-2.5,
-time:75
-},'swing');
-attacker.anim({
-time:100
-},'accel');
+scene.showEffect('wisp',
+{x:attacker.x+30,y:attacker.y,z:attacker.z,scale:1,opacity:1,time:0},
+{y:attacker.y+60,opacity:0.2,time:400},
+'linear','fade');
+scene.showEffect('wisp',
+{x:attacker.x-30,y:attacker.y,z:attacker.z,scale:1,opacity:1,time:100},
+{y:attacker.y+60,opacity:0.2,time:500},
+'linear','fade');
+scene.showEffect('wisp',
+{x:attacker.x+15,y:attacker.y,z:attacker.z,scale:1,opacity:1,time:200},
+{y:attacker.y+60,opacity:0.2,time:600},
+'linear','fade');
+scene.showEffect('wisp',
+{x:attacker.x-15,y:attacker.y,z:attacker.z,scale:1,opacity:1,time:300},
+{y:attacker.y+60,opacity:0.2,time:700},
+'linear','fade');
+attacker.anim({x:attacker.x-2.5,time:75},'swing');
+attacker.anim({x:attacker.x+2.5,time:75},'swing');
+attacker.anim({x:attacker.x-2.5,time:75},'swing');
+attacker.anim({x:attacker.x+2.5,time:75},'swing');
+attacker.anim({x:attacker.x-2.5,time:75},'swing');
+attacker.anim({time:100},'accel');
 }
 },
 bideunleash:{
 anim:function(scene,_ref37){var attacker=_ref37[0];
-scene.showEffect('fireball',{
-x:attacker.x+40,
-y:attacker.y,
-z:attacker.z,
-scale:0,
-opacity:0.6
-},{
-scale:6,
-opacity:0
-},'linear');
-scene.showEffect('fireball',{
-x:attacker.x-40,
-y:attacker.y-20,
-z:attacker.z,
-scale:0,
-opacity:0.6,
-time:150
-},{
-scale:6,
-opacity:0
-},'linear');
-scene.showEffect('fireball',{
-x:attacker.x+10,
-y:attacker.y+20,
-z:attacker.z,
-scale:0,
-opacity:0.6,
-time:300
-},{
-scale:6,
-opacity:0
-},'linear');
-
-attacker.anim({
-x:attacker.x-30,
-time:75
-});
-attacker.anim({
-x:attacker.x+30,
-time:100
-});
-attacker.anim({
-x:attacker.x-30,
-time:100
-});
-attacker.anim({
-x:attacker.x+30,
-time:100
-});
-attacker.anim({
-x:attacker.x-30,
-time:100
-});
-attacker.anim({
-x:attacker.x+30,
-time:100
-});
-attacker.anim({
-x:attacker.x,
-time:100
-});
+scene.showEffect('fireball',
+{x:attacker.x+40,y:attacker.y,z:attacker.z,scale:0,opacity:0.6},
+{scale:6,opacity:0},
+'linear');
+scene.showEffect('fireball',
+{x:attacker.x-40,y:attacker.y-20,z:attacker.z,scale:0,opacity:0.6,time:150},
+{scale:6,opacity:0},
+'linear');
+scene.showEffect('fireball',
+{x:attacker.x+10,y:attacker.y+20,z:attacker.z,scale:0,opacity:0.6,time:300},
+{scale:6,opacity:0},
+'linear');
+attacker.anim({x:attacker.x-30,time:75});
+attacker.anim({x:attacker.x+30,time:100});
+attacker.anim({x:attacker.x-30,time:100});
+attacker.anim({x:attacker.x+30,time:100});
+attacker.anim({x:attacker.x-30,time:100});
+attacker.anim({x:attacker.x+30,time:100});
+attacker.anim({x:attacker.x,time:100});
 }
 },
 spectralthiefboost:{
 anim:function(scene,_ref38){var attacker=_ref38[0],defender=_ref38[1];
 scene.backgroundEffect('linear-gradient(#000000 30%, #440044',1400,0.5);
-scene.showEffect('shadowball',{
-x:defender.x,
-y:defender.y-30,
-z:defender.z,
-scale:0.5,
-xscale:0.5,
-yscale:1,
-opacity:0.5
-},{
-scale:2,
-xscale:4,
-opacity:0.1,
-time:400
-},'decel','fade');
-scene.showEffect('poisonwisp',{
-x:defender.x,
-y:defender.y-25,
-z:defender.z,
-scale:1
-},{
-x:defender.x+50,
-scale:3,
-xscale:3.5,
-opacity:0.3,
-time:500
-},'linear','fade');
-scene.showEffect('poisonwisp',{
-x:defender.x,
-y:defender.y-25,
-z:defender.z,
-scale:1
-},{
-x:defender.x-50,
-scale:3,
-xscale:3.5,
-opacity:0.3,
-time:500
-},'linear','fade');
-scene.showEffect('shadowball',{
-x:defender.x+35,
-y:defender.y,
-z:defender.z,
-opacity:0.4,
-scale:0.25,
-time:50
-},{
-y:defender.y-40,
-opacity:0,
-time:300
-},'accel');
-scene.showEffect('shadowball',{
-x:defender.x-35,
-y:defender.y,
-z:defender.z,
-opacity:0.4,
-scale:0.25,
-time:100
-},{
-y:defender.y-40,
-opacity:0,
-time:350
-},'accel');
-scene.showEffect('shadowball',{
-x:defender.x+15,
-y:defender.y,
-z:defender.z,
-opacity:0.4,
-scale:0.5,
-time:150
-},{
-y:defender.y-40,
-opacity:0,
-time:400
-},'accel');
-scene.showEffect('shadowball',{
-x:defender.x+15,
-y:defender.y,
-z:defender.z,
-opacity:0.4,
-scale:0.25,
-time:200
-},{
-y:defender.y-40,
-opacity:0,
-time:450
-},'accel');
-
-scene.showEffect('poisonwisp',{
-x:defender.x-50,
-y:defender.y-40,
-z:defender.z,
-scale:2,
-opacity:0.3,
-time:300
-},{
-x:attacker.x-50,
-y:attacker.y-40,
-z:attacker.z,
-time:900
-},'decel','fade');
-scene.showEffect('poisonwisp',{
-x:defender.x-50,
-y:defender.y-40,
-z:defender.z,
-scale:2,
-opacity:0.3,
-time:400
-},{
-x:attacker.x-50,
-y:attacker.y-40,
-z:attacker.z,
-time:900
-},'decel','fade');
-scene.showEffect('poisonwisp',{
-x:defender.x,
-y:defender.y-40,
-z:defender.z,
-scale:2,
-opacity:0.3,
-time:450
-},{
-x:attacker.x,
-y:attacker.y-40,
-z:attacker.z,
-time:950
-},'decel','fade');
-
-scene.showEffect('shadowball',{
-x:attacker.x,
-y:attacker.y-30,
-z:attacker.z,
-scale:0,
-xscale:0.5,
-yscale:1,
-opacity:0.5,
-time:750
-},{
-scale:2,
-xscale:4,
-opacity:0.1,
-time:1200
-},'decel','fade');
-
-scene.showEffect('shadowball',{
-x:attacker.x+35,
-y:attacker.y-40,
-z:attacker.z,
-opacity:0.4,
-scale:0.25,
-time:750
-},{
-y:attacker.y,
-opacity:0,
-time:1000
-},'decel');
-scene.showEffect('shadowball',{
-x:attacker.x-35,
-y:attacker.y-40,
-z:attacker.z,
-opacity:1,
-scale:0.25,
-time:800
-},{
-y:attacker.y,
-opacity:0,
-time:1150
-},'decel');
-scene.showEffect('shadowball',{
-x:attacker.x+15,
-y:attacker.y-40,
-z:attacker.z,
-opacity:1,
-scale:0.25,
-time:950
-},{
-y:attacker.y,
-opacity:0,
-time:1200
-},'decel');
-scene.showEffect('shadowball',{
-x:attacker.x+15,
-y:attacker.y-40,
-z:attacker.z,
-opacity:1,
-scale:0.25,
-time:1000
-},{
-y:attacker.y,
-opacity:0,
-time:1350
-},'decel');
-
-scene.showEffect('poisonwisp',{
-x:attacker.x,
-y:attacker.y-25,
-z:attacker.z,
-scale:2,
-opacity:1,
-time:750
-},{
-x:attacker.x+75,
-opacity:0.3,
-time:1200
-},'linear','fade');
-scene.showEffect('poisonwisp',{
-x:attacker.x,
-y:attacker.y-25,
-z:attacker.z,
-scale:2,
-opacity:1,
-time:750
-},{
-x:attacker.x-75,
-opacity:0.3,
-time:1200
-},'linear','fade');
-
-defender.anim({
-x:defender.x-15,
-time:75
-});
-defender.anim({
-x:defender.x+15,
-time:100
-});
-defender.anim({
-x:defender.x-15,
-time:100
-});
-defender.anim({
-x:defender.x+15,
-time:100
-});
-defender.anim({
-x:defender.x-15,
-time:100
-});
-defender.anim({
-x:defender.x+15,
-time:100
-});
-defender.anim({
-x:defender.x,
-time:100
-});
+scene.showEffect('shadowball',
+{x:defender.x,y:defender.y-30,z:defender.z,scale:0.5,xscale:0.5,yscale:1,opacity:0.5},
+{scale:2,xscale:4,opacity:0.1,time:400},
+'decel','fade');
+scene.showEffect('poisonwisp',
+{x:defender.x,y:defender.y-25,z:defender.z,scale:1},
+{x:defender.x+50,scale:3,xscale:3.5,opacity:0.3,time:500},
+'linear','fade');
+scene.showEffect('poisonwisp',
+{x:defender.x,y:defender.y-25,z:defender.z,scale:1},
+{x:defender.x-50,scale:3,xscale:3.5,opacity:0.3,time:500},
+'linear','fade');
+scene.showEffect('shadowball',
+{x:defender.x+35,y:defender.y,z:defender.z,opacity:0.4,scale:0.25,time:50},
+{y:defender.y-40,opacity:0,time:300},
+'accel');
+scene.showEffect('shadowball',
+{x:defender.x-35,y:defender.y,z:defender.z,opacity:0.4,scale:0.25,time:100},
+{y:defender.y-40,opacity:0,time:350},
+'accel');
+scene.showEffect('shadowball',
+{x:defender.x+15,y:defender.y,z:defender.z,opacity:0.4,scale:0.5,time:150},
+{y:defender.y-40,opacity:0,time:400},
+'accel');
+scene.showEffect('shadowball',
+{x:defender.x+15,y:defender.y,z:defender.z,opacity:0.4,scale:0.25,time:200},
+{y:defender.y-40,opacity:0,time:450},
+'accel');
+scene.showEffect('poisonwisp',
+{x:defender.x-50,y:defender.y-40,z:defender.z,scale:2,opacity:0.3,time:300},
+{x:attacker.x-50,y:attacker.y-40,z:attacker.z,time:900},
+'decel','fade');
+scene.showEffect('poisonwisp',
+{x:defender.x-50,y:defender.y-40,z:defender.z,scale:2,opacity:0.3,time:400},
+{x:attacker.x-50,y:attacker.y-40,z:attacker.z,time:900},
+'decel','fade');
+scene.showEffect('poisonwisp',
+{x:defender.x,y:defender.y-40,z:defender.z,scale:2,opacity:0.3,time:450},
+{x:attacker.x,y:attacker.y-40,z:attacker.z,time:950},
+'decel','fade');
+scene.showEffect('shadowball',
+{x:attacker.x,y:attacker.y-30,z:attacker.z,scale:0,xscale:0.5,yscale:1,opacity:0.5,time:750},
+{scale:2,xscale:4,opacity:0.1,time:1200},
+'decel','fade');
+scene.showEffect('shadowball',
+{x:attacker.x+35,y:attacker.y-40,z:attacker.z,opacity:0.4,scale:0.25,time:750},
+{y:attacker.y,opacity:0,time:1000},
+'decel');
+scene.showEffect('shadowball',
+{x:attacker.x-35,y:attacker.y-40,z:attacker.z,opacity:1,scale:0.25,time:800},
+{y:attacker.y,opacity:0,time:1150},
+'decel');
+scene.showEffect('shadowball',
+{x:attacker.x+15,y:attacker.y-40,z:attacker.z,opacity:1,scale:0.25,time:950},
+{y:attacker.y,opacity:0,time:1200},
+'decel');
+scene.showEffect('shadowball',
+{x:attacker.x+15,y:attacker.y-40,z:attacker.z,opacity:1,scale:0.25,time:1000},
+{y:attacker.y,opacity:0,time:1350},
+'decel');
+scene.showEffect('poisonwisp',
+{x:attacker.x,y:attacker.y-25,z:attacker.z,scale:2,opacity:1,time:750},
+{x:attacker.x+75,opacity:0.3,time:1200},
+'linear','fade');
+scene.showEffect('poisonwisp',
+{x:attacker.x,y:attacker.y-25,z:attacker.z,scale:2,opacity:1,time:750},
+{x:attacker.x-75,opacity:0.3,time:1200},
+'linear','fade');
+defender.anim({x:defender.x-15,time:75});
+defender.anim({x:defender.x+15,time:100});
+defender.anim({x:defender.x-15,time:100});
+defender.anim({x:defender.x+15,time:100});
+defender.anim({x:defender.x-15,time:100});
+defender.anim({x:defender.x+15,time:100});
+defender.anim({x:defender.x,time:100});
 }
 },
 schoolingin:{
 anim:function(scene,_ref39){var attacker=_ref39[0];
 scene.backgroundEffect('#0000DD',600,0.2);
-scene.showEffect('wisp',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:2.5,
-opacity:1
-},{
-scale:3,
-time:600
-},'linear','explode');
-scene.showEffect('waterwisp',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:3,
-opacity:0.3
-},{
-scale:3.25,
-time:600
-},'linear','explode');
-
-scene.showEffect('iceball',{
-x:attacker.leftof(200),
-y:attacker.y+40,
-z:attacker.z,
-scale:0.5,
-opacity:0.5
-},{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-opacity:0,
-time:200
-},'ballistic','fade');
-scene.showEffect('iceball',{
-x:attacker.leftof(-140),
-y:attacker.y-60,
-z:attacker.z,
-scale:0.5,
-opacity:0.5,
-time:100
-},{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-opacity:0,
-time:300
-},'ballistic2Under','fade');
-scene.showEffect('iceball',{
-x:attacker.leftof(-140),
-y:attacker.y+50,
-z:attacker.behind(170),
-scale:0.5,
-opacity:0.5,
-time:200
-},{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-opacity:0,
-time:400
-},'ballistic2','fade');
-scene.showEffect('iceball',{
-x:attacker.x,
-y:attacker.y+30,
-z:attacker.behind(-250),
-scale:0.5,
-opacity:0.5,
-time:200
-},{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-opacity:0,
-time:500
-},'ballistic','fade');
-scene.showEffect('iceball',{
-x:attacker.leftof(240),
-y:attacker.y-80,
-z:attacker.z,
-scale:0.5,
-opacity:0.5,
-time:300
-},{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-opacity:0,
-time:600
-},'ballistic2Under');
+scene.showEffect('wisp',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:2.5,opacity:1},
+{scale:3,time:600},
+'linear','explode');
+scene.showEffect('waterwisp',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:3,opacity:0.3},
+{scale:3.25,time:600},
+'linear','explode');
+scene.showEffect('iceball',
+{x:attacker.leftof(200),y:attacker.y+40,z:attacker.z,scale:0.5,opacity:0.5},
+{x:attacker.x,y:attacker.y,z:attacker.z,opacity:0,time:200},
+'ballistic','fade');
+scene.showEffect('iceball',
+{x:attacker.leftof(-140),y:attacker.y-60,z:attacker.z,scale:0.5,opacity:0.5,time:100},
+{x:attacker.x,y:attacker.y,z:attacker.z,opacity:0,time:300},
+'ballistic2Under','fade');
+scene.showEffect('iceball',
+{x:attacker.leftof(-140),y:attacker.y+50,z:attacker.behind(170),scale:0.5,opacity:0.5,time:200},
+{x:attacker.x,y:attacker.y,z:attacker.z,opacity:0,time:400},
+'ballistic2','fade');
+scene.showEffect('iceball',
+{x:attacker.x,y:attacker.y+30,z:attacker.behind(-250),scale:0.5,opacity:0.5,time:200},
+{x:attacker.x,y:attacker.y,z:attacker.z,opacity:0,time:500},
+'ballistic','fade');
+scene.showEffect('iceball',
+{x:attacker.leftof(240),y:attacker.y-80,z:attacker.z,scale:0.5,opacity:0.5,time:300},
+{x:attacker.x,y:attacker.y,z:attacker.z,opacity:0,time:600},
+'ballistic2Under');
 }
 },
 schoolingout:{
 anim:function(scene,_ref40){var attacker=_ref40[0];
 scene.backgroundEffect('#0000DD',600,0.2);
-scene.showEffect('wisp',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:3,
-opacity:1
-},{
-scale:2,
-time:600
-},'linear','explode');
-scene.showEffect('waterwisp',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:3.25,
-opacity:0.3
-},{
-scale:2.5,
-time:600
-},'linear','explode');
-
-scene.showEffect('iceball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:0
-},{
-x:attacker.leftof(200),
-y:attacker.y+40,
-z:attacker.z,
-scale:0.5,
-opacity:0.5,
-time:200
-},'ballistic','fade');
-scene.showEffect('iceball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:0,
-time:100
-},{
-x:attacker.leftof(-140),
-y:attacker.y-60,
-z:attacker.z,
-opacity:0.5,
-time:300
-},'ballistic2Under','fade');
-scene.showEffect('iceball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:0,
-time:200
-},{
-x:attacker.leftof(-140),
-y:attacker.y+50,
-z:attacker.behind(170),
-opacity:0.5,
-time:400
-},'ballistic2','fade');
-scene.showEffect('iceball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:0,
-time:200
-},{
-x:attacker.x,
-y:attacker.y+30,
-z:attacker.behind(-250),
-opacity:0.5,
-time:500
-},'ballistic','fade');
-scene.showEffect('iceball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:0,
-time:300
-},{
-x:attacker.leftof(240),
-y:attacker.y-80,
-z:attacker.z,
-opacity:0.5,
-time:600
-},'ballistic2Under');
+scene.showEffect('wisp',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:3,opacity:1},
+{scale:2,time:600},
+'linear','explode');
+scene.showEffect('waterwisp',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:3.25,opacity:0.3},
+{scale:2.5,time:600},
+'linear','explode');
+scene.showEffect('iceball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.5,opacity:0},
+{x:attacker.leftof(200),y:attacker.y+40,z:attacker.z,scale:0.5,opacity:0.5,time:200},
+'ballistic','fade');
+scene.showEffect('iceball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.5,opacity:0,time:100},
+{x:attacker.leftof(-140),y:attacker.y-60,z:attacker.z,opacity:0.5,time:300},
+'ballistic2Under','fade');
+scene.showEffect('iceball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.5,opacity:0,time:200},
+{x:attacker.leftof(-140),y:attacker.y+50,z:attacker.behind(170),opacity:0.5,time:400},
+'ballistic2','fade');
+scene.showEffect('iceball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.5,opacity:0,time:200},
+{x:attacker.x,y:attacker.y+30,z:attacker.behind(-250),opacity:0.5,time:500},
+'ballistic','fade');
+scene.showEffect('iceball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.5,opacity:0,time:300},
+{x:attacker.leftof(240),y:attacker.y-80,z:attacker.z,opacity:0.5,time:600},
+'ballistic2Under');
 }
 },
 primalalpha:{
 anim:function(scene,_ref41){var attacker=_ref41[0];
 scene.backgroundEffect('#0000DD',500,0.4);
-scene.showEffect('iceball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:2,
-opacity:0.2,
-time:0
-},{
-scale:0.5,
-opacity:1,
-time:300
-},'linear','fade');
-scene.showEffect('iceball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:1,
-time:300
-},{
-scale:4,
-opacity:0,
-time:700
-},'linear','fade');
-scene.showEffect('shadowball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:0.5,
-time:300
-},{
-scale:5,
-opacity:0,
-time:600
-},'linear','fade');
-scene.showEffect('alpha',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:1,
-time:300
-},{
-scale:2.5,
-opacity:0,
-time:600
-},'decel');
+scene.showEffect('iceball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:2,opacity:0.2,time:0},
+{scale:0.5,opacity:1,time:300},
+'linear','fade');
+scene.showEffect('iceball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.5,opacity:1,time:300},
+{scale:4,opacity:0,time:700},
+'linear','fade');
+scene.showEffect('shadowball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.5,opacity:0.5,time:300},
+{scale:5,opacity:0,time:600},
+'linear','fade');
+scene.showEffect('alpha',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.5,opacity:1,time:300},
+{scale:2.5,opacity:0,time:600},
+'decel');
 }
 },
 primalomega:{
 anim:function(scene,_ref42){var attacker=_ref42[0];
 scene.backgroundEffect('linear-gradient(#390000 30%, #B84038)',500,0.4);
-scene.showEffect('flareball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:2,
-opacity:0.2,
-time:0
-},{
-scale:0.5,
-opacity:1,
-time:300
-},'linear','fade');
-scene.showEffect('flareball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:1,
-time:300
-},{
-scale:4,
-opacity:0,
-time:700
-},'linear','fade');
-scene.showEffect('shadowball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:0.5,
-time:300
-},{
-scale:5,
-opacity:0,
-time:600
-},'linear','fade');
-scene.showEffect('omega',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:1,
-time:300
-},{
-scale:2.5,
-opacity:0,
-time:600
-},'decel');
+scene.showEffect('flareball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:2,opacity:0.2,time:0},
+{scale:0.5,opacity:1,time:300},
+'linear','fade');
+scene.showEffect('flareball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.5,opacity:1,time:300},
+{scale:4,opacity:0,time:700},
+'linear','fade');
+scene.showEffect('shadowball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.5,opacity:0.5,time:300},
+{scale:5,opacity:0,time:600},
+'linear','fade');
+scene.showEffect('omega',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.5,opacity:1,time:300},
+{scale:2.5,opacity:0,time:600},
+'decel');
 }
 },
 megaevo:{
 anim:function(scene,_ref43){var attacker=_ref43[0];
 scene.backgroundEffect('#835BA5',500,0.6);
-scene.showEffect('iceball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:2,
-opacity:0.2,
-time:0
-},{
-scale:0.5,
-opacity:1,
-time:300
-},'linear','fade');
-scene.showEffect('iceball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:1,
-time:300
-},{
-scale:4,
-opacity:0,
-time:700
-},'linear','fade');
-scene.showEffect('mistball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:0.5,
-time:300
-},{
-scale:5,
-opacity:0,
-time:600
-},'linear','fade');
-scene.showEffect('rainbow',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:1,
-time:300
-},{
-scale:5,
-opacity:0,
-time:600
-},'linear','fade');
+scene.showEffect('iceball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:2,opacity:0.2,time:0},
+{scale:0.5,opacity:1,time:300},
+'linear','fade');
+scene.showEffect('iceball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.5,opacity:1,time:300},
+{scale:4,opacity:0,time:700},
+'linear','fade');
+scene.showEffect('mistball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.5,opacity:0.5,time:300},
+{scale:5,opacity:0,time:600},
+'linear','fade');
+scene.showEffect('rainbow',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.5,opacity:1,time:300},
+{scale:5,opacity:0,time:600},
+'linear','fade');
 }
 },
 zpower:{
 anim:function(scene,_ref44){var attacker=_ref44[0];
 scene.backgroundEffect('linear-gradient(#000000 20%, #0000DD)',1800,0.4);
-scene.showEffect('electroball',{
-x:attacker.x-60,
-y:attacker.y+40,
-z:attacker.z,
-scale:0.7,
-opacity:0.7,
-time:0
-},{
-x:attacker.x,
-y:attacker.y,
-scale:0.2,
-opacity:0.2,
-time:300
-},'linear','fade');
-scene.showEffect('electroball',{
-x:attacker.x+60,
-y:attacker.y-5,
-z:attacker.z,
-scale:0.7,
-opacity:0.7,
-time:100
-},{
-x:attacker.x,
-y:attacker.y,
-scale:0.2,
-opacity:0.2,
-time:300
-},'linear','fade');
-scene.showEffect('electroball',{
-x:attacker.x-30,
-y:attacker.y+60,
-z:attacker.z,
-scale:0.7,
-opacity:0.7,
-time:100
-},{
-x:attacker.x,
-y:attacker.y,
-scale:0.2,
-opacity:0.2,
-time:400
-},'linear','fade');
-scene.showEffect('electroball',{
-x:attacker.x+20,
-y:attacker.y-50,
-z:attacker.z,
-scale:0.7,
-opacity:0.7,
-time:100
-},{
-x:attacker.x,
-y:attacker.y,
-scale:0.2,
-opacity:0.2,
-time:400
-},'linear','fade');
-scene.showEffect('electroball',{
-x:attacker.x-70,
-y:attacker.y-50,
-z:attacker.z,
-scale:0.7,
-opacity:0.7,
-time:200
-},{
-x:attacker.x,
-y:attacker.y,
-scale:0.2,
-opacity:0.2,
-time:500
-},'linear','fade');
-scene.showEffect('zsymbol',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.7,
-opacity:1,
-time:500
-},{
-scale:1,
-opacity:0.5,
-time:800
-},'decel','explode');
-scene.showEffect(attacker.sp,{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-opacity:0.3,
-time:800
-},{
-y:attacker.y+20,
-scale:2,
-opacity:0,
-time:1200
-},'accel');
-scene.showEffect(attacker.sp,{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-opacity:0.3,
-time:1000
-},{
-y:attacker.y+20,
-scale:2,
-opacity:0,
-time:1400
-},'accel');
-scene.showEffect(attacker.sp,{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-opacity:0.3,
-time:1200
-},{
-y:attacker.y+20,
-scale:2,
-opacity:0,
-time:1600
-},'accel');
+scene.showEffect('electroball',
+{x:attacker.x-60,y:attacker.y+40,z:attacker.z,scale:0.7,opacity:0.7,time:0},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:300},
+'linear','fade');
+scene.showEffect('electroball',
+{x:attacker.x+60,y:attacker.y-5,z:attacker.z,scale:0.7,opacity:0.7,time:100},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:300},
+'linear','fade');
+scene.showEffect('electroball',
+{x:attacker.x-30,y:attacker.y+60,z:attacker.z,scale:0.7,opacity:0.7,time:100},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:400},
+'linear','fade');
+scene.showEffect('electroball',
+{x:attacker.x+20,y:attacker.y-50,z:attacker.z,scale:0.7,opacity:0.7,time:100},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:400},
+'linear','fade');
+scene.showEffect('electroball',
+{x:attacker.x-70,y:attacker.y-50,z:attacker.z,scale:0.7,opacity:0.7,time:200},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:500},
+'linear','fade');
+scene.showEffect('zsymbol',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.7,opacity:1,time:500},
+{scale:1,opacity:0.5,time:800},
+'decel','explode');
+scene.showEffect(attacker.sp,
+{x:attacker.x,y:attacker.y,z:attacker.z,opacity:0.3,time:800},
+{y:attacker.y+20,scale:2,opacity:0,time:1200},
+'accel');
+scene.showEffect(attacker.sp,
+{x:attacker.x,y:attacker.y,z:attacker.z,opacity:0.3,time:1000},
+{y:attacker.y+20,scale:2,opacity:0,time:1400},
+'accel');
+scene.showEffect(attacker.sp,
+{x:attacker.x,y:attacker.y,z:attacker.z,opacity:0.3,time:1200},
+{y:attacker.y+20,scale:2,opacity:0,time:1600},
+'accel');
 }
 },
 powerconstruct:{
@@ -5535,556 +3397,201 @@ var xf=[1,-1,1,-1];
 var yf=[1,-1,-1,1];
 var xf2=[1,0,-1,0];
 var yf2=[0,1,0,-1];
-
 scene.backgroundEffect('#000000',1000,0.7);
 for(var i=0;i<4;i++){
-scene.showEffect('energyball',{
-x:attacker.x+150*xf[i],
-y:attacker.y-50,
-z:attacker.z+70*yf[i],
-scale:0.1,
-xscale:0.5,
-opacity:0.4
-},{
-x:attacker.x,
-y:attacker.y-50,
-z:attacker.z,
-scale:0.3,
-xscale:0.8,
-opacity:0,
-time:500
-},'decel','fade');
-scene.showEffect('energyball',{
-x:attacker.x+200*xf2[i],
-y:attacker.y-50,
-z:attacker.z+90*yf2[i],
-scale:0.1,
-xscale:0.5,
-opacity:0.4
-},{
-x:attacker.x,
-y:attacker.y-50,
-z:attacker.z,
-scale:0.3,
-xscale:0.8,
-opacity:0,
-time:500
-},'decel','fade');
-
-scene.showEffect('energyball',{
-x:attacker.x+50*xf[i],
-y:attacker.y-50,
-z:attacker.z+100*yf[i],
-scale:0.1,
-xscale:0.5,
-opacity:0.4,
-time:200
-},{
-x:attacker.x,
-y:attacker.y-50,
-z:attacker.z,
-scale:0.3,
-xscale:0.8,
-opacity:0,
-time:500
-},'decel','fade');
-scene.showEffect('energyball',{
-x:attacker.x+100*xf2[i],
-y:attacker.y-50,
-z:attacker.z+90*yf2[i],
-scale:0.1,
-xscale:0.5,
-opacity:0.4,
-time:200
-},{
-x:attacker.x,
-y:attacker.y-50,
-z:attacker.z,
-scale:0.3,
-xscale:0.8,
-opacity:0,
-time:500
-},'decel','fade');
+scene.showEffect('energyball',
+{x:attacker.x+150*xf[i],y:attacker.y-50,z:attacker.z+70*yf[i],scale:0.1,xscale:0.5,opacity:0.4},
+{x:attacker.x,y:attacker.y-50,z:attacker.z,scale:0.3,xscale:0.8,opacity:0,time:500},
+'decel','fade');
+scene.showEffect('energyball',
+{x:attacker.x+200*xf2[i],y:attacker.y-50,z:attacker.z+90*yf2[i],scale:0.1,xscale:0.5,opacity:0.4},
+{x:attacker.x,y:attacker.y-50,z:attacker.z,scale:0.3,xscale:0.8,opacity:0,time:500},
+'decel','fade');
+scene.showEffect('energyball',
+{x:attacker.x+50*xf[i],y:attacker.y-50,z:attacker.z+100*yf[i],scale:0.1,xscale:0.5,opacity:0.4,time:200},
+{x:attacker.x,y:attacker.y-50,z:attacker.z,scale:0.3,xscale:0.8,opacity:0,time:500},
+'decel','fade');
+scene.showEffect('energyball',
+{x:attacker.x+100*xf2[i],y:attacker.y-50,z:attacker.z+90*yf2[i],scale:0.1,xscale:0.5,opacity:0.4,time:200},
+{x:attacker.x,y:attacker.y-50,z:attacker.z,scale:0.3,xscale:0.8,opacity:0,time:500},
+'decel','fade');
 }
-scene.showEffect('energyball',{
-x:attacker.x,
-y:attacker.y-25,
-z:attacker.z,
-scale:3,
-opacity:0,
-time:50
-},{
-scale:1,
-opacity:0.8,
-time:300
-},'linear','fade');
-scene.showEffect('energyball',{
-x:attacker.x,
-y:attacker.y-25,
-z:attacker.z,
-scale:3.5,
-opacity:0,
-time:150
-},{
-scale:1.5,
-opacity:1,
-time:350
-},'linear','fade');
-scene.showEffect('energyball',{
-x:attacker.x,
-y:attacker.y-25,
-z:attacker.z,
-scale:0.5,
-opacity:1,
-time:200
-},{
-scale:3,
-opacity:0,
-time:600
-},'linear','fade');
-scene.showEffect('wisp',{
-x:attacker.x,
-y:attacker.y-25,
-z:attacker.z,
-scale:1,
-opacity:0.6,
-time:100
-},{
-scale:3.5,
-opacity:0.8,
-time:500
-},'linear','explode');
+scene.showEffect('energyball',
+{x:attacker.x,y:attacker.y-25,z:attacker.z,scale:3,opacity:0,time:50},
+{scale:1,opacity:0.8,time:300},
+'linear','fade');
+scene.showEffect('energyball',
+{x:attacker.x,y:attacker.y-25,z:attacker.z,scale:3.5,opacity:0,time:150},
+{scale:1.5,opacity:1,time:350},
+'linear','fade');
+scene.showEffect('energyball',
+{x:attacker.x,y:attacker.y-25,z:attacker.z,scale:0.5,opacity:1,time:200},
+{scale:3,opacity:0,time:600},
+'linear','fade');
+scene.showEffect('wisp',
+{x:attacker.x,y:attacker.y-25,z:attacker.z,scale:1,opacity:0.6,time:100},
+{scale:3.5,opacity:0.8,time:500},
+'linear','explode');
 }
 },
 ultraburst:{
 anim:function(scene,_ref46){var attacker=_ref46[0];
 scene.backgroundEffect('#000000',600,0.5);
 scene.backgroundEffect('#ffffff',500,1,550);
-scene.showEffect('wisp',{
-x:attacker.x-60,
-y:attacker.y+40,
-z:attacker.z,
-scale:0.7,
-opacity:0.7,
-time:0
-},{
-x:attacker.x,
-y:attacker.y,
-scale:0.2,
-opacity:0.2,
-time:150
-},'linear','fade');
-scene.showEffect('wisp',{
-x:attacker.x+60,
-y:attacker.y-5,
-z:attacker.z,
-scale:0.7,
-opacity:0.7,
-time:100
-},{
-x:attacker.x,
-y:attacker.y,
-scale:0.2,
-opacity:0.2,
-time:150
-},'linear','fade');
-scene.showEffect('wisp',{
-x:attacker.x-30,
-y:attacker.y+60,
-z:attacker.z,
-scale:0.7,
-opacity:0.7,
-time:100
-},{
-x:attacker.x,
-y:attacker.y,
-scale:0.2,
-opacity:0.2,
-time:250
-},'linear','fade');
-scene.showEffect('wisp',{
-x:attacker.x+20,
-y:attacker.y-50,
-z:attacker.z,
-scale:0.7,
-opacity:0.7,
-time:100
-},{
-x:attacker.x,
-y:attacker.y,
-scale:0.2,
-opacity:0.2,
-time:250
-},'linear','fade');
-scene.showEffect('wisp',{
-x:attacker.x-70,
-y:attacker.y-50,
-z:attacker.z,
-scale:0.7,
-opacity:0.7,
-time:100
-},{
-x:attacker.x,
-y:attacker.y,
-scale:0.2,
-opacity:0.2,
-time:300
-},'linear','fade');
-
-scene.showEffect('wisp',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:1.5,
-opacity:1
-},{
-scale:4,
-time:600
-},'linear','explode');
-scene.showEffect('electroball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:2,
-opacity:0
-},{
-scale:2.25,
-opacity:0.1,
-time:600
-},'linear','explode');
-scene.showEffect('energyball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:2,
-opacity:0,
-time:200
-},{
-scale:2.25,
-opacity:0.1,
-time:600
-},'linear','explode');
-
-scene.showEffect('electroball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:6,
-opacity:0.2
-},{
-scale:1,
-opacity:0,
-time:300
-},'linear');
-scene.showEffect('electroball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:6,
-opacity:0.2,
-time:150
-},{
-scale:1,
-opacity:0,
-time:450
-},'linear');
-scene.showEffect('electroball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:6,
-opacity:0.2,
-time:300
-},{
-scale:1,
-opacity:0,
-time:600
-},'linear');
-scene.showEffect('ultra',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:1,
-time:600
-},{
-scale:1,
-opacity:0,
-time:900
-},'decel');
-scene.showEffect('iceball',{
-x:attacker.x,
-y:attacker.y-60,
-z:attacker.z,
-scale:0.5,
-xscale:0.25,
-yscale:0,
-opacity:0.5,
-time:600
-},{
-scale:2,
-xscale:6,
-yscale:1,
-opacity:0,
-time:800
-},'linear');
-scene.showEffect('iceball',{
-x:attacker.x,
-y:attacker.y-60,
-z:attacker.z,
-scale:0.5,
-xscale:0.25,
-yscale:0.75,
-opacity:0.5,
-time:800
-},{
-scale:2,
-xscale:6,
-opacity:0.1,
-time:1000
-},'linear');
+scene.showEffect('wisp',
+{x:attacker.x-60,y:attacker.y+40,z:attacker.z,scale:0.7,opacity:0.7,time:0},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:150},
+'linear','fade');
+scene.showEffect('wisp',
+{x:attacker.x+60,y:attacker.y-5,z:attacker.z,scale:0.7,opacity:0.7,time:100},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:150},
+'linear','fade');
+scene.showEffect('wisp',
+{x:attacker.x-30,y:attacker.y+60,z:attacker.z,scale:0.7,opacity:0.7,time:100},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:250},
+'linear','fade');
+scene.showEffect('wisp',
+{x:attacker.x+20,y:attacker.y-50,z:attacker.z,scale:0.7,opacity:0.7,time:100},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:250},
+'linear','fade');
+scene.showEffect('wisp',
+{x:attacker.x-70,y:attacker.y-50,z:attacker.z,scale:0.7,opacity:0.7,time:100},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:300},
+'linear','fade');
+scene.showEffect('wisp',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:1.5,opacity:1},
+{scale:4,time:600},
+'linear','explode');
+scene.showEffect('electroball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:2,opacity:0},
+{scale:2.25,opacity:0.1,time:600},
+'linear','explode');
+scene.showEffect('energyball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:2,opacity:0,time:200},
+{scale:2.25,opacity:0.1,time:600},
+'linear','explode');
+scene.showEffect('electroball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:6,opacity:0.2},
+{scale:1,opacity:0,time:300},
+'linear');
+scene.showEffect('electroball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:6,opacity:0.2,time:150},
+{scale:1,opacity:0,time:450},
+'linear');
+scene.showEffect('electroball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:6,opacity:0.2,time:300},
+{scale:1,opacity:0,time:600},
+'linear');
+scene.showEffect('ultra',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.5,opacity:1,time:600},
+{scale:1,opacity:0,time:900},
+'decel');
+scene.showEffect('iceball',
+{x:attacker.x,y:attacker.y-60,z:attacker.z,scale:0.5,xscale:0.25,yscale:0,opacity:0.5,time:600},
+{scale:2,xscale:6,yscale:1,opacity:0,time:800},
+'linear');
+scene.showEffect('iceball',
+{x:attacker.x,y:attacker.y-60,z:attacker.z,scale:0.5,xscale:0.25,yscale:0.75,opacity:0.5,time:800},
+{scale:2,xscale:6,opacity:0.1,time:1000},
+'linear');
 }
 }
 };
+
 var BattleStatusAnims={
 brn:{
 anim:function(scene,_ref47){var attacker=_ref47[0];
-scene.showEffect('fireball',{
-x:attacker.x-20,
-y:attacker.y-15,
-z:attacker.z,
-scale:0.2,
-opacity:0.3
-},{
-x:attacker.x+40,
-y:attacker.y+15,
-z:attacker.z,
-scale:1,
-opacity:1,
-time:300
-},'swing','fade');
+scene.showEffect('fireball',
+{x:attacker.x-20,y:attacker.y-15,z:attacker.z,scale:0.2,opacity:0.3},
+{x:attacker.x+40,y:attacker.y+15,z:attacker.z,scale:1,opacity:1,time:300},
+'swing','fade');
 }
 },
 psn:{
 anim:function(scene,_ref48){var attacker=_ref48[0];
-scene.showEffect('poisonwisp',{
-x:attacker.x+30,
-y:attacker.y-40,
-z:attacker.z,
-scale:0.2,
-opacity:1,
-time:0
-},{
-y:attacker.y,
-scale:1,
-opacity:0.5,
-time:300
-},'decel','fade');
-scene.showEffect('poisonwisp',{
-x:attacker.x-30,
-y:attacker.y-40,
-z:attacker.z,
-scale:0.2,
-opacity:1,
-time:100
-},{
-y:attacker.y,
-scale:1,
-opacity:0.5,
-time:400
-},'decel','fade');
-scene.showEffect('poisonwisp',{
-x:attacker.x,
-y:attacker.y-40,
-z:attacker.z,
-scale:0.2,
-opacity:1,
-time:200
-},{
-y:attacker.y,
-scale:1,
-opacity:0.5,
-time:500
-},'decel','fade');
+scene.showEffect('poisonwisp',
+{x:attacker.x+30,y:attacker.y-40,z:attacker.z,scale:0.2,opacity:1,time:0},
+{y:attacker.y,scale:1,opacity:0.5,time:300},
+'decel','fade');
+scene.showEffect('poisonwisp',
+{x:attacker.x-30,y:attacker.y-40,z:attacker.z,scale:0.2,opacity:1,time:100},
+{y:attacker.y,scale:1,opacity:0.5,time:400},
+'decel','fade');
+scene.showEffect('poisonwisp',
+{x:attacker.x,y:attacker.y-40,z:attacker.z,scale:0.2,opacity:1,time:200},
+{y:attacker.y,scale:1,opacity:0.5,time:500},
+'decel','fade');
 }
 },
 slp:{
 anim:function(scene,_ref49){var attacker=_ref49[0];
-scene.showEffect('wisp',{
-x:attacker.x,
-y:attacker.y+20,
-z:attacker.z,
-scale:0.5,
-opacity:0.1
-},{
-x:attacker.x,
-y:attacker.y+20,
-z:attacker.behind(-50),
-scale:1.5,
-opacity:1,
-time:400
-},'ballistic2Under','fade');
-scene.showEffect('wisp',{
-x:attacker.x,
-y:attacker.y+20,
-z:attacker.z,
-scale:0.5,
-opacity:0.1,
-time:200
-},{
-x:attacker.x,
-y:attacker.y+20,
-z:attacker.behind(-50),
-scale:1.5,
-opacity:1,
-time:600
-},'ballistic2Under','fade');
+scene.showEffect('wisp',
+{x:attacker.x,y:attacker.y+20,z:attacker.z,scale:0.5,opacity:0.1},
+{x:attacker.x,y:attacker.y+20,z:attacker.behind(-50),scale:1.5,opacity:1,time:400},
+'ballistic2Under','fade');
+scene.showEffect('wisp',
+{x:attacker.x,y:attacker.y+20,z:attacker.z,scale:0.5,opacity:0.1,time:200},
+{x:attacker.x,y:attacker.y+20,z:attacker.behind(-50),scale:1.5,opacity:1,time:600},
+'ballistic2Under','fade');
 }
 },
 par:{
 anim:function(scene,_ref50){var attacker=_ref50[0];
-scene.showEffect('electroball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:1.5,
-opacity:0.2
-},{
-scale:2,
-opacity:0.1,
-time:300
-},'linear','fade');
-
+scene.showEffect('electroball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:1.5,opacity:0.2},
+{scale:2,opacity:0.1,time:300},
+'linear','fade');
 attacker.delay(100);
-attacker.anim({
-x:attacker.x-1,
-time:75
-},'swing');
-attacker.anim({
-x:attacker.x+1,
-time:75
-},'swing');
-attacker.anim({
-x:attacker.x-1,
-time:75
-},'swing');
-attacker.anim({
-x:attacker.x+1,
-time:75
-},'swing');
-attacker.anim({
-x:attacker.x-1,
-time:75
-},'swing');
-attacker.anim({
-time:100
-},'accel');
+attacker.anim({x:attacker.x-1,time:75},'swing');
+attacker.anim({x:attacker.x+1,time:75},'swing');
+attacker.anim({x:attacker.x-1,time:75},'swing');
+attacker.anim({x:attacker.x+1,time:75},'swing');
+attacker.anim({x:attacker.x-1,time:75},'swing');
+attacker.anim({time:100},'accel');
 }
 },
 frz:{
 anim:function(scene,_ref51){var attacker=_ref51[0];
-scene.showEffect('icicle',{
-x:attacker.x-30,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:0.5,
-time:200
-},{
-scale:0.9,
-opacity:0,
-time:600
-},'linear','fade');
-scene.showEffect('icicle',{
-x:attacker.x,
-y:attacker.y-30,
-z:attacker.z,
-scale:0.5,
-opacity:0.5,
-time:300
-},{
-scale:0.9,
-opacity:0,
-time:650
-},'linear','fade');
-scene.showEffect('icicle',{
-x:attacker.x+15,
-y:attacker.y,
-z:attacker.z,
-scale:0.5,
-opacity:0.5,
-time:400
-},{
-scale:0.9,
-opacity:0,
-time:700
-},'linear','fade');
-scene.showEffect('wisp',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:1,
-opacity:0.5
-},{
-scale:3,
-opacity:0,
-time:600
-},'linear','fade');
+scene.showEffect('icicle',
+{x:attacker.x-30,y:attacker.y,z:attacker.z,scale:0.5,opacity:0.5,time:200},
+{scale:0.9,opacity:0,time:600},
+'linear','fade');
+scene.showEffect('icicle',
+{x:attacker.x,y:attacker.y-30,z:attacker.z,scale:0.5,opacity:0.5,time:300},
+{scale:0.9,opacity:0,time:650},
+'linear','fade');
+scene.showEffect('icicle',
+{x:attacker.x+15,y:attacker.y,z:attacker.z,scale:0.5,opacity:0.5,time:400},
+{scale:0.9,opacity:0,time:700},
+'linear','fade');
+scene.showEffect('wisp',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:1,opacity:0.5},
+{scale:3,opacity:0,time:600},
+'linear','fade');
 }
 },
 flinch:{
 anim:function(scene,_ref52){var attacker=_ref52[0];
-scene.showEffect('shadowball',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:1,
-opacity:0.2
-},{
-scale:3,
-opacity:0.1,
-time:300
-},'linear','fade');
+scene.showEffect('shadowball',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:1,opacity:0.2},
+{scale:3,opacity:0.1,time:300},
+'linear','fade');
 }
 },
 attracted:{
 anim:function(scene,_ref53){var attacker=_ref53[0];
-scene.showEffect('heart',{
-x:attacker.x+20,
-y:attacker.y+20,
-z:attacker.z,
-scale:0.5,
-opacity:0.5,
-time:0
-},{
-scale:1,
-opacity:1,
-time:300
-},'ballistic2Under','fade');
-scene.showEffect('heart',{
-x:attacker.x-20,
-y:attacker.y+10,
-z:attacker.z,
-scale:0.5,
-opacity:0.5,
-time:100
-},{
-scale:1,
-opacity:1,
-time:400
-},'ballistic2Under','fade');
-scene.showEffect('heart',{
-x:attacker.x,
-y:attacker.y+40,
-z:attacker.z,
-scale:0.5,
-opacity:0.5,
-time:200
-},{
-scale:1,
-opacity:1,
-time:500
-},'ballistic2Under','fade');
+scene.showEffect('heart',
+{x:attacker.x+20,y:attacker.y+20,z:attacker.z,scale:0.5,opacity:0.5,time:0},
+{scale:1,opacity:1,time:300},
+'ballistic2Under','fade');
+scene.showEffect('heart',
+{x:attacker.x-20,y:attacker.y+10,z:attacker.z,scale:0.5,opacity:0.5,time:100},
+{scale:1,opacity:1,time:400},
+'ballistic2Under','fade');
+scene.showEffect('heart',
+{x:attacker.x,y:attacker.y+40,z:attacker.z,scale:0.5,opacity:0.5,time:200},
+{scale:1,opacity:1,time:500},
+'ballistic2Under','fade');
 }
 },
 cursed:{
@@ -6096,98 +3603,41 @@ attacker.anim({x:attacker.x+5,time:50});
 attacker.anim({x:attacker.x-5,time:50});
 attacker.anim({x:attacker.x+5,time:50});
 attacker.anim({x:attacker.x,time:50});
-
-scene.showEffect(attacker.sp,{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-opacity:0.5,
-time:0
-},{
-z:attacker.behind(20),
-opacity:0,
-time:600
-},'decel');
+scene.showEffect(attacker.sp,
+{x:attacker.x,y:attacker.y,z:attacker.z,opacity:0.5,time:0},
+{z:attacker.behind(20),opacity:0,time:600},
+'decel');
 }
 },
 confused:{
 anim:function(scene,_ref55){var attacker=_ref55[0];
-scene.showEffect('electroball',{
-x:attacker.x+50,
-y:attacker.y+30,
-z:attacker.z,
-scale:0.1,
-opacity:1,
-time:400
-},{
-x:attacker.x-50,
-scale:0.15,
-opacity:0.4,
-time:600
-},'linear','fade');
-scene.showEffect('electroball',{
-x:attacker.x-50,
-y:attacker.y+30,
-z:attacker.z,
-scale:0.1,
-opacity:1,
-time:400
-},{
-x:attacker.x+50,
-scale:0.15,
-opacity:0.4,
-time:600
-},'linear','fade');
-scene.showEffect('electroball',{
-x:attacker.x+50,
-y:attacker.y+30,
-z:attacker.z,
-scale:0.1,
-opacity:1,
-time:600
-},{
-x:attacker.x-50,
-scale:0.4,
-opacity:0.4,
-time:800
-},'linear','fade');
-scene.showEffect('electroball',{
-x:attacker.x-50,
-y:attacker.y+30,
-z:attacker.z,
-scale:0.15,
-opacity:1,
-time:600
-},{
-x:attacker.x+50,
-scale:0.4,
-opacity:0.4,
-time:800
-},'linear','fade');
+scene.showEffect('electroball',
+{x:attacker.x+50,y:attacker.y+30,z:attacker.z,scale:0.1,opacity:1,time:400},
+{x:attacker.x-50,scale:0.15,opacity:0.4,time:600},
+'linear','fade');
+scene.showEffect('electroball',
+{x:attacker.x-50,y:attacker.y+30,z:attacker.z,scale:0.1,opacity:1,time:400},
+{x:attacker.x+50,scale:0.15,opacity:0.4,time:600},
+'linear','fade');
+scene.showEffect('electroball',
+{x:attacker.x+50,y:attacker.y+30,z:attacker.z,scale:0.1,opacity:1,time:600},
+{x:attacker.x-50,scale:0.4,opacity:0.4,time:800},
+'linear','fade');
+scene.showEffect('electroball',
+{x:attacker.x-50,y:attacker.y+30,z:attacker.z,scale:0.15,opacity:1,time:600},
+{x:attacker.x+50,scale:0.4,opacity:0.4,time:800},
+'linear','fade');
 }
 },
 confusedselfhit:{
 anim:function(scene,_ref56){var attacker=_ref56[0];
-scene.showEffect('wisp',{
-x:attacker.x,
-y:attacker.y,
-z:attacker.z,
-scale:0,
-opacity:0.5
-},{
-scale:2,
-opacity:0,
-time:200
-},'linear');
+scene.showEffect('wisp',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0,opacity:0.5},
+{scale:2,opacity:0,time:200},
+'linear');
 attacker.delay(50);
-attacker.anim({
-x:attacker.leftof(2),
-z:attacker.behind(5),
-time:100
-},'swing');
-attacker.anim({
-time:300
-},'swing');
+attacker.anim({x:attacker.leftof(2),z:attacker.behind(5),time:100},'swing');
+attacker.anim({time:300},'swing');
 }
 }
 };

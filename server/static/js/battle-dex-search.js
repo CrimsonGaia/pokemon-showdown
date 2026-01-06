@@ -108,7 +108,7 @@ return null;
 
 find=function find(query){
 query=toID(query);
-if(this.query===query&&this.results){
+if(this.query===query&&this.results&&this.results.length>0){
 return false;
 }
 this.query=query;
@@ -193,6 +193,19 @@ if(!this.filters)this.filters=[];
 this.filters.push(entry.slice(0,2));
 this.results=null;
 return true;
+}else if(this.typedSearch.searchType==='item'){
+if(type===this.sortCol)this.sortCol=null;
+if(!['itemclass'].includes(type))return false;
+if(type==='itemclass')entry[1]=this.capitalizeFirst(entry[1]);
+if(!this.filters)this.filters=[];
+this.results=null;for(var _i4=0,_this$filters4=
+this.filters;_i4<_this$filters4.length;_i4++){var _filter2=_this$filters4[_i4];
+if(_filter2[0]===type&&_filter2[1]===entry[1]){
+return true;
+}
+}
+this.filters.push(entry.slice(0,2));
+return true;
 }
 return false;
 };_proto.
@@ -248,16 +261,19 @@ getTier=function getTier(species){var _this$typedSearch4;
 return((_this$typedSearch4=this.typedSearch)==null?void 0:_this$typedSearch4.getTier(species))||'';
 };_proto.
 
-textSearch=function textSearch(query){var _this$typedSearch5,_this$typedSearch6;
+textSearch=function textSearch(query){var _this$typedSearch5,_this$typedSearch6,_this$typedSearch7;
 
 if(this.typedSearch&&!this.typedSearch.baseResults){
 this.typedSearch.getResults(null,null);
+}
+if((_this$typedSearch5=this.typedSearch)!=null&&_this$typedSearch5.illegalReasons){
+console.log('[DEBUG] illegalReasons count:',Object.keys(this.typedSearch.illegalReasons).length);
 }
 
 query=toID(query);
 
 this.exactMatch=false;
-var searchType=((_this$typedSearch5=this.typedSearch)==null?void 0:_this$typedSearch5.searchType)||'';
+var searchType=((_this$typedSearch6=this.typedSearch)==null?void 0:_this$typedSearch6.searchType)||'';
 
 
 
@@ -357,7 +373,7 @@ var nearMatch=false;
 
 var instafilter=null;
 var instafilterSort=[0,1,2,5,4,3,6,7,8];
-var illegal=(_this$typedSearch6=this.typedSearch)==null?void 0:_this$typedSearch6.illegalReasons;
+var illegal=(_this$typedSearch7=this.typedSearch)==null?void 0:_this$typedSearch7.illegalReasons;
 
 
 for(i=0;i<BattleSearchIndex.length;i++){
@@ -507,8 +523,8 @@ this.results=Array.prototype.concat.apply(topbuf,bufs);
 
 
 if(this.typedSearch&&this.typedSearch.baseResults){
-var legalSet=new Set();for(var _i4=0,_this$typedSearch$bas2=
-this.typedSearch.baseResults;_i4<_this$typedSearch$bas2.length;_i4++){var _ref=_this$typedSearch$bas2[_i4];var _type=_ref[0];var _id=_ref[1];
+var legalSet=new Set();for(var _i6=0,_this$typedSearch$bas2=
+this.typedSearch.baseResults;_i6<_this$typedSearch$bas2.length;_i6++){var _ref=_this$typedSearch$bas2[_i6];var _type=_ref[0];var _id=_ref[1];
 if(_type!=='header'){
 legalSet.add(_id);
 }
@@ -523,10 +539,10 @@ return true;
 
 return this.results;
 };_proto.
-instafilter=function instafilter(searchType,fType,fId){var _this$typedSearch7;
+instafilter=function instafilter(searchType,fType,fId){var _this$typedSearch8;
 var buf=[];
 var illegalBuf=[];
-var illegal=(_this$typedSearch7=this.typedSearch)==null?void 0:_this$typedSearch7.illegalReasons;
+var illegal=(_this$typedSearch8=this.typedSearch)==null?void 0:_this$typedSearch8.illegalReasons;
 if(searchType==='pokemon'){
 switch(fType){
 case'type':
@@ -614,6 +630,7 @@ var classNames={
 fragile:'Fragile',
 "volatile":'Volatile',
 consumable:'Consumable',
+berry:'Berry',
 pokeball:'Pokéball',
 evolution:'Evolution',
 tradeevo:'Trade Evo'
@@ -627,7 +644,8 @@ var itemClass='';
 if(item.isFragile)itemClass='Fragile';else
 if(item.isMildlyFragile)itemClass='Volatile';else
 if(item.isPokeball)itemClass='Pokéball';else
-if(item.isBerry||item.isGem)itemClass='Consumable';else
+if(BattleItemSearch.berryItems.has(item.id))itemClass='Berry';else
+if(BattleItemSearch.consumableItems.has(item.id))itemClass='Consumable';else
 {
 var desc=item.desc||item.shortDesc||'';
 if(desc.includes('Single use')||desc.includes('Holder\'s use of')||desc.includes('One-time use')){
@@ -805,10 +823,9 @@ this.formatType='letsgo';
 this.dex=Dex.mod('gen7letsgo');
 }
 if(format.includes('indigostarstorm')||format.includes('isl')){
-console.log('[DEBUG] ISL format detected in search:',format);
+console.log('[DEBUG] ISL format detected, original format:',format);
 this.formatType='indigostarstorm';
 this.dex=Dex.mod('gen9indigostarstorm');
-console.log('[DEBUG] Set dex to gen9indigostarstorm, dex.modid:',this.dex.modid);
 }
 if(format.includes('nationaldex')||format.startsWith('nd')||format.includes('natdex')){
 format=format.startsWith('nd')?format.slice(2):
@@ -866,8 +883,8 @@ this.baseResults=this.getBaseResults();
 }
 
 if(!this.baseIllegalResults){
-var legalityFilter={};for(var _i6=0,_this$baseResults2=
-this.baseResults;_i6<_this$baseResults2.length;_i6++){var _ref3=_this$baseResults2[_i6];var resultType=_ref3[0];var value=_ref3[1];
+var legalityFilter={};for(var _i8=0,_this$baseResults2=
+this.baseResults;_i8<_this$baseResults2.length;_i8++){var _ref3=_this$baseResults2[_i8];var resultType=_ref3[0];var value=_ref3[1];
 if(resultType===this.searchType)legalityFilter[value]=1;
 }
 this.baseIllegalResults=[];
@@ -886,8 +903,8 @@ var illegalResults;
 
 if(filters){
 results=[];
-illegalResults=[];for(var _i8=0,_this$baseResults4=
-this.baseResults;_i8<_this$baseResults4.length;_i8++){var result=_this$baseResults4[_i8];
+illegalResults=[];for(var _i10=0,_this$baseResults4=
+this.baseResults;_i10<_this$baseResults4.length;_i10++){var result=_this$baseResults4[_i10];
 if(this.filter(result,filters)){
 if(results.length&&result[0]==='header'&&results[results.length-1][0]==='header'){
 results[results.length-1]=result;
@@ -898,8 +915,8 @@ results.push(result);
 }
 if(results.length&&results[results.length-1][0]==='header'){
 results.pop();
-}for(var _i10=0,_this$baseIllegalResu2=
-this.baseIllegalResults;_i10<_this$baseIllegalResu2.length;_i10++){var _result=_this$baseIllegalResu2[_i10];
+}for(var _i12=0,_this$baseIllegalResu2=
+this.baseIllegalResults;_i12<_this$baseIllegalResu2.length;_i12++){var _result=_this$baseIllegalResu2[_i12];
 if(this.filter(_result,filters)){
 illegalResults.push(_result);
 }
@@ -935,7 +952,7 @@ if((_this$formatType=this.formatType)!=null&&_this$formatType.startsWith('bdsp')
 if(this.formatType==='letsgo')table=table['gen7letsgo'];
 if(this.formatType==='bw1')table=table['gen5bw1'];
 if(this.formatType==='rs')table=table['gen3rs'];
-if(this.formatType==='indigostarstorm')table=table['gen9indigostarstorm'];
+if(this.formatType==='indigostarstorm')table=table['gen9indigostarstorm']||table;
 if(table&&table.learnsets&&speciesid in table.learnsets)return speciesid;
 var species=this.dex.species.get(speciesid);
 if(!species.exists)return'';
@@ -944,7 +961,7 @@ var baseLearnsetid=toID(species.baseSpecies);
 if(typeof species.battleOnly==='string'&&species.battleOnly!==species.baseSpecies){
 baseLearnsetid=toID(species.battleOnly);
 }
-if(baseLearnsetid in table.learnsets)return baseLearnsetid;
+if(table&&table.learnsets&&baseLearnsetid in table.learnsets)return baseLearnsetid;
 return'';
 };_proto2.
 nextLearnsetid=function nextLearnsetid(learnsetid,speciesid){var checkingMoves=arguments.length>2&&arguments[2]!==undefined?arguments[2]:false;
@@ -998,15 +1015,25 @@ genChar='q';
 genChar='p';
 }
 }
+console.log('[DEBUG canLearn]',{speciesid:speciesid,moveid:moveid,gen:gen,genChar:genChar,formatType:this.formatType});
 var learnsetid=this.firstLearnsetid(speciesid);
+console.log('[DEBUG canLearn] firstLearnsetid:',learnsetid);
 while(learnsetid){var _this$formatType2;
 var table=BattleTeambuilderTable;
 if((_this$formatType2=this.formatType)!=null&&_this$formatType2.startsWith('bdsp'))table=table['gen8bdsp'];
 if(this.formatType==='letsgo')table=table['gen7letsgo'];
 if(this.formatType==='bw1')table=table['gen5bw1'];
 if(this.formatType==='rs')table=table['gen3rs'];
-if(this.formatType==='indigostarstorm')table=table['gen9indigostarstorm'];
+if(this.formatType==='indigostarstorm')table=table['gen9indigostarstorm']||table;
+if(!table||!table.learnsets){
+console.log('[DEBUG canLearn] No table or learnsets');
+break;
+}
 var learnset=table.learnsets[learnsetid];
+console.log('[DEBUG canLearn] learnset for',learnsetid,':',learnset?Object.keys(learnset).slice(0,5):'undefined');
+if(learnset&&moveid in learnset){
+console.log('[DEBUG canLearn] Move found!',moveid,'data:',learnset[moveid],'checking for genChar:',genChar);
+}
 var eggMovesOnly=this.eggMovesOnly(learnsetid,speciesid);
 if(learnset&&moveid in learnset&&(!this.format.startsWith('tradebacks')?learnset[moveid].includes(genChar):
 learnset[moveid].includes(genChar)||learnset[moveid].includes(""+(gen+1))&&move.gen===gen)&&(
@@ -1202,16 +1229,29 @@ table=table['gen9dlc1'];
 }
 }else if(this.formatType==='stadium'){
 table=table["gen"+dex.gen+"stadium"+(dex.gen>1?dex.gen:'')];
-}else if(this.formatType==='indigostarstorm'){
+}else if(this.formatType==='indigostarstorm'){var _table2,_table3,_table4;
 table=table['gen9indigostarstorm'];
+console.log('[DEBUG] Loading gen9indigostarstorm table, table exists:',!!table,'has tiers:',!!((_table2=table)!=null&&_table2.tiers),'has formatSlices:',!!((_table3=table)!=null&&_table3.formatSlices),'slice keys:',Object.keys(((_table4=table)==null?void 0:_table4.formatSlices)||{}));
+
+if(!table){
+console.log('[DEBUG] gen9indigostarstorm table not found, falling back to gen9');
+table=BattleTeambuilderTable['gen9'];
+}
 }
 
-if(!table.tierSet){
+if(!table||!table.tierSet){
+if(table&&table.tiers){
 table.tierSet=table.tiers.map(function(r){
 if(typeof r==='string')return['pokemon',r];
 return[r[0],r[1]];
 });
 table.tiers=null;
+}else{
+
+console.log('[DEBUG] Table has no tiers, creating empty tierSet');
+if(!table)table={};
+table.tierSet=[];
+}
 }
 var tierSet=table.tierSet;
 var slices=table.formatSlices;
@@ -1270,27 +1310,48 @@ if(format==='doublesuu')tierSet=tierSet.slice(slices.DUU);else
 if(format==='doublesnu')tierSet=tierSet.slice(slices.DNU||slices.DUU);else
 if(this.formatType==='indigostarstorm'){
 
+console.log('[DEBUG] ISL format detected. Format string:',format,'Available slices:',Object.keys(slices));
 if(format.includes('babyleague')){
+
 tierSet=tierSet.slice(slices['Reg α'],slices['Reg Δ']).reverse();
 }else if(format.includes('nfeleague')){
+
 tierSet=tierSet.slice(slices['Reg α'],slices['Reg ι']).reverse();
 }else if(format.includes('singlestageonly')){
+
 tierSet=tierSet.slice(slices['Reg ι'],slices['Reg β']).reverse();
 }else if(format.includes('2ndstageleague')){
+
 tierSet=tierSet.slice(slices['Reg α'],slices['Reg ζ']).reverse();
 }else{
+
 tierSet=tierSet.slice(slices['Reg α']).reverse();
 }
+console.log('[DEBUG] ISL tierSet sliced, remaining Pokemon:',tierSet.filter(function(_ref8){var t=_ref8[0];return t==='pokemon';}).length);
 
 
-tierSet=tierSet.filter(function(_ref8){var type=_ref8[0],id=_ref8[1];
+var beforeFilter=tierSet.filter(function(_ref9){var t=_ref9[0];return t==='pokemon';}).length;
+console.log('[DEBUG] About to filter ISL tierSet, before count:',beforeFilter);
+console.log('[DEBUG] Sample Pokemon before filter:',tierSet.filter(function(_ref10){var t=_ref10[0];return t==='pokemon';}).slice(0,10).map(function(_ref11){var id=_ref11[1];return id;}));
+console.log('[DEBUG] Checking a few Pokemon isNonstandard values:');for(var _i14=0,_tierSet$filter$slice2=
+tierSet.filter(function(_ref13){var t=_ref13[0];return t==='pokemon';}).slice(0,5);_i14<_tierSet$filter$slice2.length;_i14++){var _ref12=_tierSet$filter$slice2[_i14];var type=_ref12[0];var id=_ref12[1];
+var species=this.dex.species.get(id);
+console.log("  "+id+": isNonstandard="+species.isNonstandard+", gen="+species.gen+", exists="+species.exists);
+}
+tierSet=tierSet.filter(function(_ref14){var type=_ref14[0],id=_ref14[1];
 if(type!=='pokemon')return true;
+var species=_this3.dex.species.get(id);
 
 var baseGen9Species=Dex.forGen(9).species.get(id);
-return baseGen9Species.isNonstandard!=='Past'&&
+var isAvailableInGen9=baseGen9Species.isNonstandard!=='Past'&&
 baseGen9Species.isNonstandard!=='Gigantamax'&&
 baseGen9Species.isNonstandard!=='CAP';
+if(!isAvailableInGen9)console.log('[DEBUG] Filtering out:',id,'base gen9 isNonstandard:',baseGen9Species.isNonstandard);
+return isAvailableInGen9;
 });
+var afterFilter=tierSet.filter(function(_ref15){var t=_ref15[0];return t==='pokemon';}).length;
+console.log('[DEBUG] ISL tierSet filtered, after count:',afterFilter,'removed:',beforeFilter-afterFilter);
+console.log('[DEBUG] Sample Pokemon after filter:',tierSet.filter(function(_ref16){var t=_ref16[0];return t==='pokemon';}).slice(0,10).map(function(_ref17){var id=_ref17[1];return id;}));
 }else
 if((_this$formatType10=this.formatType)!=null&&_this$formatType10.startsWith('bdsp')||this.formatType==='letsgo'||this.formatType==='stadium'){
 tierSet=tierSet.slice(slices.Uber);
@@ -1311,39 +1372,39 @@ tierSet.slice(slices.DUU));
 
 }
 if(format==='ubersuu'&&table.ubersUUBans){
-tierSet=tierSet.filter(function(_ref9){var type=_ref9[0],id=_ref9[1];
+tierSet=tierSet.filter(function(_ref18){var type=_ref18[0],id=_ref18[1];
 if(id in table.ubersUUBans)return false;
 return true;
 });
 }
 if(format==='doubles'&&this.formatType==='natdex'&&table&&table.ndDoublesBans){
-tierSet=tierSet.filter(function(_ref10){var type=_ref10[0],id=_ref10[1];
+tierSet=tierSet.filter(function(_ref19){var type=_ref19[0],id=_ref19[1];
 if(table&&table.ndDoublesBans&&id in table.ndDoublesBans)return false;
 return true;
 });
 }
 if(format==='35pokes'&&table&&table.thirtyfivePokes){
-tierSet=tierSet.filter(function(_ref11){var type=_ref11[0],id=_ref11[1];
+tierSet=tierSet.filter(function(_ref20){var type=_ref20[0],id=_ref20[1];
 if(table&&table.thirtyfivePokes&&id in table.thirtyfivePokes)return true;
 return false;
 });
 }
 if(dex.gen>=5){
 if((format==='monotype'||format.startsWith('monothreat'))&&table&&table.monotypeBans){
-tierSet=tierSet.filter(function(_ref12){var type=_ref12[0],id=_ref12[1];
+tierSet=tierSet.filter(function(_ref21){var type=_ref21[0],id=_ref21[1];
 if(table&&table.monotypeBans&&id in table.monotypeBans)return false;
 return true;
 });
 }
 }
 if(format==='zu'&&dex.gen===5&&table&&table.gen5zuBans){
-tierSet=tierSet.filter(function(_ref13){var type=_ref13[0],id=_ref13[1];
+tierSet=tierSet.filter(function(_ref22){var type=_ref22[0],id=_ref22[1];
 if(table&&table.gen5zuBans&&id in table.gen5zuBans)return false;
 return true;
 });
 }
 if(format==='pu'&&dex.gen===4&&table&&table.gen4puBans){
-tierSet=tierSet.filter(function(_ref14){var type=_ref14[0],id=_ref14[1];
+tierSet=tierSet.filter(function(_ref23){var type=_ref23[0],id=_ref23[1];
 if(table&&table.gen4puBans&&id in table.gen4puBans)return false;
 return true;
 });
@@ -1351,7 +1412,7 @@ return true;
 
 
 if(!(/^(battlestadium|vgc|doublesubers)/g.test(format)||format==='doubles'&&this.formatType==='natdex')){
-tierSet=tierSet.filter(function(_ref15){var type=_ref15[0],id=_ref15[1];
+tierSet=tierSet.filter(function(_ref24){var type=_ref24[0],id=_ref24[1];
 if(type==='header'&&id==='DUber by technicality')return false;
 if(type==='header'&&id==='Uber by technicality')return false;
 if(type==='pokemon')return!id.endsWith('gmax');
@@ -1364,8 +1425,8 @@ return tierSet;
 filter=function filter(row,filters){
 if(!filters)return true;
 if(row[0]!=='pokemon')return true;
-var species=this.dex.species.get(row[1]);for(var _i12=0;_i12<
-filters.length;_i12++){var _ref16=filters[_i12];var filterType=_ref16[0];var value=_ref16[1];
+var species=this.dex.species.get(row[1]);for(var _i16=0;_i16<
+filters.length;_i16++){var _ref25=filters[_i16];var filterType=_ref25[0];var value=_ref25[1];
 switch(filterType){
 case'type':
 if(species.types[0]!==value&&species.types[1]!==value)return false;
@@ -1398,13 +1459,13 @@ return true;
 sort=function sort(results,sortCol,reverseSort){var _this4=this;
 var sortOrder=reverseSort?-1:1;
 if(['hp','atk','def','spa','spd','spe'].includes(sortCol)){
-return results.sort(function(_ref17,_ref18){var rowType1=_ref17[0],id1=_ref17[1];var rowType2=_ref18[0],id2=_ref18[1];
+return results.sort(function(_ref26,_ref27){var rowType1=_ref26[0],id1=_ref26[1];var rowType2=_ref27[0],id2=_ref27[1];
 var stat1=_this4.dex.species.get(id1).baseStats[sortCol];
 var stat2=_this4.dex.species.get(id2).baseStats[sortCol];
 return(stat2-stat1)*sortOrder;
 });
 }else if(sortCol==='bst'){
-return results.sort(function(_ref19,_ref20){var rowType1=_ref19[0],id1=_ref19[1];var rowType2=_ref20[0],id2=_ref20[1];
+return results.sort(function(_ref28,_ref29){var rowType1=_ref28[0],id1=_ref28[1];var rowType2=_ref29[0],id2=_ref29[1];
 var base1=_this4.dex.species.get(id1).baseStats;
 var base2=_this4.dex.species.get(id2).baseStats;
 var bst1=base1.hp+base1.atk+base1.def+base1.spa+base1.spd+base1.spe;
@@ -1416,7 +1477,7 @@ bst2-=base2.spd;
 return(bst2-bst1)*sortOrder;
 });
 }else if(sortCol==='name'){
-return results.sort(function(_ref21,_ref22){var rowType1=_ref21[0],id1=_ref21[1];var rowType2=_ref22[0],id2=_ref22[1];
+return results.sort(function(_ref30,_ref31){var rowType1=_ref30[0],id1=_ref30[1];var rowType2=_ref31[0],id2=_ref31[1];
 var name1=id1;
 var name2=id2;
 return(name1<name2?-1:name1>name2?1:0)*sortOrder;
@@ -1476,8 +1537,8 @@ abilities.push(ability.id);
 
 var goodAbilities=[['header',"Abilities"]];
 var poorAbilities=[['header',"Situational Abilities"]];
-var badAbilities=[['header',"Unviable Abilities"]];for(var _i14=0,_abilities$sort$map2=
-abilities.sort().map(function(abil){return dex.abilities.get(abil);});_i14<_abilities$sort$map2.length;_i14++){var _ability=_abilities$sort$map2[_i14];
+var badAbilities=[['header',"Unviable Abilities"]];for(var _i18=0,_abilities$sort$map2=
+abilities.sort().map(function(abil){return dex.abilities.get(abil);});_i18<_abilities$sort$map2.length;_i18++){var _ability=_abilities$sort$map2[_i18];
 var rating=_ability.rating;
 if(_ability.id==='normalize')rating=3;
 if(rating>=3){
@@ -1501,8 +1562,8 @@ return abilitySet;
 filter=function filter(row,filters){
 if(!filters)return true;
 if(row[0]!=='ability')return true;
-var ability=this.dex.abilities.get(row[1]);for(var _i16=0;_i16<
-filters.length;_i16++){var _ref23=filters[_i16];var filterType=_ref23[0];var value=_ref23[1];
+var ability=this.dex.abilities.get(row[1]);for(var _i20=0;_i20<
+filters.length;_i20++){var _ref32=filters[_i20];var filterType=_ref32[0];var value=_ref32[1];
 switch(filterType){
 case'pokemon':
 if(!Dex.hasAbility(this.dex.species.get(value),ability.name))return false;
@@ -1520,7 +1581,7 @@ BattleItemSearch=function(_BattleTypedSearch4){function BattleItemSearch(){retur
 getTable=function getTable(){
 return BattleItems;
 };_proto5.
-getDefaultResults=function getDefaultResults(){var _this$formatType11,_this$formatType12,_table3;
+getDefaultResults=function getDefaultResults(){var _this$formatType11,_this$formatType12,_table6,_table7;
 var table=BattleTeambuilderTable;
 if((_this$formatType11=this.formatType)!=null&&_this$formatType11.startsWith('bdsp')){
 table=table['gen8bdsp'];
@@ -1528,10 +1589,10 @@ table=table['gen8bdsp'];
 table=table['gen5bw1'];
 }else if(this.formatType==='rs'){
 table=table['gen3rs'];
-}else if(this.formatType==='indigostarstorm'){var _table2;
+}else if(this.formatType==='indigostarstorm'){var _table5;
 
 
-console.log('[DEBUG] BattleItemSearch.getDefaultResults() - formatType:',this.formatType,'using root table, has items:',!!((_table2=table)!=null&&_table2.items));
+console.log('[DEBUG] BattleItemSearch.getDefaultResults() - formatType:',this.formatType,'using root table, has items:',!!((_table5=table)!=null&&_table5.items));
 }else if(this.formatType==='natdex'){
 table=table["gen"+this.dex.gen+"natdex"];
 }else if((_this$formatType12=this.formatType)!=null&&_this$formatType12.endsWith('doubles')){
@@ -1541,8 +1602,8 @@ table=table["gen"+this.dex.gen+"metronome"];
 }else if(this.dex.gen<9){
 table=table["gen"+this.dex.gen];
 }
-console.log('[DEBUG] BattleItemSearch final check - table:',!!table,'items:',!!((_table3=table)!=null&&_table3.items),'formatType:',this.formatType);
-if(!table||!table.items)return[];
+console.log('[DEBUG] BattleItemSearch final check - table:',!!table,'items:',!!((_table6=table)!=null&&_table6.items),'itemSet:',!!((_table7=table)!=null&&_table7.itemSet),'formatType:',this.formatType);
+if(!table||!table.items&&!table.itemSet)return[];
 if(!table.itemSet){
 table.itemSet=table.items.map(function(r){
 if(typeof r==='string'){
@@ -1566,8 +1627,8 @@ quarkdrive:'boosterenergy'
 
 
 
-}[toID((_this$set=this.set)==null?void 0:_this$set.ability)];for(var _i18=0;_i18<
-results.length;_i18++){var _item$itemUser;var row=results[_i18];
+}[toID((_this$set=this.set)==null?void 0:_this$set.ability)];for(var _i22=0;_i22<
+results.length;_i22++){var _item$itemUser;var row=results[_i22];
 if(row[0]!=='item')continue;
 var item=this.dex.items.get(row[1]);
 if((_item$itemUser=item.itemUser)!=null&&_item$itemUser.includes(speciesName))speciesSpecific.push(row);
@@ -1596,37 +1657,40 @@ return results;
 }
 return results;
 };_proto5.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 getItemClass=function getItemClass(item){
-
-if(item.isFragile)return'Fragile';
-if(item.isMildlyFragile)return'Volatile';
-if(item.isPokeball)return'Pokéball';
+var id=item.id;
 
 
-if(item.isBerry||item.isGem)return'Consumable';
-var desc=item.desc||item.shortDesc||'';
-if(desc.includes('Single use')||desc.includes('Holder\'s use of')||desc.includes('One-time use')){
-return'Consumable';
-}
-
-
-var evolutionStones=['firestone','waterstone','thunderstone','leafstone','moonstone','sunstone',
-'shinystone','duskstone','dawnstone','everstone','linkingcord','ovalstone','icestone'];
-if(evolutionStones.includes(item.id)||desc.includes('Evolves')){
-return'Evolution';
-}
-
-
-if(desc.includes('when traded')){
-return'Trade Evo';
-}
+if(BattleItemSearch.fragileItems.has(id))return'Fragile';
+if(BattleItemSearch.volatileItems.has(id))return'Volatile';
+if(BattleItemSearch.pokeballItems.has(id))return'Pokéball';
+if(BattleItemSearch.berryItems.has(id))return'Berry';
+if(BattleItemSearch.tradeEvoItems.has(id))return'Trade Evo';
+if(BattleItemSearch.evolutionItems.has(id))return'Evolution';
+if(BattleItemSearch.consumableItems.has(id))return'Consumable';
 
 return'';
 };_proto5.
 filter=function filter(row,filters){
 if(row[0]!=='item')return true;
-var item=this.dex.items.get(row[1]);for(var _i20=0;_i20<
-filters.length;_i20++){var _ref24=filters[_i20];var filterType=_ref24[0];var value=_ref24[1];
+var item=this.dex.items.get(row[1]);for(var _i24=0;_i24<
+filters.length;_i24++){var _ref33=filters[_i24];var filterType=_ref33[0];var value=_ref33[1];
 if(filterType==='itemclass'){
 var itemClass=this.getItemClass(item);
 if(itemClass!==value)return false;
@@ -1636,7 +1700,7 @@ return true;
 };_proto5.
 sort=function sort(results,sortCol,reverseSort){
 throw new Error("invalid sortcol");
-};return BattleItemSearch;}(BattleTypedSearch);var
+};return BattleItemSearch;}(BattleTypedSearch);BattleItemSearch.fragileItems=new Set(['airballoon','focussash','powerherb','electricseed','grassyseed','mistyseed','psychicseed','snowball','weaknesspolicy','absorbbulb','cellbattery','luminousmoss','mentalherb','whiteherb','redcard']);BattleItemSearch.volatileItems=new Set(['boosterenergy']);BattleItemSearch.berryItems=new Set(['aguavberry','apicotberry','aspearberry','babiriberry','belueberry','blukberry','chartiberry','cherimberry','chestoberry','chilanberry','chopleberry','cobaberry','colburberry','cornnberry','custapberry','durinberry','enigmaberry','figyberry','ganlonberry','grepaberry','habanberry','hondewberry','iapapaberry','jabocaberry','kasibberry','kebiaberry','kelpsyberry','lansatberry','leppaberry','liechiberry','lumberry','magoberry','magostberry','micleberry','nanabberry','nomelberry','occaberry','oranberry','pamtreberry','passhoberry','payapaberry','pechaberry','persimberry','petayaberry','pinapberry','pomegberry','qualotberry','rabutaberry','rawstberry','razzberry','rindoberry','rowapberry','salacberry','shucaberry','sitrusberry','spelonberry','starfberry','tamatoberry','tangaberry','wacanberry','watmelberry','wepearberry','wikiberry','yacheberry']);BattleItemSearch.pokeballItems=new Set(['pokeball','greatball','ultraball','masterball','safariball','fastball','levelball','lureball','heavyball','loveball','friendball','moonball','sportball','netball','diveball','nestball','repeatball','timerball','luxuryball','premierball','duskball','healball','quickball','cherishball','parkball','dreamball','beastball']);BattleItemSearch.evolutionItems=new Set(['firestone','waterstone','thunderstone','leafstone','moonstone','sunstone','shinystone','duskstone','dawnstone','everstone','linkingcord','ovalstone','icestone']);BattleItemSearch.tradeEvoItems=new Set(['deepseatooth','deepseascale','dragonscale','electirizer','magmarizer','metalcoat','prismscale','protector','reapercloth','sachet','upgrade','whippeddream']);BattleItemSearch.consumableItems=new Set(['normalgem','fightinggem','flyinggem','poisongem','groundgem','rockgem','buggem','ghostgem','steelgem','firegem','watergem','grassgem','electricgem','psychicgem','icegem','dragongem','darkgem','fairygem','focusband','kingsrock','razorclaw','razorfang']);var
 
 
 BattleMoveSearch=function(_BattleTypedSearch5){function BattleMoveSearch(){var _this5;for(var _len2=arguments.length,args=new Array(_len2),_key2=0;_key2<_len2;_key2++){args[_key2]=arguments[_key2];}_this5=_BattleTypedSearch5.call.apply(_BattleTypedSearch5,[this].concat(args))||this;_this5.
@@ -1935,7 +1999,7 @@ return!BattleMoveSearch.BAD_STRONG_MOVES.includes(id);
 
 
 
-getBaseResults=function getBaseResults(){var _this$formatType14,_this$formatType15,_this$formatType16,_this$formatType17;
+getBaseResults=function getBaseResults(){var _this$formatType14,_this$formatType15,_this$formatType16,_this$formatType17,_lsetTable;
 if(!this.species)return this.getDefaultResults();
 var dex=this.dex;
 var species=dex.species.get(this.species);
@@ -1957,11 +2021,14 @@ if((_this$formatType14=this.formatType)!=null&&_this$formatType14.startsWith('bd
 if(this.formatType==='letsgo')lsetTable=lsetTable['gen7letsgo'];
 if(this.formatType==='bw1')lsetTable=lsetTable['gen5bw1'];
 if(this.formatType==='rs')lsetTable=lsetTable['gen3rs'];
+if(this.formatType==='indigostarstorm')lsetTable=lsetTable['gen9indigostarstorm']||lsetTable;
 if((_this$formatType15=this.formatType)!=null&&_this$formatType15.startsWith('ssdlc1'))lsetTable=lsetTable['gen8dlc1'];
 if((_this$formatType16=this.formatType)!=null&&_this$formatType16.startsWith('predlc'))lsetTable=lsetTable['gen9predlc'];
 if((_this$formatType17=this.formatType)!=null&&_this$formatType17.startsWith('svdlc1'))lsetTable=lsetTable['gen9dlc1'];
+console.log('[DEBUG getMovesList] formatType:',this.formatType,'has learnsets?',!!((_lsetTable=lsetTable)!=null&&_lsetTable.learnsets));
 while(learnsetid){
 var learnset=lsetTable.learnsets[learnsetid];
+console.log('[DEBUG getMovesList] learnsetid:',learnsetid,'has learnset?',!!learnset,'move count:',learnset?Object.keys(learnset).length:0);
 if(learnset){
 for(var moveid in learnset){var _this$formatType18,_BattleTeambuilderTab,_this$formatType19,_BattleTeambuilderTab2,_this$formatType20,_BattleTeambuilderTab3;
 var learnsetEntry=learnset[moveid];
@@ -2066,15 +2133,15 @@ var excludedForme=function(s){return[
 'Alola','Alola-Totem','Galar','Galar-Zen','Hisui','Paldea','Paldea-Combat','Paldea-Blaze','Paldea-Aqua'].
 includes(s.forme);};
 if(baseSpecies.otherFormes&&!['Wormadam','Urshifu'].includes(baseSpecies.baseSpecies)){
-if(!excludedForme(species))speciesTypes.push.apply(speciesTypes,baseSpecies.types);for(var _i22=0,_baseSpecies$otherFor2=
-baseSpecies.otherFormes;_i22<_baseSpecies$otherFor2.length;_i22++){var formeName=_baseSpecies$otherFor2[_i22];
+if(!excludedForme(species))speciesTypes.push.apply(speciesTypes,baseSpecies.types);for(var _i26=0,_baseSpecies$otherFor2=
+baseSpecies.otherFormes;_i26<_baseSpecies$otherFor2.length;_i26++){var formeName=_baseSpecies$otherFor2[_i26];
 var forme=dex.species.get(formeName);
 if(!forme.battleOnly&&!excludedForme(forme))speciesTypes.push.apply(speciesTypes,forme.types);
 }
 }
 }
-var valid=false;for(var _i24=0;_i24<
-moveTypes.length;_i24++){var type=moveTypes[_i24];
+var valid=false;for(var _i28=0;_i28<
+moveTypes.length;_i28++){var type=moveTypes[_i28];
 if(speciesTypes.includes(type)){
 valid=true;
 break;
@@ -2088,8 +2155,8 @@ moves.sort();
 sketchMoves.sort();
 
 var usableMoves=[];
-var uselessMoves=[];for(var _i26=0,_moves2=
-moves;_i26<_moves2.length;_i26++){var _id9=_moves2[_i26];
+var uselessMoves=[];for(var _i30=0,_moves2=
+moves;_i30<_moves2.length;_i30++){var _id9=_moves2[_i30];
 var isUsable=this.moveIsNotUseless(_id9,species,moves,this.set);
 if(isUsable){
 if(!usableMoves.length)usableMoves.push(['header',"Moves"]);
@@ -2102,8 +2169,8 @@ uselessMoves.push(['move',_id9]);
 if(sketchMoves.length){
 usableMoves.push(['header',"Sketched moves"]);
 uselessMoves.push(['header',"Useless sketched moves"]);
-}for(var _i28=0;_i28<
-sketchMoves.length;_i28++){var _id10=sketchMoves[_i28];
+}for(var _i32=0;_i32<
+sketchMoves.length;_i32++){var _id10=sketchMoves[_i32];
 var _isUsable=this.moveIsNotUseless(_id10,species,sketchMoves,this.set);
 if(_isUsable){
 usableMoves.push(['move',_id10]);
@@ -2116,8 +2183,8 @@ return[].concat(usableMoves,uselessMoves);
 filter=function filter(row,filters){
 if(!filters)return true;
 if(row[0]!=='move')return true;
-var move=this.dex.moves.get(row[1]);for(var _i30=0;_i30<
-filters.length;_i30++){var _ref25=filters[_i30];var filterType=_ref25[0];var value=_ref25[1];
+var move=this.dex.moves.get(row[1]);for(var _i34=0;_i34<
+filters.length;_i34++){var _ref34=filters[_i34];var filterType=_ref34[0];var value=_ref34[1];
 switch(filterType){
 case'type':
 if(move.type!==value)return false;
@@ -2147,7 +2214,7 @@ beatup:24,punishment:1020,psywave:1250,nightshade:1200,seismictoss:1200,
 dragonrage:1140,sonicboom:1120,superfang:1350,endeavor:1399,sheercold:1501,
 fissure:1500,horndrill:1500,guillotine:1500
 };
-return results.sort(function(_ref26,_ref27){var rowType1=_ref26[0],id1=_ref26[1];var rowType2=_ref27[0],id2=_ref27[1];
+return results.sort(function(_ref35,_ref36){var rowType1=_ref35[0],id1=_ref35[1];var rowType2=_ref36[0],id2=_ref36[1];
 var move1=_this6.dex.moves.get(id1);
 var move2=_this6.dex.moves.get(id2);
 var pow1=move1.basePower||powerTable[id1]||(move1.category==='Status'?-1:1400);
@@ -2155,7 +2222,7 @@ var pow2=move2.basePower||powerTable[id2]||(move2.category==='Status'?-1:1400);
 return(pow2-pow1)*sortOrder;
 });
 case'accuracy':
-return results.sort(function(_ref28,_ref29){var rowType1=_ref28[0],id1=_ref28[1];var rowType2=_ref29[0],id2=_ref29[1];
+return results.sort(function(_ref37,_ref38){var rowType1=_ref37[0],id1=_ref37[1];var rowType2=_ref38[0],id2=_ref38[1];
 var accuracy1=_this6.dex.moves.get(id1).accuracy||0;
 var accuracy2=_this6.dex.moves.get(id2).accuracy||0;
 if(accuracy1===true)accuracy1=101;
@@ -2163,19 +2230,19 @@ if(accuracy2===true)accuracy2=101;
 return(accuracy2-accuracy1)*sortOrder;
 });
 case'pp':
-return results.sort(function(_ref30,_ref31){var rowType1=_ref30[0],id1=_ref30[1];var rowType2=_ref31[0],id2=_ref31[1];
+return results.sort(function(_ref39,_ref40){var rowType1=_ref39[0],id1=_ref39[1];var rowType2=_ref40[0],id2=_ref40[1];
 var pp1=_this6.dex.moves.get(id1).pp||0;
 var pp2=_this6.dex.moves.get(id2).pp||0;
 return(pp2-pp1)*sortOrder;
 });
 case'flags:':
-return results.sort(function(_ref32,_ref33){var rowType1=_ref32[0],id1=_ref32[1];var rowType2=_ref33[0],id2=_ref33[1];
+return results.sort(function(_ref41,_ref42){var rowType1=_ref41[0],id1=_ref41[1];var rowType2=_ref42[0],id2=_ref42[1];
 var flags1=_this6.dex.moves.get(id1).flags||0;
 var flags2=_this6.dex.moves.get(id2).flags||0;
 return(flags1<flags2?-1:flags1>flags2?1:0)*sortOrder;
 });
 case'name':
-return results.sort(function(_ref34,_ref35){var rowType1=_ref34[0],id1=_ref34[1];var rowType2=_ref35[0],id2=_ref35[1];
+return results.sort(function(_ref43,_ref44){var rowType1=_ref43[0],id1=_ref43[1];var rowType2=_ref44[0],id2=_ref44[1];
 var name1=id1;
 var name2=id2;
 return(name1<name2?-1:name1>name2?1:0)*sortOrder;

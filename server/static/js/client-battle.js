@@ -92,11 +92,9 @@
 				var scale = (width / 640);
 				this.$battle.css('transform', 'scale(' + scale + ')');
 				this.$foeHint.css('transform', 'scale(' + scale + ')');
-				this.$controls.css('top', 360 * scale + 10);
 			} else {
 				this.$battle.css('transform', 'none');
 				this.$foeHint.css('transform', 'none');
-				this.$controls.css('top', 370);
 			}
 			this.$el.toggleClass('small-layout', width < 830);
 			this.$el.toggleClass('tiny-layout', width < 640);

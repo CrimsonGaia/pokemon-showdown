@@ -56,6 +56,8 @@
 
 
 
+
+
 var Teams=new(function(){function _class(){}var _proto=_class.prototype;_proto.
 pack=function pack(team){
 if(!team)return'';
@@ -116,12 +118,13 @@ buf+="|"+(set.level&&set.level!==100?set.level:'');
 buf+="|"+(set.happiness!==undefined&&set.happiness!==255?set.happiness:'');
 
 if(set.pokeball||set.hpType||set.gigantamax||
-set.dynamaxLevel!==undefined&&set.dynamaxLevel!==10||set.teraType){
+set.dynamaxLevel!==undefined&&set.dynamaxLevel!==10||set.teraType||set.size){
 buf+=","+(set.hpType||'');
 buf+=","+this.packName(set.pokeball||'');
 buf+=","+(set.gigantamax?'G':'');
 buf+=","+(set.dynamaxLevel!==undefined&&set.dynamaxLevel!==10?set.dynamaxLevel:'');
 buf+=","+(set.teraType||'');
+buf+=","+(set.size||'');
 }
 }
 
@@ -246,9 +249,9 @@ i=j+1;
 j=buf.indexOf(']',i);
 var misc=void 0;
 if(j<0){
-if(i<buf.length)misc=buf.substring(i).split(',',6);
+if(i<buf.length)misc=buf.substring(i).split(',',7);
 }else{
-if(i!==j)misc=buf.substring(i,j).split(',',6);
+if(i!==j)misc=buf.substring(i,j).split(',',7);
 }
 if(misc){
 set.happiness=misc[0]?Number(misc[0]):undefined;
@@ -257,6 +260,7 @@ set.pokeball=misc[2]||undefined;
 set.gigantamax=!!misc[3]||undefined;
 set.dynamaxLevel=misc[4]?Number(misc[4]):undefined;
 set.teraType=misc[5]||undefined;
+set.size=misc[6]||undefined;
 }
 i=j+1;
 if(j<0||i<=lastI)break;
@@ -391,6 +395,9 @@ text+=!newFormat?"Gigantamax: Yes\n":"Gigantamax\n";
 if(set.teraType){
 text+="Tera Type: "+set.teraType+"\n";
 }
+if(set.size){
+text+="Size: "+set.size+"\n";
+}
 
 if(!newFormat){for(var _i10=0,_ref2=
 set.moves||[];_i10<_ref2.length;_i10++){var _move=_ref2[_i10];
@@ -483,6 +490,8 @@ set.dynamaxLevel=+line.slice(15);
 set.gigantamax=true;
 }else if(line.startsWith('Tera Type: ')){
 set.teraType=line.slice(11);
+}else if(line.startsWith('Size: ')){
+set.size=line.slice(6);
 }else if(line.startsWith('EVs: ')){
 var evLines=line.slice(5).split('(')[0].split('/');
 set.evs={hp:0,atk:0,def:0,spa:0,spd:0,spe:0};

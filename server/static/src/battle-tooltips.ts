@@ -943,8 +943,8 @@ export class BattleTooltips {
 			text += '<p>';
 			text += abilityText;
 			if (abilityText && itemText) {
-				// ability/item on one line for your own switch tooltips, two lines everywhere else
-				text += (!isActive && serverPokemon ? ' / ' : '</p><p>');
+				// ability/item on one line
+				text += ' / ';
 			}
 			text += itemText;
 			text += '</p>';
@@ -2535,6 +2535,39 @@ export class BattleTooltips {
 	) {
 		let text = '';
 		const abilityData = this.getPokemonAbilityData(clientPokemon, serverPokemon);
+		const tier = this.battle.tier;
+		const isISLFormat = tier?.toLowerCase().includes('indigostarstorm') || tier?.toLowerCase().includes('isl');
+		
+		// For ISL formats, show both abilities in the set
+		if (isISLFormat && (clientPokemon || serverPokemon)) {
+			const speciesForme = clientPokemon?.getSpeciesForme() || serverPokemon?.speciesForme || '';
+			const species = this.battle.dex.species.get(speciesForme);
+			if (species.exists && species.abilities) {
+				// Determine which ability set (check if using H or S)
+				const currentAbility = clientPokemon?.ability || serverPokemon?.ability || '';
+				const isSet2 = currentAbility === species.abilities['H'] || currentAbility === species.abilities['S'];
+				
+				let ability1, ability2;
+				if (isSet2) {
+					ability1 = species.abilities['H'];
+					ability2 = species.abilities['S'];
+				} else {
+					ability1 = species.abilities['0'];
+					ability2 = species.abilities['1'];
+				}
+				
+				// Build ability set display
+				const abilityNames = [];
+				if (ability1) abilityNames.push(this.battle.dex.abilities.get(ability1).name);
+				if (ability2 && ability2 !== ability1) abilityNames.push(this.battle.dex.abilities.get(ability2).name);
+				
+				if (abilityNames.length > 0) {
+					text = '<small>Ability Set:</small> ' + abilityNames.join(' + ');
+					return text;
+				}
+			}
+		}
+		
 		if (!isActive) {
 			// for switch tooltips, only show the original ability
 			const ability = abilityData.baseAbility || abilityData.ability;
@@ -2547,7 +2580,6 @@ export class BattleTooltips {
 				if (baseAbilityName && baseAbilityName !== abilityName) text += ' (base: ' + baseAbilityName + ')';
 			}
 		}
-		const tier = this.battle.tier;
 		if (!text && abilityData.possibilities.length && !hidePossible &&
 			!(tier.includes('Almost Any Ability') || tier.includes('Hackmons') ||
 				tier.includes('Inheritance') || tier.includes('Metronome'))) {

@@ -208,6 +208,13 @@ class TeamEditorState extends PSModel {
 		if (set.name === set.species.split('-')[0]) delete set.name;
 		set.species = species.name;
 		set.ability = this.getDefaultAbility(set);
+		
+		// Set default ability set (Set 1) and ability2
+		if (species.abilities) {
+			(set as any).abilitySet = 1;
+			(set as any).ability2 = species.abilities['1'];
+		}
+		
 		set.item = this.getDefaultItem(species.name) ?? set.item;
 
 		if (toID(speciesName) === 'Cathy') {
@@ -1802,6 +1809,7 @@ class TeamWizard extends preact.Component<{
 		this.handleSetChange();
 		ev.preventDefault();
 	};
+	dex: any;
 	changeFocus(focus: TeamEditorState['innerFocus']) {
 		const { editor } = this.props;
 		editor.innerFocus = focus;
@@ -2000,6 +2008,27 @@ class TeamWizard extends preact.Component<{
 			case 'ability':
 				if (name === 'No Ability' && editor.gen <= 2) name = '';
 				set.ability = name;
+				
+				// Determine which ability set this ability belongs to
+				const species = this.dex.species.get(set.species);
+				if (species.abilities) {
+					const abilityId = toID(name);
+					const abilities = species.abilities;
+					// Check if ability is in Set 2 (H or S slots) exclusively
+					const isInSet1 = abilityId === toID(abilities['0']) || abilityId === toID(abilities['1']);
+					const isInSet2 = abilityId === toID(abilities['H']) || abilityId === toID(abilities['S']);
+					
+					if (isInSet2 && !isInSet1) {
+						// Ability is exclusively in Set 2
+						(set as any).abilitySet = 2;
+						(set as any).ability2 = abilities['S'];
+					} else {
+						// Default to Set 1
+						(set as any).abilitySet = 1;
+						(set as any).ability2 = abilities['1'];
+					}
+				}
+				
 				this.changeFocus({
 					setIndex,
 					type: reverse ? 'pokemon' : 'item',

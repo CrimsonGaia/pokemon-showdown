@@ -35,14 +35,14 @@ Config.customcolors = {
 	'crimson gaia' : 'aeo'
 };
 /*** Begin automatically generated configuration ***/
-Config.version = "0.11.2 (bab610bf/adb6b7fc)";
+Config.version = "0.11.2 (2f9254d2/adb6b7fc)";
 
 Config.routes = {
-	root: 'localhost:8000',
-	client: 'localhost:8000',
-	dex: 'localhost:8000',
-	replays: 'localhost:8000',
-	users: 'localhost:8000/users',
-	teams: 'localhost:8000/teams',
+	root: 'pokemonshowdown.com',
+	client: 'play.pokemonshowdown.com',
+	dex: 'dex.pokemonshowdown.com',
+	replays: 'replay.pokemonshowdown.com',
+	users: 'pokemonshowdown.com/users',
+	teams: 'teams.pokemonshowdown.com',
 };
 /*** End automatically generated configuration ***/

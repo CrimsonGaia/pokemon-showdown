@@ -1149,6 +1149,8 @@ this.isPokeball=!!data.isPokeball;
 this.itemUser=data.itemUser;
 this.isFragile=!!data.isFragile;
 this.isMildlyFragile=!!data.isMildlyFragile;
+this.isFragile=data.isFragile;
+this.isMildlyFragile=data.isMildlyFragile;
 
 if(!this.gen){
 if(this.num>=577){

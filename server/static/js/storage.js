@@ -866,12 +866,14 @@ Storage.packTeam = function (team) {
 			buf += '|';
 		}
 
-		if (set.pokeball || (set.hpType && !hasHP) || set.gigantamax || (set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10) || set.teraType) {
+		if (set.pokeball || (set.hpType && !hasHP) || set.gigantamax || (set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10) || set.teraType || set.ability2 || set.abilitySet) {
 			buf += ',' + (set.hpType || '');
 			buf += ',' + toID(set.pokeball);
 			buf += ',' + (set.gigantamax ? 'G' : '');
 			buf += ',' + (set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10 ? set.dynamaxLevel : '');
 			buf += ',' + (set.teraType || '');
+			buf += ',' + toID(set.ability2 || '');
+			buf += ',' + (set.abilitySet || '');
 		}
 	}
 
@@ -981,9 +983,9 @@ Storage.fastUnpackTeam = function (buf) {
 		j = buf.indexOf(']', i);
 		var misc = undefined;
 		if (j < 0) {
-			if (i < buf.length) misc = buf.substring(i).split(',', 6);
+			if (i < buf.length) misc = buf.substring(i).split(',', 8);
 		} else {
-			if (i !== j) misc = buf.substring(i, j).split(',', 6);
+			if (i !== j) misc = buf.substring(i, j).split(',', 8);
 		}
 		if (misc) {
 			set.happiness = (misc[0] ? Number(misc[0]) : 255);
@@ -992,6 +994,8 @@ Storage.fastUnpackTeam = function (buf) {
 			set.gigantamax = !!misc[3];
 			set.dynamaxLevel = (misc[4] ? Number(misc[4]) : 10);
 			set.teraType = misc[5];
+			set.ability2 = misc[6] || undefined;
+			set.abilitySet = misc[7] ? Number(misc[7]) : undefined;
 		}
 		if (j < 0) break;
 		i = j + 1;
@@ -1106,7 +1110,7 @@ Storage.unpackTeam = function (buf) {
 		if (j < 0) {
 			if (i < buf.length) misc = buf.substring(i).split(',', 6);
 		} else {
-			if (i !== j) misc = buf.substring(i, j).split(',', 6);
+			if (i !== j) misc = buf.substring(i, j).split(',', 8);
 		}
 		if (misc) {
 			set.happiness = (misc[0] ? Number(misc[0]) : 255);
@@ -1115,6 +1119,8 @@ Storage.unpackTeam = function (buf) {
 			set.gigantamax = !!misc[3];
 			set.dynamaxLevel = (misc[4] ? Number(misc[4]) : 10);
 			set.teraType = misc[5];
+			set.ability2 = misc[6] ? Dex.abilities.get(misc[6]).name : undefined;
+			set.abilitySet = misc[7] ? Number(misc[7]) : undefined;
 		}
 		if (j < 0 || buf.indexOf('|', j) < 0) break;
 		i = j + 1;
@@ -1152,9 +1158,10 @@ Storage.packedTeamNames = function (buf) {
 Storage.packedTeamIcons = function (buf) {
 	if (!buf) return '<em>(empty team)</em>';
 
-	return this.packedTeamNames(buf).map(function (species) {
-		return '<span class="picon" style="' + Dex.getPokemonIcon(species) + ';float:left;overflow:visible"><span style="font-size:0px">' + toID(species) + '</span></span>';
+	var icons = this.packedTeamNames(buf).map(function (species) {
+		return '<span class="picon" style="' + Dex.getPokemonIcon(species) + ';overflow:visible"><span style="font-size:0px">' + toID(species) + '</span></span>';
 	}).join('');
+	return '<span class="team-icons-container">' + icons + '</span>';
 };
 
 Storage.getTeamIcons = function (team) {

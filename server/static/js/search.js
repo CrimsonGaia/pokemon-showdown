@@ -45,6 +45,17 @@
 			self.removeFilter(e);
 			if (self.$inputEl) self.$inputEl.focus();
 		});
+		this.$el.on('click', '.itemclasscol[data-tag], .itemconsumecol[data-tag]', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+			var tag = e.currentTarget.dataset.tag;
+			self.engine.addFilter(['itemclass', tag]);
+			self.filters = self.engine.filters;
+			self.find('');
+			if (self.$inputEl) self.$inputEl.focus();
+			return false;
+		});
 		this.$el.on('click', '.sortcol', function (e) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -53,10 +64,110 @@
 			self.sortCol = self.engine.sortCol;
 			self.find('');
 		});
+		this.$el.on('change', '#flag-icons-toggle', function (e) {
+			console.log('[FLAG CHECKBOX] change event fired');
+			var checked = e.currentTarget.checked;
+			console.log('[FLAG CHECKBOX] checked:', checked);
+			Storage.prefs('flagicons', checked);
+			console.log('[FLAG CHECKBOX] preference saved, refreshing...');
+			// Force a complete re-render by clearing the rendered state and re-rendering
+			self.renderedIndex = 0;
+			self.renderingDone = false;
+			self.updateScroll();
+		});
+		this.$el.on('click', '#flag-icons-toggle', function (e) {
+			console.log('[FLAG CHECKBOX] click event fired');
+		});
+		this.$el.on('change', '#category-display-toggle', function (e) {
+			var value = e.currentTarget.value;
+			Storage.prefs('categorydisplay', value);
+			self.renderedIndex = 0;
+			self.renderingDone = false;
+			self.updateScroll();
+		});
+		this.$el.on('change', '#flag-tint-toggle', function (e) {
+			var value = e.currentTarget.value;
+			Storage.prefs('flagtint', value);
+			self.renderedIndex = 0;
+			self.renderingDone = false;
+			self.updateScroll();
+		});
 	}
 
 	Search.prototype.$ = function (query) {
 		return this.$el.find(query);
+	};
+
+	// Helper function to render category based on user preference
+	Search.prototype.getCategoryDisplay = function (category) {
+		var displayMode = Dex.prefs('categorydisplay') || 'icons';
+		var icon = Dex.getCategoryIcon(category);
+		var text = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
+		
+		// Color mapping for categories
+		var categoryColors = {
+			'Physical': '#F08030',
+			'Special': '#4DB8A8',
+			'Status': '#A8A878'
+		};
+		var color = categoryColors[text] || '#000';
+		
+		if (displayMode === 'text') {
+			return '<span style="font-size: 10px; font-weight: bold; color: ' + color + ';">' + text + '</span>';
+		} else if (displayMode === 'both') {
+			// Remove the hidden span from the icon and show text below
+			var iconOnly = icon.replace(/<span[^>]*>.*?<\/span>/g, '');
+			return '<div style="display: inline-block; text-align: center;">' + iconOnly + '<div style="font-size: 8px; font-weight: bold; line-height: 1; margin-top: -1px; color: ' + color + ';">' + text + '</div></div>';
+		} else {
+			// icons (default)
+			return icon;
+		}
+	};
+
+	// Helper function to get CSS filter for category-based flag tinting
+	Search.prototype.getCategoryFlagFilter = function (category) {
+		var cat = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
+		switch (cat) {
+			case 'Physical':
+				// Orange tint for physical moves
+				return 'sepia(100%) saturate(300%) hue-rotate(-10deg) brightness(0.9)';
+			case 'Special':
+				// Greenish tint for special moves with deeper coloration
+				return 'sepia(100%) saturate(345%) hue-rotate(85deg) brightness(1.0)';
+			case 'Status':
+				// Olive/gray tint for status moves
+				return 'sepia(100%) saturate(50%) hue-rotate(30deg) brightness(0.85)';
+			default:
+				return 'none';
+		}
+	};
+
+	// Helper function to calculate crit chance based on crit ratio
+	Search.prototype.getCritChance = function (critRatio) {
+		// Gen 6+ crit system: 1/24, 1/8, 1/2, always
+		// critRatio 0 = stage 0, critRatio 1 = stage 1, etc.
+		var stage = Math.max(0, critRatio || 1);
+		if (stage >= 3) return 'Always';
+		var chances = [24, 8, 2]; // denominators for stages 0, 1, 2
+		if (stage < chances.length) {
+			return '1/' + chances[stage];
+		}
+		return 'Always';
+	};
+
+	// Helper function to get text color for category-based flag tinting
+	Search.prototype.getCategoryTextColor = function (category) {
+		var cat = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
+		switch (cat) {
+			case 'Physical':
+				return '#F08030';
+			case 'Special':
+				return '#4DB8A8';
+			case 'Status':
+				return '#A8A878';
+			default:
+				return '#000';
+		}
 	};
 
 	//
@@ -110,6 +221,7 @@
 			var text = this.filters[i][1];
 			if (this.filters[i][0] === 'move') text = Dex.moves.get(text).name;
 			if (this.filters[i][0] === 'pokemon') text = Dex.species.get(text).name;
+			if (this.filters[i][0] === 'itemclass') text = this.filters[i][1]; // Already capitalized
 			buf += '<button class="filter" value="' + BattleLog.escapeHTML(this.filters[i].join(':')) + '">' + text + ' <i class="fa fa-times-circle"></i></button> ';
 		}
 		if (!q) buf += '<small style="color: #888">(backspace = delete filter)</small>';
@@ -256,6 +368,17 @@
 	case 'flag':
 		var flag = { name: id[0].toUpperCase() + id.substr(1), id: id };
 		return this.renderFlagRow(flag, matchStart, matchLength, errorMessage);
+	case 'itemclass':
+		var itemclassNames = {
+			'fragile': 'Fragile',
+			'volatile': 'Volatile',
+			'consumable': 'Consumable',
+			'pokeball': 'Pokéball',
+			'evolution': 'Evolution',
+			'tradeevo': 'Trade Evo'
+		};
+		var itemclass = { name: itemclassNames[id] || id[0].toUpperCase() + id.substr(1), id: id };
+		return this.renderItemClassRow(itemclass, matchStart, matchLength, errorMessage);
 		case 'article':
 			var articleTitle = (window.BattleArticleTitles && BattleArticleTitles[id]) || (id[0].toUpperCase() + id.substr(1));
 			var article = { name: articleTitle, id: id };
@@ -285,13 +408,36 @@
 	};
 	Search.prototype.renderMoveSortRow = function () {
 		var buf = '<li class="result"><div class="sortrow">';
-		buf += '<button class="sortcol movenamesortcol' + (this.sortCol === 'name' ? ' cur' : '') + '" data-sort="name">Name</button>';
-		buf += '<button class="sortcol movetypesortcol' + (this.sortCol === 'type' ? ' cur' : '') + '" data-sort="type">Type</button>';
-	buf += '<button class="sortcol catsortcol' + (this.sortCol === 'category' ? ' cur' : '') + '" data-sort="category">Category</button>';
-	buf += '<button class="sortcol flagsortcol' + (this.sortCol === 'flag' ? ' cur' : '') + '" data-sort="flag">Flags</button>';
-	buf += '<button class="sortcol powersortcol' + (this.sortCol === 'power' ? ' cur' : '') + '" data-sort="power">Power</button>';
-		buf += '<button class="sortcol accuracysortcol' + (this.sortCol === 'accuracy' ? ' cur' : '') + '" data-sort="accuracy">Accuracy</button>';
-		buf += '<button class="sortcol ppsortcol' + (this.sortCol === 'pp' ? ' cur' : '') + '" data-sort="pp">PP</button>';
+		buf += '<button class="sortcol movenamecol' + (this.sortCol === 'name' ? ' cur' : '') + '" data-sort="name">Name</button>';
+		buf += '<button class="sortcol typecol' + (this.sortCol === 'type' ? ' cur' : '') + '" data-sort="type">Type</button>';
+		buf += '<button class="sortcol catcol' + (this.sortCol === 'category' ? ' cur' : '') + '" data-sort="category">Category</button>';
+		buf += '<button class="sortcol flagssortcol' + (this.sortCol === 'flag' ? ' cur' : '') + '" data-sort="flag" style="margin-left: 12px;">Flags</button>';
+		buf += '<button class="sortcol labelcol' + (this.sortCol === 'power' ? ' cur' : '') + '" data-sort="power" style="margin-left: 0;">Power</button>';
+		buf += '<button class="sortcol widelabelcol' + (this.sortCol === 'accuracy' ? ' cur' : '') + '" data-sort="accuracy">Accuracy</button>';
+		buf += '<button class="sortcol labelcol' + (this.sortCol === 'crit' ? ' cur' : '') + '" data-sort="crit" style="margin-left: 0;">Crit</button>';
+		buf += '<button class="sortcol pplabelcol' + (this.sortCol === 'pp' ? ' cur' : '') + '" data-sort="pp" style="margin-left: 0;">PP</button>';
+		buf += '<span style="margin: 0 5px; color: #999;">|</span>';
+		var categoryDisplay = Dex.prefs('categorydisplay') || 'icons';
+		buf += '<label style="font-size: 9px; display: inline-flex; align-items: center; vertical-align: middle;">';
+		buf += '<span style="margin-right: 1px; line-height: 1;">Category Icons:</span>';
+		buf += '<select id="category-display-toggle" style="font-size: 9px; padding: 1px 3px 1px 1px; appearance: none; -webkit-appearance: none; -moz-appearance: none; width: 42px;">';
+		buf += '<option value="icons"' + (categoryDisplay === 'icons' ? ' selected' : '') + '>Icons</option>';
+		buf += '<option value="text"' + (categoryDisplay === 'text' ? ' selected' : '') + '>Text</option>';
+		buf += '<option value="both"' + (categoryDisplay === 'both' ? ' selected' : '') + '>Both</option>';
+		buf += '</select></label>';
+		buf += '<span style="margin: 0 5px; color: #999;">|</span>';
+		var flagIconsChecked = Dex.prefs('flagicons') !== false;
+		buf += '<label style="font-size: 9px; cursor: pointer; display: inline-flex; align-items: center; vertical-align: middle; margin-right: 4px;">';
+		buf += '<span style="line-height: 1; margin-right: 2px;">Flag Icons</span><input type="checkbox" id="flag-icons-toggle" style="margin: 0; vertical-align: middle;"' + (flagIconsChecked ? ' checked' : '') + '></label>';
+		var flagTint = Dex.prefs('flagtint') || 'both';
+		buf += '<label style="font-size: 9px; display: inline-flex; align-items: center; vertical-align: middle;">';
+		buf += '<span style="margin-right: 1px; line-height: 1;">Flag Tint:</span>';
+		buf += '<select id="flag-tint-toggle" style="font-size: 9px; padding: 1px 3px 1px 1px; appearance: none; -webkit-appearance: none; -moz-appearance: none; width: 40px;">';
+		buf += '<option value="none"' + (flagTint === 'none' ? ' selected' : '') + '>None</option>';
+		buf += '<option value="icons"' + (flagTint === 'icons' ? ' selected' : '') + '>Icons</option>';
+		buf += '<option value="text"' + (flagTint === 'text' ? ' selected' : '') + '>Text</option>';
+		buf += '<option value="both"' + (flagTint === 'both' ? ' selected' : '') + '>Both</option>';
+		buf += '</select></label>';
 		buf += '</div></li>';
 		return buf;
 	};
@@ -362,9 +508,9 @@
 				if (unreleasedHidden === 'Past' && (this.mod === 'natdex' || gen < 8)) unreleasedHidden = false;
 				if (abilities['S']) {
 					if (abilities['H']) {
-						buf += '<span class="col twoabilitycol' + (unreleasedHidden ? ' unreleasedhacol' : '') + '">' + (abilities['H'] || '') + '<br />(' + abilities['S'] + ')</span>';
-					} else {
-						buf += '<span class="col abilitycol">(' + abilities['S'] + ')</span>';
+					buf += '<span class="col twoabilitycol' + (unreleasedHidden ? ' unreleasedhacol' : '') + '">' + (abilities['H'] || '') + '<br />' + abilities['S'] + '</span>';
+				} else {
+					buf += '<span class="col abilitycol">' + abilities['S'] + '</span>';
 					}
 				} else if (abilities['H']) {
 					buf += '<span class="col abilitycol' + (unreleasedHidden ? ' unreleasedhacol' : '') + '">' + abilities['H'] + '</span>';
@@ -476,8 +622,45 @@
 		if (!attrs) attrs = '';
 		if (!item) return '<li class="result">Unrecognized item</li>';
 		var id = toID(item.name);
+		
+		// Calculate classification and type for later use
+		var classification = '';
+		var classificationClass = '';
+		if (item.isFragile) {
+			classification = 'Fragile';
+			classificationClass = 'fragile';
+		} else if (item.isMildlyFragile) {
+			classification = 'Volatile';
+			classificationClass = 'volatile';
+		}
+		
+		var consumable = '';
+		var consumableClass = '';
+		var isSingleUse = (item.shortDesc || item.desc || '').includes('Single use');
+		var evolutionStones = ['dawnstone', 'duskstone', 'firestone', 'icestone', 'leafstone', 'moonstone', 'shinystone', 'sunstone', 'thunderstone', 'waterstone'];
+		var isEvolutionStone = evolutionStones.includes(id);
+		var isEvolution = (item.shortDesc || item.desc || '').includes('Evolves') || isEvolutionStone;
+		var isTradeEvo = (item.shortDesc || item.desc || '').includes('when traded');
+		var isBerryItem = (item.isBerry || id.endsWith('berry')) && id !== 'berryjuice';
+		if (item.isPokeball) {
+			consumable = 'Pokéball';
+			consumableClass = 'pokeball';
+		} else if (isTradeEvo) {
+			consumable = 'Trade Evo';
+			consumableClass = 'tradeevo';
+		} else if (isEvolution) {
+			consumable = 'Evolution';
+			consumableClass = 'evolution';
+		} else if (isBerryItem) {
+			consumable = 'Berry';
+			consumableClass = 'berry';
+		} else if (item.isGem || isSingleUse) {
+			consumable = 'Consumable';
+			consumableClass = 'consumable';
+		}
+		
 		if (Search.urlRoot) attrs += ' href="' + Search.urlRoot + 'items/' + id + '" data-target="push"';
-		var buf = '<li class="result"><a' + attrs + ' data-entry="item|' + BattleLog.escapeHTML(item.name) + '">';
+		var buf = '<li class="result itemrow"><a' + attrs + ' data-entry="item|' + BattleLog.escapeHTML(item.name) + '">';
 
 		// icon
 		buf += '<span class="col itemiconcol">';
@@ -489,31 +672,42 @@
 		if (matchLength) {
 			name = name.substr(0, matchStart) + '<b>' + name.substr(matchStart, matchLength) + '</b>' + name.substr(matchStart + matchLength);
 		}
-		buf += '<span class="col namecol">' + name + '</span> ';
+		buf += '<span class="col itemnamecol">' + name + '</span> ';
 
+		// classification buttons container
+		buf += '<span class="col itemclasscontainer">';
+		
 		// classification
-		var classification = '';
-		var classificationClass = '';
-		if (id === 'airballoon' || id === 'assaultvest') {
-			console.log('[ITEM DEBUG]', id, 'keys:', Object.keys(item), 'isFragile:', item.isFragile, 'isMildlyFragile:', item.isMildlyFragile);
-		}
-		if (item.isFragile) {
-			classification = 'Fragile';
-			classificationClass = 'fragile';
-		} else if (item.isMildlyFragile) {
-			classification = 'Volatile';
-			classificationClass = 'volatile';
-		}
-		buf += '<span class="col itemclasscol ' + classificationClass + '">' + (classification || '—') + '</span> ';
+		var fragileEmpty = classification ? '' : ' empty';
+		var fragileTag = classification ? ' data-tag="' + classification.toLowerCase() + '"' : '';
+		buf += '<span class="itemclasscol ' + classificationClass + fragileEmpty + '"' + fragileTag + '>' + (classification || '\u2014') + '</span>';
+
+		// consumable
+		var consumableEmpty = consumable ? '' : ' empty';
+		var consumableTag = consumable ? ' data-tag="' + consumable.toLowerCase().replace(' ', '') + '"' : '';
+		buf += '<span class="itemconsumecol ' + consumableClass + consumableEmpty + '"' + consumableTag + '>' + (consumable || '\u2014') + '</span>';
+		
+		buf += '</span> ';
 
 		// error
 		if (errorMessage) {
 			buf += errorMessage + '</a></li>';
 			return buf;
 		}
-
-		// desc
-		buf += '<span class="col itemdesccol">' + BattleLog.escapeHTML(item.shortDesc) + '</span> ';
+		// desc - split into main and fragile descriptions
+		var fullDesc = item.shortDesc || '';
+		var mainDesc = fullDesc;
+		var fragileDesc = '';
+		
+		// Extract fragility-related text
+		var fragileMatch = fullDesc.match(/\. (Fragile[^.]*\.|Volatile[^.]*\.)/);
+		if (fragileMatch) {
+			fragileDesc = fragileMatch[1];
+			mainDesc = fullDesc.replace(fragileMatch[0], '.');
+		}
+		
+		buf += '<span class="col itemdesccol">' + BattleLog.escapeHTML(mainDesc) + '</span> ';
+		buf += '<span class="col fragiledesccol">' + BattleLog.escapeHTML(fragileDesc) + '</span> ';
 
 		buf += '</a></li>';
 
@@ -583,27 +777,30 @@
 		buf += Dex.getTypeIcon(move.type);
 		buf += '</span> ';
 		buf += '<span class="col catcol">';
-		buf += Dex.getCategoryIcon(move.category);
+		buf += this.getCategoryDisplay(move.category);
 		buf += '</span> ';
 		// render flags as textual labels (escaped), showing truthy keys from move.flags
 		// but exclude implementation/internal flags from display.
 		var HIDDEN_FLAGS = new Set(['allyanim', 'bypasssub', 'cantusetwice', 'charge', 'defrost', 'distance', 'failcopycat', 'failencore', 'failinstruct', 'failmefirst', 'failmimic', 'futuremove', 'gravity', 'metronome', 'mirror', 'mustpressure', 'noassist', 'noparentalbond', 'nonsky', 'nosketch', 'nosleeptalk', 'pledgecombo', 'protect', 'recharge', 'reflectable', 'snatch']);
-		var flagsHtml = '&mdash;';
+		var flagsHtml = '';
 		if (move.flags && typeof move.flags === 'object') {
 			var flagKeys = Object.keys(move.flags).filter(function (k) { return move.flags[k]; });
 			// filter out hidden/internal flags
 			flagKeys = flagKeys.filter(function (k) { return !HIDDEN_FLAGS.has(k); });
 			if (flagKeys.length) {
-				// render each flag on its own line; prefer an icon if the dex provides one
-				var dexRef = (this.engine && this.engine.dex) || null;
-				var useFlagIcons = dexRef && typeof dexRef.getFlagIcon === 'function';
+				var useFlagIcons = Dex.prefs('flagicons') !== false;
+				var flagTintPref = Dex.prefs('flagtint') || 'both';
+				var shouldTintText = flagTintPref === 'text' || flagTintPref === 'both';
+				var textColor = shouldTintText ? this.getCategoryTextColor(move.category) : '';
+				var self = this;
 				flagsHtml = flagKeys.map(function (k) {
-					var s = k.charAt(0).toUpperCase() + k.slice(1);
 					if (useFlagIcons) {
-						try {
-							var icon = dexRef.getFlagIcon(k);
-							if (icon) return '<div>' + icon + '</div>';
-						} catch (e) {}
+						var icon = Dex.getFlagIcon(k);
+						if (icon && icon !== '\u2014') return '<div>' + icon + '</div>';
+					}
+					var s = k.charAt(0).toUpperCase() + k.slice(1);
+					if (textColor) {
+						return '<div style="color: ' + textColor + ';">' + BattleLog.escapeHTML(s) + '</div>';
 					}
 					return '<div>' + BattleLog.escapeHTML(s) + '</div>';
 				}).join('');
@@ -611,20 +808,31 @@
 		} else if (typeof move.flags === 'string') {
 			var singleFlag = move.flags;
 			if (!HIDDEN_FLAGS.has(singleFlag)) {
-				var sf = singleFlag.charAt(0).toUpperCase() + singleFlag.slice(1);
-				var dexRef2 = (this.engine && this.engine.dex) || null;
-				var useFlagIcons2 = dexRef2 && typeof dexRef2.getFlagIcon === 'function';
+				var useFlagIcons2 = Dex.prefs('flagicons') !== false;
+				var flagTintPref2 = Dex.prefs('flagtint') || 'both';
+				var shouldTintText2 = flagTintPref2 === 'text' || flagTintPref2 === 'both';
+				var textColor2 = shouldTintText2 ? this.getCategoryTextColor(move.category) : '';
 				if (useFlagIcons2) {
-					try {
-						var icon2 = dexRef2.getFlagIcon(singleFlag);
-						if (icon2) flagsHtml = '<div>' + icon2 + '</div>'; else flagsHtml = '<div>' + BattleLog.escapeHTML(sf) + '</div>';
-					} catch (e) {
-						flagsHtml = '<div>' + BattleLog.escapeHTML(sf) + '</div>';
+					var icon2 = Dex.getFlagIcon(singleFlag);
+					if (icon2 && icon2 !== '\u2014') {
+						flagsHtml = '<div>' + icon2 + '</div>';
+					} else {
+						var sf = singleFlag.charAt(0).toUpperCase() + singleFlag.slice(1);
+						if (textColor2) {
+							flagsHtml = '<div style="color: ' + textColor2 + ';">' + BattleLog.escapeHTML(sf) + '</div>';
+						} else {
+							flagsHtml = '<div>' + BattleLog.escapeHTML(sf) + '</div>';
+						}
 					}
 				} else {
-					flagsHtml = '<div>' + BattleLog.escapeHTML(sf) + '</div>';
+					var sf = singleFlag.charAt(0).toUpperCase() + singleFlag.slice(1);
+					if (textColor2) {
+						flagsHtml = '<div style="color: ' + textColor2 + ';">' + BattleLog.escapeHTML(sf) + '</div>';
+					} else {
+						flagsHtml = '<div>' + BattleLog.escapeHTML(sf) + '</div>';
+					}
 				}
-				}}
+			}}
 		
 		// Determine if we need multi-flag class (3+ flags)
 		var flagCount = 0;
@@ -634,14 +842,18 @@
 			flagCount = 1;
 		}
 		var flagClass = flagCount >= 3 ? 'col flagcol multi-flag' : 'col flagcol';
-		
-		buf += '<span class="' + flagClass + '" style="text-align:center;">' + flagsHtml + '</span> ';
-
-		// power, accuracy, pp
+	var flagTintPref = Dex.prefs('flagtint') || 'both';
+	var shouldTintIcons = flagTintPref === 'icons' || flagTintPref === 'both';
+	var categoryFilter = shouldTintIcons ? this.getCategoryFlagFilter(move.category) : 'none';
+	
+	buf += '<span class="' + flagClass + '" style="text-align:center; margin-left: 6px; filter: ' + categoryFilter + ';">' + flagsHtml + '</span> ';
 		var pp = (move.pp === 1 || move.noPPBoosts ? move.pp : move.pp * 8 / 5);
 		if (this.engine && this.engine.dex.gen < 3) pp = Math.min(61, pp);
-		buf += '<span class="col labelcol">' + (move.category !== 'Status' ? ('<em>Power</em><br />' + (move.basePower || '&mdash;')) : '') + '</span> ';
+		console.log('[CRIT DEBUG]', move.name, 'critRatio:', move.critRatio, 'num:', move.num, 'desc:', move.desc ? move.desc.substring(0, 30) : 'none');
+		buf += '<span class="col labelcol" style="margin-left: 6px;">' + (move.category !== 'Status' ? ('<em>Power</em><br />' + (move.basePower || '&mdash;')) : '') + '</span> ';
 		buf += '<span class="col widelabelcol"><em>Accuracy</em><br />' + (move.accuracy && move.accuracy !== true ? move.accuracy + '%' : '&mdash;') + '</span> ';
+		var critValue = move.critRatio ? '<span style="position: relative; top: -0.5px;">' + ((move.critRatio - 4) >= 0 ? '+' + (move.critRatio - 4) : (move.critRatio - 4)) + '</span>' : '&mdash;';
+		buf += '<span class="col labelcol"' + (move.critRatio ? ' style="cursor: help;" title="Crit Chance: ' + this.getCritChance(move.critRatio) + '"' : '') + '><em>Crit</em><br />' + critValue + '</span> ';
 		buf += '<span class="col pplabelcol"><em>PP</em><br />' + pp + '</span> ';
 		// desc
 		buf += '<span class="col movedesccol">' + BattleLog.escapeHTML(move.shortDesc) + '</span> ';
@@ -670,26 +882,29 @@
 		// type
 		buf += '<span class="col typecol">';
 		buf += Dex.getTypeIcon(move.type);
-		buf += Dex.getCategoryIcon(move.category);
+		buf += this.getCategoryDisplay(move.category);
 		buf += '</span> ';
 
 		// flags
 		var HIDDEN_FLAGS = new Set(['allyanim', 'bypasssub', 'charge', 'defrost', 'distance', 'failinstruct', 'gravity', 'mirror', 'nonsky', 'nosketch', 'protect', 'recharge', 'reflectable', 'snatch']);
-		var innerFlagsHtml = '&mdash;';
+		var innerFlagsHtml = '';
 		if (move.flags && typeof move.flags === 'object') {
 			var innerFlagKeys = Object.keys(move.flags).filter(function (k) { return move.flags[k]; });
 			innerFlagKeys = innerFlagKeys.filter(function (k) { return !HIDDEN_FLAGS.has(k); });
 			if (innerFlagKeys.length) {
-				// render each inner flag on its own line; prefer an icon if the dex provides one
-				var dexRefInner = (this.engine && this.engine.dex) || null;
-				var useFlagIconsInner = dexRefInner && typeof dexRefInner.getFlagIcon === 'function';
+				var useFlagIconsInner = Dex.prefs('flagicons') !== false;
+				var flagTintPrefInner = Dex.prefs('flagtint') || 'both';
+				var shouldTintTextInner = flagTintPrefInner === 'text' || flagTintPrefInner === 'both';
+				var textColorInner = shouldTintTextInner ? this.getCategoryTextColor(move.category) : '';
+				var self = this;
 				innerFlagsHtml = innerFlagKeys.map(function (k) {
-					var s = k.charAt(0).toUpperCase() + k.slice(1);
 					if (useFlagIconsInner) {
-						try {
-							var iconInner = dexRefInner.getFlagIcon(k);
-							if (iconInner) return '<div>' + iconInner + '</div>';
-						} catch (e) {}
+						var iconInner = Dex.getFlagIcon(k);
+						if (iconInner && iconInner !== '\u2014') return '<div>' + iconInner + '</div>';
+					}
+					var s = k.charAt(0).toUpperCase() + k.slice(1);
+					if (textColorInner) {
+						return '<div style="color: ' + textColorInner + ';">' + BattleLog.escapeHTML(s) + '</div>';
 					}
 					return '<div>' + BattleLog.escapeHTML(s) + '</div>';
 				}).join('');
@@ -697,28 +912,44 @@
 		} else if (typeof move.flags === 'string') {
 			var singleInnerFlag = move.flags;
 			if (!HIDDEN_FLAGS.has(singleInnerFlag)) {
-				var sif = singleInnerFlag.charAt(0).toUpperCase() + singleInnerFlag.slice(1);
-				var dexRefInner2 = (this.engine && this.engine.dex) || null;
-				var useFlagIconsInner2 = dexRefInner2 && typeof dexRefInner2.getFlagIcon === 'function';
+				var useFlagIconsInner2 = Dex.prefs('flagicons') !== false;
+				var flagTintPrefInner2 = Dex.prefs('flagtint') || 'both';
+				var shouldTintTextInner2 = flagTintPrefInner2 === 'text' || flagTintPrefInner2 === 'both';
+				var textColorInner2 = shouldTintTextInner2 ? this.getCategoryTextColor(move.category) : '';
 				if (useFlagIconsInner2) {
-					try {
-						var iconInner2 = dexRefInner2.getFlagIcon(singleInnerFlag);
-						if (iconInner2) innerFlagsHtml = '<div>' + iconInner2 + '</div>'; else innerFlagsHtml = '<div>' + BattleLog.escapeHTML(sif) + '</div>';
-					} catch (e) {
-						innerFlagsHtml = '<div>' + BattleLog.escapeHTML(sif) + '</div>';
+					var iconInner2 = Dex.getFlagIcon(singleInnerFlag);
+					if (iconInner2 && iconInner2 !== '\u2014') {
+						innerFlagsHtml = '<div>' + iconInner2 + '</div>';
+					} else {
+						var sif = singleInnerFlag.charAt(0).toUpperCase() + singleInnerFlag.slice(1);
+						if (textColorInner2) {
+							innerFlagsHtml = '<div style="color: ' + textColorInner2 + ';">' + BattleLog.escapeHTML(sif) + '</div>';
+						} else {
+							innerFlagsHtml = '<div>' + BattleLog.escapeHTML(sif) + '</div>';
+						}
 					}
 				} else {
-					innerFlagsHtml = '<div>' + BattleLog.escapeHTML(sif) + '</div>';
+					var sif = singleInnerFlag.charAt(0).toUpperCase() + singleInnerFlag.slice(1);
+					if (textColorInner2) {
+						innerFlagsHtml = '<div style="color: ' + textColorInner2 + ';">' + BattleLog.escapeHTML(sif) + '</div>';
+					} else {
+						innerFlagsHtml = '<div>' + BattleLog.escapeHTML(sif) + '</div>';
+					}
 				}
 			}
 		}
-		buf += '<span class="col flagcol";">' + innerFlagsHtml + '</span> ';
+		var flagTintPrefInner = Dex.prefs('flagtint') || 'both';
+		var shouldTintIconsInner = flagTintPrefInner === 'icons' || flagTintPrefInner === 'both';
+		var categoryFilterInner = shouldTintIconsInner ? this.getCategoryFlagFilter(move.category) : 'none';
+		buf += '<span class="col flagcol" style="margin-left: 6px; filter: ' + categoryFilterInner + ';">' + innerFlagsHtml + '</span> ';
 
 		// power, accuracy, pp
 		var pp = (move.pp === 1 || move.noPPBoosts ? move.pp : move.pp * 8 / 5);
 		if (this.engine && this.engine.dex.gen < 3) pp = Math.min(61, pp);
-		buf += '<span class="col labelcol">' + (move.category !== 'Status' ? ('<em>Power</em><br />' + (move.basePower || '&mdash;')) : '') + '</span> ';
+		buf += '<span class="col labelcol" style="margin-left: 6px;">' + (move.category !== 'Status' ? ('<em>Power</em><br />' + (move.basePower || '&mdash;')) : '') + '</span> ';
 		buf += '<span class="col widelabelcol"><em>Accuracy</em><br />' + (move.accuracy && move.accuracy !== true ? move.accuracy + '%' : '&mdash;') + '</span> ';
+		var critValue = move.critRatio ? '<span style="position: relative; top: -0.5px;">' + ((move.critRatio - 4) >= 0 ? '+' + (move.critRatio - 4) : (move.critRatio - 4)) + '</span>' : '&mdash;';
+		buf += '<span class="col labelcol"' + (move.critRatio ? ' style="cursor: help;" title="Crit Chance: ' + this.getCritChance(move.critRatio) + '"' : '') + '><em>Crit</em><br />' + critValue + '</span> ';
 		buf += '<span class="col pplabelcol"><em>PP</em><br />' + pp + '</span> ';
 
 		// desc
@@ -750,7 +981,7 @@
 		// type
 		buf += '<span class="col typecol">';
 		buf += Dex.getTypeIcon(move.type);
-		buf += Dex.getCategoryIcon(move.category);
+		buf += this.getCategoryDisplay(move.category);
 		buf += '</span> ';
 
 		// power, accuracy, pp
@@ -806,7 +1037,7 @@
 		buf += '<span class="col namecol">' + name + '</span> ';
 
 		// category
-		buf += '<span class="col typecol">' + Dex.getCategoryIcon(category.name) + '</span> ';
+		buf += '<span class="col typecol">' + this.getCategoryDisplay(category.name) + '</span> ';
 
 		// error
 		if (errorMessage) {
@@ -833,7 +1064,7 @@ Search.prototype.renderFlagRow = function (flag, matchStart, matchLength, errorM
 	buf += '<span class="col namecol">' + name + '</span> ';
 
 	// flag icon
-	buf += '<span class="col flagcol">' + Dex.getFlagIcon(flag.id) + '</span> ';
+	buf += '<span class="col flagcol" style="margin-left: 6px;">' + Dex.getFlagIcon(flag.id) + '</span> ';
 
 	// error
 	if (errorMessage) {
@@ -920,6 +1151,28 @@ Search.prototype.renderFlagRow = function (flag, matchStart, matchLength, errorM
 		return buf;
 	};
 
+	Search.prototype.renderItemClassRow = function (itemclass, matchStart, matchLength, errorMessage) {
+		var attrs = '';
+		var buf = '<li class="result"><a' + attrs + ' data-entry="itemclass|' + BattleLog.escapeHTML(itemclass.name) + '">';
+
+		// name
+		var name = itemclass.name;
+		if (matchLength) {
+			name = name.substr(0, matchStart) + '<b>' + name.substr(matchStart, matchLength) + '</b>' + name.substr(matchStart + matchLength);
+		}
+		buf += '<span class="col namecol">' + name + '</span> ';
+
+		// error
+		if (errorMessage) {
+			buf += errorMessage + '</a></li>';
+			return buf;
+		}
+
+		buf += '</a></li>';
+
+		return buf;
+	};
+
 	Search.gen = 9;
 	Search.renderRow = Search.prototype.renderRow;
 	Search.renderPokemonRow = Search.prototype.renderPokemonRow;
@@ -934,6 +1187,7 @@ Search.prototype.renderFlagRow = function (flag, matchStart, matchLength, errorM
 	Search.renderFlagRow = Search.prototype.renderFlagRow;
 	Search.renderEggGroupRow = Search.prototype.renderEggGroupRow;
 	Search.renderTierRow = Search.prototype.renderTierRow;
+	Search.renderItemClassRow = Search.prototype.renderItemClassRow;
 
 	exports.BattleSearch = Search;
 

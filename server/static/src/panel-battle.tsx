@@ -1045,17 +1045,17 @@ class BattlePanel extends PSRoomPanel<BattleRoom> {
 				{hardcoreStyle}
 				<BattleDiv room={room} />
 				<ChatLog
-					class="battle-log hasuserlist" room={room} top={this.battleHeight} noSubscription
+					class="battle-log hasuserlist" room={room} noSubscription
 				>
 					<div class="battle-controls" role="complementary" aria-label="Battle Controls">
 						{this.renderControls()}
 					</div>
 				</ChatLog>
 				<ChatTextEntry room={room} onMessage={this.send} onKey={this.onKey} left={0} />
-				<ChatUserList room={room} top={this.battleHeight} minimized />
+				<ChatUserList room={room} minimized />
 				<button
 					data-href="battleoptions" class="button"
-					style={{ position: 'absolute', right: '75px', top: this.battleHeight }}
+					style={{ position: 'absolute', right: '75px' }}
 				>
 					Battle options
 				</button>
@@ -1082,7 +1082,7 @@ class BattlePanel extends PSRoomPanel<BattleRoom> {
 				Battle options
 			</button>
 			<div class="battle-controls-container">
-				<div class="battle-controls" role="complementary" aria-label="Battle Controls" style="top: 370px;">
+				<div class="battle-controls" role="complementary" aria-label="Battle Controls">
 					{(room.battle && !room.battle.ended && room.request && room.battle.mySide.id === PS.user.userid) &&
 						<TimerButton room={room} />}
 					{this.renderControls()}

@@ -351,6 +351,9 @@ afdMode=void 0;this.
 
 
 
+
+
+
 moves={
 get:function(nameOrMove){
 if(nameOrMove&&typeof nameOrMove!=='string'){
@@ -569,7 +572,7 @@ var id=toID(name);
 if(name!==id.substr(0,1).toUpperCase()+id.substr(1))return false;
 return(_window$BattleTypeCha2=window.BattleTypeChart)==null?void 0:_window$BattleTypeCha2.hasOwnProperty(id);
 }
-};}var _proto2=_class2.prototype;_proto2.mod=function mod(modid){if(modid==='gen9')return this;if(!window.BattleTeambuilderTable)return this;if(modid in this.moddedDexes){return this.moddedDexes[modid];}this.moddedDexes[modid]=new ModdedDex(modid);return this.moddedDexes[modid];};_proto2.forGen=function forGen(gen){if(!gen)return this;return this.mod("gen"+gen);};_proto2.formatGen=function formatGen(format){var formatid=toID(format);if(!formatid)return Dex.gen;if(!formatid.startsWith('gen'))return 6;return parseInt(formatid.charAt(3))||Dex.gen;};_proto2.forFormat=function forFormat(format){var dex=Dex.forGen(Dex.formatGen(format));var formatid=toID(format).slice(4);if(dex.gen===7&&formatid.includes('letsgo')){dex=Dex.mod('gen7letsgo');}if(dex.gen===8&&formatid.includes('bdsp')){dex=Dex.mod('gen8bdsp');}return dex;};_proto2.resolveAvatar=function resolveAvatar(avatar){var _window$Config;if(window.BattleAvatarNumbers&&avatar in BattleAvatarNumbers){avatar=BattleAvatarNumbers[avatar];}if(avatar.startsWith('#')){return Dex.resourcePrefix+'sprites/trainers-custom/'+toID(avatar.substr(1))+'.png';}if(avatar.includes('.')&&(_window$Config=window.Config)!=null&&(_window$Config=_window$Config.server)!=null&&_window$Config.registered){var protocol=Config.server.port===443?'https':'http';var server=protocol+"://"+Config.server.host+":"+Config.server.port;return server+"/avatars/"+encodeURIComponent(avatar).replace(/%3F/g,'?');}return Dex.resourcePrefix+'sprites/trainers/'+Dex.sanitizeName(avatar||'unknown')+'.png';};_proto2.sanitizeName=function sanitizeName(name){if(!name)return'';return(''+name).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').slice(0,50);};_proto2.prefs=function prefs(prop){var _window$Storage,_window$PS;return(_window$Storage=window.Storage)!=null&&_window$Storage.prefs?window.Storage.prefs(prop):(_window$PS=window.PS)==null||(_window$PS=_window$PS.prefs)==null?void 0:_window$PS[prop];};_proto2.getShortName=function getShortName(name){var shortName=name.replace(/[^A-Za-z0-9]+$/,'');if(shortName.includes('(')){shortName+=name.slice(shortName.length).replace(/[^()]+/g,'').replace(/\(\)/g,'');}return shortName;};_proto2.getEffect=function getEffect(name){name=(name||'').trim();if(name.substr(0,5)==='item:'){return Dex.items.get(name.substr(5).trim());}else if(name.substr(0,8)==='ability:'){return Dex.abilities.get(name.substr(8).trim());}else if(name.substr(0,5)==='move:'){return Dex.moves.get(name.substr(5).trim());}var id=toID(name);return new PureEffect(id,name);};_proto2.getGen3Category=function getGen3Category(type){return['Fire','Water','Grass','Electric','Ice','Psychic','Dark','Dragon'].includes(type)?'Special':'Physical';};_proto2.
+};}var _proto2=_class2.prototype;_proto2.mod=function mod(modid){if(modid==='gen9')return this;if(!window.BattleTeambuilderTable)return this;if(modid in this.moddedDexes){return this.moddedDexes[modid];}this.moddedDexes[modid]=new ModdedDex(modid);return this.moddedDexes[modid];};_proto2.forGen=function forGen(gen){if(!gen)return this;return this.mod("gen"+gen);};_proto2.formatGen=function formatGen(format){var formatid=toID(format);if(!formatid)return Dex.gen;if(!formatid.startsWith('gen'))return 6;return parseInt(formatid.charAt(3))||Dex.gen;};_proto2.forFormat=function forFormat(format){var dex=Dex.forGen(Dex.formatGen(format));var formatid=toID(format).slice(4);if(dex.gen===7&&formatid.includes('letsgo')){dex=Dex.mod('gen7letsgo');}if(dex.gen===8&&formatid.includes('bdsp')){dex=Dex.mod('gen8bdsp');}if(dex.gen===9&&(formatid.includes('indigostarstorm')||formatid.includes('isl'))){dex=Dex.mod('gen9indigostarstorm');}return dex;};_proto2.resolveAvatar=function resolveAvatar(avatar){var _window$Config;if(window.BattleAvatarNumbers&&avatar in BattleAvatarNumbers){avatar=BattleAvatarNumbers[avatar];}if(avatar.startsWith('#')){return Dex.resourcePrefix+'sprites/trainers-custom/'+toID(avatar.substr(1))+'.png';}if(avatar.includes('.')&&(_window$Config=window.Config)!=null&&(_window$Config=_window$Config.server)!=null&&_window$Config.registered){var protocol=Config.server.port===443?'https':'http';var server=protocol+"://"+Config.server.host+":"+Config.server.port;return server+"/avatars/"+encodeURIComponent(avatar).replace(/%3F/g,'?');}return Dex.resourcePrefix+'sprites/trainers/'+Dex.sanitizeName(avatar||'unknown')+'.png';};_proto2.sanitizeName=function sanitizeName(name){if(!name)return'';return(''+name).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').slice(0,50);};_proto2.prefs=function prefs(prop){var _window$Storage,_window$PS;return(_window$Storage=window.Storage)!=null&&_window$Storage.prefs?window.Storage.prefs(prop):(_window$PS=window.PS)==null||(_window$PS=_window$PS.prefs)==null?void 0:_window$PS[prop];};_proto2.getShortName=function getShortName(name){var shortName=name.replace(/[^A-Za-z0-9]+$/,'');if(shortName.includes('(')){shortName+=name.slice(shortName.length).replace(/[^()]+/g,'').replace(/\(\)/g,'');}return shortName;};_proto2.getEffect=function getEffect(name){name=(name||'').trim();if(name.substr(0,5)==='item:'){return Dex.items.get(name.substr(5).trim());}else if(name.substr(0,8)==='ability:'){return Dex.abilities.get(name.substr(8).trim());}else if(name.substr(0,5)==='move:'){return Dex.moves.get(name.substr(5).trim());}var id=toID(name);return new PureEffect(id,name);};_proto2.getGen3Category=function getGen3Category(type){return['Fire','Water','Grass','Electric','Ice','Psychic','Dark','Dragon'].includes(type)?'Special':'Physical';};_proto2.
 
 hasAbility=function hasAbility(species,ability){
 for(var i in species.abilities){
@@ -1010,6 +1013,7 @@ sanitizedFlag='undefined';
 break;
 }
 var flagText=sanitizedFlag.charAt(0).toUpperCase()+sanitizedFlag.slice(1);
+
 return"<img src=\"sprites/flagicons/"+sanitizedFlag+".png\" alt=\""+flagText+"\" height=\"32\" width=\"132\" class=\"pixelated\" onerror=\"this.style.display='none'; this.nextSibling.style.display='inline';\" /><span style=\"display: none;\">"+flagText+"</span>";
 };_proto2.
 
@@ -1072,13 +1076,13 @@ var data=Object.assign({},Dex.moves.get(name));
 
 for(var i=Dex.gen-1;i>=_this2.gen;i--){
 var table=window.BattleTeambuilderTable["gen"+i];
-if(id in table.overrideMoveData){
+if(table&&table.overrideMoveData&&id in table.overrideMoveData){
 Object.assign(data,table.overrideMoveData[id]);
 }
 }
 if(_this2.modid!=="gen"+_this2.gen){
 var _table=window.BattleTeambuilderTable[_this2.modid];
-if(id in _table.overrideMoveData){
+if(_table&&_table.overrideMoveData&&id in _table.overrideMoveData){
 Object.assign(data,_table.overrideMoveData[id]);
 }
 }
@@ -1105,13 +1109,13 @@ var data=Object.assign({},Dex.flags.get(name));
 
 for(var i=Dex.gen-1;i>=_this2.gen;i--){
 var table=window.BattleTeambuilderTable["gen"+i];
-if(id in table.overrideFlagData){
+if(table&&table.overrideFlagData&&id in table.overrideFlagData){
 Object.assign(data,table.overrideFlagData[id]);
 }
 }
 if(_this2.modid!=="gen"+_this2.gen){
 var _table2=window.BattleTeambuilderTable[_this2.modid];
-if(id in _table2.overrideFlagData){
+if(_table2&&_table2.overrideFlagData&&id in _table2.overrideFlagData){
 Object.assign(data,_table2.overrideFlagData[id]);
 }
 }
@@ -1135,13 +1139,13 @@ var data=Object.assign({},Dex.items.get(name));
 
 for(var i=Dex.gen-1;i>=_this2.gen;i--){
 var table=window.BattleTeambuilderTable["gen"+i];
-if(id in table.overrideItemData){
+if(table&&table.overrideItemData&&id in table.overrideItemData){
 Object.assign(data,table.overrideItemData[id]);
 }
 }
 if(_this2.modid!=="gen"+_this2.gen){
 var _table3=window.BattleTeambuilderTable[_this2.modid];
-if(id in _table3.overrideItemData){
+if(_table3&&_table3.overrideItemData&&id in _table3.overrideItemData){
 Object.assign(data,_table3.overrideItemData[id]);
 }
 }
@@ -1165,13 +1169,13 @@ var data=Object.assign({},Dex.abilities.get(name));
 
 for(var i=Dex.gen-1;i>=_this2.gen;i--){
 var table=window.BattleTeambuilderTable["gen"+i];
-if(id in table.overrideAbilityData){
+if(table&&table.overrideAbilityData&&id in table.overrideAbilityData){
 Object.assign(data,table.overrideAbilityData[id]);
 }
 }
 if(_this2.modid!=="gen"+_this2.gen){
 var _table4=window.BattleTeambuilderTable[_this2.modid];
-if(id in _table4.overrideAbilityData){
+if(_table4&&_table4.overrideAbilityData&&id in _table4.overrideAbilityData){
 Object.assign(data,_table4.overrideAbilityData[id]);
 }
 }
@@ -1195,13 +1199,13 @@ var data=Object.assign({},Dex.species.get(name));
 
 for(var i=Dex.gen-1;i>=_this2.gen;i--){
 var _table5=window.BattleTeambuilderTable["gen"+i];
-if(id in _table5.overrideSpeciesData){
+if(_table5&&_table5.overrideSpeciesData&&id in _table5.overrideSpeciesData){
 Object.assign(data,_table5.overrideSpeciesData[id]);
 }
 }
 if(_this2.modid!=="gen"+_this2.gen){
 var _table6=window.BattleTeambuilderTable[_this2.modid];
-if(id in _table6.overrideSpeciesData){
+if(_table6&&_table6.overrideSpeciesData&&id in _table6.overrideSpeciesData){
 Object.assign(data,_table6.overrideSpeciesData[id]);
 }
 }
@@ -1210,7 +1214,7 @@ data.abilities={0:"No Ability"};
 }
 
 var table=window.BattleTeambuilderTable[_this2.modid];
-if(id in table.overrideTier)data.tier=table.overrideTier[id];
+if(table&&table.overrideTier&&id in table.overrideTier)data.tier=table.overrideTier[id];
 if(!data.tier&&id.endsWith('totem')){
 data.tier=_this2.species.get(id.slice(0,-5)).tier;
 }

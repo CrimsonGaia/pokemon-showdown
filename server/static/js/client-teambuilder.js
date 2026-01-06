@@ -90,9 +90,9 @@
 	exports.TeambuilderRoom = exports.Room.extend({
 		type: 'teambuilder',
 		title: 'Teambuilder',
-		bestWidth: 850,
-		minWidth: 850,
-		maxWidth: 850,
+		bestWidth: 870,
+		minWidth: 870,
+		maxWidth: 870,
 		initialize: function () {
 			teams = Storage.teams;
 			// left menu
@@ -1327,17 +1327,6 @@
 			var abilitySet = set.abilitySet || 1;
 			// Check if Pokemon has H or S abilities
 			var hasHiddenOrS = !!(species.abilities['H'] || species.abilities['S']);
-			
-			// Always sync abilities with the current ability set
-			if (!set.abilitySet || set.abilitySet === 1) {
-				// Set 1: Regular abilities (slot 0 and 1)
-				set.ability = species.abilities['0'] || '';
-				set.ability2 = species.abilities['1'] || '';
-			} else {
-				// Set 2: Hidden ability and S ability
-				set.ability = species.abilities['H'] || '';
-				set.ability2 = species.abilities['S'] || '';
-			}
 			
 			var buttonStyle, buttonClass, buttonName, buttonText;
 			if (!hasHiddenOrS) {
@@ -2931,6 +2920,8 @@
 				this.updateAbilitySetsForm();
 			}
 
+			// Mark team for repacking
+			this.curTeam.iconCache = '!';
 			this.save();
 		},
 		ivSpreadChange: function (e) {
@@ -3260,6 +3251,7 @@
 					this.$('input[name=ability2]').val(val);
 				}
 				console.log('[CHART CLICK] After - set.ability:', this.curSet.ability, 'set.ability2:', this.curSet.ability2);
+				this.curTeam.iconCache = '!';
 				this.updateAbilitySetsForm();
 				this.save();
 				return;
@@ -3505,10 +3497,12 @@
 				break;
 			case 'ability':
 				this.curSet.ability = val;
+				this.curTeam.iconCache = '!';
 				if (selectNext) this.$('input[name=move1]').select();
 				break;
 			case 'ability2':
 				this.curSet.ability2 = val;
+				this.curTeam.iconCache = '!';
 				if (selectNext) this.$('input[name=move1]').select();
 				break;
 			case 'move1':

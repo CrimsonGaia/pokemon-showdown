@@ -1045,17 +1045,17 @@ return preact.h(PSPanelWrapper,{room:room,focusClick:true,scrollable:"hidden"},
 hardcoreStyle,
 preact.h(BattleDiv,{room:room}),
 preact.h(ChatLog,{
-"class":"battle-log hasuserlist",room:room,top:this.battleHeight,noSubscription:true},
+"class":"battle-log hasuserlist",room:room,noSubscription:true},
 
 preact.h("div",{"class":"battle-controls",role:"complementary","aria-label":"Battle Controls"},
 this.renderControls()
 )
 ),
 preact.h(ChatTextEntry,{room:room,onMessage:this.send,onKey:this.onKey,left:0}),
-preact.h(ChatUserList,{room:room,top:this.battleHeight,minimized:true}),
+preact.h(ChatUserList,{room:room,minimized:true}),
 preact.h("button",{
 "data-href":"battleoptions","class":"button",
-style:{position:'absolute',right:'75px',top:this.battleHeight}},
+style:{position:'absolute',right:'75px'}},
 "Battle options"
 
 ),
@@ -1082,7 +1082,7 @@ style:{position:'absolute',right:'15px'}},
 
 ),
 preact.h("div",{"class":"battle-controls-container"},
-preact.h("div",{"class":"battle-controls",role:"complementary","aria-label":"Battle Controls",style:"top: 370px;"},
+preact.h("div",{"class":"battle-controls",role:"complementary","aria-label":"Battle Controls"},
 room.battle&&!room.battle.ended&&room.request&&room.battle.mySide.id===PS.user.userid&&
 preact.h(TimerButton,{room:room}),
 this.renderControls()

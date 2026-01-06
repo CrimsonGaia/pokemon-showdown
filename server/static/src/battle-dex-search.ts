@@ -1235,7 +1235,7 @@ class BattlePokemonSearch extends BattleTypedSearch<'pokemon'> {
 			// Fallback to gen9 if gen9indigostarstorm doesn't exist
 			if (!table) {
 				console.log('[DEBUG] gen9indigostarstorm table not found, falling back to gen9');
-				table = tableData['gen9'];
+				table = BattleTeambuilderTable['gen9'];
 			}
 		}
 

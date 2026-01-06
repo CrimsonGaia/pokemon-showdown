@@ -33,9 +33,7 @@ export const Conditions = {
 				this.add('-message', `${target.name}'s aura ${auraName} has engulfed their surroundings!`);
 			} else { this.add('-status', target, 'aura'); }
 		},
-		onSwitchIn(target) {
-			if (this.effectState.auraAbility) { target.setAbility(this.effectState.auraAbility, target, null, false, false, 2); }
-		},
+		onSwitchIn(target) { if (this.effectState.auraAbility) { target.setAbility(this.effectState.auraAbility, target, null, false, false, 2); } },
 		onResidualOrder: 9,
 		onResidual(pokemon) {
 			if (this.effectState.time) {
@@ -88,8 +86,7 @@ export const Conditions = {
 			if (sourceEffect && sourceEffect.id === 'flameorb') { this.add('-status', target, 'brn', '[from] item: Flame Orb'); } 
 			else if (sourceEffect && sourceEffect.effectType === 'Ability') { this.add('-status', target, 'brn', '[from] ability: ' + sourceEffect.name, `[of] ${source}`); } 
 			else { this.add('-status', target, 'brn'); }
-		},
-		// Damage reduction is handled directly in the sim/battle.js damage function
+		}, // Damage reduction is handled directly in the sim/battle.js damage function
 		onResidualOrder: 10,
 		onResidual(pokemon) {
 			if (pokemon.battle.field.getPseudoWeather('timebreak')) return;
@@ -108,8 +105,7 @@ export const Conditions = {
 			if (pokemon.battle.field.getPseudoWeather('timebreak')) return;
 			if (pokemon.hasType('Dragon') || pokemon.hasType('Fairy')) return;
 			this.damage(pokemon.baseMaxhp / 12);
-		},
-		// Apply damage and confusion when user uses a Dragon-type move
+		}, // Apply damage and confusion when user uses a Dragon-type move
 		onBeforeMove(pokemon, target, move) {
 			if (move && move.type === 'Dragon') {
 				this.damage(pokemon.baseMaxhp / 12, pokemon, pokemon, this.effect);
@@ -134,15 +130,10 @@ export const Conditions = {
 		effectType: 'Status',
 		onStart(target, source, sourceEffect) {
 			if (sourceEffect && sourceEffect.effectType === 'Ability') { this.add('-status', target, 'fear', '[from] ability: ' + sourceEffect.name, `[of] ${source}`); } 
-			else { this.add('-status', target, 'fear'); }
-			// Initialize fear counter based on type
-			if (target.hasType('Dark') || target.hasType('Fighting')) {
-				this.effectState.fearStacks = 0;
-			} else if (target.hasType('Normal') || target.hasType('Psychic')) {
-				this.effectState.fearStacks = 4;
-			} else {
-				this.effectState.fearStacks = 2;
-			}
+			else { this.add('-status', target, 'fear'); } // Initialize fear counter based on type
+			if (target.hasType('Dark') || target.hasType('Fighting')) { this.effectState.fearStacks = 0; } 
+			else if (target.hasType('Normal') || target.hasType('Psychic')) { this.effectState.fearStacks = 4; }
+			else { this.effectState.fearStacks = 2; }
 		},
 		onModifySpA(spa, pokemon) { return Math.floor(spa * 0.5); },
 		onDamagingHit(damage, target, source, move) {
@@ -185,11 +176,7 @@ export const Conditions = {
 				return false;
 			}
 		},
-		onSourceModifyDamage(damage, source, target, move) {
-			if (move && (move.type === 'Dark' || move.type === 'Shadow')) {
-				return this.chainModify(2);
-			}
-		},
+		onSourceModifyDamage(damage, source, target, move) { if (move && (move.type === 'Dark' || move.type === 'Shadow')) { return this.chainModify(2); } },
 	},
 	frz: {
 		name: 'frz',
@@ -261,7 +248,6 @@ export const Conditions = {
 			this.effectState.time--;
 			if (this.effectState.time <= 0) {
 				this.add('-message', `${pokemon.name} was frozen solid from frostbite!`);
-				// Remove frostbite and set freeze directly, bypassing status block
 				pokemon.cureStatus();
 				pokemon.setStatus('frz');
 			}
@@ -272,12 +258,9 @@ export const Conditions = {
 		},
 		onEnd(target) { this.add('-curestatus', target, 'frostbite'); },
 		onDamagingHit(damage, target, source, move) {
-			// Cure frostbite if hit by a Fire-type move
 			if ((move.type === 'Fire' && move.id !== 'polarflare') || move.thawsTarget) { target.cureStatus(); }
-            // Cure frostbite if hit by a move that attempts to burn
             if (move && move.status === 'brn' && target.status === 'frostbite') {
-                target.cureStatus();
-                // Prevent burn from being applied
+                target.cureStatus(); 
                 move.status = '';
             }
 		},
@@ -309,8 +292,7 @@ export const Conditions = {
 		onBeforeMove(pokemon) {
 			if (pokemon.hasType('Psychic')) return; // Psychic types ignore move prevention from paralysis
 			if (pokemon.hasType('Electric')) return; // Electric types ignore move prevention from paralysis
-			if (this.randomChance(1, 6)) {
-				// Steadfast: boost Speed instead of being immobilized
+			if (this.randomChance(1, 6)) { // Steadfast: boost Speed instead of being immobilized
 				if (pokemon.hasAbility('steadfast')) {
 					this.add('-activate', pokemon, 'ability: Steadfast');
 					this.boost({ spe: 1 }, pokemon);
@@ -347,9 +329,7 @@ export const Conditions = {
 			return false;
 		},
 		onResidualOrder: 9,
-		onResidual(pokemon) {
-			this.heal(pokemon.baseMaxhp / 8);
-		},
+		onResidual(pokemon) { this.heal(pokemon.baseMaxhp / 8); },
 		onDamagingHit(damage, target, source, move) { if (move && move.type === 'Electric' && target.status === 'slp') { target.cureStatus(); } },
 	},
 	drowsy: {
@@ -359,9 +339,7 @@ export const Conditions = {
 				this.add('-status', target, 'drowsy');
 				let duration = this.random(1, 3);
 				// Halve drowsy duration for Electric and Flying types
-				if (target.hasType('Electric') || target.hasType('Flying')) {
-					duration = Math.ceil(duration / 2);
-				}
+				if (target.hasType('Electric') || target.hasType('Flying')) { duration = Math.ceil(duration / 2); }
 				this.effectState.startTime = duration;
 				this.effectState.time = this.effectState.startTime;
 			},
@@ -415,7 +393,6 @@ export const Conditions = {
 			this.damage(this.clampIntRange(pokemon.baseMaxhp / 16, 1) * this.effectState.stage);
 		},
 	},
-
 	// #region Volatiles
 	allured: {
 		name: 'allured',
@@ -466,8 +443,7 @@ export const Conditions = {
 	onEnd(target) { this.add('-end', target, 'eeriespelltrap'); },
 	},
 	confusion: {
-		name: 'confusion',
-		// this is a volatile status
+		name: 'confusion', // this is a volatile status
 		onStart(target, source, sourceEffect) {
 			if (sourceEffect?.id === 'lockedmove') { this.add('-start', target, 'confusion', '[fatigue]'); } 
 			else if (sourceEffect?.effectType === 'Ability') { this.add('-start', target, 'confusion', '[from] ability: ' + sourceEffect.name, `[of] ${source}`); } 
@@ -654,20 +630,14 @@ export const Conditions = {
 	groundedbyaffliction: {
 		name: 'Grounded (Affliction)',
 		effectType: 'Volatile',
-		onStart(pokemon) {
-			// Apply grounded hazards as if the Pokémon just switched in
-			// Check for and apply each hazard effect that affects grounded Pokémon
+		onStart(pokemon) { // Apply grounded hazards as if the Pokémon just switched in
 			const side = pokemon.side;
-			
-			// Sticky Web
 			if (side.sideConditions['stickyweb']) {
 				if (!pokemon.hasItem('heavydutyboots')) {
 					this.add('-activate', pokemon, 'move: Sticky Web');
 					this.boost({ spe: -1 }, pokemon, side.foe.active[0], this.dex.getActiveMove('stickyweb'));
 				}
 			}
-			
-			// Spikes
 			if (side.sideConditions['spikes']) {
 				if (!pokemon.hasItem('heavydutyboots') && !pokemon.hasType('Bug')) {
 					const layers = side.sideConditions['spikes'].layers;
@@ -675,23 +645,16 @@ export const Conditions = {
 					this.damage(damageAmounts[layers] * pokemon.maxhp / 24);
 				}
 			}
-			
-			// Toxic Spikes
 			if (side.sideConditions['toxicspikes']) {
 				if (pokemon.hasType('Poison')) {
 					this.add('-sideend', side, 'move: Toxic Spikes', `[of] ${pokemon}`);
 					side.removeSideCondition('toxicspikes');
 				} else if (!pokemon.hasType('Steel') && !pokemon.hasItem('heavydutyboots') && !pokemon.hasType('Bug')) {
 					const layers = side.sideConditions['toxicspikes'].layers;
-					if (layers >= 2) {
-						pokemon.trySetStatus('tox', side.foe.active[0]);
-					} else {
-						pokemon.trySetStatus('psn', side.foe.active[0]);
-					}
+					if (layers >= 2) { pokemon.trySetStatus('tox', side.foe.active[0]); } 
+					else { pokemon.trySetStatus('psn', side.foe.active[0]); }
 				}
 			}
-			
-			// Steel Spikes (if present in your mod)
 			if (side.sideConditions['steelspikes']) {
 				if (!pokemon.hasItem('heavydutyboots')) {
 					const layers = side.sideConditions['steelspikes'].layers || 1;
@@ -701,9 +664,7 @@ export const Conditions = {
 			}
 		},
 		// Override Ground-type immunity
-		onImmunity(type) {
-			if (type === 'Ground') return false;
-		},
+		onImmunity(type) { if (type === 'Ground') return false; },
 	},
 	rainboweffect: {
 		name: 'rainboweffect',
@@ -726,8 +687,7 @@ export const Conditions = {
 		name: 'trackgroundedstate',
 		effectType: 'Volatile',
 		noCopy: true,
-		// Silent volatile used to track grounding state changes
-		// No onStart/onEnd to avoid message spam
+		// Silent volatile used to track grounding state changes. No onStart/onEnd to avoid message spam
 	},
 	// Volatile condition: LuckEffect (boosts secondary effect chance by 20%)
 	luckeffect: {
@@ -748,8 +708,7 @@ export const Conditions = {
 		onEnd(target) { this.add('-end', target, 'luckeffect'); },
 	},
 	//#region Other
-	lockedmove: {
-		// Outrage, Thrash, Petal Dance...
+	lockedmove: { // Outrage, Thrash, Petal Dance...
 		name: 'lockedmove',
 		duration: 2,
 		onResidual(target) {
@@ -773,12 +732,10 @@ export const Conditions = {
 			return this.effectState.move;
 		},
 	},
-	twoturnmove: {
-		// Skull Bash, SolarBeam, Sky Drop...
+	twoturnmove: { // Skull Bash, SolarBeam, Sky Drop...
 		name: 'twoturnmove',
 		duration: 2,
-		onStart(attacker, defender, effect) {
-			// ("attacker" is the Pokemon using the two turn move and the Pokemon this condition is being applied to)
+		onStart(attacker, defender, effect) { // ("attacker" is the Pokemon using the two turn move and the Pokemon this condition is being applied to)
 			this.effectState.move = effect.id;
 			attacker.addVolatile(effect.id);
 			// lastMoveTargetLoc is the location of the originally targeted slot before any redirection
@@ -821,8 +778,7 @@ export const Conditions = {
 				return;
 			}
 			if ( !pokemon.ignoringItem() && !pokemon.volatiles['dynamax'] && move.id !== this.effectState.move && move.id !== 'struggle' ) 
-			{
-				// Fails unless the Choice item is being ignored, and no PP is lost
+			{ // Fails unless the Choice item is being ignored, and no PP is lost
 				this.addMove('move', pokemon, move.name);
 				this.attrLastMove('[still]');
 				this.debug("Disabled by Choice item lock");
@@ -851,14 +807,12 @@ export const Conditions = {
 		},
 		onStart(pokemon) { this.add('-mustrecharge', pokemon); },
 		onLockMove: 'recharge',
-        onResidual(target) {
-            // Pause mustrecharge duration decrement if Timebreak is active
+        onResidual(target) {  // Pause mustrecharge duration decrement if Timebreak is active
             if (target.battle.field.getPseudoWeather('timebreak')) return;
             this.effectState.duration--;
         },
 	},
-	futuremove: {
-		// this is a slot condition
+	futuremove: { // this is a slot condition
 		name: 'futuremove',
 		onStart(target) {
 			this.effectState.targetSlot = target.getSlot();
@@ -871,8 +825,7 @@ export const Conditions = {
 			target.side.removeSlotCondition(this.getAtSlot(this.effectState.targetSlot), 'futuremove');
 		},
 		onEnd(target) {
-			const data = this.effectState;
-			// time's up; time to hit! :D
+			const data = this.effectState; // time's up; time to hit! :D
 			const move = this.dex.moves.get(data.move);
 			if (target.fainted || target === data.source) {
 				this.hint(`${move.name} did not hit because the target is ${(target.fainted ? 'fainted' : 'the user')}.`);
@@ -938,14 +891,9 @@ export const Conditions = {
 	windswept: {
 		name: 'windswept',
 		effectType: 'Volatile',
-		onStart(pokemon) {
-			this.add('-start', pokemon, 'Windswept');
-		},
-		onEnd(pokemon) {
-			this.add('-end', pokemon, 'Windswept');
-		},
+		onStart(pokemon) { this.add('-start', pokemon, 'Windswept'); },
+		onEnd(pokemon) { this.add('-end', pokemon, 'Windswept'); },
 	},
-
 	// #region Weather 
 	hail: {
 		name: 'Hail',
@@ -956,9 +904,7 @@ export const Conditions = {
 			return 7;
 		},
 		onModifyDefPriority: 10,
-		onModifyDef(def, pokemon) {
-			if (pokemon.hasType('Ice') && this.field.isWeather('hail')) { return this.modify(def, 1.5); }
-		},
+		onModifyDef(def, pokemon) { if (pokemon.hasType('Ice') && this.field.isWeather('hail')) { return this.modify(def, 1.5); } },
 		onModifyWeatherDamage(damage, attacker, defender, move) { if (move.flags && move.flags.wind) { return this.chainModify(1.2); } },
 		onFieldStart(field, source, effect) {
 			if (effect?.effectType === 'Ability') {
@@ -1095,8 +1041,7 @@ export const Conditions = {
 				return false;
 			}
 		},
-		// This should be applied directly to the stat before any of the other modifiers are chained
-		// So we give it increased priority.
+		// This should be applied directly to the stat before any of the other modifiers are chained so we give it increased priority.
 		onModifySpDPriority: 10,
 		onModifySpD(spd, pokemon) { if (pokemon.hasType('Rock') && this.field.isWeather('sandstorm')) { return this.modify(spd, 1.5); } },
 		onModifyWeatherDamage(damage, attacker, defender, move) { if (move.flags && move.flags.wind) { return this.chainModify(1.1); } },
@@ -1170,8 +1115,8 @@ export const Conditions = {
 			if (this.field.isWeather('sunnyday')) this.eachEvent('Weather');
 		},
 		onWeather(target) {
-				if (target.hasType('Ice') && !target.hasType('Fire')) { this.damage(target.baseMaxhp / 16); }
-				if (target.hasType('grass')) { this.heal(target.baseMaxhp / 16); }
+			if (target.hasType('Ice') && !target.hasType('Fire')) { this.damage(target.baseMaxhp / 16); }
+			if (target.hasType('grass')) { this.heal(target.baseMaxhp / 16); }
 		},
 		onFieldEnd() { this.add('-weather', 'none'); },
 	},
@@ -1234,8 +1179,7 @@ export const Conditions = {
 		},
 		// Make Bug types airborne while Turbulent Winds is active (immune to all grounded effects)
 		onImmunity(type, pokemon) {
-			if (this.field.isWeather('turbulentwinds') && pokemon.hasType('Bug')) {
-				// Bug types are treated as airborne for all grounded effects
+			if (this.field.isWeather('turbulentwinds') && pokemon.hasType('Bug')) { // Bug types are treated as airborne for all grounded effects
 				const groundedEffects = [
 					'ground', // Ground-type moves
 					'spikes', 'toxicspikes', // Entry hazards
@@ -1291,14 +1235,10 @@ export const Conditions = {
 				// Trigger Wind Rider and Wind Power when weather starts - check both ability slots
 				const ability1 = this.toID((pokemon as any).ability1);
 				const ability2 = this.toID((pokemon as any).ability2);
-				
 				this.add('-message', `[DEBUG START] ${pokemon.name}: ability1=${ability1}, ability2=${ability2}`);
-				
 				if (ability1 === 'windrider' || ability2 === 'windrider') {
 					this.add('-message', `${pokemon.name}'s Wind Rider is triggered by Turbulent Winds!`);
-					if (this.boost({ atk: 1 }, pokemon, pokemon)) {
-						this.add('-activate', pokemon, 'ability: Wind Rider', '[from] Turbulent Winds');
-					}
+					if (this.boost({ atk: 1 }, pokemon, pokemon)) { this.add('-activate', pokemon, 'ability: Wind Rider', '[from] Turbulent Winds'); }
 				}
 				if (ability1 === 'windpower' || ability2 === 'windpower') {
 					this.add('-message', `${pokemon.name}'s Wind Power is triggered by Turbulent Winds!`);
@@ -1306,11 +1246,8 @@ export const Conditions = {
 						pokemon.addVolatile('charge');
 						this.add('-activate', pokemon, 'ability: Wind Power', '[from] Turbulent Winds');
 					}
-				}
-				// Make Bug types airborne with windswept volatile
-				if (pokemon.hasType('Bug')) {
-					pokemon.addVolatile('windswept');
-				}
+				} // Make Bug types airborne with windswept volatile
+				if (pokemon.hasType('Bug')) { pokemon.addVolatile('windswept'); }
 			}
 		},
 		onFieldResidualOrder: 1,
@@ -1322,14 +1259,10 @@ export const Conditions = {
 				// Trigger Wind Rider and Wind Power - check both ability slots
 				const ability1 = this.toID((pokemon as any).ability1);
 				const ability2 = this.toID((pokemon as any).ability2);
-				
 				this.add('-message', `[DEBUG] ${pokemon.name}: ability1=${ability1}, ability2=${ability2}`);
-				
 				if (ability1 === 'windrider' || ability2 === 'windrider') {
 					this.add('-message', `${pokemon.name}'s Wind Rider is triggered by Turbulent Winds!`);
-					if (this.boost({ atk: 1 }, pokemon, pokemon)) {
-						this.add('-activate', pokemon, 'ability: Wind Rider', '[from] Turbulent Winds');
-					}
+					if (this.boost({ atk: 1 }, pokemon, pokemon)) { this.add('-activate', pokemon, 'ability: Wind Rider', '[from] Turbulent Winds'); }
 				}
 				if (ability1 === 'windpower' || ability2 === 'windpower') {
 					this.add('-message', `${pokemon.name}'s Wind Power is triggered by Turbulent Winds!`);
@@ -1339,9 +1272,7 @@ export const Conditions = {
 					}
 				}
 				// Check for any Bug types that just switched in
-				if (pokemon.hasType('Bug') && !pokemon.volatiles['windswept']) {
-					pokemon.addVolatile('windswept');
-				}
+				if (pokemon.hasType('Bug') && !pokemon.volatiles['windswept']) { pokemon.addVolatile('windswept'); }
 			}
 		},
 		onWeather(target) { if (target.hasType('Fire')) { this.damage(target.baseMaxhp / 16); } },
@@ -1422,10 +1353,8 @@ export const Conditions = {
 			this.add('-weather', 'none');
 		},
 	},
-
 	// #region Terrain 
 	electricterrain: {
-	
 		name: "Electric Terrain",
 		effectType: "Terrain",
 		duration: 4,
@@ -1480,7 +1409,6 @@ export const Conditions = {
 		},
 	},
 	grassyterrain: {
-	
 		name: "Grassy Terrain",
 		effectType: "Terrain",
 		duration: 4,
@@ -1590,7 +1518,6 @@ export const Conditions = {
 		onTryHit(target, source, effect) {
 			if (effect && (effect.priority <= 0.1 || effect.target === 'self')) { return; }
 			if (target.isSemiInvulnerable() || target.isAlly(source)) return;
-			// If boostedpsyparticle is true, fliers are affected as if grounded
 			const isAffected = this.boostedpsyparticle ? true : target.isGrounded();
 			if (!isAffected) {
 				const baseMove = this.dex.moves.get(effect.id);
@@ -1640,46 +1567,15 @@ export const Conditions = {
 		// So we give it increased priority.
 		onModifySpDPriority: 10,
 		onModifySpD(spd, pokemon) { if (pokemon.hasType('Steel') && this.field.isTerrain('toxicterrain')) { return this.modify(spd, 0.7); } },
-		onModifyWeatherDamage(damage, attacker, defender, move) { if (move.flags && move.flags.wind) { return this.chainModify(1.1); } },
+		onModifyDamage(damage, attacker, defender, move) { if (move.flags && move.flags.wind) { return this.chainModify(1.1); } },
 		onFieldStart(field, source, effect) {
-			if (effect?.effectType === 'Ability') { this.add('-fieldstart', 'move: Toxic Terrain', '[from] ability: ' + effect.name, `[of] ${source}`); } 
-			else { this.add('-fieldstart', 'move: Toxic Terrain'); }
+		   if (effect?.effectType === 'Ability') { this.add('-fieldstart', 'move: Toxic Terrain', '[from] ability: ' + effect.name, `[of] ${source}`);  } 
+		   else { this.add('-fieldstart', 'move: Toxic Terrain'); }
 		},
-		onFieldResidualOrder: 27,
-		onFieldResidualSubOrder: 8,
-		onFieldResidual() {
-				for (const pokemon of this.getAllActive()) {
-					if (!pokemon.isGrounded() || pokemon.hasType('Poison') || pokemon.hasType('Steel')) continue;
-					if (pokemon.hasType('Grass') || pokemon.hasType('Water')) { this.damage(pokemon.baseMaxhp / 8, pokemon, pokemon, this.effect); } 
-					else { this.damage(pokemon.baseMaxhp / 16, pokemon, pokemon, this.effect); }
-					// Toxic Terrain counter logic
-					if (!pokemon.volatiles['toxicterraincounter']) {
-						const type1 = pokemon.getTypes()[0];
-						const type2 = pokemon.getTypes()[1];
-						let effectiveness = 1;
-						if (type1) effectiveness *= this.dex.getEffectiveness('Poison', type1);
-						if (type2) effectiveness *= this.dex.getEffectiveness('Poison', type2);
-						let counter;
-						if (effectiveness > 1) counter = 1; // 4x weak
-						else if (effectiveness === 1) counter = 2; // 2x weak
-						else if (effectiveness === 0) counter = 3; // neutral
-						else if (effectiveness === -1) counter = 4; // 2x resist
-						else counter = 5; // 4x resist
-						pokemon.volatiles['toxicterraincounter'] = {turns: counter};
-					} else if (!pokemon.status || pokemon.status !== 'tox') {
-						pokemon.volatiles['toxicterraincounter'].turns--;
-						if (pokemon.volatiles['toxicterraincounter'].turns <= 0) {
-							pokemon.setStatus('tox');
-							delete pokemon.volatiles['toxicterraincounter'];
-						}
-					}
-				}
-		},
-		onFieldEnd() { this.add('-fieldend', 'move: Toxic Terrain'); },
+		
+		onFieldEnd() { this.add('-fieldend', 'terrain', 'toxicterrain'); },
 	},
-	
 	//#region Other Field Effects
-	
 	gravity: {
 		name: "Gravity",
 		effectType: "Field",
@@ -1719,34 +1615,33 @@ export const Conditions = {
 				if (applies) this.add('-activate', pokemon, 'move: Gravity');
 			}
 		},
-		onBasePower(basePower, attacker, defender, move) {
-				// Boost moves with crushing or throwing flags, and Grav Apple
-				if ((move.flags && (move.flags.crushing || move.flags.throwing)) || move.id === 'gravapple') {
-					this.debug('Gravity boost for crushing/throwing/Grav Apple');
-					return this.chainModify(1.5);
-				}
-			},
+		onBasePower(basePower, attacker, defender, move) { // Boost moves with crushing or throwing flags, and Grav Apple
+			if ((move.flags && (move.flags.crushing || move.flags.throwing)) || move.id === 'gravapple') {
+				this.debug('Gravity boost for crushing/throwing/Grav Apple');
+				return this.chainModify(1.5);
+			}
+		},
 		onModifyAccuracy(accuracy) {
-				if (typeof accuracy !== 'number') return;
-				// Throwing moves get 0.8x accuracy instead of the boost
-				const move = this.activeMove;
-				if (move && move.flags && move.flags.throwing) { return this.chainModify(0.8); }
-				return this.chainModify([6840, 4096]);
+			if (typeof accuracy !== 'number') return;
+			// Throwing moves get 0.8x accuracy instead of the boost
+			const move = this.activeMove;
+			if (move && move.flags && move.flags.throwing) { return this.chainModify(0.8); }
+			return this.chainModify([6840, 4096]);
 		},
 		onDisableMove(pokemon) { for (const moveSlot of pokemon.moveSlots) { if (this.dex.moves.get(moveSlot.id).flags['gravity']) { pokemon.disableMove(moveSlot.id); } } },
 		// groundedness implemented in battle.engine.js:BattlePokemon#isGrounded
 		onBeforeMovePriority: 6,
 		onBeforeMove(pokemon, target, move) {
-				if ((move.flags['gravity'] || move.flags['airborne']) && !move.isZ) {
-					this.add('cant', pokemon, 'move: Gravity', move);
-					return false;
-				}
+			if ((move.flags['gravity'] || move.flags['airborne']) && !move.isZ) {
+				this.add('cant', pokemon, 'move: Gravity', move);
+				return false;
+			}
 		},
 		onModifyMove(move, pokemon, target) {
-				if ((move.flags['gravity'] || move.flags['airborne']) && !move.isZ) {
-					this.add('cant', pokemon, 'move: Gravity', move);
-					return false;
-				}
+			if ((move.flags['gravity'] || move.flags['airborne']) && !move.isZ) {
+				this.add('cant', pokemon, 'move: Gravity', move);
+				return false;
+			}
 		},
 		onFieldResidualOrder: 27,
 		onFieldResidualSubOrder: 2,
@@ -1764,12 +1659,12 @@ export const Conditions = {
 		onFieldResidualOrder: 26,
 		onFieldResidualSubOrder: 7,
 		onBasePower(basePower, attacker, defender, move) {
-				if (move.type === 'Stellar') {
-					this.debug('Rainbow boost for Stellar-type moves');
-					return this.chainModify(1.2);
-				}
-			},
-			onModifyCritRatio(critRatio, pokemon, target, move) { return critRatio + 1; },
+			if (move.type === 'Stellar') {
+				this.debug('Rainbow boost for Stellar-type moves');
+				return this.chainModify(1.2);
+			}
+		},
+		onModifyCritRatio(critRatio, pokemon, target, move) { return critRatio + 1; },
 		onFieldEnd() { this.add('-fieldend', 'Rainbow'); },
 		onModifyMove(move, pokemon) {
 			if (move.secondaries) {
@@ -1818,9 +1713,9 @@ export const Conditions = {
 		onFieldResidualSubOrder: 9,
 		onFieldEnd() { this.add('-fieldend', 'Swamp'); },
 		onModifySpe(spe, pokemon) {
-			  if (!pokemon.isGrounded()) return spe;
-			  if (pokemon.hasType('Bug') || pokemon.hasType('Grass') || pokemon.hasType('Ground') || pokemon.hasType('Water')) return spe;
-			  return this.chainModify(0.25);
+			if (!pokemon.isGrounded()) return spe;
+			if (pokemon.hasType('Bug') || pokemon.hasType('Grass') || pokemon.hasType('Ground') || pokemon.hasType('Water')) return spe;
+			return this.chainModify(0.25);
 		},
 	},
 	timebreak: {
@@ -1838,7 +1733,6 @@ export const Conditions = {
 			},
 			onFieldEnd() {
 				this.add('-fieldend', 'Timebreak');
-				// Resume all other effect timers
 				for (const key in this.field.pseudoWeather) {
 					if (key !== 'timebreak' && this.field.pseudoWeather[key]?.pausedDuration) {
 						this.field.pseudoWeather[key].duration = this.field.pseudoWeather[key].pausedDuration;
@@ -1847,17 +1741,13 @@ export const Conditions = {
 				}
 			},
 			// Remove Timebreak when the calling effect leaves the field
-			onResidual() {
-				// Pause residual effect if timebreak is active
+			onResidual() { // Pause residual effect if timebreak is active
 				if (this.field.getPseudoWeather('timebreak')) return;
 				if (this.effectState.caller && !this.field.pseudoWeather[this.effectState.caller.id]) { this.field.removePseudoWeather('timebreak'); }
 			},
 		},
-
 	//#region Transformations
-	
-	// Commander needs two conditions so they are implemented here
-	// Dondozo
+	// Commander needs two conditions so they are implemented here Dondozo
 	commanded: {
 		name: "Commanded",
 		noCopy: true,
@@ -1882,13 +1772,9 @@ export const Conditions = {
 		onInvulnerability: false,
 		onBeforeTurn(pokemon) { this.queue.cancelAction(pokemon); },
 	},
-
 	// Arceus and Silvally's actual typing is implemented here.
-	// Their true typing for all their formes is Normal, and it's only
-	// Multitype and RKS System, respectively, that changes their type,
-	// but their formes are specified to be their corresponding type
-	// in the Pokedex, so that needs to be overridden.
-	// This is mainly relevant for Hackmons Cup and Balanced Hackmons.
+	// Their true typing for all their formes is Normal, and it's only Multitype and RKS System, respectively, that changes their type,
+	// but their formes are specified to be their corresponding type in the Pokedex, so that needs to be overridden.
 	arceus: {
 		name: 'Arceus',
 		onTypePriority: 1,
@@ -1947,9 +1833,7 @@ export const Conditions = {
 		},
 		onAfterDamage(damage, target, source, effect) {
 			// Track damage dealt by the slipping pokemon
-			if (source && source === this.effectState.target && effect?.effectType === 'Move') {
-				this.effectState.totalDamage += damage;
-			}
+			if (source && source === this.effectState.target && effect?.effectType === 'Move') { this.effectState.totalDamage += damage; }
 		},
 		onAfterMoveSecondary(target, source, move) {
 			// Apply 1/8 of total damage dealt as recoil
@@ -1958,17 +1842,12 @@ export const Conditions = {
 				this.damage(recoil, pokemon, pokemon, 'slip');
 			}
 		},
-		onSourceModifyDamage(damage, source, target, move) {
-			if (move && move.id !== 'slip') {
-				return this.chainModify(2);
-			}
-		},
+		onSourceModifyDamage(damage, source, target, move) { if (move && move.id !== 'slip') { return this.chainModify(2); } },
 	},
 	electricterrainairborne: {
 		name: 'electricterrainairborne',
 		effectType: 'Volatile',
-		onImmunity(type, pokemon) {
-			// Steel types are airborne for all grounded effects except Electric Terrain effects
+		onImmunity(type, pokemon) { // Steel types are airborne for all grounded effects except Electric Terrain effects
 			const ignoreEffects = ['gravity', 'ingrain', 'smackdown', 'ironball', 'gastroacid', 'terrain'];
 			if (ignoreEffects.includes(type) && type !== 'terrain') { return false; }
 		},
@@ -2020,17 +1899,13 @@ export const Conditions = {
 			this.add('-start', target, 'Discombobulated');
 			this.add('-message', `${target.name} was launched into the air and is now discombobulated!`);
 		},
-		onEnd(target) {
-			this.add('-end', target, 'Discombobulated');
-		},
-		onModifyAccuracy(accuracy, target, source, move) {
-			// Target cannot dodge moves (moves always have perfect accuracy against them)
+		onEnd(target) { this.add('-end', target, 'Discombobulated'); },
+		onModifyAccuracy(accuracy, target, source, move) { // Target cannot dodge moves (moves always have perfect accuracy against them)
 			if (typeof accuracy !== 'number') return;
-			return true; // Always hit
+			return true;
 		},
 		onBeforeMovePriority: 10,
-		onBeforeMove(pokemon, target, move) {
-			// Prevent using Ground-type moves
+		onBeforeMove(pokemon, target, move) { // Prevent using Ground-type moves
 			if (move.type === 'Ground') {
 				this.add('cant', pokemon, 'Discombobulated', move);
 				this.add('-message', `${pokemon.name} can't use Ground-type moves while airborne!`);

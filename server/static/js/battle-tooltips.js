@@ -944,7 +944,7 @@ text+='<p>';
 text+=abilityText;
 if(abilityText&&itemText){
 
-text+=!isActive&&serverPokemon?' / ':'</p><p>';
+text+=' / ';
 }
 text+=itemText;
 text+='</p>';
@@ -2535,6 +2535,39 @@ hidePossible)
 {
 var text='';
 var abilityData=this.getPokemonAbilityData(clientPokemon,serverPokemon);
+var tier=this.battle.tier;
+var isISLFormat=(tier==null?void 0:tier.toLowerCase().includes('indigostarstorm'))||(tier==null?void 0:tier.toLowerCase().includes('isl'));
+
+
+if(isISLFormat&&(clientPokemon||serverPokemon)){
+var speciesForme=(clientPokemon==null?void 0:clientPokemon.getSpeciesForme())||(serverPokemon==null?void 0:serverPokemon.speciesForme)||'';
+var species=this.battle.dex.species.get(speciesForme);
+if(species.exists&&species.abilities){
+
+var currentAbility=(clientPokemon==null?void 0:clientPokemon.ability)||(serverPokemon==null?void 0:serverPokemon.ability)||'';
+var isSet2=currentAbility===species.abilities['H']||currentAbility===species.abilities['S'];
+
+var ability1,ability2;
+if(isSet2){
+ability1=species.abilities['H'];
+ability2=species.abilities['S'];
+}else{
+ability1=species.abilities['0'];
+ability2=species.abilities['1'];
+}
+
+
+var abilityNames=[];
+if(ability1)abilityNames.push(this.battle.dex.abilities.get(ability1).name);
+if(ability2&&ability2!==ability1)abilityNames.push(this.battle.dex.abilities.get(ability2).name);
+
+if(abilityNames.length>0){
+text='<small>Ability Set:</small> '+abilityNames.join(' + ');
+return text;
+}
+}
+}
+
 if(!isActive){
 
 var ability=abilityData.baseAbility||abilityData.ability;
@@ -2547,7 +2580,6 @@ var baseAbilityName=this.battle.dex.abilities.get(abilityData.baseAbility).name;
 if(baseAbilityName&&baseAbilityName!==abilityName)text+=' (base: '+baseAbilityName+')';
 }
 }
-var tier=this.battle.tier;
 if(!text&&abilityData.possibilities.length&&!hidePossible&&
 !(tier.includes('Almost Any Ability')||tier.includes('Hackmons')||
 tier.includes('Inheritance')||tier.includes('Metronome'))){
