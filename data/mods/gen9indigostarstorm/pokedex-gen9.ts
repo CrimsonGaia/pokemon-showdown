@@ -11234,19 +11234,6 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 
 
 	//#region Pokestar Studios
-	pokestarsmeargle: {
-		num: -5000,
-		name: "Pokestar Smeargle",
-		types: ["Normal"],
-		baseStats: { hp: 55, atk: 20, def: 35, spa: 20, spd: 45, spe: 75 },
-		abilities: { 0: "Own Tempo", 1: "Technician", H: "Moody" },
-		heightm: 1.5,
-		weightkg: 61,
-		color: "White",
-		eggGroups: ["Field"],
-		gen: 5,
-		tags: ["Single Stage Pokemon", "Fully Evolved"],
-	},
 	pokestarufo: {
 		num: -5001,
 		name: "Pokestar UFO",
