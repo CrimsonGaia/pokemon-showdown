@@ -535,7 +535,7 @@ you can't delete it by pressing Backspace */
 
 .set-button {
 	position: relative;
-	max-width: 660px;
+	max-width: 860px;
 }
 .set-button.cur {
 	opacity: 0.5;
@@ -713,6 +713,10 @@ you can't delete it by pressing Backspace */
 	top: -21px;
 	left: 4px;
 	list-style: none;
+	line-height: 1;
+	margin: 0;
+	padding: 0;
+	height: 32px;
 }
 .searchboxwrapper .moveslot {
 	float: right;

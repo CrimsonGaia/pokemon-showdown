@@ -1,117 +1,52 @@
 /**
  * Pokemon Showdown Dex Data
- *
  * A collection of data and definitions for src/battle-dex.ts.
- *
  * Larger data has their own files in data/, so this is just for small
  * miscellaneous data that doesn't need its own file.
- *
  * Licensing note: PS's client has complicated licensing:
  * - The client as a whole is AGPLv3
  * - The battle replay/animation engine (battle-*.ts) by itself is MIT
- *
  * @author Guangcong Luo <guangcongluo@gmail.com>
  * @license MIT
  */
-
 import { Dex, toID } from "./battle-dex";
-
 /**
  * String that contains only lowercase alphanumeric characters.
  */
 export type ID = string & { __isID: true };
-
 export interface Nature {
 	plus?: StatNameExceptHP;
 	minus?: StatNameExceptHP;
 }
-
 export const BattleNatures: { [k in NatureName]: Nature } = {
 	Adamant: {
 		plus: 'atk',
 		minus: 'spa',
 	},
 	Bashful: {},
-	Bold: {
-		plus: 'def',
-		minus: 'atk',
-	},
-	Brave: {
-		plus: 'atk',
-		minus: 'spe',
-	},
-	Calm: {
-		plus: 'spd',
-		minus: 'atk',
-	},
-	Careful: {
-		plus: 'spd',
-		minus: 'spa',
-	},
+	Bold: { plus: 'def', minus: 'atk', },
+	Brave: { plus: 'atk', minus: 'spe', },
+	Calm: { plus: 'spd', minus: 'atk', },
+	Careful: { plus: 'spd', minus: 'spa', },
 	Docile: {},
-	Gentle: {
-		plus: 'spd',
-		minus: 'def',
-	},
+	Gentle: { plus: 'spd', minus: 'def', },
 	Hardy: {},
-	Hasty: {
-		plus: 'spe',
-		minus: 'def',
-	},
-	Impish: {
-		plus: 'def',
-		minus: 'spa',
-	},
-	Jolly: {
-		plus: 'spe',
-		minus: 'spa',
-	},
-	Lax: {
-		plus: 'def',
-		minus: 'spd',
-	},
-	Lonely: {
-		plus: 'atk',
-		minus: 'def',
-	},
-	Mild: {
-		plus: 'spa',
-		minus: 'def',
-	},
-	Modest: {
-		plus: 'spa',
-		minus: 'atk',
-	},
-	Naive: {
-		plus: 'spe',
-		minus: 'spd',
-	},
-	Naughty: {
-		plus: 'atk',
-		minus: 'spd',
-	},
-	Quiet: {
-		plus: 'spa',
-		minus: 'spe',
-	},
+	Hasty: { plus: 'spe', minus: 'def', },
+	Impish: { plus: 'def', minus: 'spa', },
+	Jolly: { plus: 'spe', minus: 'spa', },
+	Lax: { plus: 'def', minus: 'spd', },
+	Lonely: { plus: 'atk', minus: 'def', },
+	Mild: { plus: 'spa', minus: 'def', },
+	Modest: { plus: 'spa', minus: 'atk', },
+	Naive: { plus: 'spe', minus: 'spd', },
+	Naughty: { plus: 'atk', minus: 'spd', },
+	Quiet: { plus: 'spa', minus: 'spe', },
 	Quirky: {},
-	Rash: {
-		plus: 'spa',
-		minus: 'spd',
-	},
-	Relaxed: {
-		plus: 'def',
-		minus: 'spe',
-	},
-	Sassy: {
-		plus: 'spd',
-		minus: 'spe',
-	},
+	Rash: { plus: 'spa', minus: 'spd', },
+	Relaxed: { plus: 'def', minus: 'spe', },
+	Sassy: { plus: 'spd', minus: 'spe', },
 	Serious: {},
-	Timid: {
-		plus: 'spe',
-		minus: 'atk',
-	},
+	Timid: { plus: 'spe', minus: 'atk', },
 };
 export const BattleStatIDs: { [k: string]: StatName | undefined } = {
 	HP: 'hp',
@@ -143,11 +78,8 @@ export const BattleStatNames = {
 	spd: 'SpD',
 	spe: 'Spe',
 } as const;
-
-export const BattleBaseSpeciesChart = [
-	"unown", "burmy", "shellos", "gastrodon", "deerling", "sawsbuck", "vivillon", "flabebe", "floette", "florges", "furfrou", "minior", "alcremie", "tatsugiri", "pokestarufo", "pokestarbrycenman", "pokestarmt", "pokestarmt2", "pokestartransport", "pokestargiant", "pokestarhumanoid", "pokestarmonster", "pokestarf00", "pokestarf002", "pokestarspirit", "pokestarblackdoor", "pokestarwhitedoor", "pokestarblackbelt",
-] as ID[];
-
+export const BattleBaseSpeciesChart = ["unown", "burmy", "shellos", "gastrodon", "deerling", "sawsbuck", "vivillon", "flabebe", "floette", "florges", "furfrou", "minior", "alcremie", "tatsugiri", "pokestarufo", "pokestarbrycenman", "pokestarmt", "pokestarmt2", "pokestartransport", "pokestargiant", "pokestarhumanoid", "pokestarmonster", "pokestarf00", "pokestarf002", "pokestarspirit", "pokestarblackdoor", "pokestarwhitedoor", "pokestarblackbelt",] as ID[];
+//region Visual Form Icons
 export const BattlePokemonIconIndexes: { [id: string]: number } = {
 	// alt forms
 	egg: 1032 + 1,
@@ -395,7 +327,6 @@ export const BattlePokemonIconIndexes: { [id: string]: number } = {
 	ogerponcornerstone: 1032 + 243,
 	terapagosterastal: 1032 + 244,
 	terapagosstellar: 1032 + 245,
-
 	arceusbug: 1032 + 246,
 	arceusdark: 1032 + 247,
 	arceusdragon: 1032 + 248,
@@ -413,12 +344,10 @@ export const BattlePokemonIconIndexes: { [id: string]: number } = {
 	arceusrock: 1032 + 260,
 	arceussteel: 1032 + 261,
 	arceuswater: 1032 + 262,
-
 	genesectdouse: 1032 + 263,
 	genesectshock: 1032 + 264,
 	genesectburn: 1032 + 265,
 	genesectchill: 1032 + 266,
-
 	silvallybug: 1032 + 267,
 	silvallydark: 1032 + 268,
 	silvallydragon: 1032 + 269,
@@ -436,7 +365,6 @@ export const BattlePokemonIconIndexes: { [id: string]: number } = {
 	silvallyrock: 1032 + 281,
 	silvallysteel: 1032 + 282,
 	silvallywater: 1032 + 283,
-
 	// alt forms with duplicate icons
 	greninjabond: 658,
 	gumshoostotem: 735,
@@ -460,7 +388,6 @@ export const BattlePokemonIconIndexes: { [id: string]: number } = {
 	ogerponhearthflametera: 1032 + 242,
 	ogerponcornerstonetera: 1032 + 243,
 	toxtricitylowkeygmax: 1320 + 69,
-
 	// Mega/G-Max
 	venusaurmega: 1320 + 0,
 	charizardmegax: 1320 + 1,
@@ -546,7 +473,6 @@ export const BattlePokemonIconIndexes: { [id: string]: number } = {
 	inteleongmax: 1320 + 81,
 	urshifugmax: 1320 + 82,
 	urshifurapidstrikegmax: 1320 + 83,
-
 	// CAP
 	syclant: 1512 + 0,
 	revenankh: 1512 + 1,
@@ -629,7 +555,6 @@ export const BattlePokemonIconIndexes: { [id: string]: number } = {
 	ramnarok: 1512 + 78,
 	ramnarokradiant: 1512 + 79,
 };
-
 export const BattlePokemonIconIndexesLeft: { [id: string]: number } = {
 	pikachubelle: 1404 + 0,
 	pikachupopstar: 1404 + 1,
@@ -739,7 +664,7 @@ export const BattlePokemonIconIndexesLeft: { [id: string]: number } = {
 	stakataka: 1404 + 104,
 	blacephalon: 1404 + 105,
 };
-
+//region Avatars
 export const BattleAvatarNumbers: { [k: string]: string } = {
 	1: 'lucas',
 	2: 'dawn',
@@ -1047,14 +972,13 @@ export const BattleAvatarNumbers: { [k: string]: string } = {
 	'hilda-dueldisk': 'hilda-wonderlauncher',
 	'nate-dueldisk': 'nate-wonderlauncher',
 	'rosa-dueldisk': 'rosa-wonderlauncher',
-
 	1001: '#1001',
 	1002: '#1002',
 	1003: '#1003',
 	1005: '#1005',
 	1010: '#1010',
 };
-
+//region mechanic name def
 export type StatName = 'hp' | 'atk' | 'def' | 'spa' | 'spd' | 'spe';
 export type NatureName = 'Adamant' | 'Bashful' | 'Bold' | 'Brave' | 'Calm' | 'Careful' | 'Docile' | 'Gentle' |
 	'Hardy' | 'Hasty' | 'Impish' | 'Jolly' | 'Lax' | 'Lonely' | 'Mild' | 'Modest' | 'Naive' | 'Naughty' |
@@ -1065,19 +989,14 @@ export type TypeName = 'Normal' | 'Fighting' | 'Flying' | 'Poison' | 'Ground' | 
 export type StatusName = 'par' | 'psn' | 'frz' | 'slp' | 'brn';
 export type BoostStatName = 'atk' | 'def' | 'spa' | 'spd' | 'spe' | 'evasion' | 'accuracy' | 'spc';
 export type GenderName = 'M' | 'F' | 'N';
-
 export interface Effect {
 	readonly id: ID;
 	readonly name: string;
 	readonly gen: number;
 	readonly effectType: 'Item' | 'Move' | 'Flag' | 'Ability' | 'Species' | 'PureEffect';
-	/**
-	 * Do we have data on this item/move/ability/species?
-	 * WARNING: Always false if the relevant data files aren't loaded.
-	 */
+	// Do we have data on this item/move/ability/species? WARNING: Always false if the relevant data files aren't loaded.
 	readonly exists: boolean;
 }
-
 export class PureEffect implements Effect {
 	readonly effectType = 'PureEffect';
 	readonly id: ID;
@@ -1091,7 +1010,6 @@ export class PureEffect implements Effect {
 		this.exists = false;
 	}
 }
-
 export class Item implements Effect {
 	// effect
 	readonly effectType = 'Item';
@@ -1099,12 +1017,10 @@ export class Item implements Effect {
 	readonly name: string;
 	readonly gen: number;
 	readonly exists: boolean;
-
 	readonly num: number;
 	readonly spritenum: number;
 	readonly desc: string;
 	readonly shortDesc: string;
-
 	readonly megaStone: string;
 	readonly megaEvolves: string;
 	readonly zMove: string | true | null;
@@ -1120,7 +1036,6 @@ export class Item implements Effect {
 	readonly itemUser?: readonly string[];
 	readonly isFragile?: boolean;
 	readonly isMildlyFragile?: boolean;
-
 	constructor(id: ID, name: string, data: any) {
 		if (!data || typeof data !== 'object') data = {};
 		if (data.name) name = data.name;
@@ -1128,12 +1043,10 @@ export class Item implements Effect {
 		this.id = id;
 		this.gen = data.gen || 0;
 		this.exists = ('exists' in data ? !!data.exists : true);
-
 		this.num = data.num || 0;
 		this.spritenum = data.spritenum || 0;
 		this.desc = data.desc || data.shortDesc || '';
 		this.shortDesc = data.shortDesc || this.desc;
-
 		this.megaStone = data.megaStone || '';
 		this.megaEvolves = data.megaEvolves || '';
 		this.zMove = data.zMove || null;
@@ -1151,96 +1064,49 @@ export class Item implements Effect {
 		this.isMildlyFragile = !!data.isMildlyFragile;
 		this.isFragile = data.isFragile;
 		this.isMildlyFragile = data.isMildlyFragile;
-
 		if (!this.gen) {
-			if (this.num >= 577) {
-				this.gen = 6;
-			} else if (this.num >= 537) {
-				this.gen = 5;
-			} else if (this.num >= 377) {
-				this.gen = 4;
-			} else {
-				this.gen = 3;
-			}
+			if (this.num >= 577) { this.gen = 6; } 
+			else if (this.num >= 537) { this.gen = 5; } 
+			else if (this.num >= 377) { this.gen = 4; }
+			else { this.gen = 3; }
 		}
 	}
 }
-
-
 export interface MoveFlags {
-	
-	/** */
 	binding?:1|0;
-	/** Power is multiplied by 1.5 when used by a Pokemon with the Strong Jaw Ability. */
 	bite?: 1 | 0;
-	/** Has no effect on Pokemon with the Bulletproof Ability. */
 	bullet?: 1 | 0;
-	/** */
 	bomb?:1|0;
-	/** Makes contact. */
 	contact?: 1 | 0;
-	/** When used by a Pokemon, other Pokemon with the Dancer Ability can attempt to execute the same move. */
 	dance?: 1 | 0;
-	/** */
 	drain?:1|0;
-	/** */
 	explosive?:1|0;
-	/** Prevented from being executed or selected during Heal Block's effect. */
 	heal?: 1 | 0;
-	/** Has no effect on Grass-type Pokemon, Pokemon with the Overcoat Ability, and Pokemon holding Safety Goggles. */
 	powder?: 1 | 0;
-	/** Power is multiplied by 1.5 when used by a Pokemon with the Mega Launcher Ability. */
 	pulse?: 1 | 0;
-	/** Power is multiplied by 1.2 when used by a Pokemon with the Iron Fist Ability. */
 	punch?: 1 | 0;
-	/** Power is multiplied by 1.5 when used by a Pokemon with the Sharpness Ability. */
 	slicing?: 1 | 0;
-	/** Has no effect on Pokemon with the Soundproof Ability. */
 	sound?: 1 | 0;
-	/** Activates the effects of the Wind Power and Wind Rider Abilities. */
 	wind?: 1 | 0;
-
-	
-	/**  */
 	airborne?: 1 | 0;
-	/**  */
 	aura?: 1 | 0;
-	/**  */
 	beam?: 1 | 0;
-	/**  */
 	breath?: 1 | 0;
-	/**  */
 	claw?: 1 | 0;
-	/**  */
 	crush?: 1 | 0;
-	/**  */
 	kick?: 1 | 0;
-	/**  */
 	launch?: 1 | 0;
-	/**  */
 	light?: 1 | 0;
-	/**  */
 	lunar?: 1 | 0;
-	/**  */
 	magic?: 1 | 0;
-	/**  */
 	pierce?: 1 | 0;
-	/**  */
 	shadow?: 1 | 0;
-	/**  */
 	solar?: 1 | 0;
-	/**  */
 	spin?: 1 | 0;
-	/**  */
 	sweep?: 1 | 0;
-	/**  */
 	throw?: 1 | 0;
-	/**  */
 	weapon?: 1 | 0;
-	/**  */
 	wing?: 1 | 0;
-
-
 	/** The move has an animation when used on an ally. */
 	allyanim?: 1 | 0;
 	/** Ignores a target's substitute. */
@@ -1273,7 +1139,6 @@ export type MoveTarget = 'normal' | 'any' | 'adjacentAlly' | 'adjacentFoe' | 'ad
 	'self' | 'randomNormal' | // single-target, automatic
 	'allAdjacent' | 'allAdjacentFoes' | // spread
 	'allySide' | 'foeSide' | 'all'; // side and field
-
 export class Move implements Effect {
 	// effect
 	readonly effectType = 'Move';
@@ -1281,7 +1146,6 @@ export class Move implements Effect {
 	readonly name: string;
 	readonly gen: number;
 	readonly exists: boolean;
-
 	readonly basePower: number;
 	readonly accuracy: number | true;
 	readonly pp: number;
@@ -1293,7 +1157,6 @@ export class Move implements Effect {
 	readonly flags: Readonly<MoveFlags>;
 	readonly critRatio: number;
 	readonly damage?: number | 'level' | false | null;
-
 	readonly desc: string;
 	readonly shortDesc: string;
 	readonly isNonstandard: string | null;
@@ -1315,7 +1178,6 @@ export class Move implements Effect {
 	readonly status: string;
 	readonly secondaries: readonly any[] | null;
 	readonly num: number;
-
 	constructor(id: ID, name: string, data: any) {
 		if (!data || typeof data !== 'object') data = {};
 		if (data.name) name = data.name;
@@ -1323,7 +1185,6 @@ export class Move implements Effect {
 		this.id = id;
 		this.gen = data.gen || 0;
 		this.exists = ('exists' in data ? !!data.exists : true);
-
 		this.basePower = data.basePower || 0;
 		this.accuracy = data.accuracy || 0;
 		this.pp = data.pp || 1;
@@ -1335,7 +1196,6 @@ export class Move implements Effect {
 		this.flags = data.flags || {};
 		this.critRatio = data.critRatio === 0 ? 0 : (data.critRatio || 1);
 		this.damage = data.damage;
-
 		// TODO: move to text.js
 		this.desc = data.desc;
 		this.shortDesc = data.shortDesc;
@@ -1351,103 +1211,59 @@ export class Move implements Effect {
 		this.noPPBoosts = data.noPPBoosts || false;
 		this.status = data.status || '';
 		this.secondaries = data.secondaries || (data.secondary ? [data.secondary] : null);
-
 		this.isMax = data.isMax || false;
 		this.maxMove = data.maxMove || { basePower: 0 };
 		if (this.category !== 'Status' && !this.maxMove?.basePower) {
-			if (this.isZ || this.isMax) {
-				this.maxMove = { basePower: 1 };
-			} else if (!this.basePower) {
-				this.maxMove = { basePower: 100 };
-			} else if (['Fighting', 'Poison'].includes(this.type)) {
-				if (this.basePower >= 150) {
-					this.maxMove = { basePower: 100 };
-				} else if (this.basePower >= 110) {
-					this.maxMove = { basePower: 95 };
-				} else if (this.basePower >= 75) {
-					this.maxMove = { basePower: 90 };
-				} else if (this.basePower >= 65) {
-					this.maxMove = { basePower: 85 };
-				} else if (this.basePower >= 55) {
-					this.maxMove = { basePower: 80 };
-				} else if (this.basePower >= 45) {
-					this.maxMove = { basePower: 75 };
-				} else {
-					this.maxMove = { basePower: 70 };
-				}
+			if (this.isZ || this.isMax) { this.maxMove = { basePower: 1 }; } 
+			else if (!this.basePower) { this.maxMove = { basePower: 100 }; } 
+			else if (['Fighting', 'Poison'].includes(this.type)) {
+				if (this.basePower >= 150) { this.maxMove = { basePower: 100 }; } 
+				else if (this.basePower >= 110) { this.maxMove = { basePower: 95 }; } 
+				else if (this.basePower >= 75) { this.maxMove = { basePower: 90 }; } 
+				else if (this.basePower >= 65) { this.maxMove = { basePower: 85 }; } 
+				else if (this.basePower >= 55) { this.maxMove = { basePower: 80 }; } 
+				else if (this.basePower >= 45) { this.maxMove = { basePower: 75 }; } 
+				else { this.maxMove = { basePower: 70 }; }
 			} else {
-				if (this.basePower >= 150) {
-					this.maxMove = { basePower: 150 };
-				} else if (this.basePower >= 110) {
-					this.maxMove = { basePower: 140 };
-				} else if (this.basePower >= 75) {
-					this.maxMove = { basePower: 130 };
-				} else if (this.basePower >= 65) {
-					this.maxMove = { basePower: 120 };
-				} else if (this.basePower >= 55) {
-					this.maxMove = { basePower: 110 };
-				} else if (this.basePower >= 45) {
-					this.maxMove = { basePower: 100 };
-				} else {
-					this.maxMove = { basePower: 90 };
-				}
+				if (this.basePower >= 150) { this.maxMove = { basePower: 150 }; } 
+				else if (this.basePower >= 110) { this.maxMove = { basePower: 140 }; } 
+				else if (this.basePower >= 75) { this.maxMove = { basePower: 130 }; } 
+				else if (this.basePower >= 65) { this.maxMove = { basePower: 120 }; } 
+				else if (this.basePower >= 55) { this.maxMove = { basePower: 110 }; } 
+				else if (this.basePower >= 45) { this.maxMove = { basePower: 100 }; } 
+				else { this.maxMove = { basePower: 90 }; }
 			}
 		}
-
 		if (this.category !== 'Status' && !this.isZ && !this.isMax) {
 			let basePower = this.basePower;
 			this.zMove = {};
 			if (Array.isArray(this.multihit)) basePower *= 3;
-			if (!basePower) {
-				this.zMove.basePower = 100;
-			} else if (basePower >= 140) {
-				this.zMove.basePower = 200;
-			} else if (basePower >= 130) {
-				this.zMove.basePower = 195;
-			} else if (basePower >= 120) {
-				this.zMove.basePower = 190;
-			} else if (basePower >= 110) {
-				this.zMove.basePower = 185;
-			} else if (basePower >= 100) {
-				this.zMove.basePower = 180;
-			} else if (basePower >= 90) {
-				this.zMove.basePower = 175;
-			} else if (basePower >= 80) {
-				this.zMove.basePower = 160;
-			} else if (basePower >= 70) {
-				this.zMove.basePower = 140;
-			} else if (basePower >= 60) {
-				this.zMove.basePower = 120;
-			} else {
-				this.zMove.basePower = 100;
-			}
+			if (!basePower) { this.zMove.basePower = 100; } 
+			else if (basePower >= 140) { this.zMove.basePower = 200; } 
+			else if (basePower >= 130) { this.zMove.basePower = 195; } 
+			else if (basePower >= 120) { this.zMove.basePower = 190; } 
+			else if (basePower >= 110) { this.zMove.basePower = 185; } 
+			else if (basePower >= 100) { this.zMove.basePower = 180; } 
+			else if (basePower >= 90) { this.zMove.basePower = 175; } 
+			else if (basePower >= 80) { this.zMove.basePower = 160; } 
+			else if (basePower >= 70) { this.zMove.basePower = 140; } 
+			else if (basePower >= 60) { this.zMove.basePower = 120; } 
+			else { this.zMove.basePower = 100; }
 			if (data.zMove) this.zMove.basePower = data.zMove.basePower;
 		}
-
 		this.num = data.num || 0;
 		if (!this.gen) {
-			if (this.num >= 743) {
-				this.gen = 8;
-			} else if (this.num >= 622) {
-				this.gen = 7;
-			} else if (this.num >= 560) {
-				this.gen = 6;
-			} else if (this.num >= 468) {
-				this.gen = 5;
-			} else if (this.num >= 355) {
-				this.gen = 4;
-			} else if (this.num >= 252) {
-				this.gen = 3;
-			} else if (this.num >= 166) {
-				this.gen = 2;
-			} else if (this.num >= 1) {
-				this.gen = 1;
-			}
+			if (this.num >= 743) { this.gen = 8; } 
+			else if (this.num >= 622) { this.gen = 7; } 
+			else if (this.num >= 560) { this.gen = 6; } 
+			else if (this.num >= 468) { this.gen = 5; } 
+			else if (this.num >= 355) { this.gen = 4; } 
+			else if (this.num >= 252) { this.gen = 3; } 
+			else if (this.num >= 166) { this.gen = 2; }
+			else if (this.num >= 1) { this.gen = 1; }
 		}
 	}
-	
 }
-
 export interface AbilityFlags {
 	/** Can be suppressed by Mold Breaker and related effects */
 	breakable?: 1;
@@ -1466,7 +1282,6 @@ export interface AbilityFlags {
 	/** Disables the Ability if the user is Transformed */
 	notransform?: 1;
 }
-
 export class Flag implements Effect {
 	readonly effectType = 'Flag';
 	readonly id: ID;
@@ -1475,7 +1290,6 @@ export class Flag implements Effect {
 	readonly exists: boolean;
 	readonly desc: string;
 	readonly shortDesc: string;
-
 	constructor(id: ID, name: string, data: any) {
 		if (!data || typeof data !== 'string') data = {};
 		if (data.name) name = data.name;
@@ -1486,7 +1300,6 @@ export class Flag implements Effect {
 		this.desc = data.desc;
 		this.shortDesc = data.shortDesc;
 	}}
-
 export class Ability implements Effect {
 	// effect
 	readonly effectType = 'Ability';
@@ -1494,15 +1307,12 @@ export class Ability implements Effect {
 	readonly name: string;
 	readonly gen: number;
 	readonly exists: boolean;
-
 	readonly num: number;
 	readonly shortDesc: string;
 	readonly desc: string;
-
 	readonly rating: number;
 	readonly flags: AbilityFlags;
 	readonly isNonstandard: boolean;
-
 	constructor(id: ID, name: string, data: any) {
 		if (!data || typeof data !== 'object') data = {};
 		if (data.name) name = data.name;
@@ -1517,23 +1327,15 @@ export class Ability implements Effect {
 		this.flags = data.flags || {};
 		this.isNonstandard = !!data.isNonstandard;
 		if (!this.gen) {
-			if (this.num >= 234) {
-				this.gen = 8;
-			} else if (this.num >= 192) {
-				this.gen = 7;
-			} else if (this.num >= 165) {
-				this.gen = 6;
-			} else if (this.num >= 124) {
-				this.gen = 5;
-			} else if (this.num >= 77) {
-				this.gen = 4;
-			} else if (this.num >= 1) {
-				this.gen = 3;
-			}
+			if (this.num >= 234) { this.gen = 8; } 
+			else if (this.num >= 192) { this.gen = 7; } 
+			else if (this.num >= 165) { this.gen = 6; } 
+			else if (this.num >= 124) { this.gen = 5; } 
+			else if (this.num >= 77) { this.gen = 4; } 
+			else if (this.num >= 1) { this.gen = 3; }
 		}
 	}
 }
-
 export class Species implements Effect {
 	// effect
 	readonly effectType = 'Species';
@@ -1541,26 +1343,19 @@ export class Species implements Effect {
 	readonly name: string;
 	readonly gen: number;
 	readonly exists: boolean;
-
 	// name
 	readonly baseSpecies: string;
 	readonly forme: string;
 	readonly formeid: string;
 	readonly spriteid: string;
 	readonly baseForme: string;
-
 	// basic data
 	readonly num: number;
 	readonly types: readonly TypeName[];
-	readonly abilities: Readonly<{
-		0: string, 1?: string, H?: string, S?: string,
-	}>;
-	readonly baseStats: Readonly<{
-		hp: number, atk: number, def: number, spa: number, spd: number, spe: number,
-	}>;
+	readonly abilities: Readonly<{ 0: string, 1?: string, H?: string, S?: string, }>;
+	readonly baseStats: Readonly<{ hp: number, atk: number, def: number, spa: number, spd: number, spe: number, }>;
 	readonly bst: number;
 	readonly weightkg: number;
-
 	// flavor data
 	readonly heightm: number;
 	readonly gender: GenderName;
@@ -1568,7 +1363,6 @@ export class Species implements Effect {
 	readonly genderRatio: Readonly<{ M: number, F: number }> | null;
 	readonly eggGroups: readonly string[];
 	readonly tags: readonly string[];
-
 	// format data
 	readonly otherFormes: readonly string[] | null;
 	readonly cosmeticFormes: readonly string[] | null;
@@ -1592,7 +1386,6 @@ export class Species implements Effect {
 	readonly isNonstandard: string | null;
 	readonly unreleasedHidden: boolean | 'Past';
 	readonly changesFrom: string | undefined;
-
 	constructor(id: ID, name: string, data: any) {
 		if (!data || typeof data !== 'object') data = {};
 		if (data.name) name = data.name;
@@ -1610,22 +1403,18 @@ export class Species implements Effect {
 		if (this.spriteid === 'rockruff-dusk') this.spriteid = 'rockruff';
 		if (this.spriteid.endsWith('-')) this.spriteid = this.spriteid.slice(0, -1);
 		this.baseForme = data.baseForme || '';
-
 		this.num = data.num || 0;
 		this.types = data.types || ['???'];
 		this.abilities = data.abilities || { 0: "No Ability" };
 		this.baseStats = data.baseStats || { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
-		this.bst = this.baseStats.hp + this.baseStats.atk + this.baseStats.def +
-			this.baseStats.spa + this.baseStats.spd + this.baseStats.spe;
+		this.bst = this.baseStats.hp + this.baseStats.atk + this.baseStats.def + this.baseStats.spa + this.baseStats.spd + this.baseStats.spe;
 		this.weightkg = data.weightkg || 0;
-
 		this.heightm = data.heightm || 0;
 		this.gender = data.gender || '';
 		this.color = data.color || '';
 		this.genderRatio = data.genderRatio || null;
 		this.eggGroups = data.eggGroups || [];
 		this.tags = data.tags || [];
-
 		this.otherFormes = data.otherFormes || null;
 		this.cosmeticFormes = data.cosmeticFormes || null;
 		this.evos = data.evos || null;
@@ -1638,7 +1427,6 @@ export class Species implements Effect {
 		this.nfe = data.nfe || false;
 		this.requiredItems = data.requiredItems || (data.requiredItem ? [data.requiredItem] : []);
 		this.tier = data.tier || '';
-
 		this.isTotem = false;
 		this.isMega = !!(this.forme && ['-mega', '-megax', '-megay'].includes(this.formeid));
 		this.isPrimal = !!(this.forme && this.formeid === '-primal');
@@ -1651,41 +1439,31 @@ export class Species implements Effect {
 		this.changesFrom = data.changesFrom ||
 			(this.battleOnly !== this.baseSpecies ? this.battleOnly : this.baseSpecies);
 		if (!this.gen) {
-			if (this.num >= 906 || this.formeid.startsWith('-paldea')) {
-				this.gen = 9;
-			} else if (this.num >= 810 || this.formeid.startsWith('-galar') || this.formeid.startsWith('-hisui')) {
-				this.gen = 8;
-			} else if (this.num >= 722 || this.formeid === '-alola' || this.formeid === '-starter') {
-				this.gen = 7;
-			} else if (this.isMega || this.isPrimal) {
+			if (this.num >= 906 || this.formeid.startsWith('-paldea')) { this.gen = 9; } 
+			else if (this.num >= 810 || this.formeid.startsWith('-galar') || this.formeid.startsWith('-hisui')) { this.gen = 8; } 
+			else if (this.num >= 722 || this.formeid === '-alola' || this.formeid === '-starter') { this.gen = 7; } 
+			else if (this.isMega || this.isPrimal) {
 				this.gen = 6;
 				this.battleOnly = this.baseSpecies;
-			} else if (this.formeid === '-totem' || this.formeid === '-alolatotem') {
+			} 
+			else if (this.formeid === '-totem' || this.formeid === '-alolatotem') {
 				this.gen = 7;
 				this.isTotem = true;
-			} else if (this.num >= 650) {
-				this.gen = 6;
-			} else if (this.num >= 494) {
-				this.gen = 5;
-			} else if (this.num >= 387) {
-				this.gen = 4;
-			} else if (this.num >= 252) {
-				this.gen = 3;
-			} else if (this.num >= 152) {
-				this.gen = 2;
-			} else if (this.num >= 1) {
-				this.gen = 1;
-			}
+			} 
+			else if (this.num >= 650) { this.gen = 6; } 
+			else if (this.num >= 494) { this.gen = 5; } 
+			else if (this.num >= 387) { this.gen = 4; } 
+			else if (this.num >= 252) { this.gen = 3; } 
+			else if (this.num >= 152) { this.gen = 2; } 
+			else if (this.num >= 1) { this.gen = 1; }
 		}
 	}
 }
-
 export interface Type extends Effect {
 	damageTaken?: Record<Dex.TypeName, Dex.WeaknessType>;
 	HPivs?: Partial<Dex.StatsTable>;
 	HPdvs?: Partial<Dex.StatsTable>;
 }
-
 declare const require: any;
 declare const global: any;
 if (typeof require === 'function') {

@@ -19,6 +19,15 @@
 	border-color: #CCCCCC;
 	background: #F2F2F2;
 }
+/* Item rows need taller height to match the 60px row height */
+.utilichart li:has(.itemiconcol) > a,
+.utilichart li:has(.itemclasscontainer) > a {
+	height: 60px;
+}
+/* Ability rows need taller height for descriptions */
+.utilichart li:has(.abilitydesccol) > a {
+	height: 60px;
+}
 .utilichart .filter,
 .searchboxwrapper .filter {
 	padding:1px 3px;
@@ -52,12 +61,19 @@
 .resultheader,
 .utilichart li.resultheader,
 .utilichart .result {
-	height: 36px;
+	height: 33px;
 	padding: 1px 0 0 0;
 	contain: strict;
 }
+.utilichart li.result.itemrow {
+	height: 60px;
+}
+.utilichart li.result.abilityrow {
+	height: 60px;
+}
 .utilichart li.result {
-	border-bottom: 1px solid rgba(0,0,0,0.06);
+	border-bottom: 1px solid rgba(0,0,0,0.15);
+	margin-bottom: 2px;
 }
 .message .utilichart .result, .chat .utilichart .result, .notice .utilichart .result {
 	height: auto;
@@ -95,6 +111,12 @@
 	height: 29px;
 	font-size: 9pt;
 	color: #444444;
+	margin-left: 4px;
+}
+.utilichart .namecol,
+.utilichart .typecol,
+.utilichart .categorycol {
+	margin-left: 0;
 }
 .utilichart .iconcol {
 	padding-top: 3px;
@@ -108,9 +130,12 @@
 	background: transparent none no-repeat scroll 0px -8px;
 }
 .utilichart .itemiconcol {
-	padding-top: 6px;
 	width: 24px;
-	height: 30px;
+	height: 60px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding-top: 0;
 }
 .utilichart .itemiconcol span {
 	display: block;
@@ -178,34 +203,68 @@
 	color: #999999;
 }
 .utilichart .namecol {
-	padding-top: 6px;
-	height: 30px;
+	height: 36px;
 	width: 120px;
 	color: #000000;
 	font-size: 10pt;
+	display: flex;
+	align-items: center;
+	padding-top: 0;
+	padding-left: 4px;
+	margin-left: 9px;
+}
+.utilichart .itemnamecol {
+	height: 60px;
+	width: 120px;
+	color: #000000;
+	font-size: 10pt;
+	display: flex;
+	align-items: center;
+	padding-top: 0;
+}
+/* Container for stacked classification buttons */
+.utilichart .itemclasscontainer {
+	height: 60px;
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 2px;
+	margin: 0 12px 0 4px;
+	padding-top: 0;
 }
 .utilichart .itemclasscol {
-	float: left;
-	padding-top: 10.5px;
-	padding-bottom: 10.5px;
-	height: 15px;
-	width: 40px;
+	height: 18px;
+	width: 50px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 7pt;
+	font-size: 6pt;
 	font-weight: bold;
 	text-align: center;
 	border-radius: 3px;
-	padding-left: 3px;
-	padding-right: 3px;
-	margin-left: 4px;
-	margin-right: 4px;
+	padding: 1px 3px;
 	/* Default (emdash) - grey */
 	background: linear-gradient(to bottom, #cccccc, #999999);
 	border: 1px solid #777777;
 	color: #555555;
 	box-shadow: 0 1px 1px rgba(0,0,0,.2), inset 0 -1px 1px rgba(255,255,255,.3);
+}
+/* Make clickable classification buttons appear interactive */
+.utilichart .itemclasscol[data-tag],
+.utilichart .itemconsumecol[data-tag] {
+	cursor: pointer;
+	transition: transform 0.1s, box-shadow 0.1s;
+}
+.utilichart .itemclasscol[data-tag]:hover,
+.utilichart .itemconsumecol[data-tag]:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 2px 3px rgba(0,0,0,.3), inset 0 -1px 1px rgba(255,255,255,.4);
+}
+.utilichart .itemclasscol[data-tag]:active,
+.utilichart .itemconsumecol[data-tag]:active {
+	transform: translateY(0px);
+	box-shadow: 0 1px 1px rgba(0,0,0,.2), inset 0 1px 2px rgba(0,0,0,.2);
 }
 /* Fragile items - red */
 .utilichart .itemclasscol.fragile {
@@ -218,6 +277,65 @@
 	background: linear-gradient(to bottom, #ffbb44, #ee9922);
 	border-color: #cc7711;
 	color: #ffffff;
+}
+/* Empty fragile button - invisible */
+.utilichart .itemclasscol.empty {
+	opacity: 0;
+	pointer-events: none;
+}
+
+/* Consumable button */
+.utilichart .itemconsumecol {
+	height: 18px;
+	width: 50px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 6pt;
+	font-weight: bold;
+	text-align: center;
+	border-radius: 3px;
+	padding: 1px 3px;
+	/* Default (emdash) - grey */
+	background: linear-gradient(to bottom, #cccccc, #999999);
+	border: 1px solid #777777;
+	color: #555555;
+	box-shadow: 0 1px 1px rgba(0,0,0,.2), inset 0 -1px 1px rgba(255,255,255,.3);
+}
+/* Consumable items - green */
+.utilichart .itemconsumecol.consumable {
+	background: linear-gradient(to bottom, #55cc55, #33aa33);
+	border-color: #228822;
+	color: #ffffff;
+}
+/* Pokeball items - red */
+.utilichart .itemconsumecol.pokeball {
+	background: linear-gradient(to bottom, #ff3333, #ee1515);
+	border-color: #cc0000;
+	color: #ffffff;
+}
+/* Evolution items - blue */
+.utilichart .itemconsumecol.evolution {
+	background: linear-gradient(to bottom, #5599ff, #3377dd);
+	border-color: #2255bb;
+	color: #ffffff;
+}
+/* Trade evolution items - violet */
+.utilichart .itemconsumecol.tradeevo {
+	background: linear-gradient(to bottom, #bb77ff, #9955dd);
+	border-color: #7733bb;
+	color: #ffffff;
+}
+/* Berry items - pink/magenta */
+.utilichart .itemconsumecol.berry {
+	background: linear-gradient(to bottom, #ff77cc, #ee55aa);
+	border-color: #cc3388;
+	color: #ffffff;
+}
+/* Empty consumable button - invisible */
+.utilichart .itemconsumecol.empty {
+	opacity: 0;
+	pointer-events: none;
 }
 .utilichart .pokemonnamecol {
 	padding-top: 6px;
@@ -236,18 +354,22 @@
 	white-space: nowrap;
 }
 .utilichart .movenamecol {
-	padding-top: 6px;
 	height: 30px;
 	width: 140px;
 	color: #000000;
 	font-size: 10pt;
+	display: flex;
+	align-items: center;
+	padding-top: 0;
 }
 .utilichart .shortmovenamecol {
-	padding-top: 6px;
 	height: 30px;
 	width: 112px;
 	color: #000000;
 	font-size: 10pt;
+	display: flex;
+	align-items: center;
+	padding-top: 0;
 }
 .utilichart .tagcol {
 	padding-top: 6px;
@@ -277,10 +399,14 @@
 	position: relative;
 	top: 1px;
 }
+.utilichart .flagssortcol {
+	width: 116px;
+}
 .utilichart .flagcol {
-	width: 132px;
+	width: 116px;
 	height: 48px !important;
 	font-size: 7pt;
+	font-weight: bold;
 	position: relative;
 	box-sizing: border-box;
 	margin-top: -6px;
@@ -382,7 +508,7 @@
 	padding-top: 8px;
 	height: 28px;
 	font-size: 8pt;
-	width: 86px;
+	width: 96px;
 	text-align: center;
 	white-space: nowrap;
 }
@@ -390,7 +516,7 @@
 	padding-top: 1px;
 	height: 35px;
 	font-size: 8pt;
-	width: 86px;
+	width: 96px;
 	text-align: center;
 	white-space: nowrap;
 }
@@ -484,25 +610,54 @@
 .utilichart .itemdesccol,
 .utilichart .abilitydesccol,
 .utilichart .movedesccol {
-	white-space: nowrap;
+	white-space: normal;
 	padding-top: 8px;
 	font-size: 8pt;
 	width: 488px;
-	height: 28px;
 	overflow: hidden;
 	color: #777777;
+	display: flex;
+	align-items: center;
+	padding-top: 0;
 }
 .utilichart .movedesccol {
 	width: 284px;
+	height: auto;
+}
+.utilichart .itemdesccol,
+.utilichart .abilitydesccol {
+	height: 60px;
 }
 .utilichart .itemdesccol {
-	width: 330px;
+	width: 420px;
+	height: 60px;
+	white-space: normal;
+	overflow: visible;
+	line-height: 1.4;
+	padding: 4px 8px 4px 0;
+	align-items: flex-start;
 }
-.utilichart .movedesccol {
-	width: 284px;
+.utilichart .abilitydesccol {
+	width: 488px;
+	height: 60px;
+	white-space: normal;
+	overflow: visible;
+	line-height: 1.4;
+	padding: 4px 8px 4px 0;
+	align-items: flex-start;
 }
-.utilichart .itemdesccol {
-	width: 416px;
+.utilichart .fragiledesccol {
+	width: 170px;
+	height: 60px;
+	white-space: normal;
+	overflow: visible;
+	line-height: 1.4;
+	padding: 4px 8px 4px 0;
+	font-size: 8pt;
+	color: #cc6600;
+	font-style: italic;
+	display: flex;
+	align-items: flex-start;
 }
 
 .utilichart .sortrow {
@@ -522,6 +677,7 @@
 	padding: 30 0 30 0;
 	text-align: center;
 	height: 20px;
+	margin-left: 4px;
 }
 .utilichart .sortcol.cur {
 	font-weight: bold;
@@ -554,23 +710,27 @@
 	width: 24px;
 	text-align: right;
 }
-.utilichart .movenamesortcol {
-	width: 155px;
+.utilichart .sortcol.movenamecol {
+	width: 140px;
+	margin-left: 9px;
 }
-.utilichart .movetypesortcol {
-	width: 35px;
+.utilichart .sortcol.typecol {
+	width: 46px;
+	margin-left: 4px;
 }
-.utilichart .flagsortcol {
+.utilichart .sortcol.catcol {
+	width: 52px;
+	margin-left: 4px;
+}
+.utilichart .sortcol.flagssortcol {
 	width: 116px;
 }
-.utilichart .powersortcol {
+.utilichart .sortcol.labelcol {
 	width: 38px;
 }
-.utilichart .accuracysortcol {
-	width: 47px;
+.utilichart .sortcol.widelabelcol {
+	width: 50px;
 }
-.utilichart .ppsortcol {
-	width: 38px;
+.utilichart .sortcol.pplabelcol {
+	width: 25px;
 }
-
-
