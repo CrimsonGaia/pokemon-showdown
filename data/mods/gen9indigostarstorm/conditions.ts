@@ -930,8 +930,8 @@ export const Conditions = {
 		effectType: 'Weather',
 		duration: 5,
 		durationCallback(source, effect) {
-			if (source?.hasItem('icyrock')) { return 8; }
-			return 5;
+			if (source?.hasItem('icyrock')) { return 11; }
+			return 7;
 		},
 		onModifyDefPriority: 10,
 		onModifyDef(def, pokemon) {
