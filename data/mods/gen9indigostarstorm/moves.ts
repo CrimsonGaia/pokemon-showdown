@@ -13,6 +13,10 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 
 
 	
+
+
+
+
 	accelerock: {
 		num: 709,
 		accuracy: 100,
@@ -914,6 +918,26 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		shortDesc: "Sets Spikes after damaging.",
 		target: "normal",
 	},
+	chomp: {
+		num: 501,
+		accuracy: 100,
+		basePower: 80,
+		type: "Dragon",
+		category: "Physical",
+		name: "Chomp",
+		pp: 10,
+		priority: 0,
+		critRatio: 6,
+		flags: { contact: 1, bite: 1, protect: 1, mirror: 1, metronome: 1 },
+		secondaries: [
+		   { chance: 20, status: 'dragonblight', },
+		   { chance: 10, volatileStatus: 'flinch',},
+		   { chance: 5, self: { status: 'dragonblight' }, },
+	   ],
+		desc: "No additional effect.",
+		shortDesc: "20% Dragonblight, 10% Flinch, 5% Self-inflict Dragonblight",
+		target: "normal",
+	},
 	chistrike: {
 		num: -1001,
 		accuracy: 100,
@@ -926,9 +950,9 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		critRatio: 6,
 		flags: { aura: 1, contact: 1, protect: 1, mirror: 1, punch: 1, metronome: 1 },
 		desc: "30% chance to apply the Indomitable Spirit aura to the user for 4 turns.",
-		shortDesc: "30% chance to apply Indomitable Spirit aura.",
+		shortDesc: "50% chance to apply Indomitable Spirit aura.",
 		secondary: {
-			chance: 30,
+			chance: 50,
 			self: {
 				onHit(source) {
 					// Clear any existing aura status before applying Indomitable Spirit
@@ -959,6 +983,21 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		forceSwitch: true,
 		desc: "Forces the target to switch out. Usually moves last. This move is a throwing move that launches the target.",
 		shortDesc: "Throws and forces switch. Usually moves last.",
+		target: "normal",
+	},
+	clamp: {
+		num: 128,
+		accuracy: 95,
+		basePower: 50,
+		type: "Water",
+		category: "Physical",
+		name: "Clamp",
+		pp: 15,
+		priority: 0,
+		critRatio: 3,
+		flags: { contact: 1, binding: 1, protect: 1, mirror: 1, metronome: 1 },
+		volatileStatus: 'partiallytrapped',
+		secondary: null,
 		target: "normal",
 	},
 	closecombat: {
@@ -2556,6 +2595,33 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		shortDesc: "No additional effect.",
 		target: "normal",
 	},
+	grudge: {
+		num: 288,
+		accuracy: true,
+		basePower: 75,
+		type: "Ghost",
+		category: "Physical",
+		name: "Grudge",
+		pp: 10,
+		priority: 0,
+		critRatio: 4,
+		flags: { bypasssub: 1, metronome: 1 },
+		onHit(target) {
+			let move: Move | ActiveMove | null = target.lastMove;
+			if (!move || move.isZ) return false;
+			if (move.isMax && move.baseMove) move = this.dex.moves.get(move.baseMove);
+			const ppDeducted = target.deductPP(move.id, 4);
+			if (!ppDeducted) return false;
+			this.add("-activate", target, 'move: Spite', move.name, ppDeducted);
+		},
+		secondaries: [
+			{ chance: 30, volatileStatus: 'curse', },
+		],
+		onBasePower(basePower, attacker, defender, move) { if (defender.volatiles['curse']) { return this.chainModify(2); } },
+		desc: "No additional effect.",
+		shortDesc: "No additional effect.",
+		target: "normal",
+	},
 	gunkshot: {
 		num: 441,
 		accuracy: 85,
@@ -3475,7 +3541,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 	},
 	megakick: {
 		num: 25,
-		accuracy: 85,
+		accuracy: 75,
 		basePower: 120,
 		type: "Normal",
 		category: "Physical",
@@ -3484,7 +3550,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		priority: 0,
 		critRatio: 3,
 		flags: { contact: 1, kick: 1, protect: 1, mirror: 1, metronome: 1 },
-		secondary: { chance: 20, volatileStatus: 'flinch', },
+		secondary: { chance: 30, volatileStatus: 'flinch', },
 		desc: "This move is a kicking move.",
 		shortDesc: "No additional effect.",
 		target: "normal",
@@ -4749,7 +4815,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 15,
 		priority: -5,
 		critRatio: 6,
-		flags: { contact: 1, kick: 1, protect: 1, mirror: 1, metronome: 1, cantusetwice: 1 },
+		flags: { contact: 1, kick: 1, spin: 1, protect: 1, mirror: 1, metronome: 1, cantusetwice: 1 },
 		desc: "Usually moves last. This move cannot be used twice in a row.",
 		shortDesc: "Usually moves last. Can't use twice in a row.",
 		onTryMove(source, target, move) {
@@ -6473,7 +6539,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 5,
 		priority: 0,
 		critRatio: 4,
-		flags: { explosive: 1, protect: 1, mirror: 1 },
+		flags: { explosive: 1, weapon: 1, protect: 1, mirror: 1 },
 		self: {boosts: {def: -1, spd: -1,},},
 		secondary: null,
 		desc: "No additional effect.",
@@ -6615,10 +6681,35 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		shortDesc: "No additional effect.",
 		target: "normal",
 	},
+	bellow: {
+		num: 12050,
+		accuracy: 100,
+		basePower: 70,
+		type: "Dragon",
+		category: "Special",
+		name: "Bellow",
+		pp: 10,
+		priority: 0,
+		critRatio: 4,
+		flags: { sound: 1, protect: 1, mirror: 1, metronome: 1 },
+		onBasePower(basePower, pokemon, target) {
+			if (target.status === 'dragonblight') {this.chainModify(2);}
+			if (pokemon.status === 'dragonblight') {this.chainModify(0.5);}
+		},
+		secondary: null,
+		desc: "Power doubles if the target has dragonblight. Power is halved if the user has dragonblight. Effects stack multiplicatively.",
+		shortDesc: "2x power if target has dragonblight; 0.5x if user has.",
+		target: "allAdjacentFoes",
+	},
 	bittermalice: {
 		num: 841,
 		accuracy: 100,
 		basePower: 80,
+		onBasePower(basePower, pokemon, target) {
+			if (target.status === 'frostbite' || target.status === 'frz') {
+				return this.chainModify(2);
+			}
+		},
 		type: "Ghost",
 		category: "Special",
 		name: "Bitter Malice",
@@ -6628,9 +6719,8 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		flags: { protect: 1, mirror: 1, metronome: 1 },
 		secondaries: [
 			{ chance: 100, boosts: { atk: -1 }, },
-			{ chance: 30, volatileStatus: 'curse', },
+			{ chance: 30, status: 'frostbite', },
 		],
-		onBasePower(basePower, attacker, defender, move) { if (defender.volatiles['curse']) { return this.chainModify(2); } },
 		desc: "No additional effect.",
 		shortDesc: "No additional effect.",
 		target: "normal",
@@ -6695,7 +6785,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 				break;
 			}
 		},
-		secondary: { chance: 10, status: 'frz', },
+		secondary: { chance: 20, status: 'frostbite', },
 		desc: "No additional effect.",
 		shortDesc: "No additional effect.",
 		target: "allAdjacentFoes",
@@ -6857,7 +6947,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 	},
 	chargebeam: {
 		num: 451,
-		accuracy: 90,
+		accuracy: 100,
 		basePower: 60,
 		type: "Electric",
 		category: "Special",
@@ -7168,7 +7258,10 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		priority: 0,
 		critRatio: 7,
 		flags: { breath: 1, protect: 1, mirror: 1, metronome: 1 },
-		secondary: { chance: 80, status: 'dragonblight', },
+		secondaries: [
+		   { chance: 80, status: 'dragonblight', },
+		   { chance: 10, self: { status: 'dragonblight' }, },
+	   ],
 		desc: "No additional effect.",
 		shortDesc: "No additional effect.",
 		target: "normal",
@@ -7189,7 +7282,10 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		priority: 0,
 		critRatio: 5,
 		flags: { light: 1, protect: 1, mirror: 1 },
-		secondary: { chance: 10, status: 'dragonblight', },
+		secondaries: [
+		   { chance: 20, status: 'dragonblight', },
+		   { chance: 5, self: { status: 'dragonblight' }, },
+	   ],
 		desc: "No additional effect.",
 		shortDesc: "No additional effect.",
 		target: "allAdjacentFoes",
@@ -7205,7 +7301,10 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		priority: 0,
 		critRatio: 5,
 		flags: { beam: 1, pulse: 1, protect: 1, mirror: 1, distance: 1, metronome: 1 },
-		secondary: { chance: 20, status: 'dragonblight', },
+		secondaries: [
+		   { chance: 20, status: 'dragonblight', },
+		   { chance: 5, self: { status: 'dragonblight' }, },
+	   ],
 		desc: "No additional effect.",
 		shortDesc: "No additional effect.",
 		target: "any",
@@ -8524,6 +8623,20 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		shortDesc: "No additional effect.",
 		target: "normal",
 	},
+	leaftornado: {
+		num: 536,
+		accuracy: 90,
+		basePower: 85,
+		type: "Grass",
+		category: "Special",
+		name: "Leaf Tornado",
+		pp: 10,
+		priority: 0,
+		flags: { slicing: 1, wind: 1, protect: 1, mirror: 1, metronome: 1 },
+		self: {boosts: {spa: -1,},},
+		secondary: null,
+		target: "normal",
+	},
 	luminacrash: {
 		num: 855,
 		accuracy: 100,
@@ -8923,6 +9036,23 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		flags: { protect: 1, mirror: 1, metronome: 1 },
 		secondary: null,
 		target: "normal",
+	},
+	nobleroar: {
+		num: 568,
+		accuracy: 100,
+		basePower: 55,
+		type: "Normal",
+		category: "Special",
+		name: "Noble Roar",
+		pp: 30,
+		priority: 0,
+		critRatio: 0,
+		flags: { sound: 1, protect: 1, reflectable: 1, mirror: 1, bypasssub: 1, metronome: 1 },
+		secondaries: [ 
+			{chance: 100, boosts: {spa: -1,},},
+			{chance: 100, boosts: {atk: -1,},}
+		],
+		target: "allAdjacentFoes",
 	},
 	originpulse: {
 		num: 618,
@@ -9522,7 +9652,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 	},
 	shortcircuit: {
 		num: 4003,
-		accuracy: 100,
+		accuracy: 90,
 		basePower: 120,
 		type: "Electric",
 		category: "Special",
@@ -9626,6 +9756,19 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		desc: "No additional effect.",
 		shortDesc: "No additional effect.",
 		target: "allAdjacent",
+	},
+	silverwind: {
+		num: 318,
+		accuracy: 100,
+		basePower: 65,
+		type: "Bug",
+		category: "Special",
+		name: "Silver Wind",
+		pp: 15,
+		priority: 0,
+		flags: { wind: 1, protect: 1, mirror: 1, metronome: 1 },
+		secondary: { chance: 100, sideCondition: 'silverpowder', },
+		target: "normal",
 	},
 	smog: {
 		num: 123,
@@ -11153,6 +11296,51 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		secondary: null,
 		target: "normal",
 	},
+	bubbletrap: {
+		num: 12000,
+		accuracy: 90,
+		basePower: 0,
+		type: "Water",
+		category: "Status",
+		name: "Bubble Trap",
+		pp: 10,
+		priority: -1,
+		flags: { snatch: 1, metronome: 1, },
+		onTryImmunity(target) {if (target.hasType('Water') || target.hasAbility('swiftswim')) {return false;}},
+		onHit(target) {target.addVolatile('bubbletrap');},
+		condition: {
+			duration: 2,
+			onStart(pokemon) {
+				this.add('-start', pokemon, 'move: Bubble Trap');
+				this.add('-message', `${pokemon.name} was encased in a bubble!`);
+			},
+			onTrapPokemon(pokemon) {
+				if (pokemon.hasType('Ghost')) return;
+				pokemon.tryTrap();
+			},
+			onResidualPriority: 9,
+			onResidual(pokemon) {
+				const damage = this.damage(pokemon.baseMaxhp / 16, pokemon, pokemon);
+				if (damage) {this.add('-damage', pokemon, pokemon.getHealth);}
+			},
+			onEnd(target) { this.add('-end', target, 'Bubble Trap'); },
+			onAccuracy(accuracy, target, source, move) {
+				if (typeof accuracy !== 'number') return;
+				return true;
+			},
+			onBeforeMovePriority: 10,
+			onBeforeMove(pokemon, target, move) {
+				if (move.type === 'Ground') {
+					this.add('cant', pokemon, 'Bubble Trap', move);
+					this.add('-message', `${pokemon.name} can't use Ground-type moves while trapped!`);
+					return false;
+				}
+			},
+		},
+		status: 'bubbleblight',
+		secondary: null,
+		target: "normal",
+	},
 	bulkup: {
 		num: 339,
 		accuracy: true,
@@ -11385,10 +11573,10 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		type: "Normal",
 		category: "Status",
 		name: "Confide",
-		pp: 20,
+		pp: 10,
 		priority: 0,
 		flags: { reflectable: 1, mirror: 1, sound: 1, bypasssub: 1, metronome: 1 },
-		boosts: {spa: -1,},
+		boosts: {spa: -1, spd: -1,},
 		secondary: null,
 		target: "normal",
 	},
@@ -13222,6 +13410,37 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		secondary: null,
 		target: "allySide",
 	},
+	liquify: {
+		num: 12000,
+		accuracy: true,
+		basePower: 0,
+		type: "Water",
+		category: "Status",
+		name: "Liquify",
+		pp: 10,
+		priority: 2,
+		flags: {metronome: 1 },
+		onHit(target) {
+			target.addVolatile('liquify');
+		},
+		condition: {
+			onStart(pokemon) {
+				this.add('-start', pokemon, 'move: Liquify');
+				this.add('-message', `${pokemon.name} spread its body thin!`);
+			},
+			onDamage(damage, target, source, effect) {
+				if (effect && effect.effectType === 'Move') {return this.chainModify(0.5);}
+			},
+			onResidualPriority: 9,
+			onResidual(pokemon) {
+				const heal = this.heal(pokemon.baseMaxhp / 3, pokemon, pokemon);
+				if (heal) {this.add('-heal', pokemon, pokemon.getHealth);}
+			},
+			onEnd(target) {this.add('-end', target, 'Liquify');},
+		},
+		secondary: null,
+		target: "self",
+	},
 	lockon: {
 		num: 199,
 		accuracy: true,
@@ -14083,20 +14302,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		},
 		secondary: null,
 		target: "allAdjacent",
-	},
-	nobleroar: {
-		num: 568,
-		accuracy: 100,
-		basePower: 0,
-		type: "Normal",
-		category: "Status",
-		name: "Noble Roar",
-		pp: 30,
-		priority: 0,
-		flags: { protect: 1, reflectable: 1, mirror: 1, sound: 1, bypasssub: 1, metronome: 1 },
-		boosts: {atk: -1,spa: -1,},
-		secondary: null,
-		target: "normal",
 	},
 	noretreat: {
 		num: 748,
@@ -16135,9 +16340,22 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		flags: { protect: 1, reflectable: 1, mirror: 1, metronome: 1 },
 		volatileStatus: 'tarshot',
 		condition: {
-			onStart(pokemon) {
-				if (pokemon.terastallized) return false;
-				this.add('-start', pokemon, 'Tar Shot');
+			duration: 3,
+			onStart(pokemon) {this.add('-start', pokemon, 'Tar Shot');},
+			onTrapPokemon(pokemon) {if (!pokemon.trapped) {pokemon.tryTrap();}},
+			onModifyPriority(priority, pokemon, target, move) {if (pokemon && pokemon.volatiles['tarshot']) {return priority - 0.1;}},
+			onResidualPriority: 9,
+			onResidual(pokemon) {
+				const damage = this.damage(pokemon.baseMaxhp / 10, pokemon, pokemon);
+				if (damage) {this.add('-damage', pokemon, pokemon.getHealth);}
+			},
+			onDamagingHit(damage, target, source, move) {
+				if (move.type === 'Fire') {
+					this.add('-activate', target, 'ability: Tar Shot');
+					this.add('-message', `A tar bubble exploded!`);
+					const tarDamage = this.damage(target.baseMaxhp / 10, target, target);
+					if (tarDamage) {this.add('-damage', target, target.getHealth);}
+				}
 			},
 			onEffectivenessPriority: -2,
 			onEffectiveness(typeMod, target, type, move) {
@@ -16147,7 +16365,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 				return typeMod + 1;
 			},
 		},
-		boosts: {spe: -1,},
 		secondary: null,
 		target: "normal",
 	},
@@ -16578,6 +16795,20 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		secondary: null,
 		target: "all",
 	},
+	turbulentwinds: {
+		num: 12003,
+		accuracy: true,
+		basePower: 0,
+		type: "Flying",
+		category: "Status",
+		name: "Turbulent Winds",
+		pp: 5,
+		priority: 0,
+		flags: { wind: 1, metronome: 1 },
+		weather: 'turbulentwinds',
+		secondary: null,
+		target: "all",
+	},
 	victorydance: {
 		num: 837,
 		accuracy: true,
@@ -16699,6 +16930,15 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		priority: 0,
 		flags: { snatch: 1, metronome: 1 },
 		boosts: {def: 1,},
+		onHit(target) {target.addVolatile('withdraw');},
+		condition: {
+			onStart(pokemon) {
+				this.add('-start', pokemon, 'move: Withdraw');
+				this.add('-message', `${pokemon.name} withdrew into its shell!`);
+			},
+			onDamage(damage, target, source, effect) {if (effect && effect.effectType === 'Move') {return this.chainModify(0.5);}},
+			onEnd(target) {this.add('-end', target, 'Withdraw');},
+		},
 		secondary: null,
 		target: "self",
 	},
@@ -16712,7 +16952,9 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 10,
 		priority: 0,
 		flags: { mirror: 1, metronome: 1 },
-		pseudoWeather: 'wonderroom',
+		onHit(target, source) {
+			this.field.setRoom('wonderroom', source, this.effect);
+		},
 		condition: {
 			duration: 5,
 			durationCallback(source, effect) {
@@ -18318,21 +18560,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		secondary: null,
 		target: "normal",
 	},
-	clamp: {
-		num: 128,
-		accuracy: 85,
-		basePower: 35,
-		type: "Water",
-		category: "Physical",
-		isNonstandard: "Past",
-		name: "Clamp",
-		pp: 15,
-		priority: 0,
-		flags: { contact: 1, protect: 1, mirror: 1, metronome: 1 },
-		volatileStatus: 'partiallytrapped',
-		secondary: null,
-		target: "normal",
-	},
 	cometpunch: {
 		num: 4,
 		accuracy: 85,
@@ -19043,20 +19270,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		target: "normal",
 
 	},
-	leaftornado: {
-		num: 536,
-		accuracy: 90,
-		basePower: 65,
-		type: "Grass",
-		category: "Special",
-		isNonstandard: "Past",
-		name: "Leaf Tornado",
-		pp: 10,
-		priority: 0,
-		flags: { protect: 1, mirror: 1, metronome: 1 },
-		secondary: { chance: 50, boosts: {accuracy: -1,}, },
-		target: "normal",
-	},
 	lightofruin: {
 		num: 617,
 		accuracy: 90,
@@ -19252,20 +19465,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		desc: "Moves after most other moves (priority -3).",
 		shortDesc: "Priority -3.",
 		target: "allAdjacentFoes",
-	},
-	silverwind: {
-		num: 318,
-		accuracy: 100,
-		basePower: 60,
-		type: "Bug",
-		category: "Special",
-		isNonstandard: "Past",
-		name: "Silver Wind",
-		pp: 5,
-		priority: 0,
-		flags: { protect: 1, mirror: 1, metronome: 1 },
-		secondary: { chance: 10, self: {boosts: {atk: 1, def: 1, spa: 1, spd: 1, spe: 1,},}, },
-		target: "normal",
 	},
 	sonicboom: {
 		num: 49,
@@ -19579,42 +19778,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		secondary: null,
 		target: "self",
 	},
-	grudge: {
-		num: 288,
-		accuracy: true,
-		basePower: 0,
-		type: "Ghost",
-		category: "Status",
-		isNonstandard: "Past",
-		name: "Grudge",
-		pp: 5,
-		priority: 0,
-		flags: { bypasssub: 1, metronome: 1 },
-		volatileStatus: 'grudge',
-		condition: {
-			onStart(pokemon) { this.add('-singlemove', pokemon, 'Grudge'); },
-			onFaint(target, source, effect) {
-				if (!source || source.fainted || !effect) return;
-				if (effect.effectType === 'Move' && !effect.flags['futuremove'] && source.lastMove) {
-					let move: Move = source.lastMove;
-					if (move.isMax && move.baseMove) move = this.dex.moves.get(move.baseMove);
-					for (const moveSlot of source.moveSlots) {
-						if (moveSlot.id === move.id) {
-							moveSlot.pp = 0;
-							this.add('-activate', source, 'move: Grudge', move.name);
-						}
-					}
-				}
-			},
-			onBeforeMovePriority: 100,
-			onBeforeMove(pokemon) {
-				this.debug('removing Grudge before attack');
-				pokemon.removeVolatile('grudge');
-			},
-		},
-		secondary: null,
-		target: "self",
-	},
+	
 	iondeluge: {
 		num: 569,
 		accuracy: true,

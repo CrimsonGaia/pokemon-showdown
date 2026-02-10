@@ -707,7 +707,7 @@ export const Conditions = {
 		},
 		onEnd(target) { this.add('-end', target, 'luckeffect'); },
 	},
-	//#region Other
+	//#region Move locking effects
 	lockedmove: { // Outrage, Thrash, Petal Dance...
 		name: 'lockedmove',
 		duration: 2,
@@ -1852,6 +1852,31 @@ export const Conditions = {
 			if (ignoreEffects.includes(type) && type !== 'terrain') { return false; }
 		},
 	},
+	//region misc
+	discombobulated: {
+		name: 'Discombobulated',
+		duration: 2,
+		effectType: 'Volatile',
+		onStart(target) {
+			this.add('-start', target, 'Discombobulated');
+			this.add('-message', `${target.name} was launched into the air and is now discombobulated!`);
+		},
+		onEnd(target) { this.add('-end', target, 'Discombobulated'); },
+		onAccuracy(accuracy, target, source, move) { // Target cannot dodge moves (moves always have perfect accuracy against them)
+			if (typeof accuracy !== 'number') return;
+			return true;
+		},
+		onBeforeMovePriority: 10,
+		onBeforeMove(pokemon, target, move) { // Prevent using Ground-type moves
+			if (move.type === 'Ground') {
+				this.add('cant', pokemon, 'Discombobulated', move);
+				this.add('-message', `${pokemon.name} can't use Ground-type moves while airborne!`);
+				return false;
+			}
+		},
+		// Target is treated as airborne (like being under Magnet Rise or having Levitate)
+		// This is handled in battle.engine.js:BattlePokemon#isGrounded
+	},
 	lagging: {
 		name: 'lagging',
 		effectType: 'Volatile',
@@ -1890,30 +1915,6 @@ export const Conditions = {
 				return false;
 			}
 		},
-	},
-	discombobulated: {
-		name: 'Discombobulated',
-		duration: 2,
-		effectType: 'Volatile',
-		onStart(target) {
-			this.add('-start', target, 'Discombobulated');
-			this.add('-message', `${target.name} was launched into the air and is now discombobulated!`);
-		},
-		onEnd(target) { this.add('-end', target, 'Discombobulated'); },
-		onModifyAccuracy(accuracy, target, source, move) { // Target cannot dodge moves (moves always have perfect accuracy against them)
-			if (typeof accuracy !== 'number') return;
-			return true;
-		},
-		onBeforeMovePriority: 10,
-		onBeforeMove(pokemon, target, move) { // Prevent using Ground-type moves
-			if (move.type === 'Ground') {
-				this.add('cant', pokemon, 'Discombobulated', move);
-				this.add('-message', `${pokemon.name} can't use Ground-type moves while airborne!`);
-				return false;
-			}
-		},
-		// Target is treated as airborne (like being under Magnet Rise or having Levitate)
-		// This is handled in battle.engine.js:BattlePokemon#isGrounded
 	},
 	roundhousekick: {
 		name: 'Roundhouse Kick',
