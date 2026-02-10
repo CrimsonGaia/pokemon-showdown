@@ -347,6 +347,7 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Electric: 1,
 			Ice: 1,
 			Rock: 1,
+			Steel: 1,
 			// Neutral
 			Dark: 0,
 			Dragon: 0,
@@ -354,17 +355,18 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Fire: 0,
 			Flying: 0,
 			Ghost: 0,
-			Normal: 0,
+			Grass: 0,
+			
 			Poison: 0,
 			Psychic: 0,
-			Steel: 0,
+			
 			Stellar: 0,
 			Water: 0,
 			// Resist
 			banal: 2,
 			Bug: 2,
 			Fighting: 2,
-			Grass: 2,
+			Normal: 2,
 		},
 		affinity: {
 			airborne: 5,
@@ -393,11 +395,15 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			hail: 3,
 			Fighting: 3,
 			Normal: 3,
+			Poison: 3,
 			psn: 3,
+			tox: 3,
 			// Weak
 			Dark: 1,
 			Ghost: 1,
+			Psychic: 1,
 			// Neutral
+			Bug: 0,
 			Dragon: 0,
 			Electric: 0,
 			Fairy: 0,
@@ -406,15 +412,13 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Grass: 0,
 			Ground: 0,
 			Ice: 0,
-			Psychic: 0,
+			
 			Rock: 0,
 			Steel: 0,
 			Stellar: 0,
 			Water: 0,
 			// Resist
 			banal: 2,
-			Bug: 2,
-			Poison: 2,
 		},
 		affinity: {
 			airborne: 5,
@@ -451,7 +455,7 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Dragon: 0,
 			Fairy: 0,
 			Fighting: 0,
-			Ghost: 0,
+			
 			Normal: 0,
 			Psychic: 0,
 			Rock: 0,
@@ -460,6 +464,7 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			// Resist
 			banal: 2,
 			Electric: 2,
+			Ghost: 2,
 			Grass: 2,
 			Ground: 2,
 			Water: 2,
@@ -487,11 +492,11 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			hail: 3,
 			Electric: 3,
 			// Weak
+			Bug: 1,
 			Grass: 1,
 			Ice: 1,
 			Water: 1,
 			// Neutral
-			Bug: 0,
 			Dark: 0,
 			Dragon: 0,
 			Fairy: 0,
@@ -502,12 +507,12 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Ground: 0,
 			Normal: 0,
 			Psychic: 0,
-			Steel: 0,
 			Stellar: 0,
 			// Resist
 			banal: 2,
 			Poison: 2,
 			Rock: 2,
+			Steel: 2,
 		},
 		affinity: {
 			binding: 5,
@@ -545,16 +550,16 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Fairy: 0,
 			Flying: 0,
 			Ghost: 0,
-			Grass: 0,
 			Ground: 0,
-			Normal: 0,
 			Poison: 0,
 			Psychic: 0,
 			Stellar: 0,
-			Water: 0,
 			// Resist
 			banal: 2,
+			Grass: 2,
 			Ice: 2,
+			Normal: 2,
+			Water: 2,
 		},
 		affinity: {
 			beam: 5,
@@ -575,14 +580,14 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Ghost: 3,
 			// Weak
 			Fighting: 1,
+			Flying: 1,
 			// Neutral
-			Bug: 0,
+			
 			Dark: 0,
 			Dragon: 0,
 			Electric: 0,
-			Fairy: 0,
+			
 			Fire: 0,
-			Flying: 0,
 			Grass: 0,
 			Ground: 0,
 			Ice: 0,
@@ -595,6 +600,8 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Water: 0,
 			// Resist
 			banal: 2,
+			Bug: 2,
+			Fairy: 2,
 		},
 		affinity: {
 			contact: 5,
@@ -620,6 +627,7 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			// Weak
 			Ground: 1,
 			Psychic: 1,
+			Water: 1,
 			// Neutral
 			Dark: 0,
 			Dragon: 0,
@@ -632,7 +640,6 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Rock: 0,
 			Steel: 0,
 			Stellar: 0,
-			Water: 0,
 			// Resist
 			banal: 2,
 			Bug: 2,
@@ -663,7 +670,6 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			// Weak
 			Bug: 1,
 			Dark: 1,
-			Ghost: 1,
 			// Neutral
 			Dragon: 0,
 			Electric: 0,
@@ -682,6 +688,7 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			// Resist
 			banal: 2,
 			Fighting: 2,
+			Ghost: 2,
 			Psychic: 2,
 		},
 		affinity: {
@@ -713,25 +720,25 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Fighting: 1,
 			Grass: 1,
 			Ground: 1,
+			Poison: 1,
 			Steel: 1,
 			Water: 1,
 			// Neutral
-			Bug: 0,
 			Dark: 0,
 			Dragon: 0,
-			Electric: 0,
 			Fairy: 0,
 			Ghost: 0,
-			Ice: 0,
 			Psychic: 0,
-			Rock: 0,
 			Stellar: 0,
 			// Resist
 			banal: 2,
+			Bug: 2,
+			Electric: 2,
 			Fire: 2,
 			Flying: 2,
+			Ice: 2,
 			Normal: 2,
-			Poison: 2,
+			Rock: 2,
 		},
 		affinity: {
 			airborne: 5,
@@ -806,6 +813,8 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 	},
 	stellar: {
 		damageTaken: {
+			// Weak
+			Normal: 1,
 			// Neutral
 			Bug: 0,
 			Dark: 0,
@@ -819,7 +828,6 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 			Grass: 0,
 			Ground: 0,
 			Ice: 0,
-			Normal: 0,
 			Poison: 0,
 			Psychic: 0,
 			Rock: 0,
@@ -887,5 +895,3 @@ export const TypeChart: import('../../../sim/dex-data').TypeDataTable = {
 		HPdvs: { atk: 14, def: 13 },
 	},
 };
-
-
