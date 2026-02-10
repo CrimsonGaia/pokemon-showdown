@@ -979,7 +979,13 @@ export class BattleActions {
 					didSomething = this.combineResults(didSomething, hitResult);
 				}
 				if (moveData.pseudoWeather) {
-					hitResult = this.battle.field.addPseudoWeather(moveData.pseudoWeather, source, move);
+					// Room effects: wonderroom, trickroom, magicroom - these should be mutually exclusive
+					const roomTypes = ['wonderroom', 'trickroom', 'magicroom'];
+					if (roomTypes.includes(moveData.pseudoWeather)) {
+						hitResult = this.battle.field.setRoom(moveData.pseudoWeather, source, move);
+					} else {
+						hitResult = this.battle.field.addPseudoWeather(moveData.pseudoWeather, source, move);
+					}
 					didSomething = this.combineResults(didSomething, hitResult);
 				}
 				if (moveData.forceSwitch) {

@@ -218,6 +218,45 @@ export class Field {
 		return true;
 	}
 
+	setRoom(
+		status: string | Condition,
+		source: Pokemon | 'debug' | null = null,
+		sourceEffect: Effect | null = null
+	): boolean {
+		if (!source && this.battle.event?.target) source = this.battle.event.target;
+		if (source === 'debug') source = this.battle.sides[0].active[0];
+		status = this.battle.dex.conditions.get(status);
+
+		// Check if Surging Migraine user is on field and preventing room changes
+		if (status.id !== 'wonderroom') {
+			for (const side of this.battle.sides) {
+				for (const pokemon of side.active) {
+					if (pokemon && !pokemon.fainted && pokemon.hasAbility('surgingmigraine')) {
+						if (this.pseudoWeather['wonderroom']) {
+							// Surging Migraine prevents other rooms from being set
+							this.battle.add('-fail');
+							this.battle.add('-message', `${pokemon.name}'s Surging Migraine keeps Wonder Room active!`);
+							return false;
+						}
+					}
+				}
+			}
+		}
+
+		// Room effects: wonderroom, trickroom, and any others with the room flag
+		const roomTypes = ['wonderroom', 'trickroom', 'magicroom'];
+		
+		// Clear other room effects
+		for (const room of roomTypes) {
+			if (room !== status.id && this.pseudoWeather[room]) {
+				this.removePseudoWeather(room);
+			}
+		}
+		
+		// Now add the new room
+		return this.addPseudoWeather(status, source, sourceEffect);
+	}
+
 	getPseudoWeather(status: string | Effect) {
 		status = this.battle.dex.conditions.get(status);
 		return this.pseudoWeather[status.id] ? status : null;

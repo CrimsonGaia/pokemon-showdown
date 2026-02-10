@@ -1022,8 +1022,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 	},
 	spellhorizon: {
 		onStart(source) {
-			if (this.field.getPseudoWeather('magicroom')) return;
-			this.field.addPseudoWeather('magicroom', source, source.ability, 5);
+			this.field.setRoom('magicroom', source, source.ability);
 		},
 		flags: {},
 		name: "Spell Horizon",
@@ -1115,6 +1114,18 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		rating: 3,
 		num: 1063,
 	},
+	steelgirder: {
+		onBasePower(basePower, attacker, defender, move) { if (move.type === 'Steel') { return this.chainModify(1.5); } },
+		onModifyMove(move, pokemon) {  if (move.flags?.contact) {
+			move.flags.contact = 0;
+			move.flags.weapon = 1;
+			}
+		},
+		flags: {},
+		name: "Steel Girder",
+		rating: 3,
+		num: 1064,
+	},
 	superconductor: {
 		onModifySpe(spe, pokemon) { if (this.field.isWeather(['hail', 'snow', 'snowscape'])) { return this.chainModify(1.25); } },
 		onTryHit(target, source, move) { if (this.field.isWeather(['hail', 'snow', 'snowscape']) && move.type === 'Electric') { this.add('-immune', target, '[from] ability: Superconducto');
@@ -1138,19 +1149,30 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		flags: {},
 		name: "Superconductor",
 		rating: 4,
-		num: 1064,
+		num: 1065,
 	},
-	steelgirder: {
-		onBasePower(basePower, attacker, defender, move) { if (move.type === 'Steel') { return this.chainModify(1.5); } },
-		onModifyMove(move, pokemon) {  if (move.flags?.contact) {
-			move.flags.contact = 0;
-			move.flags.weapon = 1;
+	surgingmigraine: {
+		onStart(pokemon) {
+			this.field.setRoom('wonderroom', pokemon, pokemon.ability);
+			this.add('-activate', pokemon, 'ability: Surging Migraine');
+		},
+		onResidualOrder: 5,
+		onResidual(pokemon) {
+			if (!this.field.pseudoWeather['wonderroom']) {
+				this.field.setRoom('wonderroom', pokemon, pokemon.ability);
+				this.add('-message', `${pokemon.name}'s Surging Migraine re-established Wonder Room!`);
+			}
+		},
+		onExit(pokemon) {
+			if (this.field.pseudoWeather['wonderroom']) {
+				this.field.removePseudoWeather('wonderroom');
+				this.add('-message', `The Wonder Room wore off as ${pokemon.name} left the field!`);
 			}
 		},
 		flags: {},
-		name: "Steel Girder",
-		rating: 3,
-		num: 1065,
+		name: "Surging Migraine",
+		rating: 3.5,
+		num: 1066,
 	},
 	thorns: {
 		onDamagingHitOrder: 1,
@@ -1158,7 +1180,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		flags: {},
 		name: "Thorns",
 		rating: 2.5,
-		num: 1066,
+		num: 1067,
 	},
 	threeminded: {
 		onPrepareHit(source, target, move) {
@@ -1174,7 +1196,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		flags: {},
 		name: "Three Minded",
 		rating: 3,
-		num: 1067,
+		num: 1068,
 	},
 	thunderhead: {
 		onBasePower(basePower, attacker, defender, move) { if (move.type === 'Electric' && this.field.isWeather(['hail', 'snow', 'snowscape', 'raindance', 'primordialsea'])) { return this.chainModify(1.3); } },
@@ -1182,7 +1204,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		flags: {},
 		name: "Thunderhead",
 		rating: 3,
-		num: 1068,
+		num: 1069,
 	},
 	thunderthighs: {
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.kick) { return this.chainModify(1.3); } },
@@ -1191,7 +1213,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		flags: {},
 		name: "Thunder Thighs",
 		rating: 3,
-		num: 1069,
+		num: 1070,
 	},
 	timebreak: {
 		onStart(source) { this.field.addPseudoWeather('timebreak', source, source.ability); },
@@ -1205,7 +1227,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		flags: {},
 		name: "Time Break",
 		rating: 5,
-		num: 1070,
+		num: 1071,
 	},
 	tippedthorns: {
 		onDamagingHitOrder: 1,
@@ -1216,21 +1238,21 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		flags: {},
 		name: "TippedThorns",
 		rating: 3,
-		num: 1071,
+		num: 1072,
 	},
 	toxicpollen: {
 		onDamagingHit(damage, target, source, move) { if (this.randomChance(3, 10)) { source.trySetStatus('tox', target); } },
 		flags: {},
 		name: "Toxic Pollen",
 		rating: 3,
-		num: 1072,
+		num: 1073,
 	},
 	toxicsurge: {
 		onStart(source) { this.field.setTerrain('toxicterrain'); },
 		flags: {},
 		name: "Toxic Surge",
 		rating: 4,
-		num: 1073,
+		num: 1074,
 	},
 	twominded: {
 		onBeforeMovePriority: 11,
@@ -1238,7 +1260,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		flags: {},
 		name: "Two Minded",
 		rating: 3,
-		num: 1067,
+		num: 1075,
 	},
 	volvation: {
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.spin) { return this.chainModify(1.5); } },
@@ -1255,18 +1277,19 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		flags: {},
 		name: "Volvation",
 		rating: 3,
-		num: 1074,
+		num: 1076,
 	},
 	waterlogged: {
 		onStart(source) { this.field.addPseudoWeather('swamp', source, source.ability); },
 		flags: {},
 		name: "Waterlogged",
 		rating: 3.5,
-		num: 1075,
+		num: 1077,
 	},
 	webarmor: {
 		onModifyDefPriority: 6,
 		onModifyDef(def, pokemon) { if (!pokemon.webArmorBroken) { return this.chainModify(2); } },
+		onModifyMove(move, pokemon) {if (move.flags?.airborne && !pokemon.webArmorBroken) { move.priority = (move.priority || 0) + 1; }},
 		onDamagingHit(damage, target, source, move) { if (!target.webArmorBroken && (move.type === 'Fire' || move.flags?.slice)) {
 				target.webArmorBroken = true;
 				this.add('-activate', target, 'ability: Web Armor');
@@ -1277,7 +1300,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		flags: { breakable: 1 },
 		name: "Web Armor",
 		rating: 4,
-		num: 1076,
+		num: 1078,
 	},
 	woodpillar: {
 		onBasePower(basePower, attacker, defender, move) { if (move.type === 'Grass') { return this.chainModify(1.5); } },
@@ -1289,7 +1312,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		flags: {},
 		name: "Steel Girder",
 		rating: 3,
-		num: 1077,
+		num: 1079,
 	},
 
 
@@ -3692,9 +3715,10 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		num: 160,
 	},
 	justified: {
+		onTryImmunity(source, target, move) { if (move && move.type === 'Dark') { return false; } },
 		onDamagingHit(damage, target, source, move) { if (move.type === 'Dark' || (move.flags && (move.flags.binding || move.flags.sweep || move.flags.shadow))) { this.boost({ atk: 1 }, target, source, null, true); } },
 		onSetStatus(status, target, source, effect) { if (status.id === 'curse') { this.boost({ atk: 1 }, target, source, null, true); } },
-		onSourceModifyDamage(damage, source, target, move) { if (move.type === 'Dark' || (move.flags && (move.flags.binding || move.flags.sweep || move.flags.shadow))) { return this.chainModify(0.5); } },
+		onSourceModifyDamage(damage, source, target, move) { if (move.flags && (move.flags.binding || move.flags.sweep || move.flags.shadow)) { return this.chainModify(0.5); } },
 		flags: {},
 		name: "Justified",
 		rating: 3.5,
