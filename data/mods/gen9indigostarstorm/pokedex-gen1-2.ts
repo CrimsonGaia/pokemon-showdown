@@ -1542,7 +1542,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 88,
 		name: "Grimer",
 		types: ["Poison"],
-		baseStats: { hp: 80, atk: 80, def: 50, spa: 40, spd: 50, spe: 25 },
+		baseStats: { hp: 80, atk: 80, def: 50, spa: 65, spd: 50, spe: 25 },
 		abilities: { // ABILITY SET 1
 			0: "Stench",
 			1: "Liquid Ooze",
@@ -1565,7 +1565,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Grimer",
 		forme: "Alola",
 		types: ["Poison", "Dark"],
-		baseStats: { hp: 80, atk: 80, def: 50, spa: 40, spd: 50, spe: 25 },
+		baseStats: { hp: 80, atk: 80, def: 50, spa: 65, spd: 50, spe: 25 },
 		abilities: { // ABILITY SET 1
 			0: "Power of Alchemy",
 			1: "Poison Touch",
@@ -1768,7 +1768,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		name: "Voltorb",
 		types: ["Electric"],
 		gender: "N",
-		baseStats: { hp: 40, atk: 30, def: 50, spa: 55, spd: 55, spe: 100 },
+		baseStats: { hp: 40, atk: 20, def: 50, spa: 65, spd: 55, spe: 100 },
 		abilities: { // ABILITY SET 1
 			0: "Soundproof",
 			1: "Aftermath",
@@ -1812,7 +1812,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		name: "Electrode",
 		types: ["Electric"],
 		gender: "N",
-		baseStats: { hp: 60, atk: 50, def: 70, spa: 80, spd: 80, spe: 150 },
+		baseStats: { hp: 60, atk: 25, def: 75, spa: 95, spd: 85, spe: 150 },
 		abilities: { // ABILITY SET 1
 			0: "Soundproof",
 			1: "Aftermath",
@@ -1837,7 +1837,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		forme: "Hisui",
 		types: ["Electric", "Grass"],
 		gender: "N",
-		baseStats: { hp: 60, atk: 50, def: 70, spa: 80, spd: 80, spe: 150 },
+		baseStats: { hp: 60, atk: 25, def: 70, spa: 95, spd: 80, spe: 150 },
 		abilities: { // ABILITY SET 1
 			0: "Soundproof",
 			1: "Aftermath",
@@ -2422,7 +2422,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		name: "Porygon",
 		types: ["Normal"],
 		gender: "N",
-		baseStats: { hp: 72, atk: 32, def: 80, spa: 88, spd: 88, spe: 8 },
+		baseStats: { hp: 72, atk: 56, def: 80, spa: 88, spd: 88, spe: 8 },
 		abilities: { // ABILITY SET 1
 			0: "Trace",
 			1: "Conversion",
@@ -2678,7 +2678,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		name: "Chikorita",
 		types: ["Grass"],
 		genderRatio: { M: 0.875, F: 0.125 },
-		baseStats: { hp: 45, atk: 49, def: 65, spa: 49, spd: 65, spe: 45 },
+		baseStats: { hp: 55, atk: 44, def: 65, spa: 44, spd: 65, spe: 45 },
 		abilities: { // ABILITY SET 1
 			0: "Leaf Guard",
 			1: "Flower Veil",
@@ -2961,7 +2961,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 167,
 		name: "Spinarak",
 		types: ["Bug", "Poison"],
-		baseStats: { hp: 40, atk: 45, def: 40, spa: 15, spd: 40, spe: 82 },
+		baseStats: { hp: 40, atk: 55, def: 40, spa: 5, spd: 40, spe: 82 },
 		abilities: { // ABILITY SET 1
 			0: "Insomnia",
 			1: "Sniper",

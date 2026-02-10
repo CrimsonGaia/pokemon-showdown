@@ -2588,7 +2588,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 879,
 		name: "Copperajah",
 		types: ["Steel"],
-		baseStats: { hp: 152, atk: 130, def: 76, spa: 60, spd: 76, spe: 30 },
+		baseStats: { hp: 152, atk: 130, def: 83, spa: 60, spd: 83, spe: 30 },
 		abilities: { // ABILITY SET 1
             0: "Sheer Force",
             1: "Pack Mentality",
@@ -2606,7 +2606,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 884,
 		name: "Duraludon",
 		types: ["Steel", "Dragon"],
-		baseStats: { hp: 70, atk: 95, def: 115, spa: 120, spd: 50, spe: 85 },
+		baseStats: { hp: 45, atk: 95, def: 115, spa: 120, spd: 50, spe: 37 },
 		abilities: { // ABILITY SET 1
             0: "Light Metal",
             1: "Stalwart",

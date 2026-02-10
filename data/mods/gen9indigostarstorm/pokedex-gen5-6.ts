@@ -2896,7 +2896,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 692,
 		name: "Clauncher",
 		types: ["Water"],
-		baseStats: { hp: 50, atk: 53, def: 62, spa: 58, spd: 63, spe: 44 },
+		baseStats: { hp: 50, atk: 63, def: 72, spa: 73, spd: 63, spe: 29 },
 		abilities: { // ABILITY SET 1
             0: "Mold Breaker",
             1: "Mega Launcher",
