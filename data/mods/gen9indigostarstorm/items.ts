@@ -2062,7 +2062,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	expertbelt: {
 		name: "Expert Belt",
-		shortDesc: "Holder's attacks that are super effective have 1.3x power.",
+		shortDesc: "Holder's super effective attacks are boosed in power 1.3x.",
 		spritenum: 132,
 		fling: { basePower: 10, },
 		onModifyDamage(damage, source, target, move) { if (move && target.getMoveHitData(move).typeMod > 0) { return this.chainModify([5325, 4096]); } },
