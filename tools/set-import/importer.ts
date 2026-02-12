@@ -7,11 +7,8 @@ import { Streams } from '../../lib';
 import { Dex, toID } from '../../sim/dex';
 import { TeamValidator } from '../../sim/team-validator';
 Dex.includeModData();
-
 type DeepPartial<T> = { [P in keyof T]?: T[P] extends (infer I)[] ? (DeepPartial<I>)[] : DeepPartial<T[P]>; };
-
 interface PokemonSets { [speciesid: string]: { [name: string]: DeepPartial<PokemonSet>, }; }
-
 interface IncomingMessage extends NodeJS.ReadableStream {
 	statusCode: number;
 	headers: { location?: string };
@@ -24,12 +21,10 @@ type GenerationNum = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 // The tiers we support, ie. ones that we have data sources for.
 export const TIERS = new Set([
 	'ubers', 'ou', 'uu', 'ru', 'nu', 'pu', 'zu', 'lc', 'cap', 'nationaldex',
-	'doublesou', 'battlespotsingles', 'battlespotdoubles', 'battlestadiumsingles',
 	// UGH
 	'battlestadiumsinglesseries2', 'battlestadiumsinglesregulationc',
-	'vgc2016', 'vgc2017', 'vgc2018', 'vgc2019ultraseries', 'vgc2020', 'vgc2023regulatione', 'vgc', '1v1',
-	'anythinggoes', 'nationaldexag', 'almostanyability', 'balancedhackmons',
-	'letsgoou', 'monotype', 'purehackmons', 'nationaldexmonotype',
+	'vgc2016', 'vgc2017', 'vgc2018', 'vgc2019ultraseries', 'vgc2020', 'vgc2023regulatione', 'vgc', 
+	'1v1', 'anythinggoes', 'monotype',
 ]);
 const FORMATS = new Map<ID, { gen: GenerationNum, format: Format }>();
 const VALIDATORS = new Map<ID, TeamValidator>();

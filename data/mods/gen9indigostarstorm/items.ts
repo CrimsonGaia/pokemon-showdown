@@ -2361,6 +2361,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			}
 		},
 		name: "Power Herb",
+		itemClass: 'Consumable',
 		shortDesc: "Holder's two-turn moves complete in one turn. 1 time use.",
 		spritenum: 358,
 		fling: { basePower: 10, },
@@ -3928,7 +3929,6 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	sharpbeak: {
 		name: "Sharp Beak",
-		itemClass: 'Berries',
 		shortDesc: "1.2x power on holder's Flying type, Pierce moves. Holder's Bite moves consume opponent's held berries.",
 		spritenum: 436,
 		fling: { basePower: 50, },
