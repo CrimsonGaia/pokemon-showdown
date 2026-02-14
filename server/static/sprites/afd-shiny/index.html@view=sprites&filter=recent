@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+	<meta charset="UTF-8" />
+
+	<title>/sprites/afd-shiny/ - Showdown!</title>
+
+	<meta name="viewport" content="width=device-width" />
+	<link rel="stylesheet" href="http://play.pokemonshowdown.com/dirindex/font-awesome.min.css" />
+	<link rel="stylesheet" href="http://play.pokemonshowdown.com/dirindex/fontawesome5-solid-duotone.min.css?" />
+
+	<style>
+		/*********************************************************
+		 * Layout
+		 *********************************************************/
+
+		html, body {
+			margin: 0;
+			padding: 0;
+			min-height: 100%;
+		}
+
+		html {
+			color: white;
+			font-family: Verdana,Helvetica,sans-serif;
+			font-size: 11pt;
+			background: #f0f0f0;
+			color: #333333;
+		}
+		body {
+			background: linear-gradient(to bottom, rgba(77, 93, 140, 0.6), rgba(77, 93, 140, 0.2) 80px, transparent 160px, transparent);
+		}
+
+		header {
+			margin: 0;
+			padding: 2px;
+			/* background: rgba(255, 255, 255, .2);
+			border-bottom: 1px solid rgba(255, 255, 255, .6); */
+			text-align: center;
+			height: 60px;
+		}
+		.nav-wrapper {
+			width: 700px;
+			margin: 0 auto;
+			position: relative;
+		}
+		.nav {
+			padding: 0;
+		}
+		.nav-wrapper .nav {
+			padding-left: 140px;
+			padding-top: 5px;
+		}
+		.nav li {
+			float: left;
+			list-style-type: none;
+		}
+		.nav img {
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+		.nav a, .nav a:visited {
+			color: white;
+			background: #3a4f88;
+			background: linear-gradient(to bottom, #4c63a3, #273661);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px 1px rgba(255, 255, 255, 0.5);
+			border: 1px solid #222c4a;
+			text-shadow: black 0px -1px 0;
+			padding: 8px 15px;
+			font-weight: bold;
+			text-decoration: none;
+			border-radius: 0;
+			margin-left: -1px;
+			font-size: 11pt;
+		}
+		.dark .nav a, .dark .nav a:visited {
+			/* make sure other styling doesn't override */
+			color: white;
+			background: #3a4f88;
+			background: linear-gradient(to bottom, #4c63a3, #273661);
+			border: 1px solid #222c4a;
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px 1px rgba(255, 255, 255, 0.5);
+		}
+		.nav a:hover, .dark .nav a:hover {
+			background: linear-gradient(to bottom, #5a77c7, #2f447f);
+			border: 1px solid #222c4a;
+		}
+		.nav a:active, .dark .nav a:active {
+			background: linear-gradient(to bottom, #273661, #4c63a3);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px -1px rgba(255, 255, 255, 0.5);
+		}
+		.nav a.cur, .nav a.cur:hover, .nav a.cur:active,
+		.dark .nav a.cur, .dark .nav a.cur:hover, .dark .nav a.cur:active {
+			color: #CCCCCC;
+			background: rgba(79, 109, 148, 0.7);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45);
+			border: 1px solid #222c4a;
+		}
+		.nav a.nav-first {
+			margin-left: 10px;
+			border-top-left-radius: 8px;
+			border-bottom-left-radius: 8px;
+		}
+		.nav a.nav-last {
+			border-top-right-radius: 8px;
+			border-bottom-right-radius: 8px;
+		}
+		.nav a.greenbutton {
+			background: linear-gradient(to bottom, #4ca363, #276136);
+		}
+		.nav a.greenbutton:hover {
+			background: linear-gradient(to bottom, #5ac777, #2f7f44);
+		}
+		.nav a.greenbutton:active {
+			background: linear-gradient(to bottom, #276136, #4ca363);
+			box-shadow: 0 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px -1px rgba(255, 255, 255, 0.5);
+		}
+		.nav a.purplebutton {
+			background: linear-gradient(to bottom,hsl(267, 36.40%, 46.90%),hsl(267, 42.60%, 26.70%));
+		}
+		.nav a.purplebutton:hover {
+			background: linear-gradient(to bottom,hsl(267, 49.30%, 56.70%),hsl(267, 46.00%, 34.10%));
+		}
+		.nav a.purplebutton:active {
+			background: linear-gradient(to bottom,hsl(267, 42.60%, 26.70%),hsl(267, 36.40%, 46.90%));
+			box-shadow: 0 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px -1px rgba(255, 255, 255, 0.5);
+		}
+
+		@media (max-width:700px) {
+			.nav-wrapper {
+				width: auto;
+				display: inline-block;
+			}
+			.nav-wrapper .nav {
+				padding-left: 135px;
+			}
+			.nav a {
+				font-weight: normal;
+				padding: 8px 7px;
+			}
+			.nav img {
+				top: 10px;
+			}
+		}
+
+		@media (max-width:554px) {
+			header {
+				height: 100px;
+			}
+			.nav-wrapper .nav {
+				padding-left: 0;
+				padding-top: 50px;
+			}
+			.nav img {
+				top: 10px;
+			}
+			.nav a {
+				padding: 8px 12px;
+			}
+			.nav a.nav-first {
+				margin-left: 0;
+			}
+			.nav a.greenbutton {
+				position: absolute;
+				top: 10px;
+				right: 0;
+			}
+		}
+		@media (max-width:419px) {
+			.nav a {
+				padding: 8px 7px;
+			}
+		}
+		@media (max-width:359px) {
+			.nav-wrapper {
+				padding-left: 5px;
+			}
+			.nav a {
+				padding: 8px 4px;
+			}
+		}
+
+		footer {
+			clear: both;
+			text-align: center;
+			color: #888888;
+			padding: 10px 0 10px 0;
+		}
+		footer p {
+			margin: 10px 0;
+		}
+		footer a {
+			color: #AAAAAA;
+		}
+		footer a:hover {
+			color: #6688AA;
+		}
+		footer a.cur, footer a.cur:hover {
+			color: #888888;
+			font-weight: bold;
+			text-decoration: none;
+		}
+
+		/*********************************************************
+		 * Main
+		 *********************************************************/
+		.button {
+			color: white;
+			background: #3a4f88;
+			background: linear-gradient(to bottom, #4c63a3, #273661);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px 1px rgba(255, 255, 255, 0.5);
+			border: 1px solid #222c4a;
+			padding: 3px 10px;
+			text-shadow: black 0px -1px 0;
+			border-radius: 10px;
+			text-decoration: none;
+			display: inline-block;
+			font-family: Verdana,Helvetica,sans-serif;
+			font-size: 11pt;
+			cursor: pointer;
+		}
+		.button:hover {
+			text-decoration: none;
+		}
+		main {
+			margin: 0 auto;
+			padding: 0 15px 15px 15px;
+			max-width: 800px;
+			overflow-wrap: break-word;
+		}
+		a {
+			color: #0073aa;
+		}
+		a:visited {
+			color: #8000aa;
+		}
+		h1 {
+			font-size: 20px;
+			margin-bottom: 20px;
+		}
+		.parentlink {
+			padding: 0 0 12px 0;
+		}
+		.parentlink a {
+			text-decoration: none;
+			display: block;
+			border: 1px solid transparent;
+			padding: 4px 8px 4px 40px;
+			border-radius: 4px;
+		}
+		.parentlink a:hover {
+			background: #e7ebee;
+			border-color: #5f8a9e;
+		}
+		.parentlink i, .parentlink em {
+			vertical-align: middle;
+		}
+		@media (prefers-color-scheme: dark) {
+			html {
+				background: #000;
+				color: #ddd;
+				color-scheme: dark;
+			}
+			a {
+				color:rgb(99, 174, 209);
+			}
+			a:visited {
+				color:rgb(177, 123, 195);
+			}
+			.parentlink a:hover {
+				background: #181818;
+				border-color: #444;
+			}
+		}
+
+		/*********************************************************
+		 * Dirlist
+		 *********************************************************/
+		h1 a {
+			font-weight: normal;
+			text-decoration: none;
+		}
+		h1 a:hover {
+			text-decoration: underline;
+		}
+
+		.dirlist {
+			font-size: 14px;
+			list-style-type: none;
+			padding: 0;
+		}
+		.header {
+			padding: 0 7px 0 39px;
+			border-bottom: 1px solid #888888;
+			background: #f0f0f0;
+		}
+		.parentlink {
+			padding: 0 0 12px 0;
+		}
+
+		.header a, .header a:visited {
+			text-decoration: none;
+			padding: 5px 0;
+			color: inherit;
+		}
+		.header a:hover {
+			text-decoration: none;
+			background: #dddddd;
+		}
+		a.row {
+			text-decoration: none;
+			display: block;
+			border: 1px solid transparent;
+			padding: 4px 8px 4px 40px;
+			border-radius: 4px;
+		}
+		a.row:hover {
+			background:#e7ebee;
+			border-color:#5f8a9e;
+		}
+		a.row * {
+			vertical-align: middle;
+		}
+
+		.icon {
+			display: inline-block;
+			width: 32px;
+			margin-left: -32px;
+			font-size: 20px;
+			text-align: center;
+			color: #777;
+		}
+		.icon.fa-arrow-circle-o-up, .icon.fa-folder-open {
+			color: #3798c5;
+			--fa-secondary-opacity: 0.55;
+		}
+		.icon.fa-image, .icon.fa-picture-o, .icon.fa-film, .icon.fa-video, .icon.fa-video-camera, .icon.fa-volume, .icon.fa-volume-up {
+			color: rgb(139, 115, 82);
+			--fa-secondary-opacity: 0.4;
+		}
+		.icon.icon-js {
+			color: rgb(160, 153, 89);
+		}
+		.icon.icon-ts, .icon.icon-md {
+			color: rgb(83, 112, 149);
+		}
+		.icon.icon-html {
+			color: rgb(166, 125, 67);
+		}
+		.icon.icon-php, .icon.icon-css {
+			color: rgb(125, 83, 149);
+		}
+		.icon.fa-file-pdf, .icon.fa-file-pdf-o, .icon.fa-font-case {
+			color: rgb(149, 83, 83);
+		}
+		.icon.fa-file-archive, .icon.fa-file-archive-o {
+			color:rgb(116, 149, 163);
+		}
+		.filename {
+			display: inline-block;
+			width: 50%;
+			min-width: 260px;
+			font-family: monospace;
+			font-size: 10pt;
+		}
+		.parentlink .filename {
+			font-family: inherit;
+			font-style: italic;
+		}
+		.filesize {
+			display: inline-block;
+			width: 20%;
+			min-width: 80px;
+			color: #666666;
+		}
+		.filemtime {
+			display: inline-block;
+			color: #666666;
+			font-size: 0.9em;
+			min-width: 150px;
+		}
+		.header .icon, .header .filename, .header .filesize, .header .filemtime {
+			font-style: normal;
+			font-family: inherit;
+			font-size: inherit;
+			color: inherit;
+		}
+		@media (prefers-color-scheme: dark) {
+			.header {
+				background: #000;
+			}
+			.header a:hover {
+				background: #333;
+			}
+			.icon {
+				color: #888;
+			}
+			a.row:hover {
+				background: #181818;
+				border-color: #444;
+			}
+			.filesize, .filemtime {
+				color: #888;
+			}
+		}
+
+		/*********************************************************
+		 * Icons
+		 *********************************************************/
+
+		.dirlist-icons {
+			font-size: 0;
+		}
+		.dirlist-icons li {
+			display: inline-block;
+			vertical-align: top;
+			width: 133px;
+			font-size: 10pt;
+		}
+		.dirlist-icons li.header {
+			display: block;
+			width: auto;
+			height: auto;
+			margin-bottom: 2px;
+		}
+		.dirlist-icons .row, .dirlist-icons a.row:hover {
+			text-align: center;
+			padding: 0;
+			text-decoration: none;
+		}
+		.dirlist-icons .row .filesize, .dirlist-icons .row .filemtime {
+			display: none;
+		}
+		.dirlist-icons .row .icon, .dirlist-icons a.row:hover .icon {
+			display: block;
+			font-size: 60px;
+			margin: 0;
+			width: auto;
+			text-decoration: none;
+		}
+		.dirlist-icons .row .filename {
+			display: block;
+			min-width: auto;
+			width: auto;
+			font-size: 9pt;
+		}
+
+		/*********************************************************
+		 * Spriteindex
+		 *********************************************************/
+
+		figure {
+			width: 96px;
+			display: inline-block;
+			vertical-align: top;
+			text-align: center;
+			margin: 0.5em 10px;
+			overflow-wrap: break-word;
+		}
+		figure img {
+			image-rendering: pixelated;
+		}
+		figure figcaption {
+			font-size: 12px;
+			text-align: center;
+		}
+		a {
+			text-decoration: none;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+	</style>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-26211653-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'UA-26211653-1');
+	</script>
+	<!-- End Google Analytics -->
+</head><body>
+
+	<header>
+		<div class="nav-wrapper"><ul class="nav">
+			<li><a class="button nav-first" href="http://pokemonshowdown.com/"><img src="http://play.pokemonshowdown.com/pokemonshowdownbeta.png" srcset="http://play.pokemonshowdown.com/pokemonshowdownbeta.png 1x, http://play.pokemonshowdown.com/pokemonshowdownbeta@2x.png 2x" alt="Pok&eacute;mon Showdown" width="146" height="44" /> Home</a></li>
+			<li><a class="button" href="http://pokemonshowdown.com/dex/">Pok&eacute;dex</a></li>
+			<li><a class="button" href="http://replay.pokemonshowdown.com/">Replay</a></li>
+			<li><a class="button purplebutton" href="http://smogon.com/dex/" target="_blank">Strategy</a></li>
+			<li><a class="button nav-last purplebutton" href="http://smogon.com/forums/" target="_blank">Forum</a></li>
+			<li><a class="button greenbutton nav-first nav-last" href="http://play.pokemonshowdown.com/">Play</a></li>
+		</ul></div>
+	</header>
+
+	<main>
+		<h1>
+			Index of
+			<a href="http://play.pokemonshowdown.com/">play.pokemonshowdown.com</a><wbr />/<a href="../index.html">sprites</a><wbr />/afd-shiny/
+		</h1>
+
+		<p class="parentlink">
+			<a class="row" href="../index.html">
+				<i class="icon fa fa-arrow-circle-o-up">
+				</i><em>(Parent directory)
+				</em>
+			</a>
+		</p>
+	<div>
+		View:
+		<ul class="nav" style="display:inline-block;vertical-align:middle;margin:0 10px 0 0">
+			<li><a class="button nav-first cur" href="index.html@view=sprites">Sprites</a></li>
+			<li><a class="button nav-last" href="index.html@view=dir">Directory</a></li>
+		</ul>
+		Filter:
+		<ul class="nav" style="display:inline-block;vertical-align:middle;margin:0">
+			<li><a class="button nav-first" href="index.html@view=sprites">All</a></li>
+			<li><a class="button nav-last cur" href="index.html@view=sprites&amp;filter=recent">Recent</a></li>
+		</ul>
+	</div>
+</main>
+<h3 style="margin:1em;border-bottom:1px solid #999;padding-bottom:2px">New in 2025-03</h3><figure id="xerneas-neutral.png">
+	<img loading="lazy" src="xerneas-neutral.png" alt="xerneas-neutral.png" title="xerneas-neutral.png" />
+	<figcaption><a href="xerneas-neutral.png">xerneas-neutral</a></figcaption>
+</figure>
+<figure id="vanillish.png">
+	<img loading="lazy" src="vanillish.png" alt="vanillish.png" title="vanillish.png" />
+	<figcaption><a href="vanillish.png">vanillish</a></figcaption>
+</figure>
+<figure id="umbreon.png">
+	<img loading="lazy" src="umbreon.png" alt="umbreon.png" title="umbreon.png" />
+	<figcaption><a href="umbreon.png">umbreon</a></figcaption>
+</figure>
+<figure id="spearow.png">
+	<img loading="lazy" src="spearow.png" alt="spearow.png" title="spearow.png" />
+	<figcaption><a href="spearow.png">spearow</a></figcaption>
+</figure>
+<figure id="shox.png">
+	<img loading="lazy" src="shox.png" alt="shox.png" title="shox.png" />
+	<figcaption><a href="shox.png">shox</a></figcaption>
+</figure>
+<figure id="sandslash-alola.png">
+	<img loading="lazy" src="sandslash-alola.png" alt="sandslash-alola.png" title="sandslash-alola.png" />
+	<figcaption><a href="sandslash-alola.png">sandslash-alola</a></figcaption>
+</figure>
+<figure id="sandile.png">
+	<img loading="lazy" src="sandile.png" alt="sandile.png" title="sandile.png" />
+	<figcaption><a href="sandile.png">sandile</a></figcaption>
+</figure>
+<figure id="sableye-mega.png">
+	<img loading="lazy" src="sableye-mega.png" alt="sableye-mega.png" title="sableye-mega.png" />
+	<figcaption><a href="sableye-mega.png">sableye-mega</a></figcaption>
+</figure>
+<figure id="rhyperior.png">
+	<img loading="lazy" src="rhyperior.png" alt="rhyperior.png" title="rhyperior.png" />
+	<figcaption><a href="rhyperior.png">rhyperior</a></figcaption>
+</figure>
+<figure id="plusle.png">
+	<img loading="lazy" src="plusle.png" alt="plusle.png" title="plusle.png" />
+	<figcaption><a href="plusle.png">plusle</a></figcaption>
+</figure>
+<figure id="pikachu-unova.png">
+	<img loading="lazy" src="pikachu-unova.png" alt="pikachu-unova.png" title="pikachu-unova.png" />
+	<figcaption><a href="pikachu-unova.png">pikachu-unova</a></figcaption>
+</figure>
+<figure id="pikachu-sinnoh.png">
+	<img loading="lazy" src="pikachu-sinnoh.png" alt="pikachu-sinnoh.png" title="pikachu-sinnoh.png" />
+	<figcaption><a href="pikachu-sinnoh.png">pikachu-sinnoh</a></figcaption>
+</figure>
+<figure id="pikachu-original.png">
+	<img loading="lazy" src="pikachu-original.png" alt="pikachu-original.png" title="pikachu-original.png" />
+	<figcaption><a href="pikachu-original.png">pikachu-original</a></figcaption>
+</figure>
+<figure id="pikachu-kalos.png">
+	<img loading="lazy" src="pikachu-kalos.png" alt="pikachu-kalos.png" title="pikachu-kalos.png" />
+	<figcaption><a href="pikachu-kalos.png">pikachu-kalos</a></figcaption>
+</figure>
+<figure id="pikachu-hoenn.png">
+	<img loading="lazy" src="pikachu-hoenn.png" alt="pikachu-hoenn.png" title="pikachu-hoenn.png" />
+	<figcaption><a href="pikachu-hoenn.png">pikachu-hoenn</a></figcaption>
+</figure>
+<figure id="pikachu-alola.png">
+	<img loading="lazy" src="pikachu-alola.png" alt="pikachu-alola.png" title="pikachu-alola.png" />
+	<figcaption><a href="pikachu-alola.png">pikachu-alola</a></figcaption>
+</figure>
+<figure id="mothim.png">
+	<img loading="lazy" src="mothim.png" alt="mothim.png" title="mothim.png" />
+	<figcaption><a href="mothim.png">mothim</a></figcaption>
+</figure>
+<figure id="missingno.png">
+	<img loading="lazy" src="missingno.png" alt="missingno.png" title="missingno.png" />
+	<figcaption><a href="missingno.png">missingno</a></figcaption>
+</figure>
+<figure id="minun.png">
+	<img loading="lazy" src="minun.png" alt="minun.png" title="minun.png" />
+	<figcaption><a href="minun.png">minun</a></figcaption>
+</figure>
+<figure id="lopunny.png">
+	<img loading="lazy" src="lopunny.png" alt="lopunny.png" title="lopunny.png" />
+	<figcaption><a href="lopunny.png">lopunny</a></figcaption>
+</figure>
+<figure id="larvesta.png">
+	<img loading="lazy" src="larvesta.png" alt="larvesta.png" title="larvesta.png" />
+	<figcaption><a href="larvesta.png">larvesta</a></figcaption>
+</figure>
+<figure id="lapras.png">
+	<img loading="lazy" src="lapras.png" alt="lapras.png" title="lapras.png" />
+	<figcaption><a href="lapras.png">lapras</a></figcaption>
+</figure>
+<figure id="kricketot.png">
+	<img loading="lazy" src="kricketot.png" alt="kricketot.png" title="kricketot.png" />
+	<figcaption><a href="kricketot.png">kricketot</a></figcaption>
+</figure>
+<figure id="koffing.png">
+	<img loading="lazy" src="koffing.png" alt="koffing.png" title="koffing.png" />
+	<figcaption><a href="koffing.png">koffing</a></figcaption>
+</figure>
+<figure id="kabuto.png">
+	<img loading="lazy" src="kabuto.png" alt="kabuto.png" title="kabuto.png" />
+	<figcaption><a href="kabuto.png">kabuto</a></figcaption>
+</figure>
+<figure id="jirachi.png">
+	<img loading="lazy" src="jirachi.png" alt="jirachi.png" title="jirachi.png" />
+	<figcaption><a href="jirachi.png">jirachi</a></figcaption>
+</figure>
+<figure id="grumpig.png">
+	<img loading="lazy" src="grumpig.png" alt="grumpig.png" title="grumpig.png" />
+	<figcaption><a href="grumpig.png">grumpig</a></figcaption>
+</figure>
+<figure id="gimmighoul.png">
+	<img loading="lazy" src="gimmighoul.png" alt="gimmighoul.png" title="gimmighoul.png" />
+	<figcaption><a href="gimmighoul.png">gimmighoul</a></figcaption>
+</figure>
+<figure id="gimmighoul-roaming.png">
+	<img loading="lazy" src="gimmighoul-roaming.png" alt="gimmighoul-roaming.png" title="gimmighoul-roaming.png" />
+	<figcaption><a href="gimmighoul-roaming.png">gimmighoul-roaming</a></figcaption>
+</figure>
+<figure id="espeon.png">
+	<img loading="lazy" src="espeon.png" alt="espeon.png" title="espeon.png" />
+	<figcaption><a href="espeon.png">espeon</a></figcaption>
+</figure>
+<figure id="elekid.png">
+	<img loading="lazy" src="elekid.png" alt="elekid.png" title="elekid.png" />
+	<figcaption><a href="elekid.png">elekid</a></figcaption>
+</figure>
+<figure id="electivire.png">
+	<img loading="lazy" src="electivire.png" alt="electivire.png" title="electivire.png" />
+	<figcaption><a href="electivire.png">electivire</a></figcaption>
+</figure>
+<figure id="draggalong.png">
+	<img loading="lazy" src="draggalong.png" alt="draggalong.png" title="draggalong.png" />
+	<figcaption><a href="draggalong.png">draggalong</a></figcaption>
+</figure>
+<figure id="diggersby.png">
+	<img loading="lazy" src="diggersby.png" alt="diggersby.png" title="diggersby.png" />
+	<figcaption><a href="diggersby.png">diggersby</a></figcaption>
+</figure>
+<figure id="cyndaquil.png">
+	<img loading="lazy" src="cyndaquil.png" alt="cyndaquil.png" title="cyndaquil.png" />
+	<figcaption><a href="cyndaquil.png">cyndaquil</a></figcaption>
+</figure>
+<figure id="crawdaunt.png">
+	<img loading="lazy" src="crawdaunt.png" alt="crawdaunt.png" title="crawdaunt.png" />
+	<figcaption><a href="crawdaunt.png">crawdaunt</a></figcaption>
+</figure>
+<figure id="claydol.png">
+	<img loading="lazy" src="claydol.png" alt="claydol.png" title="claydol.png" />
+	<figcaption><a href="claydol.png">claydol</a></figcaption>
+</figure>
+<figure id="chuggon.png">
+	<img loading="lazy" src="chuggon.png" alt="chuggon.png" title="chuggon.png" />
+	<figcaption><a href="chuggon.png">chuggon</a></figcaption>
+</figure>
+<figure id="chuggalong.png">
+	<img loading="lazy" src="chuggalong.png" alt="chuggalong.png" title="chuggalong.png" />
+	<figcaption><a href="chuggalong.png">chuggalong</a></figcaption>
+</figure>
+<figure id="camerupt.png">
+	<img loading="lazy" src="camerupt.png" alt="camerupt.png" title="camerupt.png" />
+	<figcaption><a href="camerupt.png">camerupt</a></figcaption>
+</figure>
+<figure id="banette.png">
+	<img loading="lazy" src="banette.png" alt="banette.png" title="banette.png" />
+	<figcaption><a href="banette.png">banette</a></figcaption>
+</figure>
+<figure id="banette-mega.png">
+	<img loading="lazy" src="banette-mega.png" alt="banette-mega.png" title="banette-mega.png" />
+	<figcaption><a href="banette-mega.png">banette-mega</a></figcaption>
+</figure>
+<h3 style="margin:1em;border-bottom:1px solid #999;padding-bottom:2px">New in 2024-03</h3><figure id="zekrom.png">
+	<img loading="lazy" src="zekrom.png" alt="zekrom.png" title="zekrom.png" />
+	<figcaption><a href="zekrom.png">zekrom</a></figcaption>
+</figure>
+<figure id="voodoll.png">
+	<img loading="lazy" src="voodoll.png" alt="voodoll.png" title="voodoll.png" />
+	<figcaption><a href="voodoll.png">voodoll</a></figcaption>
+</figure>
+<figure id="volkritter.png">
+	<img loading="lazy" src="volkritter.png" alt="volkritter.png" title="volkritter.png" />
+	<figcaption><a href="volkritter.png">volkritter</a></figcaption>
+</figure>
+<figure id="ursaluna-bloodmoon.png">
+	<img loading="lazy" src="ursaluna-bloodmoon.png" alt="ursaluna-bloodmoon.png" title="ursaluna-bloodmoon.png" />
+	<figcaption><a href="ursaluna-bloodmoon.png">ursaluna-bloodmoon</a></figcaption>
+</figure>
+<figure id="terapagos.png">
+	<img loading="lazy" src="terapagos.png" alt="terapagos.png" title="terapagos.png" />
+	<figcaption><a href="terapagos.png">terapagos</a></figcaption>
+</figure>
+<figure id="terapagos-terastal.png">
+	<img loading="lazy" src="terapagos-terastal.png" alt="terapagos-terastal.png" title="terapagos-terastal.png" />
+	<figcaption><a href="terapagos-terastal.png">terapagos-terastal</a></figcaption>
+</figure>
+<figure id="terapagos-stellar.png">
+	<img loading="lazy" src="terapagos-stellar.png" alt="terapagos-stellar.png" title="terapagos-stellar.png" />
+	<figcaption><a href="terapagos-stellar.png">terapagos-stellar</a></figcaption>
+</figure>
+<figure id="tactite.png">
+	<img loading="lazy" src="tactite.png" alt="tactite.png" title="tactite.png" />
+	<figcaption><a href="tactite.png">tactite</a></figcaption>
+</figure>
+<figure id="syclar.png">
+	<img loading="lazy" src="syclar.png" alt="syclar.png" title="syclar.png" />
+	<figcaption><a href="syclar.png">syclar</a></figcaption>
+</figure>
+<figure id="swirlpool.png">
+	<img loading="lazy" src="swirlpool.png" alt="swirlpool.png" title="swirlpool.png" />
+	<figcaption><a href="swirlpool.png">swirlpool</a></figcaption>
+</figure>
+<figure id="solotl.png">
+	<img loading="lazy" src="solotl.png" alt="solotl.png" title="solotl.png" />
+	<figcaption><a href="solotl.png">solotl</a></figcaption>
+</figure>
+<figure id="snugglow.png">
+	<img loading="lazy" src="snugglow.png" alt="snugglow.png" title="snugglow.png" />
+	<figcaption><a href="snugglow.png">snugglow</a></figcaption>
+</figure>
+<figure id="smoguana.png">
+	<img loading="lazy" src="smoguana.png" alt="smoguana.png" title="smoguana.png" />
+	<figcaption><a href="smoguana.png">smoguana</a></figcaption>
+</figure>
+<figure id="smogecko.png">
+	<img loading="lazy" src="smogecko.png" alt="smogecko.png" title="smogecko.png" />
+	<figcaption><a href="smogecko.png">smogecko</a></figcaption>
+</figure>
+<figure id="sinistcha.png">
+	<img loading="lazy" src="sinistcha.png" alt="sinistcha.png" title="sinistcha.png" />
+	<figcaption><a href="sinistcha.png">sinistcha</a></figcaption>
+</figure>
+<figure id="sinistcha-masterpiece.png">
+	<img loading="lazy" src="sinistcha-masterpiece.png" alt="sinistcha-masterpiece.png" title="sinistcha-masterpiece.png" />
+	<figcaption><a href="sinistcha-masterpiece.png">sinistcha-masterpiece</a></figcaption>
+</figure>
+<figure id="sentret.png">
+	<img loading="lazy" src="sentret.png" alt="sentret.png" title="sentret.png" />
+	<figcaption><a href="sentret.png">sentret</a></figcaption>
+</figure>
+<figure id="scratchet.png">
+	<img loading="lazy" src="scratchet.png" alt="scratchet.png" title="scratchet.png" />
+	<figcaption><a href="scratchet.png">scratchet</a></figcaption>
+</figure>
+<figure id="scattervein.png">
+	<img loading="lazy" src="scattervein.png" alt="scattervein.png" title="scattervein.png" />
+	<figcaption><a href="scattervein.png">scattervein</a></figcaption>
+</figure>
+<figure id="saharascal.png">
+	<img loading="lazy" src="saharascal.png" alt="saharascal.png" title="saharascal.png" />
+	<figcaption><a href="saharascal.png">saharascal</a></figcaption>
+</figure>
+<figure id="relicanth.png">
+	<img loading="lazy" src="relicanth.png" alt="relicanth.png" title="relicanth.png" />
+	<figcaption><a href="relicanth.png">relicanth</a></figcaption>
+</figure>
+<figure id="registeel.png">
+	<img loading="lazy" src="registeel.png" alt="registeel.png" title="registeel.png" />
+	<figcaption><a href="registeel.png">registeel</a></figcaption>
+</figure>
+<figure id="regice.png">
+	<img loading="lazy" src="regice.png" alt="regice.png" title="regice.png" />
+	<figcaption><a href="regice.png">regice</a></figcaption>
+</figure>
+<figure id="rebble.png">
+	<img loading="lazy" src="rebble.png" alt="rebble.png" title="rebble.png" />
+	<figcaption><a href="rebble.png">rebble</a></figcaption>
+</figure>
+<figure id="ragingbolt.png">
+	<img loading="lazy" src="ragingbolt.png" alt="ragingbolt.png" title="ragingbolt.png" />
+	<figcaption><a href="ragingbolt.png">ragingbolt</a></figcaption>
+</figure>
+<figure id="protowatt.png">
+	<img loading="lazy" src="protowatt.png" alt="protowatt.png" title="protowatt.png" />
+	<figcaption><a href="protowatt.png">protowatt</a></figcaption>
+</figure>
+<figure id="privatyke.png">
+	<img loading="lazy" src="privatyke.png" alt="privatyke.png" title="privatyke.png" />
+	<figcaption><a href="privatyke.png">privatyke</a></figcaption>
+</figure>
+<figure id="poltchageist.png">
+	<img loading="lazy" src="poltchageist.png" alt="poltchageist.png" title="poltchageist.png" />
+	<figcaption><a href="poltchageist.png">poltchageist</a></figcaption>
+</figure>
+<figure id="poltchageist-artisan.png">
+	<img loading="lazy" src="poltchageist-artisan.png" alt="poltchageist-artisan.png" title="poltchageist-artisan.png" />
+	<figcaption><a href="poltchageist-artisan.png">poltchageist-artisan</a></figcaption>
+</figure>
+<figure id="poliwhirl.png">
+	<img loading="lazy" src="poliwhirl.png" alt="poliwhirl.png" title="poliwhirl.png" />
+	<figcaption><a href="poliwhirl.png">poliwhirl</a></figcaption>
+</figure>
+<figure id="pluffle.png">
+	<img loading="lazy" src="pluffle.png" alt="pluffle.png" title="pluffle.png" />
+	<figcaption><a href="pluffle.png">pluffle</a></figcaption>
+</figure>
+<figure id="pecharunt.png">
+	<img loading="lazy" src="pecharunt.png" alt="pecharunt.png" title="pecharunt.png" />
+	<figcaption><a href="pecharunt.png">pecharunt</a></figcaption>
+</figure>
+<figure id="patrat.png">
+	<img loading="lazy" src="patrat.png" alt="patrat.png" title="patrat.png" />
+	<figcaption><a href="patrat.png">patrat</a></figcaption>
+</figure>
+<figure id="okidogi.png">
+	<img loading="lazy" src="okidogi.png" alt="okidogi.png" title="okidogi.png" />
+	<figcaption><a href="okidogi.png">okidogi</a></figcaption>
+</figure>
+<figure id="ogerpon.png">
+	<img loading="lazy" src="ogerpon.png" alt="ogerpon.png" title="ogerpon.png" />
+	<figcaption><a href="ogerpon.png">ogerpon</a></figcaption>
+</figure>
+<figure id="ogerpon-wellspringtera.png">
+	<img loading="lazy" src="ogerpon-wellspringtera.png" alt="ogerpon-wellspringtera.png" title="ogerpon-wellspringtera.png" />
+	<figcaption><a href="ogerpon-wellspringtera.png">ogerpon-wellspringtera</a></figcaption>
+</figure>
+<figure id="ogerpon-wellspring.png">
+	<img loading="lazy" src="ogerpon-wellspring.png" alt="ogerpon-wellspring.png" title="ogerpon-wellspring.png" />
+	<figcaption><a href="ogerpon-wellspring.png">ogerpon-wellspring</a></figcaption>
+</figure>
+<figure id="ogerpon-tealtera.png">
+	<img loading="lazy" src="ogerpon-tealtera.png" alt="ogerpon-tealtera.png" title="ogerpon-tealtera.png" />
+	<figcaption><a href="ogerpon-tealtera.png">ogerpon-tealtera</a></figcaption>
+</figure>
+<figure id="ogerpon-hearthstonetera.png">
+	<img loading="lazy" src="ogerpon-hearthstonetera.png" alt="ogerpon-hearthstonetera.png" title="ogerpon-hearthstonetera.png" />
+	<figcaption><a href="ogerpon-hearthstonetera.png">ogerpon-hearthstonetera</a></figcaption>
+</figure>
+<figure id="ogerpon-hearthflame.png">
+	<img loading="lazy" src="ogerpon-hearthflame.png" alt="ogerpon-hearthflame.png" title="ogerpon-hearthflame.png" />
+	<figcaption><a href="ogerpon-hearthflame.png">ogerpon-hearthflame</a></figcaption>
+</figure>
+<figure id="ogerpon-cornerstonetera.png">
+	<img loading="lazy" src="ogerpon-cornerstonetera.png" alt="ogerpon-cornerstonetera.png" title="ogerpon-cornerstonetera.png" />
+	<figcaption><a href="ogerpon-cornerstonetera.png">ogerpon-cornerstonetera</a></figcaption>
+</figure>
+<figure id="ogerpon-cornerstone.png">
+	<img loading="lazy" src="ogerpon-cornerstone.png" alt="ogerpon-cornerstone.png" title="ogerpon-cornerstone.png" />
+	<figcaption><a href="ogerpon-cornerstone.png">ogerpon-cornerstone</a></figcaption>
+</figure>
+<figure id="nohface.png">
+	<img loading="lazy" src="nohface.png" alt="nohface.png" title="nohface.png" />
+	<figcaption><a href="nohface.png">nohface</a></figcaption>
+</figure>
+<figure id="nidoranf.png">
+	<img loading="lazy" src="nidoranf.png" alt="nidoranf.png" title="nidoranf.png" />
+	<figcaption><a href="nidoranf.png">nidoranf</a></figcaption>
+</figure>
+<figure id="necturine.png">
+	<img loading="lazy" src="necturine.png" alt="necturine.png" title="necturine.png" />
+	<figcaption><a href="necturine.png">necturine</a></figcaption>
+</figure>
+<figure id="munkidori.png">
+	<img loading="lazy" src="munkidori.png" alt="munkidori.png" title="munkidori.png" />
+	<figcaption><a href="munkidori.png">munkidori</a></figcaption>
+</figure>
+<figure id="mumbao.png">
+	<img loading="lazy" src="mumbao.png" alt="mumbao.png" title="mumbao.png" />
+	<figcaption><a href="mumbao.png">mumbao</a></figcaption>
+</figure>
+<figure id="monohm.png">
+	<img loading="lazy" src="monohm.png" alt="monohm.png" title="monohm.png" />
+	<figcaption><a href="monohm.png">monohm</a></figcaption>
+</figure>
+<figure id="miasmite.png">
+	<img loading="lazy" src="miasmite.png" alt="miasmite.png" title="miasmite.png" />
+	<figcaption><a href="miasmite.png">miasmite</a></figcaption>
+</figure>
+<figure id="luxray.png">
+	<img loading="lazy" src="luxray.png" alt="luxray.png" title="luxray.png" />
+	<figcaption><a href="luxray.png">luxray</a></figcaption>
+</figure>
+<figure id="lunala.png">
+	<img loading="lazy" src="lunala.png" alt="lunala.png" title="lunala.png" />
+	<figcaption><a href="lunala.png">lunala</a></figcaption>
+</figure>
+<figure id="litleo.png">
+	<img loading="lazy" src="litleo.png" alt="litleo.png" title="litleo.png" />
+	<figcaption><a href="litleo.png">litleo</a></figcaption>
+</figure>
+<figure id="justyke.png">
+	<img loading="lazy" src="justyke.png" alt="justyke.png" title="justyke.png" />
+	<figcaption><a href="justyke.png">justyke</a></figcaption>
+</figure>
+<figure id="ironcrown.png">
+	<img loading="lazy" src="ironcrown.png" alt="ironcrown.png" title="ironcrown.png" />
+	<figcaption><a href="ironcrown.png">ironcrown</a></figcaption>
+</figure>
+<figure id="ironboulder.png">
+	<img loading="lazy" src="ironboulder.png" alt="ironboulder.png" title="ironboulder.png" />
+	<figcaption><a href="ironboulder.png">ironboulder</a></figcaption>
+</figure>
+<figure id="illumise.png">
+	<img loading="lazy" src="illumise.png" alt="illumise.png" title="illumise.png" />
+	<figcaption><a href="illumise.png">illumise</a></figcaption>
+</figure>
+<figure id="hydrapple.png">
+	<img loading="lazy" src="hydrapple.png" alt="hydrapple.png" title="hydrapple.png" />
+	<figcaption><a href="hydrapple.png">hydrapple</a></figcaption>
+</figure>
+<figure id="hemogoblin.png">
+	<img loading="lazy" src="hemogoblin.png" alt="hemogoblin.png" title="hemogoblin.png" />
+	<figcaption><a href="hemogoblin.png">hemogoblin</a></figcaption>
+</figure>
+<figure id="gougingfire.png">
+	<img loading="lazy" src="gougingfire.png" alt="gougingfire.png" title="gougingfire.png" />
+	<figcaption><a href="gougingfire.png">gougingfire</a></figcaption>
+</figure>
+<figure id="floatoy.png">
+	<img loading="lazy" src="floatoy.png" alt="floatoy.png" title="floatoy.png" />
+	<figcaption><a href="floatoy.png">floatoy</a></figcaption>
+</figure>
+<figure id="flarelm.png">
+	<img loading="lazy" src="flarelm.png" alt="flarelm.png" title="flarelm.png" />
+	<figcaption><a href="flarelm.png">flarelm</a></figcaption>
+</figure>
+<figure id="fezandipiti.png">
+	<img loading="lazy" src="fezandipiti.png" alt="fezandipiti.png" title="fezandipiti.png" />
+	<figcaption><a href="fezandipiti.png">fezandipiti</a></figcaption>
+</figure>
+<figure id="fawnifer.png">
+	<img loading="lazy" src="fawnifer.png" alt="fawnifer.png" title="fawnifer.png" />
+	<figcaption><a href="fawnifer.png">fawnifer</a></figcaption>
+</figure>
+<figure id="embirch.png">
+	<img loading="lazy" src="embirch.png" alt="embirch.png" title="embirch.png" />
+	<figcaption><a href="embirch.png">embirch</a></figcaption>
+</figure>
+<figure id="electrelk.png">
+	<img loading="lazy" src="electrelk.png" alt="electrelk.png" title="electrelk.png" />
+	<figcaption><a href="electrelk.png">electrelk</a></figcaption>
+</figure>
+<figure id="duohm.png">
+	<img loading="lazy" src="duohm.png" alt="duohm.png" title="duohm.png" />
+	<figcaption><a href="duohm.png">duohm</a></figcaption>
+</figure>
+<figure id="dorsoil.png">
+	<img loading="lazy" src="dorsoil.png" alt="dorsoil.png" title="dorsoil.png" />
+	<figcaption><a href="dorsoil.png">dorsoil</a></figcaption>
+</figure>
+<figure id="dipplin.png">
+	<img loading="lazy" src="dipplin.png" alt="dipplin.png" title="dipplin.png" />
+	<figcaption><a href="dipplin.png">dipplin</a></figcaption>
+</figure>
+<figure id="cupra.png">
+	<img loading="lazy" src="cupra.png" alt="cupra.png" title="cupra.png" />
+	<figcaption><a href="cupra.png">cupra</a></figcaption>
+</figure>
+<figure id="crucibelle.png">
+	<img loading="lazy" src="crucibelle.png" alt="crucibelle.png" title="crucibelle.png" />
+	<figcaption><a href="crucibelle.png">crucibelle</a></figcaption>
+</figure>
+<figure id="cresceidon.png">
+	<img loading="lazy" src="cresceidon.png" alt="cresceidon.png" title="cresceidon.png" />
+	<figcaption><a href="cresceidon.png">cresceidon</a></figcaption>
+</figure>
+<figure id="corsola.png">
+	<img loading="lazy" src="corsola.png" alt="corsola.png" title="corsola.png" />
+	<figcaption><a href="corsola.png">corsola</a></figcaption>
+</figure>
+<figure id="coribalis.png">
+	<img loading="lazy" src="coribalis.png" alt="coribalis.png" title="coribalis.png" />
+	<figcaption><a href="coribalis.png">coribalis</a></figcaption>
+</figure>
+<figure id="cinccino.png">
+	<img loading="lazy" src="cinccino.png" alt="cinccino.png" title="cinccino.png" />
+	<figcaption><a href="cinccino.png">cinccino</a></figcaption>
+</figure>
+<figure id="cawdet.png">
+	<img loading="lazy" src="cawdet.png" alt="cawdet.png" title="cawdet.png" />
+	<figcaption><a href="cawdet.png">cawdet</a></figcaption>
+</figure>
+<figure id="caimanoe.png">
+	<img loading="lazy" src="caimanoe.png" alt="caimanoe.png" title="caimanoe.png" />
+	<figcaption><a href="caimanoe.png">caimanoe</a></figcaption>
+</figure>
+<figure id="buzzwole.png">
+	<img loading="lazy" src="buzzwole.png" alt="buzzwole.png" title="buzzwole.png" />
+	<figcaption><a href="buzzwole.png">buzzwole</a></figcaption>
+</figure>
+<figure id="breezi.png">
+	<img loading="lazy" src="breezi.png" alt="breezi.png" title="breezi.png" />
+	<figcaption><a href="breezi.png">breezi</a></figcaption>
+</figure>
+<figure id="brattler.png">
+	<img loading="lazy" src="brattler.png" alt="brattler.png" title="brattler.png" />
+	<figcaption><a href="brattler.png">brattler</a></figcaption>
+</figure>
+<figure id="binacle.png">
+	<img loading="lazy" src="binacle.png" alt="binacle.png" title="binacle.png" />
+	<figcaption><a href="binacle.png">binacle</a></figcaption>
+</figure>
+<figure id="argalis.png">
+	<img loading="lazy" src="argalis.png" alt="argalis.png" title="argalis.png" />
+	<figcaption><a href="argalis.png">argalis</a></figcaption>
+</figure>
+<figure id="archaludon.png">
+	<img loading="lazy" src="archaludon.png" alt="archaludon.png" title="archaludon.png" />
+	<figcaption><a href="archaludon.png">archaludon</a></figcaption>
+</figure>
+<figure id="ababo.png">
+	<img loading="lazy" src="ababo.png" alt="ababo.png" title="ababo.png" />
+	<figcaption><a href="ababo.png">ababo</a></figcaption>
+</figure>
+</html>

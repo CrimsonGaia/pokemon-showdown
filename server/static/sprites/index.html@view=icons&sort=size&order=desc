@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+	<meta charset="UTF-8" />
+
+	<title>/sprites/ - Showdown!</title>
+
+	<meta name="viewport" content="width=device-width" />
+	<link rel="stylesheet" href="http://play.pokemonshowdown.com/dirindex/font-awesome.min.css" />
+	<link rel="stylesheet" href="http://play.pokemonshowdown.com/dirindex/fontawesome5-solid-duotone.min.css?" />
+
+	<style>
+		/*********************************************************
+		 * Layout
+		 *********************************************************/
+
+		html, body {
+			margin: 0;
+			padding: 0;
+			min-height: 100%;
+		}
+
+		html {
+			color: white;
+			font-family: Verdana,Helvetica,sans-serif;
+			font-size: 11pt;
+			background: #f0f0f0;
+			color: #333333;
+		}
+		body {
+			background: linear-gradient(to bottom, rgba(77, 93, 140, 0.6), rgba(77, 93, 140, 0.2) 80px, transparent 160px, transparent);
+		}
+
+		header {
+			margin: 0;
+			padding: 2px;
+			/* background: rgba(255, 255, 255, .2);
+			border-bottom: 1px solid rgba(255, 255, 255, .6); */
+			text-align: center;
+			height: 60px;
+		}
+		.nav-wrapper {
+			width: 700px;
+			margin: 0 auto;
+			position: relative;
+		}
+		.nav {
+			padding: 0;
+		}
+		.nav-wrapper .nav {
+			padding-left: 140px;
+			padding-top: 5px;
+		}
+		.nav li {
+			float: left;
+			list-style-type: none;
+		}
+		.nav img {
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+		.nav a, .nav a:visited {
+			color: white;
+			background: #3a4f88;
+			background: linear-gradient(to bottom, #4c63a3, #273661);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px 1px rgba(255, 255, 255, 0.5);
+			border: 1px solid #222c4a;
+			text-shadow: black 0px -1px 0;
+			padding: 8px 15px;
+			font-weight: bold;
+			text-decoration: none;
+			border-radius: 0;
+			margin-left: -1px;
+			font-size: 11pt;
+		}
+		.dark .nav a, .dark .nav a:visited {
+			/* make sure other styling doesn't override */
+			color: white;
+			background: #3a4f88;
+			background: linear-gradient(to bottom, #4c63a3, #273661);
+			border: 1px solid #222c4a;
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px 1px rgba(255, 255, 255, 0.5);
+		}
+		.nav a:hover, .dark .nav a:hover {
+			background: linear-gradient(to bottom, #5a77c7, #2f447f);
+			border: 1px solid #222c4a;
+		}
+		.nav a:active, .dark .nav a:active {
+			background: linear-gradient(to bottom, #273661, #4c63a3);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px -1px rgba(255, 255, 255, 0.5);
+		}
+		.nav a.cur, .nav a.cur:hover, .nav a.cur:active,
+		.dark .nav a.cur, .dark .nav a.cur:hover, .dark .nav a.cur:active {
+			color: #CCCCCC;
+			background: rgba(79, 109, 148, 0.7);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45);
+			border: 1px solid #222c4a;
+		}
+		.nav a.nav-first {
+			margin-left: 10px;
+			border-top-left-radius: 8px;
+			border-bottom-left-radius: 8px;
+		}
+		.nav a.nav-last {
+			border-top-right-radius: 8px;
+			border-bottom-right-radius: 8px;
+		}
+		.nav a.greenbutton {
+			background: linear-gradient(to bottom, #4ca363, #276136);
+		}
+		.nav a.greenbutton:hover {
+			background: linear-gradient(to bottom, #5ac777, #2f7f44);
+		}
+		.nav a.greenbutton:active {
+			background: linear-gradient(to bottom, #276136, #4ca363);
+			box-shadow: 0 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px -1px rgba(255, 255, 255, 0.5);
+		}
+		.nav a.purplebutton {
+			background: linear-gradient(to bottom,hsl(267, 36.40%, 46.90%),hsl(267, 42.60%, 26.70%));
+		}
+		.nav a.purplebutton:hover {
+			background: linear-gradient(to bottom,hsl(267, 49.30%, 56.70%),hsl(267, 46.00%, 34.10%));
+		}
+		.nav a.purplebutton:active {
+			background: linear-gradient(to bottom,hsl(267, 42.60%, 26.70%),hsl(267, 36.40%, 46.90%));
+			box-shadow: 0 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px -1px rgba(255, 255, 255, 0.5);
+		}
+
+		@media (max-width:700px) {
+			.nav-wrapper {
+				width: auto;
+				display: inline-block;
+			}
+			.nav-wrapper .nav {
+				padding-left: 135px;
+			}
+			.nav a {
+				font-weight: normal;
+				padding: 8px 7px;
+			}
+			.nav img {
+				top: 10px;
+			}
+		}
+
+		@media (max-width:554px) {
+			header {
+				height: 100px;
+			}
+			.nav-wrapper .nav {
+				padding-left: 0;
+				padding-top: 50px;
+			}
+			.nav img {
+				top: 10px;
+			}
+			.nav a {
+				padding: 8px 12px;
+			}
+			.nav a.nav-first {
+				margin-left: 0;
+			}
+			.nav a.greenbutton {
+				position: absolute;
+				top: 10px;
+				right: 0;
+			}
+		}
+		@media (max-width:419px) {
+			.nav a {
+				padding: 8px 7px;
+			}
+		}
+		@media (max-width:359px) {
+			.nav-wrapper {
+				padding-left: 5px;
+			}
+			.nav a {
+				padding: 8px 4px;
+			}
+		}
+
+		footer {
+			clear: both;
+			text-align: center;
+			color: #888888;
+			padding: 10px 0 10px 0;
+		}
+		footer p {
+			margin: 10px 0;
+		}
+		footer a {
+			color: #AAAAAA;
+		}
+		footer a:hover {
+			color: #6688AA;
+		}
+		footer a.cur, footer a.cur:hover {
+			color: #888888;
+			font-weight: bold;
+			text-decoration: none;
+		}
+
+		/*********************************************************
+		 * Main
+		 *********************************************************/
+		.button {
+			color: white;
+			background: #3a4f88;
+			background: linear-gradient(to bottom, #4c63a3, #273661);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px 1px rgba(255, 255, 255, 0.5);
+			border: 1px solid #222c4a;
+			padding: 3px 10px;
+			text-shadow: black 0px -1px 0;
+			border-radius: 10px;
+			text-decoration: none;
+			display: inline-block;
+			font-family: Verdana,Helvetica,sans-serif;
+			font-size: 11pt;
+			cursor: pointer;
+		}
+		.button:hover {
+			text-decoration: none;
+		}
+		main {
+			margin: 0 auto;
+			padding: 0 15px 15px 15px;
+			max-width: 800px;
+			overflow-wrap: break-word;
+		}
+		a {
+			color: #0073aa;
+		}
+		a:visited {
+			color: #8000aa;
+		}
+		h1 {
+			font-size: 20px;
+			margin-bottom: 20px;
+		}
+		.parentlink {
+			padding: 0 0 12px 0;
+		}
+		.parentlink a {
+			text-decoration: none;
+			display: block;
+			border: 1px solid transparent;
+			padding: 4px 8px 4px 40px;
+			border-radius: 4px;
+		}
+		.parentlink a:hover {
+			background: #e7ebee;
+			border-color: #5f8a9e;
+		}
+		.parentlink i, .parentlink em {
+			vertical-align: middle;
+		}
+		@media (prefers-color-scheme: dark) {
+			html {
+				background: #000;
+				color: #ddd;
+				color-scheme: dark;
+			}
+			a {
+				color:rgb(99, 174, 209);
+			}
+			a:visited {
+				color:rgb(177, 123, 195);
+			}
+			.parentlink a:hover {
+				background: #181818;
+				border-color: #444;
+			}
+		}
+
+		/*********************************************************
+		 * Dirlist
+		 *********************************************************/
+		h1 a {
+			font-weight: normal;
+			text-decoration: none;
+		}
+		h1 a:hover {
+			text-decoration: underline;
+		}
+
+		.dirlist {
+			font-size: 14px;
+			list-style-type: none;
+			padding: 0;
+		}
+		.header {
+			padding: 0 7px 0 39px;
+			border-bottom: 1px solid #888888;
+			background: #f0f0f0;
+		}
+		.parentlink {
+			padding: 0 0 12px 0;
+		}
+
+		.header a, .header a:visited {
+			text-decoration: none;
+			padding: 5px 0;
+			color: inherit;
+		}
+		.header a:hover {
+			text-decoration: none;
+			background: #dddddd;
+		}
+		a.row {
+			text-decoration: none;
+			display: block;
+			border: 1px solid transparent;
+			padding: 4px 8px 4px 40px;
+			border-radius: 4px;
+		}
+		a.row:hover {
+			background:#e7ebee;
+			border-color:#5f8a9e;
+		}
+		a.row * {
+			vertical-align: middle;
+		}
+
+		.icon {
+			display: inline-block;
+			width: 32px;
+			margin-left: -32px;
+			font-size: 20px;
+			text-align: center;
+			color: #777;
+		}
+		.icon.fa-arrow-circle-o-up, .icon.fa-folder-open {
+			color: #3798c5;
+			--fa-secondary-opacity: 0.55;
+		}
+		.icon.fa-image, .icon.fa-picture-o, .icon.fa-film, .icon.fa-video, .icon.fa-video-camera, .icon.fa-volume, .icon.fa-volume-up {
+			color: rgb(139, 115, 82);
+			--fa-secondary-opacity: 0.4;
+		}
+		.icon.icon-js {
+			color: rgb(160, 153, 89);
+		}
+		.icon.icon-ts, .icon.icon-md {
+			color: rgb(83, 112, 149);
+		}
+		.icon.icon-html {
+			color: rgb(166, 125, 67);
+		}
+		.icon.icon-php, .icon.icon-css {
+			color: rgb(125, 83, 149);
+		}
+		.icon.fa-file-pdf, .icon.fa-file-pdf-o, .icon.fa-font-case {
+			color: rgb(149, 83, 83);
+		}
+		.icon.fa-file-archive, .icon.fa-file-archive-o {
+			color:rgb(116, 149, 163);
+		}
+		.filename {
+			display: inline-block;
+			width: 50%;
+			min-width: 260px;
+			font-family: monospace;
+			font-size: 10pt;
+		}
+		.parentlink .filename {
+			font-family: inherit;
+			font-style: italic;
+		}
+		.filesize {
+			display: inline-block;
+			width: 20%;
+			min-width: 80px;
+			color: #666666;
+		}
+		.filemtime {
+			display: inline-block;
+			color: #666666;
+			font-size: 0.9em;
+			min-width: 150px;
+		}
+		.header .icon, .header .filename, .header .filesize, .header .filemtime {
+			font-style: normal;
+			font-family: inherit;
+			font-size: inherit;
+			color: inherit;
+		}
+		@media (prefers-color-scheme: dark) {
+			.header {
+				background: #000;
+			}
+			.header a:hover {
+				background: #333;
+			}
+			.icon {
+				color: #888;
+			}
+			a.row:hover {
+				background: #181818;
+				border-color: #444;
+			}
+			.filesize, .filemtime {
+				color: #888;
+			}
+		}
+
+		/*********************************************************
+		 * Icons
+		 *********************************************************/
+
+		.dirlist-icons {
+			font-size: 0;
+		}
+		.dirlist-icons li {
+			display: inline-block;
+			vertical-align: top;
+			width: 133px;
+			font-size: 10pt;
+		}
+		.dirlist-icons li.header {
+			display: block;
+			width: auto;
+			height: auto;
+			margin-bottom: 2px;
+		}
+		.dirlist-icons .row, .dirlist-icons a.row:hover {
+			text-align: center;
+			padding: 0;
+			text-decoration: none;
+		}
+		.dirlist-icons .row .filesize, .dirlist-icons .row .filemtime {
+			display: none;
+		}
+		.dirlist-icons .row .icon, .dirlist-icons a.row:hover .icon {
+			display: block;
+			font-size: 60px;
+			margin: 0;
+			width: auto;
+			text-decoration: none;
+		}
+		.dirlist-icons .row .filename {
+			display: block;
+			min-width: auto;
+			width: auto;
+			font-size: 9pt;
+		}
+
+		/*********************************************************
+		 * Spriteindex
+		 *********************************************************/
+
+		figure {
+			width: 96px;
+			display: inline-block;
+			vertical-align: top;
+			text-align: center;
+			margin: 0.5em 10px;
+			overflow-wrap: break-word;
+		}
+		figure img {
+			image-rendering: pixelated;
+		}
+		figure figcaption {
+			font-size: 12px;
+			text-align: center;
+		}
+		a {
+			text-decoration: none;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+	</style>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-26211653-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'UA-26211653-1');
+	</script>
+	<!-- End Google Analytics -->
+</head><body>
+
+	<header>
+		<div class="nav-wrapper"><ul class="nav">
+			<li><a class="button nav-first" href="http://pokemonshowdown.com/"><img src="http://play.pokemonshowdown.com/pokemonshowdownbeta.png" srcset="http://play.pokemonshowdown.com/pokemonshowdownbeta.png 1x, http://play.pokemonshowdown.com/pokemonshowdownbeta@2x.png 2x" alt="Pok&eacute;mon Showdown" width="146" height="44" /> Home</a></li>
+			<li><a class="button" href="http://pokemonshowdown.com/dex/">Pok&eacute;dex</a></li>
+			<li><a class="button" href="http://replay.pokemonshowdown.com/">Replay</a></li>
+			<li><a class="button purplebutton" href="http://smogon.com/dex/" target="_blank">Strategy</a></li>
+			<li><a class="button nav-last purplebutton" href="http://smogon.com/forums/" target="_blank">Forum</a></li>
+			<li><a class="button greenbutton nav-first nav-last" href="http://play.pokemonshowdown.com/">Play</a></li>
+		</ul></div>
+	</header>
+
+	<main>
+		<h1>
+			Index of
+			<a href="http://play.pokemonshowdown.com/">play.pokemonshowdown.com</a><wbr />/sprites/
+		</h1>
+
+		<p class="parentlink">
+			<a class="row" href="http://play.pokemonshowdown.com/">
+				<i class="icon fa fa-arrow-circle-o-up">
+				</i><em>(Parent directory)
+				</em>
+			</a>
+		</p>
+	<div>
+		View:
+		<ul class="nav" style="display:inline-block;vertical-align:middle;margin:0 10px 0 0">
+			<li><a class="button nav-first" href="index.html@view=dir">Directory</a></li>
+			<li><a class="button nav-last cur" href="index.html@view=icons">Icons</a></li>
+		</ul>
+	</div>
+
+		<ul class="dirlist dirlist-icons">
+			<li class="header">
+				<a class="icon" href="index.html@view=icons&amp;sort=type">&nbsp;
+				</a><a class="filename" href="index.html@view=icons&amp;sort=name">Name
+				</a><a class="filesize" href="index.html@view=icons">Size <i class="fa fa-caret-square-o-down"></i>
+				</a><a class="filemtime" href="index.html@view=icons&amp;sort=mtime">Last Modified</a>
+			</li>
+			<li>
+				<a class="row" href="pokemonicons-sheet.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">pokemonicons-sheet.png
+					</code><em class="filesize">365.02 KiB
+					</em><small class="filemtime">2025-07-11 19:23:00</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="dupes-full.txt">
+					<i class="icon fad fa-file-alt icon-txt">
+					</i><code class="filename">dupes-full.txt
+					</code><em class="filesize">358.47 KiB
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="pokemonicons-sheet-old.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">pokemonicons-sheet-old.png
+					</code><em class="filesize">271.52 KiB
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="trainers-sheet.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">trainers-sheet.png
+					</code><em class="filesize">253.05 KiB
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen6icons-sheet.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">gen6icons-sheet.png
+					</code><em class="filesize">224.32 KiB
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="xyicons-sheet.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">xyicons-sheet.png
+					</code><em class="filesize">224.32 KiB
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="bwicons-sheet.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">bwicons-sheet.png
+					</code><em class="filesize">181.46 KiB
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen5icons-sheet.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">gen5icons-sheet.png
+					</code><em class="filesize">181.46 KiB
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="dupes.txt">
+					<i class="icon fad fa-file-alt icon-txt">
+					</i><code class="filename">dupes.txt
+					</code><em class="filesize">160.23 KiB
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="production.min.js">
+					<i class="icon fad fa-code icon-js">
+					</i><code class="filename">production.min.js
+					</code><em class="filesize">117.51 KiB
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="itemicons-sheet.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">itemicons-sheet.png
+					</code><em class="filesize">94.21 KiB
+					</em><small class="filemtime">2025-10-21 13:56:15</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="missing.txt">
+					<i class="icon fad fa-file-alt icon-txt">
+					</i><code class="filename">missing.txt
+					</code><em class="filesize">63.33 KiB
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="scene-test.html">
+					<i class="icon fad fa-file-code icon-html">
+					</i><code class="filename">scene-test.html
+					</code><em class="filesize">22.29 KiB
+					</em><small class="filemtime">2023-11-16 12:28:33</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="index.js">
+					<i class="icon fad fa-code icon-js">
+					</i><code class="filename">index.js
+					</code><em class="filesize">16.47 KiB
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="spriteindex.old.inc.php">
+					<i class="icon fad fa-file-code icon-php">
+					</i><code class="filename">spriteindex.old.inc.php
+					</code><em class="filesize">11.5 KiB
+					</em><small class="filemtime">2025-03-29 01:31:41</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gallery-test.html">
+					<i class="icon fad fa-file-code icon-html">
+					</i><code class="filename">gallery-test.html
+					</code><em class="filesize">7.37 KiB
+					</em><small class="filemtime">2023-11-16 12:28:33</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="find-missing.ps.js">
+					<i class="icon fad fa-code icon-js">
+					</i><code class="filename">find-missing.ps.js
+					</code><em class="filesize">3.15 KiB
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="find-missing.pkmn.js">
+					<i class="icon fad fa-code icon-js">
+					</i><code class="filename">find-missing.pkmn.js
+					</code><em class="filesize">1.59 KiB
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="spritescript.php">
+					<i class="icon fad fa-file-code icon-php">
+					</i><code class="filename">spritescript.php
+					</code><em class="filesize">647 bytes
+					</em><small class="filemtime">2025-03-29 11:57:23</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen6icons-pokeball-sheet.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">gen6icons-pokeball-sheet.png
+					</code><em class="filesize">394 bytes
+					</em><small class="filemtime">2023-11-16 00:05:07</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="xyicons-pokeball-sheet.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">xyicons-pokeball-sheet.png
+					</code><em class="filesize">394 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="bwicons-pokeball-sheet.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">bwicons-pokeball-sheet.png
+					</code><em class="filesize">329 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen5icons-pokeball-sheet.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">gen5icons-pokeball-sheet.png
+					</code><em class="filesize">329 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="tutor.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">tutor.png
+					</code><em class="filesize">298 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="pokemonicons-pokeball-sheet.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">pokemonicons-pokeball-sheet.png
+					</code><em class="filesize">268 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="afd.1">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">afd
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-03-31 13:22:55</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="afd-back.1">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">afd-back
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-03-31 13:22:55</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="afd-back-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">afd-back-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-04-03 00:38:44</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="afd-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">afd-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-04-03 00:38:53</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="ani">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">ani
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-10-16 22:16:31</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="ani-back">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">ani-back
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-10-16 22:16:31</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="ani-back-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">ani-back-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-10-16 22:16:32</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="ani-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">ani-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-10-16 22:16:32</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="bwicons">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">bwicons
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:09</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="categories">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">categories
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="dex">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">dex
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-07-12 01:10:14</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="dex-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">dex-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-07-12 01:10:15</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="digimon">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">digimon
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:09</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="digimon-backup-2021-11-22">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">digimon-backup-2021-11-22
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:10</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen1">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen1
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:09</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen1-back">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen1-back
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen1rb">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen1rb
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:09</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen1rg">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen1rg
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen1rgb-back">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen1rgb-back
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen2">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen2
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-07-04 21:03:49</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen2-back">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen2-back
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-07-04 21:03:51</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen2-back-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen2-back-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-07-04 21:03:53</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen2-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen2-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-07-04 21:03:30</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen2g">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen2g
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen2s">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen2s
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:09</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen3">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen3
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-07-04 21:03:32</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen3-2">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen3-2
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:09</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen3-back">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen3-back
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-07-04 21:03:34</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen3-back-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen3-back-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-07-04 21:03:36</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen3-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen3-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-07-04 21:03:39</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen3frlg">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen3frlg
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:10</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen3rs">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen3rs
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:09</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen3rs-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen3rs-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:09</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen4">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen4
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-07-04 21:03:41</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen4-back">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen4-back
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-07-04 21:03:43</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen4-back-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen4-back-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-07-04 21:03:45</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen4-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen4-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-07-04 21:03:46</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen4dp">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen4dp
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen4dp-2">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen4dp-2
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:09</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen4dp-2-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen4dp-2-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:10</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen4dp-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen4dp-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen5">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen5
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-10-16 22:16:58</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen5-back">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen5-back
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-10-16 22:17:01</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen5-back-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen5-back-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-10-16 22:17:03</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen5-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen5-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-10-16 22:17:06</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen5ani">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen5ani
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-03-06 21:49:07</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen5ani-back">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen5ani-back
+					</code><em class="filesize">
+					</em><small class="filemtime">2024-10-16 18:18:40</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen5ani-back-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen5ani-back-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2024-10-16 18:18:58</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen5ani-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen5ani-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-03-06 21:49:23</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen5icons">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen5icons
+					</code><em class="filesize">
+					</em><small class="filemtime">2024-12-22 20:45:38</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen6">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen6
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:10</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen6-back">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen6-back
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gen6bgs">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">gen6bgs
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:09</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="home">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">home
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-05-20 14:08:46</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="home-centered">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">home-centered
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-05-21 12:46:52</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="home-centered-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">home-centered-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-05-21 12:49:12</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="home-shiny">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">home-shiny
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-05-20 14:10:51</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="itemicons">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">itemicons
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:09</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="misc">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">misc
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-05-08 19:07:25</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="substitutes">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">substitutes
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="trainers.1">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">trainers
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-10-22 18:24:47</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="trainers-custom.1">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">trainers-custom
+					</code><em class="filesize">
+					</em><small class="filemtime">2025-10-20 00:56:16</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="types">
+					<i class="icon fad fa-folder-open">
+					</i><code class="filename">types
+					</code><em class="filesize">
+					</em><small class="filemtime">2023-12-16 04:29:40</small>
+				</a>
+			</li>
+		</ul>
+
+	</main>
+
+</body>

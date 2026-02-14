@@ -1,22 +1,14 @@
 "use strict";/**
  * Pokemon Showdown Dex Data
- *
  * A collection of data and definitions for src/battle-dex.ts.
- *
  * Larger data has their own files in data/, so this is just for small
  * miscellaneous data that doesn't need its own file.
- *
  * Licensing note: PS's client has complicated licensing:
  * - The client as a whole is AGPLv3
  * - The battle replay/animation engine (battle-*.ts) by itself is MIT
- *
  * @author Guangcong Luo <guangcongluo@gmail.com>
  * @license MIT
  */
-
-
-
-
 
 
 
@@ -32,86 +24,29 @@ plus:'atk',
 minus:'spa'
 },
 Bashful:{},
-Bold:{
-plus:'def',
-minus:'atk'
-},
-Brave:{
-plus:'atk',
-minus:'spe'
-},
-Calm:{
-plus:'spd',
-minus:'atk'
-},
-Careful:{
-plus:'spd',
-minus:'spa'
-},
+Bold:{plus:'def',minus:'atk'},
+Brave:{plus:'atk',minus:'spe'},
+Calm:{plus:'spd',minus:'atk'},
+Careful:{plus:'spd',minus:'spa'},
 Docile:{},
-Gentle:{
-plus:'spd',
-minus:'def'
-},
+Gentle:{plus:'spd',minus:'def'},
 Hardy:{},
-Hasty:{
-plus:'spe',
-minus:'def'
-},
-Impish:{
-plus:'def',
-minus:'spa'
-},
-Jolly:{
-plus:'spe',
-minus:'spa'
-},
-Lax:{
-plus:'def',
-minus:'spd'
-},
-Lonely:{
-plus:'atk',
-minus:'def'
-},
-Mild:{
-plus:'spa',
-minus:'def'
-},
-Modest:{
-plus:'spa',
-minus:'atk'
-},
-Naive:{
-plus:'spe',
-minus:'spd'
-},
-Naughty:{
-plus:'atk',
-minus:'spd'
-},
-Quiet:{
-plus:'spa',
-minus:'spe'
-},
+Hasty:{plus:'spe',minus:'def'},
+Impish:{plus:'def',minus:'spa'},
+Jolly:{plus:'spe',minus:'spa'},
+Lax:{plus:'def',minus:'spd'},
+Lonely:{plus:'atk',minus:'def'},
+Mild:{plus:'spa',minus:'def'},
+Modest:{plus:'spa',minus:'atk'},
+Naive:{plus:'spe',minus:'spd'},
+Naughty:{plus:'atk',minus:'spd'},
+Quiet:{plus:'spa',minus:'spe'},
 Quirky:{},
-Rash:{
-plus:'spa',
-minus:'spd'
-},
-Relaxed:{
-plus:'def',
-minus:'spe'
-},
-Sassy:{
-plus:'spd',
-minus:'spe'
-},
+Rash:{plus:'spa',minus:'spd'},
+Relaxed:{plus:'def',minus:'spe'},
+Sassy:{plus:'spd',minus:'spe'},
 Serious:{},
-Timid:{
-plus:'spe',
-minus:'atk'
-}
+Timid:{plus:'spe',minus:'atk'}
 };
 var BattleStatIDs={
 HP:'hp',
@@ -143,10 +78,7 @@ spa:'SpA',
 spd:'SpD',
 spe:'Spe'
 };
-
-var BattleBaseSpeciesChart=[
-"unown","burmy","shellos","gastrodon","deerling","sawsbuck","vivillon","flabebe","floette","florges","furfrou","minior","alcremie","tatsugiri","pokestarufo","pokestarbrycenman","pokestarmt","pokestarmt2","pokestartransport","pokestargiant","pokestarhumanoid","pokestarmonster","pokestarf00","pokestarf002","pokestarspirit","pokestarblackdoor","pokestarwhitedoor","pokestarblackbelt"];
-
+var BattleBaseSpeciesChart=["unown","burmy","shellos","gastrodon","deerling","sawsbuck","vivillon","flabebe","floette","florges","furfrou","minior","alcremie","tatsugiri","pokestarufo","pokestarbrycenman","pokestarmt","pokestarmt2","pokestartransport","pokestargiant","pokestarhumanoid","pokestarmonster","pokestarf00","pokestarf002","pokestarspirit","pokestarblackdoor","pokestarwhitedoor","pokestarblackbelt"];
 
 var BattlePokemonIconIndexes={
 
@@ -395,7 +327,6 @@ ogerponhearthflame:1032+242,
 ogerponcornerstone:1032+243,
 terapagosterastal:1032+244,
 terapagosstellar:1032+245,
-
 arceusbug:1032+246,
 arceusdark:1032+247,
 arceusdragon:1032+248,
@@ -413,12 +344,10 @@ arceuspsychic:1032+259,
 arceusrock:1032+260,
 arceussteel:1032+261,
 arceuswater:1032+262,
-
 genesectdouse:1032+263,
 genesectshock:1032+264,
 genesectburn:1032+265,
 genesectchill:1032+266,
-
 silvallybug:1032+267,
 silvallydark:1032+268,
 silvallydragon:1032+269,
@@ -436,7 +365,6 @@ silvallypsychic:1032+280,
 silvallyrock:1032+281,
 silvallysteel:1032+282,
 silvallywater:1032+283,
-
 
 greninjabond:658,
 gumshoostotem:735,
@@ -460,7 +388,6 @@ ogerponwellspringtera:1032+241,
 ogerponhearthflametera:1032+242,
 ogerponcornerstonetera:1032+243,
 toxtricitylowkeygmax:1320+69,
-
 
 venusaurmega:1320+0,
 charizardmegax:1320+1,
@@ -547,7 +474,6 @@ inteleongmax:1320+81,
 urshifugmax:1320+82,
 urshifurapidstrikegmax:1320+83,
 
-
 syclant:1512+0,
 revenankh:1512+1,
 pyroak:1512+2,
@@ -629,7 +555,6 @@ draggalong:1512+77,
 ramnarok:1512+78,
 ramnarokradiant:1512+79
 };
-
 var BattlePokemonIconIndexesLeft={
 pikachubelle:1404+0,
 pikachupopstar:1404+1,
@@ -1047,18 +972,12 @@ breederf:'pokemonbreederf',
 'hilda-dueldisk':'hilda-wonderlauncher',
 'nate-dueldisk':'nate-wonderlauncher',
 'rosa-dueldisk':'rosa-wonderlauncher',
-
 1001:'#1001',
 1002:'#1002',
 1003:'#1003',
 1005:'#1005',
 1010:'#1010'
 };var
-
-
-
-
-
 
 
 
@@ -1091,11 +1010,7 @@ this.gen=0;
 this.exists=false;
 };var
 
-
 Item=
-
-
-
 
 
 
@@ -1128,12 +1043,10 @@ this.name=Dex.sanitizeName(name);
 this.id=id;
 this.gen=data.gen||0;
 this.exists='exists'in data?!!data.exists:true;
-
 this.num=data.num||0;
 this.spritenum=data.spritenum||0;
 this.desc=data.desc||data.shortDesc||'';
 this.shortDesc=data.shortDesc||this.desc;
-
 this.megaStone=data.megaStone||'';
 this.megaEvolves=data.megaEvolves||'';
 this.zMove=data.zMove||null;
@@ -1151,61 +1064,13 @@ this.isFragile=!!data.isFragile;
 this.isMildlyFragile=!!data.isMildlyFragile;
 this.isFragile=data.isFragile;
 this.isMildlyFragile=data.isMildlyFragile;
-
 if(!this.gen){
-if(this.num>=577){
-this.gen=6;
-}else if(this.num>=537){
-this.gen=5;
-}else if(this.num>=377){
-this.gen=4;
-}else{
-this.gen=3;
-}
+if(this.num>=577){this.gen=6;}else
+if(this.num>=537){this.gen=5;}else
+if(this.num>=377){this.gen=4;}else
+{this.gen=3;}
 }
 };var
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1313,9 +1178,6 @@ Move=
 
 
 
-
-
-
 function Move(id,name,data){var _this$maxMove;this.effectType='Move';this.id=void 0;this.name=void 0;this.gen=void 0;this.exists=void 0;this.basePower=void 0;this.accuracy=void 0;this.pp=void 0;this.type=void 0;this.category=void 0;this.priority=void 0;this.target=void 0;this.pressureTarget=void 0;this.flags=void 0;this.critRatio=void 0;this.damage=void 0;this.desc=void 0;this.shortDesc=void 0;this.isNonstandard=void 0;this.isZ=void 0;this.zMove=void 0;this.isMax=void 0;this.maxMove=void 0;this.ohko=void 0;this.recoil=void 0;this.heal=void 0;this.multihit=void 0;this.hasCrashDamage=void 0;this.basePowerCallback=void 0;this.noPPBoosts=void 0;this.status=void 0;this.secondaries=void 0;this.num=void 0;
 if(!data||typeof data!=='object')data={};
 if(data.name)name=data.name;
@@ -1323,7 +1185,6 @@ this.name=Dex.sanitizeName(name);
 this.id=id;
 this.gen=data.gen||0;
 this.exists='exists'in data?!!data.exists:true;
-
 this.basePower=data.basePower||0;
 this.accuracy=data.accuracy||0;
 this.pp=data.pp||1;
@@ -1335,7 +1196,6 @@ this.pressureTarget=data.pressureTarget||this.target;
 this.flags=data.flags||{};
 this.critRatio=data.critRatio===0?0:data.critRatio||1;
 this.damage=data.damage;
-
 
 this.desc=data.desc;
 this.shortDesc=data.shortDesc;
@@ -1351,103 +1211,58 @@ this.basePowerCallback=!!data.basePowerCallback;
 this.noPPBoosts=data.noPPBoosts||false;
 this.status=data.status||'';
 this.secondaries=data.secondaries||(data.secondary?[data.secondary]:null);
-
 this.isMax=data.isMax||false;
 this.maxMove=data.maxMove||{basePower:0};
 if(this.category!=='Status'&&!((_this$maxMove=this.maxMove)!=null&&_this$maxMove.basePower)){
-if(this.isZ||this.isMax){
-this.maxMove={basePower:1};
-}else if(!this.basePower){
-this.maxMove={basePower:100};
-}else if(['Fighting','Poison'].includes(this.type)){
-if(this.basePower>=150){
-this.maxMove={basePower:100};
-}else if(this.basePower>=110){
-this.maxMove={basePower:95};
-}else if(this.basePower>=75){
-this.maxMove={basePower:90};
-}else if(this.basePower>=65){
-this.maxMove={basePower:85};
-}else if(this.basePower>=55){
-this.maxMove={basePower:80};
-}else if(this.basePower>=45){
-this.maxMove={basePower:75};
+if(this.isZ||this.isMax){this.maxMove={basePower:1};}else
+if(!this.basePower){this.maxMove={basePower:100};}else
+if(['Fighting','Poison'].includes(this.type)){
+if(this.basePower>=150){this.maxMove={basePower:100};}else
+if(this.basePower>=110){this.maxMove={basePower:95};}else
+if(this.basePower>=75){this.maxMove={basePower:90};}else
+if(this.basePower>=65){this.maxMove={basePower:85};}else
+if(this.basePower>=55){this.maxMove={basePower:80};}else
+if(this.basePower>=45){this.maxMove={basePower:75};}else
+{this.maxMove={basePower:70};}
 }else{
-this.maxMove={basePower:70};
-}
-}else{
-if(this.basePower>=150){
-this.maxMove={basePower:150};
-}else if(this.basePower>=110){
-this.maxMove={basePower:140};
-}else if(this.basePower>=75){
-this.maxMove={basePower:130};
-}else if(this.basePower>=65){
-this.maxMove={basePower:120};
-}else if(this.basePower>=55){
-this.maxMove={basePower:110};
-}else if(this.basePower>=45){
-this.maxMove={basePower:100};
-}else{
-this.maxMove={basePower:90};
+if(this.basePower>=150){this.maxMove={basePower:150};}else
+if(this.basePower>=110){this.maxMove={basePower:140};}else
+if(this.basePower>=75){this.maxMove={basePower:130};}else
+if(this.basePower>=65){this.maxMove={basePower:120};}else
+if(this.basePower>=55){this.maxMove={basePower:110};}else
+if(this.basePower>=45){this.maxMove={basePower:100};}else
+{this.maxMove={basePower:90};}
 }
 }
-}
-
 if(this.category!=='Status'&&!this.isZ&&!this.isMax){
 var basePower=this.basePower;
 this.zMove={};
 if(Array.isArray(this.multihit))basePower*=3;
-if(!basePower){
-this.zMove.basePower=100;
-}else if(basePower>=140){
-this.zMove.basePower=200;
-}else if(basePower>=130){
-this.zMove.basePower=195;
-}else if(basePower>=120){
-this.zMove.basePower=190;
-}else if(basePower>=110){
-this.zMove.basePower=185;
-}else if(basePower>=100){
-this.zMove.basePower=180;
-}else if(basePower>=90){
-this.zMove.basePower=175;
-}else if(basePower>=80){
-this.zMove.basePower=160;
-}else if(basePower>=70){
-this.zMove.basePower=140;
-}else if(basePower>=60){
-this.zMove.basePower=120;
-}else{
-this.zMove.basePower=100;
-}
+if(!basePower){this.zMove.basePower=100;}else
+if(basePower>=140){this.zMove.basePower=200;}else
+if(basePower>=130){this.zMove.basePower=195;}else
+if(basePower>=120){this.zMove.basePower=190;}else
+if(basePower>=110){this.zMove.basePower=185;}else
+if(basePower>=100){this.zMove.basePower=180;}else
+if(basePower>=90){this.zMove.basePower=175;}else
+if(basePower>=80){this.zMove.basePower=160;}else
+if(basePower>=70){this.zMove.basePower=140;}else
+if(basePower>=60){this.zMove.basePower=120;}else
+{this.zMove.basePower=100;}
 if(data.zMove)this.zMove.basePower=data.zMove.basePower;
 }
-
 this.num=data.num||0;
 if(!this.gen){
-if(this.num>=743){
-this.gen=8;
-}else if(this.num>=622){
-this.gen=7;
-}else if(this.num>=560){
-this.gen=6;
-}else if(this.num>=468){
-this.gen=5;
-}else if(this.num>=355){
-this.gen=4;
-}else if(this.num>=252){
-this.gen=3;
-}else if(this.num>=166){
-this.gen=2;
-}else if(this.num>=1){
-this.gen=1;
-}
+if(this.num>=743){this.gen=8;}else
+if(this.num>=622){this.gen=7;}else
+if(this.num>=560){this.gen=6;}else
+if(this.num>=468){this.gen=5;}else
+if(this.num>=355){this.gen=4;}else
+if(this.num>=252){this.gen=3;}else
+if(this.num>=166){this.gen=2;}else
+if(this.num>=1){this.gen=1;}
 }
 };var
-
-
-
 
 
 
@@ -1475,7 +1290,6 @@ Flag=
 
 
 
-
 function Flag(id,name,data){this.effectType='Flag';this.id=void 0;this.name=void 0;this.gen=void 0;this.exists=void 0;this.desc=void 0;this.shortDesc=void 0;
 if(!data||typeof data!=='string')data={};
 if(data.name)name=data.name;
@@ -1486,11 +1300,7 @@ this.exists='exists'in data?!!data.exists:true;
 this.desc=data.desc;
 this.shortDesc=data.shortDesc;
 };var
-
 Ability=
-
-
-
 
 
 
@@ -1517,33 +1327,16 @@ this.rating=data.rating||1;
 this.flags=data.flags||{};
 this.isNonstandard=!!data.isNonstandard;
 if(!this.gen){
-if(this.num>=234){
-this.gen=8;
-}else if(this.num>=192){
-this.gen=7;
-}else if(this.num>=165){
-this.gen=6;
-}else if(this.num>=124){
-this.gen=5;
-}else if(this.num>=77){
-this.gen=4;
-}else if(this.num>=1){
-this.gen=3;
-}
+if(this.num>=234){this.gen=8;}else
+if(this.num>=192){this.gen=7;}else
+if(this.num>=165){this.gen=6;}else
+if(this.num>=124){this.gen=5;}else
+if(this.num>=77){this.gen=4;}else
+if(this.num>=1){this.gen=3;}
 }
 };var
 
-
 Species=
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1610,22 +1403,18 @@ if(this.spriteid==='greninja-bond')this.spriteid='greninja';
 if(this.spriteid==='rockruff-dusk')this.spriteid='rockruff';
 if(this.spriteid.endsWith('-'))this.spriteid=this.spriteid.slice(0,-1);
 this.baseForme=data.baseForme||'';
-
 this.num=data.num||0;
 this.types=data.types||['???'];
 this.abilities=data.abilities||{0:"No Ability"};
 this.baseStats=data.baseStats||{hp:0,atk:0,def:0,spa:0,spd:0,spe:0};
-this.bst=this.baseStats.hp+this.baseStats.atk+this.baseStats.def+
-this.baseStats.spa+this.baseStats.spd+this.baseStats.spe;
+this.bst=this.baseStats.hp+this.baseStats.atk+this.baseStats.def+this.baseStats.spa+this.baseStats.spd+this.baseStats.spe;
 this.weightkg=data.weightkg||0;
-
 this.heightm=data.heightm||0;
 this.gender=data.gender||'';
 this.color=data.color||'';
 this.genderRatio=data.genderRatio||null;
 this.eggGroups=data.eggGroups||[];
 this.tags=data.tags||[];
-
 this.otherFormes=data.otherFormes||null;
 this.cosmeticFormes=data.cosmeticFormes||null;
 this.evos=data.evos||null;
@@ -1638,7 +1427,6 @@ this.evoCondition=data.evoCondition||'';
 this.nfe=data.nfe||false;
 this.requiredItems=data.requiredItems||(data.requiredItem?[data.requiredItem]:[]);
 this.tier=data.tier||'';
-
 this.isTotem=false;
 this.isMega=!!(this.forme&&['-mega','-megax','-megay'].includes(this.formeid));
 this.isPrimal=!!(this.forme&&this.formeid==='-primal');
@@ -1651,35 +1439,25 @@ this.unreleasedHidden=data.unreleasedHidden||false;
 this.changesFrom=data.changesFrom||(
 this.battleOnly!==this.baseSpecies?this.battleOnly:this.baseSpecies);
 if(!this.gen){
-if(this.num>=906||this.formeid.startsWith('-paldea')){
-this.gen=9;
-}else if(this.num>=810||this.formeid.startsWith('-galar')||this.formeid.startsWith('-hisui')){
-this.gen=8;
-}else if(this.num>=722||this.formeid==='-alola'||this.formeid==='-starter'){
-this.gen=7;
-}else if(this.isMega||this.isPrimal){
+if(this.num>=906||this.formeid.startsWith('-paldea')){this.gen=9;}else
+if(this.num>=810||this.formeid.startsWith('-galar')||this.formeid.startsWith('-hisui')){this.gen=8;}else
+if(this.num>=722||this.formeid==='-alola'||this.formeid==='-starter'){this.gen=7;}else
+if(this.isMega||this.isPrimal){
 this.gen=6;
 this.battleOnly=this.baseSpecies;
-}else if(this.formeid==='-totem'||this.formeid==='-alolatotem'){
+}else
+if(this.formeid==='-totem'||this.formeid==='-alolatotem'){
 this.gen=7;
 this.isTotem=true;
-}else if(this.num>=650){
-this.gen=6;
-}else if(this.num>=494){
-this.gen=5;
-}else if(this.num>=387){
-this.gen=4;
-}else if(this.num>=252){
-this.gen=3;
-}else if(this.num>=152){
-this.gen=2;
-}else if(this.num>=1){
-this.gen=1;
-}
+}else
+if(this.num>=650){this.gen=6;}else
+if(this.num>=494){this.gen=5;}else
+if(this.num>=387){this.gen=4;}else
+if(this.num>=252){this.gen=3;}else
+if(this.num>=152){this.gen=2;}else
+if(this.num>=1){this.gen=1;}
 }
 };
-
-
 
 
 

@@ -1,1 +1,0 @@
-{"version":3,"file":"client-endload.js","names":["PS","libsLoaded","loaded"],"sources":["../src/client-endload.ts"],"sourcesContent":["import { PS } from \"./client-main\";\r\n\r\nPS.libsLoaded.loaded();\r\n"],"mappings":";;AAEAA,EAAE,CAACC,UAAU,CAACC,MAAM,CAAC,CAAC","ignoreList":[]}

@@ -3537,6 +3537,67 @@ limitparadox: {
 			];
 		}
 	},
-},
-}
+	},
+	indigotimer: {
+	effectType: 'Rule',
+	name: 'Indigo Timer',
+	desc: "Indigo Starstorm's timer: 150 second Team Preview, 20 minutes Your Time, 90 seconds per turn",
+	ruleset: [
+		'Timer Starting = 1200', 'Timer Grace = 150',
+		'Timer Add Per Turn = 0', 'Timer Max Per Turn = 90', 'Timer Max First Turn = 150',
+		'Timeout Auto Choose', 'DC Timer Bank',
+	],
+	},
+	itemreveal: {
+	effectType: 'Rule',
+	name: 'Item Reveal',
+	desc: "All items are revealed at battle start (but not which Pokémon holds them)",
+	onBegin() {
+		this.add('rule', 'Item Reveal: All items revealed at start');
+			
+		// Collect all items from both sides
+		const p1Items: string[] = [];
+		const p2Items: string[] = [];
+		for (const pokemon of this.sides[0].pokemon) {
+			if (pokemon.item) {
+				const item = this.dex.items.get(pokemon.item);
+				p1Items.push(item.name);
+			}
+		}
+		for (const pokemon of this.sides[1].pokemon) {
+			if (pokemon.item) {
+				const item = this.dex.items.get(pokemon.item);
+				p2Items.push(item.name);
+			}
+		}
+		// Sort items alphabetically for consistency
+		p1Items.sort();
+		p2Items.sort();
+		// Display items for each side
+		if (p1Items.length) { this.add('message', `${this.sides[0].name}'s team items: ${p1Items.join(', ')}`); }
+		if (p2Items.length) { this.add('message', `${this.sides[1].name}'s team items: ${p2Items.join(', ')}`); }
+		},
+	},
+	freezeclause: {
+		effectType: 'ValidatorRule',
+		name: 'Freeze Clause',
+		desc: "Prevents players from freezing more than one opposing Pokémon at a time",
+		// Note: This is typically enforced in battle, not in validation
+		// Including it here for format compatibility
+	},
+	levelclause: {
+		effectType: 'ValidatorRule',
+		name: 'Level Clause',
+		desc: "Requires all Pokémon to be set to a specific level",
+		// Note: This is typically handled by the Adjust Level rule
+		// Including it here for format compatibility
+	},
+	teraclause: {
+		effectType: 'ValidatorRule',
+		name: 'Tera Clause',
+		desc: "Limits the use of Terastallization in battle",
+		// Note: This restricts terastallization usage
+		// Including it here for format compatibility
+	},
 
+}

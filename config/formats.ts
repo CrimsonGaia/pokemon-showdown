@@ -16,6 +16,7 @@ If you specify a section that already exists, your format will be added to the b
 New sections will be added to the bottom of the specified column.
 The column value will be ignored for repeat sections.
 */
+console.log("LOADING FORMATS.TS FROM:", __filename);
 
 export const Formats: import('../sim/dex-formats').FormatList = [
 

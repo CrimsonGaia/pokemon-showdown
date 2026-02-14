@@ -1,0 +1,2738 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+
+	<meta charset="UTF-8" />
+
+	<title>/sprites/gen2-back-shiny/ - Showdown!</title>
+
+	<meta name="viewport" content="width=device-width" />
+	<link rel="stylesheet" href="http://play.pokemonshowdown.com/dirindex/font-awesome.min.css" />
+	<link rel="stylesheet" href="http://play.pokemonshowdown.com/dirindex/fontawesome5-solid-duotone.min.css?" />
+
+	<style>
+		/*********************************************************
+		 * Layout
+		 *********************************************************/
+
+		html, body {
+			margin: 0;
+			padding: 0;
+			min-height: 100%;
+		}
+
+		html {
+			color: white;
+			font-family: Verdana,Helvetica,sans-serif;
+			font-size: 11pt;
+			background: #f0f0f0;
+			color: #333333;
+		}
+		body {
+			background: linear-gradient(to bottom, rgba(77, 93, 140, 0.6), rgba(77, 93, 140, 0.2) 80px, transparent 160px, transparent);
+		}
+
+		header {
+			margin: 0;
+			padding: 2px;
+			/* background: rgba(255, 255, 255, .2);
+			border-bottom: 1px solid rgba(255, 255, 255, .6); */
+			text-align: center;
+			height: 60px;
+		}
+		.nav-wrapper {
+			width: 700px;
+			margin: 0 auto;
+			position: relative;
+		}
+		.nav {
+			padding: 0;
+		}
+		.nav-wrapper .nav {
+			padding-left: 140px;
+			padding-top: 5px;
+		}
+		.nav li {
+			float: left;
+			list-style-type: none;
+		}
+		.nav img {
+			position: absolute;
+			left: 0;
+			top: 0;
+		}
+		.nav a, .nav a:visited {
+			color: white;
+			background: #3a4f88;
+			background: linear-gradient(to bottom, #4c63a3, #273661);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px 1px rgba(255, 255, 255, 0.5);
+			border: 1px solid #222c4a;
+			text-shadow: black 0px -1px 0;
+			padding: 8px 15px;
+			font-weight: bold;
+			text-decoration: none;
+			border-radius: 0;
+			margin-left: -1px;
+			font-size: 11pt;
+		}
+		.dark .nav a, .dark .nav a:visited {
+			/* make sure other styling doesn't override */
+			color: white;
+			background: #3a4f88;
+			background: linear-gradient(to bottom, #4c63a3, #273661);
+			border: 1px solid #222c4a;
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px 1px rgba(255, 255, 255, 0.5);
+		}
+		.nav a:hover, .dark .nav a:hover {
+			background: linear-gradient(to bottom, #5a77c7, #2f447f);
+			border: 1px solid #222c4a;
+		}
+		.nav a:active, .dark .nav a:active {
+			background: linear-gradient(to bottom, #273661, #4c63a3);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px -1px rgba(255, 255, 255, 0.5);
+		}
+		.nav a.cur, .nav a.cur:hover, .nav a.cur:active,
+		.dark .nav a.cur, .dark .nav a.cur:hover, .dark .nav a.cur:active {
+			color: #CCCCCC;
+			background: rgba(79, 109, 148, 0.7);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45);
+			border: 1px solid #222c4a;
+		}
+		.nav a.nav-first {
+			margin-left: 10px;
+			border-top-left-radius: 8px;
+			border-bottom-left-radius: 8px;
+		}
+		.nav a.nav-last {
+			border-top-right-radius: 8px;
+			border-bottom-right-radius: 8px;
+		}
+		.nav a.greenbutton {
+			background: linear-gradient(to bottom, #4ca363, #276136);
+		}
+		.nav a.greenbutton:hover {
+			background: linear-gradient(to bottom, #5ac777, #2f7f44);
+		}
+		.nav a.greenbutton:active {
+			background: linear-gradient(to bottom, #276136, #4ca363);
+			box-shadow: 0 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px -1px rgba(255, 255, 255, 0.5);
+		}
+		.nav a.purplebutton {
+			background: linear-gradient(to bottom,hsl(267, 36.40%, 46.90%),hsl(267, 42.60%, 26.70%));
+		}
+		.nav a.purplebutton:hover {
+			background: linear-gradient(to bottom,hsl(267, 49.30%, 56.70%),hsl(267, 46.00%, 34.10%));
+		}
+		.nav a.purplebutton:active {
+			background: linear-gradient(to bottom,hsl(267, 42.60%, 26.70%),hsl(267, 36.40%, 46.90%));
+			box-shadow: 0 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px -1px rgba(255, 255, 255, 0.5);
+		}
+
+		@media (max-width:700px) {
+			.nav-wrapper {
+				width: auto;
+				display: inline-block;
+			}
+			.nav-wrapper .nav {
+				padding-left: 135px;
+			}
+			.nav a {
+				font-weight: normal;
+				padding: 8px 7px;
+			}
+			.nav img {
+				top: 10px;
+			}
+		}
+
+		@media (max-width:554px) {
+			header {
+				height: 100px;
+			}
+			.nav-wrapper .nav {
+				padding-left: 0;
+				padding-top: 50px;
+			}
+			.nav img {
+				top: 10px;
+			}
+			.nav a {
+				padding: 8px 12px;
+			}
+			.nav a.nav-first {
+				margin-left: 0;
+			}
+			.nav a.greenbutton {
+				position: absolute;
+				top: 10px;
+				right: 0;
+			}
+		}
+		@media (max-width:419px) {
+			.nav a {
+				padding: 8px 7px;
+			}
+		}
+		@media (max-width:359px) {
+			.nav-wrapper {
+				padding-left: 5px;
+			}
+			.nav a {
+				padding: 8px 4px;
+			}
+		}
+
+		footer {
+			clear: both;
+			text-align: center;
+			color: #888888;
+			padding: 10px 0 10px 0;
+		}
+		footer p {
+			margin: 10px 0;
+		}
+		footer a {
+			color: #AAAAAA;
+		}
+		footer a:hover {
+			color: #6688AA;
+		}
+		footer a.cur, footer a.cur:hover {
+			color: #888888;
+			font-weight: bold;
+			text-decoration: none;
+		}
+
+		/*********************************************************
+		 * Main
+		 *********************************************************/
+		.button {
+			color: white;
+			background: #3a4f88;
+			background: linear-gradient(to bottom, #4c63a3, #273661);
+			box-shadow: 0.5px 1px 2px rgba(255, 255, 255, 0.45), inset 0.5px 1px 1px rgba(255, 255, 255, 0.5);
+			border: 1px solid #222c4a;
+			padding: 3px 10px;
+			text-shadow: black 0px -1px 0;
+			border-radius: 10px;
+			text-decoration: none;
+			display: inline-block;
+			font-family: Verdana,Helvetica,sans-serif;
+			font-size: 11pt;
+			cursor: pointer;
+		}
+		.button:hover {
+			text-decoration: none;
+		}
+		main {
+			margin: 0 auto;
+			padding: 0 15px 15px 15px;
+			max-width: 800px;
+			overflow-wrap: break-word;
+		}
+		a {
+			color: #0073aa;
+		}
+		a:visited {
+			color: #8000aa;
+		}
+		h1 {
+			font-size: 20px;
+			margin-bottom: 20px;
+		}
+		.parentlink {
+			padding: 0 0 12px 0;
+		}
+		.parentlink a {
+			text-decoration: none;
+			display: block;
+			border: 1px solid transparent;
+			padding: 4px 8px 4px 40px;
+			border-radius: 4px;
+		}
+		.parentlink a:hover {
+			background: #e7ebee;
+			border-color: #5f8a9e;
+		}
+		.parentlink i, .parentlink em {
+			vertical-align: middle;
+		}
+		@media (prefers-color-scheme: dark) {
+			html {
+				background: #000;
+				color: #ddd;
+				color-scheme: dark;
+			}
+			a {
+				color:rgb(99, 174, 209);
+			}
+			a:visited {
+				color:rgb(177, 123, 195);
+			}
+			.parentlink a:hover {
+				background: #181818;
+				border-color: #444;
+			}
+		}
+
+		/*********************************************************
+		 * Dirlist
+		 *********************************************************/
+		h1 a {
+			font-weight: normal;
+			text-decoration: none;
+		}
+		h1 a:hover {
+			text-decoration: underline;
+		}
+
+		.dirlist {
+			font-size: 14px;
+			list-style-type: none;
+			padding: 0;
+		}
+		.header {
+			padding: 0 7px 0 39px;
+			border-bottom: 1px solid #888888;
+			background: #f0f0f0;
+		}
+		.parentlink {
+			padding: 0 0 12px 0;
+		}
+
+		.header a, .header a:visited {
+			text-decoration: none;
+			padding: 5px 0;
+			color: inherit;
+		}
+		.header a:hover {
+			text-decoration: none;
+			background: #dddddd;
+		}
+		a.row {
+			text-decoration: none;
+			display: block;
+			border: 1px solid transparent;
+			padding: 4px 8px 4px 40px;
+			border-radius: 4px;
+		}
+		a.row:hover {
+			background:#e7ebee;
+			border-color:#5f8a9e;
+		}
+		a.row * {
+			vertical-align: middle;
+		}
+
+		.icon {
+			display: inline-block;
+			width: 32px;
+			margin-left: -32px;
+			font-size: 20px;
+			text-align: center;
+			color: #777;
+		}
+		.icon.fa-arrow-circle-o-up, .icon.fa-folder-open {
+			color: #3798c5;
+			--fa-secondary-opacity: 0.55;
+		}
+		.icon.fa-image, .icon.fa-picture-o, .icon.fa-film, .icon.fa-video, .icon.fa-video-camera, .icon.fa-volume, .icon.fa-volume-up {
+			color: rgb(139, 115, 82);
+			--fa-secondary-opacity: 0.4;
+		}
+		.icon.icon-js {
+			color: rgb(160, 153, 89);
+		}
+		.icon.icon-ts, .icon.icon-md {
+			color: rgb(83, 112, 149);
+		}
+		.icon.icon-html {
+			color: rgb(166, 125, 67);
+		}
+		.icon.icon-php, .icon.icon-css {
+			color: rgb(125, 83, 149);
+		}
+		.icon.fa-file-pdf, .icon.fa-file-pdf-o, .icon.fa-font-case {
+			color: rgb(149, 83, 83);
+		}
+		.icon.fa-file-archive, .icon.fa-file-archive-o {
+			color:rgb(116, 149, 163);
+		}
+		.filename {
+			display: inline-block;
+			width: 50%;
+			min-width: 260px;
+			font-family: monospace;
+			font-size: 10pt;
+		}
+		.parentlink .filename {
+			font-family: inherit;
+			font-style: italic;
+		}
+		.filesize {
+			display: inline-block;
+			width: 20%;
+			min-width: 80px;
+			color: #666666;
+		}
+		.filemtime {
+			display: inline-block;
+			color: #666666;
+			font-size: 0.9em;
+			min-width: 150px;
+		}
+		.header .icon, .header .filename, .header .filesize, .header .filemtime {
+			font-style: normal;
+			font-family: inherit;
+			font-size: inherit;
+			color: inherit;
+		}
+		@media (prefers-color-scheme: dark) {
+			.header {
+				background: #000;
+			}
+			.header a:hover {
+				background: #333;
+			}
+			.icon {
+				color: #888;
+			}
+			a.row:hover {
+				background: #181818;
+				border-color: #444;
+			}
+			.filesize, .filemtime {
+				color: #888;
+			}
+		}
+
+		/*********************************************************
+		 * Icons
+		 *********************************************************/
+
+		.dirlist-icons {
+			font-size: 0;
+		}
+		.dirlist-icons li {
+			display: inline-block;
+			vertical-align: top;
+			width: 133px;
+			font-size: 10pt;
+		}
+		.dirlist-icons li.header {
+			display: block;
+			width: auto;
+			height: auto;
+			margin-bottom: 2px;
+		}
+		.dirlist-icons .row, .dirlist-icons a.row:hover {
+			text-align: center;
+			padding: 0;
+			text-decoration: none;
+		}
+		.dirlist-icons .row .filesize, .dirlist-icons .row .filemtime {
+			display: none;
+		}
+		.dirlist-icons .row .icon, .dirlist-icons a.row:hover .icon {
+			display: block;
+			font-size: 60px;
+			margin: 0;
+			width: auto;
+			text-decoration: none;
+		}
+		.dirlist-icons .row .filename {
+			display: block;
+			min-width: auto;
+			width: auto;
+			font-size: 9pt;
+		}
+
+		/*********************************************************
+		 * Spriteindex
+		 *********************************************************/
+
+		figure {
+			width: 96px;
+			display: inline-block;
+			vertical-align: top;
+			text-align: center;
+			margin: 0.5em 10px;
+			overflow-wrap: break-word;
+		}
+		figure img {
+			image-rendering: pixelated;
+		}
+		figure figcaption {
+			font-size: 12px;
+			text-align: center;
+		}
+		a {
+			text-decoration: none;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+	</style>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-26211653-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'UA-26211653-1');
+	</script>
+	<!-- End Google Analytics -->
+</head><body>
+
+	<header>
+		<div class="nav-wrapper"><ul class="nav">
+			<li><a class="button nav-first" href="http://pokemonshowdown.com/"><img src="http://play.pokemonshowdown.com/pokemonshowdownbeta.png" srcset="http://play.pokemonshowdown.com/pokemonshowdownbeta.png 1x, http://play.pokemonshowdown.com/pokemonshowdownbeta@2x.png 2x" alt="Pok&eacute;mon Showdown" width="146" height="44" /> Home</a></li>
+			<li><a class="button" href="http://pokemonshowdown.com/dex/">Pok&eacute;dex</a></li>
+			<li><a class="button" href="http://replay.pokemonshowdown.com/">Replay</a></li>
+			<li><a class="button purplebutton" href="http://smogon.com/dex/" target="_blank">Strategy</a></li>
+			<li><a class="button nav-last purplebutton" href="http://smogon.com/forums/" target="_blank">Forum</a></li>
+			<li><a class="button greenbutton nav-first nav-last" href="http://play.pokemonshowdown.com/">Play</a></li>
+		</ul></div>
+	</header>
+
+	<main>
+		<h1>
+			Index of
+			<a href="http://play.pokemonshowdown.com/">play.pokemonshowdown.com</a><wbr />/<a href="../index.html">sprites</a><wbr />/gen2-back-shiny/
+		</h1>
+
+		<p class="parentlink">
+			<a class="row" href="../index.html">
+				<i class="icon fa fa-arrow-circle-o-up">
+				</i><em>(Parent directory)
+				</em>
+			</a>
+		</p>
+	<div>
+		View:
+		<ul class="nav" style="display:inline-block;vertical-align:middle;margin:0 10px 0 0">
+			<li><a class="button nav-first" href="index.html@view=dir">Directory</a></li>
+			<li><a class="button nav-last cur" href="index.html@view=icons">Icons</a></li>
+		</ul>
+	</div>
+
+		<ul class="dirlist dirlist-icons">
+			<li class="header">
+				<a class="icon" href="index.html@view=icons&amp;sort=type">&nbsp;
+				</a><a class="filename" href="index.html@view=icons&amp;sort=name">Name
+				</a><a class="filesize" href="index.html@view=icons&amp;sort=size">Size
+				</a><a class="filemtime" href="index.html@view=icons">Last Modified <i class="fa fa-caret-square-o-down"></i></a>
+			</li>
+			<li>
+				<a class="row" href="unown-b.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-b.png
+					</code><em class="filesize">253 bytes
+					</em><small class="filemtime">2023-03-18 00:49:05</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-c.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-c.png
+					</code><em class="filesize">299 bytes
+					</em><small class="filemtime">2023-03-18 00:49:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-d.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-d.png
+					</code><em class="filesize">250 bytes
+					</em><small class="filemtime">2023-03-18 00:49:09</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-e.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-e.png
+					</code><em class="filesize">244 bytes
+					</em><small class="filemtime">2023-03-18 00:49:11</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-f.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-f.png
+					</code><em class="filesize">260 bytes
+					</em><small class="filemtime">2023-03-18 00:49:13</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-g.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-g.png
+					</code><em class="filesize">253 bytes
+					</em><small class="filemtime">2023-03-18 00:49:15</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-h.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-h.png
+					</code><em class="filesize">292 bytes
+					</em><small class="filemtime">2023-03-18 00:49:18</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-i.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-i.png
+					</code><em class="filesize">218 bytes
+					</em><small class="filemtime">2023-03-18 00:49:19</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-j.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-j.png
+					</code><em class="filesize">240 bytes
+					</em><small class="filemtime">2023-03-18 00:49:21</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-k.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-k.png
+					</code><em class="filesize">240 bytes
+					</em><small class="filemtime">2023-03-18 00:49:23</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-l.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-l.png
+					</code><em class="filesize">231 bytes
+					</em><small class="filemtime">2023-03-18 00:49:25</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-m.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-m.png
+					</code><em class="filesize">302 bytes
+					</em><small class="filemtime">2023-03-18 00:49:27</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-n.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-n.png
+					</code><em class="filesize">255 bytes
+					</em><small class="filemtime">2023-03-18 00:49:30</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-o.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-o.png
+					</code><em class="filesize">290 bytes
+					</em><small class="filemtime">2023-03-18 00:49:31</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-p.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-p.png
+					</code><em class="filesize">224 bytes
+					</em><small class="filemtime">2023-03-18 00:49:33</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-q.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-q.png
+					</code><em class="filesize">219 bytes
+					</em><small class="filemtime">2023-03-18 00:49:35</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-r.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-r.png
+					</code><em class="filesize">223 bytes
+					</em><small class="filemtime">2023-03-18 00:49:37</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-s.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-s.png
+					</code><em class="filesize">266 bytes
+					</em><small class="filemtime">2023-03-18 00:49:39</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-t.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-t.png
+					</code><em class="filesize">224 bytes
+					</em><small class="filemtime">2023-03-18 00:49:41</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-u.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-u.png
+					</code><em class="filesize">271 bytes
+					</em><small class="filemtime">2023-03-18 00:49:43</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-v.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-v.png
+					</code><em class="filesize">255 bytes
+					</em><small class="filemtime">2023-03-18 00:49:45</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-w.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-w.png
+					</code><em class="filesize">254 bytes
+					</em><small class="filemtime">2023-03-18 00:49:47</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-x.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-x.png
+					</code><em class="filesize">241 bytes
+					</em><small class="filemtime">2023-03-18 00:49:49</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-y.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-y.png
+					</code><em class="filesize">246 bytes
+					</em><small class="filemtime">2023-03-18 00:49:50</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown-z.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown-z.png
+					</code><em class="filesize">229 bytes
+					</em><small class="filemtime">2023-03-18 00:49:53</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="abra.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">abra.png
+					</code><em class="filesize">447 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="aerodactyl.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">aerodactyl.png
+					</code><em class="filesize">410 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="aipom.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">aipom.png
+					</code><em class="filesize">407 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="alakazam.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">alakazam.png
+					</code><em class="filesize">535 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="ampharos.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">ampharos.png
+					</code><em class="filesize">393 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="arbok.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">arbok.png
+					</code><em class="filesize">359 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="arcanine.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">arcanine.png
+					</code><em class="filesize">487 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="ariados.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">ariados.png
+					</code><em class="filesize">438 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="articuno.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">articuno.png
+					</code><em class="filesize">386 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="azumarill.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">azumarill.png
+					</code><em class="filesize">340 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="bayleef.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">bayleef.png
+					</code><em class="filesize">497 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="beedrill.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">beedrill.png
+					</code><em class="filesize">483 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="bellossom.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">bellossom.png
+					</code><em class="filesize">434 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="bellsprout.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">bellsprout.png
+					</code><em class="filesize">377 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="blastoise.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">blastoise.png
+					</code><em class="filesize">477 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="blissey.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">blissey.png
+					</code><em class="filesize">365 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="bulbasaur.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">bulbasaur.png
+					</code><em class="filesize">368 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="butterfree.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">butterfree.png
+					</code><em class="filesize">515 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="caterpie.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">caterpie.png
+					</code><em class="filesize">391 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="celebi.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">celebi.png
+					</code><em class="filesize">513 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="chansey.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">chansey.png
+					</code><em class="filesize">394 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="charizard.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">charizard.png
+					</code><em class="filesize">431 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="charmander.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">charmander.png
+					</code><em class="filesize">403 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="charmeleon.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">charmeleon.png
+					</code><em class="filesize">444 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="chikorita.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">chikorita.png
+					</code><em class="filesize">412 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="chinchou.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">chinchou.png
+					</code><em class="filesize">379 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="clefable.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">clefable.png
+					</code><em class="filesize">507 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="clefairy.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">clefairy.png
+					</code><em class="filesize">444 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="cleffa.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">cleffa.png
+					</code><em class="filesize">334 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="cloyster.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">cloyster.png
+					</code><em class="filesize">563 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="corsola.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">corsola.png
+					</code><em class="filesize">408 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="crobat.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">crobat.png
+					</code><em class="filesize">360 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="croconaw.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">croconaw.png
+					</code><em class="filesize">480 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="cubone.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">cubone.png
+					</code><em class="filesize">467 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="cyndaquil.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">cyndaquil.png
+					</code><em class="filesize">492 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="delibird.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">delibird.png
+					</code><em class="filesize">445 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="dewgong.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">dewgong.png
+					</code><em class="filesize">344 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="diglett.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">diglett.png
+					</code><em class="filesize">290 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="ditto.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">ditto.png
+					</code><em class="filesize">318 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="dodrio.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">dodrio.png
+					</code><em class="filesize">568 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="doduo.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">doduo.png
+					</code><em class="filesize">451 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="donphan.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">donphan.png
+					</code><em class="filesize">349 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="dragonair.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">dragonair.png
+					</code><em class="filesize">420 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="dragonite.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">dragonite.png
+					</code><em class="filesize">382 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="dratini.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">dratini.png
+					</code><em class="filesize">357 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="drowzee.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">drowzee.png
+					</code><em class="filesize">367 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="dugtrio.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">dugtrio.png
+					</code><em class="filesize">406 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="dunsparce.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">dunsparce.png
+					</code><em class="filesize">348 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="eevee.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">eevee.png
+					</code><em class="filesize">475 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="ekans.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">ekans.png
+					</code><em class="filesize">455 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="electabuzz.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">electabuzz.png
+					</code><em class="filesize">463 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="electrode.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">electrode.png
+					</code><em class="filesize">316 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="elekid.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">elekid.png
+					</code><em class="filesize">515 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="entei.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">entei.png
+					</code><em class="filesize">450 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="espeon.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">espeon.png
+					</code><em class="filesize">429 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="exeggcute.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">exeggcute.png
+					</code><em class="filesize">430 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="exeggutor.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">exeggutor.png
+					</code><em class="filesize">542 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="farfetchd.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">farfetchd.png
+					</code><em class="filesize">487 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="fearow.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">fearow.png
+					</code><em class="filesize">342 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="feraligatr.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">feraligatr.png
+					</code><em class="filesize">556 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="flaaffy.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">flaaffy.png
+					</code><em class="filesize">493 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="flareon.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">flareon.png
+					</code><em class="filesize">475 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="forretress.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">forretress.png
+					</code><em class="filesize">242 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="furret.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">furret.png
+					</code><em class="filesize">450 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gastly.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">gastly.png
+					</code><em class="filesize">329 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gengar.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">gengar.png
+					</code><em class="filesize">398 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="geodude.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">geodude.png
+					</code><em class="filesize">455 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="girafarig.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">girafarig.png
+					</code><em class="filesize">460 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gligar.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">gligar.png
+					</code><em class="filesize">482 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gloom.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">gloom.png
+					</code><em class="filesize">460 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="golbat.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">golbat.png
+					</code><em class="filesize">284 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="goldeen.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">goldeen.png
+					</code><em class="filesize">497 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="golduck.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">golduck.png
+					</code><em class="filesize">419 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="golem.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">golem.png
+					</code><em class="filesize">299 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="granbull.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">granbull.png
+					</code><em class="filesize">395 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="graveler.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">graveler.png
+					</code><em class="filesize">434 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="grimer.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">grimer.png
+					</code><em class="filesize">391 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="growlithe.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">growlithe.png
+					</code><em class="filesize">456 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="gyarados.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">gyarados.png
+					</code><em class="filesize">536 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="haunter.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">haunter.png
+					</code><em class="filesize">384 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="heracross.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">heracross.png
+					</code><em class="filesize">471 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="hitmonchan.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">hitmonchan.png
+					</code><em class="filesize">439 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="hitmonlee.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">hitmonlee.png
+					</code><em class="filesize">390 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="hitmontop.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">hitmontop.png
+					</code><em class="filesize">545 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="hooh.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">hooh.png
+					</code><em class="filesize">474 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="hoothoot.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">hoothoot.png
+					</code><em class="filesize">433 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="hoppip.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">hoppip.png
+					</code><em class="filesize">403 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="horsea.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">horsea.png
+					</code><em class="filesize">349 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="houndoom.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">houndoom.png
+					</code><em class="filesize">363 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="houndour.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">houndour.png
+					</code><em class="filesize">345 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="hypno.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">hypno.png
+					</code><em class="filesize">502 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="igglybuff.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">igglybuff.png
+					</code><em class="filesize">364 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="ivysaur.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">ivysaur.png
+					</code><em class="filesize">434 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="jigglypuff.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">jigglypuff.png
+					</code><em class="filesize">320 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="jolteon.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">jolteon.png
+					</code><em class="filesize">414 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="jumpluff.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">jumpluff.png
+					</code><em class="filesize">461 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="jynx.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">jynx.png
+					</code><em class="filesize">301 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="kabuto.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">kabuto.png
+					</code><em class="filesize">380 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="kabutops.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">kabutops.png
+					</code><em class="filesize">468 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="kadabra.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">kadabra.png
+					</code><em class="filesize">453 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="kakuna.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">kakuna.png
+					</code><em class="filesize">361 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="kangaskhan.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">kangaskhan.png
+					</code><em class="filesize">539 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="kingdra.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">kingdra.png
+					</code><em class="filesize">438 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="kingler.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">kingler.png
+					</code><em class="filesize">418 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="koffing.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">koffing.png
+					</code><em class="filesize">469 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="krabby.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">krabby.png
+					</code><em class="filesize">501 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="lanturn.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">lanturn.png
+					</code><em class="filesize">351 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="lapras.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">lapras.png
+					</code><em class="filesize">425 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="larvitar.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">larvitar.png
+					</code><em class="filesize">378 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="ledian.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">ledian.png
+					</code><em class="filesize">464 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="ledyba.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">ledyba.png
+					</code><em class="filesize">537 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="lickitung.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">lickitung.png
+					</code><em class="filesize">401 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="lugia.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">lugia.png
+					</code><em class="filesize">382 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="machamp.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">machamp.png
+					</code><em class="filesize">588 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="machoke.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">machoke.png
+					</code><em class="filesize">449 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="machop.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">machop.png
+					</code><em class="filesize">438 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="magby.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">magby.png
+					</code><em class="filesize">402 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="magcargo.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">magcargo.png
+					</code><em class="filesize">487 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="magikarp.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">magikarp.png
+					</code><em class="filesize">479 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="magmar.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">magmar.png
+					</code><em class="filesize">487 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="magnemite.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">magnemite.png
+					</code><em class="filesize">282 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="magneton.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">magneton.png
+					</code><em class="filesize">525 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="mankey.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">mankey.png
+					</code><em class="filesize">499 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="mantine.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">mantine.png
+					</code><em class="filesize">327 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="mareep.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">mareep.png
+					</code><em class="filesize">459 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="marill.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">marill.png
+					</code><em class="filesize">322 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="marowak.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">marowak.png
+					</code><em class="filesize">447 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="meganium.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">meganium.png
+					</code><em class="filesize">428 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="meowth.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">meowth.png
+					</code><em class="filesize">438 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="metapod.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">metapod.png
+					</code><em class="filesize">346 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="mew.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">mew.png
+					</code><em class="filesize">424 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="mewtwo.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">mewtwo.png
+					</code><em class="filesize">474 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="miltank.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">miltank.png
+					</code><em class="filesize">474 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="misdreavus.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">misdreavus.png
+					</code><em class="filesize">398 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="moltres.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">moltres.png
+					</code><em class="filesize">453 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="mrmime.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">mrmime.png
+					</code><em class="filesize">383 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="muk.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">muk.png
+					</code><em class="filesize">420 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="murkrow.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">murkrow.png
+					</code><em class="filesize">404 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="natu.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">natu.png
+					</code><em class="filesize">297 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="nidoking.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">nidoking.png
+					</code><em class="filesize">580 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="nidoqueen.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">nidoqueen.png
+					</code><em class="filesize">467 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="nidoranf.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">nidoranf.png
+					</code><em class="filesize">430 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="nidoranm.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">nidoranm.png
+					</code><em class="filesize">503 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="nidorina.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">nidorina.png
+					</code><em class="filesize">491 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="nidorino.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">nidorino.png
+					</code><em class="filesize">472 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="ninetales.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">ninetales.png
+					</code><em class="filesize">524 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="noctowl.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">noctowl.png
+					</code><em class="filesize">430 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="octillery.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">octillery.png
+					</code><em class="filesize">358 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="oddish.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">oddish.png
+					</code><em class="filesize">356 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="omanyte.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">omanyte.png
+					</code><em class="filesize">459 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="omastar.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">omastar.png
+					</code><em class="filesize">511 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="onix.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">onix.png
+					</code><em class="filesize">468 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="paras.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">paras.png
+					</code><em class="filesize">410 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="parasect.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">parasect.png
+					</code><em class="filesize">379 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="persian.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">persian.png
+					</code><em class="filesize">468 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="phanpy.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">phanpy.png
+					</code><em class="filesize">359 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="pichu.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">pichu.png
+					</code><em class="filesize">378 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="pidgeot.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">pidgeot.png
+					</code><em class="filesize">401 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="pidgeotto.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">pidgeotto.png
+					</code><em class="filesize">390 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="pidgey.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">pidgey.png
+					</code><em class="filesize">515 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="pikachu.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">pikachu.png
+					</code><em class="filesize">428 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="piloswine.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">piloswine.png
+					</code><em class="filesize">300 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="pineco.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">pineco.png
+					</code><em class="filesize">401 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="pinsir.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">pinsir.png
+					</code><em class="filesize">520 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="politoed.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">politoed.png
+					</code><em class="filesize">371 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="poliwag.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">poliwag.png
+					</code><em class="filesize">312 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="poliwhirl.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">poliwhirl.png
+					</code><em class="filesize">404 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="poliwrath.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">poliwrath.png
+					</code><em class="filesize">452 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="ponyta.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">ponyta.png
+					</code><em class="filesize">474 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="porygon.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">porygon.png
+					</code><em class="filesize">375 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="porygon2.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">porygon2.png
+					</code><em class="filesize">399 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="primeape.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">primeape.png
+					</code><em class="filesize">456 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="psyduck.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">psyduck.png
+					</code><em class="filesize">429 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="pupitar.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">pupitar.png
+					</code><em class="filesize">467 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="quagsire.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">quagsire.png
+					</code><em class="filesize">393 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="quilava.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">quilava.png
+					</code><em class="filesize">480 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="qwilfish.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">qwilfish.png
+					</code><em class="filesize">471 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="raichu.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">raichu.png
+					</code><em class="filesize">424 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="raikou.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">raikou.png
+					</code><em class="filesize">349 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="rapidash.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">rapidash.png
+					</code><em class="filesize">472 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="raticate.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">raticate.png
+					</code><em class="filesize">465 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="rattata.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">rattata.png
+					</code><em class="filesize">444 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="remoraid.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">remoraid.png
+					</code><em class="filesize">434 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="rhydon.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">rhydon.png
+					</code><em class="filesize">523 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="rhyhorn.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">rhyhorn.png
+					</code><em class="filesize">432 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="sandshrew.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">sandshrew.png
+					</code><em class="filesize">503 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="sandslash.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">sandslash.png
+					</code><em class="filesize">518 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="scizor.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">scizor.png
+					</code><em class="filesize">457 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="scyther.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">scyther.png
+					</code><em class="filesize">457 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="seadra.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">seadra.png
+					</code><em class="filesize">504 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="seaking.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">seaking.png
+					</code><em class="filesize">483 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="seel.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">seel.png
+					</code><em class="filesize">390 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="sentret.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">sentret.png
+					</code><em class="filesize">354 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="shellder.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">shellder.png
+					</code><em class="filesize">479 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="shuckle.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">shuckle.png
+					</code><em class="filesize">343 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="skarmory.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">skarmory.png
+					</code><em class="filesize">357 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="skiploom.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">skiploom.png
+					</code><em class="filesize">417 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="slowbro.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">slowbro.png
+					</code><em class="filesize">431 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="slowking.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">slowking.png
+					</code><em class="filesize">516 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="slowpoke.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">slowpoke.png
+					</code><em class="filesize">340 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="smeargle.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">smeargle.png
+					</code><em class="filesize">449 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="smoochum.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">smoochum.png
+					</code><em class="filesize">381 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="sneasel.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">sneasel.png
+					</code><em class="filesize">417 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="snorlax.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">snorlax.png
+					</code><em class="filesize">280 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="snubbull.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">snubbull.png
+					</code><em class="filesize">432 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="spearow.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">spearow.png
+					</code><em class="filesize">411 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="spinarak.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">spinarak.png
+					</code><em class="filesize">352 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="squirtle.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">squirtle.png
+					</code><em class="filesize">350 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="stantler.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">stantler.png
+					</code><em class="filesize">490 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="starmie.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">starmie.png
+					</code><em class="filesize">355 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="staryu.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">staryu.png
+					</code><em class="filesize">379 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="steelix.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">steelix.png
+					</code><em class="filesize">520 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="sudowoodo.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">sudowoodo.png
+					</code><em class="filesize">457 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="suicune.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">suicune.png
+					</code><em class="filesize">524 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="sunflora.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">sunflora.png
+					</code><em class="filesize">510 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="sunkern.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">sunkern.png
+					</code><em class="filesize">388 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="swinub.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">swinub.png
+					</code><em class="filesize">301 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="tangela.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">tangela.png
+					</code><em class="filesize">334 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="tauros.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">tauros.png
+					</code><em class="filesize">319 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="teddiursa.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">teddiursa.png
+					</code><em class="filesize">343 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="tentacool.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">tentacool.png
+					</code><em class="filesize">399 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="tentacruel.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">tentacruel.png
+					</code><em class="filesize">447 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="togepi.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">togepi.png
+					</code><em class="filesize">384 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="togetic.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">togetic.png
+					</code><em class="filesize">468 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="totodile.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">totodile.png
+					</code><em class="filesize">416 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="typhlosion.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">typhlosion.png
+					</code><em class="filesize">469 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="tyranitar.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">tyranitar.png
+					</code><em class="filesize">490 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="tyrogue.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">tyrogue.png
+					</code><em class="filesize">467 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="umbreon.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">umbreon.png
+					</code><em class="filesize">447 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="unown.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">unown.png
+					</code><em class="filesize">256 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="ursaring.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">ursaring.png
+					</code><em class="filesize">364 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="vaporeon.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">vaporeon.png
+					</code><em class="filesize">398 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="venomoth.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">venomoth.png
+					</code><em class="filesize">538 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="venonat.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">venonat.png
+					</code><em class="filesize">441 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="venusaur.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">venusaur.png
+					</code><em class="filesize">512 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="victreebel.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">victreebel.png
+					</code><em class="filesize">407 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="vileplume.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">vileplume.png
+					</code><em class="filesize">440 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="voltorb.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">voltorb.png
+					</code><em class="filesize">319 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="vulpix.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">vulpix.png
+					</code><em class="filesize">426 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="wartortle.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">wartortle.png
+					</code><em class="filesize">455 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="weedle.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">weedle.png
+					</code><em class="filesize">363 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="weepinbell.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">weepinbell.png
+					</code><em class="filesize">415 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="weezing.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">weezing.png
+					</code><em class="filesize">423 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="wigglytuff.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">wigglytuff.png
+					</code><em class="filesize">332 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="wobbuffet.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">wobbuffet.png
+					</code><em class="filesize">363 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="wooper.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">wooper.png
+					</code><em class="filesize">344 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="xatu.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">xatu.png
+					</code><em class="filesize">399 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="yanma.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">yanma.png
+					</code><em class="filesize">523 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="zapdos.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">zapdos.png
+					</code><em class="filesize">420 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="zubat.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">zubat.png
+					</code><em class="filesize">451 bytes
+					</em><small class="filemtime">2023-11-16 00:05:08</small>
+				</a>
+			</li>
+			<li>
+				<a class="row" href="slugma.png">
+					<i class="icon fad fa-image">
+					</i><code class="filename">slugma.png
+					</code><em class="filesize">403 bytes
+					</em><small class="filemtime">2024-10-16 18:16:29</small>
+				</a>
+			</li>
+		</ul>
+
+	</main>
+
+</body>

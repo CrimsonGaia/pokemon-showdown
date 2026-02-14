@@ -1510,10 +1510,8 @@ case'zapcannon':
 return abilityid==='noguard'||dex.gen<4&&!moves.includes('thunderwave');
 }
 if(this.isDoubles&&BattleMoveSearch.GOOD_DOUBLES_MOVES.includes(id)){return true;}
-
 var move=dex.moves.get(id);
 if(!move.exists)return true;
-if((move.status==='slp'||id==='yawn')&&dex.gen===9&&!this.formatType){return false;}
 if(move.category==='Status'){return BattleMoveSearch.GOOD_STATUS_MOVES.includes(id);}
 if(move.basePower<75){return BattleMoveSearch.GOOD_WEAK_MOVES.includes(id)||abilityid==='technician'&&move.basePower===60;}
 if(id==='skydrop')return true;
@@ -1553,10 +1551,11 @@ if((_this$formatType14=this.formatType)!=null&&_this$formatType14.startsWith('bd
 if(this.formatType==='letsgo')lsetTable=lsetTable['gen7letsgo'];
 if(this.formatType==='bw1')lsetTable=lsetTable['gen5bw1'];
 if(this.formatType==='rs')lsetTable=lsetTable['gen3rs'];
-if(this.formatType==='indigostarstorm')lsetTable=lsetTable['gen9indigostarstorm']||lsetTable;
 if((_this$formatType15=this.formatType)!=null&&_this$formatType15.startsWith('ssdlc1'))lsetTable=lsetTable['gen8dlc1'];
+if(this.formatType==='indigostarstorm')lsetTable=lsetTable['gen9indigostarstorm']||lsetTable;
 if((_this$formatType16=this.formatType)!=null&&_this$formatType16.startsWith('predlc'))lsetTable=lsetTable['gen9predlc'];
 if((_this$formatType17=this.formatType)!=null&&_this$formatType17.startsWith('svdlc1'))lsetTable=lsetTable['gen9dlc1'];
+if(this.formatType==='indigostarstorm')lsetTable=lsetTable['gen9indigostarstorm']||lsetTable;
 console.log('[DEBUG getMovesList] formatType:',this.formatType,'has learnsets?',!!((_lsetTable=lsetTable)!=null&&_lsetTable.learnsets));
 while(learnsetid){
 var learnset=lsetTable.learnsets[learnsetid];

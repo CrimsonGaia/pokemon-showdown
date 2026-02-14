@@ -16,11 +16,9 @@
 		this.$el = $(elem);
 		this.el = this.$el[0];
 		this.$viewport = (viewport ? $(viewport) : $(window));
-
 		this.urlRoot = '';
 		this.q = undefined; // uninitialized
 		this.exactMatch = false;
-
 		this.resultSet = null;
 		this.filters = null;
 		this.sortCol = null;
@@ -31,10 +29,8 @@
 		this.$inputEl = null;
 		this.gen = 9;
 		this.mod = null;
-
 		this.engine = new DexSearch();
 		window.search = this;
-
 		var self = this;
 		this.$el.on('click', '.more button', function (e) {
 			e.preventDefault();
@@ -93,17 +89,14 @@
 			self.updateScroll();
 		});
 	}
-
 	Search.prototype.$ = function (query) {
 		return this.$el.find(query);
 	};
-
 	// Helper function to render category based on user preference
 	Search.prototype.getCategoryDisplay = function (category) {
 		var displayMode = Dex.prefs('categorydisplay') || 'icons';
 		var icon = Dex.getCategoryIcon(category);
 		var text = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
-		
 		// Color mapping for categories
 		var categoryColors = {
 			'Physical': '#F08030',
@@ -111,50 +104,32 @@
 			'Status': '#A8A878'
 		};
 		var color = categoryColors[text] || '#000';
-		
-		if (displayMode === 'text') {
-			return '<span style="font-size: 10px; font-weight: bold; color: ' + color + ';">' + text + '</span>';
-		} else if (displayMode === 'both') {
+		if (displayMode === 'text') { return '<span style="font-size: 10px; font-weight: bold; color: ' + color + ';">' + text + '</span>'; } 
+		else if (displayMode === 'both') {
 			// Remove the hidden span from the icon and show text below
 			var iconOnly = icon.replace(/<span[^>]*>.*?<\/span>/g, '');
 			return '<div style="display: inline-block; text-align: center;">' + iconOnly + '<div style="font-size: 8px; font-weight: bold; line-height: 1; margin-top: -1px; color: ' + color + ';">' + text + '</div></div>';
-		} else {
-			// icons (default)
-			return icon;
-		}
+		} else { return icon; } // icons (default)
 	};
-
 	// Helper function to get CSS filter for category-based flag tinting
 	Search.prototype.getCategoryFlagFilter = function (category) {
 		var cat = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
 		switch (cat) {
-			case 'Physical':
-				// Orange tint for physical moves
-				return 'sepia(100%) saturate(300%) hue-rotate(-10deg) brightness(0.9)';
-			case 'Special':
-				// Greenish tint for special moves with deeper coloration
-				return 'sepia(100%) saturate(345%) hue-rotate(85deg) brightness(1.0)';
-			case 'Status':
-				// Olive/gray tint for status moves
-				return 'sepia(100%) saturate(50%) hue-rotate(30deg) brightness(0.85)';
-			default:
-				return 'none';
+			case 'Physical': return 'sepia(100%) saturate(300%) hue-rotate(-10deg) brightness(0.9)'; // Orange tint for physical moves
+			case 'Special': return 'sepia(100%) saturate(345%) hue-rotate(85deg) brightness(1.0)'; // Greenish tint for special moves with deeper coloration
+			case 'Status': return 'sepia(100%) saturate(50%) hue-rotate(30deg) brightness(0.85)'; // Olive/gray tint for status moves
+			default: return 'none';
 		}
 	};
-
 	// Helper function to calculate crit chance based on crit ratio
 	Search.prototype.getCritChance = function (critRatio) {
-		// Gen 6+ crit system: 1/24, 1/8, 1/2, always
-		// critRatio 0 = stage 0, critRatio 1 = stage 1, etc.
+		// Gen 6+ crit system: 1/24, 1/8, 1/2, always critRatio 0 = stage 0, critRatio 1 = stage 1, etc.
 		var stage = Math.max(0, critRatio || 1);
 		if (stage >= 3) return 'Always';
 		var chances = [24, 8, 2]; // denominators for stages 0, 1, 2
-		if (stage < chances.length) {
-			return '1/' + chances[stage];
-		}
+		if (stage < chances.length) { return '1/' + chances[stage]; }
 		return 'Always';
 	};
-
 	// Helper function to get text color for category-based flag tinting
 	Search.prototype.getCategoryTextColor = function (category) {
 		var cat = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
@@ -169,14 +144,9 @@
 				return '#000';
 		}
 	};
-
-	//
 	// Search functions
-	//
-
 	Search.prototype.find = function (query, firstElem) {
 		if (!this.engine.find(query)) return; // nothing changed
-
 		this.exactMatch = this.engine.exactMatch;
 		this.q = this.engine.query;
 		this.resultSet = this.engine.results;
@@ -188,10 +158,7 @@
 				this.resultSet[0] = sortRow;
 			}
 		}
-		if (this.filters) {
-			this.resultSet = [['html', this.getFilterText()]].concat(this.resultSet);
-		}
-
+		if (this.filters) { this.resultSet = [['html', this.getFilterText()]].concat(this.resultSet); }
 		this.renderedIndex = 0;
 		this.renderingDone = false;
 		this.updateScroll();
@@ -206,11 +173,8 @@
 	};
 	Search.prototype.removeFilter = function (e) {
 		var result;
-		if (e) {
-			result = this.engine.removeFilter(e.currentTarget.value.split(':'));
-		} else {
-			result = this.engine.removeFilter();
-		}
+		if (e) { result = this.engine.removeFilter(e.currentTarget.value.split(':')); } 
+		else { result = this.engine.removeFilter(); }
 		this.filters = this.engine.filters;
 		this.find('');
 		return result;
@@ -238,7 +202,6 @@
 		if (finalIndex < i + 20) finalIndex = i + 20;
 		if (bottom - top > windowHeight && !i) finalIndex = 20;
 		if (forceAdd && finalIndex > i + 40) finalIndex = i + 40;
-
 		var resultSet = this.resultSet;
 		var buf = '';
 		while (i < finalIndex) {
@@ -247,15 +210,10 @@
 				break;
 			}
 			var row = resultSet[i];
-
 			var errorMessage = '';
 			var label;
-			if ((label = this.engine.filterLabel(row[0]))) {
-				errorMessage = '<span class="col filtercol"><em>' + label + '</em></span>';
-			} else if ((label = this.engine.illegalLabel(row[1]))) {
-				errorMessage = '<span class="col illegalcol"><em>' + label + '</em></span>';
-			}
-
+			if ((label = this.engine.filterLabel(row[0]))) { errorMessage = '<span class="col filtercol"><em>' + label + '</em></span>'; } 
+			else if ((label = this.engine.illegalLabel(row[1]))) { errorMessage = '<span class="col illegalcol"><em>' + label + '</em></span>'; }
 			var mStart = 0;
 			var mEnd = 0;
 			if (row.length > 3) {
@@ -263,7 +221,6 @@
 				mEnd = row[3];
 			}
 			buf += this.renderRow(row[1], row[0], mStart, mEnd, errorMessage, row[1] in this.cur ? ' class="cur"' : '');
-
 			i++;
 		}
 		if (!this.renderedIndex) {

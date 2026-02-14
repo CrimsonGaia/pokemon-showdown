@@ -847,6 +847,7 @@ export const Dex = new class implements ModdedDex {
 		return this.pokeballs;
 	}
 };
+//region Modded Dex
 export class ModdedDex {
 	readonly gen: number;
 	readonly modid: ID;
