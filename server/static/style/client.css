@@ -2097,7 +2097,7 @@ p.or:after {
 }
 
 /*********************************************************
- * Teambuilder
+  Teambuilder
  *********************************************************/
 
 .folderpane {
@@ -3335,6 +3335,16 @@ p.or:after {
 	text-shadow: 1px 1px 0 rgb(40, 43, 45);
 	box-shadow: inset 0px 1px 0 rgb(49, 49, 49);
 	border-right: none;
+}
+
+.dex-badge {
+	margin-left: 8px;
+	padding: 2px 6px;
+	border-radius: 10px;
+	font-size: 11px;
+	border: 1px solid currentColor;
+	opacity: 0.85;
+	white-space: nowrap;
 }
 
 .dark .teambar button {

@@ -127,7 +127,7 @@ export class PSTeambuilder {
 		// }, 0);
 	}
 }
-
+//region Team Box
 export function TeamBox(props: {
 	team: Team | null,
 	noLink?: boolean,

@@ -519,6 +519,9 @@ Storage.saveTeam = function () { this.saveTeams(); };
 Storage.deleteTeam = function () { this.saveTeams(); };
 Storage.saveAllTeams = function () { this.saveTeams(); };
 Storage.deleteAllTeams = function () {};
+
+
+
 //region Team importing and exporting
 Storage.unpackAllTeams = function (buffer) {
 	if (!buffer) return [];
@@ -591,10 +594,16 @@ Storage.packTeam = function (team) {
 		// species
 		var id = toID(set.species);
 		buf += '|' + (toID(set.name || set.species) === id ? '' : id);
+		// size (NEW FIELD) - store as token XS/S/M/L/XL (or empty)
+		var sz = String(set.size || '').trim().toUpperCase();
+		if (!['XS', 'S', 'M', 'L', 'XL'].includes(sz)) sz = '';
+		buf += '|' + sz;
 		// item
 		buf += '|' + toID(set.item);
-		// ability
-		buf += '|' + toID(set.ability);
+		// abilities (NEW FIELD, plural; store ability IDs)
+		var a1 = toID(set.ability);
+		var a2 = toID(set.ability2);
+		buf += '|' + (a1 || '') + (a2 ? '/' + a2 : '');
 		// moves
 		buf += '|';
 		if (set.moves) for (var j = 0; j < set.moves.length; j++) {
@@ -629,13 +638,12 @@ Storage.packTeam = function (team) {
 		// happiness
 		if (set.happiness !== undefined && set.happiness !== 255) { buf += '|' + set.happiness; } 
 		else { buf += '|'; }
-		if (set.pokeball || (set.hpType && !hasHP) || set.gigantamax || (set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10) || set.teraType || set.ability2 || set.abilitySet) {
+		if (set.pokeball || (set.hpType && !hasHP) || set.gigantamax || (set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10) || set.teraType || set.abilitySet) {
 			buf += ',' + (set.hpType || '');
 			buf += ',' + toID(set.pokeball);
 			buf += ',' + (set.gigantamax ? 'G' : '');
 			buf += ',' + (set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10 ? set.dynamaxLevel : '');
 			buf += ',' + (set.teraType || '');
-			buf += ',' + toID(set.ability2 || '');
 			buf += ',' + (set.abilitySet || '');
 		}
 	}
@@ -657,16 +665,51 @@ Storage.fastUnpackTeam = function (buf) {
 		var species = Dex.species.get(buf.substring(i, j) || set.name);
 		set.species = species.name;
 		i = j + 1;
-		// item
-		j = buf.indexOf('|', i);
-		set.item = buf.substring(i, j);
-		i = j + 1;
-		// ability
-		j = buf.indexOf('|', i);
-		var ability = buf.substring(i, j);
-		if (species.baseSpecies === 'Zygarde' && ability === 'H') ability = 'Power Construct';
-		set.ability = (species.abilities && ['', '0', '1', 'H', 'S'].includes(ability) ? species.abilities[ability] || '!!!ERROR!!!' : ability);
-		i = j + 1;
+		// size OR (back-compat) item
+j = buf.indexOf('|', i);
+var f1 = buf.substring(i, j);
+i = j + 1;
+
+// Detect new format: size is one of xs/s/m/l/xl
+var f1u = (f1 || '').toUpperCase();
+var isNew = (f1u === '' || f1u === 'XS' || f1u === 'S' || f1u === 'M' || f1u === 'L' || f1u === 'XL');
+
+if (isNew) {
+  // NEW FORMAT: size
+  set.size = f1u || 'M'; // XS/S/M/L/XL
+
+  // item
+  j = buf.indexOf('|', i);
+  set.item = buf.substring(i, j);
+  i = j + 1;
+
+  // abilities (plural, ids or empty)
+  j = buf.indexOf('|', i);
+  var abilField = buf.substring(i, j);
+  i = j + 1;
+
+  if (abilField) {
+    var parts = abilField.split('/');
+    // keep raw in fastUnpack (fastUnpack usually keeps ids)
+    set.ability = parts[0] || '';
+    set.ability2 = parts[1] || '';
+  } else {
+    set.ability = '';
+  }
+
+} else {
+  // OLD FORMAT: f1 was actually item
+  set.size = 'M';        // default
+  set.item = f1;
+
+  // old single ability field
+  j = buf.indexOf('|', i);
+  var ability = buf.substring(i, j);
+  i = j + 1;
+
+  if (species.baseSpecies === 'Zygarde' && ability === 'H') ability = 'Power Construct';
+  set.ability = (species.abilities && ['', '0', '1', 'H', 'S'].includes(ability) ? species.abilities[ability] || '!!!ERROR!!!' : ability);
+}
 		// moves
 		j = buf.indexOf('|', i);
 		set.moves = buf.substring(i, j).split(',');
@@ -724,7 +767,7 @@ Storage.fastUnpackTeam = function (buf) {
 		j = buf.indexOf(']', i);
 		var misc = undefined;
 		if (j < 0) { if (i < buf.length) misc = buf.substring(i).split(',', 8); } 
-		else { if (i !== j) misc = buf.substring(i, j).split(',', 8); }
+		else { if (i !== j) misc = buf.substring(i, j).split(',', 7); }
 		if (misc) {
 			set.happiness = (misc[0] ? Number(misc[0]) : 255);
 			set.hpType = misc[1];
@@ -732,8 +775,7 @@ Storage.fastUnpackTeam = function (buf) {
 			set.gigantamax = !!misc[3];
 			set.dynamaxLevel = (misc[4] ? Number(misc[4]) : 10);
 			set.teraType = misc[5];
-			set.ability2 = misc[6] || undefined;
-			set.abilitySet = misc[7] ? Number(misc[7]) : undefined;
+			set.abilitySet = misc[6] ? Number(misc[6]) : undefined;
 		}
 		if (j < 0) break;
 		i = j + 1;
@@ -756,15 +798,47 @@ Storage.unpackTeam = function (buf) {
 		var species = Dex.species.get(buf.substring(i, j) || set.name);
 		set.species = species.name;
 		i = j + 1;
-		// item
-		j = buf.indexOf('|', i);
-		set.item = Dex.items.get(buf.substring(i, j)).name;
-		i = j + 1;
-		// ability
-		j = buf.indexOf('|', i);
-		var ability = Dex.abilities.get(buf.substring(i, j)).name;
-		set.ability = (species.abilities && ability in { '': 1, 0: 1, 1: 1, H: 1 } ? species.abilities[ability || '0'] : ability);
-		i = j + 1;
+		// size OR (back-compat) item
+j = buf.indexOf('|', i);
+var f1 = buf.substring(i, j);
+i = j + 1;
+
+// Detect new format: size is one of xs/s/m/l/xl
+var f1u = (f1 || '').toUpperCase();
+var isNew = (f1u === '' || f1u === 'XS' || f1u === 'S' || f1u === 'M' || f1u === 'L' || f1u === 'XL');
+
+if (isNew) {
+  // NEW FORMAT
+  set.size = f1u || 'M'; // XS/S/M/L/XL
+
+  // item
+  j = buf.indexOf('|', i);
+  set.item = Dex.items.get(buf.substring(i, j)).name;
+  i = j + 1;
+
+  // abilities (plural)
+  j = buf.indexOf('|', i);
+  var abilField = buf.substring(i, j);
+  i = j + 1;
+
+  if (abilField) {
+    var parts = abilField.split('/');
+    if (parts[0]) set.ability = Dex.abilities.get(parts[0]).name;
+    if (parts[1]) set.ability2 = Dex.abilities.get(parts[1]).name;
+  }
+
+} else {
+  // OLD FORMAT
+  set.size = 'M'; // default
+  set.item = Dex.items.get(f1).name;
+
+  // old single ability field
+  j = buf.indexOf('|', i);
+  var ability = Dex.abilities.get(buf.substring(i, j)).name;
+  i = j + 1;
+
+  set.ability = (species.abilities && ability in { '': 1, 0: 1, 1: 1, H: 1 } ? species.abilities[ability || '0'] : ability);
+}
 		// moves
 		j = buf.indexOf('|', i);
 		set.moves = buf.substring(i, j).split(',').map(function (moveid) { return Dex.moves.get(moveid).name; });
@@ -822,7 +896,7 @@ Storage.unpackTeam = function (buf) {
 		j = buf.indexOf(']', i);
 		var misc = undefined;
 		if (j < 0) { if (i < buf.length) misc = buf.substring(i).split(',', 6); } 
-		else { if (i !== j) misc = buf.substring(i, j).split(',', 8); }
+		else { if (i !== j) misc = buf.substring(i, j).split(',', 7); }
 		if (misc) {
 			set.happiness = (misc[0] ? Number(misc[0]) : 255);
 			set.hpType = misc[1];
@@ -830,16 +904,13 @@ Storage.unpackTeam = function (buf) {
 			set.gigantamax = !!misc[3];
 			set.dynamaxLevel = (misc[4] ? Number(misc[4]) : 10);
 			set.teraType = misc[5];
-			set.ability2 = misc[6] ? Dex.abilities.get(misc[6]).name : undefined;
-			set.abilitySet = misc[7] ? Number(misc[7]) : undefined;
+			set.abilitySet = misc[6] ? Number(misc[6]) : undefined;
 		}
 		if (j < 0 || buf.indexOf('|', j) < 0) break;
 		i = j + 1;
 	}
-
 	return team;
 };
-
 Storage.packedTeamNames = function (buf) {
 	if (!buf) return [];
 	var team = [];
@@ -849,7 +920,7 @@ Storage.packedTeamNames = function (buf) {
 		i = buf.indexOf('|', i) + 1;
 		if (!i) return [];
 		team.push(buf.substring(i, buf.indexOf('|', i)) || name);
-		for (var k = 0; k < 9; k++) {
+		for (var k = 0; k < 11; k++) {
 			i = buf.indexOf('|', i) + 1;
 			if (!i) return [];
 		}
@@ -887,17 +958,19 @@ Storage.getPackedTeam = function (team) {
 	if (typeof team.team !== 'string') { team.team = Storage.packTeam(team.team); } // should never happen
 	return team.team;
 };
+//#region Import Team
 Storage.importTeam = function (buffer, teams) {
 	var text = buffer.split("\n");
 	var team = teams ? null : [];
 	var curSet = null;
+	var sawAbilitiesLine = false;
 	if (teams === true) {
 		Storage.teams = [];
 		teams = Storage.teams;
 	} else if (text.length === 1 || (text.length === 2 && !text[1])) { return Storage.unpackTeam(text[0]); }
 	for (var i = 0; i < text.length; i++) {
 		var line = $.trim(text[i]);
-		if (line === '' || line === '---') { curSet = null; } 
+		if (line === '' || line === '---') { curSet = null; sawAbilitiesLine = false; } 
 		else if (line.substr(0, 3) === '===' && teams) {
 			team = [];
 			line = $.trim(line.substr(3, line.length - 6));
@@ -934,6 +1007,7 @@ Storage.importTeam = function (buffer, teams) {
 			teams.push(Storage.unpackLine(line));
 		} else if (!curSet) {
 			curSet = { name: '', species: '', gender: '' };
+			sawAbilitiesLine = false;
 			team.push(curSet);
 			var atIndex = line.lastIndexOf(' @ ');
 			if (atIndex !== -1) {
@@ -959,12 +1033,26 @@ Storage.importTeam = function (buffer, teams) {
 				curSet.species = Dex.species.get(line).name;
 				curSet.name = '';
 			}
-		} else if (line.substr(0, 7) === 'Trait: ') {
-			line = line.substr(7);
-			curSet.ability = line;
-		} else if (line.substr(0, 9) === 'Ability: ') {
-			line = line.substr(9);
-			curSet.ability = line;
+		} else if (line.substr(0, 10) === 'Abilities: ') {
+    var s = $.trim(line.substr(10));
+    var parts = s.split('/').map(function (p) { return $.trim(p); }).filter(Boolean);
+    curSet.ability = parts[0] || '';
+    curSet.ability2 = parts[1] || '';
+    sawAbilitiesLine = true;
+
+} else if (line.substr(0, 6) === 'Size: ') {
+    var sz = $.trim(line.substr(6)).toUpperCase();
+    if (sz === 'XS' || sz === 'S' || sz === 'M' || sz === 'L' || sz === 'XL') curSet.size = sz;
+
+} else if (line.substr(0, 7) === 'Trait: ') {
+    line = line.substr(7);
+    // Only accept if Abilities: wasn't already used, or if ability is still empty
+    if (!sawAbilitiesLine || !curSet.ability) curSet.ability = line;
+
+} else if (line.substr(0, 9) === 'Ability: ') {
+    line = line.substr(9);
+    // Only accept if Abilities: wasn't already used, or if ability is still empty
+    if (!sawAbilitiesLine || !curSet.ability) curSet.ability = line;
 		} else if (line === 'Shiny: Yes') { curSet.shiny = true; } 
 		else if (line.substr(0, 7) === 'Level: ') {
 			line = line.substr(7);
@@ -1075,7 +1163,10 @@ Storage.exportTeam = function (team, gen, hidestats) {
 		if (curSet.gender === 'F') text += ' (F)';
 		if (curSet.item) { text += ' @ ' + curSet.item; }
 		text += "  \n";
-		if (curSet.ability) { text += 'Ability: ' + curSet.ability + "  \n"; }
+		var a1 = (curSet.ability || '').trim();
+var a2 = (curSet.ability2 || '').trim();
+if (a1 || a2) text += 'Abilities: ' + a1 + (a2 ? ' / ' + a2 : '') + "  \n";
+text += 'Size: ' + String(curSet.size || 'M').toUpperCase() + "  \n";
 		if (curSet.level && curSet.level !== 100) { text += 'Level: ' + curSet.level + "  \n"; }
 		if (curSet.shiny) { text += 'Shiny: Yes  \n'; }
 		if (typeof curSet.happiness === 'number' && curSet.happiness !== 255 && !isNaN(curSet.happiness)) { text += 'Happiness: ' + curSet.happiness + "  \n"; }

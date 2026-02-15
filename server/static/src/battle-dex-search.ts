@@ -541,6 +541,7 @@ export class DexSearch {
 		return left;
 	}
 }
+//region Typed Search
 abstract class BattleTypedSearch<T extends SearchType> {
 	searchType: T;
 	// Dex for the mod/generation to search.
@@ -638,11 +639,19 @@ abstract class BattleTypedSearch<T extends SearchType> {
 			this.formatType = 'letsgo';
 			this.dex = Dex.mod('gen7letsgo' as ID);
 		}
-		if (format.includes('indigostarstorm') || format.includes('isl')) {
-			console.log('[DEBUG] ISL format detected, original format:', format);
-			this.formatType = 'indigostarstorm';
-			this.dex = Dex.mod('gen9indigostarstorm' as ID);
-		}
+		// must happen AFTER the "gen9" stripping block, so format is like "indigostarstormou" or "indigostarstorm"
+if (format.startsWith('indigostarstorm') || format.startsWith('isl')) {
+	console.log('[DEBUG] ISL format detected, original format:', format);
+	this.formatType = 'indigostarstorm';
+	this.dex = Dex.mod('gen9indigostarstorm' as ID);
+	// normalize: remove the mod marker so the remaining format is the actual tier (ou/uu/etc)
+	if (format.startsWith('indigostarstorm')) {
+		format = format.slice('indigostarstorm'.length) as ID;
+	} else {
+		format = format.slice('isl'.length) as ID;
+	}
+	if (!format) format = 'ou' as ID; // pick a sane default if someone selects just "gen9indigostarstorm"
+}
 		if (format.includes('nationaldex') || format.startsWith('nd') || format.includes('natdex')) {
 			format = (format.startsWith('nd') ? format.slice(2) : format.includes('natdex') ? format.slice(6) : format.slice(11)) as ID;
 			this.formatType = 'natdex';
@@ -853,6 +862,77 @@ abstract class BattleTypedSearch<T extends SearchType> {
 	abstract filter(input: SearchRow, filters: string[][]): boolean;
 	defaultFilter?(input: SearchRow[]): SearchRow[];
 	abstract sort(input: SearchRow[], sortCol: string, reverseSort?: boolean): SearchRow[];
+	protected applyTeambuilderOverrides() {
+	// pick the same table you already use in firstLearnsetid/canLearn
+	let table: any = (window as any).BattleTeambuilderTable;
+	const gen = this.dex.gen;
+
+	// base-gen slices
+	if (this.formatType?.startsWith('bdsp')) table = table?.gen8bdsp;
+	if (this.formatType === 'letsgo') table = table?.gen7letsgo;
+	if (this.formatType === 'bw1') table = table?.gen5bw1;
+	if (this.formatType === 'rs') table = table?.gen3rs;
+	if (this.formatType === 'indigostarstorm') table = table?.gen9indigostarstorm;
+
+	// also handle default gen tables (not strictly needed for ISL)
+	if (!table && table?.[`gen${gen}`]) table = table[`gen${gen}`];
+	if (!table) return;
+
+	// Apply species overrides (this is what fixes abilities like Rellor slot 1)
+	const dexAny = this.dex as any;
+
+	// IMPORTANT: depending on your Dex implementation, data might live at dexAny.data or dexAny.dataCache.
+	// In PS client it's usually dex.data.<TableName>
+	const pokedexTable = dexAny.data?.Pokedex;
+	if (pokedexTable && table.overrideSpeciesData) {
+		for (const id in table.overrideSpeciesData) {
+			const override = table.overrideSpeciesData[id];
+			const base = pokedexTable[id] || {};
+			// merge shallow; keep base fields if override doesn't provide them
+			pokedexTable[id] = {...base, ...override};
+
+			// if abilities are nested, prefer merging those too
+			if (base.abilities || override.abilities) {
+				pokedexTable[id].abilities = {...(base.abilities || {}), ...(override.abilities || {})};
+			}
+		}
+	}
+
+	// Optional: if your table includes these, apply similarly
+	const movesTable = dexAny.data?.Moves;
+	if (movesTable && table.overrideMoveData) {
+		for (const id in table.overrideMoveData) {
+			const override = table.overrideMoveData[id];
+			const base = movesTable[id] || {};
+			movesTable[id] = {...base, ...override};
+		}
+	}
+
+	const itemsTable = dexAny.data?.Items;
+	if (itemsTable && table.overrideItemData) {
+		for (const id in table.overrideItemData) {
+			const override = table.overrideItemData[id];
+			const base = itemsTable[id] || {};
+			itemsTable[id] = {...base, ...override};
+		}
+	}
+
+	const abilitiesTable = dexAny.data?.Abilities;
+	if (abilitiesTable && table.overrideAbilityData) {
+		for (const id in table.overrideAbilityData) {
+			const override = table.overrideAbilityData[id];
+			const base = abilitiesTable[id] || {};
+			abilitiesTable[id] = {...base, ...override};
+		}
+	}
+
+	// Clear any caches if your Dex caches Species objects.
+	// (Only do this if your Dex has a cache object.)
+	if (dexAny.species?.cache) dexAny.species.cache = Object.create(null);
+	if (dexAny.moves?.cache) dexAny.moves.cache = Object.create(null);
+	if (dexAny.items?.cache) dexAny.items.cache = Object.create(null);
+	if (dexAny.abilities?.cache) dexAny.abilities.cache = Object.create(null);
+}
 }
 //region Pokemon Search
 class BattlePokemonSearch extends BattleTypedSearch<'pokemon'> {
@@ -1217,28 +1297,44 @@ class BattleAbilitySearch extends BattleTypedSearch<'ability'> {
 class BattleItemSearch extends BattleTypedSearch<'item'> {
 	getTable() { return BattleItems; }
 	getDefaultResults(): SearchRow[] {
-		let table = BattleTeambuilderTable;
-		if (this.formatType?.startsWith('bdsp')) { table = table['gen8bdsp']; } 
-		else if (this.formatType === 'bw1') { table = table['gen5bw1']; } 
-		else if (this.formatType === 'rs') { table = table['gen3rs']; } 
-		else if (this.formatType === 'indigostarstorm') {
-			// Mod tables only have overrides, use parent gen for full item list
-			// Gen 9 items are at the root level of BattleTeambuilderTable
-			console.log('[DEBUG] BattleItemSearch.getDefaultResults() - formatType:', this.formatType, 'using root table, has items:', !!table?.items);
-		} 
-		else if (this.formatType === 'natdex') { table = table[`gen${this.dex.gen}natdex`]; } 
-		else if (this.formatType?.endsWith('doubles')) { table = table[`gen${this.dex.gen}doubles`]; } // no natdex/bdsp doubles support
-		else if (this.formatType === 'metronome') { table = table[`gen${this.dex.gen}metronome`]; } 
-		else if (this.dex.gen < 9) { table = table[`gen${this.dex.gen}`]; }
-		console.log('[DEBUG] BattleItemSearch final check - table:', !!table, 'items:', !!table?.items, 'itemSet:', !!table?.itemSet, 'formatType:', this.formatType);
-		if (!table || (!table.items && !table.itemSet)) return [];
-		if (!table.itemSet) { table.itemSet = table.items.map((r: any) => { if (typeof r === 'string') { return ['item', r]; }
-				return [r[0], r[1]];
-			});
-			table.items = null;
-		}
-		return table.itemSet;
+	let table: any = BattleTeambuilderTable;
+
+	if (this.formatType?.startsWith('bdsp')) {
+		table = table['gen8bdsp'];
+	} else if (this.formatType === 'bw1') {
+		table = table['gen5bw1'];
+	} else if (this.formatType === 'rs') {
+		table = table['gen3rs'];
+	} else if (this.formatType === 'indigostarstorm') {
+		// IMPORTANT:
+		// BattleTeambuilderTable (root) is a container and does NOT have .items.
+		// Use the base gen table for the full item list.
+		table = table['gen9'] || table[`gen${this.dex.gen}`];
+	} else if (this.formatType === 'natdex') {
+		table = table[`gen${this.dex.gen}natdex`];
+	} else if (this.formatType?.endsWith('doubles')) {
+		table = table[`gen${this.dex.gen}doubles`];
+	} else if (this.formatType === 'metronome') {
+		table = table[`gen${this.dex.gen}metronome`];
+	} else if (this.dex.gen < 9) {
+		table = table[`gen${this.dex.gen}`];
+	} else {
+		// gen9 default
+		table = table['gen9'] || table;
 	}
+
+	// Build itemSet once from the correct base table
+	if (!table || (!table.items && !table.itemSet)) return [];
+	if (!table.itemSet) {
+		table.itemSet = table.items.map((r: any) => {
+			if (typeof r === 'string') return ['item', r];
+			return [r[0], r[1]];
+		});
+		table.items = null;
+	}
+
+	return table.itemSet;
+}
 	getBaseResults(): SearchRow[] {
 		if (!this.species) return this.getDefaultResults();
 		const speciesName = this.dex.species.get(this.species).name;
