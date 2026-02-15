@@ -862,77 +862,7 @@ if (format.startsWith('indigostarstorm') || format.startsWith('isl')) {
 	abstract filter(input: SearchRow, filters: string[][]): boolean;
 	defaultFilter?(input: SearchRow[]): SearchRow[];
 	abstract sort(input: SearchRow[], sortCol: string, reverseSort?: boolean): SearchRow[];
-	protected applyTeambuilderOverrides() {
-	// pick the same table you already use in firstLearnsetid/canLearn
-	let table: any = (window as any).BattleTeambuilderTable;
-	const gen = this.dex.gen;
-
-	// base-gen slices
-	if (this.formatType?.startsWith('bdsp')) table = table?.gen8bdsp;
-	if (this.formatType === 'letsgo') table = table?.gen7letsgo;
-	if (this.formatType === 'bw1') table = table?.gen5bw1;
-	if (this.formatType === 'rs') table = table?.gen3rs;
-	if (this.formatType === 'indigostarstorm') table = table?.gen9indigostarstorm;
-
-	// also handle default gen tables (not strictly needed for ISL)
-	if (!table && table?.[`gen${gen}`]) table = table[`gen${gen}`];
-	if (!table) return;
-
-	// Apply species overrides (this is what fixes abilities like Rellor slot 1)
-	const dexAny = this.dex as any;
-
-	// IMPORTANT: depending on your Dex implementation, data might live at dexAny.data or dexAny.dataCache.
-	// In PS client it's usually dex.data.<TableName>
-	const pokedexTable = dexAny.data?.Pokedex;
-	if (pokedexTable && table.overrideSpeciesData) {
-		for (const id in table.overrideSpeciesData) {
-			const override = table.overrideSpeciesData[id];
-			const base = pokedexTable[id] || {};
-			// merge shallow; keep base fields if override doesn't provide them
-			pokedexTable[id] = {...base, ...override};
-
-			// if abilities are nested, prefer merging those too
-			if (base.abilities || override.abilities) {
-				pokedexTable[id].abilities = {...(base.abilities || {}), ...(override.abilities || {})};
-			}
-		}
-	}
-
-	// Optional: if your table includes these, apply similarly
-	const movesTable = dexAny.data?.Moves;
-	if (movesTable && table.overrideMoveData) {
-		for (const id in table.overrideMoveData) {
-			const override = table.overrideMoveData[id];
-			const base = movesTable[id] || {};
-			movesTable[id] = {...base, ...override};
-		}
-	}
-
-	const itemsTable = dexAny.data?.Items;
-	if (itemsTable && table.overrideItemData) {
-		for (const id in table.overrideItemData) {
-			const override = table.overrideItemData[id];
-			const base = itemsTable[id] || {};
-			itemsTable[id] = {...base, ...override};
-		}
-	}
-
-	const abilitiesTable = dexAny.data?.Abilities;
-	if (abilitiesTable && table.overrideAbilityData) {
-		for (const id in table.overrideAbilityData) {
-			const override = table.overrideAbilityData[id];
-			const base = abilitiesTable[id] || {};
-			abilitiesTable[id] = {...base, ...override};
-		}
-	}
-
-	// Clear any caches if your Dex caches Species objects.
-	// (Only do this if your Dex has a cache object.)
-	if (dexAny.species?.cache) dexAny.species.cache = Object.create(null);
-	if (dexAny.moves?.cache) dexAny.moves.cache = Object.create(null);
-	if (dexAny.items?.cache) dexAny.items.cache = Object.create(null);
-	if (dexAny.abilities?.cache) dexAny.abilities.cache = Object.create(null);
-}
+	
 }
 //region Pokemon Search
 class BattlePokemonSearch extends BattleTypedSearch<'pokemon'> {
@@ -1306,10 +1236,10 @@ class BattleItemSearch extends BattleTypedSearch<'item'> {
 	} else if (this.formatType === 'rs') {
 		table = table['gen3rs'];
 	} else if (this.formatType === 'indigostarstorm') {
-		// IMPORTANT:
-		// BattleTeambuilderTable (root) is a container and does NOT have .items.
-		// Use the base gen table for the full item list.
-		table = table['gen9'] || table[`gen${this.dex.gen}`];
+		// Use the modded teambuilder table when in ISL format
+		table = table['gen9indigostarstorm'] || table;
+		// Fallback if something went wrong and the mod table didn't build items
+		if (!table.items && !table.itemSet) table = BattleTeambuilderTable['gen9'] || BattleTeambuilderTable[`gen${this.dex.gen}`];
 	} else if (this.formatType === 'natdex') {
 		table = table[`gen${this.dex.gen}natdex`];
 	} else if (this.formatType?.endsWith('doubles')) {
@@ -1380,7 +1310,7 @@ class BattleItemSearch extends BattleTypedSearch<'item'> {
 	// Static item class lists
 	static fragileItems = new Set(['airballoon', 'focussash', 'powerherb', 'electricseed', 'grassyseed', 'mistyseed', 'psychicseed', 'snowball', 'weaknesspolicy', 'absorbbulb', 'cellbattery', 'luminousmoss', 'mentalherb', 'whiteherb', 'redcard']);
 	static volatileItems = new Set(['boosterenergy']);
-	static berryItems = new Set(['aguavberry', 'apicotberry', 'aspearberry', 'babiriberry', 'belueberry', 'blukberry', 'chartiberry', 'cherimberry', 'chestoberry', 'chilanberry', 'chopleberry', 'cobaberry', 'colburberry', 'cornnberry', 'custapberry', 'durinberry', 'enigmaberry', 'figyberry', 'ganlonberry', 'grepaberry', 'habanberry', 'hondewberry', 'iapapaberry', 'jabocaberry', 'kasibberry', 'kebiaberry', 'kelpsyberry', 'lansatberry', 'leppaberry', 'liechiberry', 'lumberry', 'magoberry', 'magostberry', 'micleberry', 'nanabberry', 'nomelberry', 'occaberry', 'oranberry', 'pamtreberry', 'passhoberry', 'payapaberry', 'pechaberry', 'persimberry', 'petayaberry', 'pinapberry', 'pomegberry', 'qualotberry', 'rabutaberry', 'rawstberry', 'razzberry', 'rindoberry', 'rowapberry', 'salacberry', 'shucaberry', 'sitrusberry', 'spelonberry', 'starfberry', 'tamatoberry', 'tangaberry', 'wacanberry', 'watmelberry', 'wepearberry', 'wikiberry', 'yacheberry']);
+	static berryItems = new Set(['aguavberry', 'apicotberry', 'aspearberry', 'babiriberry', 'belueberry', 'blukberry', 'chartiberry', 'cheriberry', 'chestoberry', 'chilanberry', 'chopleberry', 'cobaberry', 'colburberry', 'cornnberry', 'custapberry', 'durinberry', 'enigmaberry', 'figyberry', 'ganlonberry', 'grepaberry', 'habanberry', 'hondewberry', 'iapapaberry', 'jabocaberry', 'kasibberry', 'kebiaberry', 'kelpsyberry', 'lansatberry', 'leppaberry', 'liechiberry', 'lumberry', 'magoberry', 'magostberry', 'micleberry', 'nanabberry', 'nomelberry', 'occaberry', 'oranberry', 'pamtreberry', 'passhoberry', 'payapaberry', 'pechaberry', 'persimberry', 'petayaberry', 'pinapberry', 'pomegberry', 'qualotberry', 'rabutaberry', 'rawstberry', 'razzberry', 'rindoberry', 'rowapberry', 'salacberry', 'shucaberry', 'sitrusberry', 'spelonberry', 'starfberry', 'tamatoberry', 'tangaberry', 'wacanberry', 'watmelberry', 'wepearberry', 'wikiberry', 'yacheberry']);
 	static pokeballItems = new Set(['pokeball', 'greatball', 'ultraball', 'masterball', 'safariball', 'fastball', 'levelball', 'lureball', 'heavyball', 'loveball', 'friendball', 'moonball', 'sportball', 'netball', 'diveball', 'nestball', 'repeatball', 'timerball', 'luxuryball', 'premierball', 'duskball', 'healball', 'quickball', 'cherishball', 'parkball', 'dreamball', 'beastball']);
 	static evolutionItems = new Set(['firestone', 'waterstone', 'thunderstone', 'leafstone', 'moonstone', 'sunstone', 'shinystone', 'duskstone', 'dawnstone', 'everstone', 'linkingcord', 'ovalstone', 'icestone']);
 	static tradeEvoItems = new Set(['deepseatooth', 'deepseascale', 'dragonscale', 'electirizer', 'magmarizer', 'metalcoat', 'prismscale', 'protector', 'reapercloth', 'sachet', 'upgrade', 'whippeddream']);
