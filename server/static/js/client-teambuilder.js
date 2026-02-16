@@ -106,7 +106,7 @@
 				this.curTeam.dex = Dex.forGen(this.curTeam.gen);
 				if (this.curTeam.format.includes('letsgo')) { this.curTeam.dex = Dex.mod('gen7letsgo'); }
 				if (this.curTeam.format.includes('bdsp')) { this.curTeam.dex = Dex.mod('gen8bdsp'); }
-				if (this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.includes('ISL')) { this.curTeam.dex = Dex.mod('gen9indigostarstorm'); }
+				if (this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.includes('isl')) { this.curTeam.dex = Dex.mod('gen9indigostarstorm'); }
 				Storage.activeSetList = this.curSetList;
 			}
 		},
@@ -693,7 +693,7 @@
 				$teamwrapper.removeClass('scaled');
 			}
 		},
-		// button actions
+		//region button actions
 		revealFolder: function () { Storage.revealFolder(); },
 		reloadTeamsFolder: function () { Storage.nwLoadTeams(); },
 		edit: function (i) {
@@ -706,11 +706,16 @@
 			this.curTeam.dex = Dex.forGen(this.curTeam.gen);
 			if (this.curTeam.format.includes('letsgo')) { this.curTeam.dex = Dex.mod('gen7letsgo'); }
 			if (this.curTeam.format.includes('bdsp')) { this.curTeam.dex = Dex.mod('gen8bdsp'); }
+
+			// IMPORTANT: Indigo Starstorm must use the modded Dex (so abilities include H/S when present)
+			if (this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.toLowerCase().includes('isl')) {
+				this.curTeam.dex = Dex.mod('gen9indigostarstorm');
+			}
 		// Update capacity for Indigo Starstorm if needed
 		if (this.curTeam.capacity !== 24 && this.curTeam.capacity !== 50) {
-			if ((this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.includes('isl')) && this.curTeam.capacity !== 10) {
+			if ((this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.toLowerCase().includes('isl')) && this.curTeam.capacity !== 10) {
 				this.curTeam.capacity = 10;
-			} else if (!(this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.includes('isl')) && this.curTeam.capacity !== 6) {
+			} else if (!(this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.toLowerCase().includes('isl')) && this.curTeam.capacity !== 6) {
 				this.curTeam.capacity = 6;
 			}
 		}
@@ -1214,7 +1219,7 @@
 			// Type icons 
 			var types = species.types;
 			// Apply Indigo Starstorm type overrides
-			var isIndigoStarstorm = this.curTeam.format && (this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.includes('ISL'));
+			var isIndigoStarstorm = this.curTeam.format && (this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.includes('isl'));
 			if (isIndigoStarstorm && IndigoStarstormTypes[toID(species.name)]) { types = IndigoStarstormTypes[toID(species.name)]; }
 			if (types) {
 				buf += '<span style="margin-left: 8px; vertical-align: middle; position: relative;">';
@@ -1301,7 +1306,7 @@
 					? 'width: 36px; font-weight: bold; font-size: 10.5px; cursor: pointer; padding: 1.5px 0; height: 18px; background: linear-gradient(to right, rgba(0, 255, 0, 0.3) 50%, transparent 50%); text-align: left; padding-left: 5.4px;'
 					: 'width: 36px; font-weight: bold; font-size: 10.5px; cursor: pointer; padding: 1.5px 0; height: 18px; background: linear-gradient(to left, rgba(0, 100, 255, 0.3) 50%, transparent 50%); text-align: right; padding-right: 5.4px;';
 				buttonClass = ' abilitySetToggle';
-				buttonName = ' name="abilitySetToggle"';
+				buttonName = ' name="abilitySetToggle" data-setindex="' + i + '"';
 				buttonText = abilitySet;
 			}
 			buf += '<div class="setcol setcol-ability" style="align-content: end; position: relative; top: -5px;">'; ;
@@ -1623,6 +1628,8 @@
 			this.curTeam.dex = Dex.forGen(this.curTeam.gen);
 			if (this.curTeam.format.includes('letsgo')) { this.curTeam.dex = Dex.mod('gen7letsgo'); }
 			if (this.curTeam.format.includes('bdsp')) { this.curTeam.dex = Dex.mod('gen8bdsp'); }
+			if (this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.toLowerCase().includes('isl')) 
+				{ this.curTeam.dex = Dex.mod('gen9indigostarstorm'); }
 		// Update capacity for Indigo Starstorm
 		if (this.curTeam.capacity !== 24 && this.curTeam.capacity !== 50) {
 			if (format.includes('indigostarstorm') || format.includes('isl')) { this.curTeam.capacity = 10; } 
@@ -2209,36 +2216,112 @@
 			else if (format === 'nationaldexag') {  smogdexid += '/national-dex-ag'; }
 			return 'http://smogon.com/dex/' + generation + '/pokemon/' + smogdexid + '/';
 		},
-		abilityDescriptions: {
-			teravolt: "Moves ignore abilities. Electric moves 1.2x. With Turboblaze: Overdrive mode - Electric 1.5x, Fire immunity/+Atk, suppress all abilities except Teravolt/Turboblaze.",
-			turboblaze: "Moves ignore abilities. Fire moves 1.2x. With Teravolt: Overdrive mode - Fire 1.5x, Electric immunity/+SpA, other Pokemon consume 2 PP per move.",
-			aquaring: "On switch-in, the user surrounds itself with Aqua Ring.",
-			mimickry: "Copies ally's ability on faint. Resists magic moves (0.75x damage).",
-		},
 		updateAbilitySetsForm: function () {
   var set = this.curSet;
   if (!set) return;
 
   var dex = this.curTeam.dex;
+  var format = (this.curTeam && this.curTeam.format) || '';
+  var isISL = (format.includes('indigostarstorm') || format.toLowerCase().includes('isl'));
 
-  // In modded mode: display ONLY what's stored on the set.
-  // (These are the two "active" abilities for your format.)
-  var abil1 = set.ability || '';
-  var abil2 = set.ability2 || '';
+  // Always use the CURRENT TEAM DEX (modded when in ISL) to decide ability sets.
+  var species = dex.species.get(set.species);
+  var abilTable = (species && species.abilities) || {};
 
+  // In ISL: interpret abilities as 2 "ability sets":
+  //   set1: 0/1
+  //   set2: H/S
+  // Outside ISL: keep vanilla behavior (just ability/ability2 fields as-is).
+  if (!isISL) {
+    var abil1 = set.ability || '';
+    var abil2 = set.ability2 || '';
+
+    var buf = '';
+    buf += '<div class="resultheader"><h3>Abilities</h3></div>';
+    buf += '<ul class="utilichart">';
+
+    function renderAbilityRow(name) {
+      if (!name) return '';
+      var id = toID(name);
+      var ability = dex.abilities.get(name);
+      var desc = (BattleAbilities[id] && BattleAbilities[id].shortDesc) || ability.shortDesc || '';
+      return (
+        '<li class="result abilityrow">' +
+          '<a class="cur" data-entry="ability|' + BattleLog.escapeHTML(name) + '">' +
+            '<span class="col namecol">' + BattleLog.escapeHTML(ability.name || name) + '</span> ' +
+            '<span class="col abilitydesccol">' + BattleLog.escapeHTML(desc) + '</span>' +
+          '</a>' +
+        '</li>'
+      );
+    }
+
+    buf += renderAbilityRow(abil1);
+    if (abil2 && abil2 !== abil1) buf += renderAbilityRow(abil2);
+
+    buf += '</ul>';
+    this.$chart.html(buf);
+
+    this.$('input[name=ability]').val(abil1);
+    this.$('input[name=ability2]').val(abil2);
+    return;
+  }
+
+  // --- ISL mode ---
+  // Build sets from species ability table (0/1 and H/S).
+  function cleanAbilityName(x) {
+    if (!x) return '';
+    if (typeof x !== 'string') return '';
+    if (x === 'None') return '';
+    return x;
+  }
+
+  var set1 = [cleanAbilityName(abilTable['0']), cleanAbilityName(abilTable['1'])].filter(Boolean);
+  var set2 = [cleanAbilityName(abilTable['H']), cleanAbilityName(abilTable['S'])].filter(Boolean);
+
+  // Decide if Set 2 exists (any H/S ability)
+  var hasSet2 = !!set2.length;
+
+  // Ensure we have a valid abilitySet value (1 or 2)
+  var curSetNum = (set.abilitySet === 2 || set.abilitySet === '2') ? 2 : 1;
+  if (!hasSet2) curSetNum = 1;
+
+  // If stored abilities don't match the selected set, sync them from the species table.
+  // This guarantees both slots update together.
+  function applySetNum(n) {
+    var chosen = (n === 2 ? set2 : set1);
+    set.abilitySet = n;
+    set.ability = chosen[0] || '';
+    set.ability2 = chosen[1] || '';
+    // keep left-panel inputs in sync
+    this.$('input[name=ability]').val(set.ability);
+    this.$('input[name=ability2]').val(set.ability2);
+    // update the visible set number control if it exists
+    this.$('input[name=abilitySet]').val('' + n);
+    this.$('button[name=abilitySetToggle]').text('' + n);
+  }
+
+  // If the current set doesn't match species table (or is empty), fix it.
+  var expected = (curSetNum === 2 ? set2 : set1);
+  var mismatch =
+    (set.ability || '') !== (expected[0] || '') ||
+    (set.ability2 || '') !== (expected[1] || '');
+
+  if (mismatch) applySetNum.call(this, curSetNum);
+
+  // Render chart: show BOTH sets; clicking selects the whole set.
   var buf = '';
   buf += '<div class="resultheader"><h3>Abilities</h3></div>';
   buf += '<ul class="utilichart">';
 
-  function renderAbilityRow(name) {
+  function renderAbilityRow(name, setNum) {
     if (!name) return '';
     var id = toID(name);
     var ability = dex.abilities.get(name);
     var desc = (BattleAbilities[id] && BattleAbilities[id].shortDesc) || ability.shortDesc || '';
-
+    var curClass = (set.abilitySet === setNum) ? 'cur' : '';
     return (
       '<li class="result abilityrow">' +
-        '<a class="cur" data-entry="ability|' + BattleLog.escapeHTML(name) + '">' +
+        '<a class="' + curClass + '" data-entry="ability|' + BattleLog.escapeHTML(name) + '" data-abilityset="' + setNum + '">' +
           '<span class="col namecol">' + BattleLog.escapeHTML(ability.name || name) + '</span> ' +
           '<span class="col abilitydesccol">' + BattleLog.escapeHTML(desc) + '</span>' +
         '</a>' +
@@ -2246,15 +2329,24 @@
     );
   }
 
-  buf += renderAbilityRow(abil1);
-  if (abil2 && abil2 !== abil1) buf += renderAbilityRow(abil2);
+  buf += '<li class="result"><h3 style="margin:6px 0">Set 1</h3></li>';
+  if (set1.length) {
+    for (var i = 0; i < set1.length; i++) buf += renderAbilityRow(set1[i], 1);
+  } else {
+    buf += '<li class="result"><em>(none)</em></li>';
+  }
+
+  if (hasSet2) {
+    buf += '<li class="result"><h3 style="margin:10px 0 6px">Set 2</h3></li>';
+    for (var j = 0; j < set2.length; j++) buf += renderAbilityRow(set2[j], 2);
+  }
 
   buf += '</ul>';
   this.$chart.html(buf);
 
-  // Keep the inputs synced too (left panel fields)
-  this.$('input[name=ability]').val(abil1);
-  this.$('input[name=ability2]').val(abil2);
+  // Also keep the visible "Ability Set" number correct.
+  // (Your UI shows it next to Ability Set in the left panel.)
+  this.$('button[name=abilitySetToggle]').text('' + (set.abilitySet || 1));
 },
 		updateStatForm: function (setGuessed) {
 			var buf = '';
@@ -2738,63 +2830,90 @@
 			this.save();
 		},
 		abilitySetChange: function (e) {
-  var $li = $(e.currentTarget).closest('li');
-  var i = +$li.attr('value');
-  var set = this.curSetList[i];
+  e.preventDefault();
+  e.stopPropagation();
+
+  var dex = this.curTeam && this.curTeam.dex;
+  if (!dex) return;
+
+  // Which set are we editing?
+  // - In set view: this.curSet exists
+  // - In team view: use data-setindex on the clicked button
+  var set = this.curSet;
+  var setIndex = null;
+
+  if (!set) {
+    setIndex = parseInt(e.currentTarget.getAttribute('data-setindex') || '', 10);
+    if (!isNaN(setIndex) && this.curSetList && this.curSetList[setIndex]) {
+      set = this.curSetList[setIndex];
+    }
+  }
   if (!set) return;
 
-  // Toggle 1 <-> 2
-  var currentSet = set.abilitySet || 1;
-  var newSet = (currentSet === 1 ? 2 : 1);
-  set.abilitySet = newSet;
+  // Read abilities from modded dex (this is the server-correct source)
+  var species = dex.species.get(set.species);
+  var abilTable = (species && species.abilities) ? species.abilities : {};
 
-  // Update button display/styling
-  var $btn = $(e.currentTarget);
-  $btn.text(newSet).attr('data-value', newSet);
-  if (newSet === 1) {
-    $btn.css({
-      'background': 'linear-gradient(to right, rgba(0, 255, 0, 0.3) 50%, transparent 50%)',
-      'text-align': 'left',
-      'padding-left': '6px',
-      'padding-right': '0'
-    });
-  } else {
-    $btn.css({
-      'background': 'linear-gradient(to left, rgba(0, 100, 255, 0.3) 50%, transparent 50%)',
-      'text-align': 'right',
-      'padding-right': '6px',
-      'padding-left': '0'
-    });
+  function cleanAbilityName(x) {
+    if (!x) return '';
+    if (typeof x !== 'string') return '';
+    if (x === 'None') return '';
+    return x;
   }
 
-  // Overwrite the STORED abilities based on the new abilitySet
-  var species = this.curTeam.dex.species.get(set.species);
-  if (species && species.abilities) {
-    if (newSet === 1) {
-      set.ability = species.abilities['0'] || '';
-      set.ability2 = species.abilities['1'] || '';
+  // IMPORTANT: H/S must be uppercase
+  var set1 = [cleanAbilityName(abilTable['0']), cleanAbilityName(abilTable['1'])].filter(Boolean);
+  var set2 = [cleanAbilityName(abilTable['H']), cleanAbilityName(abilTable['S'])].filter(Boolean);
+
+  var hasSet2 = !!set2.length;
+
+  var cur = (set.abilitySet === 2 || set.abilitySet === '2') ? 2 : 1;
+  var next = (cur === 1 && hasSet2) ? 2 : 1;
+
+  var chosen = (next === 2 ? set2 : set1);
+
+  set.abilitySet = next;
+  set.ability = chosen[0] || '';
+  set.ability2 = chosen[1] || '';
+
+  // helper: update button visuals (gradient + alignment) to match renderSet style
+  function applyAbilitySetButtonStyle(btnEl, which) {
+    if (!btnEl) return;
+    if (which === 2) {
+      btnEl.style.background = 'linear-gradient(to left, rgba(0, 100, 255, 0.3) 50%, transparent 50%)';
+      btnEl.style.textAlign = 'right';
+      btnEl.style.paddingRight = '5.4px';
+      btnEl.style.paddingLeft = '';
     } else {
-      set.ability = species.abilities['H'] || '';
-      set.ability2 = species.abilities['S'] || '';
+      btnEl.style.background = 'linear-gradient(to right, rgba(0, 100, 255, 0.3) 50%, transparent 50%)';
+      btnEl.style.textAlign = 'left';
+      btnEl.style.paddingLeft = '5.4px';
+      btnEl.style.paddingRight = '';
     }
-  } else {
-    set.ability = set.ability || '';
-    set.ability2 = set.ability2 || '';
   }
 
-  // Update the left-side inputs for this row
-  $li.find('input[name=ability]').val(set.ability || '');
-  $li.find('input[name=ability2]').val(set.ability2 || '');
+  // Update THIS clicked button immediately (fixes "number changes but style doesn't")
+  e.currentTarget.textContent = '' + next;
+  applyAbilitySetButtonStyle(e.currentTarget, next);
 
-  // Ensure "current" set points at what was clicked (so the chart updates correctly)
-  this.curSet = set;
-  this.curSetLoc = i;
+  // If we're in set view, also sync the left-panel inputs + ability chart
+  if (this.curSet === set) {
+    this.$('input[name=ability]').val(set.ability);
+    this.$('input[name=ability2]').val(set.ability2);
 
-// Only refresh the ability chart IF the user is currently on the ability chart.
-// Do NOT force-switch charts here.
-if (this.curChartType === 'ability') {
-  this.updateAbilitySetsForm();
-}
+    // There may be multiple abilitySetToggle buttons in the set view area;
+    // keep them consistent
+    var btns = this.$('button[name=abilitySetToggle]');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].textContent = '' + next;
+      applyAbilitySetButtonStyle(btns[i], next);
+    }
+
+    this.updateAbilitySetsForm();
+  } else {
+    // Team view: rerender the team list so the shown abilities update too
+    this.updateTeamView();
+  }
 
   this.curTeam.iconCache = '!';
   this.save();
@@ -3093,23 +3212,50 @@ if (this.curChartType === 'ability') {
 			// Check if this is an ability with a specific slot
 			var slot = $(e.currentTarget).data('slot');
 			console.log('[CHART CLICK] Slot:', slot);
-			if (slot === 'ability' || slot === 'ability2') {
-				// Set the ability in the correct slot
-				console.log('[CHART CLICK] Setting ability slot:', slot, 'to value:', val);
-				console.log('[CHART CLICK] Before - set.ability:', this.curSet.ability, 'set.ability2:', this.curSet.ability2);
-				if (slot === 'ability') {
-					this.curSet.ability = val;
-					this.$('input[name=ability]').val(val);
-				} else {
-					this.curSet.ability2 = val;
-					this.$('input[name=ability2]').val(val);
-				}
-				console.log('[CHART CLICK] After - set.ability:', this.curSet.ability, 'set.ability2:', this.curSet.ability2);
-				this.curTeam.iconCache = '!';
-				this.updateAbilitySetsForm();
-				this.save();
-				return;
-			}
+			// Ability clicks in ISL choose the entire ability set (updates BOTH slots).
+if (entry && entry.slice(0, 8) === 'ability|') {
+  var abilitySetClicked = $(e.currentTarget).data('abilityset');
+  var format = (this.curTeam && this.curTeam.format) || '';
+  var isISL = (format.includes('indigostarstorm') || format.toLowerCase().includes('isl'));
+
+  if (isISL && abilitySetClicked) {
+    var setNum = Number(abilitySetClicked) || 1;
+
+    var dex = this.curTeam.dex;
+    var species = dex.species.get(this.curSet.species);
+    var abilTable = (species && species.abilities) || {};
+
+    function cleanAbilityName(x) {
+      if (!x) return '';
+      if (typeof x !== 'string') return '';
+      if (x === 'None') return '';
+      return x;
+    }
+
+    var set1 = [cleanAbilityName(abilTable['0']), cleanAbilityName(abilTable['1'])].filter(Boolean);
+    var set2 = [cleanAbilityName(abilTable['H']), cleanAbilityName(abilTable['S'])].filter(Boolean);
+
+    // If set 2 doesn't exist, force set 1
+    if (!set2.length) setNum = 1;
+
+    var chosen = (setNum === 2 ? set2 : set1);
+
+    // Update BOTH ability slots together
+    this.curSet.abilitySet = setNum;
+    this.curSet.ability = chosen[0] || '';
+    this.curSet.ability2 = chosen[1] || '';
+
+    // Sync inputs
+    this.$('input[name=ability]').val(this.curSet.ability);
+    this.$('input[name=ability2]').val(this.curSet.ability2);
+    this.$('button[name=abilitySetToggle]').text('' + setNum);
+
+    this.curTeam.iconCache = '!';
+    this.updateAbilitySetsForm();
+    this.save();
+    return;
+  }
+}
 			if (this.curChartType === 'move' && e.currentTarget.className === 'cur') {
 				// clicked a move, remove it if we already have it
 				var moves = [];

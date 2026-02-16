@@ -1171,20 +1171,42 @@ class BattleAbilitySearch extends BattleTypedSearch<'ability'> {
 		let species = dex.species.get(this.species);
 		console.log('[DEBUG] Got species:', species.name, 'abilities:', species.abilities);
 		let abilitySet: SearchRow[] = [['header', "Abilities"]];
-		if (species.isMega) {
-			abilitySet.unshift(['html', `Will be <strong>${species.abilities['0']}</strong> after Mega Evolving.`]);
-			species = dex.species.get(species.baseSpecies);
-		}
-		abilitySet.push(['ability', toID(species.abilities['0'])]);
-		if (species.abilities['1']) { abilitySet.push(['ability', toID(species.abilities['1'])]); }
-		if (species.abilities['H']) {
-			abilitySet.push(['header', "Hidden Ability"]);
-			abilitySet.push(['ability', toID(species.abilities['H'])]);
-		}
-		if (species.abilities['S']) {
-			abilitySet.push(['header', "Special Event Ability"]);
-			abilitySet.push(['ability', toID(species.abilities['S'])]);
-		}
+
+if (species.isMega) {
+	abilitySet.unshift(['html', `Will be <strong>${species.abilities['0']}</strong> after Mega Evolving.`]);
+	species = dex.species.get(species.baseSpecies);
+}
+
+const a0 = species.abilities['0'];
+const a1 = species.abilities['1'];
+const aH = species.abilities['H'];
+const aS = species.abilities['S'];
+
+// Your mod: abilities are *sets*.
+// Set 1 uses keys 0/1, Set 2 uses keys H/S.
+if (this.formatType === 'indigostarstorm') {
+	abilitySet = [['header', "Ability Set 1"]];
+	if (a0) abilitySet.push(['ability', toID(a0)]);
+	if (a1) abilitySet.push(['ability', toID(a1)]);
+
+	if (aH || aS) {
+		abilitySet.push(['header', "Ability Set 2"]);
+		if (aH) abilitySet.push(['ability', toID(aH)]);
+		if (aS) abilitySet.push(['ability', toID(aS)]);
+	}
+} else {
+	// vanilla behavior
+	abilitySet.push(['ability', toID(a0)]);
+	if (a1) abilitySet.push(['ability', toID(a1)]);
+	if (aH) {
+		abilitySet.push(['header', "Hidden Ability"]);
+		abilitySet.push(['ability', toID(aH)]);
+	}
+	if (aS) {
+		abilitySet.push(['header', "Special Event Ability"]);
+		abilitySet.push(['ability', toID(aS)]);
+	}
+}
 		if (isAAA || format.includes('metronomebattle') || isHackmons) {
 			let abilities: ID[] = [];
 			for (let i in this.getTable()) {

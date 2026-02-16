@@ -1171,19 +1171,41 @@ console.log('[DEBUG] BattleAbilitySearch.getBaseResults() - species:',this.speci
 var species=dex.species.get(this.species);
 console.log('[DEBUG] Got species:',species.name,'abilities:',species.abilities);
 var abilitySet=[['header',"Abilities"]];
+
 if(species.isMega){
 abilitySet.unshift(['html',"Will be <strong>"+species.abilities['0']+"</strong> after Mega Evolving."]);
 species=dex.species.get(species.baseSpecies);
 }
-abilitySet.push(['ability',toID(species.abilities['0'])]);
-if(species.abilities['1']){abilitySet.push(['ability',toID(species.abilities['1'])]);}
-if(species.abilities['H']){
-abilitySet.push(['header',"Hidden Ability"]);
-abilitySet.push(['ability',toID(species.abilities['H'])]);
+
+var a0=species.abilities['0'];
+var a1=species.abilities['1'];
+var aH=species.abilities['H'];
+var aS=species.abilities['S'];
+
+
+
+if(this.formatType==='indigostarstorm'){
+abilitySet=[['header',"Ability Set 1"]];
+if(a0)abilitySet.push(['ability',toID(a0)]);
+if(a1)abilitySet.push(['ability',toID(a1)]);
+
+if(aH||aS){
+abilitySet.push(['header',"Ability Set 2"]);
+if(aH)abilitySet.push(['ability',toID(aH)]);
+if(aS)abilitySet.push(['ability',toID(aS)]);
 }
-if(species.abilities['S']){
+}else{
+
+abilitySet.push(['ability',toID(a0)]);
+if(a1)abilitySet.push(['ability',toID(a1)]);
+if(aH){
+abilitySet.push(['header',"Hidden Ability"]);
+abilitySet.push(['ability',toID(aH)]);
+}
+if(aS){
 abilitySet.push(['header',"Special Event Ability"]);
-abilitySet.push(['ability',toID(species.abilities['S'])]);
+abilitySet.push(['ability',toID(aS)]);
+}
 }
 if(isAAA||format.includes('metronomebattle')||isHackmons){
 var abilities=[];
