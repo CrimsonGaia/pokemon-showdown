@@ -1381,6 +1381,42 @@ class BattleMoveSearch extends BattleTypedSearch<'move'> {
 		}
 		return results;
 	}
+		private getFlagWeightsForTypes(types: readonly string[]): Record<string, number> {
+		// TypeAffinityAversion was exported in teambuilder: exports.TypeAffinityAversion = {...}
+		// In the browser, exports === window, so this is available as window.TypeAffinityAversion
+		const table = (window as any).TypeAffinityAversion as Record<string, any> | undefined;
+		const weights: Record<string, number> = {};
+		if (!table) return weights;
+
+		for (const typeName of types) {
+			const entry = table[toID(typeName)];
+			if (!entry) continue;
+
+			// affinity => +weight
+			if (entry.affinity) {
+				for (const flag in entry.affinity) {
+					const w = Number(entry.affinity[flag]) || 0;
+					weights[flag] = (weights[flag] || 0) + w;
+				}
+			}
+			// aversion => -weight
+			if (entry.aversion) {
+				for (const flag in entry.aversion) {
+					const w = Number(entry.aversion[flag]) || 0;
+					weights[flag] = (weights[flag] || 0) - w;
+				}
+			}
+		}
+		return weights;
+	}
+
+	private getMoveAffinityScore(move: Dex.Move, flagWeights: Record<string, number>): number {
+		let score = 0;
+		for (const flag in (move.flags || {})) {
+			score += (flagWeights[flag] || 0);
+		}
+		return score;
+	}
 	private moveIsNotUseless(id: ID, species: Dex.Species, moves: string[], set: Dex.PokemonSet | null) {
 		// Please do not mark moves as useless if there is any doubt whatsoever. I don't care if you think it's clutter or whatever. We are not in the
 		// business of taking sides in arguments, or making judgments about specific metagames. If it could potentially be useful in some metagame, it is not useless.
@@ -1689,30 +1725,52 @@ class BattleMoveSearch extends BattleTypedSearch<'move'> {
 				if (valid) moves.push(id);
 			}
 		}
-		moves.sort();
+				moves.sort();
 		sketchMoves.sort();
-		let usableMoves: SearchRow[] = [];
-		let uselessMoves: SearchRow[] = [];
-		for (const id of moves) {
-			const isUsable = this.moveIsNotUseless(id as ID, species, moves, this.set);
-			if (isUsable) {
-				if (!usableMoves.length) usableMoves.push(['header', "Moves"]);
-				usableMoves.push(['move', id as ID]);
-			} else {
-				if (!uselessMoves.length) uselessMoves.push(['header', "Usually useless moves"]);
-				uselessMoves.push(['move', id as ID]);
-			}
+
+		// Build weights for this Pokemon's typing
+		const flagWeights = this.getFlagWeightsForTypes(species.types);
+
+		type Scored = { id: ID; score: number };
+		const affinity: Scored[] = [];
+		const neutral: Scored[] = [];
+		const aversion: Scored[] = [];
+
+		// Keep current inclusion behavior: learned moves + sketch moves
+		const allMoveIds: ID[] = [
+			...moves.map(x => x as ID),
+			...sketchMoves.map(x => x as ID),
+		];
+
+		for (const id of allMoveIds) {
+			const move = dex.moves.get(id);
+			const score = this.getMoveAffinityScore(move, flagWeights);
+			const entry = { id, score };
+
+			if (score > 0) affinity.push(entry);
+			else if (score < 0) aversion.push(entry);
+			else neutral.push(entry);
 		}
-		if (sketchMoves.length) {
-			usableMoves.push(['header', "Sketched moves"]);
-			uselessMoves.push(['header', "Useless sketched moves"]);
+
+		// Sort: score desc for Affinity, score asc (most negative first) for Aversion, id tie-break
+		affinity.sort((a, b) => (b.score - a.score) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+		neutral.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+		aversion.sort((a, b) => (a.score - b.score) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+
+		const out: SearchRow[] = [];
+		if (affinity.length) {
+			out.push(['header', 'Affinity']);
+			out.push(...affinity.map(x => ['move', x.id] as SearchRow));
 		}
-		for (const id of sketchMoves) {
-			const isUsable = this.moveIsNotUseless(id as ID, species, sketchMoves, this.set);
-			if (isUsable) { usableMoves.push(['move', id as ID]); } 
-			else { uselessMoves.push(['move', id as ID]); }
+		if (neutral.length) {
+			out.push(['header', 'Neutral']);
+			out.push(...neutral.map(x => ['move', x.id] as SearchRow));
 		}
-		return [...usableMoves, ...uselessMoves];
+		if (aversion.length) {
+			out.push(['header', 'Aversion']);
+			out.push(...aversion.map(x => ['move', x.id] as SearchRow));
+		}
+		return out;
 	}
 	filter(row: SearchRow, filters: string[][]) {
 		if (!filters) return true;
@@ -1759,6 +1817,21 @@ class BattleMoveSearch extends BattleTypedSearch<'move'> {
 				if (accuracy2 === true) accuracy2 = 101;
 				return (accuracy2 - accuracy1) * sortOrder;
 			});
+		case 'crit':
+			return results.sort(([rowType1, id1], [rowType2, id2]) => {
+				const m1 = this.dex.moves.get(id1);
+				const m2 = this.dex.moves.get(id2);
+
+				// Your mod: "base" crit is critRatio 4 (+0). Fallback to 4 if unset.
+				const c1 = (m1.critRatio ?? 4);
+				const c2 = (m2.critRatio ?? 4);
+
+				// Default (1st click) should be highest -> lowest (same convention as power/acc/pp)
+				if (c2 !== c1) return (c2 - c1) * sortOrder;
+
+				// Tie-break by name for stable ordering
+				return (id1 < id2 ? -1 : id1 > id2 ? 1 : 0) * sortOrder;
+			});
 		case 'pp':
 			return results.sort(([rowType1, id1], [rowType2, id2]) => {
 				let pp1 = this.dex.moves.get(id1).pp || 0;
@@ -1767,10 +1840,11 @@ class BattleMoveSearch extends BattleTypedSearch<'move'> {
 			});
 		case 'flags:':
 			return results.sort(([rowType1, id1], [rowType2, id2]) => {
-				let flags1 = this.dex.moves.get(id1).flags || 0;
-				let flags2 = this.dex.moves.get(id2).flags || 0;
-				return (flags1 < flags2 ? -1 : flags1 > flags2 ? 1 : 0) * sortOrder;
-			})
+				const f1 = Object.keys(this.dex.moves.get(id1).flags || {}).sort().join(',');
+				const f2 = Object.keys(this.dex.moves.get(id2).flags || {}).sort().join(',');
+				if (f1 !== f2) return (f1 < f2 ? -1 : 1) * sortOrder;
+				return (id1 < id2 ? -1 : id1 > id2 ? 1 : 0) * sortOrder;
+			});
 		case 'name':
 			return results.sort(([rowType1, id1], [rowType2, id2]) => {
 				const name1 = id1;
@@ -1781,6 +1855,9 @@ class BattleMoveSearch extends BattleTypedSearch<'move'> {
 		throw new Error("invalid sortcol");
 		}
 	}
+
+
+
 	//region Category Search                      
 	class BattleCategorySearch extends BattleTypedSearch<'category'> {
 		getTable() { return { physical: 1, special: 1, status: 1 }; }

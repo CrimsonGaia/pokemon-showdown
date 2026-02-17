@@ -85,6 +85,7 @@
 	padding: 7px 0 0 8px;
 	margin: 0;
 }
+
 .utilichart h3,
 .dexentry h3,
 .resultheader h3 {
@@ -385,25 +386,22 @@
 	margin-right: 1px;
 }
 .utilichart .typecol {
-	width: 46px;
+	width: 36px;
 	position: relative;
 	height: 36px;
 }
 .utilichart .catcol {
-	width: 52px;
+	width: 38px;
 	position: relative;
-	text-align: center;
-
+	padding-left: 4px;
 }
 .utilichart .catcol img {
 	position: relative;
 	top: 1px;
-}
-.utilichart .flagssortcol {
-	width: 116px;
+
 }
 .utilichart .flagcol {
-	width: 116px;
+	width: 130px;
 	height: 48px !important;
 	font-size: 7pt;
 	font-weight: bold;
@@ -715,15 +713,14 @@
 	margin-left: 9px;
 }
 .utilichart .sortcol.typecol {
-	width: 46px;
+	width: 36px;
 	margin-left: 4px;
 }
 .utilichart .sortcol.catcol {
-	width: 52px;
-	margin-left: 4px;
+	width: 40px;
 }
 .utilichart .sortcol.flagssortcol {
-	width: 116px;
+	width: 130px;
 }
 .utilichart .sortcol.labelcol {
 	width: 38px;

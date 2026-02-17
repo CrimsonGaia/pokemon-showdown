@@ -2459,12 +2459,12 @@ p.or:after {
 .setchart-nickname {
 	position: absolute;
 	left: -4px;
-	top: 5px;
+	top: 10px;
 	border: 1px solid #999999;
 	background: #CBD6E1;
 	border-radius: 5px;
 	padding: 1px 0 0 0;
-	width: 110px;
+	width: 84px;
 
 	box-shadow: inset 1px 1px 0 rgba(255,255,255,.6);
 }
@@ -2822,7 +2822,7 @@ p.or:after {
 }
 .teambuilder-results {
 	position: absolute;
-	top: 200px;
+	top: 242px;
 	left: 0;
 	bottom: 0;
 	right: 0;
@@ -2910,7 +2910,7 @@ p.or:after {
 .teambuilder-pokemon-import {
 	display: none;
 	position: absolute;
-	top: 206px;
+	top: 242px;
 	left: 10px;
 	padding: 2px;
 	overflow: hidden;
@@ -3024,7 +3024,7 @@ p.or:after {
 	background: #569;
 }
 .altform {
-	margin-left: 10px;
+	margin-left: 4px;
 	margin-top: 4px;
 }
 

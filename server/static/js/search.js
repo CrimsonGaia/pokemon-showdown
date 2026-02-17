@@ -123,13 +123,30 @@
 	};
 	// Helper function to calculate crit chance based on crit ratio
 	Search.prototype.getCritChance = function (critRatio) {
-		// Gen 6+ crit system: 1/24, 1/8, 1/2, always critRatio 0 = stage 0, critRatio 1 = stage 1, etc.
-		var stage = Math.max(0, critRatio || 1);
-		if (stage >= 3) return 'Always';
-		var chances = [24, 8, 2]; // denominators for stages 0, 1, 2
-		if (stage < chances.length) { return '1/' + chances[stage]; }
-		return 'Always';
-	};
+	// Your custom 0–15 crit system
+	const chances = [
+		'1/96',  // 0  (-4)
+		'1/64',  // 1  (-3)
+		'1/48',  // 2  (-2)
+		'1/32',  // 3  (-1)
+		'1/24',  // 4  (+0)
+		'1/16',  // 5  (+1)
+		'1/12',  // 6  (+2)
+		'1/8',   // 7  (+3)
+		'1/6',   // 8  (+4)
+		'1/4',   // 9  (+5)
+		'1/3',   // 10 (+6)
+		'1/2',   // 11 (+7)
+		'2/3',   // 12 (+8)
+		'3/4',   // 13 (+9)
+		'5/6',   // 14 (+10)
+		'Always' // 15 (+11) = guaranteed
+	];
+
+	let stage = Math.max(0, critRatio || 0);
+	if (stage >= chances.length) return 'Always';
+	return chances[stage];
+};
 	// Helper function to get text color for category-based flag tinting
 	Search.prototype.getCategoryTextColor = function (category) {
 		var cat = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
@@ -994,7 +1011,7 @@
 		buf += '<span class="col namecol">' + name + '</span> ';
 
 		// category
-		buf += '<span class="col typecol">' + this.getCategoryDisplay(category.name) + '</span> ';
+		buf += '<span class="col catcol">' + this.getCategoryDisplay(category.name) + '</span> ';
 
 		// error
 		if (errorMessage) {
