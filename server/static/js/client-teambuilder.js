@@ -145,7 +145,6 @@
 			'keyup .statform input.numform': 'statChange',
 			'input .statform input[type=number].numform': 'statChange',
 			'change select[name=nature]': 'natureChange',
-			'change select[name=ivspread]': 'ivSpreadChange',
 			'change .evslider': 'statSlided',
 			'input .evslider': 'statSlide',
 			// ability set
@@ -1221,34 +1220,21 @@ var eligibleAltCount = 0;
 
 // Build a fast lookup of cosmetic formes for this base species
 var cosmeticLookup = Object.create(null);
-if (baseSpecies.cosmeticFormes && baseSpecies.cosmeticFormes.length) {
-	for (var c = 0; c < baseSpecies.cosmeticFormes.length; c++) {
-		cosmeticLookup[toID(baseSpecies.cosmeticFormes[c])] = true;
-	}
-}
-
+if (baseSpecies.cosmeticFormes && baseSpecies.cosmeticFormes.length) { for (var c = 0; c < baseSpecies.cosmeticFormes.length; c++) { cosmeticLookup[toID(baseSpecies.cosmeticFormes[c])] = true; } }
 if (baseSpecies.otherFormes && baseSpecies.otherFormes.length) {
 	for (var f = 0; f < baseSpecies.otherFormes.length; f++) {
 		var formeName = baseSpecies.otherFormes[f];
 		var formeId = toID(formeName);
 		var sp = dex.species.get(formeName);
-
 		if (!sp) continue;
-
 		// EXCLUDE Mega/Gmax ONLY for this forme UI
-		if (sp.isMega || sp.forme === 'Mega' || sp.forme === 'Gmax' || /-Mega(-[XY])?$/i.test(sp.name) || /-Gmax$/i.test(sp.name)) {
-			continue;
-		}
-
+		if (sp.isMega || sp.forme === 'Mega' || sp.forme === 'Gmax' || /-Mega(-[XY])?$/i.test(sp.name) || /-Gmax$/i.test(sp.name)) { continue; }
 		eligibleAltCount++;
-
 		// Treat as cosmetic if explicitly listed OR flagged cosmetic
 		var isCosmetic = !!cosmeticLookup[formeId] || !!(sp && (sp.isCosmeticForme || sp.isCosmetic));
-
 		if (!isCosmetic) { hasRealFormes = true; }
 	}
 }
-
 // "Cosmetic forms" = cosmeticFormes (and at least one exists after filtering)
 var hasCosmeticForms = false;
 if (baseSpecies.cosmeticFormes && baseSpecies.cosmeticFormes.length) {
@@ -1256,20 +1242,14 @@ if (baseSpecies.cosmeticFormes && baseSpecies.cosmeticFormes.length) {
 		var cfName = baseSpecies.cosmeticFormes[c2];
 		var cfSp = dex.species.get(cfName);
 		if (!cfSp) continue;
-		if (cfSp.isMega || cfSp.forme === 'Mega' || cfSp.forme === 'Gmax' || /-Mega(-[XY])?$/i.test(cfSp.name) || /-Gmax$/i.test(cfSp.name)) {
-			continue;
-		}
+		if (cfSp.isMega || cfSp.forme === 'Mega' || cfSp.forme === 'Gmax' || /-Mega(-[XY])?$/i.test(cfSp.name) || /-Gmax$/i.test(cfSp.name)) { continue; }
 		hasCosmeticForms = true;
 		eligibleAltCount++;
 		break;
 	}
 }
-
-
-
 // Only show the button if there is at least one eligible (non-mega/non-gmax) alt
 var hasAlt = eligibleAltCount > 0;
-
 // ---------- Level (ALWAYS visible) ----------
 buf += '<div style="position:absolute; left:118px; top:16px; display:flex; align-items:flex-end; gap:4px;">';
 buf += '<label style="font-size:10px; margin:0; position:relative; top:-4px;">Level</label>';
@@ -1521,44 +1501,59 @@ buf += '<div class="setcell" style="position: relative; top: -25px; display: inl
 				}
 				buf += '</div>';
 			}
-			// stats
+						// stats (JV system, no IV column)
+			if (!set.jvs) set.jvs = {};
+
 			buf += '<div class="setcol setcol-stats"><div class="setrow"><label>Stats</label><button class="textbox setstats" name="stats">';
-			buf += '<span class="statrow statrow-head"><label></label><span class="statgraph"></span><ma>' + '</ma><ma>' + 'Base' + '</ma><em>' + '</em><em>' + '</em><ma>' + '</ma><ma>' + '</ma><ma>' + '</ma><ma>' +  '</ma><ma>' + (!isLetsGo ? 'EV' : 'AV') + '</ma><ma>' + '</ma><ma>' + '</ma></em>' + 'IV' + '</em></span>';
-			var stats = {};
-			var defaultEV = (this.curTeam.gen > 2 ? 0 : 252);
-			// collect stat values first so we can mark the highest one
-			var spacer = '<em></em>';
-			var spacersmall = '<ma></ma>';
+
+			// Header: remove IV column entirely, rename EV -> JV
+			buf += '<span class="statrow statrow-head">' +
+				'<label></label><span class="statgraph"></span>' +
+				'<ma></ma><ma>Base</ma>' +
+				'<em></em><em></em>' +
+				'<ma></ma><ma></ma><ma></ma><ma></ma><ma></ma>' +
+				'<ma>' + (!isLetsGo ? 'JV' : 'AV') + '</ma>' +
+				'</span>';
+
 			var statOrder = [];
 			for (var k in BattleStatNames) {
 				if (k === 'spd' && this.curTeam.gen === 1) continue;
 				statOrder.push(k);
 			}
+
+			var spacer = '<em></em>';
+			var spacersmall = '<ma></ma>';
+
 			var statData = {};
 			var maxVal = -Infinity;
-			var maxKey = null;
+
 			for (var idx = 0; idx < statOrder.length; idx++) {
 				var s = statOrder[idx];
-				var val = this.getStat(s, set);
+				var v = this.getStat(s, set);
+
 				statData[s] = {};
-				statData[s].value = val;
-				if (val > maxVal) { maxVal = val; maxKey = s; }
+				statData[s].value = v;
+
+				if (v > maxVal) maxVal = v;
+
 				var baseStats = species.baseStats;
 				statData[s].base = baseStats[s];
 				statData[s].baseStatsBuf = '<em>' + statData[s].base + '<em></em>' + '</em>';
-				var ev = (set.evs[s] === undefined ? defaultEV : set.evs[s]);
-				var evBuf = '<em' + (ev !== defaultEV && ev >= 100 ? ' class="ev-3"' : '') + '>' + (ev === defaultEV ? '' : ev);
-				if (BattleNatures[set.nature] && BattleNatures[set.nature].plus === s) { evBuf += '<small>+</small>'; } 
-				else if (BattleNatures[set.nature] && BattleNatures[set.nature].minus === s) { evBuf += '<small>&minus;</small>'; }
-				evBuf += '</em>';
-				statData[s].evBuf = evBuf;
-				var ivBuf = '<em>' + (set.ivs[s] === undefined || set.ivs[s] === 31 ? '' : set.ivs[s]) + '</em>';
-				statData[s].ivBuf = ivBuf;
-				statData[s].width = val * 90 / 504;
-				var color = Math.floor(val * (s === 'hp' ? 343 : 475) / 714);
+
+				// JV display (no EV 4-step logic; each point = +1 stat)
+				var jv = (set.jvs[s] === undefined ? 0 : set.jvs[s]);
+				var jvBuf = '<em>' + (jv ? jv : '') ;
+				if (BattleNatures[set.nature] && BattleNatures[set.nature].plus === s) jvBuf += '<small>+</small>';
+				else if (BattleNatures[set.nature] && BattleNatures[set.nature].minus === s) jvBuf += '<small>&minus;</small>';
+				jvBuf += '</em>';
+				statData[s].jvBuf = jvBuf;
+
+				statData[s].width = v * 90 / 504;
+
+				var color = Math.floor(v * (s === 'hp' ? 343 : 475) / 714);
 				if (color > 360) color = 360;
-				if (color <= 25) { color = Math.floor(color * 0.5); } 
-				else if (color >= 300) { color = Math.floor(color * 1); } 
+				if (color <= 25) color = Math.floor(color * 0.5);
+				else if (color >= 300) color = Math.floor(color * 1);
 				else {
 					var m = 0.5 + (color - 25) * (1 - 0.5) / (300 - 25);
 					color = Math.floor(color * m);
@@ -1566,21 +1561,33 @@ buf += '<div class="setcell" style="position: relative; top: -25px; display: inl
 				statData[s].color = color;
 				statData[s].statName = this.curTeam.gen === 1 && s === 'spa' ? 'Spc' : BattleStatNames[s];
 			}
+
 			// detect whether all stats are equal; if so, don't draw borders
 			var _minStat = Infinity, _maxStat = -Infinity;
-			for (var k in statData) {
-				if (statData[k].value < _minStat) _minStat = statData[k].value;
-				if (statData[k].value > _maxStat) _maxStat = statData[k].value;
+			for (var kk in statData) {
+				if (statData[kk].value < _minStat) _minStat = statData[kk].value;
+				if (statData[kk].value > _maxStat) _maxStat = statData[kk].value;
 			}
 			var allEqual = (_minStat === _maxStat);
-			var suppressBorders = allEqual;
+
 			for (var idx2 = 0; idx2 < statOrder.length; idx2++) {
 				var s2 = statOrder[idx2];
 				var sd = statData[s2];
 				var classFrag = (sd.value === maxVal ? ' class="statbar-highest"' : '');
-				buf += '<span class="statrow"><label>' + sd.statName + '</label> <span class="statgraph"><span' + classFrag + ' style="width:' + sd.width + 'px;background:' + ((s2 === 'hp' ? sd.value >= 700 : sd.value >= 500) ? "#fff" : ('hsl(' + sd.color + ',60%,75%)')) + ';' + ((sd.value === maxVal && !allEqual) ? 'border:1px solid #000;' : ('border-color:' + ('hsl(' + sd.color + ',60%,65%)'))) + '"></span></span> ' + spacersmall + sd.baseStatsBuf + spacer + spacer + sd.evBuf + sd.ivBuf + '</em></span>'; 
+
+				buf += '<span class="statrow">' +
+					'<label>' + sd.statName + '</label> ' +
+					'<span class="statgraph"><span' + classFrag +
+						' style="width:' + sd.width + 'px;background:' +
+						((s2 === 'hp' ? sd.value >= 700 : sd.value >= 500) ? "#fff" : ('hsl(' + sd.color + ',60%,75%)')) +
+						';' + ((sd.value === maxVal && !allEqual) ? 'border:1px solid #000;' : ('border-color:' + ('hsl(' + sd.color + ',60%,65%)'))) +
+					'"></span></span> ' +
+					spacersmall + sd.baseStatsBuf + spacer + spacer + sd.jvBuf +
+				'</span>';
 			}
+
 			buf += '</button></div></div>';
+
 			buf += '</div></li>';
 			return buf;
 		},
@@ -2183,86 +2190,138 @@ buf += '<div class="setcell" style="position: relative; top: -25px; display: inl
 			this.updateStatGraph();
 		},
 		updateStatGraph: function () {
-			var set = this.curSet;
-			if (!set) return;
-			var stats = { hp: '', atk: '', def: '', spa: '', spd: '', spe: '' };
-			var supportsEVs = !this.curTeam.format.includes('letsgo');
-			// species is needed for base stat lookups in the stat HTML below
-			var species = this.curTeam.dex.species.get(set.species);
-			// stat cell
-			var buf = '<span class="statrow statrow-head"><label></label><span class="statgraph"></span><ma>' + '</ma><ma>' +  'Base' + '</ma><em>' + '</em><em>' + '</em><ma>' + '</ma><ma>' + '</ma><ma>' + '</ma><ma>' +  '</ma><ma>' +  (supportsEVs ? 'EV' : 'AV') + '</ma><ma>' + '</ma><ma>' + '</ma></em>' + 'IV' + '</em></span>';
-			var defaultEV = (this.curTeam.gen > 2 ? 0 : 252);
-			// build a stat list, find the highest, then render with a special class for it
-			var statList = [];
-			var maxVal = -Infinity;
-			var maxKey = null;
-			var minVal = Infinity;
-			for (var s in stats) {
-				if (s === 'spd' && this.curTeam.gen === 1) continue;
-				var val = this.getStat(s, set);
-				stats[s] = val;
-				statList.push(s);
-				if (val > maxVal) { maxVal = val; maxKey = s; }
-				if (val < minVal) { minVal = val; }
-			}
-			var allEqual = (minVal === maxVal);
-			var suppressBorders = allEqual;
-			for (var ii = 0; ii < statList.length; ii++) {
-				var st = statList[ii];
-				var ev = (set.evs[st] === undefined ? defaultEV : set.evs[st]);
-				var evBuf = '<em' + (ev !== defaultEV && ev >= 100 ? ' class="ev-3"' : '') + '>' + (ev === defaultEV ? '' : ev);
-				if (BattleNatures[set.nature] && BattleNatures[set.nature].plus === st) { evBuf += '<small>+</small>'; } 
-				else if (BattleNatures[set.nature] && BattleNatures[set.nature].minus === st) { evBuf += '<small>&minus;</small>'; }
-				evBuf += '</em>';
-				var width = stats[st] * 90 / 504;
-				var color = Math.floor(stats[st] * (st === 'hp' ? 343 : 475) / 714);
-				if (color > 360) color = 360;
-				if (color <= 25) { color = Math.floor(color * 0.5); } 
-				else if (color >= 300) { color = Math.floor(color * 1); } 
-				else {
-					var m = 0.5 + (color - 25) * (1 - 0.5) / (300 - 25);
-					color = Math.floor(color * m);
-				}
-				var statName = this.curTeam.gen === 1 && st === 'spa' ? 'Spc' : BattleStatNames[st];
-				var classFrag = (stats[st] === maxVal ? ' class="statbar-highest"' : '');
-				buf += '<span class="statrow"><label>' + statName + '</label> <span class="statgraph"><span' + classFrag + ' style="width:' + width + 'px;background:' + ((st === 'hp' ? stats[st] > 699 : stats[st] > 499) ? "#fff" : ('hsl(' + color + ',40%,75%)')) + ';' + ((stats[st] === maxVal && !allEqual) ? 'border:1px solid #000;' : ('border-color:' + ('hsl(' + color + ',40%,65%)'))) + '"></span></span> ' + '<ma></ma>' + ('<em>' + (species && species.baseStats ? species.baseStats[st] : '') + '<em></em>' + '</em>') + '<em></em><em></em>' + evBuf + ('<em>' + (set.ivs && (set.ivs[st] === undefined || set.ivs[st] === 31) ? '' : set.ivs[st]) + '</em>') + '</span>';
-			}
-			this.$('button[name=stats]').html(buf);
-			if (this.curChartType !== 'stats') return;
-			buf = '<div></div>';
-			for (var stat in stats) {
-				if (stat === 'spd' && this.curTeam.gen === 1) continue;
-				buf += '<div><b>' + stats[stat] + '</b></div>';
-			}
-			this.$chart.find('.statscol').html(buf);
-			buf = '<div></div>';
-			var totalev = 0;
-			// build min/max first so we can decide whether all stats are equal (in which case we hide borders)
-			// NOTE: stats already filled above, and allEqual computed
-			for (var stat in stats) {
-				var width = stats[stat] * 180 / 504;
-				var color = Math.floor(stats[stat] * (stat === 'hp' ? 343 : 475) / 714);
-				if (color > 360) color = 360;
-				if (color <= 25) { color = Math.floor(color * 0.5); } 
-				else if (color >= 300) { color = Math.floor(color * 1); } 
-				else {
-					var m = 0.5 + (color - 25) * (1 - 0.5) / (300 - 25);
-					color = Math.floor(color * m);
-				}
-				buf += '<div><em><span style="width:' + Math.floor(width) + 'px;background:' + ((stat === 'hp' ? stats[stat] > 699 : stats[stat] > 499) ? "#fff" : ('hsl(' + color + ',85%,45%)')) + ';"></span></em></div>';
-				totalev += (set.evs[stat] || 0);
-			}
-			if (this.curTeam.gen > 2 && supportsEVs) buf += '<div><em>Remaining:</em></div>';
-			this.$chart.find('.graphcol').html(buf);
-			if (this.curTeam.gen <= 2) return;
-			if (supportsEVs) {
-				var maxEv = 510;
-				if (totalev <= maxEv) { this.$chart.find('.totalev').html('<em>' + (totalev > (maxEv - 2) ? 0 : (maxEv - 2) - totalev) + '</em>'); } 
-				else { this.$chart.find('.totalev').html('<b>' + (maxEv - totalev) + '</b>'); }
-			}
-			this.$chart.find('select[name=nature]').val(set.nature || 'Serious');
-			this.checkStatOptimizations();
-		},
+	var set = this.curSet;
+	if (!set) return;
+
+	// JVs live here
+	if (!set.jvs) set.jvs = {};
+
+	var stats = { hp: '', atk: '', def: '', spa: '', spd: '', spe: '' };
+	var supportsEVs = !this.curTeam.format.includes('letsgo'); // keep the existing letsgo behavior if you want
+	// species is needed for base stat lookups in the stat HTML below
+	var species = this.curTeam.dex.species.get(set.species);
+
+	// stat cell (HEADER) — replace EV->JV and REMOVE the IV column entirely
+	var buf =
+		'<span class="statrow statrow-head">' +
+			'<label></label>' +
+			'<span class="statgraph"></span>' +
+			'<ma></ma><ma>Base</ma>' +
+			'<em></em><em></em>' +
+			'<ma></ma><ma></ma><ma></ma><ma></ma><ma></ma>' +
+			'<ma>' + (supportsEVs ? 'JV' : 'AV') + '</ma>' +
+			'<ma></ma><ma></ma>' +
+		'</span>';
+
+	// JV defaults: 0
+	var defaultJV = 0;
+
+	// build a stat list, find the highest, then render with a special class for it
+	var statList = [];
+	var maxVal = -Infinity;
+	var minVal = Infinity;
+
+	for (var s in stats) {
+		if (s === 'spd' && this.curTeam.gen === 1) continue;
+		var v = this.getStat(s, set);
+		stats[s] = v;
+		statList.push(s);
+		if (v > maxVal) maxVal = v;
+		if (v < minVal) minVal = v;
+	}
+
+	var allEqual = (minVal === maxVal);
+
+	for (var ii = 0; ii < statList.length; ii++) {
+		var st = statList[ii];
+
+		// Use JVs (NOT EVs)
+		var jv = (set.jvs[st] === undefined ? defaultJV : set.jvs[st]);
+
+		var jvBuf = '<em' + (jv !== defaultJV && jv >= 100 ? ' class="ev-3"' : '') + '>' + (jv === defaultJV ? '' : jv);
+		if (BattleNatures[set.nature] && BattleNatures[set.nature].plus === st) jvBuf += '<small>+</small>';
+		else if (BattleNatures[set.nature] && BattleNatures[set.nature].minus === st) jvBuf += '<small>&minus;</small>';
+		jvBuf += '</em>';
+
+		var width = stats[st] * 90 / 504;
+		var color = Math.floor(stats[st] * (st === 'hp' ? 343 : 475) / 714);
+		if (color > 360) color = 360;
+		if (color <= 25) color = Math.floor(color * 0.5);
+		else if (color >= 300) color = Math.floor(color * 1);
+		else {
+			var m = 0.5 + (color - 25) * (1 - 0.5) / (300 - 25);
+			color = Math.floor(color * m);
+		}
+
+		var statName = this.curTeam.gen === 1 && st === 'spa' ? 'Spc' : BattleStatNames[st];
+		var classFrag = (stats[st] === maxVal ? ' class="statbar-highest"' : '');
+
+		// ROW — remove IV cell at the end (do NOT append any ivBuf)
+		buf +=
+			'<span class="statrow">' +
+				'<label>' + statName + '</label> ' +
+				'<span class="statgraph"><span' + classFrag +
+					' style="width:' + width + 'px;background:' +
+					((st === 'hp' ? stats[st] > 699 : stats[st] > 499) ? "#fff" : ('hsl(' + color + ',40%,75%)')) +
+					';' + ((stats[st] === maxVal && !allEqual) ? 'border:1px solid #000;' : ('border-color:' + ('hsl(' + color + ',40%,65%)'))) +
+				'"></span></span> ' +
+				'<ma></ma>' +
+				('<em>' + (species && species.baseStats ? species.baseStats[st] : '') + '<em></em>' + '</em>') +
+				'<em></em><em></em>' +
+				jvBuf +
+			'</span>';
+	}
+
+	this.$('button[name=stats]').html(buf);
+	if (this.curChartType !== 'stats') return;
+
+	// left stats column (numbers)
+	buf = '<div></div>';
+	for (var stat in stats) {
+		if (stat === 'spd' && this.curTeam.gen === 1) continue;
+		buf += '<div><b>' + stats[stat] + '</b></div>';
+	}
+	this.$chart.find('.statscol').html(buf);
+
+	// right graph column + Remaining
+	buf = '<div></div>';
+	var totalJV = 0;
+
+	for (var stat2 in stats) {
+		if (stat2 === 'spd' && this.curTeam.gen === 1) continue;
+
+		var w = stats[stat2] * 180 / 504;
+		var c = Math.floor(stats[stat2] * (stat2 === 'hp' ? 343 : 475) / 714);
+		if (c > 360) c = 360;
+		if (c <= 25) c = Math.floor(c * 0.5);
+		else if (c >= 300) c = Math.floor(c * 1);
+		else {
+			var m2 = 0.5 + (c - 25) * (1 - 0.5) / (300 - 25);
+			c = Math.floor(c * m2);
+		}
+
+		buf += '<div><em><span style="width:' + Math.floor(w) + 'px;background:' +
+			((stat2 === 'hp' ? stats[stat2] > 699 : stats[stat2] > 499) ? "#fff" : ('hsl(' + c + ',85%,45%)')) +
+			';"></span></em></div>';
+
+		totalJV += (set.jvs[stat2] || 0);
+	}
+
+	if (this.curTeam.gen > 2 && supportsEVs) buf += '<div><em>Remaining:</em></div>';
+	this.$chart.find('.graphcol').html(buf);
+
+	if (this.curTeam.gen <= 2) return;
+
+	// Remaining for JVs (TOTAL = 130)
+	if (supportsEVs) {
+		var maxJV = 130;
+		if (totalJV <= maxJV) this.$chart.find('.totalev').html('<em>' + (maxJV - totalJV) + '</em>');
+		else this.$chart.find('.totalev').html('<b>' + (maxJV - totalJV) + '</b>');
+	}
+
+	this.$chart.find('select[name=nature]').val(set.nature || 'Serious');
+},
+
 		curChartType: '',
 		curChartName: '',
 		searchChartTypes: {
@@ -2540,259 +2599,198 @@ buf += '<div class="setcell" style="position: relative; top: -25px; display: inl
   this.$('button[name=abilitySetToggle]').text('' + (set.abilitySet || 1));
 },
 		updateStatForm: function (setGuessed) {
-			var buf = '';
-			var set = this.curSet;
-			var species = this.curTeam.dex.species.get(this.curSet.species);
-			var baseStats = species.baseStats;
-			buf += '<div class="resultheader"><h3>EVs</h3></div>';
-			buf += '<div class="statform">';
-			var guess = new BattleStatGuesser(this.curTeam.format).guess(set);
-			var role = guess.role;
-			var guessedEVs = guess.evs;
-			var guessedPlus = guess.plusStat;
-			var guessedMinus = guess.minusStat;
-			buf += '<p class="suggested"><small>Guessed spread:';
-			if (role === '?') { buf += ' (Please choose 4 moves to get a guessed spread) (<a target="_blank" href="' + this.smogdexLink(species) + '">Smogon&nbsp;analysis</a>)</small></p>'; } 
-			else {
-				buf += ' </small><button name="setStatFormGuesses" class="button">' + role + ': ';
-				for (var i in BattleStatNames) { if (guessedEVs[i]) {
-						var statName = this.curTeam.gen === 1 && i === 'spa' ? 'Spc' : BattleStatNames[i];
-						buf += '' + guessedEVs[i] + ' ' + statName + ' / ';
-					}
-				}
-				if (guessedPlus && guessedMinus) buf += ' (+' + BattleStatNames[guessedPlus] + ', -' + BattleStatNames[guessedMinus] + ')';
-				else buf = buf.slice(0, -3);
-				buf += '</button><small> (<a target="_blank" href="' + this.smogdexLink(species) + '">Smogon&nbsp;analysis</a>)</small></p>';
-				// buf += ' <small>(' + role + ' | bulk: phys ' + Math.round(guess.moveCount.physicalBulk/1000) + ' + spec ' + Math.round(guess.moveCount.specialBulk/1000) + ' = ' + Math.round(guess.moveCount.bulk/1000) + ')</small>';
+	var buf = '';
+	var set = this.curSet;
+	if (!set) return;
+
+	if (!set.jvs) set.jvs = {};
+
+	var species = this.curTeam.dex.species.get(set.species);
+	var baseStats = species.baseStats;
+
+	// JV header
+	buf += '<div class="resultheader"><h3>JVs</h3></div>';
+	buf += '<div class="statform">';
+
+	// ---- Keep the existing guesser UI (but apply it as JVs and clamp to 64/130) ----
+	var guess = new BattleStatGuesser(this.curTeam.format).guess(set);
+	var role = guess.role;
+	var guessed = guess.evs; // yes, the guesser returns "evs" — we treat them as a suggestion source
+	var guessedPlus = guess.plusStat;
+	var guessedMinus = guess.minusStat;
+
+	buf += '<p class="suggested"><small>Guessed spread:';
+	if (role === '?') {
+		buf += ' (Please choose 4 moves to get a guessed spread) (<a target="_blank" href="' + this.smogdexLink(species) + '">Smogon&nbsp;analysis</a>)</small></p>';
+	} else {
+		buf += ' </small><button name="setStatFormGuesses" class="button">' + role + ': ';
+		for (var i in BattleStatNames) {
+			if (guessed[i]) {
+				var statName = this.curTeam.gen === 1 && i === 'spa' ? 'Spc' : BattleStatNames[i];
+				buf += '' + guessed[i] + ' ' + statName + ' / ';
 			}
-			if (setGuessed) {
-				set.evs = guessedEVs;
-				this.plus = guessedPlus;
-				this.minus = guessedMinus;
-				this.updateNature();
-				this.save();
-				this.updateStatGraph();
-				this.natureChange();
-				return;
+		}
+		if (guessedPlus && guessedMinus) buf += ' (+' + BattleStatNames[guessedPlus] + ', -' + BattleStatNames[guessedMinus] + ')';
+		else buf = buf.slice(0, -3);
+		buf += '</button><small> (<a target="_blank" href="' + this.smogdexLink(species) + '">Smogon&nbsp;analysis</a>)</small></p>';
+	}
+
+	// If user clicked the guessed spread button, apply it as JVs (clamp 64/stat, 130 total)
+	if (setGuessed) {
+		var jvs = {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0};
+		if (this.curTeam.gen === 1) delete jvs.spd;
+
+		// 1) per-stat clamp to 64
+		for (var s in jvs) {
+			var v = (guessed && guessed[s]) ? guessed[s] : 0;
+			v = Math.max(0, Math.min(64, v | 0));
+			jvs[s] = v;
+		}
+
+		// 2) total clamp to 130 by reducing in a stable order
+		var order = ['hp', 'atk', 'def', 'spa', 'spd', 'spe'];
+		if (this.curTeam.gen === 1) order = ['hp', 'atk', 'def', 'spa', 'spe'];
+
+		var total = 0;
+		for (var k in jvs) total += jvs[k];
+
+		while (total > 130) {
+			var reduced = false;
+			for (var oi = 0; oi < order.length && total > 130; oi++) {
+				var key = order[oi];
+				if (jvs[key] > 0) {
+					jvs[key]--;
+					total--;
+					reduced = true;
+				}
 			}
-			var stats = { hp: '', atk: '', def: '', spa: '', spd: '', spe: '' };
-			if (this.curTeam.gen === 1) delete stats.spd;
-			if (!set) return;
-			var nature = BattleNatures[set.nature || 'Serious'];
-			if (!nature) nature = {};
-			var supportsEVs = !this.curTeam.format.includes('letsgo');
-			// var supportsAVs = !supportsEVs && this.curTeam.format.endsWith('norestrictions');
-			var defaultEV = this.curTeam.gen <= 2 ? 252 : 0;
-			var maxEV = supportsEVs ? 252 : 200;
-			var stepEV = supportsEVs ? 4 : 1;
-			// label column
-			buf += '<div class="col labelcol"><div></div>';
-			buf += '<div><label>HP</label></div><div><label>Attack</label></div><div><label>Defense</label></div><div>';
-			if (this.curTeam.gen === 1) { buf += '<label>Special</label></div>'; } 
-			else { buf += '<label>Sp. Atk.</label></div><div><label>Sp. Def.</label></div>'; }
-			buf += '<div><label>Speed</label></div></div>';
-			buf += '<div class="col basestatscol"><div><em>Base</em></div>';
-			for (var i in stats) { buf += '<div><b>' + baseStats[i] + '</b></div>'; }
-			buf += '</div>';
-			buf += '<div class="col graphcol"><div></div>';
-			for (var i in stats) {
-				stats[i] = this.getStat(i);
-				var width = stats[i] * 180 / 504;
-				var color = Math.floor(stats[i] * (i === 'hp' ? 343 : 475) / 714);
-				if (color > 360) color = 360;
-				if (color <= 25) { color = Math.floor(color * 0.5); } 
-				else if (color >= 300) { color = Math.floor(color * 1); } 
-				else {
-					var m = 0.5 + (color - 25) * (1 - 0.5) / (300 - 25);
-					color = Math.floor(color * m);
-				}
-				buf += '<div><em><span style="width:' + Math.floor(width) + 'px;background:' + ((i === 'hp' ? stats[i] >= 700 : stats[i] >= 500) ? "#fff" : ('hsl(' + color + ',85%,45%)')) + ';' + ((i === 'hp' ? color >= 340 : color >= 332) ? 'border:1px solid #000;' : ('border-color:' + ('hsl(' + color + ',85%,35%)'))) + '"></span></em></div>';
-			}
-			if (this.curTeam.gen > 2 && supportsEVs) buf += '<div><em>Remaining:</em></div>';
-			buf += '</div>';
-			buf += '<div class="col evcol"><div><strong>' + (supportsEVs ? 'EVs' : 'AVs') + '</strong></div>';
-			var totalev = 0;
-			this.plus = '';
-			this.minus = '';
-			for (var i in stats) {
-				var val;
-				val = '' + ((set.evs[i] === undefined ? defaultEV : set.evs[i]) || '');
-				if (nature.plus === i) {
-					val += '+';
-					this.plus = i;
-				}
-				if (nature.minus === i) {
-					val += '-';
-					this.minus = i;
-				}
-				buf += '<div><input type="text" name="stat-' + i + '" value="' + val + '" class="textbox inputform numform" /></div>';
-				totalev += (set.evs[i] || 0);
-			}
-			if (this.curTeam.gen > 2 && supportsEVs) {
-				var maxTotalEVs = 510;
-				if (totalev <= maxTotalEVs) { buf += '<div class="totalev"><em>' + (totalev > (maxTotalEVs - 2) ? 0 : (maxTotalEVs - 2) - totalev) + '</em></div>'; } 
-				else { buf += '<div class="totalev"><b>' + (maxTotalEVs - totalev) + '</b></div>'; }
-			}
-			buf += '</div>';
-			buf += '<div class="col evslidercol"><div></div>';
-			for (var i in stats) {
-				if (i === 'spd' && this.curTeam.gen === 1) continue;
-				buf += '<div><input type="range" name="evslider-' + i + '" value="' + BattleLog.escapeHTML(set.evs[i] === undefined ? '' + defaultEV : '' + set.evs[i]) + '" min="0" max="' + maxEV + '" step="' + stepEV + '" class="evslider" tabindex="-1" aria-hidden="true" /></div>';
-			}
-			buf += '</div>';
-			if (this.curTeam.gen > 2) {
-				buf += '<div class="col ivcol"><div><strong>IVs</strong></div>';
-				if (!set.ivs) set.ivs = {};
-				for (var i in stats) {
-					if (set.ivs[i] === undefined || isNaN(set.ivs[i])) set.ivs[i] = 31;
-					var val = '' + (set.ivs[i]);
-					buf += '<div><input type="number" name="iv-' + i + '" value="' + BattleLog.escapeHTML(val) + '" class="textbox inputform numform" min="0" max="31" step="1" /></div>';
-				}
-				var hpType = '';
-				if (set.moves) { for (var i = 0; i < set.moves.length; i++) {
-						var moveid = toID(set.moves[i]);
-						if (moveid.slice(0, 11) === 'hiddenpower') { hpType = moveid.slice(11); }
-					}
-				}
-				if (hpType && !this.canHyperTrain(set)) {
-					var hpIVs;
-					switch (hpType) {
-					case 'dark': hpIVs = ['111111']; break;
-					case 'dragon': hpIVs = ['011111', '101111', '110111']; break;
-					case 'ice': hpIVs = ['010111', '100111', '111110']; break;
-					case 'psychic': hpIVs = ['011110', '101110', '110110']; break;
-					case 'electric': hpIVs = ['010110', '100110', '111011']; break;
-					case 'grass': hpIVs = ['011011', '101011', '110011']; break;
-					case 'water': hpIVs = ['100011', '111010']; break;
-					case 'fire': hpIVs = ['101010', '110010']; break;
-					case 'steel': hpIVs = ['100010', '111101']; break;
-					case 'ghost': hpIVs = ['101101', '110101']; break;
-					case 'bug': hpIVs = ['100101', '111100', '101100']; break;
-					case 'rock': hpIVs = ['001100', '110100', '100100']; break;
-					case 'ground': hpIVs = ['000100', '111001', '101001']; break;
-					case 'poison': hpIVs = ['001001', '110001', '100001']; break;
-					case 'flying': hpIVs = ['000001', '111000', '101000']; break;
-					case 'fighting': hpIVs = ['001000', '110000', '100000']; break;
-					}
-					buf += '<div style="margin-left:-80px;text-align:right"><select name="ivspread" class="button">';
-					buf += '<option value="" selected>HP ' + hpType.charAt(0).toUpperCase() + hpType.slice(1) + ' IVs</option>';
-					var minStat = this.curTeam.gen >= 6 ? 0 : 2;
-					buf += '<optgroup label="min Atk">';
-					for (var i = 0; i < hpIVs.length; i++) {
-						var spread = '';
-						for (var j = 0; j < 6; j++) {
-							if (j) spread += '/';
-							spread += (j === 1 ? minStat : 30) + parseInt(hpIVs[i].charAt(j), 10);
-						}
-						buf += '<option value="' + spread + '">' + spread + '</option>';
-					}
-					buf += '</optgroup>';
-					buf += '<optgroup label="min Atk, min Spe">';
-					for (var i = 0; i < hpIVs.length; i++) {
-						var spread = '';
-						for (var j = 0; j < 6; j++) {
-							if (j) spread += '/';
-							spread += (j === 5 || j === 1 ? minStat : 30) + parseInt(hpIVs[i].charAt(j), 10);
-						}
-						buf += '<option value="' + spread + '">' + spread + '</option>';
-					}
-					buf += '</optgroup>';
-					buf += '<optgroup label="max all">';
-					for (var i = 0; i < hpIVs.length; i++) {
-						var spread = '';
-						for (var j = 0; j < 6; j++) {
-							if (j) spread += '/';
-							spread += 30 + parseInt(hpIVs[i].charAt(j), 10);
-						}
-						buf += '<option value="' + spread + '">' + spread + '</option>';
-					}
-					buf += '</optgroup>';
-					buf += '<optgroup label="min Spe">';
-					for (var i = 0; i < hpIVs.length; i++) {
-						var spread = '';
-						for (var j = 0; j < 6; j++) {
-							if (j) spread += '/';
-							spread += (j === 5 ? minStat : 30) + parseInt(hpIVs[i].charAt(j), 10);
-						}
-						buf += '<option value="' + spread + '">' + spread + '</option>';
-					}
-					buf += '</optgroup>';
-					buf += '</select></div>';
-				} else {
-					buf += '<div style="margin-left:-80px;text-align:right"><select name="ivspread" class="button">';
-					buf += '<option value="" selected>IV spreads</option>';
-					buf += '<optgroup label="min Atk">';
-					buf += '<option value="31/0/31/31/31/31">31/0/31/31/31/31</option>';
-					buf += '</optgroup>';
-					buf += '<optgroup label="min Atk, min Spe">';
-					buf += '<option value="31/0/31/31/31/0">31/0/31/31/31/0</option>';
-					buf += '</optgroup>';
-					buf += '<optgroup label="max all">';
-					buf += '<option value="31/31/31/31/31/31">31/31/31/31/31/31</option>';
-					buf += '</optgroup>';
-					buf += '<optgroup label="min Spe">';
-					buf += '<option value="31/31/31/31/31/0">31/31/31/31/31/0</option>';
-					buf += '</optgroup>';
-					buf += '</select></div>';
-				}
-				buf += '</div>';
-			} else {
-				buf += '<div class="col ivcol"><div><strong>DVs</strong></div>';
-				if (!set.ivs) set.ivs = {};
-				for (var i in stats) {
-					if (set.ivs[i] === undefined || isNaN(set.ivs[i])) set.ivs[i] = 31;
-					var val = '' + Math.floor(set.ivs[i] / 2);
-					buf += '<div><input type="number" name="iv-' + i + '" value="' + BattleLog.escapeHTML(val) + '" class="textbox inputform numform" min="0" max="15" step="1" /></div>';
-				}
-				buf += '</div>';
-			}
-			buf += '<div class="col statscol"><div></div>';
-			for (var i in stats) { buf += '<div><b>' + stats[i] + '</b></div>'; }
-			buf += '</div>';
-			if (this.curTeam.gen > 2) {
-				buf += '<p style="clear:both">Nature: <select name="nature" class="button">';
-				for (var i in BattleNatures) {
-					var curNature = BattleNatures[i];
-					buf += '<option value="' + i + '"' + (curNature === nature ? 'selected="selected"' : '') + '>' + i;
-					if (curNature.plus) { buf += ' (+' + BattleStatNames[curNature.plus] + ', -' + BattleStatNames[curNature.minus] + ')'; }
-					buf += '</option>';
-				}
-				buf += '</select></p>';
-				buf += '<p><small><em>Protip:</em> You can also set natures by typing <kbd>+</kbd> and <kbd>-</kbd> next to a stat.</small></p>';
-				buf += '<p id="statoptimizer"></p>';
-			}
-			buf += '</div>';
-			this.$chart.html(buf);
-			this.checkStatOptimizations();
-		},
-		setStatFormGuesses: function () { this.updateStatForm(true); },
-		checkStatOptimizations: function () {
-			var optimized = BattleStatOptimizer(this.curSet, this.curTeam.format);
-			if (optimized) {
-				var buf = '';
-				var msg = '';
-				if (optimized.savedEVs) { msg = 'save ' + optimized.savedEVs + ' EVs'; } 
-				else { msg = 'get higher stats'; }
-				buf += '<small><em>Protip:</em> Use a different nature to ' + msg + ': </small>';
-				buf += ' <button name="setStatFormOptimization" class="button">';
-				for (var i in BattleStatNames) { if (optimized.evs[i]) { buf += '' + optimized.evs[i] + ' ' + BattleStatNames[i] + ' / '; } }
-				if (!optimized.plus && !optimized.minus) { buf += ' (Neutral nature)'; } 
-				else { buf += ' (+' + BattleStatNames[optimized.plus] + ', -' + BattleStatNames[optimized.minus] + ')'; }
-				buf += '</button>';
-				this.$chart.find('#statoptimizer').html(buf).show();
-			} else { this.$chart.find('#statoptimizer').hide(); }
-		},
+			if (!reduced) break;
+		}
+
+		set.jvs = jvs;
+		this.plus = guessedPlus || '';
+		this.minus = guessedMinus || '';
+		this.updateNature();
+		this.save();
+		this.updateStatGraph();
+		this.natureChange();
+		return;
+	}
+
+	// ---- Build the form UI ----
+	var stats = { hp: '', atk: '', def: '', spa: '', spd: '', spe: '' };
+	if (this.curTeam.gen === 1) delete stats.spd;
+
+	var nature = BattleNatures[set.nature || 'Serious'];
+	if (!nature) nature = {};
+
+	var defaultJV = 0;
+	var maxJV = 64;
+	var stepJV = 1;
+
+	// label column
+	buf += '<div class="col labelcol"><div></div>';
+	buf += '<div><label>HP</label></div><div><label>Attack</label></div><div><label>Defense</label></div><div>';
+	if (this.curTeam.gen === 1) buf += '<label>Special</label></div>';
+	else buf += '<label>Sp. Atk.</label></div><div><label>Sp. Def.</label></div>';
+	buf += '<div><label>Speed</label></div></div>';
+
+	// base stats column
+	buf += '<div class="col basestatscol"><div><em>Base</em></div>';
+	for (var i in stats) buf += '<div><b>' + baseStats[i] + '</b></div>';
+	buf += '</div>';
+
+	// graph column
+	buf += '<div class="col graphcol"><div></div>';
+	for (var i in stats) {
+		stats[i] = this.getStat(i);
+		var width = stats[i] * 180 / 504;
+		var color = Math.floor(stats[i] * (i === 'hp' ? 343 : 475) / 714);
+		if (color > 360) color = 360;
+		if (color <= 25) color = Math.floor(color * 0.5);
+		else if (color >= 300) color = Math.floor(color * 1);
+		else {
+			var m = 0.5 + (color - 25) * (1 - 0.5) / (300 - 25);
+			color = Math.floor(color * m);
+		}
+		buf += '<div><em><span style="width:' + Math.floor(width) + 'px;background:' +
+			((i === 'hp' ? stats[i] >= 700 : stats[i] >= 500) ? "#fff" : ('hsl(' + color + ',85%,45%)')) +
+			';' + ((i === 'hp' ? color >= 340 : color >= 332) ? 'border:1px solid #000;' : ('border-color:' + ('hsl(' + color + ',85%,35%)'))) +
+			'"></span></em></div>';
+	}
+	buf += '<div><em>Remaining:</em></div>';
+	buf += '</div>';
+
+	// JV input column
+	buf += '<div class="col evcol"><div><strong>JVs</strong></div>';
+	var totaljv = 0;
+	this.plus = '';
+	this.minus = '';
+
+	for (var i in stats) {
+		var v = (set.jvs[i] === undefined ? defaultJV : set.jvs[i]) || 0;
+		var text = '' + (v ? v : '');
+
+		if (nature.plus === i) { text += '+'; this.plus = i; }
+		if (nature.minus === i) { text += '-'; this.minus = i; }
+
+		buf += '<div><input type="text" name="stat-' + i + '" value="' + BattleLog.escapeHTML(text) + '" class="textbox inputform numform" /></div>';
+		totaljv += (v || 0);
+	}
+
+	// Remaining (130 total)
+	var maxTotalJV = 130;
+	if (totaljv <= maxTotalJV) buf += '<div class="totalev"><em>' + (maxTotalJV - totaljv) + '</em></div>';
+	else buf += '<div class="totalev"><b>' + (maxTotalJV - totaljv) + '</b></div>';
+
+	buf += '</div>';
+
+	// Slider column (still named evslider-* for compatibility)
+	buf += '<div class="col evslidercol"><div></div>';
+	for (var i in stats) {
+		if (i === 'spd' && this.curTeam.gen === 1) continue;
+		var sv = (set.jvs[i] === undefined ? defaultJV : set.jvs[i]) || 0;
+		buf += '<div><input type="range" name="evslider-' + i + '" value="' + BattleLog.escapeHTML('' + sv) +
+			'" min="0" max="' + maxJV + '" step="' + stepJV + '" class="evslider" tabindex="-1" aria-hidden="true" /></div>';
+	}
+	buf += '</div>';
+
+	// Stats column (final stats)
+	buf += '<div class="col statscol"><div></div>';
+	for (var i in stats) buf += '<div><b>' + stats[i] + '</b></div>';
+	buf += '</div>';
+
+	// Nature UI (kept)
+	if (this.curTeam.gen > 2) {
+		buf += '<p style="clear:both">Nature: <select name="nature" class="button">';
+		for (var n in BattleNatures) {
+			var curNature = BattleNatures[n];
+			buf += '<option value="' + n + '"' + (curNature === nature ? 'selected="selected"' : '') + '>' + n;
+			if (curNature.plus) buf += ' (+' + BattleStatNames[curNature.plus] + ', -' + BattleStatNames[curNature.minus] + ')';
+			buf += '</option>';
+		}
+		buf += '</select></p>';
+		buf += '<p><small><em>Protip:</em> You can also set natures by typing <kbd>+</kbd> and <kbd>-</kbd> next to a stat.</small></p>';
+	}
+
+	buf += '</div>';
+
+	this.$chart.html(buf);
+
+	// EV optimizer is not valid under JVs (disable it here)
+	this.$chart.find('#statoptimizer').hide();
+},
+
 		setStatFormOptimization: function () {
-			var optimized = BattleStatOptimizer(this.curSet, this.curTeam.format);
-			this.curSet.evs = optimized.evs;
-			this.plus = optimized.plus;
-			this.minus = optimized.minus;
-			this.updateNature();
-			this.save();
-			this.updateStatGraph();
-			this.natureChange();
-			this.$chart.find('#statoptimizer').hide();
+	// JV system: old EV optimizer is not valid. Disable safely.
+	if (this.$chart) this.$chart.find('#statoptimizer').hide();
+	return;
+},
+		checkStatOptimizations: function () {
+			// updateStatGraph() still calls this; keep it as a harmless no-op.
+			if (this.$chart) this.$chart.find('#statoptimizer').hide();
 		},
+
 		setSlider: function (stat, val) { this.$chart.find('input[name=evslider-' + stat + ']').val(val || 0); },
 		updateNature: function () {
 			var set = this.curSet;
@@ -2806,150 +2804,118 @@ buf += '<div class="setcell" style="position: relative; top: -25px; display: inl
 			}
 		},
 		statChange: function (e) {
-			var inputName = '';
-			inputName = e.currentTarget.name;
-			var val = Math.abs(parseInt(e.currentTarget.value, 10));
-			var supportsEVs = !this.curTeam.format.includes('letsgo');
-			var supportsAVs = !supportsEVs && this.curTeam.format.endsWith('norestrictions');
-			var set = this.curSet;
-			if (!set) return;
-			if (inputName.substr(0, 5) === 'stat-') {
-				// EV + and -
-				var stat = inputName.substr(5);
-				var lastchar = e.currentTarget.value.charAt(e.target.value.length - 1);
-				var firstchar = e.currentTarget.value.charAt(0);
-				var natureChange = true;
-				if ((lastchar === '+' || firstchar === '+') && stat !== 'hp') {
-					if (this.plus && this.plus !== stat) this.$chart.find('input[name=stat-' + this.plus + ']').val(set.evs[this.plus] || '');
-					this.plus = stat;
-				} else if ((lastchar === '-' || lastchar === "\u2212" || firstchar === '-' || firstchar === "\u2212") && stat !== 'hp') {
-					if (this.minus && this.minus !== stat) this.$chart.find('input[name=stat-' + this.minus + ']').val(set.evs[this.minus] || '');
-					this.minus = stat;
-				} else if (this.plus === stat) { this.plus = ''; } 
-				else if (this.minus === stat) { this.minus = ''; } 
-				else { natureChange = false; }
-				if (natureChange) { this.updateNature(); }
-				// cap
-				if (val > 252) val = 252;
-				if (val < 0 || isNaN(val)) val = 0;
-				if (set.evs[stat] !== val || natureChange) {
-					set.evs[stat] = val;
-					if (this.ignoreEVLimits) {
-						var evNum = supportsEVs ? 252 : supportsAVs ? 200 : 0;
-						if (set.evs['hp'] === undefined) set.evs['hp'] = evNum;
-						if (set.evs['atk'] === undefined) set.evs['atk'] = evNum;
-						if (set.evs['def'] === undefined) set.evs['def'] = evNum;
-						if (set.evs['spa'] === undefined) set.evs['spa'] = evNum;
-						if (set.evs['spd'] === undefined) set.evs['spd'] = evNum;
-						if (set.evs['spe'] === undefined) set.evs['spe'] = evNum;
-					}
-					this.setSlider(stat, val);
-					this.updateStatGraph();
-				}
-			} else { // IV
-				var stat = inputName.substr(3);
-				if (this.curTeam.gen <= 2) {
-					val *= 2;
-					if (val === 30) val = 31;
-				}
-				if (val > 31 || isNaN(val)) val = 31;
-				if (val < 0) val = 0;
-				if (!set.ivs) set.ivs = {};
-				if (set.ivs[stat] !== val) {
-					set.ivs[stat] = val;
-					this.updateIVs();
-					this.updateStatGraph();
-				}
-			}
-			this.save();
-		},
-		updateIVs: function () {
-			var set = this.curSet;
-			if (!set.moves || this.canHyperTrain(set)) return;
-			var hasHiddenPower = false;
-			for (var i = 0; i < set.moves.length; i++) { if (toID(set.moves[i]).slice(0, 11) === 'hiddenpower') {
-					hasHiddenPower = true;
-					break;
-				}
-			}
-			if (!hasHiddenPower) return;
-			var hpTypes = ['Fighting', 'Flying', 'Poison', 'Ground', 'Rock', 'Bug', 'Ghost', 'Steel', 'Fire', 'Water', 'Grass', 'Electric', 'Psychic', 'Ice', 'Dragon', 'Dark'];
-			var hpType;
-			if (this.curTeam.gen <= 2) {
-				var hpDV = Math.floor(set.ivs.hp / 2);
-				var atkDV = Math.floor(set.ivs.atk / 2);
-				var defDV = Math.floor(set.ivs.def / 2);
-				var speDV = Math.floor(set.ivs.spe / 2);
-				var spcDV = Math.floor(set.ivs.spa / 2);
-				hpType = hpTypes[4 * (atkDV % 4) + (defDV % 4)];
-				var expectedHpDV = (atkDV % 2) * 8 + (defDV % 2) * 4 + (speDV % 2) * 2 + (spcDV % 2);
-				if (expectedHpDV !== hpDV) {
-					set.ivs.hp = expectedHpDV * 2;
-					if (set.ivs.hp === 30) set.ivs.hp = 31;
-					this.$chart.find('input[name=iv-hp]').val(expectedHpDV);
-				}
-			} else {
-				var hpTypeX = 0;
-				var i = 1;
-				var stats = { hp: 31, atk: 31, def: 31, spe: 31, spa: 31, spd: 31 };
-				for (var s in stats) {
-					if (set.ivs[s] === undefined) set.ivs[s] = 31;
-					hpTypeX += i * (set.ivs[s] % 2);
-					i *= 2;
-				}
-				hpType = hpTypes[Math.floor(hpTypeX * 15 / 63)];
-			}
-			for (var i = 0; i < set.moves.length; i++) { if (toID(set.moves[i]).slice(0, 11) === 'hiddenpower') {
-					set.moves[i] = "Hidden Power " + hpType;
-					if (i < 4) this.$('input[name=move' + (i + 1) + ']').val("Hidden Power " + hpType);
-				}
-			}
-		},
-		statSlide: function (e) {
-			var slider = e.currentTarget;
-			var stat = slider.name.substr(9);
-			var set = this.curSet;
-			if (!set) return;
-			var val = +slider.value;
-			var originalVal = val;
-			var result = this.getStat(stat, set, val);
-			var supportsEVs = !this.curTeam.format.includes('letsgo');
-			var supportsAVs = !supportsEVs && this.curTeam.format.endsWith('norestrictions');
-			if (supportsEVs) { while (val > 0 && this.getStat(stat, set, val - 4) === result) val -= 4; }
-			if (supportsEVs && !this.ignoreEVLimits && set.evs) {
-				var total = 0;
-				for (var i in set.evs) { total += (i === stat ? val : set.evs[i]); }
-				var totalLimit = 508;
-				var limit = 252;
-				if (total > totalLimit && val - total + totalLimit >= 0) { // don't allow dragging beyond 508 EVs
-					val = val - total + totalLimit;
-					val = +val;
-					if (!val || val <= 0) val = 0;
-					if (val > limit) val = limit;
-				}
-			}
-			// Don't try this at home.
-			// I am a trained professional.
-			if (val !== originalVal) slider.value = val;
-			if (!set.evs) set.evs = {};
-			if (this.ignoreEVLimits) {
-				var evNum = supportsEVs ? 252 : supportsAVs ? 200 : 0;
-				if (set.evs['hp'] === undefined) set.evs['hp'] = evNum;
-				if (set.evs['atk'] === undefined) set.evs['atk'] = evNum;
-				if (set.evs['def'] === undefined) set.evs['def'] = evNum;
-				if (set.evs['spa'] === undefined) set.evs['spa'] = evNum;
-				if (set.evs['spd'] === undefined) set.evs['spd'] = evNum;
-				if (set.evs['spe'] === undefined) set.evs['spe'] = evNum;
-			}
-			set.evs[stat] = val;
-			val = '' + (val || '') + (this.plus === stat ? '+' : '') + (this.minus === stat ? '-' : '');
-			this.$('input[name=stat-' + stat + ']').val(val);
-			this.updateStatGraph();
-		},
-		statSlided: function (e) {
-			this.statSlide(e);
-			this.save();
-		},
+	var inputName = e.currentTarget.name;
+	var raw = '' + e.currentTarget.value;
+
+	var set = this.curSet;
+	if (!set) return;
+
+	// We only handle JV edits here (stat-*)
+	if (inputName.substr(0, 5) !== 'stat-') {
+		this.save();
+		return;
+	}
+
+	if (!set.jvs) set.jvs = {};
+
+	var stat = inputName.substr(5);
+
+	// Detect +/- nature markers (kept from your code)
+	var lastchar = raw.charAt(raw.length - 1);
+	var firstchar = raw.charAt(0);
+	var natureChange = false;
+
+	if ((lastchar === '+' || firstchar === '+') && stat !== 'hp') {
+		if (this.plus && this.plus !== stat) this.$chart.find('input[name=stat-' + this.plus + ']').val(set.jvs[this.plus] || '');
+		this.plus = stat;
+		natureChange = true;
+	} else if ((lastchar === '-' || lastchar === "\u2212" || firstchar === '-' || firstchar === "\u2212") && stat !== 'hp') {
+		if (this.minus && this.minus !== stat) this.$chart.find('input[name=stat-' + this.minus + ']').val(set.jvs[this.minus] || '');
+		this.minus = stat;
+		natureChange = true;
+	} else if (this.plus === stat) {
+		this.plus = '';
+		natureChange = true;
+	} else if (this.minus === stat) {
+		this.minus = '';
+		natureChange = true;
+	}
+
+	if (natureChange) this.updateNature();
+
+	// Parse number (JV value)
+	var val = Math.abs(parseInt(raw, 10));
+	if (isNaN(val) || val < 0) val = 0;
+	if (val > 64) val = 64;
+
+	// Enforce TOTAL 130 cap by reducing ONLY the edited stat
+	var total = 0;
+	for (var k in set.jvs) total += (k === stat ? val : (set.jvs[k] || 0));
+	if (total > 130) {
+		var overflow = total - 130;
+		val = val - overflow;
+		if (val < 0) val = 0;
+	}
+
+	// Only write/update if changed
+	if ((set.jvs[stat] || 0) !== val || natureChange) {
+		set.jvs[stat] = val;
+
+		// Keep slider + textbox consistent
+		this.setSlider(stat, val);
+		var disp = '' + (val || '') + (this.plus === stat ? '+' : '') + (this.minus === stat ? '-' : '');
+		this.$chart.find('input[name=stat-' + stat + ']').val(disp);
+
+		this.updateStatGraph();
+	}
+
+	this.save();
+},
+	statSlide: function (e) {
+	var slider = e.currentTarget;
+	var stat = slider.name.substr(9);
+	var set = this.curSet;
+	if (!set) return;
+
+	if (!set.jvs) set.jvs = {};
+
+	var val = +slider.value;
+	var originalVal = val;
+
+	// Enforce per-stat cap (0..64)
+	if (val < 0) val = 0;
+	if (val > 64) val = 64;
+
+	// Enforce total cap (<=130) by reducing ONLY the edited stat
+	if (!this.ignoreEVLimits) {
+		var total = 0;
+		for (var i in set.jvs) {
+			total += (i === stat ? val : (set.jvs[i] || 0));
+		}
+		if (total > 130) {
+			var overflow = total - 130;
+			val = val - overflow;
+			if (val < 0) val = 0;
+		}
+	}
+
+	// Keep slider in sync if we adjusted
+	if (val !== originalVal) slider.value = val;
+
+	// Write final JV
+	set.jvs[stat] = val;
+
+	// Update the textbox (keeps your +/- nature markers)
+	var disp = '' + (val || '') + (this.plus === stat ? '+' : '') + (this.minus === stat ? '-' : '');
+	this.$('input[name=stat-' + stat + ']').val(disp);
+
+	this.updateStatGraph();
+},
+statSlided: function (e) {
+	this.statSlide(e);
+	this.save();
+},
+
 		natureChange: function (e) {
 			var set = this.curSet;
 			if (!set) return;
@@ -2958,7 +2924,7 @@ buf += '<div class="setcell" style="position: relative; top: -25px; display: inl
 			this.minus = '';
 			var nature = BattleNatures[set.nature || 'Serious'];
 			for (var i in BattleStatNames) {
-				var val = '' + (set.evs[i] || '');
+				var val = '' + (set.jvs[i] || '');
 				if (nature.plus === i) {
 					this.plus = i;
 					val += '+';
@@ -2968,7 +2934,7 @@ buf += '<div class="setcell" style="position: relative; top: -25px; display: inl
 					val += '-';
 				}
 				this.$chart.find('input[name=stat-' + i + ']').val(val);
-				if (!e) this.setSlider(i, set.evs[i]);
+				if (!e) this.setSlider(i, set.jvs[i]);
 			}
 
 			this.save();
@@ -3124,21 +3090,6 @@ buf += '<div class="setcell" style="position: relative; top: -25px; display: inl
   this.curTeam.iconCache = '!';
   this.save();
 },
-		ivSpreadChange: function (e) {
-			var set = this.curSet;
-			if (!set) return;
-			var spread = e.currentTarget.value.split('/');
-			if (!set.ivs) set.ivs = {};
-			if (spread.length !== 6) return;
-			var stats = ['hp', 'atk', 'def', 'spa', 'spd', 'spe'];
-			for (var i = 0; i < 6; i++) {
-				this.$chart.find('input[name=iv-' + stats[i] + ']').val(spread[i]);
-				set.ivs[stats[i]] = parseInt(spread[i], 10);
-			}
-			$(e.currentTarget).val('');
-			this.save();
-			this.updateStatGraph();
-		},
 		//#region Set Detail Form
 		updateDetailsForm: function () {
 			var buf = '';
@@ -3653,69 +3604,7 @@ if (entry && entry.slice(0, 8) === 'ability|') {
 		},
 		chartSetCustom: function (val) {
 			val = toID(val);
-			if (val === 'cathy') {
-				var set = this.curSet;
-				set.name = "Cathy";
-				set.species = 'Trevenant';
-				delete set.level;
-				var baseFormat = this.curTeam.format;
-				if (baseFormat.substr(0, 3) === 'gen') baseFormat = baseFormat.substr(4);
-				if (baseFormat.substr(0, 4) === 'bdsp') baseFormat = baseFormat.substr(4);
-				if (baseFormat.substr(0, 8) === 'pokebank') baseFormat = baseFormat.substr(8);
-				if (baseFormat.substr(0, 6) === 'natdex') baseFormat = baseFormat.substr(6);
-				if (baseFormat.substr(0, 11) === 'nationaldex') baseFormat = baseFormat.substr(11);
-				if (baseFormat.substr(-5) === 'draft') baseFormat = baseFormat.substr(0, baseFormat.length - 5);
-				if (!baseFormat) baseFormat = 'ou';
-				if (this.curTeam && this.curTeam.format) {
-					if (baseFormat === 'battlespotsingles' || baseFormat === 'battlespotdoubles' || baseFormat.substr(0, 3) === 'vgc' || baseFormat === 'battlefestivaldoubles') { set.level = 50; }
-					if (baseFormat.startsWith('lc') || baseFormat.endsWith('lc')) set.level = 5;
-				}
-				set.gender = 'F';
-				if (set.happiness) delete set.happiness;
-				if (set.shiny) delete set.shiny;
-				if (set.dynamaxLevel) delete set.dynamaxLevel;
-				if (set.gigantamax) delete set.gigantamax;
-				set.item = 'Starf Berry';
-				set.ability = 'Harvest';
-				set.moves = ['Substitute', 'Horn Leech', 'Earthquake', 'Phantom Force'];
-				set.evs = { hp: 36, atk: 252, def: 0, spa: 0, spd: 0, spe: 220 };
-				set.ivs = {};
-				set.nature = 'Jolly';
-				this.updateSetTop();
-				this.$(!this.$('input[name=item]').length ? (this.$('input[name=ability]').length ? 'input[name=ability]' : 'input[name=move1]') : 'input[name=item]').select();
-				return true;
-			}
-			if (val === 'citizensnips' || val === 'snips') {
-				var set = this.curSet;
-				set.name = "citizen snips";
-				set.species = 'Drapion';
-				delete set.level;
-				var baseFormat = this.curTeam.format;
-				if (baseFormat.substr(0, 3) === 'gen') baseFormat = baseFormat.substr(4);
-				if (baseFormat.substr(0, 4) === 'bdsp') baseFormat = baseFormat.substr(4);
-				if (baseFormat.substr(0, 8) === 'pokebank') baseFormat = baseFormat.substr(8);
-				if (baseFormat.substr(0, 6) === 'natdex') baseFormat = baseFormat.substr(6);
-				if (baseFormat.substr(0, 11) === 'nationaldex') baseFormat = baseFormat.substr(11);
-				if (baseFormat.substr(-5) === 'draft') baseFormat = baseFormat.substr(0, baseFormat.length - 5);
-				if (!baseFormat) baseFormat = 'ou';
-				if (this.curTeam && this.curTeam.format) {
-					if (baseFormat === 'battlespotsingles' || baseFormat === 'battlespotdoubles' || baseFormat.substr(0, 3) === 'vgc' || baseFormat === 'battlefestivaldoubles') { set.level = 50; }
-					if (baseFormat.startsWith('lc') || baseFormat.endsWith('lc')) set.level = 5;
-				}
-				if (set.happiness) delete set.happiness;
-				if (set.shiny) delete set.shiny;
-				if (set.dynamaxLevel) delete set.dynamaxLevel;
-				if (set.gigantamax) delete set.gigantamax;
-				set.item = 'Leftovers';
-				set.ability = 'Battle Armor';
-				set.moves = ['Acupressure', 'Knock Off', 'Rest', 'Sleep Talk'];
-				set.evs = { hp: 248, atk: 0, def: 96, spa: 0, spd: 108, spe: 56 };
-				set.ivs = {};
-				set.nature = 'Impish';
-				this.updateSetTop();
-				this.$(!this.$('input[name=item]').length ? (this.$('input[name=ability]').length ? 'input[name=ability]' : 'input[name=move1]') : 'input[name=item]').select();
-				return true;
-			}
+			
 		},
 		chartSet: function (val, selectNext) {
 			var inputName = this.curChartName;
@@ -3906,7 +3795,7 @@ if (entry && entry.slice(0, 8) === 'ability|') {
 			set.ability = species.abilities['0'];
 			set.ability2 = species.abilities['1'] || '';
 			set.moves = [];
-			set.evs = {};
+			set.jvs = {};
 			set.ivs = {};
 			set.nature = '';
 			this.updateSetTop();
@@ -3916,47 +3805,51 @@ if (entry && entry.slice(0, 8) === 'ability|') {
 		 * Utility functions
 		 *********************************************************/
 		//region Stat calculator
-		getStat: function (stat, set, evOverride, natureOverride) {
-			var supportsEVs = !this.curTeam.format.includes('letsgo');
-			var supportsAVs = !supportsEVs;
-			if (!set) set = this.curSet;
-			if (!set) return 0;
-			if (!set.ivs) set.ivs = {
-				hp: 31,
-				atk: 31,
-				def: 31,
-				spa: 31,
-				spd: 31,
-				spe: 31
-			};
-			if (!set.evs) set.evs = {};
-			// do this after setting set.evs because it's assumed to exist after getStat is run
-			var species = this.curTeam.dex.species.get(set.species);
-			if (!species.exists) return 0;
-			if (!set.level) set.level = 100;
-			if (typeof set.ivs[stat] === 'undefined') set.ivs[stat] = 31;
-			var baseStat = species.baseStats[stat];
-			var iv = (set.ivs[stat] || 0);
-			if (this.curTeam.gen <= 2) iv &= 30;
-			var ev = set.evs[stat];
-			if (evOverride !== undefined) ev = evOverride;
-			if (ev === undefined) ev = (this.curTeam.gen > 2 ? 0 : 252);
-			if (stat === 'hp') {
-				if (baseStat === 1) return 1;
-				if (!supportsEVs) return Math.floor(Math.floor(2 * baseStat + iv + 100) * set.level / 100 + 10) + (supportsAVs ? ev : 0);
-				return Math.floor(Math.floor(2 * baseStat + iv + Math.floor(ev / 4) + 100) * set.level / 100 + 10);
-			}
-			var val = Math.floor(Math.floor(2 * baseStat + iv + Math.floor(ev / 4)) * set.level / 100 + 5);
-			if (!supportsEVs) { val = Math.floor(Math.floor(2 * baseStat + iv) * set.level / 100 + 5); }
-			if (natureOverride) { val *= natureOverride; } 
-			else if (BattleNatures[set.nature] && BattleNatures[set.nature].plus === stat) { val *= 1.1; } 
-			else if (BattleNatures[set.nature] && BattleNatures[set.nature].minus === stat) { val *= 0.9; }
-			if (!supportsEVs) {
-				var friendshipValue = Math.floor((70 / 255 / 10 + 1) * 100);
-				val = Math.floor(val) * friendshipValue / 100 + (supportsAVs ? ev : 0);
-			}
-			return Math.floor(val);
-		},
+		getStat: function (stat, set, jvOverride, natureOverride) {
+	if (!set) set = this.curSet;
+	if (!set) return 0;
+
+	// JVs are the only per-stat investment now
+	if (!set.jvs) set.jvs = {};
+
+	var species = this.curTeam.dex.species.get(set.species);
+	if (!species.exists) return 0;
+
+	if (!set.level) set.level = 100;
+
+	var baseStat = species.baseStats[stat];
+
+	// No IVs in the new system: always treat as max (old system max-IV baseline)
+	var iv = 31;
+	if (this.curTeam.gen <= 2) iv &= 30;
+
+	// JV value (optionally overridden by slider typing code)
+	var jv = set.jvs[stat];
+	if (jvOverride !== undefined) jv = jvOverride;
+	if (jv === undefined) jv = 0;
+	jv = Math.max(0, Math.min(64, jv | 0));
+
+	// HP
+	if (stat === 'hp') {
+		if (baseStat === 1) return 1;
+		var hp = Math.floor(Math.floor(2 * baseStat + iv + 100) * set.level / 100 + 10);
+		return hp + jv;
+	}
+
+	// Other stats
+	var val = Math.floor(Math.floor(2 * baseStat + iv) * set.level / 100 + 5);
+
+	// Natures (kept exactly like old code)
+	if (natureOverride) val *= natureOverride;
+	else if (BattleNatures[set.nature] && BattleNatures[set.nature].plus === stat) val *= 1.1;
+	else if (BattleNatures[set.nature] && BattleNatures[set.nature].minus === stat) val *= 0.9;
+
+	val = Math.floor(val);
+
+	// JV is +1 final stat per point (NOT scaled by nature)
+	return val + jv;
+},
+
 		// initialization
 		getGen: function (format) {
 			format = '' + format;
