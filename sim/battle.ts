@@ -1350,6 +1350,30 @@ export class Battle {
 			side.activeRequest = null;
 		}
 
+		// --- Tera Charge resource system: expose canTerastallize only when allowed ---
+if (type === 'move') {
+  for (const side of this.sides) {
+    // Ensure charge exists
+    if ((side as any).teraCharge === undefined) (side as any).teraCharge = 5;
+
+    const charge = (side as any).teraCharge as number;
+    const hasAnyTera = side.pokemon.some(p => !!(p as any).terastallized);
+    const sideCanTeraNow = (charge >= 10) && !hasAnyTera;
+
+    // Only affects what the client is told it can do this request
+    for (const p of side.active) {
+      if (!p) continue;
+
+      // Preserve permanent null blocks (if your engine uses them)
+      if ((p as any).canTerastallize === null) continue;
+
+      // If allowed, expose teraType; otherwise hide
+      (p as any).canTerastallize = sideCanTeraNow ? (p as any).teraType : false;
+    }
+  }
+}
+
+
 		if (type === 'teampreview') {
 			// `pickedTeamSize = 6` means the format wants the user to select
 			// the entire team order, unlike `pickedTeamSize = undefined` which
@@ -1965,19 +1989,28 @@ export class Battle {
 		}
 	}
 
-	checkEVBalance() {
-		let limitedEVs: boolean | null = null;
+		checkEVBalance() {
+		let limitedJVs: boolean | null = null;
+
 		for (const side of this.sides) {
-			const sideLimitedEVs = !side.pokemon.some(
-				pokemon => Object.values(pokemon.set.evs).reduce((a, b) => a + b, 0) > 510
-			);
-			if (limitedEVs === null) {
-				limitedEVs = sideLimitedEVs;
-			} else if (limitedEVs !== sideLimitedEVs) {
-				this.add('bigerror', "Warning: One player isn't adhering to a 510 EV limit, and the other player is.");
+			const sideLimitedJVs = !side.pokemon.some(pokemon => {
+				const set: any = pokemon.set as any;
+				const jvs = (set && set.jvs) ? set.jvs : {};
+				let total = 0;
+				for (const s of ['hp','atk','def','spa','spd','spe']) total += (jvs[s] || 0);
+				// Gen 1 has no SpD
+				if (this.gen === 1) total -= (jvs['spd'] || 0);
+				return total > 130;
+			});
+
+			if (limitedJVs === null) {
+				limitedJVs = sideLimitedJVs;
+			} else if (limitedJVs !== sideLimitedJVs) {
+				this.add('bigerror', "Warning: One player isn't adhering to a 130 JV limit, and the other player is.");
 			}
 		}
 	}
+
 
 	boost(
 		boost: SparseBoostsTable, target: Pokemon | null = null, source: Pokemon | null = null,
@@ -2320,6 +2353,135 @@ export class Battle {
 		return tr((tr(value * modifier) + 2048 - 1) / 4096);
 	}
 
+		// --- JV helpers (Champions-style) ---
+	normalizeJVs(set: PokemonSet) {
+		const anySet = set as any;
+
+		// Ensure jvs exists
+		if (!anySet.jvs) anySet.jvs = {};
+		const jvs = anySet.jvs as Partial<StatsTable>;
+
+		// If someone sends EVs but not JVs, try to interpret them safely:
+		// - If EV values look like JVs (<=64 per stat and <=130 total), treat as JVs
+		// - Otherwise convert EVs -> JVs using floor(EV/4)
+		if (!('jvs' in anySet) && anySet.evs) {
+			// (This branch is mostly for safety; your client should send jvs.)
+			anySet.jvs = {};
+		} else if ((!jvs || Object.keys(jvs).length === 0) && anySet.evs) {
+			const evs = anySet.evs as Partial<StatsTable>;
+			let evTotal = 0;
+			let evLooksLikeJV = true;
+
+			for (const s of ['hp','atk','def','spa','spd','spe'] as const) {
+				const v = (evs[s] ?? 0) | 0;
+				evTotal += v;
+				if (v > 64) evLooksLikeJV = false;
+			}
+			if (evTotal > 130) evLooksLikeJV = false;
+
+			for (const s of ['hp','atk','def','spa','spd','spe'] as const) {
+				const ev = (evs[s] ?? 0) | 0;
+				(anySet.jvs as any)[s] = evLooksLikeJV ? ev : Math.floor(ev / 4);
+			}
+		}
+
+		// Fill missing stats with 0
+		for (const s of ['hp','atk','def','spa','spd','spe'] as const) {
+			if (jvs[s] === undefined) jvs[s] = 0;
+		}
+
+		// Gen 1 has no SpD
+		if (this.gen === 1) {
+			delete (jvs as any).spd;
+		}
+
+		// Clamp per-stat 0..64
+		for (const s of ['hp','atk','def','spa','spd','spe'] as const) {
+			if (this.gen === 1 && s === 'spd') continue;
+			let v = (jvs[s] ?? 0) | 0;
+			if (v < 0) v = 0;
+			if (v > 64) v = 64;
+			jvs[s] = v;
+		}
+
+		// Clamp total to 130 by reducing in stable stat order
+		const order = (this.gen === 1)
+			? (['hp','atk','def','spa','spe'] as const)
+			: (['hp','atk','def','spa','spd','spe'] as const);
+
+		let total = 0;
+		for (const s of order) total += (jvs[s] ?? 0) | 0;
+
+		while (total > 130) {
+			let reduced = false;
+			for (const s of order) {
+				if (total <= 130) break;
+				const v = (jvs[s] ?? 0) | 0;
+				if (v > 0) {
+					jvs[s] = v - 1;
+					total--;
+					reduced = true;
+				}
+			}
+			if (!reduced) break;
+		}
+	}
+
+		// --- AbilitySet + Size normalization ---
+	normalizeAbilitySetAndSize(set: PokemonSet) {
+		const anySet = set as any;
+
+		// ---- Ability Sets (ISL / Indigo Starstorm style) ----
+		// Convention:
+		//   abilitySet 1 = abilities 0/1
+		//   abilitySet 2 = abilities H/S
+		// We enforce (ability, ability2) to match abilitySet if abilitySet exists.
+		const abilitySet = (anySet.abilitySet === 2 || anySet.abilitySet === '2') ? 2 : 1;
+
+		// Look up species abilities from THIS battle dex/mod.
+		// (Important: battle.ts uses this.dex; this is the authoritative server mod dex.)
+		const species = this.dex.species.get(anySet.species || anySet.name);
+		const abilTable: any = (species && species.abilities) ? species.abilities : {};
+
+		function clean(x: any) {
+			if (!x) return '';
+			if (typeof x !== 'string') return '';
+			if (x === 'None') return '';
+			return x;
+		}
+
+		const set1 = [clean(abilTable['0']), clean(abilTable['1'])].filter(Boolean);
+		const set2 = [clean(abilTable['H']), clean(abilTable['S'])].filter(Boolean);
+		const hasSet2 = set2.length > 0;
+
+		// If abilitySet is 2 but the mon has no H/S abilities, force set1.
+		const chosenSet = (abilitySet === 2 && hasSet2) ? set2 : set1;
+
+		// Only enforce if the format actually uses ability sets, OR if abilitySet field exists.
+		// (This prevents messing with vanilla formats that might carry extra fields.)
+		if ('abilitySet' in anySet) {
+			anySet.abilitySet = (abilitySet === 2 && hasSet2) ? 2 : 1;
+			anySet.ability = chosenSet[0] || '';
+			anySet.ability2 = chosenSet[1] || '';
+		} else {
+			// Even without abilitySet, ensure ability2 exists so dual-ability code never sees undefined
+			if (anySet.ability2 === undefined) anySet.ability2 = '';
+		}
+
+		// ---- Size ----
+		// We do NOT change mechanics here (that may live in Pokemon/moves),
+		// but we ensure a valid canonical field exists for downstream code.
+		// Your client uses 'XS'|'S'|'M'|'L'|'XL'
+		const sz = anySet.size;
+		if (sz === undefined || sz === null || sz === '') {
+			anySet.size = 'M';
+		} else if (!['XS', 'S', 'M', 'L', 'XL'].includes(sz)) {
+			anySet.size = 'M';
+		}
+	}
+
+
+
 	/** Given a table of base stats and a pokemon set, return the actual stats. */
 	spreadModify(baseStats: StatsTable, set: PokemonSet): StatsTable {
 		const modStats: StatsTable = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
@@ -2328,17 +2490,34 @@ export class Battle {
 		}
 		return modStats;
 	}
-
 	statModify(baseStats: StatsTable, set: PokemonSet, statName: StatID): number {
 		const tr = this.trunc;
+
+		// Ensure set.jvs exists and is clamped (team load should already do this, but keep it safe)
+		this.normalizeJVs(set);
+		const jvs = ((set as any).jvs || {}) as Partial<StatsTable>;
+		let jv = (jvs as any)[statName] || 0;
+		jv = this.clampIntRange(jv | 0, 0, 64);
+
+		// "No IVs" system: treat IVs as maxed for stat calculation
+		let iv = 31;
+		if (this.gen <= 2) iv &= 30; // Gen 1-2 max DV corresponds to 30 IV
+
 		let stat = baseStats[statName];
+
 		if (statName === 'hp') {
-			return tr(tr(2 * stat + set.ivs[statName] + tr(set.evs[statName] / 4) + 200) * set.level / 100 + 10);
+			// Match your client: base HP formula (as-if max IV), then add JV directly
+			const hp = tr(tr(2 * stat + iv + 100) * set.level / 100 + 10);
+			return hp + jv;
 		}
-		stat = tr(tr(2 * stat + set.ivs[statName] + tr(set.evs[statName] / 4)) * set.level / 100 + 5);
+
+		// Base non-HP stat
+		stat = tr(tr(2 * stat + iv) * set.level / 100 + 5);
+
+		// Nature, then floor, THEN add JV (matches your client)
 		const nature = this.dex.natures.get(set.nature);
-		// Natures are calculated with 16-bit truncation.
-		// This only affects Eternatus-Eternamax in Pure Hackmons.
+
+		// keep PS overflowstatmod handling (rare edge cases)
 		if (nature.plus === statName) {
 			stat = this.ruleTable.has('overflowstatmod') ? Math.min(stat, 595) : stat;
 			stat = tr(tr(stat * 110, 16) / 100);
@@ -2346,8 +2525,10 @@ export class Battle {
 			stat = this.ruleTable.has('overflowstatmod') ? Math.min(stat, 728) : stat;
 			stat = tr(tr(stat * 90, 16) / 100);
 		}
-		return stat;
+
+		return stat + jv;
 	}
+
 
 	finalModify(relayVar: number) {
 		relayVar = this.modify(relayVar, this.event.modifier);
@@ -3177,8 +3358,15 @@ export class Battle {
 
 	getTeam(options: PlayerOptions): PokemonSet[] {
 		let team = options.team;
-		if (typeof team === 'string') team = Teams.unpack(team);
-		if (team) return team;
+				if (typeof team === 'string') team = Teams.unpack(team);
+		if (team) {
+			for (const set of team as PokemonSet[]) {
+			this.normalizeJVs(set);
+			this.normalizeAbilitySetAndSize(set);
+}
+			return team as PokemonSet[];
+		}
+
 
 		if (!options.seed) {
 			options.seed = PRNG.generateSeed();
@@ -3190,8 +3378,13 @@ export class Battle {
 			this.teamGenerator.setSeed(options.seed);
 		}
 
-		team = this.teamGenerator.getTeam(options);
+				team = this.teamGenerator.getTeam(options);
+		for (const set of team as PokemonSet[]) {
+			this.normalizeJVs(set);
+			this.normalizeAbilitySetAndSize(set);
+}
 		return team as PokemonSet[];
+
 	}
 
 	showOpenTeamSheets() {
@@ -3246,6 +3439,9 @@ export class Battle {
 			side = new Side(options.name || `Player ${slotNum + 1}`, this, slotNum, team);
 			if (options.avatar) side.avatar = `${options.avatar}`;
 			this.sides[slotNum] = side;
+			// --- Tera Charge resource system (per-side) ---
+			(side as any).teraCharge = 5;
+
 		} else {
 			// edit player
 			side = this.sides[slotNum];

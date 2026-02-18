@@ -680,10 +680,33 @@ export class Pokemon {
 	}
 	*/
 
-	getWeight() {
-		const weighthg = this.battle.runEvent('ModifyWeight', this, null, null, this.weighthg);
-		return Math.max(1, weighthg);
-	}
+	getWeight(): number {
+	let weight = this.species.weightkg;
+
+	// ---- SIZE SYSTEM ----
+	const size = (this.set as any).size || 'M';
+
+	const tierMap: {[k: string]: number} = {
+		XS: -2,
+		S: -1,
+		M: 0,
+		L: 1,
+		XL: 2,
+	};
+
+	const tier = tierMap[size] ?? 0;
+
+	// Use species modifier if defined, otherwise default to 0.1
+	const mod = (this.species as any).sizeWeightModifier ?? 0.1;
+
+	weight *= (1 + tier * mod);
+
+	// Safety: weight cannot go below 0.1kg
+	if (weight < 0.1) weight = 0.1;
+
+	return weight;
+}
+
 
 	getMoveData(move: string | Move) {
 		move = this.battle.dex.moves.get(move);

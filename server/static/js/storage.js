@@ -615,20 +615,31 @@ Storage.packTeam = function (team) {
 		// nature
 		buf += '|' + (set.nature || '');
 		// evs
-		var evs = '|';
-		if (set.evs) { evs = '|' + (set.evs['hp'] || '') + ',' + (set.evs['atk'] || '') + ',' + (set.evs['def'] || '') + ',' + (set.evs['spa'] || '') + ',' + (set.evs['spd'] || '') + ',' + (set.evs['spe'] || ''); }
-		if (evs === '|,,,,,') {
+				// jvs (stored in the old EV slot)
+		var jvs = '|';
+		var srcJVs = set.jvs || set.evs; // allow loading legacy teams
+		if (srcJVs) {
+			jvs = '|' +
+				(srcJVs['hp'] || '') + ',' +
+				(srcJVs['atk'] || '') + ',' +
+				(srcJVs['def'] || '') + ',' +
+				(srcJVs['spa'] || '') + ',' +
+				(srcJVs['spd'] || '') + ',' +
+				(srcJVs['spe'] || '');
+		}
+		if (jvs === '|,,,,,') {
 			buf += '|';
-			if (set.evs['hp'] === 0) buf += '0'; // doing it this way means packTeam doesn't need to be past-gen aware
-		} else { buf += evs; }
+			if (srcJVs && srcJVs['hp'] === 0) buf += '0';
+		} else {
+			buf += jvs;
+		}
+
 		// gender
 		if (set.gender) { buf += '|' + set.gender; } 
 		else { buf += '|'; }
-		// ivs
-		var ivs = '|';
-		if (set.ivs) { ivs = '|' + (set.ivs['hp'] === 31 || set.ivs['hp'] === undefined ? '' : set.ivs['hp']) + ',' + (set.ivs['atk'] === 31 || set.ivs['atk'] === undefined ? '' : set.ivs['atk']) + ',' + (set.ivs['def'] === 31 || set.ivs['def'] === undefined ? '' : set.ivs['def']) + ',' + (set.ivs['spa'] === 31 || set.ivs['spa'] === undefined ? '' : set.ivs['spa']) + ',' + (set.ivs['spd'] === 31 || set.ivs['spd'] === undefined ? '' : set.ivs['spd']) + ',' + (set.ivs['spe'] === 31 || set.ivs['spe'] === undefined ? '' : set.ivs['spe']); }
-		if (ivs === '|,,,,,') { buf += '|'; } 
-		else { buf += ivs; }
+				// ivs (JV system: ignore IVs; always treated as max in calc)
+		buf += '|';
+
 		// shiny
 		if (set.shiny) { buf += '|S'; } 
 		else { buf += '|'; }
@@ -720,40 +731,36 @@ if (isNew) {
 		if (set.nature === 'undefined') set.nature = undefined;
 		if (set.nature) { set.nature = set.nature.charAt(0).toUpperCase() + set.nature.slice(1); } // BattleNatures is case sensitive, so if we don't do this sometimes stuff breaks. goody.
 		i = j + 1;
-		// evs
+				// jvs (read from old EV slot)
 		j = buf.indexOf('|', i);
 		if (j !== i) {
-			var evstring = buf.substring(i, j);
-			if (evstring.length > 5) {
-				var evs = evstring.split(',');
-				set.evs = {
-					hp: Number(evs[0]) || 0,
-					atk: Number(evs[1]) || 0,
-					def: Number(evs[2]) || 0,
-					spa: Number(evs[3]) || 0,
-					spd: Number(evs[4]) || 0,
-					spe: Number(evs[5]) || 0
+			var jvstring = buf.substring(i, j);
+			if (jvstring.length > 5) {
+				var jvsArr = jvstring.split(',');
+				set.jvs = {
+					hp: Number(jvsArr[0]) || 0,
+					atk: Number(jvsArr[1]) || 0,
+					def: Number(jvsArr[2]) || 0,
+					spa: Number(jvsArr[3]) || 0,
+					spd: Number(jvsArr[4]) || 0,
+					spe: Number(jvsArr[5]) || 0
 				};
-			} else if (evstring === '0') { set.evs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }; }
+			} else if (jvstring === '0') {
+				set.jvs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
+			}
 		}
+		// safety: keep old callers from breaking
+		if (set.jvs) set.evs = set.jvs;
+
 		i = j + 1;
 		// gender
 		j = buf.indexOf('|', i);
 		if (i !== j) set.gender = buf.substring(i, j);
 		i = j + 1;
-		// ivs
+				// ivs (JV system: ignore serialized IVs)
 		j = buf.indexOf('|', i);
-		if (j !== i) {
-			var ivs = buf.substring(i, j).split(',');
-			set.ivs = {
-				hp: ivs[0] === '' ? 31 : Number(ivs[0]),
-				atk: ivs[1] === '' ? 31 : Number(ivs[1]),
-				def: ivs[2] === '' ? 31 : Number(ivs[2]),
-				spa: ivs[3] === '' ? 31 : Number(ivs[3]),
-				spd: ivs[4] === '' ? 31 : Number(ivs[4]),
-				spe: ivs[5] === '' ? 31 : Number(ivs[5])
-			};
-		}
+		i = j + 1;
+
 		i = j + 1;
 		// shiny
 		j = buf.indexOf('|', i);
@@ -849,40 +856,36 @@ if (isNew) {
 		if (set.nature === 'undefined') set.nature = undefined;
 		if (set.nature) { set.nature = set.nature.charAt(0).toUpperCase() + set.nature.slice(1); } // BattleNatures is case sensitive, so if we don't do this sometimes stuff breaks. goody.
 		i = j + 1;
-		// evs
+				// jvs (read from old EV slot)
 		j = buf.indexOf('|', i);
 		if (j !== i) {
-			var evstring = buf.substring(i, j);
-			if (evstring.length > 5) {
-				var evs = evstring.split(',');
-				set.evs = {
-					hp: Number(evs[0]) || 0,
-					atk: Number(evs[1]) || 0,
-					def: Number(evs[2]) || 0,
-					spa: Number(evs[3]) || 0,
-					spd: Number(evs[4]) || 0,
-					spe: Number(evs[5]) || 0
+			var jvstring = buf.substring(i, j);
+			if (jvstring.length > 5) {
+				var jvsArr = jvstring.split(',');
+				set.jvs = {
+					hp: Number(jvsArr[0]) || 0,
+					atk: Number(jvsArr[1]) || 0,
+					def: Number(jvsArr[2]) || 0,
+					spa: Number(jvsArr[3]) || 0,
+					spd: Number(jvsArr[4]) || 0,
+					spe: Number(jvsArr[5]) || 0
 				};
-			} else if (evstring === '0') { set.evs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }; }
+			} else if (jvstring === '0') {
+				set.jvs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
+			}
 		}
+		// safety: keep old callers from breaking
+		if (set.jvs) set.evs = set.jvs;
+
 		i = j + 1;
 		// gender
 		j = buf.indexOf('|', i);
 		if (i !== j) set.gender = buf.substring(i, j);
 		i = j + 1;
-		// ivs
+				// ivs (JV system: ignore serialized IVs)
 		j = buf.indexOf('|', i);
-		if (j !== i) {
-			var ivs = buf.substring(i, j).split(',');
-			set.ivs = {
-				hp: ivs[0] === '' ? 31 : Number(ivs[0]),
-				atk: ivs[1] === '' ? 31 : Number(ivs[1]),
-				def: ivs[2] === '' ? 31 : Number(ivs[2]),
-				spa: ivs[3] === '' ? 31 : Number(ivs[3]),
-				spd: ivs[4] === '' ? 31 : Number(ivs[4]),
-				spe: ivs[5] === '' ? 31 : Number(ivs[5])
-			};
-		}
+		i = j + 1;
+
 		i = j + 1;
 		// shiny
 		j = buf.indexOf('|', i);
@@ -1073,34 +1076,27 @@ Storage.importTeam = function (buffer, teams) {
 			line = line.substr(15);
 			curSet.dynamaxLevel = +line;
 		} else if (line === 'Gigantamax: Yes') { curSet.gigantamax = true; } 
-		else if (line.substr(0, 5) === 'EVs: ') {
+				else if (line.substr(0, 5) === 'EVs: ' || line.substr(0, 5) === 'JVs: ') {
 			line = line.substr(5);
-			var evLines = line.split('/');
-			curSet.evs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
-			for (var j = 0; j < evLines.length; j++) {
-				var evLine = $.trim(evLines[j]);
-				var spaceIndex = evLine.indexOf(' ');
+			var jvLines = line.split('/');
+			curSet.jvs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
+			for (var j = 0; j < jvLines.length; j++) {
+				var jvLine = $.trim(jvLines[j]);
+				var spaceIndex = jvLine.indexOf(' ');
 				if (spaceIndex === -1) continue;
-				var statid = BattleStatIDs[evLine.substr(spaceIndex + 1)];
-				var statval = parseInt(evLine.substr(0, spaceIndex), 10);
+				var statid = BattleStatIDs[jvLine.substr(spaceIndex + 1)];
+				var statval = parseInt(jvLine.substr(0, spaceIndex), 10);
 				if (!statid) continue;
-				curSet.evs[statid] = statval;
+				if (isNaN(statval)) statval = 0;
+				curSet.jvs[statid] = statval;
 			}
-		} else if (line.substr(0, 5) === 'IVs: ') {
-			line = line.substr(5);
-			var ivLines = line.split(' / ');
-			curSet.ivs = { hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31 };
-			for (var j = 0; j < ivLines.length; j++) {
-				var ivLine = ivLines[j];
-				var spaceIndex = ivLine.indexOf(' ');
-				if (spaceIndex === -1) continue;
-				var statid = BattleStatIDs[ivLine.substr(spaceIndex + 1)];
-				var statval = parseInt(ivLine.substr(0, spaceIndex), 10);
-				if (!statid) continue;
-				if (isNaN(statval)) statval = 31;
-				curSet.ivs[statid] = statval;
-			}
-		} else if (line.match(/^[A-Za-z]+ (N|n)ature/)) {
+			// compatibility
+			curSet.evs = curSet.jvs;
+		}
+ 		else if (line.substr(0, 5) === 'IVs: ') {
+			// JV system: ignore IVs
+		}
+ else if (line.match(/^[A-Za-z]+ (N|n)ature/)) {
 			var natureIndex = line.indexOf(' Nature');
 			if (natureIndex === -1) natureIndex = line.indexOf(' nature');
 			if (natureIndex === -1) continue;
@@ -1180,57 +1176,20 @@ text += 'Size: ' + String(curSet.size || 'M').toUpperCase() + "  \n";
 		}
 		if (!hidestats) {
 			var first = true;
-			if (curSet.evs) {
+						var jvSource = curSet.jvs || curSet.evs;
+			if (jvSource) {
 				for (var j in BattleStatNames) {
-					if (!curSet.evs[j]) continue;
+					if (!jvSource[j]) continue;
 					if (first) {
-						text += 'EVs: ';
+						text += 'JVs: ';
 						first = false;
 					} else { text += ' / '; }
-					text += '' + curSet.evs[j] + ' ' + BattleStatNames[j];
+					text += '' + jvSource[j] + ' ' + BattleStatNames[j];
 				}
 			}
+
 			if (!first) { text += "  \n"; }
 			if (curSet.nature) { text += '' + curSet.nature + ' Nature' + "  \n"; }
-			var first = true;
-			if (curSet.ivs) {
-				var defaultIvs = true;
-				var hpType = false;
-				for (var j = 0; j < curSet.moves.length; j++) {
-					var move = curSet.moves[j];
-					if (move.substr(0, 13) === 'Hidden Power ' && move.substr(0, 14) !== 'Hidden Power [') {
-						hpType = move.substr(13);
-						if (!Dex.types.isName(hpType)) {
-							alert(move + " is not a valid Hidden Power type.");
-							continue;
-						}
-						for (var stat in BattleStatNames) {
-							if ((curSet.ivs[stat] === undefined ? 31 : curSet.ivs[stat]) !== (Dex.types.get(hpType).HPivs[stat] || 31)) {
-								defaultIvs = false;
-								break;
-							}
-						}
-					}
-				}
-				if (defaultIvs && !hpType) {
-					for (var stat in BattleStatNames) {
-						if (curSet.ivs[stat] !== 31 && curSet.ivs[stat] !== undefined) {
-							defaultIvs = false;
-							break;
-						}
-					}
-				}
-				if (!defaultIvs) {
-					for (var stat in BattleStatNames) {
-						if (typeof curSet.ivs[stat] === 'undefined' || isNaN(curSet.ivs[stat]) || curSet.ivs[stat] === 31) continue;
-						if (first) {
-							text += 'IVs: ';
-							first = false;
-						} else { text += ' / '; }
-						text += '' + curSet.ivs[stat] + ' ' + BattleStatNames[stat];
-					}
-				}
-			}
 			if (!first) { text += "  \n"; }
 		}
 		if (curSet.moves) for (var j = 0; j < curSet.moves.length; j++) {
