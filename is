@@ -20,6 +20,12 @@ function newestMtimeMs(dir) {
   return newest;
 }
 
+process.env.PGHOST = '127.0.0.1';
+process.env.PGPORT = '5432';
+process.env.PGUSER = 'ps_pguser';
+process.env.PGPASSWORD = 'indigodb_pg';
+process.env.PGDATABASE = 'psreplays';
+
 function shouldRebuildLoginserver(loginDir) {
   const distServer = path.join(loginDir, '.dist', 'server.js');
   if (!fs.existsSync(distServer)) return true;
@@ -222,6 +228,20 @@ await runAndWait(
   }
 
   // Start loginserver
+    // Postgres connection for teams/replays (pg uses env vars by default)
+  process.env.PGHOST = '127.0.0.1';
+  process.env.PGPORT = '5432';
+  process.env.PGUSER = 'ps_pguser';
+  process.env.PGPASSWORD = 'indigodb_pg'; // <-- set to whatever you used in Postgres
+  process.env.PGDATABASE = 'psreplays';
+  process.env.PGOPTIONS = '--search_path=public';
+  console.log('[is] PG env set:', {
+    PGHOST: process.env.PGHOST,
+    PGPORT: process.env.PGPORT,
+    PGUSER: process.env.PGUSER,
+    PGDATABASE: process.env.PGDATABASE,
+    PGOPTIONS: process.env.PGOPTIONS,
+  });
   loginProc = spawnProc('node', ['.dist/server.js'], LOGIN_DIR, 'loginserver', false);
 
   try {
