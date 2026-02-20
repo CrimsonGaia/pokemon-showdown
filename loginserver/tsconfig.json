@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2020", "DOM"],
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "strict": true,
+    "checkJs": false,
+    "outDir": "./.dist",
+    "incremental": true,
+    "allowUnreachableCode": false,
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "include": [
+    "./src/**/*.ts",
+    "./config/config*.js"
+  ],
+  "exclude": [
+    "./.dist/**/*",
+    "./scripts/**/*",
+    "./src/test/**/*",
+    "**/*.test.ts"
+  ]
+}

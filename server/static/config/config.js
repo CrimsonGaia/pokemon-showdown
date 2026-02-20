@@ -20,7 +20,7 @@ Config.defaultserver = {
 	port: ORIGIN_PORT,
 	httpport: ORIGIN_PORT,
 	altport: ORIGIN_PORT,
-	registered: true,
+	registered: false,
 };
 
 Config.servers = Config.servers || {};
@@ -42,10 +42,10 @@ Config.version = "0.11.2 (2f9254d2/adb6b7fc)";
 // Make the client treat your current host as the "client" route,
 // so any host-based routing logic lines up.
 Config.routes = {
-	root: location.host,
-	client: location.host,
-	dex: 'dex.pokemonshowdown.com',
-	replays: 'replay.pokemonshowdown.com',
-	users: 'insecure.psim.us/users',
-	teams: 'insecure.psim.us',
+  root: location.host,
+  client: location.host,
+  dex: 'dex.pokemonshowdown.com',
+  replays: 'replay.pokemonshowdown.com',
+  users: '',
+  teams: location.host,
 };

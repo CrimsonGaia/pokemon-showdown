@@ -1,0 +1,246 @@
+#!/usr/bin/env node
+const {spawn} = require('child_process');
+const path = require('path');
+const net = require('net');
+const fs = require('fs');
+
+function newestMtimeMs(dir) {
+  let newest = 0;
+  const stack = [dir];
+  while (stack.length) {
+    const cur = stack.pop();
+    for (const name of fs.readdirSync(cur)) {
+      const full = path.join(cur, name);
+      let st;
+      try { st = fs.statSync(full); } catch { continue; }
+      if (st.isDirectory()) stack.push(full);
+      else if (st.isFile()) newest = Math.max(newest, st.mtimeMs);
+    }
+  }
+  return newest;
+}
+
+function shouldRebuildLoginserver(loginDir) {
+  const distServer = path.join(loginDir, '.dist', 'server.js');
+  if (!fs.existsSync(distServer)) return true;
+
+  const srcDir = path.join(loginDir, 'src');
+  if (!fs.existsSync(srcDir)) return false;
+
+  const srcNewest = newestMtimeMs(srcDir);
+  const distTime = fs.statSync(distServer).mtimeMs;
+  return srcNewest > distTime;
+}
+
+// Run a command and WAIT for it to finish (so we can compile before running)
+function runAndWait(cmd, args, cwd, name, useShell = false) {
+  console.log(`[is] running ${name}: ${cmd} ${args.join(' ')}`);
+  const p = spawn(cmd, args, {
+    cwd,
+    stdio: 'inherit',
+    shell: useShell,
+    env: process.env,
+  });
+  return new Promise((resolve, reject) => {
+    p.on('error', reject);
+    p.on('exit', (code) => {
+      if (code === 0) resolve();
+      else reject(new Error(`${name} exited with code ${code}`));
+    });
+  });
+}
+
+function spawnProc(cmd, args, cwd, name, useShell = false) {
+  console.log(`[is] starting ${name}: ${cmd} ${args.join(' ')}`);
+  const p = spawn(cmd, args, {
+    cwd,
+    stdio: 'inherit',
+    shell: useShell,
+    env: process.env,
+  });
+  p.on('error', (err) => {
+    console.error(`[is] failed to start ${name}: ${err.code || ''} ${err.message}`);
+    process.exit(1);
+  });
+  p.on('exit', (code) => {
+    console.error(`[is] ${name} exited with code ${code}`);
+  });
+  return p;
+}
+
+function waitForPort(port, host = '127.0.0.1', timeoutMs = 45000) {
+  const start = Date.now();
+  return new Promise((resolve, reject) => {
+    const tick = () => {
+      const sock = new net.Socket();
+      sock.setTimeout(1000);
+
+      sock.once('connect', () => {
+        sock.destroy();
+        resolve();
+      });
+
+      const onFail = () => {
+        sock.destroy();
+        if (Date.now() - start >= timeoutMs) {
+          reject(new Error(`Timed out waiting for ${host}:${port} to start listening`));
+          return;
+        }
+        setTimeout(tick, 250);
+      };
+
+      sock.once('error', onFail);
+      sock.once('timeout', onFail);
+      sock.connect(port, host);
+    };
+    tick();
+  });
+}
+
+const ROOT = __dirname;
+const LOGIN_DIR = path.join(ROOT, 'loginserver');
+
+// Your MariaDB ZIP location (as you said)
+const MARIADB_HOME = 'J:\\mariadb';
+const MARIADB_BIN = MARIADB_HOME + '\\bin';
+const MARIADB_DATA = MARIADB_HOME + '\\data';
+
+let mariaProc;
+let loginProc;
+let psProc;
+
+function shutdown() {
+  console.log('[is] shutting down...');
+  // Try graceful first
+  try { psProc?.kill('SIGINT'); } catch {}
+  try { loginProc?.kill('SIGINT'); } catch {}
+  try { mariaProc?.kill('SIGINT'); } catch {}
+
+  // Force kill after a moment (Windows sometimes ignores SIGINT)
+  setTimeout(() => {
+    try { psProc?.kill('SIGKILL'); } catch {}
+    try { loginProc?.kill('SIGKILL'); } catch {}
+    try { mariaProc?.kill('SIGKILL'); } catch {}
+    process.exit(0);
+  }, 1200).unref();
+}
+
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
+
+(async () => {
+  // 1) Start MariaDB
+  // If MariaDB is already running, this may fail with "port in use" — that's okay; we just wait for 3306.
+  mariaProc = spawnProc(
+  path.join(MARIADB_BIN, 'mysqld.exe'),
+  [`--datadir=${MARIADB_DATA}`, '--console'],
+  MARIADB_BIN,
+  'mariadb',
+  false
+);
+
+  try {
+    await waitForPort(3306, '127.0.0.1', 60000);
+    console.log('[is] MariaDB is listening on 127.0.0.1:3306');
+      // --- Ensure loginserver schema exists (one-time auto-import) ---
+  console.log('[is] checking loginserver schema...');
+
+  const mariadbClient = path.join(MARIADB_BIN, 'mariadb.exe');
+
+  // Check if ntbb_users exists
+  await runAndWait(
+    mariadbClient,
+    ['-u', 'psuser', '-pindigodb', '-e', "USE ps; SHOW TABLES LIKE 'ntbb_users';"],
+    ROOT,
+    'schema-check',
+    false
+  );
+
+  // If table missing, import all schemas
+  if (!fs.existsSync(path.join(MARIADB_DATA, 'ps', 'ntbb_users.frm'))) {
+    console.log('[is] ntbb_users missing — importing schema files...');
+
+    const schemas = [
+      'ntbb-users.sql',
+      'ntbb_sessions.sql',
+      'ntbb-loginattempts.sql',
+      'ntbb-loginthrottle.sql',
+      'ntbb-userstats.sql',
+      'ntbb-userstatshistory.sql',
+      'ntbb-usermodlog.sql',
+      'ntbb-ladder.sql',
+      'ntbb-oauth.sql',
+      'ntbb-suspects.sql',
+    ];
+
+    for (const file of schemas) {
+      await runAndWait(
+        mariadbClient,
+        ['-u', 'psuser', '-pindigodb', 'ps'],
+        path.join(LOGIN_DIR, 'src', 'schemas'),
+        `import-${file}`,
+        true
+      );
+    }
+
+    console.log('[is] schema import complete');
+  } else {
+    console.log('[is] loginserver schema already present');
+  }
+  } catch (e) {
+    console.error(`[is] ${e.message}`);
+    console.error('[is] MariaDB did not start. Check datadir/path and that no other DB is blocking it.');
+    process.exit(1);
+  }
+
+   // 2) ALWAYS rebuild loginserver (per your rule)
+  console.log('[is] rebuilding loginserver (always)');
+
+
+// Build loginserver without npx/cmd (works in Git Bash/ConEmu too)
+const tscJs = path.join(LOGIN_DIR, 'node_modules', 'typescript', 'bin', 'tsc');
+await runAndWait(
+  process.execPath,                 // node.exe
+  [tscJs, '-p', 'tsconfig.json', '--pretty', 'false'],
+  LOGIN_DIR,
+  'loginserver-build',
+  false
+);
+
+  // Ensure the runtime config used by .dist points at YOUR real config.
+  // This prevents stale/default configs (localhost + /var/www/...).
+  try {
+    const srcCfg = path.join(LOGIN_DIR, 'config', 'config.js');
+    const dstDir = path.join(LOGIN_DIR, '.dist', 'config');
+    const dstCfg = path.join(dstDir, 'config.js');
+    fs.mkdirSync(dstDir, {recursive: true});
+    fs.copyFileSync(srcCfg, dstCfg);
+    console.log(`[is] synced loginserver config -> ${dstCfg}`);
+  } catch (e) {
+    console.error(`[is] failed to sync loginserver config into .dist: ${e.message}`);
+    process.exit(1);
+  }
+
+  // Start loginserver
+  loginProc = spawnProc('node', ['.dist/server.js'], LOGIN_DIR, 'loginserver', false);
+
+  try {
+    await waitForPort(8080, '127.0.0.1', 60000);
+    console.log('[is] loginserver is listening on 127.0.0.1:8080');
+  } catch (e) {
+    console.error(`[is] ${e.message}`);
+    console.error('[is] loginserver did not start.');
+    process.exit(1);
+  }
+
+
+  // 3) Start main PS server
+  psProc = spawnProc(
+  'node',
+  ['pokemon-showdown'],
+  ROOT,
+  'main-server',
+  false
+);
+
+})();
