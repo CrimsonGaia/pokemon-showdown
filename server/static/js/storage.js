@@ -523,6 +523,19 @@ Storage.deleteAllTeams = function () {};
 
 
 //region Team importing and exporting
+function deriveAbilitiesFromSet(species, abilitySet) {
+  const abil = (species && species.abilities) || {};
+  const set1 = [abil['0'], abil['1']].filter(Boolean);
+  const set2 = [abil['H'], abil['S']].filter(Boolean);
+
+  const hasSet2 = set2.length > 0;
+  let n = (abilitySet === 2 || abilitySet === '2') ? 2 : 1;
+  if (!hasSet2) n = 1;
+
+  const chosen = (n === 2 ? set2 : set1);
+  return {abilitySet: n, ability: chosen[0] || '', ability2: chosen[1] || ''};
+}
+
 Storage.unpackAllTeams = function (buffer) {
 	if (!buffer) return [];
 	if (buffer.charAt(0) === '[' && $.trim(buffer).indexOf('\n') < 0) {
@@ -600,10 +613,21 @@ Storage.packTeam = function (team) {
 		buf += '|' + sz;
 		// item
 		buf += '|' + toID(set.item);
-		// abilities (NEW FIELD, plural; store ability IDs)
-		var a1 = toID(set.ability);
-		var a2 = toID(set.ability2);
-		buf += '|' + (a1 || '') + (a2 ? '/' + a2 : '');
+
+		// abilities field: serialize as "X/a1/a2"
+		// abilities field: serialize as "X/a1/a2"
+var as = (set.abilitySet === 2 ? 2 : 1);
+// derive them from species + abilitySet so we don't write "1//".
+var a1name = set.ability || '';
+var a2name = set.ability2 || '';
+if (!a1name && !a2name) {
+  var derived = deriveAbilitiesFromSet(Dex.species.get(set.species), as);
+  as = derived.abilitySet;
+  a1name = derived.ability;
+  a2name = derived.ability2;
+}
+
+buf += '|' + as + '/' + toID(a1name) + '/' + toID(a2name);
 		// moves
 		buf += '|';
 		if (set.moves) for (var j = 0; j < set.moves.length; j++) {
@@ -649,13 +673,13 @@ Storage.packTeam = function (team) {
 		// happiness
 		if (set.happiness !== undefined && set.happiness !== 255) { buf += '|' + set.happiness; } 
 		else { buf += '|'; }
-		if (set.pokeball || (set.hpType && !hasHP) || set.gigantamax || (set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10) || set.teraType || set.abilitySet) {
+		if (set.pokeball || (set.hpType && !hasHP) || set.gigantamax || (set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10) || set.teraType || set.abilitySet !== undefined) {
 			buf += ',' + (set.hpType || '');
 			buf += ',' + toID(set.pokeball);
 			buf += ',' + (set.gigantamax ? 'G' : '');
 			buf += ',' + (set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10 ? set.dynamaxLevel : '');
 			buf += ',' + (set.teraType || '');
-			buf += ',' + (set.abilitySet || '');
+			buf += ',' + (set.abilitySet !== undefined ? set.abilitySet : '');
 		}
 	}
 	return buf;
@@ -689,24 +713,26 @@ if (isNew) {
   // NEW FORMAT: size
   set.size = f1u || 'M'; // XS/S/M/L/XL
 
-  // item
+  // item (fastUnpack keeps raw)
   j = buf.indexOf('|', i);
   set.item = buf.substring(i, j);
   i = j + 1;
 
-  // abilities (plural, ids or empty)
-  j = buf.indexOf('|', i);
-  var abilField = buf.substring(i, j);
-  i = j + 1;
+  // abilities field: "X/a1/a2" (ids)
+j = buf.indexOf('|', i);
+var abilField = buf.substring(i, j);
+i = j + 1;
 
-  if (abilField) {
-    var parts = abilField.split('/');
-    // keep raw in fastUnpack (fastUnpack usually keeps ids)
-    set.ability = parts[0] || '';
-    set.ability2 = parts[1] || '';
-  } else {
-    set.ability = '';
-  }
+if (abilField) {
+  var parts = abilField.split('/');
+  set.abilitySet = Number(parts[0]) || 1;
+  set.ability = parts[1] || '';
+  set.ability2 = parts[2] || '';
+} else {
+  set.abilitySet = 1;
+  set.ability = '';
+  set.ability2 = '';
+}
 
 } else {
   // OLD FORMAT: f1 was actually item
@@ -782,8 +808,16 @@ if (isNew) {
 			set.gigantamax = !!misc[3];
 			set.dynamaxLevel = (misc[4] ? Number(misc[4]) : 10);
 			set.teraType = misc[5];
-			set.abilitySet = misc[6] ? Number(misc[6]) : undefined;
+			set.abilitySet = (misc.length > 6 && misc[6] !== '' && misc[6] !== undefined) ? Number(misc[6]) : undefined;
 		}
+// Only derive if the packed ability field didn't give us anything.
+// Never overwrite non-empty packed ability ids/names.
+if (!set.ability && !set.ability2) {
+  var derived = deriveAbilitiesFromSet(species, set.abilitySet || 1);
+  set.abilitySet = derived.abilitySet;
+  set.ability = derived.ability;
+  set.ability2 = derived.ability2;
+}
 		if (j < 0) break;
 		i = j + 1;
 	}
@@ -818,21 +852,30 @@ if (isNew) {
   // NEW FORMAT
   set.size = f1u || 'M'; // XS/S/M/L/XL
 
-  // item
+  // item (normal unpack resolves to name)
   j = buf.indexOf('|', i);
   set.item = Dex.items.get(buf.substring(i, j)).name;
   i = j + 1;
 
-  // abilities (plural)
-  j = buf.indexOf('|', i);
-  var abilField = buf.substring(i, j);
-  i = j + 1;
+ // abilities field: "X/a1/a2" (resolve ids to names)
+j = buf.indexOf('|', i);
+var abilField = buf.substring(i, j);
+i = j + 1;
 
-  if (abilField) {
-    var parts = abilField.split('/');
-    if (parts[0]) set.ability = Dex.abilities.get(parts[0]).name;
-    if (parts[1]) set.ability2 = Dex.abilities.get(parts[1]).name;
-  }
+if (abilField) {
+  var parts = abilField.split('/');
+  set.abilitySet = Number(parts[0]) || 1;
+
+  var a1 = parts[1] || '';
+  var a2 = parts[2] || '';
+
+  set.ability = a1 ? Dex.abilities.get(a1).name : '';
+  set.ability2 = a2 ? Dex.abilities.get(a2).name : '';
+} else {
+  set.abilitySet = 1;
+  set.ability = '';
+  set.ability2 = '';
+}
 
 } else {
   // OLD FORMAT
@@ -898,7 +941,7 @@ if (isNew) {
 		// happiness
 		j = buf.indexOf(']', i);
 		var misc = undefined;
-		if (j < 0) { if (i < buf.length) misc = buf.substring(i).split(',', 6); } 
+		if (j < 0) { if (i < buf.length) misc = buf.substring(i).split(',', 7); } 
 		else { if (i !== j) misc = buf.substring(i, j).split(',', 7); }
 		if (misc) {
 			set.happiness = (misc[0] ? Number(misc[0]) : 255);
@@ -907,8 +950,12 @@ if (isNew) {
 			set.gigantamax = !!misc[3];
 			set.dynamaxLevel = (misc[4] ? Number(misc[4]) : 10);
 			set.teraType = misc[5];
-			set.abilitySet = misc[6] ? Number(misc[6]) : undefined;
+			set.abilitySet = (misc.length > 6 && misc[6] !== '' && misc[6] !== undefined) ? Number(misc[6]) : undefined;
 		}
+		var derived = deriveAbilitiesFromSet(species, set.abilitySet || 1);
+set.abilitySet = derived.abilitySet;
+set.ability = derived.ability;
+set.ability2 = derived.ability2;
 		if (j < 0 || buf.indexOf('|', j) < 0) break;
 		i = j + 1;
 	}
@@ -1190,7 +1237,6 @@ text += 'Size: ' + String(curSet.size || 'M').toUpperCase() + "  \n";
 
 			if (!first) { text += "  \n"; }
 			if (curSet.nature) { text += '' + curSet.nature + ' Nature' + "  \n"; }
-			if (!first) { text += "  \n"; }
 		}
 		if (curSet.moves) for (var j = 0; j < curSet.moves.length; j++) {
 			var move = curSet.moves[j];

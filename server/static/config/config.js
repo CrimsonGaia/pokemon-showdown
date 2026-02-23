@@ -19,8 +19,8 @@ Config.defaultserver = {
 	host: ORIGIN_HOST,
 	port: ORIGIN_PORT,
 	httpport: ORIGIN_PORT,
-	altport: ORIGIN_PORT,
-	registered: false,
+	altport: 0,
+	registered: true,
 };
 
 Config.servers = Config.servers || {};
@@ -46,6 +46,6 @@ Config.routes = {
   client: location.host,
   dex: 'dex.pokemonshowdown.com',
   replays: 'replay.pokemonshowdown.com',
-  users: '',
+  users: 'insecure.psim.us/users',
   teams: location.host,
 };

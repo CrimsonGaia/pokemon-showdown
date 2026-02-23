@@ -2404,7 +2404,7 @@ p.or:after {
 	padding: 0 10px 10px 7px;
 }
 .teamchart li {
-	padding-top: 20px;
+	padding-top: 8px;
 	position: relative;
 }
 .teamchart li.format-select {

@@ -458,7 +458,10 @@ switch(fType){
 case'type':
 var _type2=fId.charAt(0).toUpperCase()+fId.slice(1);
 buf.push(['header',_type2+"-type moves"]);
-for(var _id4 in BattleMovedex){if(BattleMovedex[_id4].type===_type2){(illegal&&_id4 in illegal?illegalBuf:buf).push(['move',_id4]);}}
+for(var _id4 in BattleMovedex){
+var m=BattleMovedex[_id4];
+if(m.type===_type2||m.type2===_type2){(illegal&&_id4 in illegal?illegalBuf:buf).push(['move',_id4]);}
+}
 break;
 case'category':
 var category=fId.charAt(0).toUpperCase()+fId.slice(1);
@@ -1778,8 +1781,11 @@ if(row[0]!=='move')return true;
 var move=this.dex.moves.get(row[1]);for(var _i34=0;_i34<
 filters.length;_i34++){var _ref34=filters[_i34];var filterType=_ref34[0];var value=_ref34[1];
 switch(filterType){
-case'type':if(move.type!==value)return false;
+case'type':{
+var type2=move.type2;
+if(move.type!==value&&type2!==value)return false;
 break;
+}
 case'category':if(move.category!==value)return false;
 break;
 case'flag':if(!(value in move.flags))return false;

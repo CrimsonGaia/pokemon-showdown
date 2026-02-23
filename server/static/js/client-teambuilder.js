@@ -228,7 +228,7 @@
 			if (this.curTeam) {
 				if (this.curTeam.format && !this.formatResources[this.curTeam.format]) { this.tryLoadFormatResource(this.curTeam.format); }
 				if (this.curTeam.loaded === false || (this.curTeam.teamid && !this.curTeam.loaded)) { this.loadTeam();
-					return this.updateTeamView();
+				return this.updateTeamView();
 				}
 				this.ignoreEVLimits = (this.curTeam.gen < 3 || ((this.curTeam.format.includes('hackmons') || this.curTeam.format.endsWith('bh')) && this.curTeam.gen !== 6) || this.curTeam.format.includes('metronomebattle'));
 				if (this.curSet) { return this.updateSetView(); }
@@ -236,7 +236,6 @@
 			}
 			return this.updateTeamInterface();
 		},
-
 		privacyChange: function (ev) { Storage.prefs('uploadprivacy', ev.currentTarget.checked); },
 		loadTeam: function () {
 			if (this.loadingTeam) return false;
@@ -246,6 +245,27 @@
 				window.builderTeam = team;
 				teambuilder.loadingTeam = false;
 				teambuilder.curSetList = Storage.unpackTeam(team.team);
+				for (var k = 0; k < teambuilder.curSetList.length; k++) {
+					var s = teambuilder.curSetList[k];
+					if (!s || !s.species) continue;
+					var dex = teambuilder.curTeam.dex || Dex;
+					var sp = dex.species.get(s.species);
+					var ab = sp.abilities || {};
+					var as = (s.abilitySet === 2 ? 2 : 1);
+					if (as === 2) {
+    					s.ability = ab.H || '';
+    					s.ability2 = ab.S || '';
+    					if (!s.ability && !s.ability2) { // fallback if set 2 doesn't exist
+    						s.abilitySet = 1;
+    						s.ability = ab['0'] || '';
+    						s.ability2 = ab['1'] || '';
+    					}
+  					} else {
+    					s.abilitySet = 1;
+    					s.ability = ab['0'] || '';
+    					s.ability2 = ab['1'] || '';
+  					}
+				}
 				Storage.activeSetList = teambuilder.curSetList;
 				teambuilder.curTeam.team = Storage.packTeam(teambuilder.curSetList);
 				teambuilder.updateTeamView();
@@ -491,7 +511,6 @@
 						var meetsCriteria = searchVal.every(function (el) { return team.team.indexOf(el) > -1 || pokemon.includes(el); });
 						if (!meetsCriteria) continue;
 					}
-
 					if (!atLeastOne) atLeastOne = true;
 					var formatText = '';
 					if (team.format) { formatText = '[' + team.format + '] '; }
@@ -502,7 +521,6 @@
 					buf += '" draggable="true">' + BattleLog.escapeHTML(formatText) + '<strong>' + BattleLog.escapeHTML(team.name) + '</strong><br /><small>';
 					buf += Storage.getTeamIcons(team);
 					buf += '</small></div><button name="edit" value="' + i + '"><i class="fa fa-pencil" aria-label="Edit" title="Edit (you can also just click on the team)"></i></button><button name="duplicate" value="' + i + '" title="Duplicate" aria-label="Duplicate"><i class="fa fa-clone"></i></button><button name="delete" value="' + i + '"><i class="fa fa-trash"></i> Delete</button></li>';
-
 				}
 				if (!atLeastOne) {
 					if (filterFolder) { buf += '<li><p><em>you don\'t have any teams in this folder lol</em></p></li>'; } 
@@ -707,39 +725,56 @@
 			this.curTeam.dex = Dex.forGen(this.curTeam.gen);
 			if (this.curTeam.format.includes('letsgo')) { this.curTeam.dex = Dex.mod('gen7letsgo'); }
 			if (this.curTeam.format.includes('bdsp')) { this.curTeam.dex = Dex.mod('gen8bdsp'); }
-
 			// IMPORTANT: Indigo Starstorm must use the modded Dex (so abilities include H/S when present)
 			if (this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.toLowerCase().includes('isl')) {
 				this.curTeam.dex = Dex.mod('gen9indigostarstorm');
 			}
-		// Update capacity for Indigo Starstorm if needed
-		if (this.curTeam.capacity !== 24 && this.curTeam.capacity !== 50) {
-			if ((this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.toLowerCase().includes('isl')) && this.curTeam.capacity !== 10) {
-				this.curTeam.capacity = 10;
-			} else if (!(this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.toLowerCase().includes('isl')) && this.curTeam.capacity !== 6) {
-				this.curTeam.capacity = 6;
+			// Update capacity for Indigo Starstorm if needed
+			if (this.curTeam.capacity !== 24 && this.curTeam.capacity !== 50) {
+				if ((this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.toLowerCase().includes('isl')) && this.curTeam.capacity !== 10) { this.curTeam.capacity = 10; } 
+				else if (!(this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.toLowerCase().includes('isl')) && this.curTeam.capacity !== 6) { this.curTeam.capacity = 6; }
 			}
-		}
-		Storage.activeSetList = this.curSetList = Storage.unpackTeam(this.curTeam.team);
+			Storage.activeSetList = this.curSetList = Storage.unpackTeam(this.curTeam.team);
+			for (var k = 0; k < this.curSetList.length; k++) {
+				var s = this.curSetList[k];
+				if (!s || !s.species) continue;
+				var dex = this.curTeam.dex || Dex;
+				var sp = dex.species.get(s.species);
+				var ab = sp.abilities || {};
+				var as = (s.abilitySet === 2 ? 2 : 1);
+				if (as === 2) {
+    				s.ability = ab.H || '';
+    				s.ability2 = ab.S || '';
+    				if (!s.ability && !s.ability2) { // fallback if set 2 doesn't exist
+    					s.abilitySet = 1;
+    					s.ability = ab['0'] || '';
+    					s.ability2 = ab['1'] || '';
+    				}
+  				} else {
+    				s.abilitySet = 1;
+    				s.ability = ab['0'] || '';
+    				s.ability2 = ab['1'] || '';
+  				}
+			}
 			this.curTeamIndex = i;
 			this.update();
-		},
-		"delete": function (i) {
-			i = +i;
-			this.deletedTeamLoc = i;
-			this.deletedTeam = teams.splice(i, 1)[0];
-			for (var room in app.rooms) {
-				var selection = app.rooms[room].$('button.teamselect').val();
-				if (!selection || selection === 'random') continue;
-				var obj = app.rooms[room].id === "" ? app.rooms[room] : app.rooms[room].tournamentBox;
-				if (i < obj.curTeamIndex) { obj.curTeamIndex--; } 
-				else if (i === obj.curTeamIndex) { obj.curTeamIndex = -1; }
-			}
-			Storage.deleteTeam(this.deletedTeam);
-			app.user.trigger('saveteams');
-			this.updateTeamList();
-		},
-		undoDelete: function () { if (this.deletedTeamLoc >= 0) {
+			},
+			"delete": function (i) {
+				i = +i;
+				this.deletedTeamLoc = i;
+				this.deletedTeam = teams.splice(i, 1)[0];
+				for (var room in app.rooms) {
+					var selection = app.rooms[room].$('button.teamselect').val();
+					if (!selection || selection === 'random') continue;
+					var obj = app.rooms[room].id === "" ? app.rooms[room] : app.rooms[room].tournamentBox;
+					if (i < obj.curTeamIndex) { obj.curTeamIndex--; } 
+					else if (i === obj.curTeamIndex) { obj.curTeamIndex = -1; }
+				}
+				Storage.deleteTeam(this.deletedTeam);
+				app.user.trigger('saveteams');
+				this.updateTeamList();
+			},
+			undoDelete: function () { if (this.deletedTeamLoc >= 0) {
 				teams.splice(this.deletedTeamLoc, 0, this.deletedTeam);
 				for (var room in app.rooms) {
 					var selection = app.rooms[room].$('button.teamselect').val();
@@ -1206,149 +1241,139 @@
 			buf += '<label>Nickname</label><input type="text" name="nickname" class="textbox" value="' + BattleLog.escapeHTML(set.name || '') + '" placeholder="' + BattleLog.escapeHTML(species.baseSpecies) + '" />';
 			// ---- Copy/Import/Move/Delete row (shrink-to-fit, pinned right) ----
 			buf += '<div class="setmenu" style="position:absolute; left: 115px; top: -1px; white-space:nowrap; width:auto;">' +	'<button name="copySet" style="padding: 1px 4px; font-size: 11px;"><i class="fa fa-files-o"></i>Copy</button> ' +
-	'<button name="importSet" style="padding: 1px 4px; font-size: 11px;"><i class="fa fa-upload"></i>Import/Export</button> ' +
-	'<button name="moveSet" style="padding: 1px 4px; font-size: 11px;"><i class="fa fa-arrows"></i>Move</button> ' +
-	'<button name="deleteSet" style="padding: 1px 4px; font-size: 11px;"><i class="fa fa-trash"></i>Delete</button>' +
-'</div>';
-// ---- Form/Forme button OUTSIDE the box (next to Nickname) ----
-var dex = this.curTeam.dex;
-var baseSpecies = dex.species.get(species.baseSpecies);
-
-// "Real formes" = otherFormes that are NOT cosmetic (and NOT Mega/Gmax)
-var hasRealFormes = false;
-var eligibleAltCount = 0;
-
-// Build a fast lookup of cosmetic formes for this base species
-var cosmeticLookup = Object.create(null);
-if (baseSpecies.cosmeticFormes && baseSpecies.cosmeticFormes.length) { for (var c = 0; c < baseSpecies.cosmeticFormes.length; c++) { cosmeticLookup[toID(baseSpecies.cosmeticFormes[c])] = true; } }
-if (baseSpecies.otherFormes && baseSpecies.otherFormes.length) {
-	for (var f = 0; f < baseSpecies.otherFormes.length; f++) {
-		var formeName = baseSpecies.otherFormes[f];
-		var formeId = toID(formeName);
-		var sp = dex.species.get(formeName);
-		if (!sp) continue;
-		// EXCLUDE Mega/Gmax ONLY for this forme UI
-		if (sp.isMega || sp.forme === 'Mega' || sp.forme === 'Gmax' || /-Mega(-[XY])?$/i.test(sp.name) || /-Gmax$/i.test(sp.name)) { continue; }
-		eligibleAltCount++;
-		// Treat as cosmetic if explicitly listed OR flagged cosmetic
-		var isCosmetic = !!cosmeticLookup[formeId] || !!(sp && (sp.isCosmeticForme || sp.isCosmetic));
-		if (!isCosmetic) { hasRealFormes = true; }
-	}
-}
-// "Cosmetic forms" = cosmeticFormes (and at least one exists after filtering)
-var hasCosmeticForms = false;
-if (baseSpecies.cosmeticFormes && baseSpecies.cosmeticFormes.length) {
-	for (var c2 = 0; c2 < baseSpecies.cosmeticFormes.length; c2++) {
-		var cfName = baseSpecies.cosmeticFormes[c2];
-		var cfSp = dex.species.get(cfName);
-		if (!cfSp) continue;
-		if (cfSp.isMega || cfSp.forme === 'Mega' || cfSp.forme === 'Gmax' || /-Mega(-[XY])?$/i.test(cfSp.name) || /-Gmax$/i.test(cfSp.name)) { continue; }
-		hasCosmeticForms = true;
-		eligibleAltCount++;
-		break;
-	}
-}
-// Only show the button if there is at least one eligible (non-mega/non-gmax) alt
-var hasAlt = eligibleAltCount > 0;
-// ---------- Level (ALWAYS visible) ----------
-buf += '<div style="position:absolute; left:118px; top:16px; display:flex; align-items:flex-end; gap:4px;">';
-buf += '<label style="font-size:10px; margin:0; position:relative; top:-4px;">Level</label>';
-buf += '<input type="number" name="level" class="textbox" value="' + (set.level || 100) + '" min="1" max="100" ' +
-       'style="width:32px; height:15px; font-size:10px; padding:1px 4px;" />';
-buf += '</div>';
-// ---- Shiny checkbox (ALWAYS show; in nickname row) ----
-if (this.curTeam.gen > 1) {
-	buf += '<div style="position:absolute; left: 209px; top: 22px; z-index:10; display:flex; align-items:center; gap:4px;">';
-	buf += '<label style="font-size:10px; margin:0; cursor:pointer; position:relative; top:-1px;">Shiny</label>';
-	buf += '<input type="checkbox" name="shiny" class="shiny-checkbox"' + (set.shiny ? ' checked' : '') +
-		' style="margin:0; cursor:pointer; width:12px; height:12px;" />';
-	buf += '</div>';
-}
-if (hasAlt) {
-	// Label: Forme (real formes exist) vs Form (cosmetic-only)
-	var ffLabel = hasRealFormes ? 'Forme' : 'Form';
-
-	// Button text: everything after the first hyphen in set.species (e.g. "Poltchageist-Artisan" -> "Artisan")
-	var dash = set.species.indexOf('-');
-	var ffText = (dash >= 0 ? set.species.slice(dash + 1) : 'Base');
-
-	// Absolutely positioned so it DOES NOT push anything
-	buf += '<div style="position: absolute; left: 270px; top: 14px; display: flex; align-items: flex-end;">';
-	buf += '<label style="font-size: 10px; margin: 0; position: relative; top: -3px;">' + ffLabel + '</label>';
-	buf += '<button type="button" class="textbox altform" name="altform" style="width: 80px; font-size: 10px; padding: 1px 4px; height: 18px; cursor: pointer; text-align: left;">' +
-    BattleLog.escapeHTML(ffText) + '</button>';
-	buf += '</div>';
-}
-
-buf += '</div>';
-			buf += '<div class="setchart" style="' + this.getScaledTeambuilderSpriteStyle(set) + '">';
-			// icon
-			buf += '<div class="setcol setcol-icon" style="position: relative;">';
-			buf += '<div class="setcell-sprite" style="margin-left: 10px;"></div>';
-			
-			buf += '<div class="setcell setcell-pokemon"><label>Pok&eacute;mon</label><input type="text" name="pokemon" class="textbox chartinput" value="' + BattleLog.escapeHTML(set.species) + '" autocomplete="off" /></div></div>';
-			// details
-			buf += '<div class="setcol setcol-details"><div class="setrow">';
-			buf += '<div class="setcell setcell-details"><label style="position: relative; top: 6px;">Type';
-			// Type icons 
-			var types = species.types;
-			// Apply Indigo Starstorm type overrides
-			var isIndigoStarstorm = this.curTeam.format && (this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.includes('isl'));
-			if (isIndigoStarstorm && IndigoStarstormTypes[toID(species.name)]) { types = IndigoStarstormTypes[toID(species.name)]; }
-			if (types) {
-				buf += '<span style="margin-left: 8px; vertical-align: middle; position: relative; ;">';
-				for (var i = 0; i < types.length; i++) buf += Dex.getTypeIcon(types[i]);
-				buf += '</span>';
-				// Tera Type icon below type icons
-				if (this.curTeam.gen === 9) {
-					var teraType = set.teraType || species.requiredTeraType || species.types[0];
-					buf += '<br><button type="button" class="teratype" name="teraType" value="' + BattleLog.escapeHTML(teraType) + '" style="background: none; border: none; padding: 0; cursor: pointer; width: 20px; height: 20px; margin-left: 8px; position: relative; top: 4px;">';
-					buf += '<img src="' + Dex.resourcePrefix + 'sprites/types/Tera' + teraType + '.png" alt="' + teraType + '" style="width: 20px; height: 20px; object-fit: contain; display: block; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5));" />';
-					buf += '</button>';
-					buf += '<span style="position: absolute; left: 159px; top: 64px; pointer-events: none; display: flex; flex-direction: column; align-items: flex-end; width: 60px;">';
-					buf += '<span style="font-size: 9px; margin-right: 2px;"></span>';
-					buf += '<span style="font-size: 9px;"></span>';
-					buf += '</span>';
-				}
+			'<button name="importSet" style="padding: 1px 4px; font-size: 11px;"><i class="fa fa-upload"></i>Import/Export</button> ' +
+			'<button name="moveSet" style="padding: 1px 4px; font-size: 11px;"><i class="fa fa-arrows"></i>Move</button> ' +
+			'<button name="deleteSet" style="padding: 1px 4px; font-size: 11px;"><i class="fa fa-trash"></i>Delete</button>' +
+			'</div>';
+			// ---- Form/Forme button OUTSIDE the box (next to Nickname) ----
+			var dex = this.curTeam.dex;
+			var baseSpecies = dex.species.get(species.baseSpecies);
+			// "Real formes" = otherFormes that are NOT cosmetic (and NOT Mega/Gmax)
+			var hasRealFormes = false;
+			var eligibleAltCount = 0;
+			// Build a fast lookup of cosmetic formes for this base species
+			var cosmeticLookup = Object.create(null);
+			if (baseSpecies.cosmeticFormes && baseSpecies.cosmeticFormes.length) { for (var c = 0; c < baseSpecies.cosmeticFormes.length; c++) { cosmeticLookup[toID(baseSpecies.cosmeticFormes[c])] = true; } }
+			if (baseSpecies.otherFormes && baseSpecies.otherFormes.length) {
+			for (var f = 0; f < baseSpecies.otherFormes.length; f++) {
+				var formeName = baseSpecies.otherFormes[f];
+				var formeId = toID(formeName);
+				var sp = dex.species.get(formeName);
+				if (!sp) continue;
+				// EXCLUDE Mega/Gmax ONLY for this forme UI
+				if (sp.isMega || sp.forme === 'Mega' || sp.forme === 'Gmax' || /-Mega(-[XY])?$/i.test(sp.name) || /-Gmax$/i.test(sp.name)) { continue; }
+				eligibleAltCount++;
+				// Treat as cosmetic if explicitly listed OR flagged cosmetic
+				var isCosmetic = !!cosmeticLookup[formeId] || !!(sp && (sp.isCosmeticForme || sp.isCosmetic));
+				if (!isCosmetic) { hasRealFormes = true; }
 			}
-			buf += '</label>';
-			buf += '<div style="display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap;">';
-			buf += '<div style="display: flex; flex-direction: column;">';
-
-			if (this.curTeam.gen > 1) {
-				// Gender button
-				var speciesGender = species.gender; // 'M', 'F', 'N', or undefined
-				var currentGender = set.gender || '';
-				var genderButton = '';
-				if (speciesGender === 'N') {
-					// Genderless - grey button with em dash
-					genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="" style="width: 40px; font-weight: bold; font-size: 12px; pointer-events: none; padding: 1.5px 0; height: 18px; background: rgba(128, 128, 128, 0.3); text-align: center;"><span style="position: relative; top: -2px;">—</span></button>';
-				} else if (speciesGender === 'M') {
-					// 100% Male - centered blue button
-					genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="M" style="width: 40px; font-weight: bold; font-size: 12px; pointer-events: none; padding: 1.5px 0; height: 18px; background: rgba(0, 150, 255, 0.3); text-align: center;"><span style="position: relative; top: -0.75px; left: -1px; color: #0004ffff;">♂</span></button>';
-				} else if (speciesGender === 'F') {
-					// 100% Female - centered pink button
-					genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="F" style="width: 40px; font-weight: bold; font-size: 12px; pointer-events: none; padding: 1.5px 0; height: 18px; background: rgba(255, 100, 150, 0.3); text-align: center;"><span style="position: relative; top: -2px; left: -1px; color: #ff0055ff;">♀</span></button>';
-				} else {
-					// Can be Male or Female - toggle button (default to Male if not set)
-					var isMale = currentGender === 'M' || !currentGender;
-					if (isMale) {
-					genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="M" style="width: 40px; font-weight: bold; font-size: 12px; cursor: pointer; padding: 1.5px 0; height: 18px; background: linear-gradient(to right, rgba(0, 150, 255, 0.3) 50%, transparent 50%); text-align: left; padding-left: 6px;"><span style="position: relative; top: -0.75px; right: 2px; color: #0004ffff;">♂</span></button>'; } 
-					else { genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="F" style="width: 40px; font-weight: bold; font-size: 12px; cursor: pointer; padding: 1.5px 0; height: 18px; background: linear-gradient(to left, rgba(255, 100, 150, 0.3) 50%, transparent 50%); text-align: right; padding-right: 6px;"><span style="position: relative; top: -1.5px; left: 1px; color: #ff0055ff;">♀</span></button>'; }
-				}
-				buf += '<div style="display:flex; flex-direction:column; gap:3px; position:relative; top:18px; left:1px;">';
-				buf += '<div style="display: flex; align-items: center; gap: 7px;"><label style="font-size: 10px;">Gender</label>' + genderButton + '</div>';
-				buf += '</div>';
+		}
+		// "Cosmetic forms" = cosmeticFormes (and at least one exists after filtering)
+		var hasCosmeticForms = false;
+		if (baseSpecies.cosmeticFormes && baseSpecies.cosmeticFormes.length) {
+			for (var c2 = 0; c2 < baseSpecies.cosmeticFormes.length; c2++) {
+				var cfName = baseSpecies.cosmeticFormes[c2];
+				var cfSp = dex.species.get(cfName);
+				if (!cfSp) continue;
+				if (cfSp.isMega || cfSp.forme === 'Mega' || cfSp.forme === 'Gmax' || /-Mega(-[XY])?$/i.test(cfSp.name) || /-Gmax$/i.test(cfSp.name)) { continue; }
+				hasCosmeticForms = true;
+				eligibleAltCount++;
+				break;
 			}
+		}
+		// Only show the button if there is at least one eligible (non-mega/non-gmax) alt
+		var hasAlt = eligibleAltCount > 0;
+		// ---------- Level (ALWAYS visible) ----------
+		buf += '<div style="position:absolute; left:118px; top:16px; display:flex; align-items:flex-end; gap:4px;">';
+		buf += '<label style="font-size:10px; margin:0; position:relative; top:-4px;">Level</label>';
+		buf += '<input type="number" name="level" class="textbox" value="' + (set.level || 100) + '" min="1" max="100" ' +
+	       'style="width:32px; height:15px; font-size:10px; padding:1px 4px;" />';
+		buf += '</div>';
+		// ---- Shiny checkbox (ALWAYS show; in nickname row) ----
+		if (this.curTeam.gen > 1) {
+			buf += '<div style="position:absolute; left: 209px; top: 22px; z-index:10; display:flex; align-items:center; gap:4px;">';
+			buf += '<label style="font-size:10px; margin:0; cursor:pointer; position:relative; top:-1px;">Shiny</label>';
+			buf += '<input type="checkbox" name="shiny" class="shiny-checkbox"' + (set.shiny ? ' checked' : '') +
+				' style="margin:0; cursor:pointer; width:12px; height:12px;" />';
 			buf += '</div>';
-			if (this.curTeam.gen > 1) {
-				if (isLetsGo) { buf += '<label style="font-size: 10px;">Happiness</label><input type="number" name="happiness" class="textbox" value="' + (typeof set.happiness === 'number' ? set.happiness : 70) + '" min="0" max="255" style="width: 50px;" />'; } 
-				else if (this.curTeam.gen < 8 || isNatDex) { buf += '<label style="font-size: 10px;">Happiness</label><input type="number" name="happiness" class="textbox" value="' + (typeof set.happiness === 'number' ? set.happiness : 255) + '" min="0" max="255" style="width: 50px;" />'; }
+		}
+		if (hasAlt) {
+			// Label: Forme (real formes exist) vs Form (cosmetic-only)
+			var ffLabel = hasRealFormes ? 'Forme' : 'Form';
+			// Button text: everything after the first hyphen in set.species (e.g. "Poltchageist-Artisan" -> "Artisan")
+			var dash = set.species.indexOf('-');
+			var ffText = (dash >= 0 ? set.species.slice(dash + 1) : 'Base');
+			// Absolutely positioned so it DOES NOT push anything
+			buf += '<div style="position: absolute; left: 270px; top: 14px; display: flex; align-items: flex-end;">';
+			buf += '<label style="font-size: 10px; margin: 0; position: relative; top: -3px;">' + ffLabel + '</label>';
+			buf += '<button type="button" class="textbox altform" name="altform" style="width: 80px; font-size: 10px; padding: 1px 4px; height: 18px; cursor: pointer; text-align: left;">' +
+    		BattleLog.escapeHTML(ffText) + '</button>';
+			buf += '</div>';
+		}
+		buf += '</div>';
+		buf += '<div class="setchart" style="' + this.getScaledTeambuilderSpriteStyle(set) + '">';
+		// icon
+		buf += '<div class="setcol setcol-icon" style="position: relative;">';
+		// Size dropdown (top-right)
+		buf += '<div class="size-in-sprite" style="position:absolute; bottom:32px; right: 0px; z-index:20; align-items:flex-end; gap:6px;">' +
+			'<label style="font-size:10px; margin:0; position:relative; top:-1px;">Size</label>' +
+			'<select name="size" class="textbox" style="width:24px; height:15px; padding-left:2px; font-size:9px; appearance:none; -webkit-appearance:none; -moz-appearance:none; padding-right:2px; text-align:center;">' +
+			'<option value="XS"' + (set.size === 'XS' ? ' selected' : '') + '>XS</option>' +
+			'<option value="S"' + (set.size === 'S' ? ' selected' : '') + '>S</option>' +
+			'<option value="M"' + (!set.size || set.size === 'M' ? ' selected' : '') + '>M</option>' +
+			'<option value="L"' + (set.size === 'L' ? ' selected' : '') + '>L</option>' +
+			'<option value="XL"' + (set.size === 'XL' ? ' selected' : '') + '>XL</option>' +
+			'</select></div>';
+		buf += '<div class="setcell-sprite" style="margin-left: 10px;"></div>';	
+		buf += '<div class="setcell setcell-pokemon"><label>Pok&eacute;mon</label><input type="text" name="pokemon" class="textbox chartinput" value="' + BattleLog.escapeHTML(set.species) + '" autocomplete="off" /></div></div>';
+		// ---- Height/Weight (computed once, used under Tera icon) ----
+		var baseWeight = species.weightkg || 0;
+		var baseHeight = species.heightm || 0;
+		var sizeWeightModifier = species.sizeWeightModifier !== undefined ? species.sizeWeightModifier : 0.1;
+		var sizeTiers = 0;
+		var size = set.size || 'M';
+		if (size === 'XS') sizeTiers = -2;
+		else if (size === 'S') sizeTiers = -1;
+		else if (size === 'L') sizeTiers = 1;
+		else if (size === 'XL') sizeTiers = 2;
+		var modifiedWeight = baseWeight * (1 + (sizeTiers * sizeWeightModifier));
+		var modifiedHeight = baseHeight * (1 + (sizeTiers * sizeWeightModifier));
+		// details
+		buf += '<div class="setcol setcol-details"><div class="setrow">';
+		buf += '<div class="setcell setcell-details"><label style="position: relative; top: 6px;">Type';
+		// Type icons 
+		var types = species.types;
+		// Apply Indigo Starstorm type overrides
+		var isIndigoStarstorm = this.curTeam.format && (this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.includes('isl'));
+		if (isIndigoStarstorm && IndigoStarstormTypes[toID(species.name)]) { types = IndigoStarstormTypes[toID(species.name)]; }
+		if (types) {
+			buf += '<span style="margin-left: 8px; vertical-align: middle; position: relative; ;">';
+			for (var i = 0; i < types.length; i++) buf += Dex.getTypeIcon(types[i]);
+			buf += '</span>';
+			// Tera Type icon below type icons
+			if (this.curTeam.gen === 9) {
+				var teraType = set.teraType || species.requiredTeraType || species.types[0];
+				buf += '<br><button type="button" class="teratype" name="teraType" value="' + BattleLog.escapeHTML(teraType) + '" style="background: none; border: none; padding: 0; cursor: pointer; width: 20px; height: 20px; margin-left: 4px; position: relative; top: 4px;">';
+				buf += '<img src="' + Dex.resourcePrefix + 'sprites/types/Tera' + teraType + '.png" alt="' + teraType + '" style="width: 20px; height: 20px; object-fit: contain; display: block; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5));" />';
+				buf += '</button>';
+				buf += '<div style="margin-top: 11px; margin-left: 2px; font-size: 9px; line-height: 1.1; text-align: left;">' +
+				'<span class="height-display" style="display:block;">' + modifiedHeight.toFixed(1) + ' m</span>' +
+				'<span class="weight-display" style="display:block;">' + modifiedWeight.toFixed(1) + ' kg</span>' +
+				'</div>';
 			}
-			buf += '</div></div></div>';
+		}
+		buf += '</label>';
+		buf += '<div style="display: flex; gap: 8px; align-items: flex-start; flex-wrap: wrap;">';
+		buf += '<div style="display: flex; flex-direction: column;">';
+		buf += '</div>';
+		if (this.curTeam.gen > 1) {
+			if (isLetsGo) { buf += '<label style="font-size: 10px;">Happiness</label><input type="number" name="happiness" class="textbox" value="' + (typeof set.happiness === 'number' ? set.happiness : 70) + '" min="0" max="255" style="width: 50px;" />'; } 
+			else if (this.curTeam.gen < 8 || isNatDex) { buf += '<label style="font-size: 10px;">Happiness</label><input type="number" name="happiness" class="textbox" value="' + (typeof set.happiness === 'number' ? set.happiness : 255) + '" min="0" max="255" style="width: 50px;" />'; }
+		}
+		buf += '</div></div></div>';
 		// item icon
 		buf += '<div class="setrow setrow-icons">';
-		buf += '<div class="setcell" style="position: relative; left: 95px; top: 20px;">';
+		buf += '<div class="setcell" style="position: relative; left: 95px; top: 25px;">';
 		var itemicon = '<span class="itemicon"></span>';
 		var itemName = '';
 		if (set.item) {
@@ -1387,42 +1412,34 @@ buf += '</div>';
 				buttonText = abilitySet;
 			}
 			buf += '<div class="setcol setcol-ability" style="align-content: end; position: relative; top: -5px;">'; ;
-			// height/weight + size
-var baseWeight = species.weightkg || 0;
-var baseHeight = species.heightm || 0;
-var sizeWeightModifier = species.sizeWeightModifier !== undefined ? species.sizeWeightModifier : 0.1;
-var sizeTiers = 0;
-var size = set.size || 'M';
-if (size === 'XS') sizeTiers = -2;
-else if (size === 'S') sizeTiers = -1;
-else if (size === 'L') sizeTiers = 1;
-else if (size === 'XL') sizeTiers = 2;
-
-var modifiedWeight = baseWeight * (1 + (sizeTiers * sizeWeightModifier));
-var modifiedHeight = baseHeight * (1 + (sizeTiers * sizeWeightModifier));
-
-// height (top) + weight (bottom), right-aligned
-buf += '<div class="setcell" style="position: relative; top: -6px; left: 64px; display: inline-block; margin-left: 6px;">' +
-	'<div style="font-size: 9px; display: flex; flex-direction: column; align-items: flex-end; line-height: 1.1;">' +
-	'<span class="height-display">' + modifiedHeight.toFixed(1) + ' m</span>' +
-	'<span class="weight-display">' + modifiedWeight.toFixed(1) + ' kg</span>' +
-	'</div></div>';
-
-// Size label left of dropdown (no crazy offsets)
-buf += '<div class="setcell" style="position: relative; top: -25px; display: inline-block; margin-left: 13px;">' +
-	'<div style="display:flex; align-items:flex-end; gap:6px;">' +
-	'<label style="font-size: 10px; margin: 0; position: relative; top: -1px;">Size</label>' +
-	'<select name="size" class="textbox" style="width: 24px; height: 15px; padding-left: 2px; font-size: 9px; appearance: none; -webkit-appearance: none; -moz-appearance: none; padding-right: 2px; text-align: center;">' +
-	'<option value="XS"' + (set.size === 'XS' ? ' selected' : '') + '>XS</option>' +
-	'<option value="S"' + (set.size === 'S' ? ' selected' : '') + '>S</option>' +
-	'<option value="M"' + (!set.size || set.size === 'M' ? ' selected' : '') + '>M</option>' +
-	'<option value="L"' + (set.size === 'L' ? ' selected' : '') + '>L</option>' +
-	'<option value="XL"' + (set.size === 'XL' ? ' selected' : '') + '>XL</option>' +
-	'</select></div></div>';
-
+if (this.curTeam.gen > 1) {
+				// Gender button
+				var speciesGender = species.gender; // 'M', 'F', 'N', or undefined
+				var currentGender = set.gender || '';
+				var genderButton = '';
+				if (speciesGender === 'N') {
+					// Genderless - grey button with em dash
+					genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="" style="width: 36px; font-weight: bold; font-size: 12px; pointer-events: none; padding: 1.5px 0; height: 18px; background: rgba(128, 128, 128, 0.3); text-align: center;"><span style="position: relative; top: -2px;">—</span></button>';
+				} else if (speciesGender === 'M') {
+					// 100% Male - centered blue button
+					genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="M" style="width: 36px; font-weight: bold; font-size: 12px; pointer-events: none; padding: 1.5px 0; height: 18px; background: rgba(0, 150, 255, 0.3); text-align: center;"><span style="position: relative; top: -0.75px; left: -1px; color: #0004ffff;">♂</span></button>';
+				} else if (speciesGender === 'F') {
+					// 100% Female - centered pink button
+					genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="F" style="width: 36px; font-weight: bold; font-size: 12px; pointer-events: none; padding: 1.5px 0; height: 18px; background: rgba(255, 100, 150, 0.3); text-align: center;"><span style="position: relative; top: -2px; left: -1px; color: #ff0055ff;">♀</span></button>';
+				} else {
+					// Can be Male or Female - toggle button (default to Male if not set)
+					var isMale = currentGender === 'M' || !currentGender;
+					if (isMale) {
+					genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="M" style="width: 36px; font-weight: bold; font-size: 12px; cursor: pointer; padding: 1.5px 0; height: 18px; background: linear-gradient(to right, rgba(0, 150, 255, 0.3) 50%, transparent 50%); text-align: left; padding-left: 6px;"><span style="position: relative; top: -0.75px; right: 2px; color: #0004ffff;">♂</span></button>'; } 
+					else { genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="F" style="width: 36px; font-weight: bold; font-size: 12px; cursor: pointer; padding: 1.5px 0; height: 18px; background: linear-gradient(to left, rgba(255, 100, 150, 0.3) 50%, transparent 50%); text-align: right; padding-right: 6px;"><span style="position: relative; top: -1.5px; left: 1px; color: #ff0055ff;">♀</span></button>'; }
+				}
+				buf += '<div style="display:flex; flex-direction:column; gap:3px; position:relative; top:-34px; left:16px;">';
+				buf += '<div style="display: flex; align-items: center; gap: 7px;"><label style="font-size: 10.5px;">Gender</label>' + genderButton + '</div>';
+				buf += '</div>';
+			}
 			//ability set
 			buf += '<div class="setcell">';
-			buf += '<div style="display: flex; align-items: end; gap: 6px;"><label style="margin: 0;">Ability Set</label><button type="button" class="textbox' + buttonClass + '"' + buttonName + ' data-value="' + abilitySet + '" style="' + buttonStyle + '">' + buttonText + '</button></div>';
+			buf += '<div style="display: flex; align-items: end; gap: 4px;"><label style="margin: 0;">Ability Set</label><button type="button" class="textbox' + buttonClass + '"' + buttonName + ' data-value="' + abilitySet + '" style="' + buttonStyle + '">' + buttonText + '</button></div>';
 			buf += '</div>';
 			buf += '<div class="setcell">';
 			buf += '<input type="text" name="ability" class="textbox chartinput" value="' + BattleLog.escapeHTML(set.ability) + '" autocomplete="off" style="margin: 0;" />';
@@ -1501,11 +1518,9 @@ buf += '<div class="setcell" style="position: relative; top: -25px; display: inl
 				}
 				buf += '</div>';
 			}
-						// stats (JV system, no IV column)
+			// stats (JV system, no IV column)
 			if (!set.jvs) set.jvs = {};
-
 			buf += '<div class="setcol setcol-stats"><div class="setrow"><label>Stats</label><button class="textbox setstats" name="stats">';
-
 			// Header: remove IV column entirely, rename EV -> JV
 			buf += '<span class="statrow statrow-head">' +
 				'<label></label><span class="statgraph"></span>' +
@@ -1514,32 +1529,24 @@ buf += '<div class="setcell" style="position: relative; top: -25px; display: inl
 				'<ma></ma><ma></ma><ma></ma><ma></ma><ma></ma>' +
 				'<ma>' + (!isLetsGo ? 'JV' : 'AV') + '</ma>' +
 				'</span>';
-
 			var statOrder = [];
 			for (var k in BattleStatNames) {
 				if (k === 'spd' && this.curTeam.gen === 1) continue;
 				statOrder.push(k);
 			}
-
 			var spacer = '<em></em>';
 			var spacersmall = '<ma></ma>';
-
 			var statData = {};
 			var maxVal = -Infinity;
-
 			for (var idx = 0; idx < statOrder.length; idx++) {
 				var s = statOrder[idx];
 				var v = this.getStat(s, set);
-
 				statData[s] = {};
 				statData[s].value = v;
-
 				if (v > maxVal) maxVal = v;
-
 				var baseStats = species.baseStats;
 				statData[s].base = baseStats[s];
 				statData[s].baseStatsBuf = '<em>' + statData[s].base + '<em></em>' + '</em>';
-
 				// JV display (no EV 4-step logic; each point = +1 stat)
 				var jv = (set.jvs[s] === undefined ? 0 : set.jvs[s]);
 				var jvBuf = '<em>' + (jv ? jv : '') ;
@@ -1547,9 +1554,7 @@ buf += '<div class="setcell" style="position: relative; top: -25px; display: inl
 				else if (BattleNatures[set.nature] && BattleNatures[set.nature].minus === s) jvBuf += '<small>&minus;</small>';
 				jvBuf += '</em>';
 				statData[s].jvBuf = jvBuf;
-
 				statData[s].width = v * 90 / 504;
-
 				var color = Math.floor(v * (s === 'hp' ? 343 : 475) / 714);
 				if (color > 360) color = 360;
 				if (color <= 25) color = Math.floor(color * 0.5);
@@ -1561,7 +1566,6 @@ buf += '<div class="setcell" style="position: relative; top: -25px; display: inl
 				statData[s].color = color;
 				statData[s].statName = this.curTeam.gen === 1 && s === 'spa' ? 'Spc' : BattleStatNames[s];
 			}
-
 			// detect whether all stats are equal; if so, don't draw borders
 			var _minStat = Infinity, _maxStat = -Infinity;
 			for (var kk in statData) {
@@ -1569,12 +1573,10 @@ buf += '<div class="setcell" style="position: relative; top: -25px; display: inl
 				if (statData[kk].value > _maxStat) _maxStat = statData[kk].value;
 			}
 			var allEqual = (_minStat === _maxStat);
-
 			for (var idx2 = 0; idx2 < statOrder.length; idx2++) {
 				var s2 = statOrder[idx2];
 				var sd = statData[s2];
 				var classFrag = (sd.value === maxVal ? ' class="statbar-highest"' : '');
-
 				buf += '<span class="statrow">' +
 					'<label>' + sd.statName + '</label> ' +
 					'<span class="statgraph"><span' + classFrag +
@@ -1585,9 +1587,7 @@ buf += '<div class="setcell" style="position: relative; top: -25px; display: inl
 					spacersmall + sd.baseStatsBuf + spacer + spacer + sd.jvBuf +
 				'</span>';
 			}
-
 			buf += '</button></div></div>';
-
 			buf += '</div></li>';
 			return buf;
 		},
@@ -1767,271 +1767,243 @@ buf += '<div class="setcell" style="position: relative; top: -25px; display: inl
 			this.save();
 		},
 		getScaledTeambuilderSpriteStyle: function (set) {
-	// Base sprite CSS (image + default positioning) from PS/Dex
-	var css = Dex.getTeambuilderSprite(set, this.curTeam.dex) || '';
-
-	// Ensure css ends with a semicolon so concatenation can't break
-	css = css.trim();
-	if (css && css[css.length - 1] !== ';') css += ';';
-
-	// REMOVE anything that would fight us
-	// (Dex sometimes outputs background-position, or background-position-x/y, and background-size)
-	css = css
-		.replace(/background-position\s*:[^;]*;?/ig, '')
-		.replace(/background-position-x\s*:[^;]*;?/ig, '')
-		.replace(/background-position-y\s*:[^;]*;?/ig, '')
-		.replace(/background-size\s*:[^;]*;?/ig, '')
-		.replace(/background-repeat\s*:[^;]*;?/ig, '');
-
-	// Size tier -> 10% scale per step (XS..XL)
-	var size = set.size || 'M';
-	var tierMap = {XS: -2, S: -1, M: 0, L: 1, XL: 2};
-	var tier = (tierMap[size] !== undefined) ? tierMap[size] : 0;
-
-	var basePx = 96;
-	var spritePx = Math.round(basePx * (1 + tier * 0.10));
-
-	// Treat the sprite as living in a fixed 96x96 "frame" whose top-left is (baseX, baseY)
-	// These match what your UI is already laid out for.
-	var baseX = 5;
-	var baseY = 0;
-
-	var delta = Math.round((basePx - spritePx) / 2);
-	var spriteX = baseX + delta;  
-	var spriteY = baseY + delta; 
-
-	return css +
-	'background-position:' + spriteX + 'px ' + spriteY + 'px; ' +
-	'background-position-x:' + spriteX + 'px; ' +
-	'background-position-y:' + spriteY + 'px; ' +
-	'background-size:' + spritePx + 'px ' + spritePx + 'px; ' +
-	'background-repeat:no-repeat; ' +
-	'overflow:hidden;';
-},
-
-
-
-		shinyChange: function (e) {
-	var $target = $(e.currentTarget);
-	var $li = $target.closest('li');
-
-	var set, $scope;
-	if ($li.length) {
-		var i = +$li.attr('value');
-		set = this.curSetList[i];
-		$scope = $li;
-	} else {
-		set = this.curSet;
-		$scope = this.$el;
-	}
-	if (!set) return;
-
-	if ($target.is(':checked')) set.shiny = true;
-	else delete set.shiny;
-
-	this.save();
-
-	var $setchart = $scope.find('.setchart').first();
-	if ($setchart.length) $setchart.attr('style', this.getScaledTeambuilderSpriteStyle(set));
-},
-
-		sizeChange: function (e) {
-	var $target = $(e.currentTarget);
-
-	// Works in BOTH contexts:
-	// 1) Team list: inside <li value="i">
-	// 2) Focused/main panel: no <li>, use this.curSet
-	var $li = $target.closest('li');
-	var set, $scope;
-
-	if ($li.length) {
-		var i = +$li.attr('value');
-		set = this.curSetList[i];
-		$scope = $li;
-	} else {
-		set = this.curSet;
-		$scope = this.$el; // search within the main panel
-	}
-
-	if (!set) return;
-
-	var size = $target.val();
-	if (!size || !['XS', 'S', 'M', 'L', 'XL'].includes(size)) return;
-
-	// Persist size
-	if (size !== 'M') set.size = size;
-	else delete set.size;
-
-	this.save();
-
-	// Update height/weight display (same math you already use)
-	var species = this.curTeam.dex.species.get(set.species);
-	var baseWeight = species.weightkg || 0;
-	var baseHeight = species.heightm || 0;
-	var sizeWeightModifier = (species.sizeWeightModifier !== undefined ? species.sizeWeightModifier : 0.1);
-	var sizeTiers = {XS: -2, S: -1, M: 0, L: 1, XL: 2}[size] || 0;
-
-	var modifiedWeight = baseWeight * (1 + (sizeTiers * sizeWeightModifier));
-	var modifiedHeight = baseHeight * (1 + (sizeTiers * sizeWeightModifier));
-
-	$scope.find('.height-display').first().text(modifiedHeight.toFixed(1) + ' m');
-	$scope.find('.weight-display').first().text(modifiedWeight.toFixed(1) + ' kg');
-
-	// Reapply sprite style (this is the scaling feature)
-	var $setchart = $scope.find('.setchart').first();
-	if ($setchart.length) $setchart.attr('style', this.getScaledTeambuilderSpriteStyle(set));
-},
-
-		// clipboard
-		clipboard: [],
-		clipboardCount: function () { return this.clipboard.length; },
-		clipboardVisible: function () { return !!this.clipboardCount(); },
-		clipboardHTML: function () {
-			var buf = '';
-			buf += '<div class="teambuilder-clipboard-container" style="display: ' + (this.clipboardVisible() ? 'block' : 'none') + ';">';
-			buf += '<div class="teambuilder-clipboard-title">Clipboard:</div>';
-			buf += '<div class="teambuilder-clipboard-data" tabindex="-1">' + this.clipboardInnerHTML() + '</div>';
-			buf += '<div class="teambuilder-clipboard-buttons">';
-			if (this.curTeam && this.curSetList.length < this.curTeam.capacity) { buf += '<button name="pastePokemon" class="teambuilder-clipboard-button-left button"><i class="fa fa-clipboard"></i> Paste!</button>'; }
-			buf += '<button name="clipboardRemoveAll" class="teambuilder-clipboard-button-right button"><i class="fa fa-trash"></i> Clear clipboard</button>';
+		// Base sprite CSS (image + default positioning) from PS/Dex
+		var css = Dex.getTeambuilderSprite(set, this.curTeam.dex) || '';
+		// Ensure css ends with a semicolon so concatenation can't break
+		css = css.trim();
+		if (css && css[css.length - 1] !== ';') css += ';';
+		// REMOVE anything that would fight us
+		// (Dex sometimes outputs background-position, or background-position-x/y, and background-size)
+		css = css
+			.replace(/background-position\s*:[^;]*;?/ig, '')
+			.replace(/background-position-x\s*:[^;]*;?/ig, '')
+			.replace(/background-position-y\s*:[^;]*;?/ig, '')
+			.replace(/background-size\s*:[^;]*;?/ig, '')
+			.replace(/background-repeat\s*:[^;]*;?/ig, '');
+		// Size tier -> 10% scale per step (XS..XL)
+		var size = set.size || 'M';
+		var tierMap = {XS: -2, S: -1, M: 0, L: 1, XL: 2};
+		var tier = (tierMap[size] !== undefined) ? tierMap[size] : 0;
+		var basePx = 96;
+		var spritePx = Math.round(basePx * (1 + tier * 0.10));
+		// Treat the sprite as living in a fixed 96x96 "frame" whose top-left is (baseX, baseY)
+		// These match what your UI is already laid out for.
+		var baseX = 5;
+		var baseY = 0;
+		var delta = Math.round((basePx - spritePx) / 2);
+		var spriteX = baseX + delta;  
+		var spriteY = baseY + delta; 
+		return css +
+		'background-position:' + spriteX + 'px ' + spriteY + 'px; ' +
+		'background-position-x:' + spriteX + 'px; ' +
+		'background-position-y:' + spriteY + 'px; ' +
+		'background-size:' + spritePx + 'px ' + spritePx + 'px; ' +
+		'background-repeat:no-repeat; ' +
+		'overflow:hidden;';
+	},
+	shinyChange: function (e) {
+		var $target = $(e.currentTarget);
+		var $li = $target.closest('li');
+		var set, $scope;
+		if ($li.length) {
+			var i = +$li.attr('value');
+			set = this.curSetList[i];
+			$scope = $li;
+		} else {
+			set = this.curSet;
+			$scope = this.$el;
+		}
+		if (!set) return;
+		if ($target.is(':checked')) set.shiny = true;
+		else delete set.shiny;
+		this.save();
+		var $setchart = $scope.find('.setchart').first();
+		if ($setchart.length) $setchart.attr('style', this.getScaledTeambuilderSpriteStyle(set));
+	},
+	sizeChange: function (e) {
+		var $target = $(e.currentTarget);
+		// Works in BOTH contexts:
+		// 1) Team list: inside <li value="i">
+		// 2) Focused/main panel: no <li>, use this.curSet
+		var $li = $target.closest('li');
+		var set, $scope;
+		if ($li.length) {
+			var i = +$li.attr('value');
+			set = this.curSetList[i];
+			$scope = $li;
+		} else {
+			set = this.curSet;
+			$scope = this.$el; // search within the main panel
+		}
+		if (!set) return;
+		var size = $target.val();
+		if (!size || !['XS', 'S', 'M', 'L', 'XL'].includes(size)) return;
+		// Persist size
+		if (size !== 'M') set.size = size;
+		else delete set.size;
+		this.save();
+		// Update height/weight display (same math you already use)
+		var species = this.curTeam.dex.species.get(set.species);
+		var baseWeight = species.weightkg || 0;
+		var baseHeight = species.heightm || 0;
+		var sizeWeightModifier = (species.sizeWeightModifier !== undefined ? species.sizeWeightModifier : 0.1);
+		var sizeTiers = {XS: -2, S: -1, M: 0, L: 1, XL: 2}[size] || 0;
+		var modifiedWeight = baseWeight * (1 + (sizeTiers * sizeWeightModifier));
+		var modifiedHeight = baseHeight * (1 + (sizeTiers * sizeWeightModifier));
+		$scope.find('.height-display').first().text(modifiedHeight.toFixed(1) + ' m');
+		$scope.find('.weight-display').first().text(modifiedWeight.toFixed(1) + ' kg');
+		// Reapply sprite style (this is the scaling feature)
+		var $setchart = $scope.find('.setchart').first();
+		if ($setchart.length) $setchart.attr('style', this.getScaledTeambuilderSpriteStyle(set));
+	},
+	// clipboard
+	clipboard: [],
+	clipboardCount: function () { return this.clipboard.length; },
+	clipboardVisible: function () { return !!this.clipboardCount(); },
+	clipboardHTML: function () {
+		var buf = '';
+		buf += '<div class="teambuilder-clipboard-container" style="display: ' + (this.clipboardVisible() ? 'block' : 'none') + ';">';
+		buf += '<div class="teambuilder-clipboard-title">Clipboard:</div>';
+		buf += '<div class="teambuilder-clipboard-data" tabindex="-1">' + this.clipboardInnerHTML() + '</div>';
+		buf += '<div class="teambuilder-clipboard-buttons">';
+		if (this.curTeam && this.curSetList.length < this.curTeam.capacity) { buf += '<button name="pastePokemon" class="teambuilder-clipboard-button-left button"><i class="fa fa-clipboard"></i> Paste!</button>'; }
+		buf += '<button name="clipboardRemoveAll" class="teambuilder-clipboard-button-right button"><i class="fa fa-trash"></i> Clear clipboard</button>';
+		buf += '</div>';
+		buf += '</div>';
+		return buf;
+	},
+	clipboardInnerHTMLCache: '',
+	clipboardInnerHTML: function () {
+		if (this.clipboardInnerHTMLCache) { return this.clipboardInnerHTMLCache; }
+		var buf = '';
+		for (var i = 0; i < this.clipboardCount(); i++) {
+			var res = this.clipboard[i];
+			var species = Dex.species.get(res.species);
+			buf += '<div class="result" data-id="' + i + '">';
+			buf += '<div class="section"><span class="icon" style="' + Dex.getPokemonIcon(species.name) + '"></span>';
+			buf += '<span class="species">' + (species.name === species.baseSpecies ? BattleLog.escapeHTML(species.name) : (BattleLog.escapeHTML(species.baseSpecies) + '-<small>' + BattleLog.escapeHTML(species.name.substr(species.baseSpecies.length + 1)) + '</small>')) + '</span></div>';
+			buf += '<div class="section"><span class="ability-item">' + (BattleLog.escapeHTML(res.ability) || '<i>No ability</i>') + '<br />' + (BattleLog.escapeHTML(res.item) || '<i>No item</i>') + '</span></div>';
+			buf += '<div class="section no-border">';
+			for (var j = 0; j < 4; j++) {
+				if (!(j & 1)) { buf += '<span class="moves">'; }
+				buf += (BattleLog.escapeHTML(res.moves[j]) || '<i>No move</i>') + (!(j & 1) ? '<br />' : '');
+				if (j & 1) { buf += '</span>'; }
+			}
 			buf += '</div>';
 			buf += '</div>';
-			return buf;
-		},
-		clipboardInnerHTMLCache: '',
-		clipboardInnerHTML: function () {
-			if (this.clipboardInnerHTMLCache) { return this.clipboardInnerHTMLCache; }
-			var buf = '';
-			for (var i = 0; i < this.clipboardCount(); i++) {
-				var res = this.clipboard[i];
-				var species = Dex.species.get(res.species);
-				buf += '<div class="result" data-id="' + i + '">';
-				buf += '<div class="section"><span class="icon" style="' + Dex.getPokemonIcon(species.name) + '"></span>';
-				buf += '<span class="species">' + (species.name === species.baseSpecies ? BattleLog.escapeHTML(species.name) : (BattleLog.escapeHTML(species.baseSpecies) + '-<small>' + BattleLog.escapeHTML(species.name.substr(species.baseSpecies.length + 1)) + '</small>')) + '</span></div>';
-				buf += '<div class="section"><span class="ability-item">' + (BattleLog.escapeHTML(res.ability) || '<i>No ability</i>') + '<br />' + (BattleLog.escapeHTML(res.item) || '<i>No item</i>') + '</span></div>';
-				buf += '<div class="section no-border">';
-				for (var j = 0; j < 4; j++) {
-					if (!(j & 1)) { buf += '<span class="moves">'; }
-					buf += (BattleLog.escapeHTML(res.moves[j]) || '<i>No move</i>') + (!(j & 1) ? '<br />' : '');
-					if (j & 1) { buf += '</span>'; }
-				}
-				buf += '</div>';
-				buf += '</div>';
-			}
-			this.clipboardInnerHTMLCache = buf;
-			return buf;
-		},
-		clipboardUpdate: function () {
-			this.clipboardInnerHTMLCache = '';
-			$('.teambuilder-clipboard-data').html(this.clipboardInnerHTML());
-		},
-		clipboardExpanded: false,
-		clipboardExpand: function () {
-			var $clipboard = $('.teambuilder-clipboard-data');
-			$clipboard.animate({ height: this.clipboardCount() * 34 }, 500, function () { setTimeout(function () { $clipboard.focus(); }, 100); });
-			setTimeout(function () { this.clipboardExpanded = true; }.bind(this), 10);
-		},
-		clipboardShrink: function () {
-			var $clipboard = $('.teambuilder-clipboard-data');
-			$clipboard.animate({ height: 32 }, 500);
-			setTimeout(function () { this.clipboardExpanded = false; }.bind(this), 10);
-		},
-		clipboardResultSelect: function (e) {
-			if (!this.clipboardExpanded) return;
-			e.preventDefault();
-			e.stopPropagation();
-			var target = +($(e.target).closest('.result').data('id'));
-			if (target === -1) {
-				this.clipboardShrink();
-				this.clipboardRemoveAll();
-				return;
-			}
-			this.clipboard.unshift(this.clipboard.splice(target, 1)[0]);
-			this.clipboardUpdate();
+		}
+		this.clipboardInnerHTMLCache = buf;
+		return buf;
+	},
+	clipboardUpdate: function () {
+		this.clipboardInnerHTMLCache = '';
+		$('.teambuilder-clipboard-data').html(this.clipboardInnerHTML());
+	},
+	clipboardExpanded: false,
+	clipboardExpand: function () {
+		var $clipboard = $('.teambuilder-clipboard-data');
+		$clipboard.animate({ height: this.clipboardCount() * 34 }, 500, function () { setTimeout(function () { $clipboard.focus(); }, 100); });
+		setTimeout(function () { this.clipboardExpanded = true; }.bind(this), 10);
+	},
+	clipboardShrink: function () {
+		var $clipboard = $('.teambuilder-clipboard-data');
+		$clipboard.animate({ height: 32 }, 500);
+		setTimeout(function () { this.clipboardExpanded = false; }.bind(this), 10);
+	},
+	clipboardResultSelect: function (e) {
+		if (!this.clipboardExpanded) return;
+		e.preventDefault();
+		e.stopPropagation();
+		var target = +($(e.target).closest('.result').data('id'));
+		if (target === -1) {
 			this.clipboardShrink();
-		},
-		clipboardAdd: function (set) {
-			if (this.clipboard.unshift(set) > 6) { this.clipboard.pop(); }
-			this.clipboardUpdate();
-			if (this.clipboardCount() === 1) {
-				var $clipboard = $('.teambuilder-clipboard-container').css('opacity', 0);
-				$clipboard.slideDown(250, function () { $clipboard.animate({ opacity: 1 }, 250); });
+			this.clipboardRemoveAll();
+			return;
+		}
+		this.clipboard.unshift(this.clipboard.splice(target, 1)[0]);
+		this.clipboardUpdate();
+		this.clipboardShrink();
+	},
+	clipboardAdd: function (set) {
+		if (this.clipboard.unshift(set) > 6) { this.clipboard.pop(); }
+		this.clipboardUpdate();
+		if (this.clipboardCount() === 1) {
+			var $clipboard = $('.teambuilder-clipboard-container').css('opacity', 0);
+			$clipboard.slideDown(250, function () { $clipboard.animate({ opacity: 1 }, 250); });
+		}
+	},
+	clipboardRemoveAll: function () {
+		this.clipboard = [];
+		var self = this;
+		var $clipboard = $('.teambuilder-clipboard-container');
+		$clipboard.animate({ opacity: 0 }, 250, function () { $clipboard.slideUp(250, function () { self.clipboardUpdate(); }); });
+	},
+	// copy/import/export/move/delete
+	copySet: function (i, button) {
+		i = +($(button).closest('li').attr('value'));
+		this.clipboardAdd($.extend(true, {}, this.curSetList[i]));
+		button.blur();
+	},
+	wasViewingPokemon: false,
+	importSet: function (i, button) {
+		i = +($(button).closest('li').attr('value'));
+		this.wasViewingPokemon = true;
+		if (!this.curSet) {
+			this.wasViewingPokemon = false;
+			this.selectPokemon(i);
+		}
+		this.$('li').find('input, button').prop('disabled', true);
+		this.$chart.hide();
+		this.$('.teambuilder-pokemon-import')
+		.show()
+		.find('textarea')
+		.val(Storage.exportTeam([this.curSet], this.curTeam.gen).trim())
+		.focus()
+		.select();
+		this.getSmogonSets();
+	},
+	getSmogonSets: function () {
+		this.$('.teambuilder-pokemon-import .teambuilder-import-smogon-sets').empty();
+		this.$('.teambuilder-pokemon-import .teambuilder-import-user-sets').empty();
+		var format = this.curTeam.format;
+		// If we don't have a specific format, don't try and guess which sets to use.
+		if (format.match(/gen\d$/)) return;
+		var self = this;
+		this.smogonSets = this.smogonSets || {};
+		this.updateCachedUserSets(format);
+		this.importSetButtons();
+		if (this.smogonSets[format] !== undefined) { return; }
+		// We fetch this as 'text' and JSON.parse it ourserves in order to have consistent behavior between the localdev CORS helper and the real jQuery.get function, which would already parse this into an object based on the content-type header.
+		$.get('https://' + Config.routes.client + '/data/sets/' + format + '.json', {}, function (data) {
+			try { self.smogonSets[format] = JSON.parse(data); } 
+			catch (e) { self.smogonSets[format] = false; } // An error occured. Mark this as false, so that we don't try to reimport sets for this format in the future.
+			self.importSetButtons();
+		}, 'text');
+	},
+	updateCachedUserSets: function (format) {
+		if (this.userSets && this.userSets[format]) return;
+		this.userSets = this.userSets || {};
+		this.userSets[format] = {};
+		var duplicateNameIndices = {};
+		for (var i = 0; i < teams.length; i++) {
+			var team = teams[i];
+			if (team.format !== format || team.capacity !== 24) continue;
+			var setList = Storage.unpackTeam(team.team);
+			for (var j = 0; j < setList.length; j++) {
+				var set = setList[j];
+				var name = set.name + " " + (duplicateNameIndices[set.name] || "");
+				var sets = this.userSets[format][set.species] || {};
+				sets[name] = set;
+				this.userSets[format][set.species] = sets;
+				duplicateNameIndices[set.name] = 1 + (duplicateNameIndices[set.name] || 0);
 			}
-		},
-		clipboardRemoveAll: function () {
-			this.clipboard = [];
-			var self = this;
-			var $clipboard = $('.teambuilder-clipboard-container');
-			$clipboard.animate({ opacity: 0 }, 250, function () { $clipboard.slideUp(250, function () { self.clipboardUpdate(); }); });
-		},
-		// copy/import/export/move/delete
-		copySet: function (i, button) {
-			i = +($(button).closest('li').attr('value'));
-			this.clipboardAdd($.extend(true, {}, this.curSetList[i]));
-			button.blur();
-		},
-		wasViewingPokemon: false,
-		importSet: function (i, button) {
-			i = +($(button).closest('li').attr('value'));
-			this.wasViewingPokemon = true;
-			if (!this.curSet) {
-				this.wasViewingPokemon = false;
-				this.selectPokemon(i);
-			}
-			this.$('li').find('input, button').prop('disabled', true);
-			this.$chart.hide();
-			this.$('.teambuilder-pokemon-import')
-				.show()
-				.find('textarea')
-				.val(Storage.exportTeam([this.curSet], this.curTeam.gen).trim())
-				.focus()
-				.select();
-			this.getSmogonSets();
-		},
-		getSmogonSets: function () {
-			this.$('.teambuilder-pokemon-import .teambuilder-import-smogon-sets').empty();
-			this.$('.teambuilder-pokemon-import .teambuilder-import-user-sets').empty();
-			var format = this.curTeam.format;
-			// If we don't have a specific format, don't try and guess which sets to use.
-			if (format.match(/gen\d$/)) return;
-			var self = this;
-			this.smogonSets = this.smogonSets || {};
-			this.updateCachedUserSets(format);
-			this.importSetButtons();
-			if (this.smogonSets[format] !== undefined) { return; }
-			// We fetch this as 'text' and JSON.parse it ourserves in order to have consistent behavior
-			// between the localdev CORS helper and the real jQuery.get function, which would already parse
-			// this into an object based on the content-type header.
-			$.get('https://' + Config.routes.client + '/data/sets/' + format + '.json', {}, function (data) {
-				try { self.smogonSets[format] = JSON.parse(data); } 
-				catch (e) { self.smogonSets[format] = false; } // An error occured. Mark this as false, so that we don't try to reimport sets for this format in the future.
-				self.importSetButtons();
-			}, 'text');
-		},
-		updateCachedUserSets: function (format) {
-			if (this.userSets && this.userSets[format]) return;
-			this.userSets = this.userSets || {};
-			this.userSets[format] = {};
-			var duplicateNameIndices = {};
-			for (var i = 0; i < teams.length; i++) {
-				var team = teams[i];
-				if (team.format !== format || team.capacity !== 24) continue;
-				var setList = Storage.unpackTeam(team.team);
-				for (var j = 0; j < setList.length; j++) {
-					var set = setList[j];
-					var name = set.name + " " + (duplicateNameIndices[set.name] || "");
-					var sets = this.userSets[format][set.species] || {};
-					sets[name] = set;
-					this.userSets[format][set.species] = sets;
-					duplicateNameIndices[set.name] = 1 + (duplicateNameIndices[set.name] || 0);
-				}
-			}
-		},
-		clearCachedUserSetsIfNecessary: function (format) {
-			if (!this.curTeam || !this.userSets) return;
-			// clear cached user sets if we have just been in a box for given format
-			if (this.curTeam.capacity === 24 && this.userSets[format]) { this.userSets[format] = undefined; }
-		},
+		}
+	},
+	clearCachedUserSetsIfNecessary: function (format) {
+		if (!this.curTeam || !this.userSets) return;
+		// clear cached user sets if we have just been in a box for given format
+		if (this.curTeam.capacity === 24 && this.userSets[format]) { this.userSets[format] = undefined; }
+	},
 		importSetButtons: function () {
 			var format = this.curTeam.format;
 			var smogonFormatSets = this.smogonSets[format];

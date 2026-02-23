@@ -1844,6 +1844,24 @@ export const Conditions = {
 		},
 		onSourceModifyDamage(damage, source, target, move) { if (move && move.id !== 'slip') { return this.chainModify(2); } },
 	},
+	shapememory: {
+  		name: 'Shape Memory',
+  		onEnd(pokemon) { // store current scaling vs current form baseline
+    		const size = (pokemon.set as any).size || 'M';
+    		let tiers = 0;
+    		if (size === 'XS') tiers = -2;
+    		else if (size === 'S') tiers = -1;
+    		else if (size === 'L') tiers = 1;
+    		else if (size === 'XL') tiers = 2;
+    		const sp = pokemon.species;
+    		const wMod = (sp as any).sizeWeightModifier ?? 0.1;
+   		 	const hMod = (sp as any).sizeHeightModifier ?? 0.1;
+    		const baseWeighthg = Math.max(1, Math.round(sp.weighthg * (1 + (tiers * wMod))));
+    		const baseHeightmm = Math.max(10, Math.round((((sp as any).heightm || 0) * 1000) * (1 + (tiers * hMod))));
+    		pokemon.shapeMemoryWeightScale = baseWeighthg ? (pokemon.weighthg / baseWeighthg) : 1;
+    		pokemon.shapeMemoryHeightScale = baseHeightmm ? (pokemon.heightmm / baseHeightmm) : 1;
+  },
+},
 	electricterrainairborne: {
 		name: 'electricterrainairborne',
 		effectType: 'Volatile',

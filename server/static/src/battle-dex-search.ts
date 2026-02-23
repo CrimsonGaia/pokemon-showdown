@@ -458,7 +458,10 @@ export class DexSearch {
 			case 'type':
 				let type = fId.charAt(0).toUpperCase() + fId.slice(1);
 				buf.push(['header', `${type}-type moves`]);
-				for (let id in BattleMovedex) { if (BattleMovedex[id].type === type) { (illegal && id in illegal ? illegalBuf : buf).push(['move', id as ID]); } }
+				for (let id in BattleMovedex) {
+					const m: any = BattleMovedex[id];
+					if (m.type === type || m.type2 === type) { (illegal && id in illegal ? illegalBuf : buf).push(['move', id as ID]); }
+				}
 				break;
 			case 'category':
 				let category = fId.charAt(0).toUpperCase() + fId.slice(1);
@@ -1778,8 +1781,11 @@ class BattleMoveSearch extends BattleTypedSearch<'move'> {
 		const move = this.dex.moves.get(row[1]);
 		for (const [filterType, value] of filters) {
 			switch (filterType) {
-			case 'type': if (move.type !== value) return false;
+			case 'type': {
+				const type2 = (move as any).type2 as string | undefined;
+				if (move.type !== value && type2 !== value) return false;
 				break;
+			}
 			case 'category': if (move.category !== value) return false;
 				break;
 			case 'flag': if (!(value in move.flags)) return false;

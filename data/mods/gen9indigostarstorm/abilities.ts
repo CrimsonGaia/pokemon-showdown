@@ -954,6 +954,19 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		rating: 3,
 		num: 1055,
 	},
+	shapememory: {
+  		name: "Shape Memory",
+  		shortDesc: "Remembers height/weight scaling through Transform and switching.",
+  		onStart(pokemon) {
+  			pokemon.addVolatile('shapememory');
+  			const h = pokemon.shapeMemoryHeightScale ?? 1;
+  			const w = pokemon.shapeMemoryWeightScale ?? 1;
+  			if (h !== 1) pokemon.heightmm = Math.max(10, Math.round(pokemon.heightmm * h));
+  			if (w !== 1) pokemon.weighthg = Math.max(1, Math.round(pokemon.weighthg * w));
+		},
+ 	 	rating: 1,
+  		num: 1056,
+	},
 	shellsword: {
 		onModifyMove(move, pokemon) {  if (move.flags?.slice) {
 			move.flags.contact = 0;
@@ -963,7 +976,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		flags: {},
 		name: "Shell Sword",
 		rating: 3,
-		num: 1056,
+		num: 1057,
 	},
 	solaraspect: {
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.solar) { return this.chainModify(1.3); } },
@@ -986,7 +999,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Solar Aspect",
 		shortDesc: "1.3x Solar move power, immune to Solar. Sun: 1.15x all stats, heals 1/16 HP/turn. Takes 2x Lunar damage.",
 		rating: 3.5,
-		num: 1057,
+		num: 1058,
 	},
 	souleater: {
 		onAnyFaintPriority: 1,
@@ -998,7 +1011,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Soul Eater",
 		shortDesc: "When opposing Pokemon faints, holder heals 1/4 max HP.",
 		rating: 3.5,
-		num: 1058,
+		num: 1059,
 	},
 	soothingfeelers: {
 		onDamagingHit(damage, target, source, move) { if (this.checkMoveMakesContact(move, source, target)) { if (this.randomChance(3, 10)) { source.trySetStatus('aura', target, {
@@ -1020,7 +1033,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		flags: {},
 		name: "Soothing Feelers",
 		rating: 3.5,
-		num: 1059,
+		num: 1060,
 	},
 	spellhorizon: {
 		onStart(source) {
@@ -1030,7 +1043,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Spell Horizon",
 		shortDesc: "On switch-in, sets Magic Room for 5 turns.",
 		rating: 4,
-		num: 1060,
+		num: 1061,
 	},
 	spritiguide: {
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.aura) { return this.chainModify(1.5); } },
@@ -1060,7 +1073,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Spirit Guide",
 		shortDesc: "1.5x Aura move power. Aura moves bounce back to the attacker.",
 		rating: 3,
-		num: 1061,
+		num: 1062,
 	},
 	starterdough: {
 		onStart(pokemon) {
@@ -1109,7 +1122,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Starter Dough",
 		shortDesc: "Immune to Fire moves; becomes Baked on 1st hit, gains Rock type on 2nd. Breath moves heal target.",
 		rating: 4,
-		num: 1062,
+		num: 1063,
 	},
 	steelwings: {
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.slice) { return this.chainModify(1.5); } },
@@ -1118,7 +1131,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Steel Wings",
 		shortDesc: "1.5x power with Slice moves. Wing moves gain Slice flag.",
 		rating: 3,
-		num: 1063,
+		num: 1064,
 	},
 	steelgirder: {
 		onBasePower(basePower, attacker, defender, move) { if (move.type === 'Steel') { return this.chainModify(1.5); } },
@@ -1131,7 +1144,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Steel Girder",
 		shortDesc: "1.5x power with Steel moves. Contact moves do not make contact and gain weapon flag.",
 		rating: 3,
-		num: 1064,
+		num: 1065,
 	},
 	superconductor: {
 		onModifySpe(spe, pokemon) { if (this.field.isWeather(['hail', 'snow', 'snowscape'])) { return this.chainModify(1.25); } },
@@ -1157,7 +1170,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Superconductor",
 		shortDesc: "In hail: 1.25x Speed, immune to Electric, becomes airborne 1 turn and gains Ground immunity.",
 		rating: 4,
-		num: 1065,
+		num: 1066,
 	},
 	surgingmigraine: {
 		onStart(pokemon) {
@@ -1181,7 +1194,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Surging Migraine",
 		shortDesc: "On switch-in and each turn, sets Wonder Room. Other rooms cannot be set while active.",
 		rating: 3.5,
-		num: 1066,
+		num: 1067,
 	},
 	thorns: {
 		onDamagingHitOrder: 1,
@@ -1190,7 +1203,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Thorns",
 		shortDesc: "If holder is hit by a contact move, attacker loses 1/12 max HP.",
 		rating: 2.5,
-		num: 1067,
+		num: 1068,
 	},
 	threeminded: {
 		onPrepareHit(source, target, move) {
@@ -1207,7 +1220,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Three Minded",
 		shortDesc: "Bite/Piercing moves hit 3 times at 0.5x power each. Can use moves while asleep.",
 		rating: 3,
-		num: 1068,
+		num: 1069,
 	},
 	thunderhead: {
 		onBasePower(basePower, attacker, defender, move) { if (move.type === 'Electric' && this.field.isWeather(['hail', 'snow', 'snowscape', 'raindance', 'primordialsea'])) { return this.chainModify(1.3); } },
@@ -1216,7 +1229,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Thunderhead",
 		shortDesc: "1.3x Electric move power in hail/snow/rain. Immune to hail/snow damage.",
 		rating: 3,
-		num: 1069,
+		num: 1070,
 	},
 	thunderthighs: {
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.kick) { return this.chainModify(1.3); } },
@@ -1226,7 +1239,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Thunder Thighs",
 		shortDesc: "1.3x Kick move power. 20% chance to Paralyze on contact. Adds Charge after contact move.",
 		rating: 3,
-		num: 1070,
+		num: 1071,
 	},
 	timebreak: {
 		onStart(source) { this.field.addPseudoWeather('timebreak', source, source.ability); },
@@ -1241,7 +1254,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Time Break",
 		shortDesc: "On switch-in, summons Time Break field. Removed if no active user remains.",
 		rating: 5,
-		num: 1071,
+		num: 1072,
 	},
 	tippedthorns: {
 		onDamagingHitOrder: 1,
@@ -1253,7 +1266,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "TippedThorns",
 		shortDesc: "If holder is hit by a contact move, attacker loses 1/16 max HP and 20% chance to be Paralyzed.",
 		rating: 3,
-		num: 1072,
+		num: 1073,
 	},
 	toxicpollen: {
 		onDamagingHit(damage, target, source, move) { if (this.randomChance(3, 10)) { source.trySetStatus('tox', target); } },
@@ -1261,7 +1274,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Toxic Pollen",
 		shortDesc: "30% chance to badly poison attacker when hit by a move.",
 		rating: 3,
-		num: 1073,
+		num: 1074,
 	},
 	toxicsurge: {
 		onStart(source) { this.field.setTerrain('toxicterrain'); },
@@ -1269,7 +1282,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Toxic Surge",
 		shortDesc: "On switch-in, sets Toxic Terrain for 4 turns [11 if Terrain Extender is held].",
 		rating: 4,
-		num: 1074,
+		num: 1075,
 	},
 	twominded: {
 		onBeforeMovePriority: 11,
@@ -1278,7 +1291,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Two Minded",
 		shortDesc: "Can use moves while asleep.",
 		rating: 3,
-		num: 1075,
+		num: 1076,
 	},
 	volvation: {
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.spin) { return this.chainModify(1.5); } },
@@ -1296,7 +1309,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Volvation",
 		shortDesc: "1.5x Spin move power. Opposing Bullet/Bite/Bomb/Claw/Kick/Pierce/Punch/Slice moves have 0.5x power.",
 		rating: 3,
-		num: 1076,
+		num: 1077,
 	},
 	waterlogged: {
 		onStart(source) { this.field.addPseudoWeather('swamp', source, source.ability); },
@@ -1304,7 +1317,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Waterlogged",
 		shortDesc: "On switch-in, summons Swamp field. Reduces Water move power to 0.5x.",
 		rating: 3.5,
-		num: 1077,
+		num: 1078,
 	},
 	webarmor: {
 		onModifyDefPriority: 6,
@@ -1321,7 +1334,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Web Armor",
 		shortDesc: "2x Defense. Armor breaks on Fire/Slice moves. Contact moves reduce Speed 1 stage. Airborne Moves +1 priority.",
 		rating: 4,
-		num: 1078,
+		num: 1079,
 	},
 	woodpillar: {
 		onBasePower(basePower, attacker, defender, move) { if (move.type === 'Grass') { return this.chainModify(1.5); } },
@@ -1334,7 +1347,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Wood Pillar",
 		shortDesc: "1.5x power with Grass moves. Contact moves do not make contact and gain weapon flag.",
 		rating: 3,
-		num: 1079,
+		num: 1080,
 	},
 
 

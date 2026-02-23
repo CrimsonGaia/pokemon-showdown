@@ -422,8 +422,14 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		critRatio: 4,
 		flags: { contact: 1, crash: 1, weapon: 1, failcopycat: 1, failmimic: 1, protect: 1, mirror: 1 },
 		secondary: null,
-	    target: "normal",
 		onEffectiveness(typeMod, target, type) { if (type === 'Steel') return 1; },
+		onBasePower(basePower, attacker, defender, move) {
+			const height = defender.getHeightm?.();
+			if (height && height >= 2.5) { return this.chainModify(1.5); }
+		},
+		desc: "1.5x power if target's Height≥2.5m. Hits Steel neutrally",
+		shortDesc: "1.5x power if target's Height≥2.5m. Hits Steel neutrally",
+	    target: "normal",
    },
 	behemothblade: {
 		num: 781,
@@ -437,8 +443,12 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		critRatio: 4,
 		flags: { contact: 1, slicing: 1, weapon: 1, failcopycat: 1, failmimic: 1, protect: 1, mirror: 1 },
 		secondary: null,
-		desc: "",
-		shortDesc: "",
+		onBasePower(basePower, attacker, defender, move) {
+			const height = defender.getHeightm?.();
+			if (height && height >= 2.5) { return this.chainModify(1.5); }
+		},
+		desc: "1.5x power if target's Height≥2.5m",
+		shortDesc: "1.5x power if target's Height≥2.5m",
 		target: "normal",
 	},
 	bind: {
@@ -656,6 +666,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		condition: {
 			duration: 2,
 			onInvulnerability(target, source, move) {
+				if (source?.hasAbility && source.hasAbility('highdrop') || source.hasAbility('thunderhead')) return;
 				if (['gust', 'twister', 'skyuppercut', 'thunder', 'hurricane', 'smackdown', 'thousandarrows'].includes(move.id)) { return; }
 				return false;
 			},
@@ -2175,6 +2186,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		condition: {
 			duration: 2,
 			onInvulnerability(target, source, move) {
+				if (source?.hasAbility && source.hasAbility('highdrop') || source.hasAbility('thunderhead')) return;
 				if (['gust', 'twister', 'skyuppercut', 'thunder', 'hurricane', 'smackdown', 'thousandarrows'].includes(move.id)) { return; }
 				return false;
 			},
@@ -4227,8 +4239,14 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		critRatio: 4,
 		flags: { slicing: 1, protect: 1, mirror: 1, metronome: 1 },
 		secondary: null,
-		desc: "",
-		shortDesc: "",
+		onHit(target, source, move) {
+			if (target.status === 'aura' && target.statusState && target.statusState.duration) {
+				target.statusState.duration = Math.ceil(target.statusState.duration / 2);
+				this.add('-message', `${target.name}'s aura was disrupted by Signal Beam!`);
+			}
+		},
+		desc: "Dirupt target's active Aura, cutting the duration in 1/2",
+		shortDesc: "1/2 duration of target's active Aura",
 		target: "normal",
 	},
 	psyshieldbash: {
@@ -5121,6 +5139,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		onAnyInvulnerability(target, source, move) {
 			if (target !== this.effectState.target && target !== this.effectState.source) { return; }
 			if (source === this.effectState.target && target === this.effectState.source) { return; }
+			if (source?.hasAbility && source.hasAbility('highdrop') || source.hasAbility('thunderhead')) return;
 			if (['gust', 'twister', 'skyuppercut', 'thunder', 'hurricane', 'smackdown', 'thousandarrows'].includes(move.id)) { return; }
 			return false;
 		},
@@ -5398,14 +5417,24 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		critRatio: 7,
 		flags: { contact: 1, protect: 1, mirror: 1, nonsky: 1, metronome: 1 },
 		secondary: { chance: 30, volatileStatus: 'flinch', },
-		desc: "30% chance to Flinch target",
-		shortDesc: "30% Flinch",
+		onBasePower(basePower, attacker, defender, move) {
+			const atkH = attacker.getHeightm?.();
+			const defH = defender.getHeightm?.();
+			if (atkH && defH && atkH >= 5 * defH) return this.chainModify(2);
+		},
+		desc: "30% chance to Flinch target. 2x power if target's Height is at least 5x smaller than the user's",
+		shortDesc: "30% Flinch. 2x power if target's Height is at least 5x smaller than the user's",
 		target: "normal",
 	},
 	stompingtantrum: {
 		num: 707,
 		accuracy: 100,
 		basePower: 75,
+		onBasePower(basePower, attacker, defender, move) {
+			const atkH = attacker.getHeightm?.();
+			const defH = defender.getHeightm?.();
+			if (atkH && defH && atkH >= 5 * defH) return this.chainModify(2);
+		},
 		basePowerCallback(pokemon, target, move) {
 			if (pokemon.moveLastTurnResult === false) {
 				this.debug('doubling Stomping Tantrum BP due to previous move failure');
@@ -5421,6 +5450,9 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		critRatio: 4,
 		flags: { contact: 1, kick: 1, protect: 1, mirror: 1, metronome: 1 },
 		secondary: null,
+		
+		desc: "2x power if target's Height is at least 5x smaller than the user's. 2x power if user's previous move failed. These effects stack",
+		shortDesc: "2x power if target's Height is at least 5x smaller than the user's. 2x power if user's previous move failed. These effects stack",
 		target: "normal",
 	},
 	stoneaxe: {
@@ -7330,17 +7362,29 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 	eggbomb: {
 		num: 121,
 		accuracy: 95,
-		basePower: 100,
+		basePower: 0,
+		basePowerCallback(pokemon, target) {
+			const targetHeight = target.getHeightm();
+			const pokemonHeight = pokemon.getHeightm();
+			let bp;
+			if (pokemonHeight >= targetHeight * 4) { bp = 140; }
+			else if (pokemonHeight >= targetHeight * 3) { bp = 130; }
+			else if (pokemonHeight >= targetHeight * 2) { bp = 110; }
+			else if (pokemonHeight >= targetHeight * 1.5) { bp = 90; }
+			else { bp = 70; }
+			this.debug(`BP: ${bp}`);
+			return bp;
+		},
 		type: "Grass",
 		category: "Special",
 		name: "Egg Bomb",
 		pp: 10,
 		priority: 0,
 		critRatio: 4,
-		flags: { bomb: 1, protect: 1, mirror: 1, metronome: 1,  },
+		flags: { bomb: 1, protect: 1, mirror: 1, metronome: 1 },
 		secondary: null,
-		desc: "",
-		shortDesc: "",
+		desc: "Power boosts the taller the user is compared to the target, up to 120.",
+		shortDesc: "Power boosts the taller the user is compared to the target.",
 		target: "normal",
 	},
 	electroball: {
@@ -12632,12 +12676,19 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 20,
 		priority: 0,
 		flags: { solar: 1, snatch: 1, metronome: 1 },
-		onModifyMove(move, pokemon) { if (['sunnyday', 'desolateland'].includes(pokemon.effectiveWeather())) move.boosts = { atk: 2, spa: 2 }; },
-		boosts: {atk: 1, spa: 1,},
+		onHit(pokemon) {
+			const inSun = ['sunnyday', 'desolateland'].includes(pokemon.effectiveWeather());
+			const mult = inSun ? 1.4 : 1.2;
+			pokemon.heightmm = Math.max(10, Math.round(pokemon.heightmm * mult));
+			pokemon.weighthg = Math.max(1, Math.round(pokemon.weighthg * mult));
+		},
+		onModifyMove(move, pokemon) { if (['sunnyday', 'desolateland'].includes(pokemon.effectiveWeather())) { move.boosts = { atk: 2, spa: 2 }; } },
+		boosts: { atk: 1, spa: 1 },
 		secondary: null,
-		desc: "Boosts user's Attack and Special Attack [+1 stage, +2 stages under Sun]; SOUND: This move bypasses substitutes",
-		shortDesc: "+1 ATK & DEF: User [+2 under Sun]",
+		desc: "Boosts user's Attack and Special Attack [+1, +2 in Sun] and increases height by 20%.",
+		shortDesc: "+1 Atk/SpA; +2 in Sun. User grows taller.",
 		target: "self",
+		
 	},
 	guardsplit: {
 		num: 470,
