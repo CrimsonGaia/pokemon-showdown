@@ -16,7 +16,7 @@ declare const BattleStatuses: { [id: string]: AnyObject };
 declare const BattlePokemonSprites: { [id: string]: AnyObject };
 declare const BattlePokemonSpritesBW: { [id: string]: AnyObject };
 declare const NonBattleGames: { [id: string]: string };
-
+declare const ISL_ALLOWED_CACHE: WeakMap<object, Set<string>>;
 // Window
 /////////
 

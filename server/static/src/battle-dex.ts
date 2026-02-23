@@ -48,6 +48,7 @@ export declare namespace Dex {
 	export type StatsTable = { hp: number, atk: number, def: number, spa: number, spd: number, spe: number };
 	export type PokemonSet = Teams.PokemonSet;
 }
+const ISL_ALLOWED_CACHE: WeakMap<object, Set<ID>> = new WeakMap();
 export type { ID };
 declare const require: any;
 declare const global: any;
@@ -1034,7 +1035,41 @@ export class ModdedDex {
 				data.id ||= id;
 				data.name ||= name;
 			}
+			// Indigo Starstorm roster behavior:
+// Anything not explicitly in the gen9indigostarstorm teambuilder table is treated as Past,
+// so the client hides it the same way it hides non-roster mons in official gens.
+if (this.modid === 'gen9indigostarstorm') {
+	let allowedSet = ISL_ALLOWED_CACHE.get(this);
+	if (!allowedSet) {
+		const allowedIds: ID[] = [];
 
+		// Prefer tiers if present; otherwise use tierSet.
+		const rows: any[] | undefined = (modTable as any)?.tiers || (modTable as any)?.tierSet;
+		if (rows) {
+			for (const row of rows) {
+				// tiers can be "Pikachu" strings or ['pokemon','pikachu'] rows depending on build step
+				if (typeof row === 'string') {
+					allowedIds.push(toID(row) as ID);
+				} else if (Array.isArray(row) && row[0] === 'pokemon' && row[1]) {
+					allowedIds.push(toID(row[1]) as ID);
+				}
+			}
+		}
+
+		allowedSet = new Set(allowedIds);
+		ISL_ALLOWED_CACHE.set(this, allowedSet);
+	}
+
+	// Always keep custom mons
+	const num = (data.num ?? base?.num) as number | undefined;
+	const isCustom = typeof num === 'number' && (num >= 10000 || num < 0);
+
+	// Allow forms if either the form OR its baseSpecies is allowed
+	const baseId = toID(data.baseSpecies || data.name || name) as ID;
+	const ok = isCustom || allowedSet.has(id) || allowedSet.has(baseId);
+
+	if (!ok) data.isNonstandard = 'Past';
+}
 			if (this.gen < 3 || this.modid === 'gen7letsgo') data.abilities = { 0: "No Ability" };
 
 			if (modTable?.overrideTier && id in modTable.overrideTier) data.tier = modTable.overrideTier[id];

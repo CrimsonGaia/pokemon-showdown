@@ -3376,49 +3376,41 @@ statSlided: function (e) {
 			var slot = $(e.currentTarget).data('slot');
 			console.log('[CHART CLICK] Slot:', slot);
 			// Ability clicks in ISL choose the entire ability set (updates BOTH slots).
-if (entry && entry.slice(0, 8) === 'ability|') {
-  var abilitySetClicked = $(e.currentTarget).data('abilityset');
-  var format = (this.curTeam && this.curTeam.format) || '';
-  var isISL = (format.includes('indigostarstorm') || format.toLowerCase().includes('isl'));
+			if (entry && entry.slice(0, 8) === 'ability|') {
+	 	 		var abilitySetClicked = $(e.currentTarget).data('abilityset');
+  				var format = (this.curTeam && this.curTeam.format) || '';
+  				var isISL = (format.includes('indigostarstorm') || format.toLowerCase().includes('isl'));
 
-  if (isISL && abilitySetClicked) {
-    var setNum = Number(abilitySetClicked) || 1;
-
-    var dex = this.curTeam.dex;
-    var species = dex.species.get(this.curSet.species);
-    var abilTable = (species && species.abilities) || {};
-
-    function cleanAbilityName(x) {
-      if (!x) return '';
-      if (typeof x !== 'string') return '';
-      if (x === 'None') return '';
-      return x;
-    }
-
-    var set1 = [cleanAbilityName(abilTable['0']), cleanAbilityName(abilTable['1'])].filter(Boolean);
-    var set2 = [cleanAbilityName(abilTable['H']), cleanAbilityName(abilTable['S'])].filter(Boolean);
-
-    // If set 2 doesn't exist, force set 1
-    if (!set2.length) setNum = 1;
-
-    var chosen = (setNum === 2 ? set2 : set1);
-
-    // Update BOTH ability slots together
-    this.curSet.abilitySet = setNum;
-    this.curSet.ability = chosen[0] || '';
-    this.curSet.ability2 = chosen[1] || '';
-
-    // Sync inputs
-    this.$('input[name=ability]').val(this.curSet.ability);
-    this.$('input[name=ability2]').val(this.curSet.ability2);
-    this.$('button[name=abilitySetToggle]').text('' + setNum);
-
-    this.curTeam.iconCache = '!';
-    this.updateAbilitySetsForm();
-    this.save();
-    return;
-  }
-}
+  				if (isISL && abilitySetClicked) {
+    				var setNum = Number(abilitySetClicked) || 1;
+    				var dex = this.curTeam.dex;
+    				var species = dex.species.get(this.curSet.species);
+   			 		var abilTable = (species && species.abilities) || {};
+    				function cleanAbilityName(x) {
+      					if (!x) return '';
+      					if (typeof x !== 'string') return '';
+      					if (x === 'None') return '';
+      					return x;
+    				}
+    				var set1 = [cleanAbilityName(abilTable['0']), cleanAbilityName(abilTable['1'])].filter(Boolean);
+    				var set2 = [cleanAbilityName(abilTable['H']), cleanAbilityName(abilTable['S'])].filter(Boolean);
+    				// If set 2 doesn't exist, force set 1
+    				if (!set2.length) setNum = 1;
+   		 			var chosen = (setNum === 2 ? set2 : set1);
+    				// Update BOTH ability slots together
+    				this.curSet.abilitySet = setNum;
+    				this.curSet.ability = chosen[0] || '';
+    				this.curSet.ability2 = chosen[1] || '';
+    				// Sync inputs
+    				this.$('input[name=ability]').val(this.curSet.ability);
+    				this.$('input[name=ability2]').val(this.curSet.ability2);
+    				this.$('button[name=abilitySetToggle]').text('' + setNum);
+    				this.curTeam.iconCache = '!';
+    				this.updateAbilitySetsForm();
+    				this.save();
+    				return;
+  				}
+			}
 			if (this.curChartType === 'move' && e.currentTarget.className === 'cur') {
 				// clicked a move, remove it if we already have it
 				var moves = [];
@@ -3582,6 +3574,26 @@ if (entry && entry.slice(0, 8) === 'ability|') {
 			var inputName = this.curChartName;
 			var input = this.$('input[name=' + inputName + ']');
 			if (this.chartSetCustom(input.val())) return;
+			// Normalize IDs -> display names (vanilla behavior)
+// Some callers pass IDs (e.g. "covertcloak"), but the textbox should show names ("Covert Cloak").
+var format = this.curTeam && this.curTeam.format || '';
+var id = toID(val);
+
+if (inputName === 'pokemon') {
+	if (id in BattlePokedex) val = this.curTeam.dex.species.get(id).name;
+} else if (inputName === 'item') {
+	// Handle special formats (mirrors chartChange behavior)
+	if (id in BattleMovedex && format && format.endsWith("fortemons")) val = BattleMovedex[id].name;
+	else if (id in BattleAbilities && format && format.endsWith("multibility")) val = BattleAbilities[id].name;
+	else if (id in BattleItems) val = BattleItems[id].name;
+} else if (inputName === 'ability') {
+	if (id in BattleItems && format && format.endsWith("dualwielding")) val = BattleItems[id].name;
+	else if (id in BattleMovedex && format && format.endsWith("trademarked")) val = BattleMovedex[id].name;
+	else if (id in BattleAbilities) val = BattleAbilities[id].name;
+} else if (inputName === 'move') {
+	if (id in BattlePokedex && format && format.endsWith("pokemoves")) val = BattlePokedex[id].name;
+	else if (id in BattleMovedex) val = BattleMovedex[id].name;
+}
 			input.val(val).removeClass('incomplete');
 			switch (inputName) {
 			case 'pokemon': this.setPokemon(val, selectNext);

@@ -48,6 +48,7 @@
 
 
 
+var ISL_ALLOWED_CACHE=new WeakMap();
 
 
 
@@ -1035,6 +1036,40 @@ data.id||(data.id=id);
 data.name||(data.name=name);
 }
 
+
+
+if(_this2.modid==='gen9indigostarstorm'){var _data$num;
+var allowedSet=ISL_ALLOWED_CACHE.get(_this2);
+if(!allowedSet){
+var allowedIds=[];
+
+
+var rows=(modTable==null?void 0:modTable.tiers)||(modTable==null?void 0:modTable.tierSet);
+if(rows){for(var _i10=0;_i10<
+rows.length;_i10++){var row=rows[_i10];
+
+if(typeof row==='string'){
+allowedIds.push(toID(row));
+}else if(Array.isArray(row)&&row[0]==='pokemon'&&row[1]){
+allowedIds.push(toID(row[1]));
+}
+}
+}
+
+allowedSet=new Set(allowedIds);
+ISL_ALLOWED_CACHE.set(_this2,allowedSet);
+}
+
+
+var num=(_data$num=data.num)!=null?_data$num:base==null?void 0:base.num;
+var isCustom=typeof num==='number'&&(num>=10000||num<0);
+
+
+var baseId=toID(data.baseSpecies||data.name||name);
+var ok=isCustom||allowedSet.has(id)||allowedSet.has(baseId);
+
+if(!ok)data.isNonstandard='Past';
+}
 if(_this2.gen<3||_this2.modid==='gen7letsgo')data.abilities={0:"No Ability"};
 
 if(modTable!=null&&modTable.overrideTier&&id in modTable.overrideTier)data.tier=modTable.overrideTier[id];
@@ -1089,8 +1124,8 @@ return data;
 getPokeballs=function getPokeballs(){var _window2;
 if(this.pokeballs)return this.pokeballs;
 this.pokeballs=[];
-(_window2=window).BattleItems||(_window2.BattleItems={});for(var _i10=0,_Object$values4=
-Object.values(BattleItems);_i10<_Object$values4.length;_i10++){var data=_Object$values4[_i10];
+(_window2=window).BattleItems||(_window2.BattleItems={});for(var _i12=0,_Object$values4=
+Object.values(BattleItems);_i12<_Object$values4.length;_i12++){var data=_Object$values4[_i12];
 if(data.gen&&data.gen>this.gen)continue;
 if(!data.isPokeball)continue;
 this.pokeballs.push(data.name);

@@ -877,7 +877,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 			0: "Cloud Nine",
 			1: "Damp",
 					// ABILITY SET 2
-			H: "Swift Swim",
+			H: "Surging Migraine",
 			S: "Damp",
 		},
 		heightm: 0.8,
@@ -2330,6 +2330,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseStats: { hp: 48, atk: 48, def: 48, spa: 48, spd: 48, spe: 48 },
 		abilities: { // ABILITY SET 1
 			0: "Imposter",
+			1: "Shape Memory"
 		},
 		heightm: 0.3,
 		weightkg: 4,
