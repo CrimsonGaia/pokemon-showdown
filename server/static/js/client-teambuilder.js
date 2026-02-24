@@ -1643,6 +1643,16 @@ if (this.curTeam.gen > 1) {
 			}
 		},
 		addPokemon: function () {
+			// Ensure curTeam.dex exists (some code paths call addPokemon before focus() runs)
+if (this.curTeam && !this.curTeam.dex) {
+	this.curTeam.gen = this.getGen(this.curTeam.format);
+	this.curTeam.dex = Dex.forGen(this.curTeam.gen);
+	if (this.curTeam.format.includes('letsgo')) this.curTeam.dex = Dex.mod('gen7letsgo');
+	if (this.curTeam.format.includes('bdsp')) this.curTeam.dex = Dex.mod('gen8bdsp');
+	if (this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.includes('isl')) {
+		this.curTeam.dex = Dex.mod('gen9indigostarstorm');
+	}
+}
 			if (!this.curTeam) return;
 			var team = this.curSetList;
 			if (!team.length || team[team.length - 1].species) {
@@ -1651,6 +1661,7 @@ if (this.curTeam.gen > 1) {
 					species: '',
 					item: '',
 					nature: '',
+					level: this.getISLTeambuilderLevel(this.curTeam.format),    
 					evs: {},
 					ivs: {},
 					moves: []
@@ -1716,7 +1727,10 @@ if (this.curTeam.gen > 1) {
 			if (!this.curSetList.length) {app.addPopupMessage("You need at least one Pokémon to validate.");
 				return;
 			}
-			if (window.BattleFormats && BattleFormats[format] && BattleFormats[format].battleFormat) { format = BattleFormats[format].battleFormat; }
+			var formatid = toID(format);
+if (!formatid.startsWith('isl') && window.BattleFormats && BattleFormats[format] && BattleFormats[format].battleFormat) {
+  format = BattleFormats[format].battleFormat;
+}
 			app.sendTeam(this.curTeam, function () { app.send('/vtm ' + format); });
 		},
 		teamNameChange: function (e) {
@@ -2466,7 +2480,7 @@ if (this.curTeam.gen > 1) {
       if (!name) return '';
       var id = toID(name);
       var ability = dex.abilities.get(name);
-      var desc = (BattleAbilities[id] && BattleAbilities[id].shortDesc) || ability.shortDesc || '';
+      var desc = ability.shortDesc || ability.desc || '';
       return (
         '<li class="result abilityrow">' +
           '<a class="cur" data-entry="ability|' + BattleLog.escapeHTML(name) + '">' +
@@ -2539,7 +2553,7 @@ if (this.curTeam.gen > 1) {
     if (!name) return '';
     var id = toID(name);
     var ability = dex.abilities.get(name);
-    var desc = (BattleAbilities[id] && BattleAbilities[id].shortDesc) || ability.shortDesc || '';
+    var desc = ability.shortDesc || ability.desc || '';
     var curClass = (set.abilitySet === setNum) ? 'cur' : '';
     return (
       '<li class="result abilityrow">' +
@@ -3158,8 +3172,9 @@ statSlided: function (e) {
 			console.log('Container found:', $container.length, 'Level input found:', $container.find('input[name=level]').length);
 			var level = parseInt($container.find('input[name=level]').val(), 10);
 			console.log('Level value:', level, 'from input:', $container.find('input[name=level]').val());
-			if (!level || level > 100 || level < 1) level = 100;
-			if (level !== 100 || set.level) set.level = level;
+			if (!level || level < 1) return;   // ignore invalid input instead of forcing 100
+			if (level > 100) level = 100;
+			if (fieldName === 'level') { if (level !== 100 || set.level) set.level = level; }
 			// happiness
 			var happiness = parseInt($container.find('input[name=happiness]').val(), 10);
 			if (isNaN(happiness) || happiness > 255 || happiness < 0) happiness = 255;
@@ -3531,6 +3546,7 @@ statSlided: function (e) {
 			case 'pokemon': val = (id in BattlePokedex ? this.curTeam.dex.species.get(e.currentTarget.value).name : '');
 				break;
 			case 'ability':
+			case 'ability2':
 				if (id in BattleItems && format && format.endsWith("dualwielding")) { val = BattleItems[id].name; } 
 				else if (id in BattleMovedex && format && format.endsWith("trademarked")) { val = BattleMovedex[id].name; } 
 				else { val = (id in BattleAbilities ? BattleAbilities[id].name : ''); }
@@ -3538,11 +3554,11 @@ statSlided: function (e) {
 			case 'item':
 				if (id in BattleMovedex && format && format.endsWith("fortemons")) { val = BattleMovedex[id].name; } 
 				else if (id in BattleAbilities && format && format.endsWith("multibility")) { val = BattleAbilities[id].name; } 
-				else { val = (id in BattleItems ? BattleItems[id].name : ''); }
+				else { val = (id ? this.curTeam.dex.items.get(id).name : ''); }
 				break;
 			case 'move1': case 'move2': case 'move3': case 'move4':
 				if (id in BattlePokedex && format && format.endsWith("pokemoves")) { val = BattlePokedex[id].name; } 
-				else { val = (id in BattleMovedex ? BattleMovedex[id].name : ''); }
+				else { val = (id ? this.curTeam.dex.moves.get(id).name : ''); }
 				break;
 			}
 			if (!val) { if (name === 'pokemon' || name === 'ability' || id) { $(e.currentTarget).addClass('incomplete');
@@ -3575,26 +3591,32 @@ statSlided: function (e) {
 			var input = this.$('input[name=' + inputName + ']');
 			if (this.chartSetCustom(input.val())) return;
 			// Normalize IDs -> display names (vanilla behavior)
-// Some callers pass IDs (e.g. "covertcloak"), but the textbox should show names ("Covert Cloak").
-var format = this.curTeam && this.curTeam.format || '';
-var id = toID(val);
+			// Some callers pass IDs (e.g. "covertcloak"), but the textbox should show names ("Covert Cloak").
+			var format = this.curTeam && this.curTeam.format || '';
+			var id = toID(val);
 
-if (inputName === 'pokemon') {
-	if (id in BattlePokedex) val = this.curTeam.dex.species.get(id).name;
-} else if (inputName === 'item') {
-	// Handle special formats (mirrors chartChange behavior)
-	if (id in BattleMovedex && format && format.endsWith("fortemons")) val = BattleMovedex[id].name;
-	else if (id in BattleAbilities && format && format.endsWith("multibility")) val = BattleAbilities[id].name;
-	else if (id in BattleItems) val = BattleItems[id].name;
-} else if (inputName === 'ability') {
-	if (id in BattleItems && format && format.endsWith("dualwielding")) val = BattleItems[id].name;
-	else if (id in BattleMovedex && format && format.endsWith("trademarked")) val = BattleMovedex[id].name;
-	else if (id in BattleAbilities) val = BattleAbilities[id].name;
-} else if (inputName === 'move') {
-	if (id in BattlePokedex && format && format.endsWith("pokemoves")) val = BattlePokedex[id].name;
-	else if (id in BattleMovedex) val = BattleMovedex[id].name;
+			if (inputName === 'pokemon') {
+				if (id in BattlePokedex) val = this.curTeam.dex.species.get(id).name;
+			} else if (inputName === 'item') {
+				// Handle special formats (mirrors chartChange behavior)
+				if (id in BattleMovedex && format && format.endsWith("fortemons")) val = BattleMovedex[id].name;
+				else if (id in BattleAbilities && format && format.endsWith("multibility")) val = BattleAbilities[id].name;
+				else if (inputName.startsWith('move')) {
+  					if (id in BattlePokedex && format && format.endsWith("pokemoves")) val = this.curTeam.dex.species.get(id).name;
+  					else val = this.curTeam.dex.moves.get(id).name;
+				}
+			}
+			else if (inputName === 'ability' || inputName === 'ability2') {
+  				if (id in BattleItems && format && format.endsWith("dualwielding")) val = BattleItems[id].name;
+  				else if (id in BattleMovedex && format && format.endsWith("trademarked")) val = BattleMovedex[id].name;
+  				else if (id in BattleAbilities) val = BattleAbilities[id].name;
+			}
+			input.val(val);
+			input.removeClass('incomplete');
+			if (inputName === 'ability' || inputName === 'ability2') {
+  this.$('input[name=ability]').removeClass('incomplete');
+  this.$('input[name=ability2]').removeClass('incomplete');
 }
-			input.val(val).removeClass('incomplete');
 			switch (inputName) {
 			case 'pokemon': this.setPokemon(val, selectNext);
 				break;
@@ -3740,6 +3762,32 @@ if (inputName === 'pokemon') {
 				else { set.ivs['atk'] = (hasHiddenPower ? set.ivs['atk'] % hpModulo : 0); }
 			} else { set.ivs['atk'] = (hasHiddenPower ? 30 + (set.ivs['atk'] % 2) : 31); } // max Atk
 		},
+		getISLTeambuilderLevel: function (formatid) {
+	formatid = toID(formatid);
+
+	// only handle ISL formats
+	if (!formatid.includes('isl')) return 100;
+
+	// Reg α
+	if (formatid.includes('babyleague')) return 20;
+	// Reg Δ
+	if (formatid.includes('nfeleague')) return 30;
+	// Reg ι
+	if (formatid.includes('singlestageonly')) return 40;
+	// Reg β
+	if (formatid.includes('2ndstageleague')) return 50;
+	// Reg ζ
+	if (formatid.includes('betaparadox') || (formatid.includes('beta') && formatid.includes('paradox'))) return 60;
+	// Reg γ
+	if (formatid.includes('3rdstageleague')) return 70;
+	// Reg Θ
+	if (formatid.includes('norestricted') || formatid.includes('norestrictedspecial')) return 80;
+	// Reg ε
+	if (formatid.includes('restrictedparadox')) return 90;
+
+	// λ/ψ/ν/φ and anything else default to 100
+	return 100;
+},
 		setPokemon: function (val, selectNext) {
 			var set = this.curSet;
 			var species = this.curTeam.dex.species.get(val);
@@ -3750,20 +3798,23 @@ if (inputName === 'pokemon') {
 			set.species = val;
 			if (set.level) delete set.level;
 			if (this.curTeam && this.curTeam.format) {
-				var baseFormat = this.curTeam.format;
-				var format = window.BattleFormats && window.BattleFormats[baseFormat];
-				if (baseFormat.substr(0, 3) === 'gen') baseFormat = baseFormat.substr(4);
-				if (baseFormat.substr(0, 4) === 'bdsp') baseFormat = baseFormat.substr(4);
-				if (baseFormat.substr(0, 8) === 'pokebank') baseFormat = baseFormat.substr(8);
-				if (baseFormat.substr(0, 6) === 'natdex') baseFormat = baseFormat.substr(6);
-				if (baseFormat.substr(0, 11) === 'nationaldex') baseFormat = baseFormat.substr(11);
-				if (baseFormat.substr(-5) === 'draft') baseFormat = baseFormat.substr(0, baseFormat.length - 5);
-				if (!baseFormat) baseFormat = 'ou';
+				var baseFormat = toID(this.curTeam.format);
+				var baseFormatNoGen = baseFormat;
+if (baseFormatNoGen.substr(0, 3) === 'gen') baseFormatNoGen = baseFormatNoGen.substr(4);
+if (baseFormatNoGen.substr(0, 4) === 'bdsp') baseFormatNoGen = baseFormatNoGen.substr(4);
+if (baseFormatNoGen.substr(0, 8) === 'pokebank') baseFormatNoGen = baseFormatNoGen.substr(8);
+if (baseFormatNoGen.substr(0, 6) === 'natdex') baseFormatNoGen = baseFormatNoGen.substr(6);
+if (baseFormatNoGen.substr(0, 11) === 'nationaldex') baseFormatNoGen = baseFormatNoGen.substr(11);
+if (baseFormatNoGen.substr(-5) === 'draft') baseFormatNoGen = baseFormatNoGen.substr(0, baseFormatNoGen.length - 5);
+if (!baseFormatNoGen) baseFormatNoGen = 'ou';
+var format = window.BattleFormats && BattleFormats[baseFormatNoGen];
 				if (this.curTeam && this.curTeam.format) {
-					if (baseFormat.substr(0, 10) === 'battlespot' && baseFormat.substr(0, 19) !== 'battlespotspecial13' || baseFormat.substr(0, 3) === 'vgc' || baseFormat.substr(0, 14) === 'battlefestival') set.level = 50;
-					if (baseFormat.startsWith('lc') || baseFormat.endsWith('lc')) set.level = 5;
-					if (baseFormat.substr(0, 19) === 'battlespotspecial17') set.level = 1;
-					if (format && format.teambuilderLevel) { set.level = format.teambuilderLevel; }
+				if (baseFormat.substr(0, 10) === 'battlespot' && baseFormat.substr(0, 19) !== 'battlespotspecial13' || baseFormat.substr(0, 3) === 'vgc' || baseFormat.substr(0, 14) === 'battlefestival') set.level = 50;
+				if (baseFormatNoGen.startsWith('lc') || baseFormatNoGen.endsWith('lc')) set.level = 5;
+				// ISL formats: we don't have BattleFormats entries client-side, so derive from the format id
+if (baseFormatNoGen.startsWith('isl')) set.level = this.getISLTeambuilderLevel(this.curTeam.format);
+				if (baseFormat.substr(0, 19) === 'battlespotspecial17') set.level = 1;
+				if (format && format.teambuilderLevel) { set.level = format.teambuilderLevel; }
 				}
 			}
 			if (set.gender) delete set.gender;
@@ -3783,6 +3834,27 @@ if (inputName === 'pokemon') {
 			set.ivs = {};
 			set.nature = '';
 			this.updateSetTop();
+			// ISL: ability boxes should behave like pickers only (no typing)
+var formatid = (this.curTeam && this.curTeam.format) || '';
+var isISL = formatid.includes('indigostarstorm') || toID(formatid).includes('isl');
+
+var $abil1 = this.$('input[name=ability]');
+var $abil2 = this.$('input[name=ability2]');
+
+$abil1.add($abil2).off('.islreadonly');
+
+if (isISL) {
+  // readonly keeps click/focus behavior (so chart/search still opens), but prevents typing
+  $abil1.add($abil2)
+    .prop('readonly', true)
+    .attr('autocomplete', 'off')
+    .on('keydown.islreadonly paste.islreadonly drop.islreadonly', function (e) {
+      e.preventDefault();
+    });
+} else {
+  // restore normal behavior outside ISL
+  $abil1.add($abil2).prop('readonly', false);
+}
 			if (selectNext) this.$(set.item || !this.$('input[name=item]').length ? (this.$('input[name=ability]').length ? 'input[name=ability]' : 'input[name=move1]') : 'input[name=item]').select();
 		},
 		/*********************************************************

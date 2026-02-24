@@ -356,7 +356,7 @@ export class DexSearch {
 				let originalIndex = entry[2]!;
 				if (matchStart) {
 					matchEnd = matchStart + query.length;
-					const offsetRow = BattleSearchIndexOffset[originalIndex] || '';
+					const offsetRow = BattleSearchIndexOffset?.[originalIndex] || '';
 					matchStart += (offsetRow[matchStart] || '0').charCodeAt(0) - 48;
 					matchEnd += (offsetRow[matchEnd - 1] || '0').charCodeAt(0) - 48;
 				}

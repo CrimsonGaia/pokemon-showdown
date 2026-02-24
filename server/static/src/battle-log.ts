@@ -75,6 +75,7 @@ export class BattleLog {
 			elem.appendChild(preemptElem);
 			this.preemptElem = preemptElem;
 			this.battleParser = new BattleTextParser();
+			(this.battleParser as any).battle = scene.battle;
 		}
 
 		this.className = elem.className;

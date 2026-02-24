@@ -9,7 +9,21 @@
  */
 
 import { Dex, toID, type ID } from "./battle-dex";
+// Optional global dependency provided by PS client builds.
+// Normalize different bundler outputs.
+declare const BattleText: any;
 
+function getBattleTextDict(): any | null {
+  const bt = (globalThis as any).BattleText;
+  if (!bt) return null;
+  return bt.default ?? bt; // support both shapes
+}
+
+function getBattleTextDefault(): any | null {
+  const dict = getBattleTextDict();
+  if (!dict) return null;
+  return dict.default ?? null;
+}
 export type Args = [string, ...string[]];
 export type KWArgs = { [kw: string]: string };
 export type SideID = 'p1' | 'p2' | 'p3' | 'p4';
@@ -236,7 +250,9 @@ export class BattleTextParser {
 	fixLowercase(input: string) {
 		if (this.lowercaseRegExp === undefined) {
 			const prefixes = ['pokemon', 'opposingPokemon', 'team', 'opposingTeam', 'party', 'opposingParty'].map(templateId => {
-				const template = BattleText.default[templateId];
+				const def = getBattleTextDefault();
+				if (!def) return input;
+				const template = def[templateId];
 				if (template.startsWith(template.charAt(0).toUpperCase())) return '';
 				const bracketIndex = template.indexOf('[');
 				if (bracketIndex >= 0) return template.slice(0, bracketIndex);

@@ -150,11 +150,15 @@ export const Teams = new class Teams {
 			const id = this.packName(set.species || set.name);
 			buf += `|${this.packName(set.name || set.species) === id ? '' : id}`;
 
+			// ISL schema: size is a core field (placed before item)
+			buf += `|${String(set.size || '').toUpperCase()}`;
+
 			// item
 			buf += `|${this.packName(set.item)}`;
 
-			// ability
-			buf += `|${this.packName(set.ability)}`;
+			// ISL schema: abilities field is "abilitySet/ability/ability2"
+			const abilitySet = (set.abilitySet === 2 ? 2 : 1);
+			buf += `|${abilitySet}/${this.packName(set.ability)}/${this.packName(set.ability2)}`;
 
 			// moves
 			buf += '|' + set.moves.map(this.packName).join(',');
@@ -214,17 +218,16 @@ export const Teams = new class Teams {
 				buf += '|';
 			}
 
-			if (set.pokeball || set.hpType || set.gigantamax ||
-				(set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10) || set.teraType || set.ability2 || set.abilitySet || set.size) {
-				buf += `,${set.hpType || ''}`;
-				buf += `,${this.packName(set.pokeball || '')}`;
-				buf += `,${set.gigantamax ? 'G' : ''}`;
-				buf += `,${set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10 ? set.dynamaxLevel : ''}`;
-				buf += `,${set.teraType || ''}`;
-				buf += `,${this.packName(set.ability2 || '')}`;
-				buf += `,${set.abilitySet || ''}`;
-				buf += `,${set.size || ''}`;
-			}
+			// misc: keep legacy structure but DO NOT store ability2/size here (they're core fields in ISL schema)
+if (set.pokeball || set.hpType || set.gigantamax ||
+  (set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10) || set.teraType || set.abilitySet) {
+  buf += `,${set.hpType || ''}`;
+  buf += `,${this.packName(set.pokeball || '')}`;
+  buf += `,${set.gigantamax ? 'G' : ''}`;
+  buf += `,${set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10 ? set.dynamaxLevel : ''}`;
+  buf += `,${set.teraType || ''}`;
+  buf += `,${set.abilitySet || ''}`;
+}
 		}
 
 		return buf;
@@ -262,21 +265,55 @@ export const Teams = new class Teams {
 			set.species = this.unpackName(buf.substring(i, j), Dex.species) || set.name;
 			i = j + 1;
 
-			// item
-			j = buf.indexOf('|', i);
-			if (j < 0) return null;
-			set.item = this.unpackName(buf.substring(i, j), Dex.items);
-			i = j + 1;
+			// ISL compatibility: field after species can be either SIZE (new) or ITEM (old)
+j = buf.indexOf('|', i);
+if (j < 0) return null;
+const f1 = buf.substring(i, j);
+i = j + 1;
+const f1u = (f1 || '').toUpperCase();
+const isNew = (f1u === '' || f1u === 'XS' || f1u === 'S' || f1u === 'M' || f1u === 'L' || f1u === 'XL');
 
-			// ability
-			j = buf.indexOf('|', i);
-			if (j < 0) return null;
-			const ability = buf.substring(i, j);
-			const species = Dex.species.get(set.species);
-			set.ability = ['', '0', '1', 'H', 'S'].includes(ability) ?
-				species.abilities[ability as '0' || '0'] || (ability === '' ? '' : '!!!ERROR!!!') :
-				this.unpackName(ability, Dex.abilities);
-			i = j + 1;
+if (isNew) {
+  // NEW (ISL): size
+  set.size = f1u || 'M';
+
+  // item
+  j = buf.indexOf('|', i);
+  if (j < 0) return null;
+  set.item = this.unpackName(buf.substring(i, j), Dex.items);
+  i = j + 1;
+
+  // abilities field: "abilitySet/ability/ability2"
+  j = buf.indexOf('|', i);
+  if (j < 0) return null;
+  const abilField = buf.substring(i, j);
+  i = j + 1;
+
+  if (abilField) {
+    const parts = abilField.split('/');
+    set.abilitySet = (Number(parts[0]) || 1) as 1 | 2;
+    set.ability = parts[1] ? this.unpackName(parts[1], Dex.abilities) : '';
+    set.ability2 = parts[2] ? this.unpackName(parts[2], Dex.abilities) : '';
+  } else {
+    set.abilitySet = 1;
+    set.ability = '';
+    set.ability2 = '';
+  }
+} else {
+  // OLD (vanilla): f1 was item
+  set.size = 'M';
+  set.item = this.unpackName(f1, Dex.items);
+
+  // ability
+  j = buf.indexOf('|', i);
+  if (j < 0) return null;
+  const ability = buf.substring(i, j);
+  const species = Dex.species.get(set.species);
+  set.ability = ['', '0', '1', 'H', 'S'].includes(ability) ?
+    species.abilities[ability as '0' || '0'] || (ability === '' ? '' : '!!!ERROR!!!') :
+    this.unpackName(ability, Dex.abilities);
+  i = j + 1;
+}
 
 			// moves
 			j = buf.indexOf('|', i);
@@ -355,9 +392,7 @@ export const Teams = new class Teams {
 				set.gigantamax = !!misc[3];
 				set.dynamaxLevel = (misc[4] ? Number(misc[4]) : 10);
 				set.teraType = misc[5];
-				set.ability2 = this.unpackName(misc[6] || '', Dex.abilities);
-				set.abilitySet = misc[7] ? Number(misc[7]) as 1 | 2 : undefined;
-				set.size = misc[8] || undefined;
+				if (misc[6] !== undefined && misc[6] !== '') set.abilitySet = Number(misc[6]) as 1 | 2;
 			}
 			if (j < 0) break;
 			i = j + 1;

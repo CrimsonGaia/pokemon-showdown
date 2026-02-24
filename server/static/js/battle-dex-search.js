@@ -354,9 +354,9 @@ if(passType==='alias'){
 
 matchStart=entry[3];
 var originalIndex=entry[2];
-if(matchStart){
+if(matchStart){var _BattleSearchIndexOff;
 matchEnd=matchStart+query.length;
-var offsetRow=BattleSearchIndexOffset[originalIndex]||'';
+var offsetRow=((_BattleSearchIndexOff=BattleSearchIndexOffset)==null?void 0:_BattleSearchIndexOff[originalIndex])||'';
 matchStart+=(offsetRow[matchStart]||'0').charCodeAt(0)-48;
 matchEnd+=(offsetRow[matchEnd-1]||'0').charCodeAt(0)-48;
 }

@@ -561,6 +561,26 @@ Storage.unpackAllTeams = function (buffer) {
 	}
 	return buffer.split('\n').map(Storage.unpackLine).filter(function (v) { return v; });
 };
+Storage.convertLegacyEVsToJVs = function (jvs) {
+	if (!jvs) return jvs;
+
+	// If any stat is above JV cap (63), it's almost certainly legacy EVs (0–252).
+	var legacy = false;
+	for (var k in jvs) {
+		var v = Number(jvs[k]) || 0;
+		if (v > 63) { legacy = true; break; }
+	}
+	if (!legacy) return jvs;
+
+	for (var k2 in jvs) {
+		var v2 = Number(jvs[k2]) || 0;
+		v2 = Math.floor(v2 / 4);
+		if (v2 < 0) v2 = 0;
+		if (v2 > 63) v2 = 63;
+		jvs[k2] = v2;
+	}
+	return jvs;
+};
 Storage.unpackLine = function (line) {
 	var leftBracketIndex = line.indexOf('[');
 	if (leftBracketIndex < 0) leftBracketIndex = 0;
@@ -684,6 +704,26 @@ buf += '|' + as + '/' + toID(a1name) + '/' + toID(a2name);
 	}
 	return buf;
 };
+Storage.fixJVsFromLegacyEVs = function (jvs) {
+	if (!jvs) return jvs;
+
+	// If any stat is over the JV cap (63), assume it's EVs and convert.
+	var looksLikeEvs = false;
+	for (var k in jvs) {
+		var v = Number(jvs[k]) || 0;
+		if (v > 63) { looksLikeEvs = true; break; }
+	}
+	if (!looksLikeEvs) return jvs;
+
+	for (var k2 in jvs) {
+		var v2 = Number(jvs[k2]) || 0;
+		v2 = Math.floor(v2 / 4);
+		if (v2 < 0) v2 = 0;
+		if (v2 > 63) v2 = 63;
+		jvs[k2] = v2;
+	}
+	return jvs;
+};
 Storage.fastUnpackTeam = function (buf) {
 	if (!buf) return [];
 	var team = [];
@@ -771,6 +811,7 @@ if (abilField) {
 					spd: Number(jvsArr[4]) || 0,
 					spe: Number(jvsArr[5]) || 0
 				};
+				set.jvs = Storage.convertLegacyEVsToJVs(set.jvs);
 			} else if (jvstring === '0') {
 				set.jvs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
 			}
@@ -913,6 +954,7 @@ if (abilField) {
 					spd: Number(jvsArr[4]) || 0,
 					spe: Number(jvsArr[5]) || 0
 				};
+				set.jvs = Storage.convertLegacyEVsToJVs(set.jvs);
 			} else if (jvstring === '0') {
 				set.jvs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
 			}
@@ -1124,22 +1166,35 @@ Storage.importTeam = function (buffer, teams) {
 			curSet.dynamaxLevel = +line;
 		} else if (line === 'Gigantamax: Yes') { curSet.gigantamax = true; } 
 				else if (line.substr(0, 5) === 'EVs: ' || line.substr(0, 5) === 'JVs: ') {
-			line = line.substr(5);
-			var jvLines = line.split('/');
-			curSet.jvs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
-			for (var j = 0; j < jvLines.length; j++) {
-				var jvLine = $.trim(jvLines[j]);
-				var spaceIndex = jvLine.indexOf(' ');
-				if (spaceIndex === -1) continue;
-				var statid = BattleStatIDs[jvLine.substr(spaceIndex + 1)];
-				var statval = parseInt(jvLine.substr(0, spaceIndex), 10);
-				if (!statid) continue;
-				if (isNaN(statval)) statval = 0;
-				curSet.jvs[statid] = statval;
-			}
-			// compatibility
-			curSet.evs = curSet.jvs;
-		}
+	var isEvs = (line.substr(0, 5) === 'EVs: ');
+	line = line.substr(5);
+
+	var jvLines = line.split('/');
+	curSet.jvs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
+
+	for (var j = 0; j < jvLines.length; j++) {
+		var jvLine = $.trim(jvLines[j]);
+		var spaceIndex = jvLine.indexOf(' ');
+		if (spaceIndex === -1) continue;
+
+		var statid = BattleStatIDs[jvLine.substr(spaceIndex + 1)];
+		var statval = parseInt(jvLine.substr(0, spaceIndex), 10);
+		if (!statid) continue;
+		if (isNaN(statval)) statval = 0;
+
+		// ✅ EVs (0–252) -> JVs (0–63)
+		if (isEvs) statval = Math.floor(statval / 4);
+
+		// clamp to JV range
+		if (statval < 0) statval = 0;
+		if (statval > 63) statval = 63;
+
+		curSet.jvs[statid] = statval;
+	}
+
+	// compatibility
+	curSet.evs = curSet.jvs;
+}
  		else if (line.substr(0, 5) === 'IVs: ') {
 			// JV system: ignore IVs
 		}
