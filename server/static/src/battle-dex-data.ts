@@ -986,7 +986,7 @@ export type NatureName = 'Adamant' | 'Bashful' | 'Bold' | 'Brave' | 'Calm' | 'Ca
 export type StatNameExceptHP = 'atk' | 'def' | 'spa' | 'spd' | 'spe';
 export type TypeName = 'Normal' | 'Fighting' | 'Flying' | 'Poison' | 'Ground' | 'Rock' | 'Bug' | 'Ghost' | 'Steel' |
 	'Fire' | 'Water' | 'Grass' | 'Electric' | 'Psychic' | 'Ice' | 'Dragon' | 'Dark' | 'Fairy' | 'Stellar' | '???';
-export type StatusName = 'par' | 'psn' | 'frz' | 'slp' | 'brn';
+export type StatusName = 'par' | 'psn' | 'frz' | 'slp' | 'brn' | 'aura' | 'bubbleblight' | 'dragonblight' | 'fear' | 'frostbite' | 'drowsy' | 'tox';
 export type BoostStatName = 'atk' | 'def' | 'spa' | 'spd' | 'spe' | 'evasion' | 'accuracy' | 'spc';
 export type GenderName = 'M' | 'F' | 'N';
 export interface Effect {

@@ -1419,6 +1419,12 @@ export class Pokemon {
 	/** Unlike clearStatus, gives cure message */
 	cureStatus(silent = false) {
 		if (!this.hp || !this.status) return false;
+		// Aura is immune to curing/removal unless the removal is coming from another aura effect.
+		// This makes Aura persist through switch-outs without being cleared by generic cures.
+		if (this.status === 'aura') {
+			const eff = this.battle.effect;
+			if (!eff || eff.id !== 'aura') return false;
+		}
 		this.battle.add('-curestatus', this, this.status, silent ? '[silent]' : '[msg]');
 		if (this.status === 'slp' && this.removeVolatile('nightmare')) { this.battle.add('-end', this, 'Nightmare', '[silent]'); }
 		this.setStatus('');
@@ -1482,6 +1488,11 @@ export class Pokemon {
 	// Unlike cureStatus, does not give cure message
 	clearStatus() {
 		if (!this.hp || !this.status) return false;
+		// Same aura protection as cureStatus
+		if (this.status === 'aura') {
+			const eff = this.battle.effect;
+			if (!eff || eff.id !== 'aura') return false;
+		}
 		if (this.status === 'slp' && this.removeVolatile('nightmare')) { this.battle.add('-end', this, 'Nightmare', '[silent]'); }
 		this.setStatus('');
 		return true;
@@ -1617,9 +1628,23 @@ export class Pokemon {
 		this[abilityKey] = ability.id;
 		this[abilityStateKey] = this.battle.initEffectState({ id: ability.id, target: this });
 		if (sourceEffect && !isFromFormeChange && !isTransform) {
-			if (source) { this.battle.add('-ability', this, ability.name, oldAbility.name, `[from] ${sourceEffect.fullname}`, `[of] ${source}`); } 
-			else { this.battle.add('-ability', this, ability.name, oldAbility.name, `[from] ${sourceEffect.fullname}`); }
+	// Tell the client which ability slot changed (needed for ISL ability sets)
+	const slotTag = slot === 2 ? '[slot]2' : null;
+
+	if (source) {
+		if (slotTag) {
+			this.battle.add('-ability', this, ability.name, oldAbility.name, slotTag, `[from] ${sourceEffect.fullname}`, `[of] ${source}`);
+		} else {
+			this.battle.add('-ability', this, ability.name, oldAbility.name, `[from] ${sourceEffect.fullname}`, `[of] ${source}`);
 		}
+	} else {
+		if (slotTag) {
+			this.battle.add('-ability', this, ability.name, oldAbility.name, slotTag, `[from] ${sourceEffect.fullname}`);
+		} else {
+			this.battle.add('-ability', this, ability.name, oldAbility.name, `[from] ${sourceEffect.fullname}`);
+		}
+	}
+}
 		if (ability.id && this.battle.gen > 3 && (!isTransform || oldAbility.id !== ability.id || this.battle.gen <= 4)) { this.battle.singleEvent('Start', ability, this[abilityStateKey], this, source); }
 		return oldAbility.id;
 	}
@@ -1658,6 +1683,11 @@ export class Pokemon {
 	): boolean | any {
 		let result;
 		status = this.battle.dex.conditions.get(status);
+		// Prevent clearing Aura unless the current effect is Aura itself
+		if (!status.id && this.status === 'aura') {
+			const eff = this.battle.effect;
+			if (!eff || eff.id !== 'aura') return false;
+		}
 		if (!this.hp && !status.affectsFainted) return false;
 		if (linkedStatus && source && !source.hp) return false;
 		if (this.battle.event) {

@@ -926,18 +926,15 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		type: "Fighting",
 		category: "Physical",
 		name: "Chi Strike",
-		pp: 16,
+		pp: 10,
 		priority: 0,
 		critRatio: 6,
 		flags: { aura: 1, contact: 1, protect: 1, mirror: 1, punch: 1, metronome: 1 },
 		secondary: {
 			chance: 50,
 			self: {
-				onHit(source) {
-					// Clear any existing aura status before applying Indomitable Spirit
-					if (source.status === 'aura') {
-						source.clearStatus();
-					}
+				onHit(source) { // Clear any existing aura status before applying Indomitable Spirit
+					if (source.status === 'aura') { source.clearStatus(); }
 					source.setStatus('aura', source, {
 						auraAbility: 'indomitablespirit',
 						auraName: 'Indomitable Spirit',
@@ -1083,9 +1080,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		priority: -5,
 		critRatio: 0,
 		flags: { contact: 1, protect: 1, failmefirst: 1, noassist: 1, failcopycat: 1 },
-		beforeTurnCallback(pokemon) {
-			pokemon.addVolatile('counter');
-		},
+		beforeTurnCallback(pokemon) { pokemon.addVolatile('counter'); },
 		onTry(source) {
 			if (!source.volatiles['counter']) return false;
 			if (source.volatiles['counter'].slot === null) return false;
@@ -1127,17 +1122,10 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		critRatio: 4,
 		flags: { contact: 1, protect: 1, mirror: 1, failmefirst: 1, noassist: 1, failcopycat: 1 },
 		onAfterHit(target, source, move) {
-			if (source.item || source.volatiles['gem']) {
-				return;
-			}
+			if (source.item || source.volatiles['gem']) { return; }
 			const yourItem = target.takeItem(source);
-			if (!yourItem) {
-				return;
-			}
-			if (
-				!this.singleEvent('TakeItem', yourItem, target.itemState, source, target, move, yourItem) ||
-				!source.setItem(yourItem)
-			) {
+			if (!yourItem) { return; }
+			if (!this.singleEvent('TakeItem', yourItem, target.itemState, source, target, move, yourItem) || !source.setItem(yourItem)) {
 				target.item = yourItem.id; // bypass setItem so we don't break choicelock or anything
 				return;
 			}
@@ -1190,11 +1178,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		critRatio: 7,
 		flags: { contact: 1, slicing: 1, protect: 1, mirror: 1, metronome: 1 },
 		secondary: { chance: 10, status: 'psn', },
-		onAfterHit(this, source, target, move) {
-			if (move.moveHitData && move.moveHitData[target.getSlot()]?.crit && target && !target.status) {
-				target.trySetStatus('tox', source, move);
-			}
-		},
+		onAfterHit(this, source, target, move) { if (move.moveHitData && move.moveHitData[target.getSlot()]?.crit && target && !target.status) { target.trySetStatus('tox', source, move); } },
 		desc: "10% chance to poison target. On a critical hit, 100% chance to inflict Toxic Poison instead",
 		shortDesc: "10% poison. On Crit: 100% Toxic Poison",
 		target: "normal",
@@ -1338,9 +1322,9 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		secondary: {chance: 39,
 			onHit(target, source) {
 				const result = this.random(3);
-				   if (result === 0) { target.trySetStatus('psn', source); } 
-				   else if (result === 1) { target.trySetStatus('par', source); } 
-				   else { target.trySetStatus('drowsy', source); }
+				if (result === 0) { target.trySetStatus('psn', source); } 
+				else if (result === 1) { target.trySetStatus('par', source); } 
+				else { target.trySetStatus('drowsy', source); }
 			},
 		},
 		desc: "39% chance to inflict Poison, Paralysis, or Drowsy status (equal odds)",
@@ -1741,18 +1725,14 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		num: 283,
 		accuracy: 100,
 		basePower: 0,
-		damageCallback(pokemon, target) {
-			return target.getUndynamaxedHP() - pokemon.hp;
-		},
+		damageCallback(pokemon, target) { return target.getUndynamaxedHP() - pokemon.hp; },
 		type: "Normal",
 		category: "Physical",
 		name: "Endeavor",
 		pp: 5,
 		priority: 0,
 		flags: { contact: 1, protect: 1, mirror: 1, metronome: 1, noparentalbond: 1 },
-		onTryImmunity(target, pokemon) {
-			return pokemon.hp < target.hp;
-		},
+		onTryImmunity(target, pokemon) { return pokemon.hp < target.hp; },
 		secondary: null,
 		target: "normal",
 	},
@@ -2238,9 +2218,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			onTryAddVolatile(status, pokemon) { if (status.id === 'flinch') return null; },
 		},
 		onHit(target, source) {
-			if (target.status === 'aura') {
-				target.clearStatus();
-			}
+			if (target.status === 'aura') { target.clearStatus(); }
 			target.setStatus('aura', target, {
 				auraAbility: 'indomitablespirit',
 				auraName: 'Indomitable Spirit',
@@ -2328,10 +2306,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 				break;
 			}
 		},
-		secondary: {
-			chance: 10,
-			status: 'frostbite',
-		},
+		secondary: { chance: 10, status: 'frostbite',  },
 		desc: "10% chance to Frostbite target. 1.3x power under Hail/Snow. 0.5x power under Sun",
 		shortDesc: "10% Frostbite. 1.3x power under Hail/Snow. 0.5x power under Sun",
 		target: "normal",
@@ -3347,16 +3322,11 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		basePowerCallback(pokemon, target) {
 			const targetWeight = target.getWeight();
 			let bp;
-			if (targetWeight >= 2000) 
-				{ bp = 120; } 
-			else if (targetWeight >= 1000) 
-				{ bp = 100; } 
-			else if (targetWeight >= 500) 
-				{ bp = 80; } 
-			else if (targetWeight >= 250) 
-				{ bp = 60; } 
-			else if (targetWeight >= 100) 
-				{ bp = 40; } 
+			if (targetWeight >= 2000) { bp = 120; } 
+			else if (targetWeight >= 1000) { bp = 100; } 
+			else if (targetWeight >= 500) { bp = 80; } 
+			else if (targetWeight >= 250) { bp = 60; } 
+			else if (targetWeight >= 100) { bp = 40; } 
 			else { bp = 20; }
 			this.debug(`BP: ${bp}`);
 			return bp;
@@ -4162,17 +4132,13 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		flags: { throw: 1, protect: 1, mirror: 1, metronome: 1 },
 		onModifyMove(move, pokemon, target) {
 			const rand = this.random(10);
-			if (rand < 2) 
-				{
+			if (rand < 2) {
 				move.heal = [1, 4];
 				move.infiltrates = true;
 			} 
-			else if (rand < 6) 
-				{ move.basePower = 40; } 
-			else if (rand < 9) 
-				{ move.basePower = 80; } 
-			else 
-				{ move.basePower = 120; }
+			else if (rand < 6) { move.basePower = 40; } 
+			else if (rand < 9) { move.basePower = 80; } 
+			else { move.basePower = 120; }
 		},
 		secondary: null,
 		desc: "",
@@ -4216,8 +4182,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		priority: 0,
 		critRatio: 3,
 		flags: { bite: 1, protect: 1, mirror: 1, metronome: 1 },
-		onTryHit(pokemon) {
-			// will shatter screens through sub, before you hit
+		onTryHit(pokemon) { // will shatter screens through sub, before you hit
 			pokemon.side.removeSideCondition('reflect');
 			pokemon.side.removeSideCondition('lightscreen');
 			pokemon.side.removeSideCondition('auroraveil');
@@ -4386,8 +4351,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		priority: 0,
 		critRatio: 5,
 		flags: { aura: 1, crash: 1, contact: 1, protect: 1, mirror: 1 },
-		onTryHit(pokemon) {
-			// will shatter screens through sub, before you hit
+		onTryHit(pokemon) { // will shatter screens through sub, before you hit
 			pokemon.side.removeSideCondition('reflect');
 			pokemon.side.removeSideCondition('lightscreen');
 			pokemon.side.removeSideCondition('auroraveil');
@@ -4536,18 +4500,12 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		basePowerCallback(pokemon) {
 			const ratio = Math.max(Math.floor(pokemon.hp * 48 / pokemon.maxhp), 1);
 			let bp;
-			if (ratio < 2) 
-				{ bp = 200; } 
-			else if (ratio < 5) 
-				{ bp = 150; } 
-			else if (ratio < 10) 
-				{ bp = 100; } 
-			else if (ratio < 17) 
-				{ bp = 80; } 
-			else if (ratio < 33) 
-				{ bp = 40; } 
-			else 
-				{ bp = 20; }
+			if (ratio < 2) { bp = 200; } 
+			else if (ratio < 5) { bp = 150; } 
+			else if (ratio < 10) { bp = 100; } 
+			else if (ratio < 17) { bp = 80; } 
+			else if (ratio < 33) { bp = 40; } 
+			else { bp = 20; }
 			this.debug(`BP: ${bp}`);
 			return bp;
 		},
@@ -4625,8 +4583,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		desc: "Doubles: If both targets are fliers, 2x power",
 		shortDesc: "Doubles: If both targets are fliers, 2x power",
 		target: "normal",
-		onBasePower(basePower, source, target, move) {
-		   // Double power and become spread if all opposing Pokémon are airborne
+		onBasePower(basePower, source, target, move) { // Double power and become spread if all opposing Pokémon are airborne
 		   const foeActive = source.side.foe.active.filter(p => !p.fainted);
 			if (foeActive.length && foeActive.every(p => !p.isGrounded())) {
 			   this.debug('Rock Throw airborne boost');
@@ -4702,16 +4659,9 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		},
 		onAfterMove(source, target, move) {
 			const rolloutData = source.volatiles["rollout"];
-			if (
-				rolloutData &&
-				rolloutData.hitCount === 5 &&
-				rolloutData.contactHitCount < 5
-				// this conditions can only be met in gen7 and gen8dlc1
-				// see `disguise` and `iceface` abilities in the resp mod folders
-			) {
+			if (rolloutData && rolloutData.hitCount === 5 && rolloutData.contactHitCount < 5) { // this conditions can only be met in gen7 and gen8dlc1 see `disguise` and `iceface` abilities in the resp mod folders
 				source.addVolatile("rolloutstorage");
-				source.volatiles["rolloutstorage"].contactHitCount =
-					rolloutData.contactHitCount;
+				source.volatiles["rolloutstorage"].contactHitCount = rolloutData.contactHitCount;
 			}
 		},
 		condition: {
@@ -4721,8 +4671,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 				this.effectState.hitCount = 0;
 				this.effectState.contactHitCount = 0;
 			},
-			onResidual(target) {
-				// Pause residual effect if timebreak is active
+			onResidual(target) { // Pause residual effect if timebreak is active
 				if (target.battle.field.getPseudoWeather('timebreak')) return;
 				if (target.lastMove && target.lastMove.id === 'struggle') { delete target.volatiles['rollout']; }
 			},
@@ -5051,8 +5000,8 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 				return null;
 			}
 			if (source.volatiles['skyattackinterrupted']) { this.add('-fail', source, 'move: Sky Attack', '[interrupted]');
-				source.removeVolatile('skyattackinterrupted');
-				return null;
+			source.removeVolatile('skyattackinterrupted');
+			return null;
 			}
 		},
 		onPrepareHit(target, source) { this.add('-start', source, 'move: Sky Attack', '[glowing]'); },
@@ -5060,10 +5009,9 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		condition: {
 			duration: 1,
 			onDamagingHit(damage, target, source, move) { if (move.type === 'Dark' || move.flags?.drain || move.flags?.shadow) {
-					target.addVolatile('skyattackinterrupted');
-					this.add('-message', `${target.name}'s glowing was interrupted!`);
-				}
-			},
+				target.addVolatile('skyattackinterrupted');
+				this.add('-message', `${target.name}'s glowing was interrupted!`);
+			} },
 		},
 		secondary: { chance: 20, volatileStatus: 'flinch', },
 		desc: "User begins glowing at start of turn. Fails if user is Cursed, or hit by a Dark type, Draining, or Shadow move before Sky Attack goes off. 20% Flinch chance; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Ability/Type based immunities become resistances",
@@ -5514,9 +5462,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 				pokemon.side.removeSideCondition('auroraveil');
 				brokeScreen = true;
 			}
-			if (brokeScreen) {
-				this.boost({atk: 1}, pokemon, pokemon, null, true);
-			}
+			if (brokeScreen) { this.boost({atk: 1}, pokemon, pokemon, null, true); }
 		},
 		
 		secondary: null,
@@ -5731,8 +5677,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			if (source.item || source.volatiles['gem']) { return; }
 			const yourItem = target.takeItem(source);
 			if (!yourItem) { return; }
-			if (!this.singleEvent('TakeItem', yourItem, target.itemState, source, target, move, yourItem) ||
-				!source.setItem(yourItem)) {
+			if (!this.singleEvent('TakeItem', yourItem, target.itemState, source, target, move, yourItem) || !source.setItem(yourItem)) {
 				target.item = yourItem.id; // bypass setItem so we don't break choicelock or anything
 				return;
 			}
@@ -6053,18 +5998,12 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		basePowerCallback(pokemon, target, move) {
 		const targetWeight = target.getWeight();
 				let bp;
-				if (targetWeight >= 200) 
-					{ bp = 35; } 
-				else if (targetWeight >= 100) 
-					{ bp = 50; } 
-				else if (targetWeight >= 50) 
-					{ bp = 75; } 
-				else if (targetWeight >= 25) 
-					{ bp = 95; } 
-				else if (targetWeight >= 10) 
-					{ bp = 120; } 
-				else if (targetWeight >= 0.1) 
-					{ bp = 150; } 
+				if (targetWeight >= 200) { bp = 35; } 
+				else if (targetWeight >= 100) { bp = 50; } 
+				else if (targetWeight >= 50) { bp = 75; } 
+				else if (targetWeight >= 25) { bp = 95; } 
+				else if (targetWeight >= 10) { bp = 120; } 
+				else if (targetWeight >= 0.1) { bp = 150; } 
 				else { bp = 0; }
 				this.debug(`BP: ${bp}`);
 				return bp;
@@ -6290,7 +6229,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		shortDesc: "70% Flinch",
 		target: "normal",
 	},
-
 	//#region SPECIAL MOVES
 	// ==================================================================
 	absorb: {
@@ -6353,9 +6291,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		flags: { wind: 1, protect: 1, mirror: 1, distance: 1, metronome: 1 },
 		onHit(target, source, move) {
 			this.field.setWeather('turbulentwinds', source, move);
-			if (this.field.weatherState) {
-				this.field.weatherState.duration = 2;
-			}
+			if (this.field.weatherState) { this.field.weatherState.duration = 2; }
 		},
 		secondary: null,
 		desc: "Sets Turbulent Winds for 2 turns [4 with Aeolic Rock]",
@@ -6890,8 +6826,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		flags: { protect: 1, mirror: 1 },
 		secondary: { chance: 100, boosts: {atk: -1,}, },
 		onAfterMove(source, target, move) {
-			if (source.fainted || !move.hitTargets || move.hasSheerForce) {
-				// make sure the volatiles are cleared
+			if (source.fainted || !move.hitTargets || move.hasSheerForce) { // make sure the volatiles are cleared
 				for (const pokemon of this.getAllActive()) delete pokemon.volatiles['sparklingaria'];
 				return;
 			}
@@ -7538,8 +7473,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		priority: 0,
 		critRatio: 6,
 		flags: { aura: 1, slicing: 1, wing: 1, protect: 1, mirror: 1, metronome: 1 },
-		onAfterMoveSecondarySelf(pokemon, target, move) {
-			// Grant Esper Wing aura
+		onAfterMoveSecondarySelf(pokemon, target, move) { // Grant Esper Wing aura
 			pokemon.setStatus('aura', pokemon, {
 				auraAbility: 'esperwing',
 				auraName: 'Esper Wing',
@@ -7654,8 +7588,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			if (move.hit === 7) return 110;
 			return 15;
 		},
-        onHit(target, pokemon, move) {
-            // Only apply animation and activation on the last hit
+        onHit(target, pokemon, move) { // Only apply animation and activation on the last hit
             if (move.hit === 7) {
                 this.attrLastMove('[anim] Fickle Beam All Out');
                 this.add('-activate', pokemon, 'move: Fickle Beam');
@@ -7665,7 +7598,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		shortDesc: "Hits 1-7 times. 10% Dragonblight. 1% self-inflict Dragonblight",
 		target: "normal",
 		multihit: [1, 7],
-		
 	},
 	fierydance: {
 		num: 552,
@@ -8118,16 +8050,11 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		basePowerCallback(pokemon, target) {
 			const targetWeight = target.getWeight();
 			let bp;
-			if (targetWeight >= 2000) 
-				{ bp = 120; } 
-			else if (targetWeight >= 1000) 
-				{ bp = 100; } 
-			else if (targetWeight >= 500) 
-				{ bp = 80; } 
-			else if (targetWeight >= 250) 
-				{ bp = 60; } 
-			else if (targetWeight >= 100) 
-				{ bp = 40; } 
+			if (targetWeight >= 2000) { bp = 120; } 
+			else if (targetWeight >= 1000) { bp = 100; } 
+			else if (targetWeight >= 500) { bp = 80; } 
+			else if (targetWeight >= 250) { bp = 60; } 
+			else if (targetWeight >= 100) { bp = 40; } 
 			else { bp = 20; }
 			this.debug(`BP: ${bp}`);
 			return bp;
@@ -8564,7 +8491,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		desc: "Lowers target's Special Defense [-2 stages]",
 		shortDesc: "-2 Sp. DEF: Target",
 		target: "normal",
-
 	},
 	lusterpurge: {
 		num: 295,
@@ -8771,7 +8697,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		desc: "User faints. 1.5x power over Misty Terrain",
 		shortDesc: "User faints. 1.5x power over Misty Terrain",
 		target: "allAdjacent",
-
 	},
 	moonblast: {
 		num: 585,
@@ -8993,7 +8918,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		desc: "SOUND: This move bypasses substitutes",
 		shortDesc: "",
 		target: "allAdjacentFoes",
-
 	},
 	overheat: {
 		num: 315,
@@ -9457,7 +9381,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		desc: "30% chance to Burn",
 		shortDesc: "30% Burn",
 		target: "normal",
-
 	},
 	secretsword: {
 		num: 548,
@@ -9539,7 +9462,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		desc: "20% chance to Poison target. If user's Attack is greater than Special Attack, becomes a Physical move",
 		shortDesc: "20% Poison. If user's ATK≥Sp.ATK, becomes a Physical move",
 		target: "normal",
-
 	},
 	shockwave: {
 		num: 351,
@@ -15096,7 +15018,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		type: "Psychic",
 		category: "Status",
 		name: "Shattered Psyche",
-		pp: 8,
+		pp: 5,
 		priority: 0,
 		flags: { aura: 1, protect: 1, reflectable: 1, allyanim: 1, metronome: 1 },
 		onHit(target, source) {

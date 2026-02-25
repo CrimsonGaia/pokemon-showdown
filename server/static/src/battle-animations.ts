@@ -82,6 +82,31 @@ export class BattleScene implements BattleSceneStub {
 		$frame.addClass('battle');
 		this.$frame = $frame;
 		this.log = new BattleLog($logFrame[0] as HTMLDivElement, this);
+		// --- Teambar live refresh hook ---
+// Item reveals and some state changes don't always trigger updateSidebars/updateSidebar,
+// and updateStatbars can run before pokemon.item is applied for the current line.
+// Hook BattleLog updates and redraw teambar on the next microtask.
+{
+	const logAny = this.log as any;
+
+	const origAdd = logAny.add?.bind(this.log);
+	if (origAdd) {
+		logAny.add = (...args: any[]) => {
+			const ret = origAdd(...args);
+			Promise.resolve().then(() => this.updateTeamBar());
+			return ret;
+		};
+	}
+
+	const origAddDiv = logAny.addDiv?.bind(this.log);
+	if (origAddDiv) {
+		logAny.addDiv = (...args: any[]) => {
+			const ret = origAddDiv(...args);
+			Promise.resolve().then(() => this.updateTeamBar());
+			return ret;
+		};
+	}
+}
 		this.log.battleParser!.pokemonName = (pokemonId: string) => {
 			if (!pokemonId) return '';
 			if (battle.ignoreNicks || battle.ignoreOpponent) {
@@ -492,21 +517,36 @@ export class BattleScene implements BattleSceneStub {
 		return BattleLog.escapeHTML(name);
 	}
 	getTeamBarHTML(side: Side, isP1: boolean): string {
-		let html = '';
-		for (let i = 0; i < side.pokemon.length; i++) {
-			const pokemon = side.pokemon[i];
-			const status = pokemon.fainted ? ' fainted' : (pokemon.status ? ' status' : '');
-			const iconStyle = Dex.getPokemonIcon(pokemon);
-			// Add item icon if item is revealed
-			let itemIconHTML = '';
-			if (pokemon.item && pokemon.item !== '(exists)') {
-				const itemIconStyle = Dex.getItemIcon(pokemon.item);
-				itemIconHTML = `<span class="itemicon" style="${itemIconStyle}"></span>`;
-			}
-			html += `<span class="picon battleteambar-sprite${status}" style="${iconStyle}">${itemIconHTML}</span>`;
+	let html = '';
+
+	// Use stable team size (important after refresh)
+	const teamSize = side.totalPokemon || side.pokemon.length;
+
+	for (let i = 0; i < teamSize; i++) {
+		const pokemon = side.pokemon[i];
+
+		// If the slot is missing after refresh, render a placeholder instead of dropping the slot
+		if (!pokemon) {
+			html += `<span class="picon battleteambar-sprite empty" style="${Dex.getPokemonIcon('pokeball')}">` +
+				`<span class="itemicon itemicon-unknown">?</span></span>`;
+			continue;
 		}
-		return html;
+
+		const status = pokemon.fainted ? ' fainted' : (pokemon.status ? ' status' : '');
+		const iconStyle = Dex.getPokemonIcon(pokemon);
+
+		let itemIconHTML = '';
+		if (pokemon.item && pokemon.item !== '(exists)') {
+			itemIconHTML = `<span class="itemicon" style="${Dex.getItemIcon(pokemon.item)}"></span>`;
+		} else {
+			itemIconHTML = `<span class="itemicon itemicon-unknown">?</span>`;
+		}
+
+		html += `<span class="picon battleteambar-sprite${status}" style="${iconStyle}">${itemIconHTML}</span>`;
 	}
+
+	return html;
+}
 	getSidebarHTML(side: Side, posStr: string): string {
 		let noShow = this.battle.hardcoreMode && this.battle.gen < 7;
 		// Check if this is an ISL format
@@ -595,12 +635,18 @@ export class BattleScene implements BattleSceneStub {
 		);
 	}
 	updateSidebar(side: Side) {
-		if (this.battle.gameType === 'freeforall') {
-			this.updateLeftSidebar();
-			this.updateRightSidebar();
-		} else if (side === this.battle.nearSide || side === this.battle.nearSide.ally) { this.updateLeftSidebar(); } 
-		else { this.updateRightSidebar(); }
+	if (this.battle.gameType === 'freeforall') {
+		this.updateLeftSidebar();
+		this.updateRightSidebar();
+	} else if (side === this.battle.nearSide || side === this.battle.nearSide.ally) {
+		this.updateLeftSidebar();
+	} else {
+		this.updateRightSidebar();
 	}
+
+	// ✅ keep TOP teambar in sync (items, fainted, etc.)
+	this.updateTeamBar();
+}
 	updateLeftSidebar() {
 		const side = this.battle.nearSide;
 		if (side.ally) {
@@ -633,7 +679,16 @@ export class BattleScene implements BattleSceneStub {
 		const p2HTML = this.getTeamBarHTML(p2Side, false);
 		this.$battleteambar.html( `<div class="battleteambar-p1">${p1HTML}</div>` + `<div class="battleteambar-p2">${p2HTML}</div>`);
 	}
-	updateStatbars() { for (const side of this.battle.sides) { for (const active of side.active) { if (active) active.sprite.updateStatbar(active); } } }
+	updateStatbars() {
+	for (const side of this.battle.sides) {
+		for (const active of side.active) {
+			if (active) active.sprite.updateStatbar(active);
+		}
+	}
+
+	// Keep TOP teambar synced with newly-revealed items/status
+	this.updateTeamBar();
+}
 	resetSides(skipEmpty?: boolean) {
 		if (!skipEmpty) { for (const $spritesContainer of this.$sprites) { $spritesContainer.empty(); }}
 		for (const side of this.battle.sides) {
@@ -1718,62 +1773,94 @@ export class PokemonSprite extends Sprite {
 		}
 	}
 	recalculatePos(slot: number) {
-		let moreActive = this.scene.activeCount - 1;
-		let statbarOffset = 0;
-		const isFFA = this.scene.battle.gameType === 'freeforall';
-		if (isFFA) {
-			// create a gap between Pokemon on the same "side" as a distinction between FFA and Multi battles
-			moreActive++;
-			if (slot) slot++;
-		}
-		if (this.scene.gen <= 4 && moreActive) {
-			this.x = (slot - 0.52) * (this.isFrontSprite ? 1 : -1) * -55;
-			this.y = (this.isFrontSprite ? 1 : -1) + 1;
-			if (this.isFrontSprite) statbarOffset = 30 * slot;
-			if (!this.isFrontSprite) statbarOffset = -28 * slot;
-		} else {
-			switch (moreActive) {
-			case 0:
-				this.x = 0;
-				break;
-			case 1:
-				if (this.sp.pixelated) { this.x = (slot * -100 + 18) * (this.isFrontSprite ? 1 : -1); } 
-				else { this.x = (slot * -75 + 18) * (this.isFrontSprite ? 1 : -1); }
-				break;
-			case 2:
-				this.x = (slot * -70 + 20) * (this.isFrontSprite ? 1 : -1);
-				break;
+	let moreActive = this.scene.activeCount - 1;
+	let statbarOffset = 0;
+	const isFFA = this.scene.battle.gameType === 'freeforall';
+	if (isFFA) {
+		// create a gap between Pokemon on the same "side" as a distinction between FFA and Multi battles
+		moreActive++;
+		if (slot) slot++;
+	}
+
+	if (this.scene.gen <= 4 && moreActive) {
+		this.x = (slot - 0.52) * (this.isFrontSprite ? 1 : -1) * -55;
+		this.y = (this.isFrontSprite ? 1 : -1) + 1;
+
+		if (this.isFrontSprite) statbarOffset = 30 * slot;
+		if (!this.isFrontSprite) statbarOffset = -28 * slot;
+
+	} else {
+		switch (moreActive) {
+		case 0:
+			this.x = 0;
+			break;
+		case 1:
+			if (this.sp.pixelated) {
+				this.x = (slot * -100 + 18) * (this.isFrontSprite ? 1 : -1);
+			} else {
+				this.x = (slot * -75 + 18) * (this.isFrontSprite ? 1 : -1);
 			}
-			this.y = this.isFrontSprite ? slot * 7 : slot * -10;
-			if (this.isFrontSprite) statbarOffset = 17 * slot;
-			if (this.isFrontSprite && !moreActive && this.sp.pixelated) statbarOffset = 15;
-			if (!this.isFrontSprite) statbarOffset = -7 * slot;
-			if (this.isFrontSprite && moreActive === 2) statbarOffset = 14 * slot - 10;
+			break;
+		case 2:
+			this.x = (slot * -70 + 20) * (this.isFrontSprite ? 1 : -1);
+			break;
 		}
-		if (this.scene.gen <= 2) { statbarOffset += this.isFrontSprite ? 20 : 1;
-		} 
-		else if (this.scene.gen <= 3) { statbarOffset += this.isFrontSprite ? 30 : 5; } 
-		else if (this.scene.gen !== 5) { statbarOffset += this.isFrontSprite ? 30 : 20; }
-		let pos = this.scene.pos({
-			x: this.x,
-			y: this.y,
-			z: this.z,
-		}, {
-			w: 0,
-			h: 96,
-		});
-		pos.top += 40;
-		this.left = pos.left;
-		this.top = pos.top;
-		this.statbarLeft = pos.left - 80;
-		this.statbarTop = pos.top - 73 - statbarOffset;
-		if (this.statbarTop < -4) this.statbarTop = -4;
-		if (moreActive) {
-			// make sure element is in the right z-order
-			if (!!slot === this.isFrontSprite) { this.$el.prependTo(this.$el.parent()); } 
-			else { this.$el.appendTo(this.$el.parent()); }
+
+		this.y = this.isFrontSprite ? slot * 7 : slot * -10;
+
+		// Right-side slots:
+		//   opponent/front sprites -> slot 0
+		//   your/back sprites      -> slot 1
+		if (moreActive === 1) {
+			const isRightSide =
+				(this.isFrontSprite && slot === 0) ||
+				(!this.isFrontSprite && slot === 1);
+
+			if (isRightSide) {
+    			this.y -= 10; 
+    			this.x += 12; 
+  			}
+		}
+
+		if (this.isFrontSprite) statbarOffset = 17 * slot;
+		if (this.isFrontSprite && !moreActive && this.sp.pixelated) statbarOffset = 15;
+		if (!this.isFrontSprite) statbarOffset = -7 * slot;
+		if (this.isFrontSprite && moreActive === 2) statbarOffset = 14 * slot - 10;
+	}
+
+	if (this.scene.gen <= 2) {
+		statbarOffset += this.isFrontSprite ? 20 : 1;
+	} else if (this.scene.gen <= 3) {
+		statbarOffset += this.isFrontSprite ? 30 : 5;
+	} else if (this.scene.gen !== 5) {
+		statbarOffset += this.isFrontSprite ? 30 : 20;
+	}
+
+	let pos = this.scene.pos({
+		x: this.x,
+		y: this.y,
+		z: this.z,
+	}, {
+		w: 0,
+		h: 96,
+	});
+
+	pos.top += 40;
+	this.left = pos.left;
+	this.top = pos.top;
+	this.statbarLeft = pos.left - 80;
+	this.statbarTop = pos.top - 73 - statbarOffset;
+	if (this.statbarTop < -4) this.statbarTop = -4;
+
+	if (moreActive) {
+		// make sure element is in the right z-order
+		if (!!slot === this.isFrontSprite) {
+			this.$el.prependTo(this.$el.parent());
+		} else {
+			this.$el.appendTo(this.$el.parent());
 		}
 	}
+}
 	animSummon(pokemon: Pokemon, slot: number, instant?: boolean) {
 		if (!this.scene.animating) return;
 		this.scene.$sprites[+this.isFrontSprite].append(this.$el);
@@ -2258,12 +2345,29 @@ export class PokemonSprite extends Sprite {
 			else $prevhp.addClass('prevhp-yellow prevhp-red');
 		}
 		let status = '';
-		if (pokemon.status === 'brn') { status += '<span class="brn">BRN</span> '; } 
-		else if (pokemon.status === 'psn') { status += '<span class="psn">PSN</span> '; } 
-		else if (pokemon.status === 'tox') { status += '<span class="psn">TOX</span> '; } 
-		else if (pokemon.status === 'slp') { status += '<span class="slp">SLP</span> '; } 
-		else if (pokemon.status === 'par') { status += '<span class="par">PAR</span> '; }
-		else if (pokemon.status === 'frz') { status += '<span class="frz">FRZ</span> '; }
+		const STATUS_ICON_PATH = Dex.resourcePrefix + "sprites/status-is/";
+
+		const statusIcons: {[k: string]: string} = {
+  			brn: "Burn_IS.png",
+  			psn: "Poison_IS.png",
+  			tox: "Toxic_IS.png",
+  			slp: "Sleep_IS.png",
+  			par: "Paralysis_IS.png",
+  			frz: "Frozen_IS.png",
+			
+  			aura: "Aura_IS.png",
+  			bubbleblight: "Bubbleblight_IS.png",
+  			dragonblight: "Dragonblight_IS.png",
+  			drowsy: "Drowsy_IS.png",
+  			fear: "Fear_IS.png",
+  			frostbite: "Frostbite_IS.png",
+		};
+		if (pokemon.status && statusIcons[pokemon.status]) {
+  			const file = statusIcons[pokemon.status];
+  			status += `<img src="${STATUS_ICON_PATH}${file}"
+                class="status-icon"
+                alt="${pokemon.status}" /> `;
+		}
 		if (pokemon.terastallized) { status += `<img src="${Dex.resourcePrefix}sprites/types/${encodeURIComponent(pokemon.terastallized)}.png" alt="${pokemon.terastallized}" class="pixelated" /> `; } 
 		else if (pokemon.volatiles.typechange && pokemon.volatiles.typechange[1]) {
 			const types = pokemon.volatiles.typechange[1].split('/');
@@ -3499,6 +3603,12 @@ export const BattleOtherAnims: AnimTable = {
 };
 //region Status Animations
 export const BattleStatusAnims: AnimTable = {
+	aura: {
+	anim(scene, [attacker]) {
+		// Reuse the Z-move “power up” particle sequence
+		BattleOtherAnims.zpower.anim(scene, [attacker]);
+	},
+},
 	brn: {
 		anim(scene, [attacker]) {
 			scene.showEffect('fireball', 

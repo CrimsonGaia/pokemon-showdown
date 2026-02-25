@@ -90,6 +90,8 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 	moves: string[] = [];
 	ability = '';
 	baseAbility = '';
+	ability2 = '';
+	baseAbility2 = '';
 	item = '';
 	itemEffect = '';
 	prevItem = '';
@@ -360,12 +362,22 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 		}
 		this.moveTrack.push([moveName, pp]);
 	}
-	rememberAbility(ability: string, isNotBase?: boolean) {
-		ability = Dex.abilities.get(ability).name;
-		this.ability = ability;
-		if (!this.baseAbility && !isNotBase) {
-			this.baseAbility = ability;
-		}
+	rememberAbility(ability: string, isNotBase?: boolean, slot: 1 | 2 = 1) {
+	ability = Dex.abilities.get(ability).name;
+
+	if (slot === 2) {
+		this.ability2 = ability;
+		if (!this.baseAbility2 && !isNotBase) this.baseAbility2 = ability;
+		return;
+	}
+	this.ability = ability;
+	if (!this.baseAbility && !isNotBase) { this.baseAbility = ability; }
+}
+	swapAbilities(other: Pokemon) {
+		[this.ability, other.ability] = [other.ability, this.ability];
+		[this.baseAbility, other.baseAbility] = [other.baseAbility, this.baseAbility];
+		[this.ability2, other.ability2] = [other.ability2, this.ability2];
+		[this.baseAbility2, other.baseAbility2] = [other.baseAbility2, this.baseAbility2];
 	}
 	getBoost(boostStat: Dex.BoostStatName) {
 		let boostStatTable = {
@@ -527,18 +539,23 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 		return !this.getTypeList(serverPokemon).includes('Flying');
 	}
 	effectiveAbility(serverPokemon?: ServerPokemon) {
-		const ability = this.side.battle.dex.abilities.get(
-			serverPokemon?.ability || this.ability || serverPokemon?.baseAbility || ''
-		);
+		const ability = this.side.battle.dex.abilities.get(serverPokemon?.ability || this.ability || serverPokemon?.baseAbility || '');
 		if (
 			this.fainted ||
 			(this.volatiles['transform'] && ability.flags['notransform']) ||
 			(!ability.flags['cantsuppress'] && (this.side.battle.ngasActive() || this.volatiles['gastroacid']))
-		) {
-			return '';
-		}
+		) { return ''; }
 		return ability.name;
 	}
+	effectiveAbility2(serverPokemon?: any) {
+		const ability = this.side.battle.dex.abilities.get(serverPokemon?.ability2 || this.ability2 || serverPokemon?.baseAbility2 || '');
+	if (
+		this.fainted ||
+		(this.volatiles['transform'] && ability.flags['notransform']) ||
+		(!ability.flags['cantsuppress'] && (this.side.battle.ngasActive() || this.volatiles['gastroacid']))
+	) { return ''; }
+	return ability.name;
+}
 	getTypeList(serverPokemon?: ServerPokemon, preterastallized = false) {
 		const [types, addedType] = this.getTypes(serverPokemon, preterastallized);
 		return addedType ? types.concat(addedType) : types;
@@ -755,10 +772,13 @@ export class Side {
 		if (oldPokemon) {
 			poke.item = oldPokemon.item;
 			poke.baseAbility = oldPokemon.baseAbility;
+			poke.baseAbility2 = oldPokemon.baseAbility2;
+			poke.ability2 = oldPokemon.ability2;
 			poke.teraType = oldPokemon.teraType;
 		}
 
 		if (!poke.ability && poke.baseAbility) poke.ability = poke.baseAbility;
+		if (!poke.ability2 && poke.baseAbility2) poke.ability2 = poke.baseAbility2;
 		poke.reset();
 		if (oldPokemon?.moveTrack.length) poke.moveTrack = oldPokemon.moveTrack;
 
@@ -1014,6 +1034,10 @@ export interface ServerPokemon extends PokemonDetails, PokemonHealth {
 	/** currently an ID, will revise to name */
 	ability?: string;
 	/** currently an ID, will revise to name */
+	/** currently an ID, will revise to name */
+	baseAbility2?: string;
+	/** currently an ID, will revise to name */
+	ability2?: string;
 	item: string;
 	/** currently an ID, will revise to name */
 	pokeball: string;
@@ -1243,19 +1267,17 @@ export class Battle {
 	// Used in Pokemon#effectiveAbility over abilityActive to prevent infinite recursion
 	ngasActive() {
 		for (const active of this.getAllActive()) {
-			if (active.ability === 'Neutralizing Gas' && !active.volatiles['gastroacid']) {
-				return true;
-			}
+			if ((active.ability === 'Neutralizing Gas' || active.ability2 === 'Neutralizing Gas') && !active.volatiles['gastroacid']) { return true; }
 		}
 		return false;
 	}
 	abilityActive(abilities: string | string[]) {
 		if (typeof abilities === 'string') abilities = [abilities];
-		abilities = abilities.map(toID);
+		const ids = abilities.map(toID);
 		for (const active of this.getAllActive()) {
-			if (abilities.includes(toID(active.effectiveAbility()))) {
-				return true;
-			}
+			const a1 = toID(active.effectiveAbility());
+			const a2 = toID((active as any).effectiveAbility2?.() || '');
+			if (ids.includes(a1) || (a2 && ids.includes(a2))) { return true; }
 		}
 		return false;
 	}
@@ -1409,17 +1431,13 @@ export class Battle {
 				this.weatherTimeLeft--;
 				if (this.weatherMinTimeLeft !== 0) this.weatherMinTimeLeft--;
 			}
-			if (this.seeking === null) {
-				this.scene.upkeepWeather();
-			}
+			if (this.seeking === null) { this.scene.upkeepWeather(); }
 			return;
 		}
 		if (weather) {
 			let isExtremeWeather = (weather === 'deltastream' || weather === 'desolateland' || weather === 'primordialsea');
 			if (poke) {
-				if (ability) {
-					this.activateAbility(poke, ability.name);
-				}
+				if (ability) { this.activateAbility(poke, ability.name); }
 				this.weatherTimeLeft = (this.gen <= 5 || isExtremeWeather) ? 0 : 8;
 				this.weatherMinTimeLeft = (this.gen <= 5 || isExtremeWeather) ? 0 : 5;
 			} else if (isExtremeWeather) {
@@ -1434,9 +1452,7 @@ export class Battle {
 		this.scene.updateWeather();
 	}
 	swapSideConditions() {
-		const sideConditions = [
-			'mist', 'lightscreen', 'reflect', 'spikes', 'safeguard', 'tailwind', 'toxicspikes', 'stealthrock', 'waterpledge', 'firepledge', 'grasspledge', 'stickyweb', 'auroraveil', 'gmaxsteelsurge', 'gmaxcannonade', 'gmaxvinelash', 'gmaxwildfire',
-		];
+		const sideConditions = ['mist', 'lightscreen', 'reflect', 'spikes', 'safeguard', 'tailwind', 'toxicspikes', 'stealthrock', 'waterpledge', 'firepledge', 'grasspledge', 'stickyweb', 'auroraveil', 'gmaxsteelsurge', 'gmaxcannonade', 'gmaxvinelash', 'gmaxwildfire',];
 		if (this.gameType === 'freeforall') {
 			// Court Change rotates side conditions clockwise in a free-for-all
 
@@ -1661,15 +1677,20 @@ export class Battle {
 		this.scene.animReset(pokemon);
 	}
 
-	activateAbility(pokemon: Pokemon | null, effectOrName: Dex.Effect | string, isNotBase?: boolean) {
-		if (!pokemon || !effectOrName) return;
-		if (typeof effectOrName !== 'string') {
-			if (effectOrName.effectType !== 'Ability') return;
-			effectOrName = effectOrName.name;
-		}
-		this.scene.abilityActivateAnim(pokemon, effectOrName);
-		pokemon.rememberAbility(effectOrName, isNotBase);
+	activateAbility(
+	pokemon: Pokemon | null,
+	effectOrName: Dex.Effect | string,
+	isNotBase?: boolean,
+	slot: 1 | 2 = 1
+) {
+	if (!pokemon || !effectOrName) return;
+	if (typeof effectOrName !== 'string') {
+		if (effectOrName.effectType !== 'Ability') return;
+		effectOrName = effectOrName.name;
 	}
+	this.scene.abilityActivateAnim(pokemon, effectOrName);
+	pokemon.rememberAbility(effectOrName, isNotBase, slot);
+}
 
 	runMinor(args: Args, kwArgs: KWArgs, nextArgs?: Args, nextKwargs?: KWArgs) {
 		if (nextArgs && nextKwargs) {
@@ -2161,6 +2182,7 @@ export class Battle {
 			let effect = Dex.getEffect(kwArgs.from);
 			let ofpoke = this.getPokemon(kwArgs.of) || poke;
 			poke.status = args[2] as Dex.StatusName;
+			if (poke.status === 'aura' && kwArgs.time) { (poke as any).auraTime = Number(kwArgs.time) || 0; }
 			this.activateAbility(ofpoke || poke, effect);
 			if (effect.effectType === 'Item') {
 				ofpoke.item = effect.name;
@@ -2204,7 +2226,6 @@ export class Battle {
 		case '-curestatus': {
 			let poke = this.getPokemon(args[1])!;
 			let effect = Dex.getEffect(kwArgs.from);
-
 			if (effect.id) {
 				switch (effect.id) {
 				case 'flamewheel':
@@ -2219,6 +2240,12 @@ export class Battle {
 			}
 			if (poke) {
 				poke.status = '';
+				// Clear Aura UI timer state when Aura ends
+				if (args[2] === 'aura') {
+					(poke as any).auraTime = 0;
+					(poke as any).auraStartTurn = 0; // only if you ever used this earlier
+					(poke as any).auraDuration = 0;  // only if you ever used this earlier
+				}
 				switch (args[2]) {
 				case 'brn':
 					this.scene.resultAnim(poke, 'Burn cured', 'good');
@@ -2413,30 +2440,46 @@ export class Battle {
 			let oldAbility = Dex.abilities.get(args[3]);
 			let effect = Dex.getEffect(kwArgs.from);
 			let ofpoke = this.getPokemon(kwArgs.of);
-			poke.rememberAbility(ability.name, effect.id && !kwArgs.fail);
-
+			let slot: 1 | 2 = (kwArgs.slot === '2' ? 2 : 1);
+			// Hard rules (so Aura never overwrites slot 1 even if kwArgs.slot is missing)
+			if (effect.id === 'aura') slot = 2;
+			if (effect.id === 'mummy' || effect.id === 'lingeringaroma' || effect.id === 'wanderingspirit') slot = 1;
+			// If kwArgs.slot wasn't provided, infer slot 2 when the "old ability" matches slot 2
+			if (!kwArgs.slot) {
+				const oldId = toID(oldAbility.name);
+				const a2 = toID((poke as any).ability2 || '');
+				const b2 = toID((poke as any).baseAbility2 || '');
+				if (oldId && (oldId === a2 || oldId === b2)) slot = 2;
+			}
+			// Trace / PoA / Receiver replace whichever slot THEY are in on the user
+			if (effect.id === 'trace' || effect.id === 'powerofalchemy' || effect.id === 'receiver') {
+				const effId = toID(effect.id);
+				const s2 = toID((poke as any).ability2 || (poke as any).baseAbility2 || '');
+				slot = (s2 === effId ? 2 : 1);
+			}
+			poke.rememberAbility(ability.name, effect.id && !kwArgs.fail, slot);
 			if (kwArgs.silent) {
 				// do nothing
 			} else if (oldAbility.id) {
-				this.activateAbility(poke, oldAbility.name);
+				this.activateAbility(poke, oldAbility.name, undefined, slot);
 				this.scene.wait(500);
-				this.activateAbility(poke, ability.name, true);
-				ofpoke?.rememberAbility(ability.name);
+				this.activateAbility(poke, ability.name, true, slot);
+				ofpoke?.rememberAbility(ability.name, undefined, slot);
 			} else if (effect.id) {
 				switch (effect.id) {
 				case 'desolateland':
 				case 'primordialsea':
 				case 'deltastream':
 					if (kwArgs.fail) {
-						this.activateAbility(poke, ability.name);
+						this.activateAbility(poke, ability.name, undefined, slot);;
 					}
 					break;
 				default:
-					this.activateAbility(poke, ability.name);
+					this.activateAbility(poke, ability.name, undefined, slot);;
 					break;
 				}
 			} else {
-				this.activateAbility(poke, ability.name);
+				this.activateAbility(poke, ability.name, undefined, slot);;
 			}
 			this.scene.updateWeather();
 			this.log(args, kwArgs);
@@ -2448,9 +2491,11 @@ export class Battle {
 			let poke = this.getPokemon(args[1])!;
 			let ability = Dex.abilities.get(args[2]);
 			poke.ability = '(suppressed)';
+			poke.ability2 = '(suppressed)';
 
 			if (ability.id) {
 				if (!poke.baseAbility) poke.baseAbility = ability.name;
+				if (!poke.baseAbility2) poke.baseAbility2 = ability.name;
 			}
 			this.log(args, kwArgs);
 			break;
@@ -2980,21 +3025,16 @@ export class Battle {
 				poke.removeVolatile('telekinesis' as ID);
 				this.scene.anim(poke, { time: 100 });
 				break;
-			case 'skillswap': case 'wanderingspirit':
+						case 'skillswap':
 				if (this.gen <= 4) break;
-				let pokeability = Dex.sanitizeName(kwArgs.ability) || target!.ability;
-				let targetability = Dex.sanitizeName(kwArgs.ability2) || poke.ability;
-				if (pokeability) {
-					poke.ability = pokeability;
-					if (!target!.baseAbility) target!.baseAbility = pokeability;
-				}
-				if (targetability) {
-					target!.ability = targetability;
-					if (!poke.baseAbility) poke.baseAbility = targetability;
-				}
-				if (poke.side !== target!.side) {
-					this.activateAbility(poke, pokeability, true);
-					this.activateAbility(target, targetability, true);
+				if (target) {
+					// Your rule: swapping effects swap BOTH ability slots
+					poke.swapAbilities(target);
+
+					if (poke.side !== target.side) {
+						this.activateAbility(poke, poke.ability, true);
+						this.activateAbility(target, target.ability, true);
+					}
 				}
 				break;
 
@@ -3018,6 +3058,7 @@ export class Battle {
 				break;
 			case 'lingeringaroma':
 			case 'mummy':
+			case 'wanderingspirit':
 				if (!kwArgs.ability) break; // if Mummy activated but failed, no ability will have been sent
 				let ability = Dex.abilities.get(kwArgs.ability);
 				this.activateAbility(target, ability.name);
@@ -3438,6 +3479,12 @@ export class Battle {
 			}
 			if (this.tier.includes('Super Staff Bros')) {
 				this.dex = Dex.mod('gen9ssb' as ID);
+			}
+			if (
+  			this.tier.includes('Indigo Starstorm') ||
+  			this.tier.includes('ISL Regulation Set')
+			) {
+  			this.dex = Dex.mod('gen9indigostarstorm' as ID);
 			}
 			this.log(args);
 			break;

@@ -3990,11 +3990,11 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 	},
 	mummy: { // always replace ability1 
 		onDamagingHit(damage, target, source, move) {
-			const sourceAbility = source.getAbility();
-			if (sourceAbility.flags['cantsuppress'] || sourceAbility.id === 'mummy') { return; }
+			const sourceAbility = source.getAbility(1);
+			if (sourceAbility.flags['cantsuppress'] || sourceAbility.id === 'mummy') return;
 			if (this.checkMoveMakesContact(move, source, target, !source.isAlly(target))) {
-				const oldAbility = source.ability;
-				source.setAbility('mummy');
+				const oldAbility = source.getAbility(1).id;
+				source.setAbility('mummy', target, null, false, false, 1);
 				if (oldAbility && oldAbility !== 'mummy') { this.add('-activate', target, 'ability: Mummy', this.dex.abilities.get(oldAbility).name, `[of] ${source}`); }
 			}
 		},
@@ -5160,10 +5160,12 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 	},
 	powerofalchemy: {
 		onAllyFaint(target) {
-			if (!this.effectState.target.hp) return;
-			const ability = target.getAbility();
+			const holder = this.effectState.target;
+			if (!holder?.hp) return;
+			const ability = target.getAbility(1); // always copy Slot 1
 			if (ability.flags['noreceiver'] || ability.id === 'noability') return;
-			this.effectState.target.setAbility(ability, target);
+			const slot = holder.ability1 === 'powerofalchemy' ? 1 : 2; // replace the slot PoA was in
+			holder.setAbility(ability, target, null, false, false, slot);
 		},
 		onSourceModifyDamage(damage, source, target, move) {
 			if (move.flags?.magic) {
@@ -5237,10 +5239,12 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 			}
 		},
 		onAllyFaint(target) {
-			if (!this.effectState.target.hp) return;
-			const ability = target.getAbility();
+			const holder = this.effectState.target;
+			if (!holder?.hp) return;
+			const ability = target.getAbility(1); // always copy Slot 1
 			if (ability.flags['noreceiver'] || ability.id === 'noability') return;
-			this.effectState.target.setAbility(ability, target);
+			const slot = holder.ability1 === 'receiver' ? 1 : 2; // replace the slot Receiver was in
+			holder.setAbility(ability, target, null, false, false, slot);
 		},
 		flags: { failroleplay: 1, noreceiver: 1, noentrain: 1, notrace: 1 },
 		name: "Receiver",
@@ -6016,15 +6020,13 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 	},
 	wanderingspirit: {
 		onDamagingHit(damage, target, source, move) {
-			if (source.getAbility().flags['failskillswap'] || target.volatiles['dynamax']) return;
+			const sourceAbility = source.getAbility(1);
+			if (sourceAbility.flags['cantsuppress'] || sourceAbility.id === 'wanderingspirit') return;
+			if (target.volatiles['dynamax']) return;
 			if (this.checkMoveMakesContact(move, source, target)) {
-				const targetCanBeSet = this.runEvent('SetAbility', target, source, this.effect, source.ability);
-				if (!targetCanBeSet) return targetCanBeSet;
-				const sourceAbility = source.setAbility('wanderingspirit', target);
-				if (!sourceAbility) return;
-				if (target.isAlly(source)) { this.add('-activate', target, 'Skill Swap', '', '', `[of] ${source}`); }
-				else { this.add('-activate', target, 'ability: Wandering Spirit', this.dex.abilities.get(sourceAbility).name, 'Wandering Spirit', `[of] ${source}`); }
-				target.setAbility(sourceAbility);
+				const oldAbility = source.getAbility(1).id;
+				source.setAbility('wanderingspirit', target, null, false, false, 1);
+				if (oldAbility && oldAbility !== 'wanderingspirit') { this.add('-activate', target, 'ability: Wandering Spirit', this.dex.abilities.get(oldAbility).name, `[of] ${source}`); }
 			}
 		},
 		flags: {},

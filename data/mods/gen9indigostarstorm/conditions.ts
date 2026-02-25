@@ -27,23 +27,38 @@ export const Conditions = {
 			this.effectState.auraName = auraName;
 			this.effectState.time = auraDuration;
 			this.effectState.ignoreNeutralizingGas = true; // Auras ignore Neutralizing Gas
-			target.setAbility(auraAbility, target, sourceEffect, false, false, 2);
+			this.effectState.oldAbility2 = target.getAbility(2).id;
+			// Use the Aura status as the sourceEffect so it always logs |-ability| ... [slot]2
+			// and pass the real source (if any) for nicer "[of]" attribution.
+			target.setAbility(auraAbility, source ?? null, this.effect, false, false, 2);
 			if (auraName !== 'Aura') {
-				this.add('-status', target, 'aura');
+				this.add('-status', target, 'aura', `[time]${this.effectState.time}`);
 				this.add('-message', `${target.name}'s aura ${auraName} has engulfed their surroundings!`);
-			} else { this.add('-status', target, 'aura'); }
+			} else { this.add('-status', target, 'aura', `[time]${this.effectState.time}`); }
 		},
-		onSwitchIn(target) { if (this.effectState.auraAbility) { target.setAbility(this.effectState.auraAbility, target, null, false, false, 2); } },
+		onSwitchIn(target) {
+			if (this.effectState.auraAbility) {
+				// Non-null sourceEffect so client receives |-ability|... [slot]2 on switch-in too
+				target.setAbility(this.effectState.auraAbility, null, this.effect, false, false, 2);
+				this.add('-status', target, 'aura', `[time]${this.effectState.time}`, '[silent]');
+			}
+		},
 		onResidualOrder: 9,
 		onResidual(pokemon) {
 			if (this.effectState.time) {
 				this.effectState.time--;
-				if (this.effectState.time <= 0) { pokemon.cureStatus(); }
+				if (this.effectState.time <= 0) { pokemon.cureStatus();} 
+				else { this.add('-status', pokemon, 'aura', `[time]${this.effectState.time}`, '[silent]'); } // update client-side timer display without re-announcing aura
 			}
 		},
 		onEnd(target) {
 			if (this.effectState.auraAbility) {
-				target.clearAbility(2);
+				const old = this.effectState.oldAbility2;
+				if (old && old !== 'noability') {
+					// Non-null sourceEffect so client receives restoration as |-ability|... [slot]2
+					target.setAbility(old, null, this.effect, false, false, 2);
+				}
+				else { target.clearAbility(2); }
 				if (this.effectState.auraName && this.effectState.auraName !== 'Aura') {
 					this.add('-end', target, 'aura');
 					this.add('-message', `${target.name}'s ${this.effectState.auraName} faded!`);

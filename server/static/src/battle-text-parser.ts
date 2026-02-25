@@ -90,7 +90,12 @@ export class BattleTextParser {
 			const bracketPos = lastArg.indexOf(']');
 			if (bracketPos <= 0) break;
 			// default to '.' so it evaluates to boolean true
-			kwArgs[lastArg.slice(1, bracketPos)] = lastArg.slice(bracketPos + 1).trim() || '.';
+			const key = lastArg.slice(1, bracketPos);
+			const value = lastArg.slice(bracketPos + 1).trim();
+
+			// Special-case [slot]2 so it never becomes '.' and stays numeric-like
+			if (key === 'slot') { kwArgs.slot = value || '1'; } 
+			else { kwArgs[key] = value || '.'; } // default to '.' so it evaluates to boolean true
 			args.pop();
 		}
 		return BattleTextParser.upgradeArgs({ args, kwArgs });

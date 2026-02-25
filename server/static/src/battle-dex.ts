@@ -672,7 +672,7 @@ export const Dex = new class implements ModdedDex {
 		let top = Math.floor(num / 12) * 30;
 		let left = (num % 12) * 40;
 		let fainted = ((pokemon as Pokemon | ServerPokemon)?.fainted ?
-			`;opacity:.3;filter:grayscale(100%) brightness(.5)` : ``);
+			`;opacity:.6;filter:grayscale(60%) brightness(.5)` : ``);
 		return `background:transparent url(${Dex.resourcePrefix}sprites/pokemonicons-sheet.png?v19) no-repeat scroll -${left}px -${top}px${fainted}`;
 	}
 	getTeambuilderSpriteData(pokemon: any, dex: ModdedDex = Dex): TeambuilderSpriteData {

@@ -7,6 +7,32 @@ License: GPLv2
 
 @import url(./battle-log.css?v10);
 
+
+
+/* Tooltip-specific status icon sizing */
+#tooltipwrapper .tooltip-status-icon {
+	width: 80px;
+	height: 18px;
+	vertical-align: text-bottom;
+	image-rendering: pixelated;
+}
+
+/* Ability set formatting in tooltips */
+#tooltipwrapper .abilityset-title {
+	font-weight: 700;
+	display: inline-block;
+	margin-top: 2px;
+}
+
+#tooltipwrapper .ability-line {
+	display: inline-block;
+	margin-left: 8px;
+}
+/* Ability set header colors in tooltips */
+#tooltipwrapper .abilityset-title.set-1 { color: #2e9d3f; } /* green */
+#tooltipwrapper .abilityset-title.set-2 { color: #2b6fdd; } /* blue */
+
+
 .battle {
 	position: absolute;
 	text-align: left;
@@ -132,6 +158,15 @@ License: GPLv2
 	right: 0;
 }
 
+
+.status-icon {
+  width: 80px;
+  height: 18px;
+  image-rendering: pixelated;
+  vertical-align: middle;
+}
+
+
 .statbar {
 	position: absolute;
 	display: none;
@@ -249,11 +284,11 @@ License: GPLv2
 }
 .statbar .status {
 	min-height: 10px;
-	font-size: 7pt;
+	font-size: 8pt;
 }
 .statbar .status img {
 	vertical-align: top;
-	top: -2px;
+	top: 1px;
 	position: relative;
 }
 .statbar span {
@@ -342,7 +377,7 @@ License: GPLv2
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
-	padding: 2px 5px;
+	padding: 2px 0px;
 	z-index: 1;
 }
 .battleteambar-p1 {
@@ -351,7 +386,7 @@ License: GPLv2
 	flex-direction: row;
 	align-items: center;
 	flex-wrap: wrap;
-	max-width: 210px;
+	max-width: 216px;
 	align-content: flex-start;
 }
 .battleteambar-p2 {
@@ -360,7 +395,7 @@ License: GPLv2
 	flex-direction: row;
 	align-items: center;
 	flex-wrap: wrap;
-	max-width: 210px;
+	max-width: 216px;
 	align-content: flex-start;
 	justify-content: flex-end;
 }
@@ -381,10 +416,19 @@ License: GPLv2
 	height: 24px;
 	display: inline-block;
 	image-rendering: pixelated;
-	transform: scale(0.5);
+	transform: scale(1);
 	transform-origin: top right;
 	z-index: 2;
 	pointer-events: none;
+}
+.battleteambar-sprite .itemicon.itemicon-unknown {
+	border-radius: 2px;
+	color: #fff;
+	font-weight: 700;
+	font-size: 14px;        
+	line-height: 24px;
+	text-align: center;
+	background-image: none !important;
 }
 .battleteambar-sprite.fainted {
 	opacity: 0.3;
