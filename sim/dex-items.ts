@@ -1,8 +1,6 @@
 import type { PokemonEventMethods, ConditionData } from './dex-conditions';
 import { assignMissingFields, BasicEffect, toID } from './dex-data';
 import { Utils } from '../lib/utils';
-
-
 interface BelchData {
 	basePower?: number;
 	status?: string;
@@ -10,7 +8,6 @@ interface BelchData {
 	effect?: CommonHandlers['ResultMove'];
 	chance?: number; 
 }
-
 interface FlingData {
 	basePower: number;
 	status?: string;
@@ -24,79 +21,46 @@ export interface ItemData extends Partial<Item>, PokemonEventMethods {
 	isFragile?: boolean;
 	/** If true, this item is considered mildly fragile and will trigger its effect when disturbed, but will not break. */
 	isMildlyFragile?: boolean;
-	/**
-	 * Function called when this item breaks due to fragility (not from being eaten or knocked off).
-	 */
+	// Function called when this item breaks due to fragility (not from being eaten or knocked off).
 	onFragileBreak?: (this: Battle, pokemon: Pokemon, source?: Pokemon, effect?: Effect) => void;
-	/**
-	 * Function called when this item is mildly disturbed (mildly fragile effect).
-	 */
+	// Function called when this item is mildly disturbed (mildly fragile effect).
 	onMildlyFragileBreak?: (this: Battle, pokemon: Pokemon, source?: Pokemon, effect?: Effect) => void;
 }
-
 export type ModdedItemData = ItemData | Partial<Omit<ItemData, 'name'>> & {
 	inherit: true,
 	onCustap?: (this: Battle, pokemon: Pokemon) => void,
 };
-
 export interface ItemDataTable { [itemid: IDEntry]: ItemData }
 export interface ModdedItemDataTable { [itemid: IDEntry]: ModdedItemData }
-
 export class Item extends BasicEffect implements Readonly<BasicEffect> {
 	declare readonly effectType: 'Item';
-
 	/** just controls location on the item spritesheet */
 	declare readonly num: number;
-
 	/** If true, this item is considered fragile and may break/disappear under certain conditions. */
 	readonly isFragile: boolean;
 	/** If true, this item is considered mildly fragile and will trigger its effect when disturbed, but will not break. */
 	readonly isMildlyFragile: boolean;
-	/**
-	 * Function called when this item breaks due to fragility (not from being eaten or knocked off).
-	 */
+	// Function called when this item breaks due to fragility (not from being eaten or knocked off).
 	readonly onFragileBreak?: (this: Battle, pokemon: Pokemon, source?: Pokemon, effect?: Effect) => void;
-	/**
-	 * Function called when this item is mildly disturbed (mildly fragile effect).
-	 */
+	// Function called when this item is mildly disturbed (mildly fragile effect).
 	readonly onMildlyFragileBreak?: (this: Battle, pokemon: Pokemon, source?: Pokemon, effect?: Effect) => void;
-
-	/**
-	 * A Move-like object depicting what happens when Fling is used on this item.
-	 */
+	// A Move-like object depicting what happens when Fling is used on this item.
 	readonly fling?: FlingData;
-	/**
-	 * A Move-like object depicting what happens when Belch is used on this item.
-	 */
+	// A Move-like object depicting what happens when Belch is used on this item.
 	readonly belch?: BelchData;
-	/**
-	 * If this is a Drive: The type it turns Techno Blast into.
-	 * undefined, if not a Drive.
-	 */
+	// If this is a Drive: The type it turns Techno Blast into. undefined, if not a Drive.
 	readonly onDrive?: string;
-	/**
-	 * If this is a Memory: The type it turns Multi-Attack into.
-	 * undefined, if not a Memory.
-	 */
+	// If this is a Memory: The type it turns Multi-Attack into. undefined, if not a Memory.
 	readonly onMemory?: string;
-	/**
-	 * If this is a mega stone: The name (e.g. Charizard-Mega-X) of the
-	 * forme this allows transformation into.
-	 * undefined, if not a mega stone.
-	 */
+	// If this is a mega stone: The name (e.g. Charizard-Mega-X) of the forme this allows transformation into. undefined, if not a mega stone.
 	readonly megaStone?: string;
-	/**
-	 * If this is a mega stone: The name (e.g. Charizard) of the
-	 * forme this allows transformation from.
-	 * undefined, if not a mega stone.
-	 */
+	// If this is a mega stone: The name (e.g. Charizard) of the forme this allows transformation from. undefined, if not a mega stone.
 	readonly megaEvolves?: string;
 	/**
 	 * If this is a Z crystal: true if the Z Crystal is generic
 	 * (e.g. Firium Z). If species-specific, the name
 	 * (e.g. Inferno Overdrive) of the Z Move this crystal allows
-	 * the use of.
-	 * undefined, if not a Z crystal.
+	 * the use of. undefined, if not a Z crystal.
 	 */
 	readonly zMove?: true | string;
 	/**
@@ -131,22 +95,18 @@ export class Item extends BasicEffect implements Readonly<BasicEffect> {
 	readonly isPokeball: boolean;
 	/** Is this item a Red or Blue Orb? */
 	readonly isPrimalOrb: boolean;
-
 	declare readonly condition?: ConditionData;
 	declare readonly forcedForme?: string;
 	declare readonly isChoice?: boolean;
 	declare readonly naturalGift?: { basePower: number, type: string };
 	declare readonly spritenum?: number;
 	declare readonly boosts?: SparseBoostsTable | false;
-
 	declare readonly onEat?: ((this: Battle, pokemon: Pokemon) => void) | false;
 	declare readonly onUse?: ((this: Battle, pokemon: Pokemon) => void) | false;
 	declare readonly onStart?: (this: Battle, target: Pokemon) => void;
 	declare readonly onEnd?: (this: Battle, target: Pokemon) => void;
-
 	constructor(data: AnyObject) {
 		super(data);
-
 		this.fullname = `item: ${this.name}`;
 		this.effectType = 'Item';
 		this.fling = data.fling || undefined;
@@ -168,63 +128,42 @@ export class Item extends BasicEffect implements Readonly<BasicEffect> {
 		this.isMildlyFragile = !!data.isMildlyFragile;
 		this.onFragileBreak = data.onFragileBreak;
 		this.onMildlyFragileBreak = data.onMildlyFragileBreak;
-
 		if (!this.gen) {
-			if (this.num >= 1124) {
-				this.gen = 9;
-			} else if (this.num >= 927) {
-				this.gen = 8;
-			} else if (this.num >= 689) {
-				this.gen = 7;
-			} else if (this.num >= 577) {
-				this.gen = 6;
-			} else if (this.num >= 537) {
-				this.gen = 5;
-			} else if (this.num >= 377) {
-				this.gen = 4;
-			} else {
-				this.gen = 3;
-			}
-			// Due to difference in gen 2 item numbering, gen 2 items must be
-			// specified manually
+			if (this.num >= 1124) { this.gen = 9; } 
+			else if (this.num >= 927) { this.gen = 8; } 
+			else if (this.num >= 689) { this.gen = 7; } 
+			else if (this.num >= 577) { this.gen = 6; } 
+			else if (this.num >= 537) { this.gen = 5; } 
+			else if (this.num >= 377) { this.gen = 4;   } 
+			else { this.gen = 3; }
+			// Due to difference in gen 2 item numbering, gen 2 items must be specified manually
 		}
-
 		if (this.isBerry) this.fling = { basePower: 10 };
 		if (this.id.endsWith('plate')) this.fling = { basePower: 90 };
 		if (this.onDrive) this.fling = { basePower: 70 };
 		if (this.megaStone) this.fling = { basePower: 80 };
 		if (this.onMemory) this.fling = { basePower: 50 };
-
 		assignMissingFields(this, data);
 	}
 }
-
 const EMPTY_ITEM = Utils.deepFreeze(new Item({ name: '', exists: false }));
-
 export class DexItems {
 	readonly dex: ModdedDex;
 	readonly itemCache = new Map<ID, Item>();
 	allCache: readonly Item[] | null = null;
-
-	constructor(dex: ModdedDex) {
-		this.dex = dex;
-	}
-
+	constructor(dex: ModdedDex) { this.dex = dex; }
 	get(name?: string | Item): Item {
 		if (name && typeof name !== 'string') return name;
 		const id = name ? toID(name.trim()) : '' as ID;
 		return this.getByID(id);
 	}
-
 	getByID(id: ID): Item {
 		if (id === '') return EMPTY_ITEM;
 		let item = this.itemCache.get(id);
 		if (item) return item;
 		if (this.dex.getAlias(id)) {
 			item = this.get(this.dex.getAlias(id));
-			if (item.exists) {
-				this.itemCache.set(id, item);
-			}
+			if (item.exists) { this.itemCache.set(id, item); }
 			return item;
 		}
 		if (id && !this.dex.data.Items[id] && this.dex.data.Items[id + 'berry']) {
@@ -240,9 +179,7 @@ export class DexItems {
 				...itemData,
 				...itemTextData,
 			});
-			if (item.gen > this.dex.gen) {
-				(item as any).isNonstandard = 'Future';
-			}
+			if (item.gen > this.dex.gen) { (item as any).isNonstandard = 'Future'; }
 			if (this.dex.parentMod) {
 				// If this item is exactly identical to parentMod's item, reuse parentMod's copy
 				const parent = this.dex.mod(this.dex.parentMod);
@@ -252,25 +189,17 @@ export class DexItems {
 						item.isNonstandard === parentItem.isNonstandard &&
 						item.desc === parentItem.desc &&
 						item.shortDesc === parentItem.shortDesc
-					) {
-						item = parentItem;
-					}
+					) { item = parentItem; }
 				}
 			}
-		} else {
-			item = new Item({ name: id, exists: false });
-		}
-
+		} else { item = new Item({ name: id, exists: false }); }
 		if (item.exists) this.itemCache.set(id, this.dex.deepFreeze(item));
 		return item;
 	}
-
 	all(): readonly Item[] {
 		if (this.allCache) return this.allCache;
 		const items = [];
-		for (const id in this.dex.data.Items) {
-			items.push(this.getByID(id as ID));
-		}
+		for (const id in this.dex.data.Items) { items.push(this.getByID(id as ID)); }
 		this.allCache = Object.freeze(items);
 		return this.allCache;
 	}

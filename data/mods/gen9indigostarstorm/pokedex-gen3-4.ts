@@ -2724,7 +2724,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseStats: { hp: 91, atk: 72, def: 78, spa: 30, spd: 42, spe: 32 },
 		abilities: { // ABILITY SET 1
             0: "Sand Stream",
-            1: "Sand Force",
+            1: "Pack Mentality",
                     // ABILITY SET 2
             H: "Sand Stream",
             S: "Strong Jaw",
@@ -3016,6 +3016,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
         },
 		heightm: 1,
 		weightkg: 25.5,
+		infusibleSlots: 1,
 		color: "Green",
 		prevo: "Eevee",
 		evoType: "useItem",
@@ -3038,6 +3039,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
         },
 		heightm: 0.8,
 		weightkg: 25.9,
+		infusibleSlots: 1,
 		color: "Blue",
 		prevo: "Eevee",
 		evoType: "useItem",

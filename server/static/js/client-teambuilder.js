@@ -139,6 +139,7 @@
 			'click button[name=altform]': 'altForm',
 			'click .altform': 'altForm',
 			'click button.teratype': 'teraTypeSelect',
+			'click button.infusion': 'infusionSelect',
 			'click button[name=formeToggle]': 'formeToggleSelect',
 			'click button[name=genderToggle]': 'genderToggleChange',
 			// stats
@@ -174,6 +175,29 @@
 			'click .teambuilder-clipboard-data .result': 'clipboardResultSelect',
 			'click .teambuilder-clipboard-data': 'clipboardExpand',
 			'blur .teambuilder-clipboard-data': 'clipboardShrink'
+		},
+		getInfusionFilter: function (type) {
+			switch (type) {
+			case 'Normal': return 'brightness(0) saturate(100%) invert(73%) sepia(10%) saturate(272%) hue-rotate(356deg) brightness(95%) contrast(88%)';
+			case 'Fire': return 'brightness(0) saturate(100%) invert(55%) sepia(83%) saturate(1200%) hue-rotate(316deg) brightness(100%) contrast(95%)';
+			case 'Water': return 'brightness(0) saturate(100%) invert(54%) sepia(57%) saturate(1700%) hue-rotate(184deg) brightness(98%) contrast(95%)';
+			case 'Electric': return 'brightness(0) saturate(100%) invert(84%) sepia(140%) saturate(748%) hue-rotate(358deg) brightness(78%) contrast(102%)';
+			case 'Grass': return 'brightness(0) saturate(100%) invert(55%) sepia(37%) saturate(1020%) hue-rotate(66deg) brightness(94%) contrast(92%)';
+			case 'Ice': return 'brightness(0) saturate(100%) invert(78%) sepia(18%) saturate(623%) hue-rotate(146deg) brightness(103%) contrast(96%)';
+			case 'Fighting': return 'brightness(0) saturate(100%) invert(31%) sepia(43%) saturate(1264%) hue-rotate(342deg) brightness(130%) contrast(96%)';
+			case 'Poison': return 'brightness(0) saturate(100%) invert(43%) sepia(37%) saturate(1487%) hue-rotate(257deg) brightness(95%) contrast(92%)';
+			case 'Ground': return 'brightness(0) saturate(100%) invert(69%) sepia(51%) saturate(563%) hue-rotate(0deg) brightness(84%) contrast(88%)';
+			case 'Flying': return 'brightness(0) saturate(100%) invert(72%) sepia(25%) saturate(703%) hue-rotate(203deg) brightness(98%) contrast(92%)';
+			case 'Psychic': return 'brightness(0) saturate(100%) invert(60%) sepia(66%) saturate(1448%) hue-rotate(297deg) brightness(99%) contrast(96%)';
+			case 'Bug': return 'brightness(0) saturate(100%) invert(67%) sepia(60%) saturate(758%) hue-rotate(28deg) brightness(91%) contrast(90%)';
+			case 'Rock': return 'brightness(0) saturate(100%) invert(66%) sepia(34%) saturate(612%) hue-rotate(16deg) brightness(91%) contrast(90%)';
+			case 'Ghost': return 'brightness(0) saturate(100%) invert(45%) sepia(18%) saturate(923%) hue-rotate(223deg) brightness(89%) contrast(93%)';
+			case 'Dragon': return 'brightness(0) saturate(100%) invert(32%) sepia(95%) saturate(1435%) hue-rotate(228deg) brightness(95%) contrast(101%)';
+			case 'Dark': return 'brightness(0) saturate(100%) invert(24%) sepia(10%) saturate(528%) hue-rotate(356deg) brightness(92%) contrast(90%)';
+			case 'Steel': return 'brightness(0) saturate(100%) invert(79%) sepia(8%) saturate(425%) hue-rotate(172deg) brightness(94%) contrast(89%)';
+			case 'Fairy': return 'brightness(0) saturate(100%) invert(77%) sepia(33%) saturate(774%) hue-rotate(287deg) brightness(100%) contrast(97%)';
+			default: return 'none';
+			}
 		},
 		dispatchClick: function (e) {
 			e.preventDefault();
@@ -1356,6 +1380,27 @@
 				buf += '<br><button type="button" class="teratype" name="teraType" value="' + BattleLog.escapeHTML(teraType) + '" style="background: none; border: none; padding: 0; cursor: pointer; width: 20px; height: 20px; margin-left: 4px; position: relative; top: 4px;">';
 				buf += '<img src="' + Dex.resourcePrefix + 'sprites/types/Tera' + teraType + '.png" alt="' + teraType + '" style="width: 20px; height: 20px; object-fit: contain; display: block; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5));" />';
 				buf += '</button>';
+				// Infusion icon
+				var infusibleSlots = species.infusibleSlots || 0;
+				if (infusibleSlots) {
+					var move0 = (set.moves && set.moves[0]) ? this.curTeam.dex.moves.get(set.moves[0]) : null;
+					var infusionType = (move0 && move0.exists) ? move0.type : '';
+					buf += '<button type="button" class="infusion" name="infusion" value="' + BattleLog.escapeHTML(move0 ? move0.name : '') + '" style="background: none; border: none; padding: 0; cursor: pointer; width: 22px; height: 22px; margin-left: 8px; position: relative; top: 4px;">';
+					if (infusionType) {
+						buf += '<span style="position:relative; display:block; width:22px; height:22px;">';
+						buf += '<span style="position:absolute; left:1px; top:1px; width:20px; height:20px; border-radius:50%; background:#fff; z-index:1; pointer-events:none; box-shadow:0 1px 3px rgba(0,0,0,0.35);"></span>';
+						buf += '<img src="' + Dex.resourcePrefix + 'sprites/misc/uno.png" alt="" style="position:absolute; left:10px; top:-2px; width:22px; height:20px; z-index:20; pointer-events:none;" />';
+						buf += '<img src="' + Dex.resourcePrefix + 'sprites/misc/infusebw.png" alt="Infusion" style="position:absolute; left:1px; top:1px; z-index:3; width:20px; height:20px; object-fit:contain; display:block; pointer-events:none; filter:' + this.getInfusionFilter(infusionType) + ';" />';
+						buf += '</span>';
+					} else {
+						buf += '<span style="position:relative; display:block; width:22px; height:22px;">';
+						buf += '<span style="position:absolute; left:1px; top:1px; width:20px; height:20px; border-radius:50%; background:#fff; z-index:1; pointer-events:none; box-shadow:0 1px 3px rgba(0,0,0,0.35);"></span>';
+						buf += '<img src="' + Dex.resourcePrefix + 'sprites/misc/infuse.png" alt="Infusion" style="position:absolute; left:1px; top:1px; z-index:2; width:20px; height:20px; object-fit:contain; display:block; pointer-events:none;" />';
+						buf += '</span>';
+					}
+					buf += '</button>';
+				}
+
 				buf += '<div style="margin-top: 11px; margin-left: 2px; font-size: 9px; line-height: 1.1; text-align: left;">' +
 				'<span class="height-display" style="display:block;">' + modifiedHeight.toFixed(1) + ' m</span>' +
 				'<span class="weight-display" style="display:block;">' + modifiedWeight.toFixed(1) + ' kg</span>' +
@@ -3263,57 +3308,69 @@ statSlided: function (e) {
 
 		},
 		altForm: function (e) {
-  e.preventDefault();
-  e.stopPropagation();
+			e.preventDefault();
+			e.stopPropagation();
 
-  var set, i;
+			var set, i;
 
-  if (this.curSet) {
-    // focused (set) view
-    set = this.curSet;
-    i = this.curSetLoc;
-  } else {
-    // team list view
-    i = +$(e.currentTarget).closest('li').attr('value');
-    set = this.curSetList[i];
-  }
+			if (this.curSet) {
+				// focused (set) view
+				set = this.curSet;
+				i = this.curSetLoc;
+			} else {
+				// team list view
+				i = +$(e.currentTarget).closest('li').attr('value');
+				set = this.curSetList[i];
+			}
 
-  if (!set) return;
+			if (!set) return;
 
-  app.addPopup(FormePopup, {curSet: set, index: i, room: this});
-},
+			app.addPopup(FormePopup, {curSet: set, index: i, room: this});
+		},
 		formeToggleSelect: function (e) {
-  e.preventDefault();
-  e.stopPropagation();
+			e.preventDefault();
+			e.stopPropagation();
 
-  var set, i;
+			var set, i;
 
-  if (this.curSet) {
-    set = this.curSet;
-    i = this.curSetLoc;
-  } else {
-    i = +$(e.currentTarget).closest('li').attr('value');
-    set = this.curSetList[i];
-  }
+			if (this.curSet) {
+				set = this.curSet;
+				i = this.curSetLoc;
+			} else {
+				i = +$(e.currentTarget).closest('li').attr('value');
+				set = this.curSetList[i];
+			}
 
-  if (!set) return;
-
-  app.addPopup(FormePopup, {curSet: set, index: i, room: this});
-},
+			if (!set) return;
+			app.addPopup(FormePopup, {curSet: set, index: i, room: this});
+		},
 		teraTypeSelect: function (e) {
-  var set, i;
+			var set, i;
 
-  if (this.curSet) {
-    set = this.curSet;
-    i = this.curSetLoc;
-  } else {
-    i = +$(e.currentTarget).closest('li').attr('value');
-    set = this.curSetList[i];
-  }
+			if (this.curSet) {
+				set = this.curSet;
+				i = this.curSetLoc;
+			} else {
+				i = +$(e.currentTarget).closest('li').attr('value');
+				set = this.curSetList[i];
+			}
+			if (!set) return;
+			app.addPopup(TeraTypePopup, {curSet: set, index: i, room: this});
+		},
+		infusionSelect: function (e) {
+			var set, i;
 
-  if (!set) return;
-  app.addPopup(TeraTypePopup, {curSet: set, index: i, room: this});
-},
+			if (this.curSet) {
+				set = this.curSet;
+				i = this.curSetLoc;
+			} else {
+				i = +$(e.currentTarget).closest('li').attr('value');
+				set = this.curSetList[i];
+			}
+
+			if (!set) return;
+			app.addPopup(InfusionPopup, {curSet: set, index: i, room: this});
+		},
 		affinityFlagClick: function (e) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -4185,6 +4242,67 @@ buf += '<p>' + title + ' or <button name="close" class="button">Cancel</button><
 			else { this.room.update(); }
 			this.room.curTeam.team = Storage.packTeam(this.room.curSetList);
 			Storage.saveTeam(this.room.curTeam);
+		}
+	});
+		var InfusionPopup = this.InfusionPopup = Popup.extend({
+		type: 'semimodal',
+		initialize: function (data) {
+			this.room = data.room;
+			this.curSet = data.curSet;
+			this.chartIndex = data.index;
+			var dex = this.room.curTeam.dex;
+			var species = dex.species.get(this.curSet.species);
+			var infusibleSlots = (species && species.infusibleSlots) || 0;
+			var infusibleMoves = [
+				'acid', 'acidspray', 'appleacid', 'aquajet', 'aquaring', 'aromatherapy', 'aromaticmist', 'aurasphere', 'aurorabeam', 'belch', 'boneclub', 'bonerush',
+				'bonemerang', 'brine', 'bubble', 'bubblebeam', 'bubbletrap', 'burningjealousy', 'chargebeam', 'chistrike', 'confide', 'dragonbreath', 'dragoncheer',
+				'dragonrage', 'eggbomb', 'extrasensory', 'faketears', 'firepledge', 'floralhealing', 'grasspledge', 'gravapple', 'gunkshot', 'hex', 'lifedew',
+				'magicpowder', 'matchagotcha', 'mist', 'mistball', 'mistyexplosion', 'mudshot', 'poisongas', 'poisonpowder', 'pollenpuff', 'powdersnow',
+				'ragepowder', 'silverpowder', 'simplebeam', 'sleeppowder', 'sludge', 'sludgebomb', 'sludgewave', 'smog', 'soak', 'sparklingaria', 'spicyextract',
+				'stunspore', 'syrupbomb', 'toxic', 'venomdrench', 'waterpledge', 'worryseed'
+			];
+			var buf = '';
+			buf += '<div style="width: 330px; max-width: 90vw;">';
+			buf += '<p><strong>Infusible Moves</strong> <button name="close" class="button">Cancel</button></p>';
+			buf += '<p>This Pokémon can have ' + infusibleSlots + ' infusible move' + (infusibleSlots === 1 ? '' : 's') + '.</p>';
+			buf += '<p>Infusible moves are special bonus moves gained after evolution. If the Pokémon can already learn the move naturally, put it in a diffferent move slot, it will not consume the slot anyway.</p>';
+			buf += '<hr />';
+			buf += '<div style="max-height: 420px; overflow-y: auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;">';
+			buf += '</div>';
+			buf += '</div>';
+			for (var i = 0; i < infusibleMoves.length; i++) {
+				var move = dex.moves.get(infusibleMoves[i]);
+				if (!move || !move.exists) continue;
+				buf += '<button name="selectMove" value="' + move.id + '" class="button" style="text-align:left;">' + move.name + '</button>';
+			}
+
+			buf += '</div>';
+			this.$el.html(buf).appendTo('body');
+		},
+		selectMove: function (moveid) {
+			var dex = this.room.curTeam.dex;
+			var move = dex.moves.get(moveid);
+			if (!move || !move.exists) return;
+
+			if (!this.curSet.moves) this.curSet.moves = ['', '', '', ''];
+			this.curSet.moves[0] = move.name;
+
+			this.close();
+			this.room.save();
+
+			var $teamchart = this.room.$('.teamchart li[value="' + this.chartIndex + '"]');
+			$teamchart.find('input[name=move1]').val(move.name);
+
+			var $infusion = $teamchart.find('button.infusion');
+			$infusion.attr('value', move.name);
+
+			var overlayHtml = '';
+			overlayHtml += '<span style="position:relative; display:block; width:22px; height:22px;">';
+			overlayHtml += '<span style="position:absolute; left:1px; top:1px; width:20px; height:20px; border-radius:50%; background:#fff; z-index:1; pointer-events:none; box-shadow:0 1px 3px rgba(0,0,0,0.35);"></span>';
+			overlayHtml += '<img src="' + Dex.resourcePrefix + 'sprites/misc/uno.png" alt="" style="position:absolute; left:10px; top:-2px; width:22px; height:20px; z-index:20; pointer-events:none;" />';
+			overlayHtml += '<img src="' + Dex.resourcePrefix + 'sprites/misc/infusebw.png" alt="Infusion" style="position:absolute; left:1px; top:1px; z-index:3; width:20px; height:20px; object-fit:contain; display:block; pointer-events:none; filter:' + this.room.getInfusionFilter(move.type) + ';" />';
+			overlayHtml += '</span>';
+			$infusion.html(overlayHtml);
 		}
 	});
 	var TeraTypePopup = this.TeraTypePopup = Popup.extend({

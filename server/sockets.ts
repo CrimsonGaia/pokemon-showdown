@@ -1,16 +1,11 @@
 /**
  * Connections
  * Pokemon Showdown - http://pokemonshowdown.com/
- *
  * Abstraction layer for multi-process SockJS connections.
- *
  * This file handles all the communications between the users'
- * browsers, the networking processes, and users.ts in the
- * main process.
- *
+ * browsers, the networking processes, and users.ts in the main process.
  * @license MIT
  */
-
 import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
@@ -20,9 +15,7 @@ import { crashlogger, ProcessManager, Streams } from '../lib';
 import { IPTools } from './ip-tools';
 import { type ChannelID, extractChannelMessages } from '../sim/battle';
 import { StaticServer } from '../lib/static-server';
-
 type StreamWorker = ProcessManager.StreamWorker;
-
 export const Sockets = new class {
 	async onSpawn(worker: StreamWorker) {
 		const id = worker.workerid;
@@ -36,7 +29,6 @@ export const Sockets = new class {
 				Users.socketConnect(worker, id, socketid, ip, protocol);
 				break;
 			}
-
 			case '!': {
 				// !socketid
 				// disconnect
@@ -45,7 +37,6 @@ export const Sockets = new class {
 				Users.socketDisconnect(worker, id, socketid);
 				break;
 			}
-
 			case '<': {
 				// <socketid, message
 				// message
@@ -55,23 +46,18 @@ export const Sockets = new class {
 				Users.socketReceive(worker, id, socketid, message);
 				break;
 			}
-
 			default:
 			// unhandled
 			}
 		}
 	}
-	onUnspawn(this: void, worker: StreamWorker) {
-		Users.socketDisconnectAll(worker, worker.workerid);
-	}
-
+	onUnspawn(this: void, worker: StreamWorker) { Users.socketDisconnectAll(worker, worker.workerid); }
 	listen(port?: number, bindAddress?: string, processesCount?: ConfigLoader.SubProcessesConfig) {
 		if (port !== undefined && !isNaN(port)) {
 			Config.port = port;
 			Config.ssl = null;
 		} else {
 			port = Config.port;
-
 			// Autoconfigure when running in cloud environments.
 			try {
 				const cloudenv = (require as any)('cloud-env');
@@ -79,62 +65,24 @@ export const Sockets = new class {
 				port = cloudenv.get('PORT', port);
 			} catch {}
 		}
-		if (bindAddress !== undefined) {
-			Config.bindaddress = bindAddress;
-		}
-		if (port !== undefined) {
-			Config.port = port;
-		}
+		if (bindAddress !== undefined) { Config.bindaddress = bindAddress; }
+		if (port !== undefined) { Config.port = port; }
 		const workerCount = processesCount?.['network'] ?? 1;
-
 		PM.env = { PSPORT: Config.port, PSBINDADDR: Config.bindaddress || '0.0.0.0', PSNOSSL: Config.ssl ? 0 : 1 };
 		PM.subscribeSpawn(worker => void this.onSpawn(worker));
 		PM.subscribeUnspawn(this.onUnspawn);
-
 		PM.spawn(workerCount);
 	}
-
-	socketSend(worker: StreamWorker, socketid: string, message: string) {
-		void worker.stream.write(`>${socketid}\n${message}`);
-	}
-
-	socketDisconnect(worker: StreamWorker, socketid: string) {
-		void worker.stream.write(`!${socketid}`);
-	}
-
-	roomBroadcast(roomid: RoomID, message: string) {
-		for (const worker of PM.workers) {
-			void worker.stream.write(`#${roomid}\n${message}`);
-		}
-	}
-
-	roomAdd(worker: StreamWorker, roomid: RoomID, socketid: string) {
-		void worker.stream.write(`+${roomid}\n${socketid}`);
-	}
-
-	roomRemove(worker: StreamWorker, roomid: RoomID, socketid: string) {
-		void worker.stream.write(`-${roomid}\n${socketid}`);
-	}
-
-	channelBroadcast(roomid: RoomID, message: string) {
-		for (const worker of PM.workers) {
-			void worker.stream.write(`:${roomid}\n${message}`);
-		}
-	}
-
-	channelMove(worker: StreamWorker, roomid: RoomID, channelid: ChannelID, socketid: string) {
-		void worker.stream.write(`.${roomid}\n${channelid}\n${socketid}`);
-	}
-
-	eval(worker: StreamWorker, query: string) {
-		void worker.stream.write(`$${query}`);
-	}
-
-	start(processCount: ConfigLoader.SubProcessesConfig) {
-		start(processCount);
-	}
+	socketSend(worker: StreamWorker, socketid: string, message: string) { void worker.stream.write(`>${socketid}\n${message}`); }
+	socketDisconnect(worker: StreamWorker, socketid: string) { void worker.stream.write(`!${socketid}`); }
+	roomBroadcast(roomid: RoomID, message: string) { for (const worker of PM.workers) { void worker.stream.write(`#${roomid}\n${message}`); } }
+	roomAdd(worker: StreamWorker, roomid: RoomID, socketid: string) { void worker.stream.write(`+${roomid}\n${socketid}`); }
+	roomRemove(worker: StreamWorker, roomid: RoomID, socketid: string) { void worker.stream.write(`-${roomid}\n${socketid}`); }
+	channelBroadcast(roomid: RoomID, message: string) { for (const worker of PM.workers) { void worker.stream.write(`:${roomid}\n${message}`); } }
+	channelMove(worker: StreamWorker, roomid: RoomID, channelid: ChannelID, socketid: string) { void worker.stream.write(`.${roomid}\n${channelid}\n${socketid}`); }
+	eval(worker: StreamWorker, query: string) { void worker.stream.write(`$${query}`); }
+	start(processCount: ConfigLoader.SubProcessesConfig) { start(processCount); }
 };
-
 export class ServerStream extends Streams.ObjectReadWriteStream<string> {
 	/** socketid:Connection */
 	sockets = new Map<string, import('sockjs').Connection>();
@@ -142,13 +90,10 @@ export class ServerStream extends Streams.ObjectReadWriteStream<string> {
 	rooms = new Map<RoomID, Map<string, import('sockjs').Connection>>();
 	/** roomid:socketid:channelid */
 	roomChannels = new Map<RoomID, Map<string, ChannelID>>();
-
 	server: http.Server;
 	serverSsl: https.Server | null;
 	socketCounter = 0;
-
 	isTrustedProxyIp: (ip: string) => boolean;
-
 	receivers: { [k: string]: (this: ServerStream, data: string) => void } = {
 		'$'(data) {
 			// $code
@@ -240,11 +185,8 @@ export class ServerStream extends Streams.ObjectReadWriteStream<string> {
 				roomChannel = new Map();
 				this.roomChannels.set(roomid, roomChannel);
 			}
-			if (channelid === 0) {
-				roomChannel.delete(socketid);
-			} else {
-				roomChannel.set(socketid, channelid);
-			}
+			if (channelid === 0) { roomChannel.delete(socketid); } 
+			else { roomChannel.set(socketid, channelid); }
 		},
 		':'(data) {
 			// :roomid, message
@@ -253,10 +195,7 @@ export class ServerStream extends Streams.ObjectReadWriteStream<string> {
 			const roomid = data.slice(1, nlLoc) as RoomID;
 			const room = this.rooms.get(roomid);
 			if (!room) return;
-
-			const messages: [string | null, string | null, string | null, string | null, string | null] = [
-				null, null, null, null, null,
-			];
+			const messages: [string | null, string | null, string | null, string | null, string | null] = [null, null, null, null, null,];
 			const message = data.substr(nlLoc + 1);
 			const channelMessages = extractChannelMessages(message, [0, 1, 2, 3, 4]);
 			const roomChannel = this.roomChannels.get(roomid);
@@ -267,7 +206,6 @@ export class ServerStream extends Streams.ObjectReadWriteStream<string> {
 			}
 		},
 	};
-
 	constructor(config: {
 		port: number,
 		bindaddress?: string,
@@ -278,16 +216,10 @@ export class ServerStream extends Streams.ObjectReadWriteStream<string> {
 	}) {
 		super();
 		if (!config.bindaddress) config.bindaddress = '0.0.0.0';
-
 		this.isTrustedProxyIp = config.proxyip ? IPTools.checker(config.proxyip) : () => false;
-
 		// Static HTTP server
-
-		// This handles the custom CSS and custom avatar features, and also
-		// redirects yourserver:8001 to yourserver-8001.psim.us
-
+		// This handles the custom CSS and custom avatar features, and also redirects yourserver:8001 to yourserver-8001.psim.us
 		// It's optional if you don't need these features.
-
 		this.server = http.createServer();
 		this.serverSsl = null;
 		if (config.ssl) {
@@ -307,14 +239,12 @@ export class ServerStream extends Streams.ObjectReadWriteStream<string> {
 				console.warn('SSL private key config values will not support HTTPS server option values in the future. Please set it to use the absolute path of its PEM file.');
 				key = config.ssl.options.key;
 			}
-
 			let cert;
 			try {
 				cert = path.resolve(__dirname, config.ssl.options.cert);
 				if (!fs.statSync(cert).isFile()) throw new Error();
-				try {
-					cert = fs.readFileSync(cert);
-				} catch (e: any) {
+				try { cert = fs.readFileSync(cert); } 
+				catch (e: any) {
 					crashlogger(
 						new Error(`Failed to read the configured SSL certificate PEM file:\n${e.stack}`),
 						`Socket process ${process.pid}`
@@ -324,17 +254,11 @@ export class ServerStream extends Streams.ObjectReadWriteStream<string> {
 				console.warn('SSL certificate config values will not support HTTPS server option values in the future. Please set it to use the absolute path of its PEM file.');
 				cert = config.ssl.options.cert;
 			}
-
 			if (key && cert) {
-				try {
-					// In case there are additional SSL config settings besides the key and cert...
-					this.serverSsl = https.createServer({ ...config.ssl.options, key, cert });
-				} catch (e: any) {
-					crashlogger(new Error(`The SSL settings are misconfigured:\n${e.stack}`), `Socket process ${process.pid}`);
-				}
+				try { this.serverSsl = https.createServer({ ...config.ssl.options, key, cert }); } // In case there are additional SSL config settings besides the key and cert...
+				catch (e: any) { crashlogger(new Error(`The SSL settings are misconfigured:\n${e.stack}`), `Socket process ${process.pid}`); }
 			}
 		}
-
 		// Static server
 		try {
 			const roomidRegex = /^\/(?:[A-Za-z0-9][A-Za-z0-9-]*)\/?$/;
@@ -345,23 +269,16 @@ export class ServerStream extends Streams.ObjectReadWriteStream<string> {
 				// console.log(`static rq: ${req.socket.remoteAddress}:${req.socket.remotePort} -> ${req.socket.localAddress}:${req.socket.localPort} - ${req.method} ${req.url} ${req.httpVersion} - ${req.rawHeaders.join('|')}`);
 				req.resume();
 				req.addListener('end', () => {
-					if (config.customhttpresponse?.(req, res)) {
-						return;
-					}
-
+					if (config.customhttpresponse?.(req, res)) { return; }
 					let server = staticServer;
 					if (req.url) {
-						if (req.url === '/custom.css' || req.url.startsWith('/custom.css?')) {
-							server = cssServer;
-						} else if (req.url.startsWith('/avatars/')) {
+						if (req.url === '/custom.css' || req.url.startsWith('/custom.css?')) { server = cssServer; } 
+						else if (req.url.startsWith('/avatars/')) {
 							req.url = req.url.slice(8);
 							server = avatarServer;
-						} else if (roomidRegex.test(req.url)) {
-							req.url = '/';
-						}
+						} 
+						else if (roomidRegex.test(req.url)) { req.url = '/'; }
 					}
-
-
 				void server.serve(req, res, e => {
 					if (e.status === 404) {
 						// Only serve index.html for navigation requests, not static assets
@@ -374,26 +291,17 @@ export class ServerStream extends Streams.ObjectReadWriteStream<string> {
 					}
 				});
 			});
-		};			this.server.on('request', staticRequestHandler);
+		};	this.server.on('request', staticRequestHandler);
 			if (this.serverSsl) this.serverSsl.on('request', staticRequestHandler);
-		} catch {
-			console.log('Could not start static server');
-		}
-
+		} catch { console.log('Could not start static server'); }
 		// SockJS server
-
-		// This is the main server that handles users connecting to our server
-		// and doing things on our server.
-
+		// This is the main server that handles users connecting to our server and doing things on our server.
 		const sockjs: typeof import('sockjs') = (require as any)('sockjs');
 		const options: import('sockjs').ServerOptions & { faye_server_options?: { [key: string]: any } } = {
 			sockjs_url: `/js/lib/sockjs-1.4.0-nwjsfix.min.js`,
 			prefix: '/showdown',
-			log(severity: string, message: string) {
-				if (severity === 'error') console.log(`ERROR: ${message}`);
-			},
+			log(severity: string, message: string) { if (severity === 'error') console.log(`ERROR: ${message}`); },
 		};
-
 		if (config.wsdeflate !== null) {
 			try {
 				const deflate = (require as any)('permessage-deflate').configure(config.wsdeflate);
@@ -405,18 +313,14 @@ export class ServerStream extends Streams.ObjectReadWriteStream<string> {
 				);
 			}
 		}
-
 		const server = sockjs.createServer(options);
-
 		process.once('disconnect', () => this.cleanup());
 		process.once('exit', () => this.cleanup());
-
 		// this is global so it can be hotpatched if necessary
 		server.on('connection', connection => this.onConnection(connection));
 		server.installHandlers(this.server, {});
 		this.server.listen(config.port, config.bindaddress);
 		console.log(`Worker ${PM.workerid} now listening on ${config.bindaddress}:${config.port}`);
-
 		if (this.serverSsl) {
 			server.installHandlers(this.serverSsl, {});
 			// @ts-expect-error if appssl exists, then `config.ssl` must also exist
@@ -424,49 +328,34 @@ export class ServerStream extends Streams.ObjectReadWriteStream<string> {
 			// @ts-expect-error if appssl exists, then `config.ssl` must also exist
 			console.log(`Worker ${PM.workerid} now listening for SSL on port ${config.ssl.port}`);
 		}
-
 		console.log(`Test your server at http://${config.bindaddress === '0.0.0.0' ? 'localhost' : config.bindaddress}:${config.port}`);
 	}
-
 	/**
-	 * Clean up any remaining connections on disconnect. If this isn't done,
-	 * the process will not exit until any remaining connections have been destroyed.
+	 * Clean up any remaining connections on disconnect. If this isn't done, the process will not exit until any remaining connections have been destroyed.
 	 * Afterwards, the worker process will die on its own
 	 */
 	cleanup() {
-		for (const socket of this.sockets.values()) {
-			try {
-				socket.destroy();
-			} catch {}
-		}
+		for (const socket of this.sockets.values()) { try { socket.destroy(); } catch {} }
 		this.sockets.clear();
 		this.rooms.clear();
 		this.roomChannels.clear();
-
 		this.server.close();
 		if (this.serverSsl) this.serverSsl.close();
-
 		// Let the server(s) finish closing.
 		setImmediate(() => process.exit(0));
 	}
-
 	onConnection(socket: import('sockjs').Connection) {
 		// For reasons that are not entirely clear, SockJS sometimes triggers
 		// this event with a null `socket` argument.
 		if (!socket) return;
-
 		if (!socket.remoteAddress) {
 			// SockJS sometimes fails to be able to cache the IP, port, and
 			// address from connection request headers.
-			try {
-				socket.destroy();
-			} catch {}
+			try { socket.destroy(); } catch {}
 			return;
 		}
-
 		const socketid = `${++this.socketCounter}`;
 		this.sockets.set(socketid, socket);
-
 		let socketip = socket.remoteAddress;
 		if (this.isTrustedProxyIp(socketip)) {
 			const ips = (socket.headers['x-forwarded-for'] || '').split(',').reverse();
@@ -478,9 +367,7 @@ export class ServerStream extends Streams.ObjectReadWriteStream<string> {
 				}
 			}
 		}
-
 		this.push(`*${socketid}\n${socketip}\n${socket.protocol}`);
-
 		socket.on('data', message => {
 			// drop empty messages (DDoS?)
 			if (!message) return;
@@ -496,74 +383,55 @@ export class ServerStream extends Streams.ObjectReadWriteStream<string> {
 			// drop blank messages (DDoS?)
 			const pipeIndex = message.indexOf('|');
 			if (pipeIndex < 0 || pipeIndex === message.length - 1) return;
-
 			this.push(`<${socketid}\n${message}`);
 		});
-
 		socket.once('close', () => {
 			this.push(`!${socketid}`);
 			this.sockets.delete(socketid);
 			for (const room of this.rooms.values()) room.delete(socketid);
 		});
 	}
-
 	override _write(data: string) {
 		// console.log('worker received: ' + data);
-
 		const receiver = this.receivers[data.charAt(0)];
 		if (receiver) receiver.call(this, data);
 	}
 }
-
 /*********************************************************
  * Process manager
  *********************************************************/
-
 export const PM = new ProcessManager.RawProcessManager({
 	id: 'sockets',
 	module,
 	setupChild: () => new ServerStream(Config),
 	isCluster: true,
 });
-
 if (!PM.isParentProcess) {
 	ConfigLoader.ensureLoaded();
 	if (Config.crashguard) {
 		// graceful crash - allow current battles to finish before restarting
-		process.on('uncaughtException', err => {
-			crashlogger(err, `Socket process ${PM.workerid} (${process.pid})`);
-		});
-		process.on('unhandledRejection', err => {
-			crashlogger(err as any || {}, `Socket process ${PM.workerid} (${process.pid}) Promise`);
-		});
+		process.on('uncaughtException', err => { crashlogger(err, `Socket process ${PM.workerid} (${process.pid})`); });
+		process.on('unhandledRejection', err => { crashlogger(err as any || {}, `Socket process ${PM.workerid} (${process.pid}) Promise`); });
 	}
-
 	if (Config.ofesockets) {
-		try {
-			require.resolve('node-oom-heapdump');
-		} catch (e: any) {
+		try { require.resolve('node-oom-heapdump'); } 
+		catch (e: any) {
 			if (e.code !== 'MODULE_NOT_FOUND') throw e; // should never happen
 			throw new Error(
 				'node-oom-heapdump is not installed, but it is a required dependency if Config.ofesockets is set to true! ' +
 				'Run npm install node-oom-heapdump and restart the server.'
 			);
 		}
-
 		// Create a heapdump if the process runs out of memory.
-		(global as any).nodeOomHeapdump = (require as any)('node-oom-heapdump')({
-			addTimestamp: true,
-		});
+		(global as any).nodeOomHeapdump = (require as any)('node-oom-heapdump')({ addTimestamp: true, });
 	}
-
 	// setup worker
 	if (process.env.PSPORT) Config.port = +process.env.PSPORT;
 	if (process.env.PSBINDADDR) Config.bindaddress = process.env.PSBINDADDR;
 	if (process.env.PSNOSSL && parseInt(process.env.PSNOSSL)) Config.ssl = null;
-
 	// eslint-disable-next-line no-eval
 	PM.startRepl({ filename: `sockets-${PM.workerid}-${process.pid}`, eval: cmd => eval(cmd) });
 }
-
 function start(processCount: ConfigLoader.SubProcessesConfig) {
 	let port;
 	for (const arg of process.argv) {

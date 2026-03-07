@@ -101,6 +101,9 @@ export const Scripts: ModdedBattleScriptsData = {
 
 	// Magic moves ignore type and ability immunities, treat those immunities as resistances
 	init() {
+		// eslint-disable-next-line no-console
+console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(this.data.TypeChart, 'banal'),
+  'exists:', this.types.get('banal').exists, 'name:', this.types.get('banal').name);
 		for (const id in this.data.Moves) {
 			const move = this.data.Moves[id];
 			if (move.flags && move.flags.magic) {

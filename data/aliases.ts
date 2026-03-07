@@ -1,5 +1,5 @@
 export const Aliases: import('../sim/dex').AliasesTable = {
-	// formats
+	//region formats
 	randbats: "[Gen 9] Random Battle",
 	randbat: "[Gen 9] Random Battle",
 	uber: "[Gen 9] Ubers",
@@ -94,7 +94,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	omotm: "[Gen 9] Pokebilities",
 	lcotm: "[Gen 9] Tera Override",
 
-	// mega evos --- 1st ordered alphabetically by species, 2nd by alias
+	//region mega evos --- 1st ordered alphabetically by species, 2nd by alias
 	megasnow: "Abomasnow-Mega",
 	maero: "Aerodactyl-Mega",
 	malt: "Altaria-Mega",
@@ -140,7 +140,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	megazygardecomplete: "Zygarde-Mega",
 	zygardecompletemega: "Zygarde-Mega",
 
-	// Pokéstar Studios --- 1st ordered alphabetically by species, 2nd by alias
+	//region Pokéstar Studios --- 1st ordered alphabetically by species, 2nd by alias
 	blackdoor: "Pokestar Black Door",
 	brycen: "Pokestar Brycen-Man",
 	brycenman: "Pokestar Brycen-Man",
@@ -165,7 +165,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	ufopsychic: "Pokestar UFO-2",
 	whitedoor: "Pokestar White Door",
 
-	// Cosmetic Pokestar Studios formes --- unordered
+	//region Cosmetic Pokestar Studios formes --- unordered
 	pokestargiant2: "Pokestar Giant",
 	pokestarmonica2: "Pokestar Giant",
 	pokestarufopropu1: "Pokestar UFO",
@@ -234,7 +234,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	blackbeltprop: "Pokestar Black Belt",
 	propk1: "Pokestar Black Belt",
 
-	// formes --- 1st ordered alphabetically by species, 2nd by alias
+	//region formes --- 1st ordered alphabetically by species, 2nd by alias
 	harc: "Arcanine-Hisui",
 	arcbug: "Arceus-Bug",
 	bugceus: "Arceus-Bug",
@@ -503,7 +503,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	zygardefull: "Zygarde-Complete",
 	zygod: "Zygarde-Complete",
 
-	// base formes --- 1st ordered alphabetically by species, 2nd by alias
+	//region base formes --- 1st ordered alphabetically by species, 2nd by alias
 	aegislashs: "Aegislash",
 	aegislashshield: "Aegislash",
 	basculinr: "Basculin",
@@ -585,7 +585,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	wormadamplantcloak: "Wormadam",
 	xerneasactive: "Xerneas",
 
-	// totem formes --- 1st ordered alphabetically by species, 2nd by alias
+	//region totem formes --- 1st ordered alphabetically by species, 2nd by alias
 	araquanidt: "Araquanid-Totem",
 	totemaraquanid: "Araquanid-Totem",
 	gumshoost: "Gumshoos-Totem",
@@ -613,7 +613,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	totemvikavolt: "Vikavolt-Totem",
 	vikavoltt: "Vikavolt-Totem",
 
-	// Past Paradox Pokemon --- 1st ordered alphabetically by species, 2nd by alias
+	//region Past Paradox Pokemon --- 1st ordered alphabetically by species, 2nd by alias
 	bonnet: "Brute Bonnet",
 	flutter: "Flutter Mane",
 	fmane: "Flutter Mane",
@@ -637,7 +637,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	wake: "Walking Wake",
 	ww: "Walking Wake",
 
-	// Future Paradox Pokemon --- 1st ordered alphabetically by species, 2nd by alias
+	//region Future Paradox Pokemon --- 1st ordered alphabetically by species, 2nd by alias
 	boulder: "Iron Boulder",
 	bundle: "Iron Bundle",
 	bundlechan: "Iron Bundle",
@@ -655,7 +655,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	ival: "Iron Valiant",
 	valiant: "Iron Valiant",
 
-	// cosmetic formes --- 1st ordered alphabetically by species, 2nd by alias
+	//region cosmetic formes --- 1st ordered alphabetically by species, 2nd by alias
 	alcremievanillacream: "Alcremie",
 	alcremierubycream: "Alcremie",
 	alcremiematchacream: "Alcremie",
@@ -771,7 +771,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	vivillonsun: "Vivillon",
 	vivillontundra: "Vivillon",
 
-	// abilities --- 1st ordered alphabetically by ability name, 2nd by alias
+	//region abilities --- 1st ordered alphabetically by ability name, 2nd by alias
 	adapt: "Adaptability",
 	asoneg: "As One (Glastrier)",
 	asones: "As One (Spectrier)",
@@ -809,7 +809,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	wabs: "Water Absorb",
 	wbb: "Well-Baked Body",
 
-	// items --- 1st ordered alphabetically by item name, 2nd by alias
+	//region items --- 1st ordered alphabetically by item name, 2nd by alias
 	balloon: "Air Balloon",
 	assvest: "Assault Vest",
 	av: "Assault Vest",
@@ -974,7 +974,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	wp: "Weakness Policy",
 	electricplate: "Zap Plate",
 
-	// pokemon --- ordered alphabetically by alias
+	//region pokemon --- ordered alphabetically by alias
 	aboma: "Abomasnow",
 	ace: "Cinderace",
 	aegi: "Aegislash",
@@ -1014,7 +1014,6 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	chandy: "Chandelure",
 	chans: "Chansey",
 	ches: "Chesnaught",
-	chomp: "Garchomp",
 	chou: "Chinchou",
 	cind: "Cinderace",
 	clanger: "Kommo-o",
@@ -1232,7 +1231,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	zoro: "Zoroark",
 	zyg: "Zygarde",
 
-	// ultra beast codenames --- ordered by dex number
+	//region ultra beast codenames --- ordered by dex number
 	ub01: "Nihilego",
 	ub01symbiont: "Nihilego",
 	ubsymbiont: "Nihilego",
@@ -1258,7 +1257,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	ubstinger: "Naganadel",
 	ubblack: "Necrozma",
 
-	// moves --- ordered alphabetically by alias
+	//region moves --- ordered alphabetically by alias
 	ajet: "Aqua Jet",
 	astral: "Astral Barrage",
 	bb: "Brave Bird",
@@ -1339,6 +1338,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	pterrain: "Psychic Terrain",
 	pup: "Power-Up Punch",
 	qd: "Quiver Dance",
+	rhk: "Roundhouse Kick",
 	rocks: "Stealth Rock",
 	sandsear: "Sandsear Storm",
 	sball: "Shadow Ball",
@@ -1374,7 +1374,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	wisp: "Will-O-Wisp",
 	wow: "Will-O-Wisp",
 
-	// z-moves --- ordered alphabetically by alias
+	//region z-moves --- ordered alphabetically by alias
 	"10mv": "10,000,000 Volt Thunderbolt",
 	"10mvt": "10,000,000 Volt Thunderbolt",
 	clangorous: "Clangorous Soulblaze",
@@ -1461,7 +1461,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	zvolttackle: "Catastropika",
 	zwater: "Hydro Vortex",
 
-	// Max moves --- ordered alphabetically by alias
+	//region Max moves --- ordered alphabetically by alias
 	maxbug: "Max Flutterby",
 	maxdark: "Max Darkness",
 	maxdragon: "Max Wyrmwind",
@@ -1483,42 +1483,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	maxstatus: "Max Guard",
 	maxprotect: "Max Guard",
 
-	// G-Max Moves --- ordered alphabetically by alias
-	befuddle: "G-Max Befuddle",
-	cannonade: "G-Max Cannonade",
-	centiferno: "G-Max Centiferno",
-	chistrike: "G-Max Chi Strike",
-	cuddle: "G-Max Cuddle",
-	depletion: "G-Max Depletion",
-	drumsolo: "G-Max Drum Solo",
-	finale: "G-Max Finale",
-	fireball: "G-Max Fireball",
-	foamburst: "G-Max Foam Burst",
-	goldrush: "G-Max Gold Rush",
-	gravitas: "G-Max Gravitas",
-	hydrosnipe: "G-Max Hydrosnipe",
-	malodor: "G-Max Malodor",
-	meltdown: "G-Max Meltdown",
-	oneblow: "G-Max One Blow",
-	rapidflow: "G-Max Rapid Flow",
-	replenish: "G-Max Replenish",
-	resonance: "G-Max Resonance",
-	sandblast: "G-Max Sandblast",
-	smite: "G-Max Smite",
-	snooze: "G-Max Snooze",
-	steelsurge: "G-Max Steelsurge",
-	stonesurge: "G-Max Stonesurge",
-	stunshock: "G-Max Stun Shock",
-	sweetness: "G-Max Sweetness",
-	tartness: "G-Max Tartness",
-	terror: "G-Max Terror",
-	vinelash: "G-Max Vine Lash",
-	volcalith: "G-Max Volcalith",
-	voltcrash: "G-Max Volt Crash",
-	wildfire: "G-Max Wildfire",
-	windrage: "G-Max Wind Rage",
-
-	// Japanese names --- ordered by dex number
+	//region Japanese names --- ordered by dex number
 	fushigidane: "Bulbasaur",
 	fushigisou: "Ivysaur",
 	fushigibana: "Venusaur",
@@ -2536,7 +2501,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 	terapagosu: "Terapagos",
 	momowarou: "Pecharunt",
 
-	// CAP
+	//region CAP
 	arg: "Arghonaut",
 	astro: "Astrolotl",
 	auru: "Aurumoth",
@@ -2581,7 +2546,7 @@ export const Aliases: import('../sim/dex').AliasesTable = {
 /** This is what lets you type "tb"/"tbolt"/"bolt" to find "thunderbolt" in the
   * teambuilder (and PSdex) search. */
 export const CompoundWordNames = [
-	// species
+	//region species
 	'Aboma-snow',
 	'Aegi-slash',
 	'Aero-dactyl',
@@ -2850,7 +2815,7 @@ export const CompoundWordNames = [
 	'Zama-zenta',
 	'Zap-dos',
 
-	// moves
+	//region moves
 	'10,000,000 Volt Thunder-bolt',
 	'Accele-rock',
 	'Acid Down-pour',
@@ -2953,7 +2918,7 @@ export const CompoundWordNames = [
 	'Whirl-wind',
 	'Wild-bolt Storm',
 
-	// abilities
+	//region abilities
 	'Bullet-proof',
 	'Down-load',
 	'Electro-morphosis',

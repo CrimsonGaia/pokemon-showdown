@@ -509,7 +509,7 @@ export const Conditions = {
 			name: 'Magic Dust',
 			effectType: 'Volatile',
 			duration: 1,
-			onTryAddVolatile(status, target) { if (this.field.getPseudoWeather('silverpowder')) { return null; } },
+			onTryAddVolatile(status, target) { if (this.field.getPseudoWeather('silverdust')) { return null; } },
 			onStart(target) {
 				this.add('-start', target, 'magicdust');
 				const terrain = target.battle.field.getTerrain();
@@ -521,7 +521,7 @@ export const Conditions = {
 			onImmunity(type, pokemon) { return false; },
 			onEnd(target) { this.add('-end', target, 'magicdust'); },
 		},
-	silverpowder: {
+	silverdust: {
 		name: 'Silver Powder',
 		effectType: 'SideCondition',
 		duration: 3,
@@ -535,7 +535,7 @@ export const Conditions = {
 				// Powder ignites as a Bug-type Explosive move dealing 1/8 HP
 				const damage = Math.max(1, Math.floor(target.maxhp / 8));
 				this.add('-activate', target, 'move: Silver Powder');
-				this.damage(damage, target, target, {id: 'silverpowderexplosion', effectType: 'Move', type: 'Bug', flags: { explosive: 1 }, isExternal: true});
+				this.damage(damage, target, target, {id: 'silverdustexplosion', effectType: 'Move', type: 'Bug', flags: { explosive: 1 }, isExternal: true});
 			}
 		},
 		onTryMovePriority: -1,
@@ -544,7 +544,7 @@ export const Conditions = {
 			if (pokemon.side === this.effectState.target && move.type === 'Fire') {
 				this.add('-activate', pokemon, 'move: Silver Powder');
 				const damage = Math.max(1, Math.floor(pokemon.maxhp / 8));
-				this.damage(damage, pokemon, pokemon, {id: 'silverpowderexplosion', effectType: 'Move', type: 'Bug', flags: { explosive: 1 }, isExternal: true});
+				this.damage(damage, pokemon, pokemon, {id: 'silverdustexplosion', effectType: 'Move', type: 'Bug', flags: { explosive: 1 }, isExternal: true});
 				this.attrLastMove('[still]');
 				return false;
 			}
@@ -1886,6 +1886,14 @@ export const Conditions = {
 		},
 	},
 	//region misc
+	teraempowered: {
+  name: 'Tera Empowered',
+  duration: 1,
+  onStart(pokemon) { this.add('-start', pokemon, 'teraempowered'); },
+  onEnd(pokemon) { this.add('-end', pokemon, 'teraempowered'); },
+},
+
+
 	discombobulated: {
 		name: 'Discombobulated',
 		duration: 2,

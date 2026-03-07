@@ -1,9 +1,7 @@
 /**
  * Pokemon Showdown Tooltips
- *
  * A file for generating tooltips for battles. This should be IE7+ and
  * use the DOM directly.
- *
  * @author Guangcong Luo <guangcongluo@gmail.com>
  * @license MIT
  */
@@ -146,7 +144,6 @@ export class BattleTooltips {
 		slp: "Sleep_IS.png",
 		par: "Paralysis_IS.png",
 		frz: "Frozen_IS.png",
-
 		// ISL/custom statuses
 		aura: "Aura_IS.png",
 		bubbleblight: "Bubbleblight_IS.png",
@@ -426,9 +423,7 @@ private renderStatusIcon(status: string): string {
 	getStatusZMoveEffect(move: Dex.Move) {
 		if (move.zMove!.effect! in BattleTooltips.zMoveEffects) { return BattleTooltips.zMoveEffects[move.zMove!.effect!]; }
 		let boostText = '';
-		if (move.zMove!.boost) {
-			boostText = Object.entries(move.zMove!.boost).map(([stat, boost]) => `${BattleTextParser.stat(stat)} +${boost}`).join(', ');
-		}
+		if (move.zMove!.boost) { boostText = Object.entries(move.zMove!.boost).map(([stat, boost]) => `${BattleTextParser.stat(stat)} +${boost}`).join(', '); }
 		return boostText;
 	}
 	static zMoveTable: { [type in Dex.TypeName]: string } = {
@@ -494,11 +489,9 @@ private renderStatusIcon(status: string): string {
 		let value = new ModifiableValue(this.battle, pokemon, serverPokemon);
 		let [moveType, category] = this.getMoveType(move, value, gmaxMove || isZOrMax === 'maxmove');
 		let categoryDiff = move.category !== category;
-
 		if (isZOrMax === 'zmove') {
-			if (item.zMoveFrom === move.name) {
-				move = this.battle.dex.moves.get(item.zMove as string);
-			} else if (move.category === 'Status') {
+			if (item.zMoveFrom === move.name) { move = this.battle.dex.moves.get(item.zMove as string); } 
+			else if (move.category === 'Status') {
 				move = new Move(move.id, "", {
 					...move,
 					name: 'Z-' + move.name,
@@ -664,13 +657,9 @@ private renderStatusIcon(status: string): string {
 		return text;
 	}
 	/**
-	 * Needs either a Pokemon or a ServerPokemon, but note that neither
-	 * are guaranteed: If you hover over a possible switch-in that's
-	 * never been switched in before, you'll only have a ServerPokemon,
-	 * and if you hover over an opponent's pokemon, you'll only have a
-	 * Pokemon.
-	 * isActive is true if hovering over a pokemon in the battlefield,
-	 * and false if hovering over a pokemon in the Switch menu.
+	 * Needs either a Pokemon or a ServerPokemon, but note that neither are guaranteed: If you hover over a possible switch-in that's
+	 * never been switched in before, you'll only have a ServerPokemon, and if you hover over an opponent's pokemon, you'll only have a Pokemon.
+	 * isActive is true if hovering over a pokemon in the battlefield, and false if hovering over a pokemon in the Switch menu.
 	 */
 	showPokemonTooltip(clientPokemon: Pokemon | null, serverPokemon?: ServerPokemon | null, isActive?: boolean, illusionIndex?: number) {
 		const pokemon = clientPokemon || serverPokemon!;
@@ -678,7 +667,6 @@ private renderStatusIcon(status: string): string {
 		let genderBuf = '';
 		const gender = pokemon.gender;
 		if (gender === 'M' || gender === 'F') { genderBuf = ` <img src="${Dex.fxPrefix}gender-${gender.toLowerCase()}.png" alt="${gender}" width="7" height="10" class="pixelated" /> `; }
-
 		const ignoreNicks = this.battle.ignoreNicks || this.battle.ignoreOpponent;
 		const nickname = ignoreNicks ? Dex.species.get(pokemon.speciesForme).baseSpecies : pokemon.name;
 		let name = BattleLog.escapeHTML(nickname);
@@ -704,9 +692,9 @@ private renderStatusIcon(status: string): string {
 		else if (this.battle.hardcoreMode) {
 			if (serverPokemon) {
 				const auraTurns = (pokemon.status === 'aura') ? (Number((clientPokemon as any)?.auraTime) || 0) : 0;
-const status = pokemon.status
-	? ` ${this.renderStatusIcon(pokemon.status)}${auraTurns ? ` <small>- ${auraTurns} Turn${auraTurns === 1 ? '' : 's'}</small>` : ''}`
-	: '';
+				const status = pokemon.status
+				? ` ${this.renderStatusIcon(pokemon.status)}${auraTurns ? ` <small>- ${auraTurns} Turn${auraTurns === 1 ? '' : 's'}</small>` : ''}`
+				: '';
 				text += `<p><small>HP:</small> ${serverPokemon.hp}/${serverPokemon.maxhp}${status}</p>`;
 			}
 		} else {
@@ -714,15 +702,14 @@ const status = pokemon.status
 			if (serverPokemon) { exacthp = ` (${serverPokemon.hp}/${serverPokemon.maxhp})`; } 
 			else if (pokemon.maxhp === 48) { exacthp = ` <small>(${pokemon.hp}/${pokemon.maxhp} pixels)</small>`; }
 			const auraTurns = (pokemon.status === 'aura') ? (Number((clientPokemon as any)?.auraTime) || 0) : 0;
-const status = pokemon.status
-	? ` ${this.renderStatusIcon(pokemon.status)}${auraTurns ? ` <small>- ${auraTurns} Turn${auraTurns === 1 ? '' : 's'}</small>` : ''}`
-	: '';
+			const status = pokemon.status
+			? ` ${this.renderStatusIcon(pokemon.status)}${auraTurns ? ` <small>- ${auraTurns} Turn${auraTurns === 1 ? '' : 's'}</small>` : ''}`
+			: '';
 			text += `<p><small>HP:</small> ${Pokemon.getHPText(pokemon, this.battle.reportExactHP)}${exacthp}${status}`;
 			if (clientPokemon) {
 				if (pokemon.status === 'tox') {
-					if (pokemon.ability === 'Poison Heal' || pokemon.ability === 'Magic Guard') {
-						text += ` <small>Would take if ability removed: ${Math.floor(100 / 16 * Math.min(clientPokemon.statusData.toxicTurns + 1, 15))}%</small>`;
-					} else { text += ` Next damage: ${Math.floor(100 / (clientPokemon.volatiles['dynamax'] ? 32 : 16) * Math.min(clientPokemon.statusData.toxicTurns + 1, 15))}%`; }
+					if (pokemon.ability === 'Poison Heal' || pokemon.ability === 'Magic Guard') { text += ` <small>Would take if ability removed: ${Math.floor(100 / 16 * Math.min(clientPokemon.statusData.toxicTurns + 1, 15))}%</small>`; } 
+					else { text += ` Next damage: ${Math.floor(100 / (clientPokemon.volatiles['dynamax'] ? 32 : 16) * Math.min(clientPokemon.statusData.toxicTurns + 1, 15))}%`; }
 				} else if (pokemon.status === 'slp') { text += ` Turns asleep: ${clientPokemon.statusData.sleepTurns}`; }
 			}
 			text += '</p>';
@@ -915,9 +902,7 @@ const status = pokemon.status
 						}
 					}
 				}
-				if (weather === 'raindance' || weather === 'primordialsea') {
-					if (ability === 'swiftswim') { speedModifiers.push(2); }
-				}
+				if (weather === 'raindance' || weather === 'primordialsea') { if (ability === 'swiftswim') { speedModifiers.push(2); } }
 			}
 		}
 		if (ability === 'defeatist' && serverPokemon.hp <= serverPokemon.maxhp / 2) {
@@ -997,13 +982,19 @@ const status = pokemon.status
 	renderStats(clientPokemon: Pokemon | null, serverPokemon?: ServerPokemon | null, short?: boolean) {
 		const isTransformed = clientPokemon?.volatiles.transform;
 		if (!serverPokemon || isTransformed) {
-			if (!clientPokemon) throw new Error('Must pass either clientPokemon or serverPokemon');
-			let [min, max] = this.getSpeedRange(clientPokemon);
-			return `<p><small>Spe</small> ${min} to ${max} <small>(before items/abilities/modifiers)</small></p>`;
+  			if (!clientPokemon) throw new Error('Must pass either clientPokemon or serverPokemon');
+  			let [min, max] = this.getSpeedRange(clientPokemon);
+  			let buf = '';
+  			if (!short) buf += this.renderTypeMatchups(clientPokemon, null);
+  			buf += `<p><small>Spe</small> ${min} to ${max} <small>(before items/abilities/modifiers)</small></p>`;
+  			return buf;
 		}
 		const stats = serverPokemon.stats;
 		const modifiedStats = this.calculateModifiedStats(clientPokemon, serverPokemon);
-		let buf = '<p>';
+		let buf = '';
+		// Only show matchup breakdown in the full (non-short) tooltip, above base stats.
+		if (!short) buf += this.renderTypeMatchups(clientPokemon, serverPokemon);
+		buf += '<p>';
 		if (!short) {
 			let hasModifiedStat = false;
 			for (const statName of Dex.statNamesExceptHP) {
@@ -1011,12 +1002,9 @@ const status = pokemon.status
 				let statLabel = this.battle.gen === 1 && statName === 'spa' ? 'spc' : statName;
 				buf += statName === 'atk' ? '<small>' : '<small> / ';
 				const fallbackShort: Record<string, string> = { hp: 'HP', atk: 'Atk', def: 'Def', spa: 'SpA', spd: 'SpD', spe: 'Spe', spc: 'Spc' };
-
-const entry =
-  (globalThis as any).BattleText?.[statLabel] ||
-  (globalThis as any).BattleText?.stats?.[statLabel];
-const shortName = entry?.statShortName ?? fallbackShort[statLabel] ?? statLabel.toUpperCase();
-buf += `${shortName}&nbsp;</small>`;
+				const entry = (globalThis as any).BattleText?.[statLabel] || (globalThis as any).BattleText?.stats?.[statLabel];
+				const shortName = entry?.statShortName ?? fallbackShort[statLabel] ?? statLabel.toUpperCase();
+				buf += `${shortName}&nbsp;</small>`;
 				buf += `${stats[statName]}`;
 				if (modifiedStats[statName] !== stats[statName]) hasModifiedStat = true;
 			}
@@ -1030,17 +1018,67 @@ buf += `${shortName}&nbsp;</small>`;
 			let statLabel = this.battle.gen === 1 && statName === 'spa' ? 'spc' : statName;
 			buf += statName === 'atk' ? '<small>' : '<small> / ';
 			const fallbackShort: Record<string, string> = { hp: 'HP', atk: 'Atk', def: 'Def', spa: 'SpA', spd: 'SpD', spe: 'Spe', spc: 'Spc' };
-const entry =
-  (globalThis as any).BattleText?.[statLabel] ||
-  (globalThis as any).BattleText?.stats?.[statLabel];
-const shortName = entry?.statShortName ?? fallbackShort[statLabel] ?? statLabel.toUpperCase();
-buf += `${shortName}&nbsp;</small>`;
+			const entry = (globalThis as any).BattleText?.[statLabel] || (globalThis as any).BattleText?.stats?.[statLabel];
+			const shortName = entry?.statShortName ?? fallbackShort[statLabel] ?? statLabel.toUpperCase();
+			buf += `${shortName}&nbsp;</small>`;
 			if (modifiedStats[statName] === stats[statName]) { buf += `${modifiedStats[statName]}`; } 
 			else if (modifiedStats[statName] < stats[statName]) { buf += `<strong class="stat-lowered">${modifiedStats[statName]}</strong>`; } 
 			else { buf += `<strong class="stat-boosted">${modifiedStats[statName]}</strong>`; }
 		}
 		buf += '</p>';
 		return buf;
+	}
+	private renderTypeMatchups(clientPokemon: Pokemon | null, serverPokemon?: ServerPokemon | null) {
+		// Defensive typing (Tera-aware).
+		const pokemon = clientPokemon || serverPokemon;
+		if (!pokemon) return '';
+		const types = serverPokemon?.terastallized ? [serverPokemon.teraType] : this.getPokemonTypes(pokemon);
+		// Attack types list from the dex types table (includes modded types if the dex is modded).
+		const attackTypes: Dex.TypeName[] = this.battle.dex.types.names()
+		.map(n => n as Dex.TypeName);
+		const weaknesses4x: Dex.TypeName[] = [];
+		const weaknesses2x: Dex.TypeName[] = [];
+		const resistsQuarter: Dex.TypeName[] = [];
+		const resistsHalf: Dex.TypeName[] = [];
+		const immunities: Dex.TypeName[] = [];
+		for (const atkType of attackTypes) {
+			let mult = 1;
+			for (const defType of types) {
+				const typeData: any = (this.battle.dex as any).types?.get?.(defType);
+				const dt = typeData?.damageTaken;
+				if (!dt) continue;
+				// Showdown client typechart uses type IDs as keys
+				const key = toID(atkType);
+				const val = dt[key] ?? dt[atkType];
+				// damageTaken: 0 neutral, 1 weak, 2 resist, 3 immune
+				if (val === 1) mult *= 2;
+				else if (val === 2) mult *= 0.5;
+				else if (val === 3) { mult = 0; break; }
+			}
+
+			if (mult === 0) immunities.push(atkType);
+			else if (mult === 4) weaknesses4x.push(atkType);
+			else if (mult === 2) weaknesses2x.push(atkType);
+			else if (mult === 0.25) resistsQuarter.push(atkType);
+			else if (mult === 0.5) resistsHalf.push(atkType);
+		}
+		const renderIcons = (list: Dex.TypeName[]) => list.length ?
+			`<span class="textaligned-typeicons">${list.map(t => Dex.getTypeIcon(t)).join(' ')}</span>` :
+			`<small>(none)</small>`;
+		const weakParts: string[] = [];
+		if (weaknesses4x.length) weakParts.push(`<small>4×</small> ${renderIcons(weaknesses4x)}`);
+		if (weaknesses2x.length) weakParts.push(`<small>2×</small> ${renderIcons(weaknesses2x)}`);
+		const weakLine = weakParts.length ? weakParts.join('&nbsp; ') : '<small>(none)</small>';
+		const resistParts: string[] = [];
+		if (resistsQuarter.length) resistParts.push(`<small>¼×</small> ${renderIcons(resistsQuarter)}`);
+		if (resistsHalf.length) resistParts.push(`<small>½×</small> ${renderIcons(resistsHalf)}`);
+		const resistLine = resistParts.length ? resistParts.join('&nbsp; ') : '<small>(none)</small>';
+		const immuneLine = immunities.length ? renderIcons(immunities) : '<small>(none)</small>';
+		return (
+			`<p><small>Weaknesses:</small> ${weakLine}</p>` +
+			`<p><small>Resistances:</small> ${resistLine}</p>` +
+			`<p><small>Immunities:</small> ${immuneLine}</p>`
+		);
 	}
 	getPPUseText(moveTrackRow: [string, number], showKnown?: boolean) {
 		let [moveName, ppUsed] = moveTrackRow;
@@ -1709,19 +1747,13 @@ buf += `${shortName}&nbsp;</small>`;
 				}
 			}
 		}
-				if (serverPokemon) {
+		if (serverPokemon) {
 			// ServerPokemon (request payload) is authoritative and updates immediately.
 			// Always prefer it when present, otherwise stale clientPokemon can mislead tooltips.
 			const sp: any = serverPokemon;
-
-			if (serverPokemon.ability || serverPokemon.baseAbility) {
-				abilityData.ability = serverPokemon.ability || serverPokemon.baseAbility;
-			} else if (!abilityData.ability) {
-				abilityData.ability = serverPokemon.baseAbility;
-			}
-
+			if (serverPokemon.ability || serverPokemon.baseAbility) { abilityData.ability = serverPokemon.ability || serverPokemon.baseAbility; } 
+			else if (!abilityData.ability) { abilityData.ability = serverPokemon.baseAbility; }
 			if (serverPokemon.baseAbility) abilityData.baseAbility = serverPokemon.baseAbility;
-
 			// Slot 2 support (ISL)
 			if (sp.ability2) abilityData.ability2 = sp.ability2;
 			if (sp.baseAbility2) abilityData.baseAbility2 = sp.baseAbility2;
@@ -1737,92 +1769,76 @@ buf += `${shortName}&nbsp;</small>`;
 		let text = '';
 		const abilityData = this.getPokemonAbilityData(clientPokemon, serverPokemon);
 		const tier = this.battle.tier;
-
-
-
 		const isISLFormat = tier?.toLowerCase().includes('indigostarstorm') || tier?.toLowerCase().includes('isl');
 		// ISL formats: two-ability sets, Aura overrides slot 2.
-// Also keep ambiguity when shared abilities exist.
-if (isISLFormat && (clientPokemon || serverPokemon)) {
-  const status = (clientPokemon as any)?.status || (serverPokemon as any)?.status || '';
-  const abilityData = this.getPokemonAbilityData(clientPokemon, serverPokemon);
-
-  // Current + base per-slot
-  const cur1 = abilityData.ability || abilityData.baseAbility;
-  const base1 = abilityData.baseAbility || cur1;
-
-  const cur2 = abilityData.ability2 || abilityData.baseAbility2;
-  const base2 = abilityData.baseAbility2 || cur2;
-
-  const nameOf = (id: string) => id ? this.battle.dex.abilities.get(id).name : '';
-
-  const cur1Name = nameOf(cur1);
-  const cur2Name = nameOf(cur2);
-  const base2Name = nameOf(base2);
-
-  // If Aura is active, it *defines* slot 2 right now.
-  // Show the actual current pair immediately, and (optionally) note what it replaced.
-  if (status === 'aura' && cur1Name && cur2Name) {
-    let out = `<small>Ability Set:</small><br />`;
-    out += `<span class="ability-line">${BattleLog.escapeHTML(cur1Name)}</span><br />`;
-
-    // If we know what Aura replaced, annotate it
-    if (base2Name && base2Name !== cur2Name) {
-      out += `<span class="ability-line">${BattleLog.escapeHTML(cur2Name)} <small>(replaces ${BattleLog.escapeHTML(base2Name)})</small></span><br />`;
-    } else {
-      out += `<span class="ability-line">${BattleLog.escapeHTML(cur2Name)}</span><br />`;
-    }
-    return out;
-  }
-
-  // Build possible sets from the flat list (pairs)
-  const sets: string[][] = [];
-  for (let i = 0; i < abilityData.possibilities.length; i += 2) {
-    const a1 = abilityData.possibilities[i];
-    const a2 = abilityData.possibilities[i + 1];
-    const set: string[] = [];
-    if (a1) set.push(a1);
-    if (a2) set.push(a2);
-    if (set.length) sets.push(set);
-  }
-
-  // Known abilities (IDs, not names) – use base1/base2 when present.
-  // IMPORTANT: we only narrow if we have an *exclusive* signal.
-  const known: string[] = [];
-  if (base1) known.push(base1);
-  if (base2) known.push(base2);
-
-  // Filter sets: a set remains possible if it contains ALL known abilities we’ve actually confirmed.
-  // But if the only known ability is shared between sets, both remain -> ambiguity preserved.
-  let possible = sets;
-  if (known.length && sets.length) {
-    possible = sets.filter(set => known.every(k => set.includes(k)));
-    if (!possible.length) possible = sets;
-  }
-
-  // If we can narrow to one set, show it as Ability Set
-  if (possible.length === 1) {
-    const s = possible[0].map(nameOf).filter(Boolean);
-    let out = `<small>Ability Set:</small><br />`;
-    for (const a of s) out += `<span class="ability-line">${BattleLog.escapeHTML(a)}</span><br />`;
-    return out;
-  }
-
-  // Otherwise show possible sets (with Set 1/2 colors you requested)
-  if (possible.length && !hidePossible) {
-    let out = `<small>Possible ability sets:</small><br />`;
-    for (let s = 0; s < possible.length; s++) {
-      const setNum = s + 1;
-      const setClass = setNum === 1 ? 'set-1' : (setNum === 2 ? 'set-2' : '');
-      out += `<span class="abilityset-title ${setClass}">Set ${setNum}</span><br />`;
-      for (const id of possible[s]) {
-        const n = nameOf(id);
-        if (n) out += `<span class="ability-line">${BattleLog.escapeHTML(n)}</span><br />`;
-      }
-    }
-    return out;
-  }
-}
+		// Also keep ambiguity when shared abilities exist.
+		if (isISLFormat && (clientPokemon || serverPokemon)) {
+			const status = (clientPokemon as any)?.status || (serverPokemon as any)?.status || '';
+			const abilityData = this.getPokemonAbilityData(clientPokemon, serverPokemon);
+			// Current + base per-slot
+			const cur1 = abilityData.ability || abilityData.baseAbility;
+			const base1 = abilityData.baseAbility || cur1;
+			const cur2 = abilityData.ability2 || abilityData.baseAbility2;
+			const base2 = abilityData.baseAbility2 || cur2;
+			const nameOf = (id: string) => id ? this.battle.dex.abilities.get(id).name : '';
+			const cur1Name = nameOf(cur1);
+			const cur2Name = nameOf(cur2);
+			const base2Name = nameOf(base2);
+			// If Aura is active, it *defines* slot 2 right now.
+			// Show the actual current pair immediately, and (optionally) note what it replaced.
+			if (status === 'aura' && cur1Name && cur2Name) {
+				let out = `<small>Ability Set:</small><br />`;
+				out += `<span class="ability-line">${BattleLog.escapeHTML(cur1Name)}</span><br />`;
+				// If we know what Aura replaced, annotate it
+				if (base2Name && base2Name !== cur2Name) {
+				out += `<span class="ability-line">${BattleLog.escapeHTML(cur2Name)} <small>(replaces ${BattleLog.escapeHTML(base2Name)})</small></span><br />`;
+				} else { out += `<span class="ability-line">${BattleLog.escapeHTML(cur2Name)}</span><br />`; }
+				return out;
+			}
+			// Build possible sets from the flat list (pairs)
+			const sets: string[][] = [];
+			for (let i = 0; i < abilityData.possibilities.length; i += 2) {
+				const a1 = abilityData.possibilities[i];
+				const a2 = abilityData.possibilities[i + 1];
+				const set: string[] = [];
+				if (a1) set.push(a1);
+				if (a2) set.push(a2);
+				if (set.length) sets.push(set);
+			}
+			// Known abilities (IDs, not names) – use base1/base2 when present.
+			// IMPORTANT: we only narrow if we have an *exclusive* signal.
+			const known: string[] = [];
+			if (base1) known.push(base1);
+			if (base2) known.push(base2);
+			// Filter sets: a set remains possible if it contains ALL known abilities we’ve actually confirmed.
+			// But if the only known ability is shared between sets, both remain -> ambiguity preserved.
+			let possible = sets;
+			if (known.length && sets.length) {
+				possible = sets.filter(set => known.every(k => set.includes(k)));
+				if (!possible.length) possible = sets;
+			}
+			// If we can narrow to one set, show it as Ability Set
+			if (possible.length === 1) {
+				const s = possible[0].map(nameOf).filter(Boolean);
+				let out = `<small>Ability Set:</small><br />`;
+				for (const a of s) out += `<span class="ability-line">${BattleLog.escapeHTML(a)}</span><br />`;
+				return out;
+			}
+			// Otherwise show possible sets (with Set 1/2 colors you requested)
+			if (possible.length && !hidePossible) {
+				let out = `<small>Possible ability sets:</small><br />`;
+				for (let s = 0; s < possible.length; s++) {
+				const setNum = s + 1;
+				const setClass = setNum === 1 ? 'set-1' : (setNum === 2 ? 'set-2' : '');
+				out += `<span class="abilityset-title ${setClass}">Set ${setNum}</span><br />`;
+				for (const id of possible[s]) {
+					const n = nameOf(id);
+					if (n) out += `<span class="ability-line">${BattleLog.escapeHTML(n)}</span><br />`;
+				}
+				}
+				return out;
+			}
+		}
 		if (!isActive) {
 			// for switch tooltips, only show the original ability
 			const ability = abilityData.baseAbility || abilityData.ability;

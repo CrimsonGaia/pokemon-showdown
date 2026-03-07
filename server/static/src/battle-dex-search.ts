@@ -117,14 +117,46 @@ export class DexSearch {
 				entry[1] = tagMap[id] || this.capitalizeFirst(entry[1]);
 			}
 			if (type === 'ability') entry[1] = this.dex.abilities.get(entry[1]).name;
-			if (type === 'tier') { // very hardcode
-				const tierTable: { [id: string]: string } = {
-					uber: "Uber",
-					caplc: "CAP LC",
-					capnfe: "CAP NFE",
-				};
-				entry[1] = toID(entry[1]);
-				entry[1] = tierTable[entry[1]] || entry[1].toUpperCase();
+			if (type === 'tier') {
+				if ((this.typedSearch as any)?.formatType === 'indigostarstorm') {
+					const raw = String(entry[1]).trim();
+					const tierAliases: {[id: string]: string} = {
+						rega: 'Reg α',
+						regalpha: 'Reg α',
+						regd: 'Reg Δ',
+						regdelta: 'Reg Δ',
+						regi: 'Reg ι',
+						regiota: 'Reg ι',
+						regb: 'Reg β',
+						regbeta: 'Reg β',
+						regz: 'Reg ζ',
+						regzeta: 'Reg ζ',
+						regg: 'Reg γ',
+						reggamma: 'Reg γ',
+						regth: 'Reg Θ',
+						regtheta: 'Reg Θ',
+						rege: 'Reg ε',
+						regepsilon: 'Reg ε',
+						regl: 'Reg λ',
+						reglambda: 'Reg λ',
+						regp: 'Reg ψ',
+						regpsi: 'Reg ψ',
+						regn: 'Reg ν',
+						regnu: 'Reg ν',
+						regf: 'Reg φ',
+						regphi: 'Reg φ',
+					};
+					const normalized = toID(raw);
+					entry[1] = tierAliases[normalized] || raw;
+				} else {
+					const tierTable: { [id: string]: string } = {
+						uber: "Uber",
+						caplc: "CAP LC",
+						capnfe: "CAP NFE",
+					};
+					entry[1] = toID(entry[1]);
+					entry[1] = tierTable[entry[1]] || entry[1].toUpperCase();
+				}
 			}
 			if (!this.filters) this.filters = [];
 			this.results = null;
@@ -195,7 +227,28 @@ export class DexSearch {
 		if (this.typedSearch && this.typedSearch.searchType !== filterType) { return 'Filter'; }
 		return null;
 	}
-	illegalLabel(id: ID) { return this.typedSearch?.illegalReasons?.[id] || null; }
+	illegalLabel(id: ID) {
+		if (this.typedSearch?.searchType === 'move') {
+			const moveSearch = this.typedSearch as any;
+			const dex = moveSearch.dex;
+			const species = moveSearch.species ? dex.species.get(moveSearch.species) : null;
+			const infusibleSlots = (species && (species as any).infusibleSlots) || 0;
+
+			if (infusibleSlots) {
+				const infusibleMoves: {[k: string]: 1} = {
+					acid: 1, acidspray: 1, appleacid: 1, aquajet: 1, aquaring: 1, aromatherapy: 1, aromaticmist: 1, aurasphere: 1, aurorabeam: 1, belch: 1, boneclub: 1, bonerush: 1,
+					bonemerang: 1, brine: 1, bubble: 1, bubblebeam: 1, bubbletrap: 1, burningjealousy: 1, chargebeam: 1, chistrike: 1, confide: 1, dragonbreath: 1, dragoncheer: 1,
+					dragonrage: 1, eggbomb: 1, extrasensory: 1, faketears: 1, firepledge: 1, floralhealing: 1, grasspledge: 1, gravapple: 1, gunkshot: 1, hex: 1, lifedew: 1,
+					magicpowder: 1, matchagotcha: 1, mist: 1, mistball: 1, mistyexplosion: 1, mudshot: 1, poisongas: 1, poisonpowder: 1, pollenpuff: 1, powdersnow: 1,
+					ragepowder: 1, silverpowder: 1, simplebeam: 1, sleeppowder: 1, sludge: 1, sludgebomb: 1, sludgewave: 1, smog: 1, soak: 1, sparklingaria: 1, spicyextract: 1,
+					stunspore: 1, syrupbomb: 1, toxic: 1, venomdrench: 1, waterpledge: 1, worryseed: 1,
+				};
+
+				if (infusibleMoves[id]) return null;
+			}
+		}
+		return this.typedSearch?.illegalReasons?.[id] || null;
+	}
 	getTier(species: Dex.Species) { return this.typedSearch?.getTier(species) || ''; }
 	textSearch(query: string): SearchRow[] {
 		// Ensure baseResults and illegalReasons are populated
@@ -984,87 +1037,100 @@ class BattlePokemonSearch extends BattleTypedSearch<'pokemon'> {
 		let tierSet: SearchRow[] = table.tierSet;
 		let slices: { [k: string]: number } = table.formatSlices || {};
 		// ISL: derive the list from the Indigo Starstorm mod dex itself (what "exists" in the mod).
-// ISL: derive the teambuilder list from the Indigo Starstorm mod dex itself,
-// AND apply regulation-stage rules based on the format string.
-if ((this.formatType as any) === 'indigostarstorm') {
-	const results: SearchRow[] = [];
-
-	// Helpers to compute evolution stage using dex data (no tags required)
-	const getStage = (sp: Dex.Species) => {
-		let stage = 1;
-		let cur = sp;
-		while (cur.prevo) {
-			stage++;
-			const prev = this.dex.species.get(cur.prevo);
-			if (!prev || !prev.exists) break;
-			cur = prev;
-		}
-		return stage;
-	};
-	const canEvolve = (sp: Dex.Species) => !!(sp.evos && sp.evos.length);
-
-	// Decide which stages are allowed for this regulation format
-	const isBabyLeague = format.includes('babyleague');          // Reg α
-	const isNFELeague = format.includes('nfeleague');            // Reg Δ
-	const isSingleStage = format.includes('singlestageonly');    // Reg ι
-	const isSecondStageLeague = format.includes('2ndstageleague'); // Reg β
-
-		for (const row of this.getDefaultResults()) {
-		// Only keep real structural rows; don't auto-keep tier-labelled pokemon rows like ['CAP LC','syclar']
-		if (row[0] !== 'pokemon') {
-			if (row[0] === 'header' || row[0] === 'html' || row[0] === 'sortpokemon' || row[0] === 'sortmove') {
-				results.push(row);
+		// ISL: derive the teambuilder list from the Indigo Starstorm mod dex itself,
+		// AND apply regulation-stage rules based on the format string.
+		if ((this.formatType as any) === 'indigostarstorm') {
+			const pokemonRows: Dex.Species[] = [];
+			const getStage = (sp: Dex.Species) => {
+				let stage = 1;
+				let cur = sp;
+				while (cur.prevo) {
+					stage++;
+					const prev = this.dex.species.get(cur.prevo);
+					if (!prev || !prev.exists) break;
+					cur = prev;
+				}
+				return stage;
+			};
+			const canEvolve = (sp: Dex.Species) => !!(sp.evos && sp.evos.length);
+			const isBabyLeague = format.includes('babyleague');               // Reg α
+			const isNFELeague = format.includes('nfeleague');                 // Reg Δ
+			const isSingleStage = format.includes('singlestageonly');         // Reg ι
+			const isSecondStageLeague = format.includes('2ndstageleague');    // Reg β
+			for (const row of this.getDefaultResults()) {
+				if (row[0] !== 'pokemon') continue;
+				const id = row[1];
+				const species = this.dex.species.get(id);
+				if (!species || !species.exists) continue;
+				const base = this.dex.species.get(species.baseSpecies || species.name);
+				if (species.num === 0 || base.num === 0) continue;
+				if (species.num >= 13000) {
+					pokemonRows.push(species);
+					continue;
+				}
+				const ns = species.isNonstandard || base.isNonstandard;
+				const tier = this.getTier(species);
+				if (ns === 'CAP' || tier.startsWith('CAP')) continue;
+				if (ns === 'Pokestar' || id.startsWith('pokestar')) continue;
+				if (ns === 'Past' || ns === 'Gigantamax') continue;
+				if (isBabyLeague) {
+					if (!(getStage(species) === 1 && canEvolve(species))) continue;
+				} else if (isNFELeague) {
+					const stage = getStage(species);
+					if (!((stage === 1 && canEvolve(species)) || (stage === 2 && canEvolve(species)))) continue;
+				} else if (isSingleStage) {
+					if (!(getStage(species) === 1 && !canEvolve(species))) continue;
+				} else if (isSecondStageLeague) {
+					const stage = getStage(species);
+					if (stage >= 3) continue;
+				}
+				pokemonRows.push(species);
 			}
-			continue;
+			const tierOrder = ['Reg α', 'Reg Δ', 'Reg ι', 'Reg β', 'Reg ζ', 'Reg γ', 'Reg Θ', 'Reg ε', 'Reg λ', 'Reg ψ', 'Reg ν', 'Reg φ',];
+			const currentTier =
+				format.includes('babyleague') ? 'Reg α' :
+				format.includes('nfeleague') ? 'Reg Δ' :
+				format.includes('singlestageonly') ? 'Reg ι' :
+				format.includes('2ndstageleague') ? 'Reg β' :
+				(format.includes('betaparadox') || (format.includes('beta') && format.includes('paradox'))) ? 'Reg ζ' :
+				format.includes('3rdstageleague') ? 'Reg γ' :
+				(format.includes('norestricted') || format.includes('norestrictedspecial')) ? 'Reg Θ' :
+				format.includes('restrictedparadox') ? 'Reg ε' :
+				(format.includes('onerestricted') && format.includes('mythical')) ? 'Reg ν' :
+				(format.includes('tworestricted') && format.includes('mythical')) ? 'Reg φ' :
+				format.includes('onerestricted') ? 'Reg λ' :
+				format.includes('tworestricted') ? 'Reg ψ' :
+				'Reg γ';
+			const currentIndex = tierOrder.indexOf(currentTier);
+			const tierRank = (tier: string) => {
+				const idx = tierOrder.indexOf(tier);
+				if (idx < 0) return -999;
+				if (idx > currentIndex) return -999; // future regs below everything / effectively hidden in sort
+				return currentIndex - idx; // current reg first, older regs after
+			};
+
+			pokemonRows.sort((a, b) => {
+				const tierA = this.getTier(a);
+				const tierB = this.getTier(b);
+				const rankDiff = tierRank(tierA) - tierRank(tierB);
+				if (rankDiff) return rankDiff;
+
+				if (a.num !== b.num) return a.num - b.num;
+				return a.name.localeCompare(b.name);
+			});
+
+			const results: SearchRow[] = [];
+			let lastTier = '';
+			for (const species of pokemonRows) {
+				const tier = this.getTier(species);
+				if (tier !== lastTier) {
+					results.push(['header', tier]);
+					lastTier = tier;
+				}
+				results.push(['pokemon', species.id]);
+			}
+			return results;
 		}
-
-		const id = row[1];
-		const species = this.dex.species.get(id);
-
-		// Only show Pokémon that exist in the ISL mod dex
-		if (!species || !species.exists) continue;
-
-		// Hide MissingNo / glitchy num=0 entries (prevents 0.png sprite fetch)
-		const base = this.dex.species.get(species.baseSpecies || species.name);
-		if (species.num === 0 || base.num === 0) continue;
-
-		// Always show custom Pokémon
-		if (species.num >= 13000) {
-			results.push(row);
-			continue;
-		}
-
-		// Hide groups that should not appear in ISL lists
-		const ns = species.isNonstandard || base.isNonstandard;
-const tier = this.getTier(species);
-
-if (ns === 'CAP' || tier.startsWith('CAP')) continue;
-if (ns === 'Pokestar' || id.startsWith('pokestar')) continue;
-if (ns === 'Past' || ns === 'Gigantamax') continue;
-
-		// Apply regulation-stage constraints
-		if (isBabyLeague) {
-			// 1st-stage that can still evolve
-			if (!(getStage(species) === 1 && canEvolve(species))) continue;
-		} else if (isNFELeague) {
-			// 1st-stage that can evolve OR 2nd-stage that can still evolve
-			const stage = getStage(species);
-			if (!((stage === 1 && canEvolve(species)) || (stage === 2 && canEvolve(species)))) continue;
-		} else if (isSingleStage) {
-			// Single-stage only
-			if (!(getStage(species) === 1 && !canEvolve(species))) continue;
-		} else if (isSecondStageLeague) {
-			// 1st-stage + 2nd-stage + single-stage, but NOT 3rd stage
-			const stage = getStage(species);
-			if (stage >= 3) continue;
-		}
-		// else: Reg γ+ => no stage filtering
-
-		results.push(row);
-	}
-
-	return results;
-}
 		if (format === 'ubers' || format === 'uber' || format === 'ubersuu' || format === 'nationaldexdoubles') { tierSet = tierSet.slice(slices.Uber); } 
 		else if (isVGCOrBS || (isHackmons && dex.gen === 9 && !this.formatType)) {
 			if (format.endsWith('series13') || format.endsWith('regj') || isHackmons) { } // Show Mythicals

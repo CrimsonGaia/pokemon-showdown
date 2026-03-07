@@ -2943,6 +2943,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
         },
 		heightm: 1,
 		weightkg: 23.5,
+		infusibleSlots: 1,
 		color: "Pink",
 		prevo: "Eevee",
 		evoType: "levelExtra",

@@ -1,13 +1,8 @@
 /**
  * Dex
  * Pokemon Showdown - http://pokemonshowdown.com/
- *
- * Handles getting data about pokemon, items, etc. Also contains some useful
- * helper functions for using dex data.
- *
- * By default, nothing is loaded until you call Dex.mod(mod) or
- * Dex.forFormat(format).
- *
+ * Handles getting data about pokemon, items, etc. Also contains some useful helper functions for using dex data.
+ * By default, nothing is loaded until you call Dex.mod(mod) or Dex.forFormat(format).
  * You may choose to preload some things:
  * - Dex.includeMods() ~10ms
  *   This will preload `Dex.dexes`, giving you a list of possible mods.
@@ -18,17 +13,11 @@
  *   functions like `Dex.species.get`, etc will be instantly usable.
  * - Dex.includeModData() ~1500ms
  *   As above, but will also preload `Dex.dexes[...].data` for all mods.
- *
- * Note that preloading is never necessary. All the data will be
- * automatically preloaded when needed, preloading will just spend time
- * now so you don't need to spend time later.
- *
+ * Note that preloading is never necessary. All the data will be automatically preloaded when needed, preloading will just spend time now so you don't need to spend time later.
  * @license MIT
  */
-
 import * as fs from 'fs';
 import * as path from 'path';
-
 import * as Data from './dex-data';
 import { Condition, DexConditions } from './dex-conditions';
 import { DataMove, DexMoves } from './dex-moves';
@@ -37,21 +26,12 @@ import { Ability, DexAbilities } from './dex-abilities';
 import { Species, DexSpecies } from './dex-species';
 import { Format, DexFormats } from './dex-formats';
 import { Utils } from '../lib/utils';
-
 const BASE_MOD = 'gen9' as ID;
 const DATA_DIR = path.resolve(__dirname, '../data');
 const MODS_DIR = path.resolve(DATA_DIR, './mods');
-
 const dexes: { [mod: string]: ModdedDex } = Object.create(null);
-
-type DataType =
-	'Abilities' | 'Rulesets' | 'FormatsData' | 'Items' | 'Learnsets' | 'Moves' |
-	'Natures' | 'Pokedex' | 'Scripts' | 'Conditions' | 'TypeChart' | 'PokemonGoData';
-const DATA_TYPES: DataType[] = [
-	'Abilities', 'Rulesets', 'FormatsData', 'Items', 'Learnsets', 'Moves',
-	'Natures', 'Pokedex', 'Scripts', 'Conditions', 'TypeChart', 'PokemonGoData',
-];
-
+type DataType = 'Abilities' | 'Rulesets' | 'FormatsData' | 'Items' | 'Learnsets' | 'Moves' | 'Natures' | 'Pokedex' | 'Scripts' | 'Conditions' | 'TypeChart' | 'PokemonGoData';
+const DATA_TYPES: DataType[] = [ 'Abilities', 'Rulesets', 'FormatsData', 'Items', 'Learnsets', 'Moves', 'Natures', 'Pokedex', 'Scripts', 'Conditions', 'TypeChart', 'PokemonGoData',];
 const DATA_FILES = {
 	Abilities: 'abilities',
 	Rulesets: 'rulesets',
@@ -66,11 +46,9 @@ const DATA_FILES = {
 	Conditions: 'conditions',
 	TypeChart: 'typechart',
 };
-
 /** Unfortunately we do for..in too much to want to deal with the casts */
 export interface DexTable<T> { [id: string]: T }
 export interface AliasesTable { [id: IDEntry]: string }
-
 interface DexTableData {
 	Abilities: DexTable<import('./dex-abilities').AbilityData>;
 	Rulesets: DexTable<import('./dex-formats').FormatData>;
@@ -92,9 +70,7 @@ interface TextTableData {
 	Pokedex: DexTable<PokedexText>;
 	Default: DexTable<DefaultText>;
 }
-
 export const toID = Data.toID;
-
 export class ModdedDex {
 	readonly Data = Data;
 	readonly Condition = Condition;
@@ -104,25 +80,19 @@ export class ModdedDex {
 	readonly Species = Species;
 	readonly Format = Format;
 	readonly ModdedDex = ModdedDex;
-
 	readonly name = "[ModdedDex]";
 	readonly isBase: boolean;
 	readonly currentMod: string;
 	readonly dataDir: string;
-
 	readonly toID = Data.toID;
-
 	gen = 0;
 	parentMod = '';
 	modsLoaded = false;
-
 	dataCache: DexTableData | null;
 	textCache: TextTableData | null;
-
 	deepClone = Utils.deepClone;
 	deepFreeze = Utils.deepFreeze;
 	Multiset = Utils.Multiset;
-
 	readonly formats: DexFormats;
 	readonly abilities: DexAbilities;
 	readonly items: DexItems;
@@ -134,15 +104,12 @@ export class ModdedDex {
 	readonly stats: Data.DexStats;
 	readonly aliases: Map<ID, ID> | null = null;
 	readonly fuzzyAliases: Map<ID, ID[]> | null = null;
-
 	constructor(mod = 'base') {
 		this.isBase = (mod === 'base');
 		this.currentMod = mod;
 		this.dataDir = (this.isBase ? DATA_DIR : MODS_DIR + '/' + this.currentMod);
-
 		this.dataCache = null;
 		this.textCache = null;
-
 		this.formats = new DexFormats(this);
 		this.abilities = new DexAbilities(this);
 		this.items = new DexItems(this);
@@ -153,82 +120,53 @@ export class ModdedDex {
 		this.types = new Data.DexTypes(this);
 		this.stats = new Data.DexStats(this);
 	}
-
-	get data(): DexTableData {
-		return this.loadData();
-	}
-
+	get data(): DexTableData { return this.loadData(); }
 	get dexes(): { [mod: string]: ModdedDex } {
 		this.includeMods();
 		return dexes;
 	}
-
 	mod(mod: string | undefined): ModdedDex {
 		if (!dexes['base'].modsLoaded) dexes['base'].includeMods();
 		return dexes[mod || 'base'].includeData();
 	}
-
 	forGen(gen: number) {
 		if (!gen) return this;
 		return this.mod(`gen${gen}`);
 	}
-
 	forFormat(format: Format | string): ModdedDex {
 		if (!this.modsLoaded) this.includeMods();
 		const mod = this.formats.get(format).mod;
 		return dexes[mod || BASE_MOD].includeData();
 	}
-
 	modData(dataType: DataType, id: string) {
 		if (this.isBase) return this.data[dataType][id];
 		if (this.data[dataType][id] !== dexes[this.parentMod].data[dataType][id]) return this.data[dataType][id];
 		return (this.data[dataType][id] = Utils.deepClone(this.data[dataType][id]));
 	}
 
-	effectToString() {
-		return this.name;
-	}
-
+	effectToString() { return this.name; }
 	/**
 	 * Sanitizes a username or Pokemon nickname
-	 *
-	 * Returns the passed name, sanitized for safe use as a name in the PS
-	 * protocol.
-	 *
+	 * Returns the passed name, sanitized for safe use as a name in the PS protocol.
 	 * Such a string must uphold these guarantees:
 	 * - must not contain any ASCII whitespace character other than a space
 	 * - must not start or end with a space character
 	 * - must not contain any of: | , [ ]
 	 * - must not be the empty string
 	 * - must not contain Unicode RTL control characters
-	 *
-	 * If no such string can be found, returns the empty string. Calling
-	 * functions are expected to check for that condition and deal with it
-	 * accordingly.
-	 *
-	 * getName also enforces that there are not multiple consecutive space
-	 * characters in the name, although this is not strictly necessary for
-	 * safety.
+	 * If no such string can be found, returns the empty string. Calling functions are expected to check for that condition and deal with it accordingly.
+	 * getName also enforces that there are not multiple consecutive space characters in the name, although this is not strictly necessary for safety.
 	 */
 	getName(name: any): string {
 		if (typeof name !== 'string' && typeof name !== 'number') return '';
 		name = `${name}`.replace(/[|\s[\],\u202e]+/g, ' ').trim();
 		if (name.length > 18) name = name.substr(0, 18).trim();
-
 		// remove zalgo
-		name = name.replace(
-			/[\u0300-\u036f\u0483-\u0489\u0610-\u0615\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06ED\u0E31\u0E34-\u0E3A\u0E47-\u0E4E]{3,}/g,
-			''
-		);
+		name = name.replace(/[\u0300-\u036f\u0483-\u0489\u0610-\u0615\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06ED\u0E31\u0E34-\u0E3A\u0E47-\u0E4E]{3,}/g, '');
 		name = name.replace(/[\u239b-\u23b9]/g, '');
-
 		return name;
 	}
-
-	/**
-	 * Returns false if the target is immune; true otherwise.
-	 * Also checks immunity to some statuses.
-	 */
+	// Returns false if the target is immune; true otherwise. Also checks immunity to some statuses.
 	getImmunity(
 		source: { type: string } | string,
 		target: { getTypes: () => string[] } | { types: string[] } | string[] | string
@@ -237,16 +175,13 @@ export class ModdedDex {
 		// @ts-expect-error really wish TS would support this
 		const targetTyping: string[] | string = target.getTypes?.() || target.types || target;
 		if (Array.isArray(targetTyping)) {
-			for (const type of targetTyping) {
-				if (!this.getImmunity(sourceType, type)) return false;
-			}
+			for (const type of targetTyping) { if (!this.getImmunity(sourceType, type)) return false; }
 			return true;
 		}
 		const typeData = this.types.get(targetTyping);
 		if (typeData && typeData.damageTaken[sourceType] === 3) return false;
 		return true;
 	}
-
 	getEffectiveness(
 		source: { type: string } | string,
 		target: { getTypes: () => string[] } | { types: string[] } | string[] | string
@@ -256,9 +191,7 @@ export class ModdedDex {
 		const targetTyping: string[] | string = target.getTypes?.() || target.types || target;
 		let totalTypeMod = 0;
 		if (Array.isArray(targetTyping)) {
-			for (const type of targetTyping) {
-				totalTypeMod += this.getEffectiveness(sourceType, type);
-			}
+			for (const type of targetTyping) { totalTypeMod += this.getEffectiveness(sourceType, type); }
 			return totalTypeMod;
 		}
 		const typeData = this.types.get(targetTyping);
@@ -270,7 +203,6 @@ export class ModdedDex {
 		default: return 0;
 		}
 	}
-
 	getDescs(table: keyof TextTableData, id: ID, dataEntry: AnyObject) {
 		if (dataEntry.shortDesc) {
 			return {
@@ -287,25 +219,18 @@ export class ModdedDex {
 		for (let i = this.gen; i < dexes['base'].gen; i++) {
 			const curDesc = entry[`gen${i}` as keyof typeof entry]?.desc;
 			const curShortDesc = entry[`gen${i}` as keyof typeof entry]?.shortDesc;
-			if (!descs.desc && curDesc) {
-				descs.desc = curDesc;
-			}
-			if (!descs.shortDesc && curShortDesc) {
-				descs.shortDesc = curShortDesc;
-			}
+			if (!descs.desc && curDesc) { descs.desc = curDesc; }
+			if (!descs.shortDesc && curShortDesc) { descs.shortDesc = curShortDesc; }
 			if (descs.desc && descs.shortDesc) break;
 		}
 		if (!descs.shortDesc) descs.shortDesc = entry.shortDesc || '';
 		if (!descs.desc) descs.desc = entry.desc || descs.shortDesc;
 		return descs;
 	}
-
 	/**
 	 * Ensure we're working on a copy of a move (and make a copy if we aren't)
-	 *
 	 * Remember: "ensure" - by default, it won't make a copy of a copy:
 	 *     moveCopy === Dex.getActiveMove(moveCopy)
-	 *
 	 * If you really want to, use:
 	 *     moveCopyCopy = Dex.getActiveMove(moveCopy.id)
 	 */
@@ -316,12 +241,8 @@ export class ModdedDex {
 		moveCopy.hit = 0;
 		return moveCopy;
 	}
-
 	getHiddenPower(ivs: StatsTable) {
-		const hpTypes = [
-			'Fighting', 'Flying', 'Poison', 'Ground', 'Rock', 'Bug', 'Ghost', 'Steel',
-			'Fire', 'Water', 'Grass', 'Electric', 'Psychic', 'Ice', 'Dragon', 'Dark',
-		];
+		const hpTypes = ['Fighting', 'Flying', 'Poison', 'Ground', 'Rock', 'Bug', 'Ghost', 'Steel','Fire', 'Water', 'Grass', 'Electric', 'Psychic', 'Ice', 'Dragon', 'Dark',];
 		const tr = this.trunc;
 		const stats = { hp: 31, atk: 31, def: 31, spe: 31, spa: 31, spd: 31 };
 		if (this.gen <= 2) {
@@ -332,9 +253,7 @@ export class ModdedDex {
 			const spcDV = tr(ivs.spa / 2);
 			return {
 				type: hpTypes[4 * (atkDV % 4) + (defDV % 4)],
-				power: tr(
-					(5 * ((spcDV >> 3) + (2 * (speDV >> 3)) + (4 * (defDV >> 3)) + (8 * (atkDV >> 3))) + (spcDV % 4)) / 2 + 31
-				),
+				power: tr((5 * ((spcDV >> 3) + (2 * (speDV >> 3)) + (4 * (defDV >> 3)) + (8 * (atkDV >> 3))) + (spcDV % 4)) / 2 + 31),
 			};
 		} else {
 			// Hidden Power check for Gen 3 onwards
@@ -353,25 +272,18 @@ export class ModdedDex {
 			};
 		}
 	}
-
-	/**
-	 * Truncate a number into an unsigned 32-bit integer, for
-	 * compatibility with the cartridge games' math systems.
-	 */
+	// Truncate a number into an unsigned 32-bit integer, for compatibility with the cartridge games' math systems.
 	trunc(this: void, num: number, bits = 0) {
 		if (bits) return (num >>> 0) % (2 ** bits);
 		return num >>> 0;
 	}
-
 	dataSearch(
 		target: string,
 		searchIn?: ('Pokedex' | 'Moves' | 'Abilities' | 'Items' | 'Natures' | 'TypeChart')[] | null,
 		isInexact?: boolean
 	): AnyObject[] | null {
 		if (!target) return null;
-
 		searchIn = searchIn || ['Pokedex', 'Moves', 'Abilities', 'Items', 'Natures'];
-
 		const searchObjects = {
 			Pokedex: 'species', Moves: 'moves', Abilities: 'abilities', Items: 'items', Natures: 'natures', TypeChart: 'types',
 		} as const;
@@ -391,7 +303,6 @@ export class ModdedDex {
 		}
 		if (searchResults.length) return searchResults;
 		if (isInexact) return null; // prevent infinite loop
-
 		this.loadAliases();
 		const fuzzyAliases = Dex.fuzzyAliases!.get(toID(target));
 		if (fuzzyAliases) {
@@ -409,21 +320,15 @@ export class ModdedDex {
 			}
 		}
 		if (searchResults.length) return searchResults;
-
 		const cmpTarget = toID(target);
 		let maxLd = 3;
-		if (cmpTarget.length <= 1) {
-			return null;
-		} else if (cmpTarget.length <= 4) {
-			maxLd = 1;
-		} else if (cmpTarget.length <= 6) {
-			maxLd = 2;
-		}
+		if (cmpTarget.length <= 1) { return null; } 
+		else if (cmpTarget.length <= 4) { maxLd = 1; } 
+		else if (cmpTarget.length <= 6) { maxLd = 2; }
 		searchResults = null;
 		for (const table of searchIn) {
 			const searchObj = this.data[table] as DexTable<any>;
 			if (!searchObj) continue;
-
 			for (const j in searchObj) {
 				const ld = Utils.levenshtein(cmpTarget, j, maxLd);
 				if (ld <= maxLd) {
@@ -436,58 +341,33 @@ export class ModdedDex {
 				}
 			}
 		}
-
 		return searchResults;
 	}
-
 	loadDataFile(basePath: string, dataType: DataType): AnyObject | void {
 		try {
 			const filePath = basePath + DATA_FILES[dataType];
 			const dataObject = require(filePath);
-			if (!dataObject || typeof dataObject !== 'object') {
-				throw new TypeError(`${filePath}, if it exists, must export a non-null object`);
-			}
-			if (dataObject[dataType]?.constructor?.name !== 'Object') {
-				throw new TypeError(`${filePath}, if it exists, must export an object whose '${dataType}' property is an Object`);
-			}
+			if (!dataObject || typeof dataObject !== 'object') { throw new TypeError(`${filePath}, if it exists, must export a non-null object`); }
+			if (dataObject[dataType]?.constructor?.name !== 'Object') { throw new TypeError(`${filePath}, if it exists, must export an object whose '${dataType}' property is an Object`); }
 			return dataObject[dataType];
-		} catch (e: any) {
-			if (e.code !== 'MODULE_NOT_FOUND' && e.code !== 'ENOENT') {
-				throw e;
-			}
-		}
+		} catch (e: any) { if (e.code !== 'MODULE_NOT_FOUND' && e.code !== 'ENOENT') { throw e; } }
 	}
-
-	loadTextFile(
-		name: string, exportName: string
-	): DexTable<MoveText | ItemText | AbilityText | PokedexText | DefaultText> {
-		return require(`${DATA_DIR}/text/${name}`)[exportName];
-	}
-
+	loadTextFile(name: string, exportName: string): DexTable<MoveText | ItemText | AbilityText | PokedexText | DefaultText> { return require(`${DATA_DIR}/text/${name}`)[exportName]; }
 	includeMods(): this {
 		if (!this.isBase) throw new Error(`This must be called on the base Dex`);
 		if (this.modsLoaded) return this;
-
-		for (const mod of fs.readdirSync(MODS_DIR)) {
-			dexes[mod] = new ModdedDex(mod);
-		}
+		for (const mod of fs.readdirSync(MODS_DIR)) { dexes[mod] = new ModdedDex(mod); }
 		this.modsLoaded = true;
-
 		return this;
 	}
-
 	includeModData(): this {
-		for (const mod in this.dexes) {
-			dexes[mod].includeData();
-		}
+		for (const mod in this.dexes) { dexes[mod].includeData(); }
 		return this;
 	}
-
 	includeData(): this {
 		this.loadData();
 		return this;
 	}
-
 	loadTextData() {
 		if (dexes['base'].textCache) return dexes['base'].textCache;
 		dexes['base'].textCache = {
@@ -499,24 +379,15 @@ export class ModdedDex {
 		};
 		return dexes['base'].textCache;
 	}
-
-	getAlias(id: ID): ID | undefined {
-		return this.loadAliases().get(id);
-	}
-
+	getAlias(id: ID): ID | undefined { return this.loadAliases().get(id); }
 	loadAliases(): NonNullable<ModdedDex['aliases']> {
 		if (!this.isBase) return Dex.loadAliases();
 		if (this.aliases) return this.aliases;
 		const exported = require(path.resolve(DATA_DIR, 'aliases'));
 		const aliases = new Map<ID, ID>();
-		for (const [alias, target] of Object.entries(exported.Aliases)) {
-			aliases.set(alias as ID, toID(target));
-		}
+		for (const [alias, target] of Object.entries(exported.Aliases)) { aliases.set(alias as ID, toID(target)); }
 		const compoundNames = new Map<ID, string>();
-		for (const name of exported.CompoundWordNames) {
-			compoundNames.set(toID(name), name);
-		}
-
+		for (const name of exported.CompoundWordNames) { compoundNames.set(toID(name), name); }
 		const fuzzyAliases = new Map<ID, ID[]>();
 		const addFuzzy = (alias: ID, target: ID) => {
 			if (alias === target) return;
@@ -537,7 +408,6 @@ export class ModdedDex {
 			else if (forme === 'megax') addFuzzy(`mega${alias}x` as ID, target);
 			else if (forme === 'megay') addFuzzy(`mega${alias}y` as ID, target);
 			else addFuzzy(`${forme}${alias}` as ID, target);
-
 			if (forme === 'megax' || forme === 'megay') {
 				addFuzzy(`mega${alias}` as ID, target);
 				addFuzzy(`${alias}mega` as ID, target);
@@ -551,28 +421,18 @@ export class ModdedDex {
 				let name = compoundNames.get(id) || entry.name;
 				let forme = '' as ID;
 				let formeLetter = '' as ID;
-				if (name.includes('(')) {
-					addFuzzy(toID(name.split('(')[0]), id);
-				}
+				if (name.includes('(')) { addFuzzy(toID(name.split('(')[0]), id); }
 				if (table === 'Pokedex') {
 					// can't Dex.species.get; aliases isn't loaded
 					const species = entry as DexTableData['Pokedex'][string];
 					const baseid = toID(species.baseSpecies);
-					if (baseid && baseid !== id) {
-						name = compoundNames.get(baseid) || baseid;
-					}
+					if (baseid && baseid !== id) { name = compoundNames.get(baseid) || baseid; }
 					forme = toID(species.forme || species.baseForme);
-					if (forme === 'fan') {
-						formeLetter = 's' as ID;
-					} else if (forme === 'bloodmoon') {
-						formeLetter = 'bm' as ID;
-					} else {
-						// not doing baseForme as a hack to make aliases point to base forme
-						formeLetter = (species.forme || '').split(/ |-/).map(part => toID(part).charAt(0)).join('') as ID;
-					}
+					if (forme === 'fan') { formeLetter = 's' as ID; } 
+					else if (forme === 'bloodmoon') { formeLetter = 'bm' as ID; } 
+					else { formeLetter = (species.forme || '').split(/ |-/).map(part => toID(part).charAt(0)).join('') as ID; }
 					addFuzzy(forme, id);
 				}
-
 				addFuzzyForme(toID(name), id, forme, formeLetter);
 				const fullSplit = name.split(/ |-/).map(toID);
 				if (fullSplit.length < 2) continue;
@@ -581,7 +441,6 @@ export class ModdedDex {
 				const fullAcronymWord = fullAcronym + fullSplit[fullSplit.length - 1].slice(1);
 				addFuzzyForme(fullAcronymWord as ID, id, forme, formeLetter);
 				for (const wordPart of fullSplit) addFuzzyForme(wordPart, id, forme, formeLetter);
-
 				const spaceSplit = name.split(' ').map(toID);
 				if (spaceSplit.length !== fullSplit.length) {
 					const spaceAcronym = spaceSplit.map(x => x.charAt(0)).join('');
@@ -592,7 +451,6 @@ export class ModdedDex {
 				}
 			}
 		}
-
 		(this as any).aliases = aliases satisfies this['aliases'];
 		(this as any).fuzzyAliases = fuzzyAliases satisfies this['fuzzyAliases'];
 		return this.aliases!;
@@ -601,35 +459,20 @@ export class ModdedDex {
 		if (this.dataCache) return this.dataCache;
 		dexes['base'].includeMods();
 		const dataCache: { [k in keyof DexTableData]?: any } = {};
-
 		const basePath = this.dataDir + '/';
-
 		const Scripts = this.loadDataFile(basePath, 'Scripts') || {};
 		// We want to inherit most of Scripts but not this.
 		const init = Scripts.init;
 		this.parentMod = this.isBase ? '' : (Scripts.inherit || 'base');
-
 		let parentDex;
 		if (this.parentMod) {
 			parentDex = dexes[this.parentMod];
-			if (!parentDex || parentDex === this) {
-				throw new Error(
-					`Unable to load ${this.currentMod}. 'inherit' in scripts.ts should specify a parent mod from which to inherit data, or must be not specified.`
-				);
-			}
+			if (!parentDex || parentDex === this) { throw new Error(`Unable to load ${this.currentMod}. 'inherit' in scripts.ts should specify a parent mod from which to inherit data, or must be not specified.`); }
 		}
-
-		if (!parentDex) {
-			// Formats are inherited by mods and used by Rulesets
-			this.includeFormats();
-		}
+		if (!parentDex) { this.includeFormats(); }
 		for (const dataType of DATA_TYPES) {
 			dataCache[dataType] = this.loadDataFile(basePath, dataType);
-			if (dataType === 'Rulesets' && !parentDex) {
-				for (const format of this.formats.all()) {
-					dataCache.Rulesets[format.id] = { ...format, ruleTable: null };
-				}
-			}
+			if (dataType === 'Rulesets' && !parentDex) { for (const format of this.formats.all()) { dataCache.Rulesets[format.id] = { ...format, ruleTable: null }; } }
 		}
 		if (parentDex) {
 			for (const dataType of DATA_TYPES) {
@@ -640,57 +483,42 @@ export class ModdedDex {
 				}
 				const childTypedData: DexTable<any> = dataCache[dataType] || (dataCache[dataType] = {});
 				for (const entryId in parentTypedData) {
-					if (childTypedData[entryId] === null) {
-						// null means don't inherit
-						delete childTypedData[entryId];
-					} else if (!(entryId in childTypedData)) {
-						// If it doesn't exist it's inherited from the parent data
-						childTypedData[entryId] = parentTypedData[entryId];
-					} else if (childTypedData[entryId]?.inherit) {
-						// {inherit: true} can be used to modify only parts of the parent data,
-						// instead of overwriting entirely
+					if (childTypedData[entryId] === null) { delete childTypedData[entryId]; } // null means don't inherit
+					else if (!(entryId in childTypedData)) { childTypedData[entryId] = parentTypedData[entryId]; } // If it doesn't exist it's inherited from the parent data
+					else if (childTypedData[entryId]?.inherit) { 
+						// {inherit: true} can be used to modify only parts of the parent data, instead of overwriting entirely
 						delete childTypedData[entryId].inherit;
-
 						// Merge parent and child's entry, with child overwriting parent.
 						childTypedData[entryId] = { ...parentTypedData[entryId], ...childTypedData[entryId] };
 					}
 				}
 			}
 		}
-
 		// Flag the generation. Required for team validator.
 		this.gen = dataCache.Scripts.gen;
 		if (!this.gen) throw new Error(`Mod ${this.currentMod} needs a generation number in scripts.js`);
 		this.dataCache = dataCache as DexTableData;
-
 		// Execute initialization script.
 		if (init) init.call(this);
-
 		return this.dataCache;
 	}
-
 	includeFormats(): this {
 		this.formats.load();
 		return this;
 	}
 }
-
 dexes['base'] = new ModdedDex();
-
 // "gen9" is an alias for the current base data
 dexes[BASE_MOD] = dexes['base'];
-
 export const Dex = dexes['base'];
 export declare namespace Dex {
 	export type Species = import('./dex-species').Species;
 	export type Item = import('./dex-items').Item;
 	export type Move = import('./dex-moves').Move;
 	export type Ability = import('./dex-abilities').Ability;
-
 	export type HitEffect = import('./dex-moves').HitEffect;
 	export type SecondaryEffect = import('./dex-moves').SecondaryEffect;
 	export type RuleTable = import('./dex-formats').RuleTable;
-
 	export type GenderName = 'M' | 'F' | 'N' | '';
 	export type StatIDExceptHP = 'atk' | 'def' | 'spa' | 'spd' | 'spe';
 	export type StatID = 'hp' | StatIDExceptHP;
@@ -701,5 +529,4 @@ export declare namespace Dex {
 	export type BoostsTable = { [boost in BoostID]: number };
 	export type SparseBoostsTable = Partial<BoostsTable>;
 }
-
 export default Dex;

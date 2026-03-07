@@ -1,16 +1,10 @@
 /**
  * Room Battle
  * Pokemon Showdown - http://pokemonshowdown.com/
- *
- * This file wraps the simulator in an implementation of the RoomGame
- * interface. It also abstracts away the multi-process nature of the
- * simulator.
- *
+ * This file wraps the simulator in an implementation of the RoomGame interface. It also abstracts away the multi-process nature of the simulator.
  * For the actual battle simulation, see sim/
- *
  * @license MIT
  */
-
 import { execSync } from "child_process";
 import { ProcessManager, type Streams } from '../lib';
 import { BattleStream } from "../sim/battle-stream";
@@ -20,11 +14,9 @@ import type { Tournament } from './tournaments/index';
 import type { RoomSettings } from './rooms';
 import type { BestOfGame } from './room-battle-bestof';
 import type { GameTimerSettings } from '../sim/dex-formats';
-
 type ChannelIndex = 0 | 1 | 2 | 3 | 4;
 export type PlayerIndex = 1 | 2 | 3 | 4;
 export type ChallengeType = 'rated' | 'unrated' | 'challenge' | 'tour';
-
 interface BattleRequestTracker {
 	rqid: number;
 	request: string;
@@ -36,25 +28,20 @@ interface BattleRequestTracker {
 	isWait: 'cantUndo' | true | false;
 	choice: string;
 }
-
 /** 5 seconds */
 const TICK_TIME = 5;
 const SECONDS = 1000;
-
 // Timer constants: In seconds, should be multiple of TICK_TIME
 const STARTING_TIME = 150;
 const MAX_TURN_TIME = 150;
 const STARTING_TIME_CHALLENGE = 300;
 const STARTING_GRACE_TIME = 60;
 const MAX_TURN_TIME_CHALLENGE = 300;
-
 const DISCONNECTION_TIME = 60;
 const DISCONNECTION_BANK_TIME = 300;
-
 // time after a player disabling the timer before they can re-enable it
 const TIMER_COOLDOWN = 20 * SECONDS;
 const LOCKDOWN_PERIOD = 30 * 60 * 1000; // 30 minutes
-
 export class RoomBattlePlayer extends RoomGamePlayer<RoomBattle> {
 	readonly slot: SideID;
 	readonly channelIndex: ChannelIndex;
@@ -117,49 +104,33 @@ export class RoomBattlePlayer extends RoomGamePlayer<RoomBattle> {
 	constructor(user: User | string | null, game: RoomBattle, num: PlayerIndex) {
 		super(user, game, num);
 		if (typeof user === 'string') user = null;
-
 		this.slot = `p${num}` as SideID;
 		this.channelIndex = (game.gameType === 'multi' && num > 2 ? num - 2 : num) as ChannelIndex;
-
 		this.request = { rqid: 0, request: '', isWait: 'cantUndo', choice: '' };
 		this.wantsTie = false;
 		this.wantsOpenTeamSheets = null;
 		this.active = !!user?.connected;
 		this.eliminated = false;
-
 		this.secondsLeft = 1;
 		this.turnSecondsLeft = 1;
 		this.dcSecondsLeft = 1;
-
 		this.knownActive = true;
 		this.invite = '';
 		this.hasTeam = false;
-
 		if (user) {
 			user.games.add(this.game.roomid);
 			user.updateSearch();
-			for (const connection of user.connections) {
-				if (connection.inRooms.has(game.roomid)) {
-					Sockets.channelMove(connection.worker, this.game.roomid, this.channelIndex, connection.socketid);
-				}
-			}
+			for (const connection of user.connections) { if (connection.inRooms.has(game.roomid)) { Sockets.channelMove(connection.worker, this.game.roomid, this.channelIndex, connection.socketid); } }
 		}
 	}
 	override destroy() {
 		const user = this.getUser();
-		if (user) {
-			this.updateChannel(user, 0);
-		}
+		if (user) { this.updateChannel(user, 0); }
 		this.knownActive = false;
 		this.active = false;
 	}
-	updateChannel(user: User | Connection, channel = this.channelIndex) {
-		for (const connection of (user.connections || [user])) {
-			Sockets.channelMove(connection.worker, this.game.roomid, channel, connection.socketid);
-		}
-	}
+	updateChannel(user: User | Connection, channel = this.channelIndex) { for (const connection of (user.connections || [user])) { Sockets.channelMove(connection.worker, this.game.roomid, channel, connection.socketid); } }
 }
-
 export class RoomBattleTimer {
 	readonly battle: RoomBattle;
 	readonly timerRequesters = new Set<ID>();
@@ -178,19 +149,16 @@ export class RoomBattleTimer {
 	settings: GameTimerSettings;
 	constructor(battle: RoomBattle) {
 		this.battle = battle;
-
 		const format = Dex.formats.get(battle.format, true);
 		const hasLongTurns = format.gameType !== 'singles';
 		const isChallenge = (battle.challengeType === 'challenge');
 		const ruleTable = Dex.formats.getRuleTable(format);
 		const timerSettings = ruleTable.timer?.[0];
-
 		// so that Object.assign doesn't overwrite anything with `undefined`
 		for (const k in timerSettings) {
 			// @ts-expect-error prop access
 			if (timerSettings[k] === undefined) delete timerSettings[k];
 		}
-
 		this.settings = {
 			dcTimer: !isChallenge,
 			dcTimerBank: isChallenge,
@@ -204,7 +172,6 @@ export class RoomBattleTimer {
 			...timerSettings,
 		};
 		if (this.settings.maxPerTurn <= 0) this.settings.maxPerTurn = Infinity;
-
 		for (const player of this.battle.players) {
 			player.secondsLeft = this.settings.starting + this.settings.grace;
 			player.turnSecondsLeft = player.secondsLeft;
@@ -226,16 +193,13 @@ export class RoomBattleTimer {
 		if (requester && this.battle.playerTable[requester.id] && this.lastDisabledByUser === requester.id) {
 			const remainingCooldownMs = (this.lastDisabledTime || 0) + TIMER_COOLDOWN - Date.now();
 			if (remainingCooldownMs > 0) {
-				this.battle.playerTable[requester.id].sendRoom(
-					`|inactiveoff|The timer can't be re-enabled so soon after disabling it (${Math.ceil(remainingCooldownMs / SECONDS)} seconds remaining).`
-				);
+				this.battle.playerTable[requester.id].sendRoom(`|inactiveoff|The timer can't be re-enabled so soon after disabling it (${Math.ceil(remainingCooldownMs / SECONDS)} seconds remaining).`);
 				return false;
 			}
 		}
 		this.timerRequesters.add(userid);
 		const requestedBy = requester ? ` (requested by ${requester.name})` : ``;
 		this.battle.room.add(`|inactive|Battle timer is ON: inactive players will automatically lose when time's up.${requestedBy}`).update();
-
 		this.checkActivity();
 		for (const player of this.battle.players) this.nextRequest(player);
 		return true;
@@ -246,9 +210,7 @@ export class RoomBattleTimer {
 			this.timerRequesters.delete(requester.id);
 			this.lastDisabledByUser = requester.id;
 			this.lastDisabledTime = Date.now();
-		} else {
-			this.timerRequesters.clear();
-		}
+		} else { this.timerRequesters.clear(); }
 		if (this.timerRequesters.size) {
 			this.battle.room.add(`|inactive|${requester!.name} no longer wants the timer on, but the timer is staying on because ${[...this.timerRequesters].join(', ')} still does.`).update();
 			return false;
@@ -277,34 +239,21 @@ export class RoomBattleTimer {
 				// first request of a mid-turn request (U-turn or faint-switch)
 				this.isFirstRequest = false;
 				const addPerMidTurnRequest = Math.min(this.settings.addPerTurn, TICK_TIME);
-				for (const curPlayer of this.battle.players) {
-					curPlayer.secondsLeft += addPerMidTurnRequest;
-				}
-			} else {
-				// second player of a request we've already updated the timer for
-			}
+				for (const curPlayer of this.battle.players) { curPlayer.secondsLeft += addPerMidTurnRequest; }
+			} else { } // second player of a request we've already updated the timer for
 			return;
 		}
-
 		// new turn
 		this.turn = this.battle.turn;
 		this.isFirstRequest = false;
-
 		let addPerTurn = this.settings.addPerTurn;
 		if (this.settings.accelerate && addPerTurn) {
 			// after turn 100: 15s/turn -> 10s/turn
-			if (this.turn > 100 && addPerTurn > TICK_TIME) {
-				addPerTurn -= TICK_TIME;
-			}
+			if (this.turn > 100 && addPerTurn > TICK_TIME) { addPerTurn -= TICK_TIME; }
 			// after turn 200: 10s/turn -> 7s/turn
-			if (this.turn > 200 && Math.floor(this.battle.requestCount / 2) % 2) {
-				addPerTurn = 0;
-			}
+			if (this.turn > 200 && Math.floor(this.battle.requestCount / 2) % 2) { addPerTurn = 0; }
 		}
-
-		for (const player of this.battle.players) {
-			player.secondsLeft = Math.min(player.secondsLeft + addPerTurn, this.settings.starting);
-		}
+		for (const player of this.battle.players) { player.secondsLeft = Math.min(player.secondsLeft + addPerTurn, this.settings.starting); }
 	}
 	nextRequest(player: RoomBattlePlayer) {
 		if (player.secondsLeft <= 0) return;
@@ -312,7 +261,6 @@ export class RoomBattleTimer {
 			player.turnSecondsLeft = this.settings.maxPerTurn;
 			return;
 		}
-
 		if (this.timer) {
 			clearTimeout(this.timer);
 			this.timer = null;
@@ -320,22 +268,16 @@ export class RoomBattleTimer {
 		if (this.battle.ended || !this.timerRequesters.size) return;
 		// if there's only 1 player left
 		if (this.battle.players.filter(p => p.secondsLeft > 0).length <= 1) return;
-
 		const room = this.battle.room;
 		this.updateTurn();
 		const maxTurnTime = (this.isFirstRequest ? this.settings.maxFirstTurn : 0) || this.settings.maxPerTurn;
 		player.turnSecondsLeft = Math.min(player.secondsLeft, maxTurnTime);
-
 		const secondsLeft = player.turnSecondsLeft;
 		let grace = player.secondsLeft - this.settings.starting;
 		if (grace < 0) grace = 0;
 		player.sendRoom(`|inactive|Time left: ${secondsLeft} sec this turn | ${player.secondsLeft - grace} sec total` + (grace ? ` | ${grace} sec grace` : ``));
-		if (secondsLeft <= 30 && secondsLeft < this.settings.starting) {
-			room.add(`|inactive|${player.name} has ${secondsLeft} seconds left this turn.`);
-		}
-		if (this.debug) {
-			room.add(`||${player.name} | Time left: ${secondsLeft} sec this turn | ${player.secondsLeft} sec total`);
-		}
+		if (secondsLeft <= 30 && secondsLeft < this.settings.starting) { room.add(`|inactive|${player.name} has ${secondsLeft} seconds left this turn.`); }
+		if (this.debug) { room.add(`||${player.name} | Time left: ${secondsLeft} sec this turn | ${player.secondsLeft} sec total`); }
 		room.update();
 		this.lastTick = Date.now();
 		this.timer = setTimeout(() => this.nextTick(), TICK_TIME * SECONDS);
@@ -345,7 +287,6 @@ export class RoomBattleTimer {
 		if (this.battle.ended || !this.timerRequesters.size) return;
 		// if there are no active requests
 		if (this.battle.players.every(p => p.request.isWait === 'cantUndo')) return;
-
 		const room = this.battle.room;
 		for (const player of this.battle.players) {
 			if (player.request.isWait) continue;
@@ -359,66 +300,41 @@ export class RoomBattleTimer {
 					player.turnSecondsLeft -= TICK_TIME;
 				}
 			}
-
 			const dcSecondsLeft = player.dcSecondsLeft;
-			if (dcSecondsLeft <= 0) {
-				player.turnSecondsLeft = 0;
-			}
+			if (dcSecondsLeft <= 0) { player.turnSecondsLeft = 0; }
 			const secondsLeft = player.turnSecondsLeft;
 			if (!secondsLeft) continue;
-
 			if (!player.knownActive && (dcSecondsLeft <= secondsLeft || this.settings.dcTimerBank)) {
 				// dc timer is shown only if it's lower than turn timer or you're in timer bank mode
-				if (dcSecondsLeft % 30 === 0 || dcSecondsLeft <= 20) {
-					room.add(`|inactive|${player.name} has ${dcSecondsLeft} seconds to reconnect!`);
-				}
+				if (dcSecondsLeft % 30 === 0 || dcSecondsLeft <= 20) { room.add(`|inactive|${player.name} has ${dcSecondsLeft} seconds to reconnect!`); }
 			} else {
 				// regular turn timer shown
-				if (secondsLeft % 30 === 0 || secondsLeft <= 20) {
-					room.add(`|inactive|${player.name} has ${secondsLeft} seconds left.`);
-				}
+				if (secondsLeft % 30 === 0 || secondsLeft <= 20) { room.add(`|inactive|${player.name} has ${secondsLeft} seconds left.`); }
 			}
-			if (this.debug) {
-				room.add(`||[${player.name} has ${player.turnSecondsLeft}s this turn / ${player.secondsLeft}s total]`);
-			}
+			if (this.debug) { room.add(`||[${player.name} has ${player.turnSecondsLeft}s this turn / ${player.secondsLeft}s total]`); }
 		}
 		room.update();
-		if (!this.checkTimeout()) {
-			this.timer = setTimeout(() => this.nextTick(), TICK_TIME * 1000);
-		}
+		if (!this.checkTimeout()) { this.timer = setTimeout(() => this.nextTick(), TICK_TIME * 1000); }
 	}
 	checkActivity() {
 		if (this.battle.ended) return;
 		for (const player of this.battle.players) {
 			const isActive = !!player.active;
-
 			if (isActive === player.knownActive) continue;
-
 			if (!isActive) {
 				// player has disconnected
 				player.knownActive = false;
 				if (!this.settings.dcTimerBank) {
 					// don't wait longer than 6 ticks (1 minute)
-					if (this.settings.dcTimer) {
-						player.dcSecondsLeft = DISCONNECTION_TIME;
-					} else {
-						// arbitrary large number
-						player.dcSecondsLeft = DISCONNECTION_TIME * 10;
-					}
+					if (this.settings.dcTimer) { player.dcSecondsLeft = DISCONNECTION_TIME; } 
+					else { player.dcSecondsLeft = DISCONNECTION_TIME * 10; } // arbitrary large number
 				}
-
 				if (this.timerRequesters.size) {
 					let msg = `!`;
-
-					if (this.settings.dcTimer) {
-						msg = ` and has a minute to reconnect!`;
-					}
+					if (this.settings.dcTimer) { msg = ` and has a minute to reconnect!`; }
 					if (this.settings.dcTimerBank) {
-						if (player.dcSecondsLeft > 0) {
-							msg = ` and has ${player.dcSecondsLeft} seconds to reconnect!`;
-						} else {
-							msg = ` and has no disconnection time left!`;
-						}
+						if (player.dcSecondsLeft > 0) { msg = ` and has ${player.dcSecondsLeft} seconds to reconnect!`; } 
+						else { msg = ` and has no disconnection time left!`; }
 					}
 					this.battle.room.add(`|inactive|${player.name} disconnected${msg}`).update();
 				}
@@ -427,9 +343,7 @@ export class RoomBattleTimer {
 				player.knownActive = true;
 				if (this.timerRequesters.size) {
 					let timeLeft = ``;
-					if (!player.request.isWait) {
-						timeLeft = ` and has ${player.turnSecondsLeft} seconds left`;
-					}
+					if (!player.request.isWait) { timeLeft = ` and has ${player.turnSecondsLeft} seconds left`; }
 					this.battle.room.add(`|inactive|${player.name} reconnected${timeLeft}.`).update();
 				}
 			}
@@ -459,7 +373,6 @@ export class RoomBattleTimer {
 		return didSomething;
 	}
 }
-
 export interface RoomBattlePlayerOptions {
 	user: User;
 	/** should be '' for random teams */
@@ -468,7 +381,6 @@ export interface RoomBattlePlayerOptions {
 	inviteOnly?: boolean;
 	hidden?: boolean;
 }
-
 export interface RoomBattleOptions {
 	format: string;
 	/**
@@ -497,7 +409,6 @@ export interface RoomBattleOptions {
 	 */
 	isBestOfSubBattle?: boolean;
 }
-
 export class RoomBattle extends RoomGame<RoomBattlePlayer> {
 	override readonly gameid = 'battle' as ID;
 	override readonly room!: GameRoom;
@@ -513,9 +424,7 @@ export class RoomBattle extends RoomGame<RoomBattlePlayer> {
 	 * 0 for unrated battles. 1 for unknown ratings.
 	 */
 	readonly rated: number;
-	/**
-	 * userid that requested extraction -> playerids that accepted the extraction
-	 */
+	// userid that requested extraction -> playerids that accepted the extraction
 	readonly allowExtraction: { [k: string]: Set<ID> } = {};
 	readonly stream: Streams.ObjectReadWriteStream<string>;
 	override readonly timer: RoomBattleTimer;
@@ -531,9 +440,7 @@ export class RoomBattle extends RoomGame<RoomBattlePlayer> {
 	inviteOnlySetter: ID | null = null;
 	logData: AnyObject | null = null;
 	endType: 'forfeit' | 'forced' | 'normal' = 'normal';
-	/**
-	 * If the battle is ended: an array of the number of Pokemon left for each side.
-	 */
+	// If the battle is ended: an array of the number of Pokemon left for each side.
 	score: number[] | null = null;
 	inputLog: string[] | null = null;
 	turn = 0;
@@ -549,42 +456,27 @@ export class RoomBattle extends RoomGame<RoomBattlePlayer> {
 		this.options = options;
 		if (!this.title.endsWith(" Battle")) this.title += " Battle";
 		this.allowRenames = options.allowRenames !== undefined ? !!options.allowRenames : (!options.rated && !options.tour);
-
 		this.format = options.format;
 		this.gameType = format.gameType;
 		this.challengeType = options.challengeType || 'challenge';
 		this.rated = options.rated === true ? 1 : options.rated || 0;
 		this.ladder = typeof format.rated === 'string' ? toID(format.rated) : options.format;
 		this.playerCap = format.playerCount;
-
 		this.stream = PM.createStream();
-
 		let ratedMessage = options.ratedMessage || '';
-		if (this.rated) {
-			ratedMessage = 'Rated battle';
-		} else if (this.room.tour) {
-			ratedMessage = 'Tournament battle';
-		}
-
+		if (this.rated) { ratedMessage = 'Rated battle'; } 
+		else if (this.room.tour) { ratedMessage = 'Tournament battle'; }
 		this.room.battle = this;
-
 		const battleOptions = {
 			formatid: this.format,
 			roomid: this.roomid,
 			rated: ratedMessage,
 			seed: options.seed,
 		};
-		if (options.inputLog) {
-			void this.stream.write(options.inputLog);
-		} else {
-			void this.stream.write(`>start ` + JSON.stringify(battleOptions));
-		}
-
+		if (options.inputLog) { void this.stream.write(options.inputLog); } 
+		else { void this.stream.write(`>start ` + JSON.stringify(battleOptions)); }
 		void this.listen();
-
-		if (options.players.length > this.playerCap) {
-			throw new Error(`${options.players.length} players passed to battle ${room.roomid} but ${this.playerCap} players expected`);
-		}
+		if (options.players.length > this.playerCap) { throw new Error(`${options.players.length} players passed to battle ${room.roomid} but ${this.playerCap} players expected`); }
 		for (let i = 0; i < this.playerCap; i++) {
 			const p = options.players[i];
 			const player = this.addPlayer(p?.user || null, p || null);
@@ -606,7 +498,6 @@ export class RoomBattle extends RoomGame<RoomBattlePlayer> {
 		if (Config.forcetimer || this.format.includes('blitz')) this.timer.start();
 		this.start();
 	}
-
 	checkActive() {
 		const active = (this.started && !this.ended && this.players.every(p => p.active));
 		Rooms.global.battleCount += (active ? 1 : 0) - (this.active ? 1 : 0);
@@ -635,7 +526,6 @@ export class RoomBattle extends RoomGame<RoomBattlePlayer> {
 		}
 		request.isWait = true;
 		request.choice = choice;
-
 		void this.stream.write(`>${player.slot} ${choice}`);
 	}
 	override undo(user: User, data: string) {
@@ -654,7 +544,6 @@ export class RoomBattle extends RoomGame<RoomBattlePlayer> {
 			return;
 		}
 		request.isWait = false;
-
 		void this.stream.write(`>${player.slot} undo`);
 	}
 	override joinGame(user: User, slot?: SideID, playerOpts?: { team?: string }) {

@@ -198,7 +198,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 15,
 		priority: 0,
 		critRatio: 8,
-		flags: { protect: 1, metronome: 1, mirror: 1 },
+		flags: { protect: 1, metronome: 1, mirror: 1, nosketch: 1, },
 		onPrepareHit(target, source, move) {
 			// Check if ally is a Bug type
 			const ally = source.side.active.find(a => a && a !== source);
@@ -344,7 +344,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 15,
 		priority: -2,
 		critRatio: 4,
-		flags: { beam: 1, bullet: 1, protect: 1, failmefirst: 1, nosleeptalk: 1, noassist: 1, failcopycat: 1, failinstruct: 1 },
+		flags: { beam: 1, bullet: 1, protect: 1, failmefirst: 1, nosleeptalk: 1, noassist: 1, failcopycat: 1, failinstruct: 1, nosketch: 1, },
 		priorityChargeCallback(pokemon) { pokemon.addVolatile('beakblast'); },
 		condition: {
 			duration: 1,
@@ -585,7 +585,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 	boneclub: {
 		num: 125,
 		accuracy: 100,
-		basePower: 45,
+		basePower: 65,
 		type: "Ground",
 		category: "Physical",
 		name: "Bone Club",
@@ -601,7 +601,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 	bonerush: {
 		num: 198,
 		accuracy: 100,
-		basePower: 25,
+		basePower: 40,
 		type: "Ground",
 		category: "Physical",
 		name: "Bone Rush",
@@ -609,13 +609,11 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		priority: 0,
 		critRatio: 4,
 		flags: { weapon: 1, protect: 1, mirror: 1, metronome: 1 },
-		multihit: [2, 5],
+		multihit: [2, 3],
 		onAfterMoveSecondarySelf(pokemon, target, move) {
 			if (pokemon.species.name === 'Lucario' || pokemon.species.baseSpecies === 'Lucario') {
 				// Clear any existing aura status before applying Weapon Conjuration
-				if (pokemon.status === 'aura') {
-					pokemon.clearStatus();
-				}
+				if (pokemon.status === 'aura') { pokemon.clearStatus(); }
 				pokemon.setStatus('aura', pokemon, {
 					auraAbility: 'weaponconjuration',
 					auraName: 'Weapon Conjuration',
@@ -624,8 +622,8 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			}
 		},
 		secondary: null,
-		desc: "Hits 2-5 times [4-5 times with Loaded Dice]. Lucario: sets Weapon Conjuration aura for 3 turns",
-		shortDesc: "Hits 2-5 times [4-5 times with Loaded Dice]. Lucario: sets an aura",
+		desc: "Hits 2-3 times. Lucario: sets Weapon Conjuration aura for 3 turns",
+		shortDesc: "Hits 2-3 times. Lucario: sets an aura",
 		target: "normal",
 	},
 	bonemerang: {
@@ -673,7 +671,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			onSourceBasePower(basePower, target, source, move) { if (move.id === 'gust' || move.id === 'twister') { return this.chainModify(2); } },
 		},
 		secondary: { chance: 30, status: 'par', },
-		desc: "Flies up on first turn, attacks on second. 30% chance to Paralyze target",
+		desc: "Flies up turn 1, attacks on turn 2. 30% chance to Paralyze target",
 		shortDesc: "Flies up turn 1. Hits turn 2. 30% Paralyze",
 		target: "any",
 	},
@@ -1202,7 +1200,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 	crushclaw: {
 		num: 306,
 		accuracy: 95,
-		basePower: 105,
+		basePower: 95,
 		type: "Normal",
 		category: "Physical",
 		name: "Crush Claw",
@@ -1304,7 +1302,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			onSourceModifyDamage(damage, source, target, move) { if (move.id === 'earthquake' || move.id === 'magnitude') { return this.chainModify(2); } },
 		},
 		secondary: null,
-		desc: "Burrows underground turn 1, attacks turn 2. Takes 2x damage from Earthquake while underground",
+		desc: "Burrows underground turn 1, attacks on turn 2. Takes 2x damage from Earthquake while underground",
 		shortDesc: "Burrows turn 1. Hits turn 2",
 		target: "normal",
 	},
@@ -1363,7 +1361,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			onSourceModifyDamage(damage, source, target, move) { if (move.id === 'surf' || move.id === 'whirlpool') { return this.chainModify(2); } },
 		},
 		secondary: null,
-		desc: "Dives underwater turn 1, attacks turn 2. Takes 2x damage from Surf and Whirlpool underwater",
+		desc: "Dives underwater turn 1, attacks on turn 2. Takes 2x damage from Surf and Whirlpool underwater",
 		shortDesc: "Dives turn 1. Hits turn 2",
 		target: "normal",
 	},
@@ -1752,6 +1750,22 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		desc: "User faints after use",
 		shortDesc: "Kills the user",
 		target: "allAdjacent",
+	},
+	extendopunch: {
+		num: 12000,
+		accuracy: 100,
+		basePower: 60,
+		type: "Grass",
+		category: "Physical",
+		name: "Extendo-Punch",
+		pp: 15,
+		priority: 0,
+		critRatio: 3,
+		flags: { protect: 1, mirror: 1, punch: 1, metronome: 1 },
+		secondary: null,
+		desc: "",
+		shortDesc: "",
+		target: "normal"
 	},
 	extremespeed: {
 		num: 245,
@@ -2173,7 +2187,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			onSourceModifyDamage(damage, source, target, move) { if (move.id === 'gust' || move.id === 'twister') { return this.chainModify(2); } },
 		},
 		secondary: null,
-		desc: "Flies up on first turn, attacks on second",
+		desc: "Flies up turn 1, attacks on turn 2",
 		shortDesc: "Flies up turn 1. Hits turn 2",
 		target: "any",
 	},
@@ -2274,7 +2288,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 5,
 		priority: 0,
 		critRatio: 4,
-		flags: { protect: 1, mirror: 1, nosleeptalk: 1, failinstruct: 1, cantusetwice: 1 },
+		flags: { protect: 1, mirror: 1, nosleeptalk: 1, failinstruct: 1, cantusetwice: 1, nosketch: 1, },
 		secondaries: [
 			{ chance: 30, status: 'par', },
 			{ chance: 10, status: 'frz', },
@@ -2374,7 +2388,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 5,
 		priority: 0,
 		critRatio: 8,
-		flags: { throw: 1, protect: 1, mirror: 1, metronome: 1 },
+		flags: { throw: 1, protect: 1, mirror: 1, metronome: 1, nosketch: 1, },
 		onModifyMove(move, pokemon) {
 			if (this.lastSuccessfulMoveThisTurn === 'fusionflare') {
 				move.type2 = 'Fire';
@@ -3775,7 +3789,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 5,
 		priority: 0,
 		critRatio: 3,
-		flags: { throw: 1, protect: 1, mirror: 1, metronome: 1 },
+		flags: { throw: 1, protect: 1, mirror: 1, metronome: 1, nosketch: 1, },
 		secondary: { chance: 100, self: { boosts: { atk: -1 } }, },		
 		desc: "Lowers user's Attack [-1 stage]",
 		shortDesc: "-1 Attack: User",
@@ -3838,6 +3852,8 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			onInvulnerability: false,
 		},
 		secondary: null,
+		desc: "Disappears turn 1. Attacks on turn 2. Bypasses and Breaks protection effects",
+		shortDesc: "Disappears turn 1. Hits turn 2. Break protection",
 		target: "normal",
 	},
 	pinmissile: {
@@ -4113,7 +4129,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 10,
 		priority: 0,
 		critRatio: 6,
-		flags: { pierce: 1, protect: 1, mirror: 1, nonsky: 1 },
+		flags: { pierce: 1, protect: 1, mirror: 1, nonsky: 1, nosketch: 1, },
 		pierce3: true,
 		desc: "PIERCE3: Breaks through protection effects, dealing 1/8 the usual damage",
 		shortDesc: "",
@@ -4859,7 +4875,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 	selfdestruct: {
 		num: 120,
 		accuracy: 100,
-		basePower: 400,
+		basePower: 270,
 		type: "Normal",
 		category: "Physical",
 		name: "Self-Destruct",
@@ -4895,7 +4911,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 	shadowclaw: {
 		num: 421,
 		accuracy: 100,
-		basePower: 65,
+		basePower: 75,
 		type: "Ghost",
 		category: "Physical",
 		name: "Shadow Claw",
@@ -4903,9 +4919,9 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		priority: 0,
 		critRatio: 7,
 		flags: { claw: 1, shadow: 1, protect: 1, mirror: 1, metronome: 1 },
-		secondary: { chance: 30, status: 'fear' },
-		desc: "30% chance to Fear target",
-		shortDesc: "30% Fear",
+		secondary: { chance: 10, status: 'fear' },
+		desc: "10% chance to Fear target",
+		shortDesc: "10% Fear",
 		target: "normal",
 	},
 	shadowforce: {
@@ -4918,7 +4934,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 5,
 		priority: 0,
 		critRatio: 4,
-		flags: { shadow: 1, charge: 1, mirror: 1, metronome: 1, nosleeptalk: 1, noassist: 1, failinstruct: 1 },
+		flags: { shadow: 1, charge: 1, mirror: 1, metronome: 1, nosleeptalk: 1, noassist: 1, failinstruct: 1, nosketch: 1, },
 		breaksProtect: true,
 		onTryMove(attacker, defender, move) {
 			if (attacker.removeVolatile(move.id)) { return; }
@@ -4932,7 +4948,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			onInvulnerability: false,
 		},
 		secondary: { chance: 10, volatileStatus: 'curse' },
-		desc: "Disappears turn 1. Hits turn 2. Bypasses and Breaks protection effects. 10% chance to Curse target",
+		desc: "Disappears turn 1. Attacks on turn 2. Bypasses and Breaks protection effects. 10% chance to Curse target",
 		shortDesc: "Disappears turn 1. Hits turn 2. Break protection. 10% Curse",
 		target: "normal",
 	},
@@ -5102,7 +5118,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		onFaint(target) { if (target.volatiles['skydrop'] && target.volatiles['twoturnmove'].source) { this.add('-end', target.volatiles['twoturnmove'].source, 'Sky Drop', '[interrupt]'); } },
 		},
 		secondary: null,
-		desc: "Carries target to the Sky turn 1. Hits turn 2. Target cannot move while they are in the sky. Fails if Target≥200kg",
+		desc: "Carries target to the Sky turn 1. Attacks on turn 2. Target cannot move while they are in the sky. Fails if Target≥200kg",
 		shortDesc: "User annd target fly up turn 1. Hits turn 2. Fails if Target≥200kg",
 		target: "any",
 	},
@@ -5232,6 +5248,8 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			}
 		},
 		secondary: null,
+		desc: "Charges up on first turn, attacks on the second turn. Skips charge under Sun",
+		shortDesc: "Charges up turn 1. Hits turn 2. Skips charge under Sun",
 		target: "normal",
 	},
 	spark: {
@@ -5660,6 +5678,8 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		critRatio: 4,
 		flags: { crash: 1, contact: 1, protect: 1, mirror: 1, metronome: 1 },
 		secondary: null,
+		desc: "2x power if user's previous move failed",
+		shortDesc: "2x power if user's previous move failed",
 		target: "normal",
 	},
 	thief: {
@@ -6597,7 +6617,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 10,
 		priority: 0,
 		critRatio: 3,
-		flags: { magic: 1, wind: 1, protect: 1, mirror: 1, metronome: 1 },
+		flags: { magic: 1, wind: 1, protect: 1, mirror: 1, metronome: 1, nosketch: 1, },
 		onModifyMove(move, pokemon, target) { if (target && ['raindance', 'primordialsea', 'turbulentwinds'].includes(target.effectiveWeather())) { move.accuracy = true; } },
 		secondary: { chance: 30, boosts: {spe: -1,}, },
 		desc: "30% chance to lower target's Speed [-1 stage]. Bypasses accuracy checks under Rain/Turbulent Winds; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Ability/Type based immunities become resistances",
@@ -6942,7 +6962,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		basePower: 75,
 		type: "Poison",
 		category: "Special",
-		name: "Sludge Bomb",
+		name: "Corrosive Shot",
 		pp: 15,
 		priority: 0,
 		critRatio: 4,
@@ -7472,7 +7492,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 10,
 		priority: 0,
 		critRatio: 6,
-		flags: { aura: 1, slicing: 1, wing: 1, protect: 1, mirror: 1, metronome: 1 },
+		flags: { aura: 1, slicing: 1, wing: 1, protect: 1, mirror: 1, metronome: 1, nosketch: 1, },
 		onAfterMoveSecondarySelf(pokemon, target, move) { // Grant Esper Wing aura
 			pokemon.setStatus('aura', pokemon, {
 				auraAbility: 'esperwing',
@@ -7921,7 +7941,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		desc: "10% chance to Freeze. 30% chance to Frostbite",
 		shortDesc: "10% Freeze. 30% Frostbite",
 		target: "normal",
-
 	},
 	frostbreath: {
 		num: 524,
@@ -7950,7 +7969,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 5,
 		priority: 0,
 		critRatio: 4,
-		flags: { bomb: 1, explosive: 1, protect: 1, mirror: 1, defrost: 1, metronome: 1 },
+		flags: { bomb: 1, explosive: 1, protect: 1, mirror: 1, defrost: 1, metronome: 1, nosketch: 1, },
 		onModifyMove(move, pokemon) {
 			if (this.lastSuccessfulMoveThisTurn === 'fusionbolt') {
 				move.type2 = 'Electric';
@@ -8234,7 +8253,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 5,
 		priority: 0,
 		critRatio: 2,
-		flags: { magic: 1, mirror: 1, bypasssub: 1 },
+		flags: { magic: 1, mirror: 1, bypasssub: 1, nosketch: 1, },
 		breaksProtect: true,
 		secondary: null,
 		desc: "Ignores protection effects; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Ability/Type based immunities become resistances",
@@ -8284,7 +8303,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 5,
 		priority: 0,
 		critRatio: 4,
-		flags: { cantusetwice: 1, protect: 1, mirror: 1, nosleeptalk: 1, failinstruct: 1 },
+		flags: { cantusetwice: 1, protect: 1, mirror: 1, nosleeptalk: 1, failinstruct: 1, nosketch: 1, },
 		secondaries: [
 			{ chance: 30, status: 'brn', },
 			{ chance: 30, status: 'frostbite', },
@@ -8354,7 +8373,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 	inferno: {
 		num: 517,
 		accuracy: 70,
-		basePower: 100,
+		basePower: 85,
 		type: "Fire",
 		category: "Special",
 		name: "Inferno",
@@ -8395,7 +8414,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 10,
 		priority: 0,
 		critRatio: 4,
-		flags: { light: 1, protect: 1, mirror: 1, metronome: 1 },
+		flags: { light: 1, protect: 1, mirror: 1, metronome: 1, nosketch: 1, },
 		onModifyType(move, pokemon) {
 			if (pokemon.ignoringItem()) return;
 			const item = pokemon.getItem();
@@ -8568,7 +8587,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 5,
 		priority: 0,
 		critRatio: 1,
-		flags: { throw: 1, protect: 1, mirror: 1 },
+		flags: { throw: 1, protect: 1, mirror: 1, nosketch: 1, },
 		self: {boosts: {spa: -1,},},
 		secondary: null,
 		desc: "Lowers user's Special Attack [-1 stage]",
@@ -8656,6 +8675,8 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			return null;
 		},
 		secondary: null,
+		desc: "Charges up on first turn, attacks on the second turn",
+		shortDesc: "Charges up turn 1. Hits turn 2",
 		target: "normal",
 
 	},
@@ -8787,7 +8808,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		type: "Water",
 		type2: "Ground",
 		category: "Special",
-		name: "Muddy Water",
+		name: "Mudslide",
 		pp: 10,
 		priority: 0,
 		critRatio: 0,
@@ -8832,7 +8853,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 10,
 		priority: 0,
 		critRatio: 2,
-		flags: { protect: 1, mirror: 1, metronome: 1 },
+		flags: { protect: 1, mirror: 1, metronome: 1, nosketch: 1, },
 		secondary: { chance: 100, self: {boosts: {spa: 1,},}, },
 		desc: "Boosts user's Special Attack [+1 stage]",
 		shortDesc: "+1 Sp.ATK: User",
@@ -8898,7 +8919,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 10,
 		priority: 0,
 		critRatio: 2,
-		flags: { protect: 1, mirror: 1, pulse: 1 },
+		flags: { protect: 1, mirror: 1, pulse: 1, nosketch: 1, },
 		desc: "",
 		shortDesc: "",
 		target: "allAdjacentFoes",
@@ -9272,7 +9293,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 5,
 		priority: 0,
 		critRatio: 4,
-		flags: { beam: 1, sound: 1, cantusetwice: 1, protect: 1, mirror: 1, metronome: 1 },
+		flags: { beam: 1, sound: 1, cantusetwice: 1, protect: 1, mirror: 1, metronome: 1, nosketch: 1, },
 		pseudoWeather: 'trickroom',
 		condition: {
 			duration: 2,
@@ -9304,7 +9325,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		basePower: 75,
 		type: "Grass",
 		category: "Special",
-		name: "Rootburst",
+		name: "Root Burst",
 		pp: 10,
 		priority: 0,
 		critRatio: 4,
@@ -9340,7 +9361,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 10,
 		priority: 0,
 		critRatio: 2,
-		flags: { magic: 1, wind: 1, protect: 1, mirror: 1, metronome: 1, },
+		flags: { magic: 1, wind: 1, protect: 1, mirror: 1, metronome: 1, nosketch: 1, },
 		onModifyMove(move, pokemon, target) { if (target && ['raindance', 'primordialsea', 'sandstorm'].includes(target.effectiveWeather())) { move.accuracy = true; } },
 		secondary: { chance: 20, status: 'brn', },
 		desc: "20% chance to Burn target. Bypasses accuracy checks under Rain, or Sandstorm; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Ability/Type based immunities become resistances",
@@ -9441,7 +9462,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 10,
 		priority: 0,
 		critRatio: 4,
-		flags: { weapon: 1, protect: 1, mirror: 1, metronome: 1 },
+		flags: { weapon: 1, protect: 1, mirror: 1, metronome: 1, nosketch: 1, },
 		onPrepareHit(target, source, move) { if (!source.isAlly(target)) { this.attrLastMove('[anim] Shell Side Arm ' + move.category); } },
 		onModifyMove(move, pokemon, target) {
 			if (!target) return;
@@ -9549,7 +9570,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 15,
 		priority: 0,
 		flags: { wind: 1, protect: 1, mirror: 1, metronome: 1 },
-		secondary: { chance: 100, sideCondition: 'silverpowder', },
+		secondary: { chance: 100, sideCondition: 'silverdust', },
 		desc: "Applies Silver Powder to opposing side for 3 turns. Deal 1/8Hp to Dragon/Fairy/Ghost types. Reduce Misty Terrain duration 2 turns. Clear and prevent Magic Dust. If hit by, or attempts to use a Fire type move, explode, dealing 1/8HP",
 		shortDesc: "Applies Silver Powder to opposing side for 3 turns",
 		target: "allAdjacentFoes",
@@ -9701,6 +9722,8 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			}
 		},
 		secondary: null,
+		desc: "Charges up on first turn, attacks on the second turn. Skips charge under Sun",
+		shortDesc: "Charges up turn 1. Hits turn 2. Skips charge under Sun",
 		target: "normal",
 	},
 	spacialrend: {
@@ -9713,7 +9736,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 5,
 		priority: 0,
 		critRatio: 11,
-		flags: { protect: 1, mirror: 1, metronome: 1 },
+		flags: { protect: 1, mirror: 1, metronome: 1, nosketch: 1, },
 		onAfterMove(source, target, move) {
 			if (!move.hasSheerForce && source.side.foe) {
 				const foeSide = source.side.foe;
@@ -9815,7 +9838,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 10,
 		priority: 0,
 		critRatio: 4,
-		flags: { magic: 1, wind: 1, protect: 1, mirror: 1 },
+		flags: { magic: 1, wind: 1, protect: 1, mirror: 1, nosketch: 1, },
 		secondary: { chance: 30, boosts: {atk: -1,}, },
 		desc: "30% chance to lower target's Attack [-1 stage]. Bypasses accuracy checks under Turbulent Winds, or over Misty Terrain; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Ability/Type based immunities become resistances",
 		shortDesc: "30% -1 ATK: Target. Bypasses accuracy checks under Turbulent Winds, or over Misty Terrain",
@@ -10063,38 +10086,51 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		accuracy: 100,
 		basePower: 60,
 		basePowerCallback(pokemon, target, move) {
-			if (pokemon.terastallized === 'Stellar') { return 80; }
+			const empowered = pokemon.volatiles['teraempowered'] !== undefined;
+			if ((pokemon.terastallized || empowered) && pokemon.teraType === 'Stellar') { return 80; }
 			return move.basePower;
 		},
-		type: "banal",
+		type: "Normal",
 		category: "Special",
 		name: "Tera Blast",
 		pp: 10,
 		priority: 0,
 		critRatio: 3,
 		flags: { protect: 1, mirror: 1, metronome: 1, mustpressure: 1 },
-		onPrepareHit(target, source, move) { if (source.terastallized) { this.attrLastMove('[anim] Tera Blast ' + source.teraType); } },
-		onModifyType(move, pokemon, target) { if (pokemon.terastallized) { move.type = pokemon.teraType; } },
-		onModifyMove(move, pokemon) {
-			if (pokemon.terastallized && pokemon.getStat('atk', false, true) > pokemon.getStat('spa', false, true)) { move.category = 'Physical'; }
-			if (pokemon.terastallized) {
-			const typeFlags: {[key: string]: string[]} = {
-				'Dark': ['aura'],
-				'Dragon': ['breath'],
-				'Fairy': ['explosive'],
-				'Fighting': ['punch'],
-				'Fire': ['breath'],
-				'Flying': ['wind'],
-				'Grass': ['beam', 'light'],
-				'Ground': ['explosive'],
-				'Normal': ['beam', 'light'],
-			};
-			const flags = typeFlags[pokemon.teraType];
-			if (flags) { for (const flag of flags) { (move.flags as any)[flag] = 1; } }
+		onPrepareHit(target, source, move) {
+			const empowered = source.volatiles['teraempowered'] !== undefined;
+			if (source.terastallized || empowered) { this.attrLastMove('[anim] Tera Blast ' + source.teraType); }
+		},
+		onModifyType(move, pokemon, target) {
+			const empowered = pokemon.volatiles['teraempowered'] !== undefined;
+			if (pokemon.terastallized || empowered) {
+				const t = this.dex.types.get(pokemon.teraType);
+				if (t.exists) move.type = t.name;
 			}
-			if (pokemon.hasType(['Bug', 'Dark', 'Dragon', 'Rock', 'Stellar'])) { move.critRatio = 5; } 
-			else if (pokemon.hasType(['Ground', 'Normal', 'Psychic', 'Water', 'banal'])) { move.critRatio = 3; }
-			else { move.critRatio = 4; }
+		},
+		onModifyMove(move, pokemon) {
+			const empowered = pokemon.volatiles['teraempowered'] !== undefined;
+			const teraLike = !!pokemon.terastallized || empowered;
+			if (teraLike && pokemon.getStat('atk', false, true) > pokemon.getStat('spa', false, true)) { move.category = 'Physical'; }
+			if (teraLike) {
+				const typeFlags: {[key: string]: string[]} = {
+					'Dark': ['aura'],
+					'Dragon': ['breath'],
+					'Fairy': ['explosive'],
+					'Fighting': ['punch'],
+					'Fire': ['breath'],
+					'Flying': ['wind'],
+					'Grass': ['beam', 'light'],
+					'Ground': ['explosive'],
+					'Normal': ['beam', 'light'],
+				};
+				const t = this.dex.types.get(pokemon.teraType);
+				const flags = typeFlags[t.exists ? t.name : pokemon.teraType];
+				if (flags) { for (const flag of flags) (move.flags as any)[flag] = 1; }
+				}
+				if (pokemon.hasType(['Bug', 'Dark', 'Dragon', 'Rock', 'Stellar'])) move.critRatio = 5;
+				else if (pokemon.hasType(['Ground', 'Normal', 'Psychic', 'Water', 'banal'])) move.critRatio = 3;
+			else move.critRatio = 4;
 		},
 		secondary: null,
 		target: "normal",
@@ -10110,11 +10146,32 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		priority: 0,
 		critRatio: 5,
 		flags: { protect: 1, mirror: 1, noassist: 1, failcopycat: 1, failmimic: 1, nosketch: 1 },
-		onModifyType(move, pokemon) { if (pokemon.species.name === 'Terapagos-Stellar') { if (pokemon.terastallized && pokemon.getStat('atk', false, true) > pokemon.getStat('spa', false, true)) { move.category = 'Physical'; } } },
-		onModifyMove(move, pokemon) { if (pokemon.species.name === 'Terapagos-Stellar') { move.target = 'allAdjacentFoes'; } },
+		// Empowered/terastallized: becomes user's tera type; also category swap logic should apply
+		onModifyType(move, pokemon) {
+			if (pokemon.species.name !== 'Terapagos-Stellar') return;
+			const empowered = pokemon.volatiles['teraempowered'] !== undefined;
+			const teraLike = !!pokemon.terastallized || empowered;
+			if (teraLike) {
+				// empowered behavior: take user's tera type (only if valid)
+				const t = this.dex.types.get(pokemon.teraType);
+				if (t.exists) move.type = t.name;
+
+				// also keep your physical/special swap behavior
+				if (pokemon.getStat('atk', false, true) > pokemon.getStat('spa', false, true)) {
+					move.category = 'Physical';
+				}
+			}
+		},
+		// Spread ONLY when terastallized OR empowered (matches your description)
+		onModifyMove(move, pokemon) {
+			if (pokemon.species.name !== 'Terapagos-Stellar') return;
+			const empowered = pokemon.volatiles['teraempowered'] !== undefined;
+			if (pokemon.terastallized || empowered) { move.target = 'allAdjacentFoes'; } 
+			else { move.target = 'normal'; }
+		},
 		secondary: null,
-		desc: "When Terastallyzed: Spread",
-		shortDesc: "When Terastallyzed: Spread",
+		desc: "When Terastallyzed: Becomes the user's Tera type and hits all adjacent foes.",
+		shortDesc: "When Terastallyzed: Type changes + spread.",
 		target: "normal",
 	},
 	terrainpulse: {
@@ -10321,7 +10378,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 	},
 	twister: {
 		num: 239,
-		accuracy: 70,
+		accuracy: 75,
 		basePower: 90,
 		type: "Dragon",
 		category: "Special",
@@ -10643,7 +10700,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 10,
 		priority: 0,
 		critRatio: 4,
-		flags: { magic: 1, protect: 1, mirror: 1, metronome: 1, wind: 1 },
+		flags: { magic: 1, protect: 1, mirror: 1, metronome: 1, wind: 1, nosketch: 1, },
 		onModifyMove(move, pokemon, target) {
 			if (target && ['raindance', 'primordialsea'].includes(target.effectiveWeather())) { move.accuracy = true; }
 			if (this.field.isTerrain('electricterrain')) { move.accuracy = true; }
@@ -11653,7 +11710,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		name: "Defend Order",
 		pp: 10,
 		priority: 0,
-		flags: { snatch: 1, metronome: 1 },
+		flags: { snatch: 1, metronome: 1, nosketch: 1, },
 		stallingMove: true,
 		volatileStatus: 'protect',
 		onModifyPriority(priority, source, target, move) { return priority + 0.1; },
@@ -12870,7 +12927,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		name: "Heal Order",
 		pp: 10,
 		priority: 0,
-		flags: { snatch: 1, heal: 1, metronome: 1 },
+		flags: { snatch: 1, heal: 1, metronome: 1, nosketch: 1, },
 		heal: [1, 2],
 		secondary: null,
 		target: "self",
@@ -13314,7 +13371,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		name: "Lunar Blessing",
 		pp: 5,
 		priority: 0,
-		flags: { light: 1, lunar: 1, snatch: 1, heal: 1, metronome: 1 },
+		flags: { light: 1, lunar: 1, snatch: 1, heal: 1, metronome: 1, nosketch: 1, },
 		onHit(pokemon) {
 			const success = !!this.heal(this.modify(pokemon.maxhp, 0.25));
 			return pokemon.cureStatus() || success;
@@ -13331,7 +13388,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		name: "Lunar Dance",
 		pp: 10,
 		priority: 0,
-		flags: { lunar: 1, snatch: 1, dance: 1, heal: 1, metronome: 1 },
+		flags: { lunar: 1, snatch: 1, dance: 1, heal: 1, metronome: 1, nosketch: 1, },
 		onTryHit(source) {
 			if (!this.canSwitch(source.side)) {
 				this.attrLastMove('[still]');
@@ -13405,7 +13462,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		num: 750,
 		accuracy: 100,
 		basePower: 0,
-		type: "Psychic",
+		type: "Fairy",
 		category: "Status",
 		name: "Magic Powder",
 		pp: 20,
@@ -13694,7 +13751,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		name: "Milk Drink",
 		pp: 5,
 		priority: 0,
-		flags: { snatch: 1, heal: 1, metronome: 1 },
+		flags: { snatch: 1, heal: 1, metronome: 1, nosketch: 1, },
 		heal: [1, 2],
 		secondary: null,
 		target: "self",
@@ -15181,11 +15238,11 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		basePower: 0,
 		type: "Bug",
 		category: "Status",
-		name: "Powder",
+		name: "Silver Powder",
 		pp: 20,
 		priority: 0,
 		flags: { protect: 1, reflectable: 1, mirror: 1, metronome: 1, powder: 1 },
-		onHitField(target, source, move) { for (const foe of source.foes()) { foe.side.addSideCondition('silverpowder'); } },
+		onHitField(target, source, move) { for (const foe of source.foes()) { foe.side.addSideCondition('silverdust'); } },
 		secondary: null,
 		desc: "Applies Silver Powder to opposing side for 3 turns. Deal 1/8Hp to Dragon/Fairy/Ghost types. Reduce Misty Terrain duration 2 turns. Clear and prevent Magic Dust. If hit by, or attempts to use a Fire type move, explode, dealing 1/8HP",
 		shortDesc: "Applies Silver Powder to opposing side for 3 turns",
@@ -16499,7 +16556,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		name: "Transform",
 		pp: 10,
 		priority: 0,
-		flags: { allyanim: 1, failencore: 1, noassist: 1, failcopycat: 1, failmimic: 1, failinstruct: 1 },
+		flags: { allyanim: 1, failencore: 1, noassist: 1, failcopycat: 1, failmimic: 1, failinstruct: 1, nosketch: 1, },
 		onHit(target, pokemon) { if (!pokemon.transformInto(target)) { return false; } },
 		secondary: null,
 		target: "normal",
@@ -17327,6 +17384,8 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			return null;
 		},
 		secondary: null,
+		desc: "Charges up on first turn, attacks on the second turn",
+		shortDesc: "Charges up turn 1. Hits turn 2",
 		target: "normal",
 	},
 	skyuppercut: {
@@ -17511,7 +17570,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		name: "Core Enforcer",
 		pp: 10,
 		priority: 0,
-		flags: { protect: 1, mirror: 1, metronome: 1 },
+		flags: { protect: 1, mirror: 1, metronome: 1, nosketch: 1, },
 		onHit(target) {
 			if (target.getAbility().flags['cantsuppress']) return;
 			if (target.newlySwitched || this.queue.willMove(target)) return;
@@ -17551,7 +17610,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		name: "Light of Ruin",
 		pp: 5,
 		priority: 0,
-		flags: { protect: 1, mirror: 1 },
+		flags: { protect: 1, mirror: 1, nosketch: 1, },
 		recoil: [1, 2],
 		secondary: null,
 		target: "normal",
@@ -17684,8 +17743,8 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		},
 		critRatio: 2,
 		secondary: null,
-		desc: "",
-		shortDesc: "",
+		desc: "Charges up on first turn, attacks on the second turn",
+		shortDesc: "Charges up turn 1. Hits turn 2",
 		target: "allAdjacentFoes",
 	},
 	searingshot: {
@@ -17760,7 +17819,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		name: "Techno Blast",
 		pp: 5,
 		priority: 0,
-		flags: { protect: 1, mirror: 1 },
+		flags: { protect: 1, mirror: 1, nosketch: 1, },
 		onModifyType(move, pokemon) {
 			if (pokemon.ignoringItem()) return;
 			move.type = this.runEvent('Drive', pokemon, null, move, 'Normal');
@@ -18047,6 +18106,8 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		},
 		boosts: {spa: 2, spd: 2, spe: 2,},
 		secondary: null,
+		desc: "Charges up on first turn, Boosts user's Attack, Special Attack, Speed +2 stages on the second turn",
+		shortDesc: "Charges up turn 1. +2 ATK/Sp.ATK/SPE turn 2",
 		target: "self",
 	},
 	iondeluge: {

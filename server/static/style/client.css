@@ -1704,6 +1704,39 @@ p.or:after {
 	text-shadow: none;
 }
 
+/* Tera charge meter button (next to Timer) */
+.terachargebutton {
+	float: right;          /* pairs with Timer’s float:right */
+	width: 190px;          /* wider than Timer */
+	position: relative;
+	overflow: hidden;
+	padding: 0 10px;
+	height: 24px;
+	line-height: 24px;
+}
+/* background track */
+.terachargebutton .teracharge-meter {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background: rgba(0,0,0,0.15);
+}
+.terachargebutton .teracharge-fill {
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 0%;
+	background: rgba(168,85,247,0.3); /* purple fill */
+	transition: width 0.2s linear;
+}
+.terachargebutton .teracharge-text {
+	z-index: 1;
+	font-weight: bolder;
+}
+
 .battle-controls p {
 	margin: 2px 0 8px 0;
 	padding: 0 8px;

@@ -2617,381 +2617,399 @@ this.scene.resetStatbar(_poke31);
 this.log(args,kwArgs);
 break;
 }
-case'-start':{
+case'-unterastallize':{
 var _poke32=this.getPokemon(args[1]);
+
+
+
+_poke32.terastallized='';
+
+
+
+
+_poke32.details=_poke32.details.replace(/, tera:[^,]+/i,'');
+_poke32.searchid=_poke32.searchid.replace(/, tera:[^,]+/i,'');
+
+this.scene.animTransform(_poke32,true);
+this.scene.resetStatbar(_poke32);
+this.log(args,kwArgs);
+break;
+}
+case'-start':{
+var _poke33=this.getPokemon(args[1]);
 var _effect15=Dex.getEffect(args[2]);
 var _ofpoke11=this.getPokemon(kwArgs.of);
 var _fromeffect3=Dex.getEffect(kwArgs.from);
 
-this.activateAbility(_poke32,_effect15);
-this.activateAbility(_ofpoke11||_poke32,_fromeffect3);
+this.activateAbility(_poke33,_effect15);
+this.activateAbility(_ofpoke11||_poke33,_fromeffect3);
 switch(_effect15.id){
 case'typechange':
-if(_poke32.terastallized)break;
+if(_poke33.terastallized)break;
 if(_ofpoke11&&_fromeffect3.id==='reflecttype'){
-_poke32.copyTypesFrom(_ofpoke11);
+_poke33.copyTypesFrom(_ofpoke11);
 }else{
 var types=Dex.sanitizeName(args[3]||'???');
-_poke32.removeVolatile('typeadd');
-_poke32.addVolatile('typechange',types);
+_poke33.removeVolatile('typeadd');
+_poke33.addVolatile('typechange',types);
 if(!kwArgs.silent){
-this.scene.typeAnim(_poke32,types);
+this.scene.typeAnim(_poke33,types);
 }
 }
-this.scene.updateStatbar(_poke32);
+this.scene.updateStatbar(_poke33);
 break;
 case'typeadd':
 var _type=Dex.sanitizeName(args[3]);
-_poke32.addVolatile('typeadd',_type);
+_poke33.addVolatile('typeadd',_type);
 if(kwArgs.silent)break;
-this.scene.typeAnim(_poke32,_type);
+this.scene.typeAnim(_poke33,_type);
 break;
 case'dynamax':
-_poke32.addVolatile('dynamax',!!args[3]);
-this.scene.animTransform(_poke32,true);
+_poke33.addVolatile('dynamax',!!args[3]);
+this.scene.animTransform(_poke33,true);
 break;
 case'powertrick':
-this.scene.resultAnim(_poke32,'Power Trick','neutral');
+this.scene.resultAnim(_poke33,'Power Trick','neutral');
 break;
 case'foresight':
 case'miracleeye':
-this.scene.resultAnim(_poke32,'Identified','bad');
+this.scene.resultAnim(_poke33,'Identified','bad');
 break;
 case'telekinesis':
-this.scene.resultAnim(_poke32,'Telekinesis','neutral');
+this.scene.resultAnim(_poke33,'Telekinesis','neutral');
 break;
 case'confusion':
 if(!kwArgs.already){
-this.scene.runStatusAnim('confused',[_poke32]);
-this.scene.resultAnim(_poke32,'Confused','bad');
+this.scene.runStatusAnim('confused',[_poke33]);
+this.scene.resultAnim(_poke33,'Confused','bad');
 }
 break;
 case'leechseed':
-this.scene.updateStatbar(_poke32);
+this.scene.updateStatbar(_poke33);
 break;
 case'healblock':
-this.scene.resultAnim(_poke32,'Heal Block','bad');
+this.scene.resultAnim(_poke33,'Heal Block','bad');
 break;
 case'yawn':
-this.scene.resultAnim(_poke32,'Drowsy','slp');
+this.scene.resultAnim(_poke33,'Drowsy','slp');
 break;
 case'taunt':
-this.scene.resultAnim(_poke32,'Taunted','bad');
+this.scene.resultAnim(_poke33,'Taunted','bad');
 break;
 case'imprison':
-this.scene.resultAnim(_poke32,'Imprisoning','good');
+this.scene.resultAnim(_poke33,'Imprisoning','good');
 break;
 case'disable':
-this.scene.resultAnim(_poke32,'Disabled','bad');
+this.scene.resultAnim(_poke33,'Disabled','bad');
 break;
 case'embargo':
-this.scene.resultAnim(_poke32,'Embargo','bad');
+this.scene.resultAnim(_poke33,'Embargo','bad');
 break;
 case'torment':
-this.scene.resultAnim(_poke32,'Tormented','bad');
+this.scene.resultAnim(_poke33,'Tormented','bad');
 break;
 case'ingrain':
-this.scene.resultAnim(_poke32,'Ingrained','good');
+this.scene.resultAnim(_poke33,'Ingrained','good');
 break;
 case'aquaring':
-this.scene.resultAnim(_poke32,'Aqua Ring','good');
+this.scene.resultAnim(_poke33,'Aqua Ring','good');
 break;
 case'stockpile1':
-this.scene.resultAnim(_poke32,'Stockpile','good');
+this.scene.resultAnim(_poke33,'Stockpile','good');
 break;
 case'stockpile2':
-_poke32.removeVolatile('stockpile1');
-this.scene.resultAnim(_poke32,'Stockpile&times;2','good');
+_poke33.removeVolatile('stockpile1');
+this.scene.resultAnim(_poke33,'Stockpile&times;2','good');
 break;
 case'stockpile3':
-_poke32.removeVolatile('stockpile2');
-this.scene.resultAnim(_poke32,'Stockpile&times;3','good');
+_poke33.removeVolatile('stockpile2');
+this.scene.resultAnim(_poke33,'Stockpile&times;3','good');
 break;
 case'perish0':
-_poke32.removeVolatile('perish1');
+_poke33.removeVolatile('perish1');
 break;
 case'perish1':
-_poke32.removeVolatile('perish2');
-this.scene.resultAnim(_poke32,'Perish next turn','bad');
+_poke33.removeVolatile('perish2');
+this.scene.resultAnim(_poke33,'Perish next turn','bad');
 break;
 case'perish2':
-_poke32.removeVolatile('perish3');
-this.scene.resultAnim(_poke32,'Perish in 2','bad');
+_poke33.removeVolatile('perish3');
+this.scene.resultAnim(_poke33,'Perish in 2','bad');
 break;
 case'perish3':
-if(!kwArgs.silent)this.scene.resultAnim(_poke32,'Perish in 3','bad');
+if(!kwArgs.silent)this.scene.resultAnim(_poke33,'Perish in 3','bad');
 break;
 case'encore':
-this.scene.resultAnim(_poke32,'Encored','bad');
+this.scene.resultAnim(_poke33,'Encored','bad');
 break;
 case'bide':
-this.scene.resultAnim(_poke32,'Bide','good');
+this.scene.resultAnim(_poke33,'Bide','good');
 break;
 case'attract':
-this.scene.resultAnim(_poke32,'Attracted','bad');
+this.scene.resultAnim(_poke33,'Attracted','bad');
 break;
 case'autotomize':
-this.scene.resultAnim(_poke32,'Lightened','good');
-if(_poke32.volatiles.autotomize){
-_poke32.volatiles.autotomize[1]++;
+this.scene.resultAnim(_poke33,'Lightened','good');
+if(_poke33.volatiles.autotomize){
+_poke33.volatiles.autotomize[1]++;
 }else{
-_poke32.addVolatile('autotomize',1);
+_poke33.addVolatile('autotomize',1);
 }
 break;
 case'focusenergy':
-this.scene.resultAnim(_poke32,'+Crit rate','good');
+this.scene.resultAnim(_poke33,'+Crit rate','good');
 break;
 case'curse':
-this.scene.resultAnim(_poke32,'Cursed','bad');
+this.scene.resultAnim(_poke33,'Cursed','bad');
 break;
 case'nightmare':
-this.scene.resultAnim(_poke32,'Nightmare','bad');
+this.scene.resultAnim(_poke33,'Nightmare','bad');
 break;
 case'magnetrise':
-this.scene.resultAnim(_poke32,'Magnet Rise','good');
+this.scene.resultAnim(_poke33,'Magnet Rise','good');
 break;
 case'smackdown':
-this.scene.resultAnim(_poke32,'Smacked Down','bad');
-_poke32.removeVolatile('magnetrise');
-_poke32.removeVolatile('telekinesis');
-if(_poke32.lastMove==='fly'||_poke32.lastMove==='bounce')this.scene.animReset(_poke32);
+this.scene.resultAnim(_poke33,'Smacked Down','bad');
+_poke33.removeVolatile('magnetrise');
+_poke33.removeVolatile('telekinesis');
+if(_poke33.lastMove==='fly'||_poke33.lastMove==='bounce')this.scene.animReset(_poke33);
 break;
 case'substitute':
 if(kwArgs.damage){
-this.scene.resultAnim(_poke32,'Damage','bad');
+this.scene.resultAnim(_poke33,'Damage','bad');
 }else if(kwArgs.block){
-this.scene.resultAnim(_poke32,'Blocked','neutral');
+this.scene.resultAnim(_poke33,'Blocked','neutral');
 }
 break;
 
 
 case'mist':
-this.scene.resultAnim(_poke32,'Mist','good');
+this.scene.resultAnim(_poke33,'Mist','good');
 break;
 
 case'lightscreen':
-this.scene.resultAnim(_poke32,'Light Screen','good');
+this.scene.resultAnim(_poke33,'Light Screen','good');
 break;
 case'reflect':
-this.scene.resultAnim(_poke32,'Reflect','good');
+this.scene.resultAnim(_poke33,'Reflect','good');
 break;
 }
-if(!(_effect15.id==='typechange'&&_poke32.terastallized)){
-_poke32.addVolatile(_effect15.id);
+if(!(_effect15.id==='typechange'&&_poke33.terastallized)){
+_poke33.addVolatile(_effect15.id);
 }
-this.scene.updateStatbar(_poke32);
+this.scene.updateStatbar(_poke33);
 this.log(args,kwArgs);
 break;
 }
 case'-end':{
-var _poke33=this.getPokemon(args[1]);
+var _poke34=this.getPokemon(args[1]);
 var _effect16=Dex.getEffect(args[2]);
 var _fromeffect4=Dex.getEffect(kwArgs.from);
-_poke33.removeVolatile(_effect16.id);
+_poke34.removeVolatile(_effect16.id);
 
 if(kwArgs.silent&&!(_effect16.id==='protosynthesis'||_effect16.id==='quarkdrive')){
 
 }else{
 switch(_effect16.id){
 case'dynamax':
-this.scene.animTransform(_poke33);
+this.scene.animTransform(_poke34);
 break;
 case'powertrick':
-this.scene.resultAnim(_poke33,'Power Trick','neutral');
+this.scene.resultAnim(_poke34,'Power Trick','neutral');
 break;
 case'telekinesis':
-this.scene.resultAnim(_poke33,'Telekinesis&nbsp;ended','neutral');
+this.scene.resultAnim(_poke34,'Telekinesis&nbsp;ended','neutral');
 break;
 case'skydrop':
 if(kwArgs.interrupt){
-this.scene.anim(_poke33,{time:100});
+this.scene.anim(_poke34,{time:100});
 }
 break;
 case'confusion':
-this.scene.resultAnim(_poke33,'Confusion&nbsp;ended','good');
+this.scene.resultAnim(_poke34,'Confusion&nbsp;ended','good');
 break;
 case'leechseed':
 if(_fromeffect4.id==='rapidspin'){
-this.scene.resultAnim(_poke33,'De-seeded','good');
+this.scene.resultAnim(_poke34,'De-seeded','good');
 }
 break;
 case'healblock':
-this.scene.resultAnim(_poke33,'Heal Block ended','good');
+this.scene.resultAnim(_poke34,'Heal Block ended','good');
 break;
 case'attract':
-this.scene.resultAnim(_poke33,'Attract&nbsp;ended','good');
+this.scene.resultAnim(_poke34,'Attract&nbsp;ended','good');
 break;
 case'taunt':
-this.scene.resultAnim(_poke33,'Taunt&nbsp;ended','good');
+this.scene.resultAnim(_poke34,'Taunt&nbsp;ended','good');
 break;
 case'disable':
-this.scene.resultAnim(_poke33,'Disable&nbsp;ended','good');
+this.scene.resultAnim(_poke34,'Disable&nbsp;ended','good');
 break;
 case'embargo':
-this.scene.resultAnim(_poke33,'Embargo ended','good');
+this.scene.resultAnim(_poke34,'Embargo ended','good');
 break;
 case'torment':
-this.scene.resultAnim(_poke33,'Torment&nbsp;ended','good');
+this.scene.resultAnim(_poke34,'Torment&nbsp;ended','good');
 break;
 case'encore':
-this.scene.resultAnim(_poke33,'Encore&nbsp;ended','good');
+this.scene.resultAnim(_poke34,'Encore&nbsp;ended','good');
 break;
 case'bide':
-this.scene.runOtherAnim('bideunleash',[_poke33]);
+this.scene.runOtherAnim('bideunleash',[_poke34]);
 break;
 case'illusion':
-this.scene.resultAnim(_poke33,'Illusion ended','bad');
-_poke33.rememberAbility('Illusion');
+this.scene.resultAnim(_poke34,'Illusion ended','bad');
+_poke34.rememberAbility('Illusion');
 break;
 case'slowstart':
-this.scene.resultAnim(_poke33,'Slow Start ended','good');
+this.scene.resultAnim(_poke34,'Slow Start ended','good');
 break;
 case'perishsong':
-_poke33.removeVolatile('perish3');
+_poke34.removeVolatile('perish3');
 break;
 case'substitute':
-this.scene.resultAnim(_poke33,'Faded','bad');
+this.scene.resultAnim(_poke34,'Faded','bad');
 break;
 case'stockpile':
-_poke33.removeVolatile('stockpile1');
-_poke33.removeVolatile('stockpile2');
-_poke33.removeVolatile('stockpile3');
+_poke34.removeVolatile('stockpile1');
+_poke34.removeVolatile('stockpile2');
+_poke34.removeVolatile('stockpile3');
 break;
 case'protosynthesis':
-_poke33.removeVolatile('protosynthesisatk');
-_poke33.removeVolatile('protosynthesisdef');
-_poke33.removeVolatile('protosynthesisspa');
-_poke33.removeVolatile('protosynthesisspd');
-_poke33.removeVolatile('protosynthesisspe');
+_poke34.removeVolatile('protosynthesisatk');
+_poke34.removeVolatile('protosynthesisdef');
+_poke34.removeVolatile('protosynthesisspa');
+_poke34.removeVolatile('protosynthesisspd');
+_poke34.removeVolatile('protosynthesisspe');
 break;
 case'quarkdrive':
-_poke33.removeVolatile('quarkdriveatk');
-_poke33.removeVolatile('quarkdrivedef');
-_poke33.removeVolatile('quarkdrivespa');
-_poke33.removeVolatile('quarkdrivespd');
-_poke33.removeVolatile('quarkdrivespe');
+_poke34.removeVolatile('quarkdriveatk');
+_poke34.removeVolatile('quarkdrivedef');
+_poke34.removeVolatile('quarkdrivespa');
+_poke34.removeVolatile('quarkdrivespd');
+_poke34.removeVolatile('quarkdrivespe');
 break;
 default:
 if(_effect16.effectType==='Move'){
 if(_effect16.name==='Doom Desire'){
-this.scene.runOtherAnim('doomdesirehit',[_poke33]);
+this.scene.runOtherAnim('doomdesirehit',[_poke34]);
 }
 if(_effect16.name==='Future Sight'){
-this.scene.runOtherAnim('futuresighthit',[_poke33]);
+this.scene.runOtherAnim('futuresighthit',[_poke34]);
 }
 }
 }
-}
-this.scene.updateStatbar(_poke33);
-this.log(args,kwArgs);
-break;
-}
-case'-singleturn':{
-var _poke34=this.getPokemon(args[1]);
-var _effect17=Dex.getEffect(args[2]);
-if(_effect17.id==='roost'&&!_poke34.getTypeList().includes('Flying')){
-break;
-}
-_poke34.addTurnstatus(_effect17.id);
-switch(_effect17.id){
-case'roost':
-this.scene.resultAnim(_poke34,'Landed','neutral');
-break;
-case'quickguard':
-this.scene.resultAnim(_poke34,'Quick Guard','good');
-break;
-case'wideguard':
-this.scene.resultAnim(_poke34,'Wide Guard','good');
-break;
-case'craftyshield':
-this.scene.resultAnim(_poke34,'Crafty Shield','good');
-break;
-case'matblock':
-this.scene.resultAnim(_poke34,'Mat Block','good');
-break;
-case'protect':
-this.scene.resultAnim(_poke34,'Protected','good');
-break;
-case'endure':
-this.scene.resultAnim(_poke34,'Enduring','good');
-break;
-case'helpinghand':
-this.scene.resultAnim(_poke34,'Helping Hand','good');
-break;
-case'focuspunch':
-this.scene.resultAnim(_poke34,'Focusing','neutral');
-_poke34.rememberMove(_effect17.name,0);
-break;
-case'shelltrap':
-this.scene.resultAnim(_poke34,'Trap set','neutral');
-_poke34.rememberMove(_effect17.name,0);
-break;
-case'beakblast':
-this.scene.runOtherAnim('bidecharge',[_poke34]);
-this.scene.resultAnim(_poke34,'Beak Blast','neutral');
-break;
 }
 this.scene.updateStatbar(_poke34);
 this.log(args,kwArgs);
 break;
 }
-case'-singlemove':{
+case'-singleturn':{
 var _poke35=this.getPokemon(args[1]);
-var _effect18=Dex.getEffect(args[2]);
-_poke35.addMovestatus(_effect18.id);
-switch(_effect18.id){
-case'grudge':
-this.scene.resultAnim(_poke35,'Grudge','neutral');
+var _effect17=Dex.getEffect(args[2]);
+if(_effect17.id==='roost'&&!_poke35.getTypeList().includes('Flying')){
 break;
-case'destinybond':
-this.scene.resultAnim(_poke35,'Destiny Bond','neutral');
+}
+_poke35.addTurnstatus(_effect17.id);
+switch(_effect17.id){
+case'roost':
+this.scene.resultAnim(_poke35,'Landed','neutral');
+break;
+case'quickguard':
+this.scene.resultAnim(_poke35,'Quick Guard','good');
+break;
+case'wideguard':
+this.scene.resultAnim(_poke35,'Wide Guard','good');
+break;
+case'craftyshield':
+this.scene.resultAnim(_poke35,'Crafty Shield','good');
+break;
+case'matblock':
+this.scene.resultAnim(_poke35,'Mat Block','good');
+break;
+case'protect':
+this.scene.resultAnim(_poke35,'Protected','good');
+break;
+case'endure':
+this.scene.resultAnim(_poke35,'Enduring','good');
+break;
+case'helpinghand':
+this.scene.resultAnim(_poke35,'Helping Hand','good');
+break;
+case'focuspunch':
+this.scene.resultAnim(_poke35,'Focusing','neutral');
+_poke35.rememberMove(_effect17.name,0);
+break;
+case'shelltrap':
+this.scene.resultAnim(_poke35,'Trap set','neutral');
+_poke35.rememberMove(_effect17.name,0);
+break;
+case'beakblast':
+this.scene.runOtherAnim('bidecharge',[_poke35]);
+this.scene.resultAnim(_poke35,'Beak Blast','neutral');
 break;
 }
 this.scene.updateStatbar(_poke35);
 this.log(args,kwArgs);
 break;
 }
-case'-activate':{
+case'-singlemove':{
 var _poke36=this.getPokemon(args[1]);
+var _effect18=Dex.getEffect(args[2]);
+_poke36.addMovestatus(_effect18.id);
+switch(_effect18.id){
+case'grudge':
+this.scene.resultAnim(_poke36,'Grudge','neutral');
+break;
+case'destinybond':
+this.scene.resultAnim(_poke36,'Destiny Bond','neutral');
+break;
+}
+this.scene.updateStatbar(_poke36);
+this.log(args,kwArgs);
+break;
+}
+case'-activate':{
+var _poke37=this.getPokemon(args[1]);
 var _effect19=Dex.getEffect(args[2]);
 var _target3=this.getPokemon(args[3]);
-this.activateAbility(_poke36,_effect19);
+this.activateAbility(_poke37,_effect19);
 switch(_effect19.id){
 case'poltergeist':
-_poke36.item=kwArgs.item;
-_poke36.itemEffect='disturbed';
+_poke37.item=kwArgs.item;
+_poke37.itemEffect='disturbed';
 break;
 case'symbiosis':
-_poke36.item='';
-_poke36.itemEffect='';
-_poke36.prevItem=kwArgs.item;
-_poke36.prevItemEffect='given away';
+_poke37.item='';
+_poke37.itemEffect='';
+_poke37.prevItem=kwArgs.item;
+_poke37.prevItemEffect='given away';
 _target3.item=kwArgs.item;
 _target3.itemEffect='shared';
 break;
 case'grudge':
-_poke36.rememberMove(kwArgs.move,Infinity);
+_poke37.rememberMove(kwArgs.move,Infinity);
 break;
 case'substitute':
 if(kwArgs.damage){
-this.scene.resultAnim(_poke36,'Damage','bad');
+this.scene.resultAnim(_poke37,'Damage','bad');
 }else if(kwArgs.block){
-this.scene.resultAnim(_poke36,'Blocked','neutral');
+this.scene.resultAnim(_poke37,'Blocked','neutral');
 }
 break;
 case'attract':
-this.scene.runStatusAnim('attracted',[_poke36]);
+this.scene.runStatusAnim('attracted',[_poke37]);
 break;
 case'bide':
-this.scene.runOtherAnim('bidecharge',[_poke36]);
+this.scene.runOtherAnim('bidecharge',[_poke37]);
 break;
 
 
 case'aromatherapy':
-this.scene.resultAnim(_poke36,'Team Cured','good');
+this.scene.resultAnim(_poke37,'Team Cured','good');
 break;
 case'healbell':
-this.scene.resultAnim(_poke36,'Team Cured','good');
+this.scene.resultAnim(_poke37,'Team Cured','good');
 break;
 case'brickbreak':
 _target3.side.removeSideCondition('Reflect');
@@ -3002,9 +3020,9 @@ case'hyperspacehole':
 case'phantomforce':
 case'shadowforce':
 case'feint':
-this.scene.resultAnim(_poke36,'Protection broken','bad');
-_poke36.removeTurnstatus('protect');for(var _i54=0,_poke36$side$pokemon2=
-_poke36.side.pokemon;_i54<_poke36$side$pokemon2.length;_i54++){var curTarget=_poke36$side$pokemon2[_i54];
+this.scene.resultAnim(_poke37,'Protection broken','bad');
+_poke37.removeTurnstatus('protect');for(var _i54=0,_poke37$side$pokemon2=
+_poke37.side.pokemon;_i54<_poke37$side$pokemon2.length;_i54++){var curTarget=_poke37$side$pokemon2[_i54];
 curTarget.removeTurnstatus('wideguard');
 curTarget.removeTurnstatus('quickguard');
 curTarget.removeTurnstatus('craftyshield');
@@ -3018,21 +3036,21 @@ case'spite':
 var move=Dex.moves.get(kwArgs.move).name;
 var pp=Number(kwArgs.number);
 if(isNaN(pp))pp=4;
-_poke36.rememberMove(move,pp);
+_poke37.rememberMove(move,pp);
 break;
 case'gravity':
-_poke36.removeVolatile('magnetrise');
-_poke36.removeVolatile('telekinesis');
-this.scene.anim(_poke36,{time:100});
+_poke37.removeVolatile('magnetrise');
+_poke37.removeVolatile('telekinesis');
+this.scene.anim(_poke37,{time:100});
 break;
 case'skillswap':
 if(this.gen<=4)break;
 if(_target3){
 
-_poke36.swapAbilities(_target3);
+_poke37.swapAbilities(_target3);
 
-if(_poke36.side!==_target3.side){
-this.activateAbility(_poke36,_poke36.ability,true);
+if(_poke37.side!==_target3.side){
+this.activateAbility(_poke37,_poke37.ability,true);
 this.activateAbility(_target3,_target3.ability,true);
 }
 }
@@ -3041,14 +3059,14 @@ break;
 
 case'electromorphosis':
 case'windpower':
-_poke36.addMovestatus('charge');
+_poke37.addMovestatus('charge');
 break;
 case'forewarn':
 if(_target3){
 _target3.rememberMove(kwArgs.move,0);
 }else{
-var foeActive=[];for(var _i56=0,_poke36$side$foe$acti2=
-_poke36.side.foe.active;_i56<_poke36$side$foe$acti2.length;_i56++){var maybeTarget=_poke36$side$foe$acti2[_i56];
+var foeActive=[];for(var _i56=0,_poke37$side$foe$acti2=
+_poke37.side.foe.active;_i56<_poke37$side$foe$acti2.length;_i56++){var maybeTarget=_poke37$side$foe$acti2[_i56];
 if(maybeTarget&&!maybeTarget.fainted)foeActive.push(maybeTarget);
 }
 if(foeActive.length===1){
@@ -3062,7 +3080,7 @@ case'wanderingspirit':
 if(!kwArgs.ability)break;
 var _ability2=Dex.abilities.get(kwArgs.ability);
 this.activateAbility(_target3,_ability2.name);
-this.activateAbility(_poke36,_effect19.name);
+this.activateAbility(_poke37,_effect19.name);
 this.scene.wait(700);
 this.activateAbility(_target3,_effect19.name,true);
 break;
@@ -3070,20 +3088,20 @@ break;
 
 case'leppaberry':
 case'mysteryberry':
-_poke36.rememberMove(kwArgs.move,_effect19.id==='leppaberry'?-10:-5);
+_poke37.rememberMove(kwArgs.move,_effect19.id==='leppaberry'?-10:-5);
 break;
 case'focusband':
-_poke36.item='Focus Band';
+_poke37.item='Focus Band';
 break;
 case'quickclaw':
-_poke36.item='Quick Claw';
+_poke37.item='Quick Claw';
 break;
 case'abilityshield':
-_poke36.item='Ability Shield';
+_poke37.item='Ability Shield';
 break;
 default:
 if(kwArgs.broken){
-this.scene.resultAnim(_poke36,'Protection broken','bad');
+this.scene.resultAnim(_poke37,'Protection broken','bad');
 }
 }
 this.log(args,kwArgs);
@@ -3131,20 +3149,20 @@ break;
 }
 case'-weather':{
 var _effect22=Dex.getEffect(args[1]);
-var _poke37=this.getPokemon(kwArgs.of)||undefined;
+var _poke38=this.getPokemon(kwArgs.of)||undefined;
 var _ability3=Dex.getEffect(kwArgs.from);
 if(!_effect22.id||_effect22.id==='none'){
 kwArgs.from=this.weather;
 }
-this.changeWeather(_effect22.name,_poke37,!!kwArgs.upkeep,_ability3);
+this.changeWeather(_effect22.name,_poke38,!!kwArgs.upkeep,_ability3);
 this.log(args,kwArgs);
 break;
 }
 case'-fieldstart':{
 var _effect23=Dex.getEffect(args[1]);
-var _poke38=this.getPokemon(kwArgs.of);
+var _poke39=this.getPokemon(kwArgs.of);
 var _fromeffect5=Dex.getEffect(kwArgs.from);
-this.activateAbility(_poke38,_fromeffect5);
+this.activateAbility(_poke39,_fromeffect5);
 var _minTimeLeft=5;
 var _maxTimeLeft=0;
 if(_effect23.id.endsWith('terrain')){
@@ -3189,13 +3207,13 @@ this.log(args,kwArgs);
 break;
 }
 case'-anim':{
-var _poke39=this.getPokemon(args[1]);
+var _poke40=this.getPokemon(args[1]);
 var _move=Dex.moves.get(args[2]);
-if(this.checkActive(_poke39))return;
-var _poke40=this.getPokemon(args[3]);
-this.scene.beforeMove(_poke39);
-this.animateMove(_poke39,_move,_poke40,kwArgs);
-this.scene.afterMove(_poke39);
+if(this.checkActive(_poke40))return;
+var _poke41=this.getPokemon(args[3]);
+this.scene.beforeMove(_poke40);
+this.animateMove(_poke40,_move,_poke41,kwArgs);
+this.scene.afterMove(_poke40);
 break;
 }
 case'-hint':case'-message':case'-candynamax':{
@@ -3737,23 +3755,23 @@ this.log(args,kwArgs);
 break;
 }
 case'faint':{
-var _poke41=this.getPokemon(args[1]);
-_poke41.side.faint(_poke41);
+var _poke42=this.getPokemon(args[1]);
+_poke42.side.faint(_poke42);
 this.log(args,kwArgs);
 break;
 }
 case'swap':{
 if(isNaN(Number(args[2]))){
-var _poke42=this.getPokemon(args[1]);
-_poke42.side.swapWith(_poke42,this.getPokemon(args[2]),kwArgs);
-}else{
 var _poke43=this.getPokemon(args[1]);
+_poke43.side.swapWith(_poke43,this.getPokemon(args[2]),kwArgs);
+}else{
+var _poke44=this.getPokemon(args[1]);
 var targetIndex=parseInt(args[2],10);
 if(kwArgs.from){
-var target=_poke43.side.active[targetIndex];
+var target=_poke44.side.active[targetIndex];
 if(target)args[2]=target.ident;
 }
-_poke43.side.swapTo(_poke43,targetIndex);
+_poke44.side.swapTo(_poke44,targetIndex);
 }
 this.log(args,kwArgs);
 break;
@@ -3761,24 +3779,24 @@ break;
 case'move':{
 this.endLastTurn();
 this.resetTurnsSinceMoved();
-var _poke44=this.getPokemon(args[1]);
+var _poke45=this.getPokemon(args[1]);
 var _move2=Dex.moves.get(args[2]);
-if(this.checkActive(_poke44))return;
+if(this.checkActive(_poke45))return;
 var poke2=this.getPokemon(args[3]);
-this.scene.beforeMove(_poke44);
-this.useMove(_poke44,_move2,poke2,kwArgs);
-this.animateMove(_poke44,_move2,poke2,kwArgs);
-this.scene.afterMove(_poke44);
+this.scene.beforeMove(_poke45);
+this.useMove(_poke45,_move2,poke2,kwArgs);
+this.animateMove(_poke45,_move2,poke2,kwArgs);
+this.scene.afterMove(_poke45);
 this.log(args,kwArgs);
 break;
 }
 case'cant':{
 this.endLastTurn();
 this.resetTurnsSinceMoved();
-var _poke45=this.getPokemon(args[1]);
+var _poke46=this.getPokemon(args[1]);
 var effect=Dex.getEffect(args[2]);
 var _move3=Dex.moves.get(args[3]);
-this.cantUseMove(_poke45,effect,_move3,kwArgs);
+this.cantUseMove(_poke46,effect,_move3,kwArgs);
 this.log(args,kwArgs);
 break;
 }
@@ -3804,14 +3822,13 @@ break;
 case'custom':{
 
 if(args[1]==='-endterastallize'){
-var _poke46=this.getPokemon(args[2]);
-_poke46.removeVolatile('terastallize');
-_poke46.teraType='';
-_poke46.terastallized='';
-_poke46.details=_poke46.details.replace(/, tera:[a-z]+/i,'');
-_poke46.searchid=_poke46.searchid.replace(/, tera:[a-z]+/i,'');
-this.scene.animTransform(_poke46);
-this.scene.resetStatbar(_poke46);
+var _poke47=this.getPokemon(args[2]);
+_poke47.removeVolatile('terastallize');
+_poke47.terastallized='';
+_poke47.details=_poke47.details.replace(/, tera:[a-z]+/i,'');
+_poke47.searchid=_poke47.searchid.replace(/, tera:[a-z]+/i,'');
+this.scene.animTransform(_poke47);
+this.scene.resetStatbar(_poke47);
 this.log(args,kwArgs);
 }
 break;
@@ -3822,7 +3839,6 @@ break;
 }
 }
 };_proto3.
-
 run=function run(str,preempt){
 if(!preempt&&this.preemptStepQueue.length&&str===this.preemptStepQueue[0]){
 this.preemptStepQueue.shift();
@@ -3838,42 +3854,31 @@ this.activeMoveIsSpread=null;
 return;
 }
 
-
 var nextArgs=[''];
 var nextKwargs={};
 var nextLine=this.stepQueue[this.currentStep+1]||'';
 if(nextLine.startsWith('|-')){var _BattleTextParser$par2=
 BattleTextParser.parseBattleLine(nextLine);nextArgs=_BattleTextParser$par2.args;nextKwargs=_BattleTextParser$par2.kwArgs;
 }
-
 if(this.debug){
-if(args[0].startsWith('-')||args[0]==='detailschange'){
-this.runMinor(args,kwArgs,nextArgs,nextKwargs);
-}else{
-this.runMajor(args,kwArgs,preempt);
-}
+if(args[0].startsWith('-')||args[0]==='detailschange'){this.runMinor(args,kwArgs,nextArgs,nextKwargs);}else
+{this.runMajor(args,kwArgs,preempt);}
 }else{
 try{
-if(args[0].startsWith('-')||args[0]==='detailschange'){
-this.runMinor(args,kwArgs,nextArgs,nextKwargs);
-}else{
-this.runMajor(args,kwArgs,preempt);
-}
+if(args[0].startsWith('-')||args[0]==='detailschange'){this.runMinor(args,kwArgs,nextArgs,nextKwargs);}else
+{this.runMajor(args,kwArgs,preempt);}
 }catch(err){var _this$subscription6;
 this.log(['majorerror','Error parsing: '+str+' ('+err+')']);
 if(err.stack){
 var stack=(''+err.stack).split('\n');for(var _i72=0;_i72<
 stack.length;_i72++){var line=stack[_i72];
-if(/\brun\b/.test(line)){
-break;
-}
+if(/\brun\b/.test(line)){break;}
 this.log(['error',line]);
 }
 }
 (_this$subscription6=this.subscription)==null||_this$subscription6.call(this,'error');
 }
 }
-
 if(nextLine.startsWith('|start')||args[0]==='teampreview'){
 if(this.turn===-1){
 this.turn=0;
@@ -3888,13 +3893,11 @@ poke.side.replace(poke);
 }
 return false;
 };_proto3.
-
 pause=function pause(){var _this$subscription7;
 this.paused=true;
 this.scene.pause();
 (_this$subscription7=this.subscription)==null||_this$subscription7.call(this,'paused');
 };_proto3.
-
 
 
 
@@ -3909,24 +3912,18 @@ this.scene.resume();
 this.nextStep();
 (_this$subscription8=this.subscription)==null||_this$subscription8.call(this,'playing');
 };_proto3.
-skipTurn=function skipTurn(){
-this.seekBy(1);
-};_proto3.
+skipTurn=function skipTurn(){this.seekBy(1);};_proto3.
 seekBy=function seekBy(deltaTurn){var _this$seeking;
-if(this.seeking===Infinity&&deltaTurn<0){
-return this.seekTurn(this.turn+1);
-}
+if(this.seeking===Infinity&&deltaTurn<0){return this.seekTurn(this.turn+1);}
 this.seekTurn(((_this$seeking=this.seeking)!=null?_this$seeking:this.turn)+deltaTurn);
 };_proto3.
 seekTurn=function seekTurn(turn,forceReset){
 if(isNaN(turn))return;
 turn=Math.max(Math.floor(turn),0);
-
 if(this.seeking!==null&&turn>this.turn&&!forceReset){
 this.seeking=turn;
 return;
 }
-
 if(turn===0){var _this$subscription9;
 this.seeking=null;
 this.resetStep();
@@ -3934,9 +3931,7 @@ this.scene.animationOn();
 if(this.paused)(_this$subscription9=this.subscription)==null||_this$subscription9.call(this,'paused');
 return;
 }
-
 this.seeking=turn;
-
 if(turn<=this.turn||forceReset){
 this.scene.animationOff();
 this.resetStep();
@@ -3960,75 +3955,48 @@ return!(this.paused&&this.turn>=0);
 };_proto3.
 nextStep=function nextStep(){var _this2=this;
 if(!this.shouldStep())return;
-
 var time=Date.now();
 this.scene.startAnimations();
 var animations=undefined;
-
 var interruptionCount;
 do{
-
 this.waitForAnimations=true;
 if(this.currentStep>=this.stepQueue.length){var _this$subscription11;
 this.atQueueEnd=true;
 if(!this.ended&&this.isReplay)this.prematureEnd();
 this.stopSeeking();
-if(this.ended){
-this.scene.updateBgm();
-}
+if(this.ended){this.scene.updateBgm();}
 (_this$subscription11=this.subscription)==null||_this$subscription11.call(this,'atqueueend');
 return;
 }
-
 this.run(this.stepQueue[this.currentStep]);
 this.currentStep++;
-if(this.waitForAnimations===true){
-animations=this.scene.finishAnimations();
-}else if(this.waitForAnimations==='simult'){
-this.scene.timeOffset=0;
-}
-
+if(this.waitForAnimations===true){animations=this.scene.finishAnimations();}else
+if(this.waitForAnimations==='simult'){this.scene.timeOffset=0;}
 if(Date.now()-time>300){
 interruptionCount=this.scene.interruptionCount;
-setTimeout(function(){
-if(interruptionCount===_this2.scene.interruptionCount){
-_this2.nextStep();
-}
-},1);
+setTimeout(function(){if(interruptionCount===_this2.scene.interruptionCount){_this2.nextStep();}},1);
 return;
 }
 }while(!animations&&this.shouldStep());
-
 if(this.paused&&this.turn>=0&&this.seeking===null){
 
 this.scene.pause();
 return;
 }
-
 if(!animations)return;
-
 interruptionCount=this.scene.interruptionCount;
-animations.done(function(){
-if(interruptionCount===_this2.scene.interruptionCount){
-_this2.nextStep();
-}
-});
+animations.done(function(){if(interruptionCount===_this2.scene.interruptionCount){_this2.nextStep();}});
 };_proto3.
-
 setQueue=function setQueue(queue){
 this.stepQueue=queue;
 this.resetStep();
 };_proto3.
-
-setMute=function setMute(mute){
-this.scene.setMute(mute);
-};return Battle;}();
-
+setMute=function setMute(mute){this.scene.setMute(mute);};return Battle;}();
 
 
 
 if(typeof require==='function'){
-
 global.Battle=Battle;
 global.Pokemon=Pokemon;
 }

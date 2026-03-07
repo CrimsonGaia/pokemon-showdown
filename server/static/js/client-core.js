@@ -1,14 +1,11 @@
 "use strict";function _inheritsLoose(t,o){t.prototype=Object.create(o.prototype),t.prototype.constructor=t,_setPrototypeOf(t,o);}function _setPrototypeOf(t,e){return _setPrototypeOf=Object.setPrototypeOf?Object.setPrototypeOf.bind():function(t,e){return t.__proto__=e,t;},_setPrototypeOf(t,e);}/**
  * Client core
- *
  * No dependencies.
  * Does three unrelated things:
  * 1. sets up polyfills where necessary
  * 2. sets up PS's model base classes
  * 3. sets up the model and view for PS's backgrounds
- *
  * The background is mostly here so the new background can be loaded ASAP.
- *
  * @author Guangcong Luo <guancongluo@gmail.com>
  * @license AGPLv3
  */
@@ -18,11 +15,7 @@
 
 
 
-
-
-
 var PSURL=(document.location.protocol!=='http:'?'https:':'')+"//"+Config.routes.client+"/";var
-
 PSSubscription=function(){
 
 
@@ -34,10 +27,6 @@ unsubscribe=function unsubscribe(){
 var index=this.observable.subscriptions.indexOf(this);
 if(index>=0)this.observable.subscriptions.splice(index,1);
 };return PSSubscription;}();var
-
-
-
-
 
 
 
@@ -58,15 +47,7 @@ return subscription;
 };_proto2.
 
 
-update=function update(value){for(var _i2=0,_this$subscriptions2=
-this.subscriptions;_i2<_this$subscriptions2.length;_i2++){var subscription=_this$subscriptions2[_i2];
-subscription.listener(value);
-}
-};return PSModel;}();var
-
-
-
-
+update=function update(value){for(var _i2=0,_this$subscriptions2=this.subscriptions;_i2<_this$subscriptions2.length;_i2++){var subscription=_this$subscriptions2[_i2];subscription.listener(value);}};return PSModel;}();var
 
 
 
@@ -79,9 +60,7 @@ subscribe=function subscribe(listener){
 var subscription=new PSSubscription(this,listener);
 this.subscriptions.push(subscription);
 if(this.backlog){for(var _i4=0,_this$backlog2=
-this.backlog;_i4<_this$backlog2.length;_i4++){var _update=_this$backlog2[_i4];
-subscription.listener(_update);
-}
+this.backlog;_i4<_this$backlog2.length;_i4++){var _update=_this$backlog2[_i4];subscription.listener(_update);}
 this.backlog=null;
 }
 return subscription;
@@ -92,20 +71,9 @@ subscription.listener(value);
 return subscription;
 };_proto3.
 update=function update(value){
-if(!this.subscriptions.length&&value!==null&&value!==undefined){
-
-(this.backlog||(this.backlog=[])).push(value);
-}for(var _i6=0,_this$subscriptions4=
-this.subscriptions;_i6<_this$subscriptions4.length;_i6++){var subscription=_this$subscriptions4[_i6];
-subscription.listener(value);
-}
+if(!this.subscriptions.length&&value!==null&&value!==undefined){(this.backlog||(this.backlog=[])).push(value);}for(var _i6=0,_this$subscriptions4=
+this.subscriptions;_i6<_this$subscriptions4.length;_i6++){var subscription=_this$subscriptions4[_i6];subscription.listener(value);}
 };return PSStreamModel;}();
-
-
-
-
-
-
 
 
 
@@ -123,46 +91,31 @@ var PSBackground=new(function(_PSStreamModel2){
 
 
 
-
 function _class(){var _this;
 _this=_PSStreamModel2.call(this)||this;_this.id='';_this.curId='';_this.attrib=null;_this.changeCount=0;_this.menuColors=null;
 try{var _localStorage$getItem;
 var bg=((_localStorage$getItem=localStorage.getItem('showdown_bg'))==null?void 0:_localStorage$getItem.split('\n'))||[''];
-if(bg.length===1){
-
-_this.load('',bg[0]);
-}else if(bg.length===2){
-
-_this.load(bg[0],bg[1]);
-}else if(bg.length>=7){
-
-_this.load(bg[0],bg[1],bg.slice(2));
-}
+if(bg.length===1){_this.load('',bg[0]);}else
+if(bg.length===2){_this.load(bg[0],bg[1]);}else
+if(bg.length>=7){_this.load(bg[0],bg[1],bg.slice(2));}
 }catch(_unused){}return _this;
 }_inheritsLoose(_class,_PSStreamModel2);var _proto4=_class.prototype;_proto4.
 save=function save(bgUrl){
-if(this.id!=='custom'){
-localStorage.setItem('showdown_bg',this.id);
-}else if(this.menuColors){
-localStorage.setItem('showdown_bg',bgUrl+'\n'+this.id+'\n'+this.menuColors.join('\n'));
-}else{
-localStorage.setItem('showdown_bg',bgUrl+'\n'+this.id);
-}
+if(this.id!=='custom'){localStorage.setItem('showdown_bg',this.id);}else
+if(this.menuColors){localStorage.setItem('showdown_bg',bgUrl+'\n'+this.id+'\n'+this.menuColors.join('\n'));}else
+{localStorage.setItem('showdown_bg',bgUrl+'\n'+this.id);}
 };_proto4.
 set=function set(bgUrl,bgid){
 this.load(bgUrl,bgid);
 this.save(bgUrl);
 };_proto4.
-
 load=function load(bgUrl,bgid){var menuColors=arguments.length>2&&arguments[2]!==undefined?arguments[2]:null;
 
 this.id=bgid;
 
-
 if(!bgid){
-if(location.host==='smogtours.psim.us'){
-bgid='shaymin';
-}else{
+if(location.host==='smogtours.psim.us'){bgid='shaymin';}else
+{
 var bgs=['horizon','ocean','waterfall','shaymin','charizards'];
 bgid=bgs[Math.floor(Math.random()*5)];
 
@@ -170,17 +123,11 @@ if(bgid===this.curId)bgid=bgs[Math.floor(Math.random()*5)];
 }
 }
 this.curId=bgid;
-
-if(!bgUrl){
-bgUrl=bgid==='solidblue'?'#344b6c':PSURL+'fx/client-bg-'+bgid+'.jpg';
-}
-
-
+if(!bgUrl){bgUrl=bgid==='solidblue'?'#344b6c':PSURL+'fx/client-bg-'+bgid+'.jpg';}
 
 
 
 this.changeCount++;
-
 
 var attrib=null;
 switch(bgid){
@@ -278,9 +225,7 @@ menuColors=[hs,hs,hs,hs,hs,hs];
 }
 this.attrib=attrib;
 this.menuColors=menuColors;
-if(!menuColors){
-this.extractMenuColors(bgUrl);
-}
+if(!menuColors){this.extractMenuColors(bgUrl);}
 this.update(bgUrl);
 };_proto4.
 extractMenuColors=function extractMenuColors(bgUrl){var _this2=this;
@@ -289,9 +234,8 @@ var changeCount=this.changeCount;
 var img=new Image();
 img.onload=function(){
 if(changeCount!==PSBackground.changeCount)return;
-if(window.ColorThief){
-_this2.extractMenuColorsFromImg(img,bgUrl);
-}else{
+if(window.ColorThief){_this2.extractMenuColorsFromImg(img,bgUrl);}else
+{
 PS.libsLoaded.then(function(){
 if(changeCount!==PSBackground.changeCount)return;
 _this2.extractMenuColorsFromImg(img,bgUrl);
@@ -301,16 +245,12 @@ _this2.extractMenuColorsFromImg(img,bgUrl);
 img.src=bgUrl;
 };_proto4.
 extractMenuColorsFromImg=function extractMenuColorsFromImg(img,bgUrl){
-
-
 try{
 var colorThief=new ColorThief();
 var colors=colorThief.getPalette(img,5);
-
 var menuColors=[];
-if(!colors){
-menuColors=['0, 0%','0, 0%','0, 0%','0, 0%','0, 0%'];
-}else{
+if(!colors){menuColors=['0, 0%','0, 0%','0, 0%','0, 0%','0, 0%'];}else
+{
 for(var i=0;i<5;i++){
 var color=colors[i];
 var hs=PSBackground.getHueSat(color[0]/255,color[1]/255,color[2]/255);
@@ -325,9 +265,7 @@ PSBackground.save(bgUrl);
 getHueSat=function getHueSat(r,g,b){
 var max=Math.max(r,g,b);
 var min=Math.min(r,g,b);
-if(max===min){
-return"0,0%";
-}
+if(max===min){return"0,0%";}
 var l=(max+min)/2;
 var d=max-min;
 var s=l>0.5?d/(2-max-min):d/(max+min);
@@ -344,8 +282,6 @@ return h*360+","+s*100+"%";
 
 
 
-
-
 PSBackground.subscribe(function(bgUrl){
 if(!PSBackground.curId){
 document.body.style.background='';
@@ -354,20 +290,14 @@ var _buttonStyleElem=document.getElementById('mainmenubuttoncolors');
 if(_buttonStyleElem)_buttonStyleElem.textContent="";
 return;
 }
-
 if(bgUrl!==null){
 var background;
-if(bgUrl.startsWith('#')){
-background=bgUrl;
-}else if(PSBackground.curId!=='custom'){
-background="#546bac url("+bgUrl+") no-repeat left center fixed";
-}else{
-background="#546bac url("+bgUrl+") no-repeat center center fixed";
-}
+if(bgUrl.startsWith('#')){background=bgUrl;}else
+if(PSBackground.curId!=='custom'){background="#546bac url("+bgUrl+") no-repeat left center fixed";}else
+{background="#546bac url("+bgUrl+") no-repeat center center fixed";}
 document.body.style.background=background;
 document.body.style.backgroundSize='cover';
 }
-
 
 var cssBuf="";
 var n=0;
@@ -383,15 +313,11 @@ var buttonStyleElem=document.getElementById('mainmenubuttoncolors');
 if(!buttonStyleElem){
 if(cssBuf){
 
-
-
 buttonStyleElem=document.createElement("style");
 buttonStyleElem.id='mainmenubuttoncolors';
 buttonStyleElem.textContent=cssBuf;
 document.head.appendChild(buttonStyleElem);
 }
-}else{
-buttonStyleElem.textContent=cssBuf;
-}
+}else{buttonStyleElem.textContent=cssBuf;}
 });
 //# sourceMappingURL=client-core.js.map

@@ -1,28 +1,20 @@
 import { FS } from '../lib/fs';
 import type { RoomSection } from './chat-commands/room-settings';
 import { toID } from '../sim/dex-data';
-
 export type GroupSymbol = '~' | '#' | '★' | '*' | '@' | '%' | '☆' | '§' | '+' | '^' | ' ' | '‽' | '!';
 export type EffectiveGroupSymbol = GroupSymbol | 'whitelist';
 export type AuthLevel = EffectiveGroupSymbol | 'unlocked' | 'trusted' | 'autoconfirmed';
-
 export const PLAYER_SYMBOL: GroupSymbol = '\u2606';
 export const HOST_SYMBOL: GroupSymbol = '\u2605';
-
-export const ROOM_PERMISSIONS = [
-	'addhtml', 'announce', 'ban', 'bypassafktimer', 'declare', 'editprivacy', 'editroom', 'exportinputlog', 'game', 'gamemanagement', 'gamemoderation', 'joinbattle', 'kick', 'minigame', 'modchat', 'modlog', 'mute', 'nooverride', 'receiveauthmessages', 'roombot', 'roomdriver', 'roommod', 'roomowner', 'roomvoice', 'roomprizewinner', 'show', 'showmedia', 'timer', 'tournaments', 'warn',
-] as const;
-
+export const ROOM_PERMISSIONS = ['addhtml', 'announce', 'ban', 'bypassafktimer', 'declare', 'editprivacy', 'editroom', 'exportinputlog', 'game', 'gamemanagement', 'gamemoderation', 'joinbattle', 'kick', 'minigame', 'modchat', 'modlog', 'mute', 'nooverride', 'receiveauthmessages', 'roombot', 'roomdriver', 'roommod', 'roomowner', 'roomvoice', 'roomprizewinner', 'show', 'showmedia', 'timer', 'tournaments', 'warn',] as const;
 export const GLOBAL_PERMISSIONS = [
 	// administrative
 	'bypassall', 'console', 'disableladder', 'lockdown', 'potd',
 	// other
 	'addhtml', 'alts', 'altsself', 'autotimer', 'globalban', 'bypassblocks', 'bypassafktimer', 'forcepromote', 'forcerename', 'forcewin', 'gdeclare', 'hiderank', 'ignorelimits', 'importinputlog', 'ip', 'ipself', 'lock', 'makeroom', 'modlog', 'rangeban', 'promote',
 ] as const;
-
 export type RoomPermission = typeof ROOM_PERMISSIONS[number];
 export type GlobalPermission = typeof GLOBAL_PERMISSIONS[number];
-
 export type GroupInfo = {
 	symbol: GroupSymbol,
 	id: ID,
@@ -30,28 +22,17 @@ export type GroupInfo = {
 	rank: number,
 	inherit?: GroupSymbol,
 	jurisdiction?: string,
-
 	globalonly?: boolean,
 	roomonly?: boolean,
 	battleonly?: boolean,
 	root?: boolean,
 	globalGroupInPersonalRoom?: GroupSymbol,
-} & {
-	[P in RoomPermission | GlobalPermission]?: string | boolean;
-};
-
-/**
- * Auth table - a Map for which users are in which groups.
- *
- * Notice that auth.get will return the default group symbol if the
- * user isn't in a group.
- */
+} & { [P in RoomPermission | GlobalPermission]?: string | boolean; };
+// Auth table - a Map for which users are in which groups. Notice that auth.get will return the default group symbol if the user isn't in a group.
 export abstract class Auth extends Map<ID, GroupSymbol | ''> {
 	/**
 	 * Will return the default group symbol if the user isn't in a group.
-	 *
-	 * Passing a User will read `user.group`, which is relevant for unregistered
-	 * users with temporary global auth.
+	 * Passing a User will read `user.group`, which is relevant for unregistered users with temporary global auth.
 	 */
 	override get(user: ID | User) {
 		if (typeof user !== 'string') return user.tempGroup;
@@ -64,9 +45,7 @@ export abstract class Auth extends Map<ID, GroupSymbol | ''> {
 			// driver rank to make sure this function works on servers that
 			// did not reorder the ranks.
 			return Auth.atLeast(rank, '*') || Auth.atLeast(rank, '%');
-		} else {
-			return false;
-		}
+		} else { return false; }
 	}
 	atLeast(user: User, group: AuthLevel) {
 		if (user.hasSysopAccess()) return true;
@@ -77,24 +56,17 @@ export abstract class Auth extends Map<ID, GroupSymbol | ''> {
 		}
 		if (user.locked || user.semilocked) return false;
 		if (group === 'unlocked') return true;
-		if (group === 'whitelist' && this.has(user.id)) {
-			return true;
-		}
+		if (group === 'whitelist' && this.has(user.id)) { return true; }
 		if (!Config.groups[group]) return false;
 		if (this.get(user.id) === ' ' && group !== ' ') return false;
 		return Auth.atLeast(this.get(user.id), group);
 	}
-
-	static defaultSymbol() {
-		return Config.groupsranking[0] as GroupSymbol;
-	}
+	static defaultSymbol() { return Config.groupsranking[0] as GroupSymbol; }
 	static getGroup(symbol: EffectiveGroupSymbol): GroupInfo;
 	static getGroup<T>(symbol: EffectiveGroupSymbol, fallback: T): GroupInfo | T;
 	static getGroup(symbol: EffectiveGroupSymbol, fallback?: AnyObject) {
 		if (Config.groups[symbol]) return Config.groups[symbol];
-
 		if (fallback !== undefined) return fallback;
-
 		// unidentified groups are treated as voice
 		return {
 			...Config.groups['+'],
@@ -105,9 +77,7 @@ export abstract class Auth extends Map<ID, GroupSymbol | ''> {
 	}
 	getEffectiveSymbol(user: User): EffectiveGroupSymbol {
 		const group = this.get(user);
-		if (this.has(user.id) && group === Auth.defaultSymbol()) {
-			return 'whitelist';
-		}
+		if (this.has(user.id) && group === Auth.defaultSymbol()) { return 'whitelist'; }
 		return group;
 	}
 	static hasPermission(
@@ -119,23 +89,13 @@ export abstract class Auth extends Map<ID, GroupSymbol | ''> {
 		cmdToken?: string,
 	): boolean {
 		if (user.hasSysopAccess()) return true;
-
 		const auth: Auth = room ? room.auth : Users.globalAuth;
-
 		const symbol = auth.getEffectiveSymbol(user);
-
 		let targetSymbol: EffectiveGroupSymbol | null;
-		if (!target) {
-			targetSymbol = null;
-		} else if (typeof target === 'string' && !toID(target)) { // empty ID -> target is a group symbol
-			targetSymbol = target as EffectiveGroupSymbol;
-		} else {
-			targetSymbol = auth.get(target as User | ID);
-		}
-		if (!targetSymbol || ['whitelist', 'trusted', 'autoconfirmed'].includes(targetSymbol)) {
-			targetSymbol = Auth.defaultSymbol();
-		}
-
+		if (!target) { targetSymbol = null; } 
+		else if (typeof target === 'string' && !toID(target)) { targetSymbol = target as EffectiveGroupSymbol; } // empty ID -> target is a group symbol
+		else { targetSymbol = auth.get(target as User | ID); }
+		if (!targetSymbol || ['whitelist', 'trusted', 'autoconfirmed'].includes(targetSymbol)) { targetSymbol = Auth.defaultSymbol(); }
 		let group = Auth.getGroup(symbol);
 		if (group['root']) return true;
 		// Global drivers who are SLs should get room mod powers too
@@ -144,14 +104,9 @@ export abstract class Auth extends Map<ID, GroupSymbol | ''> {
 			room.settings.section === Users.globalAuth.sectionLeaders.get(user.id) &&
 			// But dont override ranks above moderator such as room owner
 			(Auth.getGroup('@').rank > group.rank)
-		) {
-			group = Auth.getGroup('@');
-		}
-
+		) { group = Auth.getGroup('@'); }
 		let jurisdiction = group[permission as GlobalPermission | RoomPermission];
-		if (jurisdiction === true && permission !== 'jurisdiction') {
-			jurisdiction = group['jurisdiction'] || true;
-		}
+		if (jurisdiction === true && permission !== 'jurisdiction') { jurisdiction = group['jurisdiction'] || true; }
 		const roomPermissions = room ? room.settings.permissions : null;
 		if (roomPermissions) {
 			let foundSpecificPermission = false;
@@ -184,14 +139,11 @@ export abstract class Auth extends Map<ID, GroupSymbol | ''> {
 		}
 		return Auth.hasJurisdiction(symbol, jurisdiction, targetSymbol as GroupSymbol);
 	}
-	static atLeast(symbol: EffectiveGroupSymbol, symbol2: EffectiveGroupSymbol) {
-		return Auth.getGroup(symbol).rank >= Auth.getGroup(symbol2).rank;
-	}
+	static atLeast(symbol: EffectiveGroupSymbol, symbol2: EffectiveGroupSymbol) { return Auth.getGroup(symbol).rank >= Auth.getGroup(symbol2).rank; }
 	static supportedRoomPermissions(room: Room | null = null) {
 		const commands = [];
 		for (const handler of Chat.allCommands()) {
 			if (!handler.hasRoomPermissions && !handler.broadcastable) continue;
-
 			// if it's only broadcast permissions, not use permissions, use the broadcast symbol
 			const cmdPrefix = handler.hasRoomPermissions ? "/" : "!";
 			commands.push(`${cmdPrefix}${handler.fullCmd}`);
@@ -213,21 +165,11 @@ export abstract class Auth extends Map<ID, GroupSymbol | ''> {
 		jurisdiction?: string | boolean,
 		targetSymbol?: GroupSymbol | null
 	) {
-		if (!targetSymbol) {
-			return !!jurisdiction;
-		}
-		if (typeof jurisdiction !== 'string') {
-			return !!jurisdiction;
-		}
-		if (jurisdiction.includes(targetSymbol)) {
-			return true;
-		}
-		if (jurisdiction.includes('a')) {
-			return true;
-		}
-		if (jurisdiction.includes('u') && Auth.getGroup(symbol).rank > Auth.getGroup(targetSymbol).rank) {
-			return true;
-		}
+		if (!targetSymbol) { return !!jurisdiction; }
+		if (typeof jurisdiction !== 'string') { return !!jurisdiction; }
+		if (jurisdiction.includes(targetSymbol)) { return true; }
+		if (jurisdiction.includes('a')) { return true; }
+		if (jurisdiction.includes('u') && Auth.getGroup(symbol).rank > Auth.getGroup(targetSymbol).rank) { return true; }
 		return false;
 	}
 	static listJurisdiction(user: User, permission: GlobalPermission | RoomPermission) {
@@ -245,7 +187,6 @@ export abstract class Auth extends Map<ID, GroupSymbol | ''> {
 	static ROOM_PERMISSIONS = ROOM_PERMISSIONS;
 	static GLOBAL_PERMISSIONS = GLOBAL_PERMISSIONS;
 }
-
 export class RoomAuth extends Auth {
 	room: BasicRoom;
 	constructor(room: BasicRoom) {
@@ -254,11 +195,9 @@ export class RoomAuth extends Auth {
 	}
 	override get(userOrID: ID | User): GroupSymbol {
 		const id = typeof userOrID === 'string' ? userOrID : userOrID.id;
-
 		const parentAuth: Auth | null = this.room.parent ? this.room.parent.auth :
 			this.room.settings.isPrivate !== true ? Users.globalAuth : null;
 		const parentGroup = parentAuth ? parentAuth.get(userOrID) : Auth.defaultSymbol();
-
 		if (this.has(id)) {
 			// authority is whichever is higher between roomauth and global auth
 			const roomGroup = this.getDirect(id);
@@ -270,14 +209,11 @@ export class RoomAuth extends Auth {
 				if (roomGroup === Users.PLAYER_SYMBOL || roomGroup === Users.HOST_SYMBOL || roomGroup === '#') {
 					// Player, Host, and Room Owner always trump higher global rank
 					group = roomGroup;
-				} else {
-					group = (roomRank > globalRank ? roomGroup : parentGroup);
-				}
+				} else { group = (roomRank > globalRank ? roomGroup : parentGroup); }
 				Config.greatergroupscache[`${roomGroup}${parentGroup}`] = group;
 			}
 			return group;
 		}
-
 		return parentGroup;
 	}
 	override getEffectiveSymbol(user: User) {
@@ -298,31 +234,20 @@ export class RoomAuth extends Auth {
 		return symbol;
 	}
 	/** gets the room group without inheriting */
-	getDirect(id: ID): GroupSymbol {
-		return super.get(id);
-	}
+	getDirect(id: ID): GroupSymbol { return super.get(id); }
 	save() {
 		// construct auth object
 		const auth = Object.create(null);
-		for (const [userid, groupSymbol] of this) {
-			auth[userid] = groupSymbol;
-		}
+		for (const [userid, groupSymbol] of this) { auth[userid] = groupSymbol; }
 		(this.room.settings as any).auth = auth;
 		this.room.saveSettings();
 	}
-	load() {
-		for (const userid in this.room.settings.auth) {
-			super.set(userid as ID, this.room.settings.auth[userid]);
-		}
-	}
+	load() { for (const userid in this.room.settings.auth) { super.set(userid as ID, this.room.settings.auth[userid]); } }
 	override set(id: ID, symbol: GroupSymbol) {
-		if (symbol === 'whitelist' as GroupSymbol) {
-			symbol = Auth.defaultSymbol();
-		}
+		if (symbol === 'whitelist' as GroupSymbol) { symbol = Auth.defaultSymbol(); }
 		super.set(id, symbol);
 		this.room.settings.auth[id] = symbol;
 		this.room.saveSettings();
-
 		const user = Users.get(id);
 		if (user) this.room.onUpdateIdentity(user);
 		return this;
@@ -335,7 +260,6 @@ export class RoomAuth extends Auth {
 		return true;
 	}
 }
-
 export class GlobalAuth extends Auth {
 	usernames = new Map<ID, string>();
 	sectionLeaders = new Map<ID, RoomSection>();
@@ -346,9 +270,7 @@ export class GlobalAuth extends Auth {
 	save() {
 		FS('config/usergroups.csv').writeUpdate(() => {
 			let buffer = '';
-			for (const [userid, groupSymbol] of this) {
-				buffer += `${this.usernames.get(userid) || userid},${groupSymbol},${this.sectionLeaders.get(userid) || ''}\n`;
-			}
+			for (const [userid, groupSymbol] of this) { buffer += `${this.usernames.get(userid) || userid},${groupSymbol},${this.sectionLeaders.get(userid) || ''}\n`; }
 			return buffer;
 		});
 	}
@@ -397,9 +319,7 @@ export class GlobalAuth extends Auth {
 		if (!super.has(id)) return false;
 		super.delete(id);
 		const user = Users.get(id);
-		if (user) {
-			user.tempGroup = ' ';
-		}
+		if (user) { user.tempGroup = ' '; }
 		this.usernames.delete(id);
 		this.save();
 		return true;
@@ -420,9 +340,7 @@ export class GlobalAuth extends Auth {
 	deleteSection(id: ID) {
 		if (!this.sectionLeaders.has(id)) return false;
 		this.sectionLeaders.delete(id);
-		if (super.get(id) === ' ') {
-			return this.delete(id);
-		}
+		if (super.get(id) === ' ') { return this.delete(id); }
 		const user = Users.get(id);
 		if (user) {
 			user.updateIdentity();

@@ -540,9 +540,7 @@ export class DexMoves {
 					) { move = parentMove; }
 				}
 			}
-		} else {
-			move = new DataMove({ name: id, exists: false, });
-		}
+		} else { move = new DataMove({ name: id, exists: false, }); }
 		if (move.exists) this.moveCache.set(id, this.dex.deepFreeze(move));
 		return move;
 	}

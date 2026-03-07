@@ -1096,6 +1096,14 @@ if (this.modid === 'gen9indigostarstorm') {
 			const names = Dex.types.names();
 			if (!names.length) return [];
 			const curNames = [...names];
+			// Include mod-defined types from the mod's overrideTypeChart
+const modTable = window.BattleTeambuilderTable?.[this.modid];
+if (modTable?.overrideTypeChart) {
+	for (const typeId of Object.keys(modTable.overrideTypeChart)) {
+		const typeName = typeId.charAt(0).toUpperCase() + typeId.slice(1);
+		if (!curNames.includes(typeName as Dex.TypeName)) curNames.push(typeName as Dex.TypeName);
+	}
+}
 			// if (this.gen < 9) curNames.splice(curNames.indexOf('Stellar'), 1);
 			if (this.gen < 6) curNames.splice(curNames.indexOf('Fairy'), 1);
 			if (this.gen < 2) curNames.splice(curNames.indexOf('Dark'), 1);
@@ -1106,8 +1114,23 @@ if (this.modid === 'gen9indigostarstorm') {
 		get: (name: string): Dex.Type => {
 			const id = toID(name);
 			name = id.substr(0, 1).toUpperCase() + id.substr(1);
-			if (this.cache.Types.hasOwnProperty(id)) return this.cache.Types[id];
+			const modTablePre = window.BattleTeambuilderTable?.[this.modid];
+const modHasTypePatch = !!(modTablePre?.overrideTypeChart && id in modTablePre.overrideTypeChart);
+// If mod patches this type, don't return a previously cached vanilla type
+if (this.cache.Types.hasOwnProperty(id) && !modHasTypePatch) return this.cache.Types[id];
 			let data = { ...Dex.types.get(name) };
+			// Apply mod-specific overrides (gen9indigostarstorm etc)
+const modTable = window.BattleTeambuilderTable?.[this.modid];
+if (modTable) {
+	if (modTable.removeType && id in modTable.removeType) {
+		data.exists = false;
+	}
+	if (modTable.overrideTypeChart && id in modTable.overrideTypeChart) {
+		data = { ...data, ...modTable.overrideTypeChart[id] };
+		// If mod supplies damageTaken, ensure the type is treated as existing
+		if ((data as any).damageTaken) (data as any).exists = true;
+	}
+}
 			for (let i = 7; i >= this.gen; i--) {
 				const table = window.BattleTeambuilderTable[`gen${i}`];
 				if (id in table.removeType) {
@@ -1115,6 +1138,13 @@ if (this.modid === 'gen9indigostarstorm') {
 					break;
 				}
 				if (id in table.overrideTypeChart) data = { ...data, ...table.overrideTypeChart[id] };
+			}
+			// Apply modded TypeChart overlay if present (e.g. data/mods/gen9indigostarstorm/typechart.js)
+			const modTypeChart = (window as any).BattleModData?.[this.modid]?.TypeChart || (globalThis as any).BattleModData?.[this.modid]?.TypeChart || (globalThis as any).exports?.BattleModData?.[this.modid]?.TypeChart;
+			if (modTypeChart && modTypeChart[id]) {
+				data = { ...data, ...modTypeChart[id] };
+				// Ensure the type is treated as existing if it has damageTaken data
+				if ((data as any).damageTaken) (data as any).exists = true;
 			}
 			this.cache.Types[id] = data;
 			return data;

@@ -1,11 +1,8 @@
 import { Dex, toID } from './dex';
-
 const CHOOSABLE_TARGETS = new Set(['normal', 'any', 'adjacentAlly', 'adjacentAllyOrSelf', 'adjacentFoe']);
-
 export class BattleActions {
 	battle: Battle;
 	dex: ModdedDex;
-
 	readonly MAX_MOVES: { readonly [k: string]: string } = {
 		Flying: 'Max Airstream',
 		Dark: 'Max Darkness',
@@ -78,9 +75,7 @@ export class BattleActions {
 				// Note: Nothing in the real games can interrupt a switch-out (except Pursuit KOing, which is handled elsewhere); this is just for custom formats.
 				return false;
 			}
-			if (!oldActive.hp) { // a pokemon fainted from Pursuit before it could switch
-				return 'pursuitfaint';
-			}
+			if (!oldActive.hp) { return 'pursuitfaint'; } // a pokemon fainted from Pursuit before it could switch
 			// will definitely switch out at this point
 			oldActive.illusion = null;
 			this.battle.singleEvent('End', oldActive.getAbility(1), oldActive.abilityState1, oldActive);
@@ -88,7 +83,6 @@ export class BattleActions {
 			this.battle.singleEvent('End', oldActive.getItem(), oldActive.itemState, oldActive);
 			// if a pokemon is forced out by Whirlwind/etc or Eject Button/Pack, it can't use its chosen move
 			this.battle.queue.cancelAction(oldActive);
-
 			let newMove = null;
 			if (this.battle.gen === 4 && sourceEffect) { newMove = oldActive.lastMove; }
 			if (switchCopyFlag) { pokemon.copyVolatileFrom(oldActive, switchCopyFlag); }
@@ -134,9 +128,7 @@ export class BattleActions {
 		const oldActive = side.active[pos];
 		if (!oldActive) throw new Error(`nothing to drag out`);
 		if (!oldActive.hp) return false;
-		if (!this.battle.runEvent('DragOut', oldActive)) {
-			return false;
-		}
+		if (!this.battle.runEvent('DragOut', oldActive)) { return false; }
 		if (!this.switchIn(pokemon, pos, null, true)) return false;
 		return true;
 	}
@@ -163,10 +155,13 @@ export class BattleActions {
 	 * For details of the difference between runMove and useMove, see useMove's info. externalMove skips LockMove and PP deduction, mostly for use by Dancer.
 	 */
 	runMove(
+		
 		moveOrMoveName: Move | string, pokemon: Pokemon, targetLoc: number,
 		options?: {
 			sourceEffect?: Effect | null, zMove?: string, externalMove?: boolean,
 			maxMove?: string, originalTarget?: Pokemon,
+			// NEW: request to spend 1 Tera Charge to empower Tera Blast/Starstorm
+			teraempower?: boolean,
 		}
 	) {
 		pokemon.activeMoveActions++;
@@ -192,7 +187,32 @@ export class BattleActions {
 		if (zMove) { move = this.getActiveZMove(baseMove, pokemon); } 
 		else if (maxMove) { move = this.getActiveMaxMove(baseMove, pokemon); }
 		move.isExternal = externalMove;
+		// ===== Tera Empower: ARM EARLY so move hooks can see it =====
+		let teraEmpoweredThisMove = false;
+		let shouldSpendTeraCharge = false;
+		if (options?.teraempower) {
+		const sideAny = pokemon.side as any;
+		const charge = Number(sideAny.teraCharge ?? 0);     // 0..100
+		const max = Number(sideAny.teraChargeMax ?? 100);   // 100
+		const COST = 10;
+		const moveid = move.id;
+		if (
+			this.battle.gen === 9 &&
+			(moveid === 'terablast' || moveid === 'terastarstorm') &&
+			!pokemon.terastallized &&
+			charge >= COST &&
+			charge < max
+		) {
+			// mark empowered state for the move hooks
+			pokemon.addVolatile('teraempowered');
+			teraEmpoweredThisMove = true;
+			// spend later (only if BeforeMove succeeds)
+			shouldSpendTeraCharge = true;
+		}
+		}
 		this.battle.setActiveMove(move, pokemon, target);
+		const activeMove = this.battle.activeMove;
+		if (activeMove && teraEmpoweredThisMove) { (activeMove as any).teraEmpowered = true; }
 		/* if (pokemon.moveThisTurn) {
 			// THIS IS PURELY A SANITY CHECK
 			// DO NOT TAKE ADVANTAGE OF THIS TO PREVENT A POKEMON FROM MOVING;
@@ -209,8 +229,27 @@ export class BattleActions {
 			// false indicates that this counts as a move failing for the purpose of calculating Stomping Tantrum's base power
 			// null indicates the opposite, as the Pokemon didn't have an option to choose anything
 			pokemon.moveThisTurnResult = willTryMove;
+			if (teraEmpoweredThisMove) pokemon.removeVolatile('teraempowered');
 			return;
 		}
+		// ===== Tera Empower: SPEND only after BeforeMove succeeded =====
+		if (shouldSpendTeraCharge) {
+			const sideAny = pokemon.side as any;
+			const charge = Number(sideAny.teraCharge ?? 0);
+			const max = Number(sideAny.teraChargeMax ?? 100);
+			const COST = 10;
+
+			// Re-check invariants just to be safe
+			if (charge >= COST && charge < max) {
+				sideAny.teraCharge = Math.max(0, charge - COST);
+			} else {
+				// undo the arm if spend fails
+				pokemon.removeVolatile('teraempowered');
+				teraEmpoweredThisMove = false;
+				shouldSpendTeraCharge = false;
+			}
+		}
+		try {
 		// Used exclusively for a hint later
 		if (move.flags['cantusetwice'] && pokemon.lastMove?.id === move.id) { pokemon.addVolatile(move.id); }
 		if (move.beforeMoveCallback) {
@@ -284,14 +323,12 @@ export class BattleActions {
 		this.battle.faintMessages();
 		this.battle.checkWin();
 		if (this.battle.gen <= 4) { this.battle.activeMove = oldActiveMove; }
+		} finally { if (teraEmpoweredThisMove) pokemon.removeVolatile('teraempowered'); }
 	}
 	/**
-	 * useMove is the "inside" move caller. It handles effects of the
-	 * move itself, but not the idea of using the move.
-	 * Most caller effects, like Sleep Talk, Nature Power, Magic Bounce,
-	 * etc use useMove.
-	 * The only ones that use runMove are Instruct, Pursuit, and
-	 * Dancer.
+	 * useMove is the "inside" move caller. It handles effects of the move itself, but not the idea of using the move.
+	 * Most caller effects, like Sleep Talk, Nature Power, Magic Bounce, etc use useMove.
+	 * The only ones that use runMove are Instruct, Pursuit, and Dancer.
 	 */
 	useMove(
 		move: Move | string, pokemon: Pokemon, options?: {
@@ -344,7 +381,32 @@ export class BattleActions {
 			move.ignoreAbility = (sourceEffect as ActiveMove).ignoreAbility;
 		}
 		let moveResult = false;
+		// ===== Tera Empower: arm BEFORE active move setup =====
+		let teraEmpoweredThisMove = false;
+		let shouldSpendTeraCharge = false;
+		if ((options as any)?.teraempower) {
+		const sideAny = pokemon.side as any;
+		const charge = Number(sideAny.teraCharge ?? 0);
+		const max = Number(sideAny.teraChargeMax ?? 100);
+		const COST = 10;
+		const moveid = move.id;
+		if (
+			this.battle.gen === 9 &&
+			(moveid === 'terablast' || moveid === 'terastarstorm') &&
+			!pokemon.terastallized &&
+			charge >= COST &&
+			charge < max
+		) {
+			// CRITICAL: this is what your moves.ts checks
+			(pokemon as any).teraEmpowered = true;
+			teraEmpoweredThisMove = true;
+			// spend later only if BeforeMove succeeds
+			shouldSpendTeraCharge = true;
+		}
+		}
 		this.battle.setActiveMove(move, pokemon, target);
+		const activeMove = this.battle.activeMove;
+		if (activeMove && teraEmpoweredThisMove) { (activeMove as any).teraEmpowered = true; }
 		this.battle.singleEvent('ModifyType', move, null, pokemon, target, move, move);
 		this.battle.singleEvent('ModifyMove', move, null, pokemon, target, move, move);
 		if (baseTarget !== move.target) { target = this.battle.getRandomTarget(pokemon, move); } // Target changed in ModifyMove, so we must adjust it here. Adjust before the next event so the correct target is passed to the event
@@ -653,8 +715,7 @@ export class BattleActions {
 		let targetHits = move.multihit || 1;
 		if (Array.isArray(targetHits)) { // yes, it's hardcoded... meh
 			if (targetHits[0] === 2 && targetHits[1] === 5) {
-				if (this.battle.gen >= 5) {
-					// 35-35-15-15 out of 100 for 2-3-4-5 hits
+				if (this.battle.gen >= 5) { // 35-35-15-15 out of 100 for 2-3-4-5 hits
 					targetHits = this.battle.sample([2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 5, 5, 5]);
 					if (targetHits < 4 && pokemon.hasItem('loadeddice')) { targetHits = 5 - this.battle.random(2); }
 				} else { targetHits = this.battle.sample([2, 2, 2, 3, 3, 3, 4, 5]); }
@@ -724,10 +785,7 @@ export class BattleActions {
 				if (move.recoil) {
 					if (!move.intendedTotalDamage) move.intendedTotalDamage = 0;
 					// md can be true/false/number; only add if number
-					if (typeof md === 'number') {
-						// If md > target.hp, intended damage is md, actual is capped at target.hp
-						move.intendedTotalDamage += md;
-					}
+					if (typeof md === 'number') { move.intendedTotalDamage += md; } // If md > target.hp, intended damage is md, actual is capped at target.hp
 				}
 				move.totalDamage += damage[i];
 			}
@@ -755,7 +813,6 @@ export class BattleActions {
 			this.battle.damage(this.calcRecoilDamage(recoilBase, move, pokemon), pokemon, pokemon, 'recoil');
 			if (pokemon.hp <= pokemon.maxhp / 2 && hpBeforeRecoil > pokemon.maxhp / 2) { this.battle.runEvent('EmergencyExit', pokemon, pokemon); }
 		}
-
 		if (move.struggleRecoil) {
 			const hpBeforeRecoil = pokemon.hp;
 			let recoilDamage;
@@ -981,11 +1038,8 @@ export class BattleActions {
 				if (moveData.pseudoWeather) {
 					// Room effects: wonderroom, trickroom, magicroom - these should be mutually exclusive
 					const roomTypes = ['wonderroom', 'trickroom', 'magicroom'];
-					if (roomTypes.includes(moveData.pseudoWeather)) {
-						hitResult = this.battle.field.setRoom(moveData.pseudoWeather, source, move);
-					} else {
-						hitResult = this.battle.field.addPseudoWeather(moveData.pseudoWeather, source, move);
-					}
+					if (roomTypes.includes(moveData.pseudoWeather)) { hitResult = this.battle.field.setRoom(moveData.pseudoWeather, source, move); } 
+					else { hitResult = this.battle.field.addPseudoWeather(moveData.pseudoWeather, source, move); }
 					didSomething = this.combineResults(didSomething, hitResult);
 				}
 				if (moveData.forceSwitch) {
@@ -1441,23 +1495,15 @@ export class BattleActions {
 		const altForme = species.otherFormes && this.dex.species.get(species.otherFormes[0]);
 		const item = pokemon.getItem();
 		// Mega Rayquaza
-		if ((this.battle.gen <= 7 || this.battle.ruleTable.has('+pokemontag:past') || this.battle.ruleTable.has('+pokemontag:future')) && altForme?.isMega && altForme?.requiredMove && pokemon.baseMoves.includes(toID(altForme.requiredMove)) && !item.zMove) {
-			return altForme.name;
-		}
+		if ((this.battle.gen <= 7 || this.battle.ruleTable.has('+pokemontag:past') || this.battle.ruleTable.has('+pokemontag:future')) && altForme?.isMega && altForme?.requiredMove && pokemon.baseMoves.includes(toID(altForme.requiredMove)) && !item.zMove) { return altForme.name; }
 		// Temporary hardcode until generation shift
-		if ((species.baseSpecies === "Floette" || species.baseSpecies === "Zygarde") && item.megaEvolves === species.name) {
-			return item.megaStone;
-		}
+		if ((species.baseSpecies === "Floette" || species.baseSpecies === "Zygarde") && item.megaEvolves === species.name) { return item.megaStone; }
 		// a hacked-in Megazard X can mega evolve into Megazard Y, but not into Megazard X
-		if (item.megaEvolves === species.baseSpecies && item.megaStone !== species.name) {
-			return item.megaStone;
-		}
+		if (item.megaEvolves === species.baseSpecies && item.megaStone !== species.name) { return item.megaStone; }
 		return null;
 	}
 	canUltraBurst(pokemon: Pokemon) {
-		if (['Necrozma-Dawn-Wings', 'Necrozma-Dusk-Mane'].includes(pokemon.baseSpecies.name) && pokemon.getItem().id === 'ultranecroziumz') {
-			return "Necrozma-Ultra";
-		}
+		if (['Necrozma-Dawn-Wings', 'Necrozma-Dusk-Mane'].includes(pokemon.baseSpecies.name) && pokemon.getItem().id === 'ultranecroziumz') { return "Necrozma-Ultra"; }
 		return null;
 	}
 	runMegaEvo(pokemon: Pokemon) {
@@ -1494,12 +1540,26 @@ export class BattleActions {
 			const abilityStateKey = illusionSlot === 1 ? 'abilityState1' : 'abilityState2';
 			this.battle.singleEvent('End', this.dex.abilities.get('Illusion'), pokemon[abilityStateKey], pokemon);
 		}
+		// --- ISL Tera Charge: snapshot state so we can un-tera later ---
+		const p: any = pokemon;
+		if (!p.preTeraState) {
+			p.preTeraState = {
+				speciesId: pokemon.species.id,
+				baseSpeciesId: pokemon.baseSpecies.id,
+				details: pokemon.details,
+				types: pokemon.types?.slice ? pokemon.types.slice() : null,
+				addedType: pokemon.addedType,
+				knownType: pokemon.knownType,
+				apparentType: pokemon.apparentType,
+			};
+		}
+		// remember original form so we can revert when charge hits 0
+		(pokemon as any).teraOriginalSpecies = pokemon.species.id;
 		const type = pokemon.teraType;
 		this.battle.add('-terastallize', pokemon, type);
 		pokemon.terastallized = type;
 		// Reset Tera Shell type tracking when Terastallizing
 		if (pokemon.teraShellUsedTypes) {pokemon.teraShellUsedTypes = []; }
-		for (const ally of pokemon.side.pokemon) { ally.canTerastallize = null; }
 		pokemon.addedType = '';
 		pokemon.knownType = true;
 		pokemon.apparentType = type;
@@ -1515,5 +1575,20 @@ export class BattleActions {
 			pokemon.details = pokemon.getUpdatedDetails();
 		}
 		this.battle.runEvent('AfterTerastallization', pokemon);
+	}
+	unterastallize(pokemon: Pokemon) {
+		if (!pokemon.terastallized) return;
+		const prev = pokemon.terastallized;
+		// Tell the client to visually revert
+		this.battle.add('-unterastallize', pokemon, prev);
+		// Core state revert
+		pokemon.terastallized = '';
+		pokemon.addedType = '';
+		pokemon.knownType = true;
+		pokemon.apparentType = pokemon.getTypes(false, true).join('/');
+		// If you ever Terastallized into a forced form (Ogerpon/Terapagos), revert form if you stored it
+		const origSpecies = (pokemon as any).teraOriginalSpecies as string | undefined;
+		if (origSpecies && origSpecies !== pokemon.species.id) { pokemon.formeChange(origSpecies, null, true); }
+		(pokemon as any).teraOriginalSpecies = undefined;
 	}
 }

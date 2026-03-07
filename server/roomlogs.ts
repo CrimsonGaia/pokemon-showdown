@@ -1,22 +1,17 @@
 /**
  * Roomlogs
  * Pokemon Showdown - http://pokemonshowdown.com/
- *
  * This handles data storage for rooms.
- *
  * @license MIT
  */
-
 import { FS, Utils, type Streams } from '../lib';
 import { PGDatabase, SQL, type SQLStatement } from '../lib/database';
 import type { PartialModlogEntry } from './modlog';
-
 interface RoomlogOptions {
 	isMultichannel?: boolean;
 	noAutoTruncate?: boolean;
 	noLogTimes?: boolean;
 }
-
 interface RoomlogRow {
 	type: string;
 	roomid: string;
@@ -26,52 +21,32 @@ interface RoomlogRow {
 	// tsvector, really don't use
 	content: string | null;
 }
-
 export const roomlogDB = (() => {
 	if (!global.Config || !Config.replaysdb || Config.disableroomlogdb) return null;
 	return new PGDatabase(Config.replaysdb);
 })();
 export const roomlogTable = roomlogDB?.getTable<RoomlogRow>('roomlogs');
-
 /**
  * Most rooms have three logs:
  * - scrollback
  * - roomlog
  * - modlog
  * This class keeps track of all three.
- *
- * The scrollback is stored in memory, and is the log you get when you
- * join the room. It does not get moderator messages.
- *
- * The modlog is stored in
- * `logs/modlog/modlog_<ROOMID>.txt`
+ * The scrollback is stored in memory, and is the log you get when you join the room. It does not get moderator messages.
+ * The modlog is stored in `logs/modlog/modlog_<ROOMID>.txt`
  * It contains moderator messages, formatted for ease of search.
- * Direct modlog access is handled in server/modlog/; this file is just
- * a wrapper to make other code more readable.
- *
- * The roomlog is stored in
- * `logs/chat/<ROOMID>/<YEAR>-<MONTH>/<YEAR>-<MONTH>-<DAY>.txt`
- * It contains (nearly) everything.
+ * Direct modlog access is handled in server/modlog/; this file is just a wrapper to make other code more readable.
+ * The roomlog is stored in `logs/chat/<ROOMID>/<YEAR>-<MONTH>/<YEAR>-<MONTH>-<DAY>.txt`. It contains (nearly) everything.
  */
 export class Roomlog {
-	/**
-	 * Battle rooms are multichannel, which means their logs are split
-	 * into four channels, public, p1, p2, full.
-	 */
+	// Battle rooms are multichannel, which means their logs are split into four channels, public, p1, p2, full.
 	readonly isMultichannel: boolean;
-	/**
-	 * Chat rooms auto-truncate, which means it only stores the recent
-	 * messages, if there are more.
-	 */
+	// Chat rooms auto-truncate, which means it only stores the recent messages, if there are more.
 	readonly noAutoTruncate: boolean;
-	/**
-	 * Chat rooms include timestamps.
-	 */
+	// Chat rooms include timestamps.
 	readonly noLogTimes: boolean;
 	roomid: RoomID;
-	/**
-	 * Scrollback log
-	 */
+	// Scrollback log
 	log: string[];
 	visibleMessageCount = 0;
 	broadcastBuffer: string[];
@@ -80,36 +55,26 @@ export class Roomlog {
 	 * null = disabled
 	 */
 	roomlogStream?: Streams.WriteStream | null;
-	/**
-	 * Takes precedence over roomlogStream if it exists.
-	 */
+	// Takes precedence over roomlogStream if it exists.
 	roomlogTable: typeof roomlogTable;
 	roomlogFilename: string;
-
 	numTruncatedLines: number;
 	constructor(room: BasicRoom, options: RoomlogOptions = {}) {
 		this.roomid = room.roomid;
-
 		this.isMultichannel = !!options.isMultichannel;
 		this.noAutoTruncate = !!options.noAutoTruncate;
 		this.noLogTimes = !!options.noLogTimes;
-
 		this.log = [];
 		this.broadcastBuffer = [];
-
 		this.roomlogStream = undefined;
 		this.roomlogFilename = '';
-
 		this.numTruncatedLines = 0;
-
 		this.setupRoomlogStream();
 	}
 	getScrollback(channel = 0) {
 		let log = this.log;
 		if (!this.noLogTimes) log = [`|:|${~~(Date.now() / 1000)}`].concat(log);
-		if (!this.isMultichannel) {
-			return log.join('\n') + '\n';
-		}
+		if (!this.isMultichannel) { return log.join('\n') + '\n'; }
 		log = [];
 		for (let i = 0; i < this.log.length; ++i) {
 			const line = this.log[i];
@@ -119,9 +84,7 @@ export class Roomlog {
 				const ownLine = this.log[i + (canSeePrivileged ? 1 : 2)];
 				if (ownLine) log.push(ownLine);
 				i += 2;
-			} else {
-				log.push(line);
-			}
+			} else { log.push(line); }
 		}
 		return log.join('\n') + '\n';
 	}
@@ -141,9 +104,7 @@ export class Roomlog {
 		const monthString = dateString.split('-', 2).join('-');
 		const basepath = `chat/${this.roomid}/`;
 		const relpath = `${monthString}/${dateString}.txt`;
-
 		if (relpath === this.roomlogFilename) return;
-
 		Monitor.logPath(basepath + monthString).mkdirpSync();
 		this.roomlogFilename = relpath;
 		if (this.roomlogStream) void this.roomlogStream.writeEnd();
@@ -163,20 +124,15 @@ export class Roomlog {
 		this.roomlog(message);
 		// |uhtml gets both uhtml and uhtmlchange
 		// which are visible and so should be counted
-		if (['|c|', '|c:|', '|raw|', '|html|', '|uhtml'].some(k => message.startsWith(k))) {
-			this.visibleMessageCount++;
-		}
+		if (['|c|', '|c:|', '|raw|', '|html|', '|uhtml'].some(k => message.startsWith(k))) { this.visibleMessageCount++; }
 		message = this.withTimestamp(message);
 		this.log.push(message);
 		this.broadcastBuffer.push(message);
 		return this;
 	}
 	private withTimestamp(message: string) {
-		if (!this.noLogTimes && message.startsWith('|c|')) {
-			return `|c:|${Math.trunc(Date.now() / 1000)}|${message.slice(3)}`;
-		} else {
-			return message;
-		}
+		if (!this.noLogTimes && message.startsWith('|c|')) { return `|c:|${Math.trunc(Date.now() / 1000)}|${message.slice(3)}`; } 
+		else { return message; }
 	}
 	hasUsername(username: string) {
 		const userid = toID(username);
@@ -263,7 +219,6 @@ export class Roomlog {
 				time: SQL`now()`,
 				log: message,
 			}})`);
-
 			const dateStr = Chat.toTimestamp(date).split(' ')[0];
 			void this.insertLog(SQL`INSERT INTO roomlog_dates (${{
 				roomid: this.roomid,
@@ -276,19 +231,14 @@ export class Roomlog {
 		}
 	}
 	private async insertLog(query: SQLStatement, ignoreFailure = false, retries = 3): Promise<void> {
-		try {
-			await this.roomlogTable?.query(query);
-		} catch (e: any) {
+		try { await this.roomlogTable?.query(query); } 
+		catch (e: any) {
 			if (e?.code === '42P01') { // table not found
 				await roomlogDB!._query(FS('databases/schemas/roomlogs.sql').readSync(), []);
 				return this.insertLog(query, ignoreFailure, retries);
 			}
 			// connection terminated / transient errors
-			if (
-				!ignoreFailure &&
-				retries > 0 &&
-				e.message?.includes('Connection terminated unexpectedly')
-			) {
+			if (!ignoreFailure && retries > 0 && e.message?.includes('Connection terminated unexpectedly')) {
 				// delay before retrying
 				await new Promise(resolve => { setTimeout(resolve, 2000); });
 				return this.insertLog(query, ignoreFailure, retries - 1);
@@ -300,24 +250,19 @@ export class Roomlog {
 			});
 		}
 	}
-	modlog(entry: PartialModlogEntry, overrideID?: string) {
-		void Rooms.Modlog.write(this.roomid, entry, overrideID);
-	}
+	modlog(entry: PartialModlogEntry, overrideID?: string) { void Rooms.Modlog.write(this.roomid, entry, overrideID); }
 	async rename(newID: RoomID): Promise<true> {
 		await Rooms.Modlog.rename(this.roomid, newID);
 		const roomlogStreamExisted = this.roomlogStream !== null;
 		await this.destroy();
-		if (this.roomlogTable) {
-			await this.roomlogTable.updateAll({ roomid: newID })`WHERE roomid = ${this.roomid}`;
-		} else {
+		if (this.roomlogTable) { await this.roomlogTable.updateAll({ roomid: newID })`WHERE roomid = ${this.roomid}`; } 
+		else {
 			const roomlogPath = `chat`;
 			const [roomlogExists, newRoomlogExists] = await Promise.all([
 				Monitor.logPath(roomlogPath + `/${this.roomid}`).exists(),
 				Monitor.logPath(roomlogPath + `/${newID}`).exists(),
 			]);
-			if (roomlogExists && !newRoomlogExists) {
-				await Monitor.logPath(roomlogPath + `/${this.roomid}`).rename(Monitor.logPath(roomlogPath + `/${newID}`).path);
-			}
+			if (roomlogExists && !newRoomlogExists) { await Monitor.logPath(roomlogPath + `/${this.roomid}`).rename(Monitor.logPath(roomlogPath + `/${newID}`).path); }
 			if (roomlogStreamExisted) {
 				this.roomlogStream = undefined;
 				this.roomlogFilename = "";
@@ -330,13 +275,9 @@ export class Roomlog {
 	}
 	static rollLogs(this: void) {
 		if (Roomlogs.rollLogTimer === true) return;
-		if (Roomlogs.rollLogTimer) {
-			clearTimeout(Roomlogs.rollLogTimer);
-		}
+		if (Roomlogs.rollLogTimer) { clearTimeout(Roomlogs.rollLogTimer); }
 		Roomlogs.rollLogTimer = true;
-		for (const log of Roomlogs.roomlogs.values()) {
-			log.setupRoomlogStream();
-		}
+		for (const log of Roomlogs.roomlogs.values()) { log.setupRoomlogStream(); }
 		const time = Date.now();
 		const nextMidnight = new Date();
 		nextMidnight.setHours(24, 0, 0, 0);
@@ -350,13 +291,8 @@ export class Roomlog {
 			this.numTruncatedLines += truncationLength;
 		}
 	}
-	/**
-	 * Returns the total number of lines in the roomlog, including truncated lines.
-	 */
-	getLineCount(onlyVisible = true) {
-		return (onlyVisible ? this.visibleMessageCount : this.log.length) + this.numTruncatedLines;
-	}
-
+	// Returns the total number of lines in the roomlog, including truncated lines.
+	getLineCount(onlyVisible = true) { return (onlyVisible ? this.visibleMessageCount : this.log.length) + this.numTruncatedLines; }
 	destroy() {
 		const promises = [];
 		if (this.roomlogStream) {
@@ -367,26 +303,20 @@ export class Roomlog {
 		return Promise.all(promises);
 	}
 }
-
 const roomlogs = new Map<string, Roomlog>();
-
 function createRoomlog(room: BasicRoom, options = {}) {
 	let roomlog = Roomlogs.roomlogs.get(room.roomid);
 	if (roomlog) throw new Error(`Roomlog ${room.roomid} already exists`);
-
 	roomlog = new Roomlog(room, options);
 	Roomlogs.roomlogs.set(room.roomid, roomlog);
 	return roomlog;
 }
-
 export const Roomlogs = {
 	create: createRoomlog,
 	Roomlog,
 	roomlogs,
 	db: roomlogDB,
 	table: roomlogTable,
-
 	rollLogs: Roomlog.rollLogs,
-
 	rollLogTimer: null as NodeJS.Timeout | true | null,
 };

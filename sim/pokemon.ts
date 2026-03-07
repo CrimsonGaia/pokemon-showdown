@@ -77,7 +77,6 @@ export class Pokemon {
 	 * These are the basic stats that appear on the in-game stats screen:
 	 * calculated purely from the species base stats, level, IVs, EVs,
 	 * and Nature, before modifications from item, ability, etc.
-	 *
 	 * Forme changes affect these, but Transform doesn't.
 	 */
 	baseStoredStats: StatsTable;
@@ -85,11 +84,9 @@ export class Pokemon {
 	 * These are pre-modification stored stats in-battle. At switch-in,
 	 * they're identical to `baseStoredStats`, but can be temporarily changed
 	 * until switch-out by effects such as Power Trick and Transform.
-	 *
 	 * Stat multipliers from abilities, items, and volatiles, such as
 	 * Solar Power, Choice Band, or Swords Dance, are not stored in
 	 * `storedStats`, but applied on top and accessed by `pokemon.getStat`.
-	 *
 	 * (Except in Gen 1, where stat multipliers are stored, leading
 	 * to several famous glitches.)
 	 */
@@ -113,7 +110,6 @@ export class Pokemon {
 	maybeDisabled: boolean;
 	/** true = locked,  */
 	maybeLocked: boolean | null;
-
 	illusion: Pokemon | null;
 	transformed: boolean;
 	maxhp: number;
@@ -130,11 +126,7 @@ export class Pokemon {
 	knownType: boolean;
 	/** Keeps track of what type the client sees for this Pokemon. */
 	apparentType: string;
-	/**
-	 * If the switch is called by an effect with a special switch
-	 * message, like U-turn or Baton Pass, this will be the ID of
-	 * the calling effect.
-	 */
+	// If the switch is called by an effect with a special switch message, like U-turn or Baton Pass, this will be the ID of the calling effect.
 	switchFlag: ID | boolean;
 	forceSwitchFlag: boolean;
 	skipBeforeSwitchOutEventFlag: boolean;
@@ -150,82 +142,40 @@ export class Pokemon {
 	statsRaisedThisTurn: boolean;
 	statsLoweredThisTurn: boolean;
 	/**
-	 * The result of the last move used on the previous turn by this
-	 * Pokemon. Stomping Tantrum checks this property for a value of false
-	 * when determine whether to double its power, but it has four
-	 * possible values:
-	 *
-	 * undefined indicates this Pokemon was not active last turn. It should
-	 * not be used to indicate that a move was attempted and failed, either
-	 * in a way that boosts Stomping Tantrum or not.
-	 *
-	 * null indicates that the Pokemon's move was skipped in such a way
-	 * that does not boost Stomping Tantrum, either from having to recharge
-	 * or spending a turn trapped by another Pokemon's Sky Drop.
-	 *
-	 * false indicates that the move completely failed to execute for any
-	 * reason not mentioned above, including missing, the target being
-	 * immune, the user being immobilized by an effect such as paralysis, etc.
-	 *
-	 * true indicates that the move successfully executed one or more of
-	 * its effects on one or more targets, including hitting with an attack
-	 * but dealing 0 damage to the target in cases such as Disguise, or that
-	 * the move was blocked by one or more moves such as Protect.
+	 * The result of the last move used on the previous turn by this Pokemon. Stomping Tantrum checks this property for a value of false
+	 * when determine whether to double its power, but it has four possible values:
+	 * undefined indicates this Pokemon was not active last turn. It should not be used to indicate that a move was attempted and failed, either in a way that boosts Stomping Tantrum or not.
+	 * null indicates that the Pokemon's move was skipped in such a way that does not boost Stomping Tantrum, either from having to recharge or spending a turn trapped by another Pokemon's Sky Drop.
+	 * false indicates that the move completely failed to execute for any reason not mentioned above, including missing, the target being immune, the user being immobilized by an effect such as paralysis, etc.
+	 * true indicates that the move successfully executed one or more of its effects on one or more targets, including hitting with an attack
+	 * but dealing 0 damage to the target in cases such as Disguise, or that the move was blocked by one or more moves such as Protect.
 	 */
 	moveLastTurnResult: boolean | null | undefined;
 	/**
 	 * The result of the most recent move used this turn by this Pokemon.
-	 * At the start of each turn, the value stored here is moved to its
-	 * counterpart, moveLastTurnResult, and this property is reinitialized
-	 * to undefined. This property can have one of four possible values:
-	 *
-	 * undefined indicates that this Pokemon has not yet finished an
-	 * attempt to use a move this turn. As this value is only overwritten
-	 * after a move finishes execution, it is not sufficient for an event
-	 * to examine only this property when checking if a Pokemon has not
-	 * moved yet this turn if the event could take place during that
-	 * Pokemon's move.
-	 *
-	 * null indicates that the Pokemon's move was skipped in such a way
-	 * that does not boost Stomping Tantrum, either from having to recharge
-	 * or spending a turn trapped by another Pokemon's Sky Drop.
-	 *
-	 * false indicates that the move completely failed to execute for any
-	 * reason not mentioned above, including missing, the target being
-	 * immune, the user being immobilized by an effect such as paralysis, etc.
-	 *
-	 * true indicates that the move successfully executed one or more of
-	 * its effects on one or more targets, including hitting with an attack
-	 * but dealing 0 damage to the target in cases such as Disguise. It can
-	 * also mean that the move was blocked by one or more moves such as
-	 * Protect. Uniquely, this value can also be true if this Pokemon mega
-	 * evolved or ultra bursted this turn, but in that case the value should
-	 * always be overwritten by a move action before the end of that turn.
+	 * At the start of each turn, the value stored here is moved to its counterpart, moveLastTurnResult, and this property is reinitialized to undefined. This property can have one of four possible values:
+	 * undefined indicates that this Pokemon has not yet finished an attempt to use a move this turn. As this value is only overwritten after a move finishes execution, it is not sufficient for an event
+	 * to examine only this property when checking if a Pokemon has not moved yet this turn if the event could take place during that Pokemon's move.
+	 * null indicates that the Pokemon's move was skipped in such a way that does not boost Stomping Tantrum, either from having to recharge or spending a turn trapped by another Pokemon's Sky Drop.
+	 * false indicates that the move completely failed to execute for any reason not mentioned above, including missing, the target being immune, the user being immobilized by an effect such as paralysis, etc.
+	 * true indicates that the move successfully executed one or more of its effects on one or more targets, including hitting with an attack but dealing 0 damage to the target in cases such as Disguise. It can
+	 * also mean that the move was blocked by one or more moves such as Protect. Uniquely, this value can also be true if this Pokemon mega
+	 * evolved or ultra bursted this turn, but in that case the value should always be overwritten by a move action before the end of that turn.
 	 */
 	moveThisTurnResult: boolean | null | undefined;
-	/**
-	 * The undynamaxed HP value this Pokemon was reduced to by damage this turn,
-	 * or false if it hasn't taken damage yet this turn
-	 *
-	 * Used for Assurance, Emergency Exit, and Wimp Out
-	 */
+	// The undynamaxed HP value this Pokemon was reduced to by damage this turn, or false if it hasn't taken damage yet this turn Used for Assurance, Emergency Exit, and Wimp Out
 	hurtThisTurn: number | null;
 	lastDamage: number;
 	attackedBy: Attacker[];
 	timesAttacked: number;
-
 	isActive: boolean;
 	activeTurns: number;
 	/**
-	 * This is for Fake-Out-likes specifically - it mostly counts how many move
-	 * actions you've had since the last time you switched in, so 1/turn normally,
+	 * This is for Fake-Out-likes specifically - it mostly counts how many move actions you've had since the last time you switched in, so 1/turn normally,
 	 * +1 for Dancer/Instruct, -1 for shifting/Sky Drop.
-	 *
 	 * Incremented before the move is used, so the first move use has
 	 * `activeMoveActions === 1`.
-	 *
-	 * Unfortunately, Truant counts Mega Evolution as an action and Fake
-	 * Out doesn't, meaning that Truant can't use this number.
+	 * Unfortunately, Truant counts Mega Evolution as an action and Fake Out doesn't, meaning that Truant can't use this number.
 	 */
 	activeMoveActions: number;
 	previouslySwitchedIn: number;
@@ -250,10 +200,7 @@ export class Pokemon {
 	canMegaEvoY: string | false | null | undefined;
 	canUltraBurst: string | null | undefined;
 	readonly canGigantamax: string | null;
-	/**
-	 * A Pokemon's Tera type if it can Terastallize, false if it is temporarily unable to tera and should have its
-	 * ability restored upon switching out, or null if its inability to tera is permanent.
-	 */
+	// A Pokemon's Tera type if it can Terastallize, false if it is temporarily unable to tera and should have its ability restored upon switching out, or null if its inability to tera is permanent.
 	canTerastallize: string | false | null;
 	teraType: string;
 	baseTypes: string[];
@@ -541,22 +488,18 @@ export class Pokemon {
 		let awakeningSum = 0;
 		for (const stat in this.stats) {
 			statSum += this.calculateStat(stat, this.boosts[stat as BoostName]);
-			awakeningSum += this.calculateStat(
-				stat, this.boosts[stat as BoostName]) + this.set.evs[stat];
+			awakeningSum += this.calculateStat(stat, this.boosts[stat as BoostName]) + this.set.evs[stat];
 		}
-		const combatPower = Math.floor(Math.floor(statSum * this.level * 6 / 100) +
-			(Math.floor(awakeningSum) * Math.floor((this.level * 4) / 100 + 2)));
+		const combatPower = Math.floor(Math.floor(statSum * this.level * 6 / 100) + (Math.floor(awakeningSum) * Math.floor((this.level * 4) / 100 + 2)));
 		return this.battle.clampIntRange(combatPower, 0, 10000);
 	}
 	*/
-		getWeight(): number {
-		// canonical current weight is stored in hg
+		getWeight(): number { // canonical current weight is stored in hg
 		let hg = this.weighthg;
 		if (hg < 1) hg = 1; // 0.1kg minimum (1 hg = 0.1 kg)
 		return hg / 10;
 	}
-	getHeightm(): number {
-		// canonical current height is stored in mm
+	getHeightm(): number { // canonical current height is stored in mm
 		let mm = this.heightmm;
 		if (mm < 10) mm = 10; // 0.01m minimum
 		return mm / 1000;
@@ -617,10 +560,7 @@ export class Pokemon {
 		}
 		return side.active[targetLoc - 1];
 	}
-	/**
-	 * Returns a relative location: 1-3, positive for foe, and negative for ally.
-	 * Use `getAtLoc` to reverse.
-	 */
+	// Returns a relative location: 1-3, positive for foe, and negative for ally. Use `getAtLoc` to reverse.
 	getLocOf(target: Pokemon) {
 		const positionOffset = Math.floor(target.side.n / 2) * target.side.active.length;
 		const position = target.position + positionOffset + 1;
@@ -661,9 +601,7 @@ export class Pokemon {
 					!(move.id.startsWith('solarb') && ['sunnyday', 'desolateland'].includes(this.effectiveWeather())) &&
 					!(move.id === 'electroshot' && ['raindance', 'primordialsea'].includes(this.effectiveWeather())) &&
 					!(this.hasItem('powerherb') && move.id !== 'skydrop');
-				if (!isCharging && !(move.id === 'pursuit' && (target.beingCalledBack || target.switchFlag))) {
-					target = this.battle.priorityEvent('RedirectTarget', this, this, move, target);
-				}
+				if (!isCharging && !(move.id === 'pursuit' && (target.beingCalledBack || target.switchFlag))) { target = this.battle.priorityEvent('RedirectTarget', this, this, move, target); }
 			}
 			if (move.smartTarget) {
 				targets = this.getSmartTargets(target, move);
@@ -746,11 +684,7 @@ export class Pokemon {
 		if (damagedBy.length === 0) return undefined;
 		return damagedBy[damagedBy.length - 1];
 	}
-	/**
-	 * This refers to multi-turn moves like SolarBeam and Outrage and
-	 * Sky Drop, which remove all choice (no dynamax, switching, etc).
-	 * Don't use it for "soft locks" like Choice Band.
-	 */
+	// This refers to multi-turn moves like SolarBeam and Outrage and Sky Drop, which remove all choice (no dynamax, switching, etc). Don't use it for "soft locks" like Choice Band.
 	getLockedMove(): ID | null {
 		const lockedMove = this.battle.runEvent('LockMove', this);
 		return (lockedMove === true) ? null : lockedMove;
@@ -888,7 +822,6 @@ export class Pokemon {
 			if (this.canUltraBurst) data.canUltraBurst = true;
 			const canZMove = this.battle.actions.canZMove(this);
 			if (canZMove) data.canZMove = canZMove;
-
 			if (this.getDynamaxRequest()) data.canDynamax = true;
 			if (data.canDynamax || this.volatiles['dynamax']) data.maxMoves = this.getDynamaxRequest(true);
 			if (this.canTerastallize) data.canTerastallize = this.canTerastallize;
@@ -1099,7 +1032,6 @@ export class Pokemon {
 			if (pokemon.ability2) { this.setAbility(pokemon.ability2, this, null, true, true, 2); } 
 			else { this.ability2 = '' as ID; }
 		}
-
 		// Change formes based on held items (for Transform)
 		// Only ever relevant in Generation 4 since Generation 3 didn't have item-based forme changes
 		if (this.battle.gen === 4) {
@@ -1128,12 +1060,10 @@ export class Pokemon {
 		const species = this.battle.runEvent('ModifySpecies', this, null, source, rawSpecies);
 		if (!species) return null;
 		this.species = species;
-
 		this.setType(species.types, true);
 		this.apparentType = rawSpecies.types.join('/');
 		this.addedType = species.addedType || '';
 		this.knownType = true;
-		
 		// Apply size modifier to weight
 		const sizeWeightModifier = species.sizeWeightModifier || 0.1;
 		let sizeTiers = 0;
@@ -1143,7 +1073,6 @@ export class Pokemon {
 		else if (size === 'L') sizeTiers = 1;
 		else if (size === 'XL') sizeTiers = 2;
 		this.weighthg = Math.round(species.weighthg * (1 + (sizeTiers * sizeWeightModifier)));
-
 		// Apply size modifier to height
 		const sizeHeightModifier = (species as any).sizeHeightModifier ?? 0.1;
 		let sizeTiersHeight = 0;
@@ -1212,22 +1141,16 @@ export class Pokemon {
 						this.ability1 = '' as ID;
 						this.ability2 = '' as ID;
 						this.battle.add('-primal', this.illusion, species.requiredItem);
-					} else {
-						this.battle.add('-primal', this, species.requiredItem);
-					}
+					} else { this.battle.add('-primal', this, species.requiredItem); }
 				} else {
 					this.battle.add('-mega', this, apparentSpecies, species.requiredItem);
 					this.moveThisTurnResult = true; // Mega Evolution counts as an action for Truant
 				}
 				this.formeRegression = true;
-			} else if (source.effectType === 'Status') {
-				// Shaymin-Sky -> Shaymin
-				this.battle.add('-formechange', this, species.name, message);
-			}
+			} else if (source.effectType === 'Status') { this.battle.add('-formechange', this, species.name, message); }
 		} else {
-			if (source?.effectType === 'Ability') {
-				this.battle.add('-formechange', this, species.name, message, `[from] ability: ${source.name}`);
-			} else { this.battle.add('-formechange', this, this.illusion ? this.illusion.species.name : species.name, message); }
+			if (source?.effectType === 'Ability') { this.battle.add('-formechange', this, species.name, message, `[from] ability: ${source.name}`); } 
+			else { this.battle.add('-formechange', this, this.illusion ? this.illusion.species.name : species.name, message); }
 		}
 		if (isPermanent && (!source || !['disguise', 'iceface'].includes(source.id))) {
 			if (this.illusion && source) {
@@ -1300,9 +1223,7 @@ export class Pokemon {
 		this.hpType = this.baseHpType;
 		this.hpPower = this.baseHpPower;
 		if (this.canTerastallize === false) this.canTerastallize = this.teraType;
-		for (const i in this.volatiles) {
-			if (this.volatiles[i].linkedStatus) { this.removeLinkedVolatiles(this.volatiles[i].linkedStatus, this.volatiles[i].linkedPokemon); }
-		}
+		for (const i in this.volatiles) { if (this.volatiles[i].linkedStatus) { this.removeLinkedVolatiles(this.volatiles[i].linkedStatus, this.volatiles[i].linkedPokemon); } }
 		if (this.species.name === 'Eternatus-Eternamax' && this.volatiles['dynamax']) { this.volatiles = { dynamax: this.volatiles['dynamax'] }; } 
 		else { this.volatiles = {}; }
 		if (includeSwitchFlags) {
@@ -1336,7 +1257,6 @@ export class Pokemon {
 	 * This function only puts the pokemon in the faint queue;
 	 * actually setting of this.fainted comes later when the
 	 * faint queue is resolved.
-	 *
 	 * Returns the amount of damage actually dealt
 	 */
 	faint(source: Pokemon | null = null, effect: Effect | null = null) {
@@ -1372,9 +1292,7 @@ export class Pokemon {
 	hasMove(moveid: string) {
 		moveid = toID(moveid);
 		if (moveid.substr(0, 11) === 'hiddenpower') moveid = 'hiddenpower';
-		for (const moveSlot of this.moveSlots) {
-			if (moveid === moveSlot.id) { return moveid; }
-		}
+		for (const moveSlot of this.moveSlots) { if (moveid === moveSlot.id) { return moveid; } }
 		return false;
 	}
 	disableMove(moveid: string, isHidden?: boolean, sourceEffect?: Effect) {
@@ -1444,9 +1362,8 @@ export class Pokemon {
 		}
 		if (!source) source = this;
 		if (this.status === status.id) {
-			if ((sourceEffect as Move)?.status === this.status) {
-				this.battle.add('-fail', this, this.status);
-			} else if ((sourceEffect as Move)?.status) {
+			if ((sourceEffect as Move)?.status === this.status) { this.battle.add('-fail', this, this.status); } 
+			else if ((sourceEffect as Move)?.status) {
 				this.battle.add('-fail', source);
 				this.battle.attrLastMove('[still]');
 			}
@@ -1501,7 +1418,6 @@ export class Pokemon {
 	eatItem(force?: boolean, source?: Pokemon, sourceEffect?: Effect) {
 		if (!this.item) return false;
 		if ((!this.hp && this.item !== 'jabocaberry' && this.item !== 'rowapberry') || !this.isActive) return false;
-
 		if (!sourceEffect && this.battle.effect) sourceEffect = this.battle.effect;
 		if (!source && this.battle.event?.target) source = this.battle.event.target;
 		const item = this.getItem();
@@ -1628,25 +1544,19 @@ export class Pokemon {
 		this[abilityKey] = ability.id;
 		this[abilityStateKey] = this.battle.initEffectState({ id: ability.id, target: this });
 		if (sourceEffect && !isFromFormeChange && !isTransform) {
-	// Tell the client which ability slot changed (needed for ISL ability sets)
-	const slotTag = slot === 2 ? '[slot]2' : null;
+		// Tell the client which ability slot changed (needed for ISL ability sets)
+		const slotTag = slot === 2 ? '[slot]2' : null;
 
-	if (source) {
-		if (slotTag) {
-			this.battle.add('-ability', this, ability.name, oldAbility.name, slotTag, `[from] ${sourceEffect.fullname}`, `[of] ${source}`);
+		if (source) {
+			if (slotTag) { this.battle.add('-ability', this, ability.name, oldAbility.name, slotTag, `[from] ${sourceEffect.fullname}`, `[of] ${source}`); } 
+			else { this.battle.add('-ability', this, ability.name, oldAbility.name, `[from] ${sourceEffect.fullname}`, `[of] ${source}`); }
 		} else {
-			this.battle.add('-ability', this, ability.name, oldAbility.name, `[from] ${sourceEffect.fullname}`, `[of] ${source}`);
-		}
-	} else {
-		if (slotTag) {
-			this.battle.add('-ability', this, ability.name, oldAbility.name, slotTag, `[from] ${sourceEffect.fullname}`);
-		} else {
-			this.battle.add('-ability', this, ability.name, oldAbility.name, `[from] ${sourceEffect.fullname}`);
+			if (slotTag) { this.battle.add('-ability', this, ability.name, oldAbility.name, slotTag, `[from] ${sourceEffect.fullname}`); } 
+			else { this.battle.add('-ability', this, ability.name, oldAbility.name, `[from] ${sourceEffect.fullname}`); }
 		}
 	}
-}
-		if (ability.id && this.battle.gen > 3 && (!isTransform || oldAbility.id !== ability.id || this.battle.gen <= 4)) { this.battle.singleEvent('Start', ability, this[abilityStateKey], this, source); }
-		return oldAbility.id;
+	if (ability.id && this.battle.gen > 3 && (!isTransform || oldAbility.id !== ability.id || this.battle.gen <= 4)) { this.battle.singleEvent('Start', ability, this[abilityStateKey], this, source); }
+	return oldAbility.id;
 	}
 	getAbility(slot: 1 | 2 = 1) {
 		const abilityKey = slot === 1 ? 'ability1' : 'ability2';
@@ -1794,9 +1704,7 @@ export class Pokemon {
 			// No Pokemon should be able to have Stellar as a base type
 			if (typeof newType === 'string' ? newType === 'Stellar' : newType.includes('Stellar')) return false;
 			// First type of Arceus, Silvally cannot be normally changed
-			if ((this.battle.gen >= 5 && (this.species.num === 493 || this.species.num === 773)) || (this.battle.gen === 4 && this.hasAbility('multitype'))) {
-				return false;
-			}
+			if ((this.battle.gen >= 5 && (this.species.num === 493 || this.species.num === 773)) || (this.battle.gen === 4 && this.hasAbility('multitype'))) { return false; }
 			// Terastallized Pokemon cannot have their base type changed except via forme change
 			if (this.terastallized) return false;
 		}
@@ -1861,9 +1769,8 @@ export class Pokemon {
 	}
 	runEffectiveness(move: ActiveMove) {
 		let totalTypeMod = 0;
-		if (this.terastallized && move.type === 'Stellar') {
-			totalTypeMod = 1;
-		} else {
+		if (this.terastallized && move.type === 'Stellar') { totalTypeMod = 1; } 
+		else {
 			const moveTypes = [move.type];
 			if (move.type2 && move.type2 !== move.type) moveTypes.push(move.type2);
 			for (const attackingType of moveTypes) {

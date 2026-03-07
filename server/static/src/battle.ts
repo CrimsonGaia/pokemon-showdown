@@ -2617,6 +2617,24 @@ export class Battle {
 			this.log(args, kwArgs);
 			break;
 		}
+		case '-unterastallize': {
+			const poke = this.getPokemon(args[1])!;
+			// args[2] is usually the previous tera type, but we don't really need it to revert visuals
+			// const prevType = Dex.types.get(args[2]).name;
+			// Undo the visible/state changes made in -terastallize
+			poke.terastallized = '';
+			// IMPORTANT: do NOT clear poke.teraType permanently — that's the mon's tera type
+			// (your request-side data uses teraType to re-enable tera later)
+			// So leave poke.teraType as-is.
+			// Remove the ", tera:Type" tag you appended to details/searchid in -terastallize
+			poke.details = poke.details.replace(/, tera:[^,]+/i, '');
+			poke.searchid = poke.searchid.replace(/, tera:[^,]+/i, '');
+			// Revert the sprite and refresh the statbar
+			this.scene.animTransform(poke, true);
+			this.scene.resetStatbar(poke);
+			this.log(args, kwArgs);
+			break;
+			}
 		case '-start': {
 			let poke = this.getPokemon(args[1])!;
 			let effect = Dex.getEffect(args[2]);
@@ -3806,7 +3824,6 @@ export class Battle {
 			if (args[1] === '-endterastallize') {
 				let poke = this.getPokemon(args[2])!;
 				poke.removeVolatile('terastallize' as ID);
-				poke.teraType = '';
 				poke.terastallized = '';
 				poke.details = poke.details.replace(/, tera:[a-z]+/i, '');
 				poke.searchid = poke.searchid.replace(/, tera:[a-z]+/i, '');
@@ -3822,7 +3839,6 @@ export class Battle {
 		}
 		}
 	}
-
 	run(str: string, preempt?: boolean) {
 		if (!preempt && this.preemptStepQueue.length && str === this.preemptStepQueue[0]) {
 			this.preemptStepQueue.shift();
@@ -3837,7 +3853,6 @@ export class Battle {
 			this.activeMoveIsSpread = null;
 			return;
 		}
-
 		// parse the next line if it's a minor: runMinor needs it parsed to determine when to merge minors
 		let nextArgs: Args = [''];
 		let nextKwargs: KWArgs = {};
@@ -3845,35 +3860,25 @@ export class Battle {
 		if (nextLine.startsWith('|-')) {
 			({ args: nextArgs, kwArgs: nextKwargs } = BattleTextParser.parseBattleLine(nextLine));
 		}
-
 		if (this.debug) {
-			if (args[0].startsWith('-') || args[0] === 'detailschange') {
-				this.runMinor(args, kwArgs, nextArgs, nextKwargs);
-			} else {
-				this.runMajor(args, kwArgs, preempt);
-			}
+			if (args[0].startsWith('-') || args[0] === 'detailschange') { this.runMinor(args, kwArgs, nextArgs, nextKwargs); } 
+			else { this.runMajor(args, kwArgs, preempt); }
 		} else {
 			try {
-				if (args[0].startsWith('-') || args[0] === 'detailschange') {
-					this.runMinor(args, kwArgs, nextArgs, nextKwargs);
-				} else {
-					this.runMajor(args, kwArgs, preempt);
-				}
+				if (args[0].startsWith('-') || args[0] === 'detailschange') { this.runMinor(args, kwArgs, nextArgs, nextKwargs); } 
+				else { this.runMajor(args, kwArgs, preempt); }
 			} catch (err: any) {
 				this.log(['majorerror', 'Error parsing: ' + str + ' (' + err + ')']);
 				if (err.stack) {
 					let stack = ('' + err.stack).split('\n');
 					for (const line of stack) {
-						if (/\brun\b/.test(line)) {
-							break;
-						}
+						if (/\brun\b/.test(line)) { break; }
 						this.log(['error', line]);
 					}
 				}
 				this.subscription?.('error');
 			}
 		}
-
 		if (nextLine.startsWith('|start') || args[0] === 'teampreview') {
 			if (this.turn === -1) {
 				this.turn = 0;
@@ -3888,7 +3893,6 @@ export class Battle {
 		}
 		return false;
 	}
-
 	pause() {
 		this.paused = true;
 		this.scene.pause();
@@ -3898,8 +3902,7 @@ export class Battle {
 	 * Properties relevant to battle playback, for replay UI implementers:
 	 * - `ended`: has the game ended in a win/loss?
 	 * - `atQueueEnd`: is animation caught up to the end of the battle queue, waiting for more input?
-	 * - `seeking`: are we trying to skip to a specific turn
-	 * - `turn`: what turn are we currently on? `-1` if we haven't started yet, `0` at team preview
+	 * - `seeking`: are we trying to skip to a specific turn `turn`: what turn are we currently on? `-1` if we haven't started yet, `0` at team preview
 	 * - `paused`: are we playing at all?
 	 */
 	play() {
@@ -3909,24 +3912,18 @@ export class Battle {
 		this.nextStep();
 		this.subscription?.('playing');
 	}
-	skipTurn() {
-		this.seekBy(1);
-	}
+	skipTurn() { this.seekBy(1); }
 	seekBy(deltaTurn: number) {
-		if (this.seeking === Infinity && deltaTurn < 0) {
-			return this.seekTurn(this.turn + 1);
-		}
+		if (this.seeking === Infinity && deltaTurn < 0) { return this.seekTurn(this.turn + 1); }
 		this.seekTurn((this.seeking ?? this.turn) + deltaTurn);
 	}
 	seekTurn(turn: number, forceReset?: boolean) {
 		if (isNaN(turn)) return;
 		turn = Math.max(Math.floor(turn), 0);
-
 		if (this.seeking !== null && turn > this.turn && !forceReset) {
 			this.seeking = turn;
 			return;
 		}
-
 		if (turn === 0) {
 			this.seeking = null;
 			this.resetStep();
@@ -3934,9 +3931,7 @@ export class Battle {
 			if (this.paused) this.subscription?.('paused');
 			return;
 		}
-
 		this.seeking = turn;
-
 		if (turn <= this.turn || forceReset) {
 			this.scene.animationOff();
 			this.resetStep();
@@ -3960,75 +3955,48 @@ export class Battle {
 	}
 	nextStep() {
 		if (!this.shouldStep()) return;
-
 		let time = Date.now();
 		this.scene.startAnimations();
 		let animations = undefined;
-
 		let interruptionCount: number;
-		do {
-			// modified in this.run() but idk how to tell TS that
+		do { // modified in this.run() but idk how to tell TS that
 			this.waitForAnimations = true as this['waitForAnimations'];
 			if (this.currentStep >= this.stepQueue.length) {
 				this.atQueueEnd = true;
 				if (!this.ended && this.isReplay) this.prematureEnd();
 				this.stopSeeking();
-				if (this.ended) {
-					this.scene.updateBgm();
-				}
+				if (this.ended) { this.scene.updateBgm(); }
 				this.subscription?.('atqueueend');
 				return;
 			}
-
 			this.run(this.stepQueue[this.currentStep]);
 			this.currentStep++;
-			if (this.waitForAnimations === true) {
-				animations = this.scene.finishAnimations();
-			} else if (this.waitForAnimations === 'simult') {
-				this.scene.timeOffset = 0;
-			}
-
+			if (this.waitForAnimations === true) { animations = this.scene.finishAnimations(); } 
+			else if (this.waitForAnimations === 'simult') { this.scene.timeOffset = 0; }
 			if (Date.now() - time > 300) {
 				interruptionCount = this.scene.interruptionCount;
-				setTimeout(() => {
-					if (interruptionCount === this.scene.interruptionCount) {
-						this.nextStep();
-					}
-				}, 1);
+				setTimeout(() => { if (interruptionCount === this.scene.interruptionCount) { this.nextStep(); } }, 1);
 				return;
 			}
 		} while (!animations && this.shouldStep());
-
 		if (this.paused && this.turn >= 0 && this.seeking === null) {
 			// initial Play button, team preview
 			this.scene.pause();
 			return;
 		}
-
 		if (!animations) return;
-
 		interruptionCount = this.scene.interruptionCount;
-		animations.done(() => {
-			if (interruptionCount === this.scene.interruptionCount) {
-				this.nextStep();
-			}
-		});
+		animations.done(() => { if (interruptionCount === this.scene.interruptionCount) { this.nextStep(); } });
 	}
-
 	setQueue(queue: string[]) {
 		this.stepQueue = queue;
 		this.resetStep();
 	}
-
-	setMute(mute: boolean) {
-		this.scene.setMute(mute);
-	}
+	setMute(mute: boolean) { this.scene.setMute(mute); }
 }
-
 declare const require: any;
 declare const global: any;
-if (typeof require === 'function') {
-	// in Node
+if (typeof require === 'function') { // in Node
 	global.Battle = Battle;
 	global.Pokemon = Pokemon;
 }

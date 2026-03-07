@@ -1,15 +1,11 @@
 /**
  * Connection library
- *
  * @author Guangcong Luo <guangcongluo@gmail.com>
  * @license MIT
  */
-
 import { Config, PS } from "./client-main";
-
 declare const SockJS: any;
 declare const POKEMON_SHOWDOWN_TESTCLIENT_KEY: string | undefined;
-
 export class PSConnection {
 	socket: WebSocket | null = null;
 	connected = false;
@@ -22,47 +18,29 @@ export class PSConnection {
 
 	constructor() {
 		const loading = PSStorage.init();
-		if (loading) {
-			loading.then(() => {
-				this.initConnection();
-			});
-		} else {
-			this.initConnection();
-		}
+		if (loading) { loading.then(() => { this.initConnection(); }); } 
+		else { this.initConnection(); }
 	}
-
-	initConnection() {
-		if (!this.tryConnectInWorker()) this.directConnect();
-	}
-
+	initConnection() { if (!this.tryConnectInWorker()) this.directConnect(); }
 	canReconnect() {
 		const uptime = Date.now() - PS.startTime;
 		if (uptime > 24 * 60 * 60 * 1000) {
-			PS.confirm(`It's been over a day since you first connected. Please refresh.`, {
-				okButton: 'Refresh',
-			}).then(confirmed => {
-				if (confirmed) PS.room?.send(`/refresh`);
-			});
+			PS.confirm(`It's been over a day since you first connected. Please refresh.`, { okButton: 'Refresh', }).then(confirmed => { if (confirmed) PS.room?.send(`/refresh`); });
 			return false;
 		}
 		return this.shouldReconnect;
 	}
-
 	tryConnectInWorker(): boolean {
 		if (this.socket) return false; // must be one or the other
 		if (this.connected) return true;
-
 		if (this.worker) {
 			this.worker.postMessage({ type: 'connect', server: PS.server });
 			return true;
 		}
-
 		try {
 			const worker = new Worker('/js/client-connection-worker.js');
 			this.worker = worker;
-
 			worker.postMessage({ type: 'connect', server: PS.server });
-
 			worker.onmessage = event => {
 				const { type, data } = event.data;
 				switch (type) {
@@ -88,13 +66,11 @@ export class PSConnection {
 					break;
 				}
 			};
-
 			worker.onerror = (ev: ErrorEvent) => {
 				console.warn('Worker connection error:', ev);
 				this.worker = null;
 				this.directConnect(); // fallback
 			};
-
 			return true;
 		} catch {
 			console.warn('Worker connection failed, falling back to regular connection.');
@@ -102,22 +78,14 @@ export class PSConnection {
 			return false;
 		}
 	}
-
 	directConnect() {
 		if (this.worker) return; // must be one or the other
-
 		const server = PS.server;
 		const port = server.protocol === 'https' ? `:${server.port}` : `:${server.httpport!}`;
 		const url = `${server.protocol}://${server.host}${port}${server.prefix}`;
-
-		try {
-			this.socket = new SockJS(url, [], { timeout: 5 * 60 * 1000 });
-		} catch {
-			this.socket = new WebSocket(url.replace('http', 'ws') + '/websocket');
-		}
-
+		try { this.socket = new SockJS(url, [], { timeout: 5 * 60 * 1000 }); } 
+		catch { this.socket = new WebSocket(url.replace('http', 'ws') + '/websocket'); }
 		const socket = this.socket!;
-
 		socket.onopen = () => {
 			console.log('\u2705 (CONNECTED)');
 			this.connected = true;
@@ -126,11 +94,7 @@ export class PSConnection {
 			this.queue = [];
 			PS.update();
 		};
-
-		socket.onmessage = (ev: MessageEvent) => {
-			PS.receive('' + ev.data);
-		};
-
+		socket.onmessage = (ev: MessageEvent) => { PS.receive('' + ev.data); };
 		socket.onclose = () => {
 			console.log('\u274C (DISCONNECTED)');
 			this.handleDisconnect();
@@ -144,7 +108,6 @@ export class PSConnection {
 			this.socket = null;
 			PS.update();
 		};
-
 		socket.onerror = (ev: Event) => {
 			PS.isOffline = true;
 			// no useful info to print from the event
@@ -152,7 +115,6 @@ export class PSConnection {
 			PS.update();
 		};
 	}
-
 	private handleDisconnect() {
 		this.connected = false;
 		PS.isOffline = true;
@@ -164,11 +126,9 @@ export class PSConnection {
 		this.retryConnection();
 		PS.update();
 	}
-
 	private retryConnection() {
 		if (!this.canReconnect()) return;
 		if (this.reconnectTimer) return;
-
 		this.reconnectTimer = setTimeout(() => {
 			this.reconnectTimer = null;
 			if (!this.connected && this.canReconnect()) {
@@ -178,7 +138,6 @@ export class PSConnection {
 			PS.update();
 		}, this.reconnectDelay);
 	}
-
 	disconnect() {
 		this.shouldReconnect = false;
 		this.socket?.close();
@@ -192,31 +151,22 @@ export class PSConnection {
 		if (this.worker && this.tryConnectInWorker()) return;
 		this.directConnect();
 	}
-
 	send(msg: string) {
 		if (!this.connected) {
 			this.queue.push(msg);
 			return;
 		}
-		if (this.worker) {
-			this.worker.postMessage({ type: 'send', data: msg });
-		} else if (this.socket) {
-			this.socket.send(msg);
-		}
+		if (this.worker) { this.worker.postMessage({ type: 'send', data: msg }); } 
+		else if (this.socket) { this.socket.send(msg); }
 	}
-
 	static connect() {
 		if (PS.connection?.socket) return;
 		PS.isOffline = false;
-		if (!PS.connection) {
-			PS.connection = new PSConnection();
-		} else {
-			PS.connection.reconnect();
-		}
+		if (!PS.connection) { PS.connection = new PSConnection(); } 
+		else { PS.connection.reconnect(); }
 		PS.prefs.doAutojoin();
 	}
 }
-
 export class PSStorage {
 	static frame: WindowProxy | null = null;
 	static requests: Record<string, (data: any) => void> | null = null;
@@ -229,23 +179,19 @@ export class PSStorage {
 			if (this.loaded === true) return;
 			return this.loaded;
 		}
-		if (Config.testclient) {
-			return;
-		} else if (`${location.protocol}//${location.hostname}` === PSStorage.origin) {
+		if (Config.testclient) { return; } 
+		else if (`${location.protocol}//${location.hostname}` === PSStorage.origin) {
 			// Same origin, everything can be kept as default
 			Config.server ||= Config.defaultserver;
 			return;
 		}
-
 		// Cross-origin
 		if (!('postMessage' in window)) {
 			// browser does not support cross-document messaging
 			PS.alert("Sorry, psim connections are unsupported by your browser.");
 			return;
 		}
-
 		window.addEventListener('message', this.onMessage);
-
 		if (document.location.hostname !== Config.routes.client) {
 			const iframe = document.createElement('iframe');
 			iframe.src = 'https://' + Config.routes.client + '/crossdomain.php?host=' +
@@ -256,24 +202,18 @@ export class PSStorage {
 			document.body.appendChild(iframe);
 		} else {
 			Config.server ||= Config.defaultserver;
-			$(
-				`<iframe src="https://${Config.routes.client}/crossprotocol.html?v1.2" style="display: none;"></iframe>`
-			).appendTo('body');
+			$(`<iframe src="https://${Config.routes.client}/crossprotocol.html?v1.2" style="display: none;"></iframe>`).appendTo('body');
 			setTimeout(() => {
 				// HTTPS may be blocked
 				// yes, this happens, blame Avast! and BitDefender and other antiviruses
 				// that feel a need to MitM HTTPS poorly
 			}, 2000);
 		}
-		this.loaded = new Promise(resolve => {
-			this.loader = resolve;
-		});
+		this.loaded = new Promise(resolve => { this.loader = resolve; });
 		return this.loaded;
 	}
-
 	static onMessage = (e: MessageEvent) => {
 		if (e.origin !== PSStorage.origin) return;
-
 		this.frame = e.source as WindowProxy;
 		const data = e.data;
 		// console.log(`top recv: ${data}`);
@@ -294,35 +234,21 @@ export class PSStorage {
 			PS.prefs.save = function () {
 				const prefData = JSON.stringify(PS.prefs.storage);
 				PSStorage.postCrossOriginMessage('P' + prefData);
-
-				// in Safari, cross-origin local storage is apparently treated as session
-				// storage, so mirror the storage in the current origin just in case
-				try {
-					localStorage.setItem('showdown_prefs', prefData);
-				} catch {}
+				// in Safari, cross-origin local storage is apparently treated as session storage, so mirror the storage in the current origin just in case
+				try { localStorage.setItem('showdown_prefs', prefData); } catch {}
 			};
 			PS.prefs.update(null);
 			break;
 		case 't':
 			if (window.nodewebkit) return;
 			let oldTeams;
-			if (PS.teams.list.length) {
-				// Teams are still stored in the old location; merge them with the
-				// new teams.
-				oldTeams = PS.teams.list;
-			}
+			if (PS.teams.list.length) { oldTeams = PS.teams.list; } // Teams are still stored in the old location; merge them with the new teams.
 			PS.teams.unpackAll(data.substr(1));
 			PS.teams.save = function () {
 				const packedTeams = PS.teams.packAll(PS.teams.list);
 				PSStorage.postCrossOriginMessage('T' + packedTeams);
-
-				// in Safari, cross-origin local storage is apparently treated as session
-				// storage, so mirror the storage in the current origin just in case
-				if (document.location.hostname === Config.routes.client) {
-					try {
-						localStorage.setItem('showdown_teams_local', packedTeams);
-					} catch {}
-				}
+				// in Safari, cross-origin local storage is apparently treated as session storage, so mirror the storage in the current origin just in case
+				if (document.location.hostname === Config.routes.client) { try { localStorage.setItem('showdown_teams_local', packedTeams); } catch {} }
 				PS.teams.update('team');
 			};
 			if (oldTeams) {
@@ -330,26 +256,15 @@ export class PSStorage {
 				PS.teams.save();
 				localStorage.removeItem('showdown_teams');
 			}
-			if (data === 'tnull' && !PS.teams.list.length) {
-				PS.teams.unpackAll(localStorage.getItem('showdown_teams_local'));
-			}
+			if (data === 'tnull' && !PS.teams.list.length) { PS.teams.unpackAll(localStorage.getItem('showdown_teams_local')); }
 			break;
 		case 'a':
-			if (data === 'a0') {
-				PS.alert("Your browser doesn't support third-party cookies. Some things might not work correctly.");
-			}
+			if (data === 'a0') { PS.alert("Your browser doesn't support third-party cookies. Some things might not work correctly."); }
 			if (!window.nodewebkit) {
 				// for whatever reason, Node-Webkit doesn't let us make remote
-				// Ajax requests or something. Oh well, making them direct
-				// isn't a problem, either.
-
-				try {
-					// I really hope this is a Chrome bug that this can fail
-					PSStorage.frame!.postMessage("", PSStorage.origin);
-				} catch {
-					return;
-				}
-
+				// Ajax requests or something. Oh well, making them direct isn't a problem, either.
+				try { PSStorage.frame!.postMessage("", PSStorage.origin); } // I really hope this is a Chrome bug that this can fail
+				catch { return; }
 				PSStorage.requests = {};
 			}
 			PSStorage.loaded = true;
@@ -375,17 +290,12 @@ export class PSStorage {
 		});
 	}
 	static postCrossOriginMessage = function (data: string) {
-		try {
-			// I really hope this is a Chrome bug that this can fail
-			return PSStorage.frame!.postMessage(data, PSStorage.origin);
-		} catch {
-		}
+		try { return PSStorage.frame!.postMessage(data, PSStorage.origin); } // I really hope this is a Chrome bug that this can fail
+		catch { }
 		return false;
 	};
 };
-
 PSConnection.connect();
-
 export const PSLoginServer = new class {
 	rawQuery(act: string, data: PostData): Promise<string | null> {
 		// commenting out because for some reason this is working in Chrome????
@@ -397,28 +307,13 @@ export const PSLoginServer = new class {
 		let url = '/~~' + PS.server.id + '/action.php';
 		if (location.pathname.endsWith('.html')) {
 			url = 'https://' + Config.routes.client + url;
-			if (typeof POKEMON_SHOWDOWN_TESTCLIENT_KEY === 'string') {
-				data.sid = POKEMON_SHOWDOWN_TESTCLIENT_KEY.replace(/%2C/g, ',');
-			}
+			if (typeof POKEMON_SHOWDOWN_TESTCLIENT_KEY === 'string') { data.sid = POKEMON_SHOWDOWN_TESTCLIENT_KEY.replace(/%2C/g, ','); }
 		}
-		return PSStorage.request('POST', url, data) || Net(url).get({ method: 'POST', body: data }).then(
-			res => res ?? null
-		).catch(
-			() => null
-		);
+		return PSStorage.request('POST', url, data) || Net(url).get({ method: 'POST', body: data }).then(res => res ?? null).catch(() => null);
 	}
-	query(act: string, data: PostData = {}): Promise<{ [k: string]: any } | null> {
-		return this.rawQuery(act, data).then(
-			res => res ? JSON.parse(res.slice(1)) : null
-		).catch(
-			() => null
-		);
-	}
+	query(act: string, data: PostData = {}): Promise<{ [k: string]: any } | null> { return this.rawQuery(act, data).then(res => res ? JSON.parse(res.slice(1)) : null).catch(() => null); }
 };
-
-interface PostData {
-	[key: string]: string | number | boolean | null | undefined;
-}
+interface PostData { [key: string]: string | number | boolean | null | undefined; }
 interface NetRequestOptions {
 	method?: 'GET' | 'POST';
 	body?: string | PostData;
@@ -439,25 +334,18 @@ class HttpError extends Error {
 }
 class NetRequest {
 	uri: string;
-	constructor(uri: string) {
-		this.uri = uri;
-	}
-
+	constructor(uri: string) { this.uri = uri; }
 	/**
 	 * Makes a basic http/https request to the URI.
 	 * Returns the response data.
-	 *
 	 * Will throw if the response code isn't 200 OK.
-	 *
 	 * @param opts request opts
 	 */
 	get(opts: NetRequestOptions = {}): Promise<string> {
 		return new Promise((resolve, reject) => {
 			const xhr = new XMLHttpRequest();
 			let uri = this.uri;
-			if (opts.query) {
-				uri += (uri.includes('?') ? '&' : '?') + Net.encodeQuery(opts.query);
-			}
+			if (opts.query) { uri += (uri.includes('?') ? '&' : '?') + Net.encodeQuery(opts.query); }
 			xhr.open(opts.method || 'GET', uri);
 			xhr.onreadystatechange = function () {
 				const DONE = 4;
@@ -473,12 +361,9 @@ class NetRequest {
 			if (opts.body) {
 				xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 				xhr.send(Net.encodeQuery(opts.body));
-			} else {
-				xhr.send();
-			}
+			} else { xhr.send(); }
 		});
 	}
-
 	/**
 	 * Makes a http/https POST request to the given link.
 	 * @param opts request opts
@@ -499,15 +384,12 @@ class NetRequest {
 		});
 	}
 }
-
 export function Net(uri: string) {
 	if (uri.startsWith('/') && !uri.startsWith('//') && Net.defaultRoute) uri = Net.defaultRoute + uri;
 	if (uri.startsWith('//') && document.location.protocol === 'file:') uri = 'https:' + uri;
 	return new NetRequest(uri);
 }
-
 Net.defaultRoute = '';
-
 Net.encodeQuery = function (data: string | PostData): string {
 	if (typeof data === 'string') return data;
 	let urlencodedData = '';
@@ -520,21 +402,14 @@ Net.encodeQuery = function (data: string | PostData): string {
 	}
 	return urlencodedData;
 };
-
 Net.formData = function (form: HTMLFormElement): { [name: string]: string | boolean } {
 	// not technically all `HTMLInputElement`s but who wants to cast all these?
 	const elements = form.querySelectorAll<HTMLInputElement>('input[name], select[name], textarea[name]');
 	const out: { [name: string]: string | boolean } = {};
 	for (const element of elements) {
 		if (element.type === 'checkbox') {
-			out[element.name] = element.getAttribute('value') ? (
-				element.checked ? element.value : ''
-			) : (
-				!!element.checked
-			);
-		} else if (element.type !== 'radio' || element.checked) {
-			out[element.name] = element.value;
-		}
+			out[element.name] = element.getAttribute('value') ? (element.checked ? element.value : '') : (!!element.checked);
+		} else if (element.type !== 'radio' || element.checked) { out[element.name] = element.value; }
 	}
 	return out;
 };

@@ -117,7 +117,38 @@ var id=toID(entry[1]);
 entry[1]=tagMap[id]||this.capitalizeFirst(entry[1]);
 }
 if(type==='ability')entry[1]=this.dex.abilities.get(entry[1]).name;
-if(type==='tier'){
+if(type==='tier'){var _this$typedSearch3;
+if(((_this$typedSearch3=this.typedSearch)==null?void 0:_this$typedSearch3.formatType)==='indigostarstorm'){
+var raw=String(entry[1]).trim();
+var tierAliases={
+rega:'Reg α',
+regalpha:'Reg α',
+regd:'Reg Δ',
+regdelta:'Reg Δ',
+regi:'Reg ι',
+regiota:'Reg ι',
+regb:'Reg β',
+regbeta:'Reg β',
+regz:'Reg ζ',
+regzeta:'Reg ζ',
+regg:'Reg γ',
+reggamma:'Reg γ',
+regth:'Reg Θ',
+regtheta:'Reg Θ',
+rege:'Reg ε',
+regepsilon:'Reg ε',
+regl:'Reg λ',
+reglambda:'Reg λ',
+regp:'Reg ψ',
+regpsi:'Reg ψ',
+regn:'Reg ν',
+regnu:'Reg ν',
+regf:'Reg φ',
+regphi:'Reg φ'
+};
+var normalized=toID(raw);
+entry[1]=tierAliases[normalized]||raw;
+}else{
 var tierTable={
 uber:"Uber",
 caplc:"CAP LC",
@@ -125,6 +156,7 @@ capnfe:"CAP NFE"
 };
 entry[1]=toID(entry[1]);
 entry[1]=tierTable[entry[1]]||entry[1].toUpperCase();
+}
 }
 if(!this.filters)this.filters=[];
 this.results=null;for(var _i2=0,_this$filters2=
@@ -195,18 +227,39 @@ filterLabel=function filterLabel(filterType){
 if(this.typedSearch&&this.typedSearch.searchType!==filterType){return'Filter';}
 return null;
 };_proto.
-illegalLabel=function illegalLabel(id){var _this$typedSearch3;return((_this$typedSearch3=this.typedSearch)==null||(_this$typedSearch3=_this$typedSearch3.illegalReasons)==null?void 0:_this$typedSearch3[id])||null;};_proto.
-getTier=function getTier(species){var _this$typedSearch4;return((_this$typedSearch4=this.typedSearch)==null?void 0:_this$typedSearch4.getTier(species))||'';};_proto.
-textSearch=function textSearch(query){var _this$typedSearch5,_this$typedSearch6,_this$typedSearch7,_this=this;
+illegalLabel=function illegalLabel(id){var _this$typedSearch4,_this$typedSearch5;
+if(((_this$typedSearch4=this.typedSearch)==null?void 0:_this$typedSearch4.searchType)==='move'){
+var moveSearch=this.typedSearch;
+var dex=moveSearch.dex;
+var species=moveSearch.species?dex.species.get(moveSearch.species):null;
+var infusibleSlots=species&&species.infusibleSlots||0;
+
+if(infusibleSlots){
+var infusibleMoves={
+acid:1,acidspray:1,appleacid:1,aquajet:1,aquaring:1,aromatherapy:1,aromaticmist:1,aurasphere:1,aurorabeam:1,belch:1,boneclub:1,bonerush:1,
+bonemerang:1,brine:1,bubble:1,bubblebeam:1,bubbletrap:1,burningjealousy:1,chargebeam:1,chistrike:1,confide:1,dragonbreath:1,dragoncheer:1,
+dragonrage:1,eggbomb:1,extrasensory:1,faketears:1,firepledge:1,floralhealing:1,grasspledge:1,gravapple:1,gunkshot:1,hex:1,lifedew:1,
+magicpowder:1,matchagotcha:1,mist:1,mistball:1,mistyexplosion:1,mudshot:1,poisongas:1,poisonpowder:1,pollenpuff:1,powdersnow:1,
+ragepowder:1,silverpowder:1,simplebeam:1,sleeppowder:1,sludge:1,sludgebomb:1,sludgewave:1,smog:1,soak:1,sparklingaria:1,spicyextract:1,
+stunspore:1,syrupbomb:1,toxic:1,venomdrench:1,waterpledge:1,worryseed:1
+};
+
+if(infusibleMoves[id])return null;
+}
+}
+return((_this$typedSearch5=this.typedSearch)==null||(_this$typedSearch5=_this$typedSearch5.illegalReasons)==null?void 0:_this$typedSearch5[id])||null;
+};_proto.
+getTier=function getTier(species){var _this$typedSearch6;return((_this$typedSearch6=this.typedSearch)==null?void 0:_this$typedSearch6.getTier(species))||'';};_proto.
+textSearch=function textSearch(query){var _this$typedSearch7,_this$typedSearch8,_this$typedSearch9,_this=this;
 
 if(this.typedSearch&&!this.typedSearch.baseResults){this.typedSearch.getResults(null,null);}
-if((_this$typedSearch5=this.typedSearch)!=null&&_this$typedSearch5.illegalReasons){console.log('[DEBUG] illegalReasons count:',Object.keys(this.typedSearch.illegalReasons).length);}
+if((_this$typedSearch7=this.typedSearch)!=null&&_this$typedSearch7.illegalReasons){console.log('[DEBUG] illegalReasons count:',Object.keys(this.typedSearch.illegalReasons).length);}
 
 query=toID(query);
 
 var offsetTable=typeof BattleSearchIndexOffset!=='undefined'&&BattleSearchIndexOffset?BattleSearchIndexOffset:[];
 this.exactMatch=false;
-var searchType=((_this$typedSearch6=this.typedSearch)==null?void 0:_this$typedSearch6.searchType)||'';
+var searchType=((_this$typedSearch8=this.typedSearch)==null?void 0:_this$typedSearch8.searchType)||'';
 
 
 
@@ -293,7 +346,7 @@ var nearMatch=false;
 
 var instafilter=null;
 var instafilterSort=[0,1,2,5,4,3,6,7,8];
-var illegal=(_this$typedSearch7=this.typedSearch)==null?void 0:_this$typedSearch7.illegalReasons;
+var illegal=(_this$typedSearch9=this.typedSearch)==null?void 0:_this$typedSearch9.illegalReasons;
 
 for(i=0;i<BattleSearchIndex.length;i++){
 if(!passType){
@@ -420,10 +473,10 @@ return true;
 }
 return this.results;
 };_proto.
-instafilter=function instafilter(searchType,fType,fId){var _this$typedSearch8;
+instafilter=function instafilter(searchType,fType,fId){var _this$typedSearch10;
 var buf=[];
 var illegalBuf=[];
-var illegal=(_this$typedSearch8=this.typedSearch)==null?void 0:_this$typedSearch8.illegalReasons;
+var illegal=(_this$typedSearch10=this.typedSearch)==null?void 0:_this$typedSearch10.illegalReasons;
 if(searchType==='pokemon'){
 switch(fType){
 case'type':
@@ -987,9 +1040,7 @@ var slices=table.formatSlices||{};
 
 
 if(this.formatType==='indigostarstorm'){
-var results=[];
-
-
+var pokemonRows=[];
 var getStage=function(sp){
 var stage=1;
 var cur=sp;
@@ -1002,67 +1053,82 @@ cur=prev;
 return stage;
 };
 var canEvolve=function(sp){return!!(sp.evos&&sp.evos.length);};
-
-
 var isBabyLeague=format.includes('babyleague');
 var isNFELeague=format.includes('nfeleague');
 var isSingleStage=format.includes('singlestageonly');
 var isSecondStageLeague=format.includes('2ndstageleague');for(var _i14=0,_this$getDefaultResul2=
-
 this.getDefaultResults();_i14<_this$getDefaultResul2.length;_i14++){var row=_this$getDefaultResul2[_i14];
-
-if(row[0]!=='pokemon'){
-if(row[0]==='header'||row[0]==='html'||row[0]==='sortpokemon'||row[0]==='sortmove'){
-results.push(row);
-}
-continue;
-}
-
+if(row[0]!=='pokemon')continue;
 var id=row[1];
 var species=this.dex.species.get(id);
-
-
 if(!species||!species.exists)continue;
-
-
 var base=this.dex.species.get(species.baseSpecies||species.name);
 if(species.num===0||base.num===0)continue;
-
-
 if(species.num>=13000){
-results.push(row);
+pokemonRows.push(species);
 continue;
 }
-
-
 var ns=species.isNonstandard||base.isNonstandard;
 var tier=this.getTier(species);
-
 if(ns==='CAP'||tier.startsWith('CAP'))continue;
 if(ns==='Pokestar'||id.startsWith('pokestar'))continue;
 if(ns==='Past'||ns==='Gigantamax')continue;
-
-
 if(isBabyLeague){
-
 if(!(getStage(species)===1&&canEvolve(species)))continue;
 }else if(isNFELeague){
-
 var stage=getStage(species);
 if(!(stage===1&&canEvolve(species)||stage===2&&canEvolve(species)))continue;
 }else if(isSingleStage){
-
 if(!(getStage(species)===1&&!canEvolve(species)))continue;
 }else if(isSecondStageLeague){
-
 var _stage=getStage(species);
 if(_stage>=3)continue;
 }
-
-
-results.push(row);
+pokemonRows.push(species);
 }
+var tierOrder=['Reg α','Reg Δ','Reg ι','Reg β','Reg ζ','Reg γ','Reg Θ','Reg ε','Reg λ','Reg ψ','Reg ν','Reg φ'];
+var currentTier=
+format.includes('babyleague')?'Reg α':
+format.includes('nfeleague')?'Reg Δ':
+format.includes('singlestageonly')?'Reg ι':
+format.includes('2ndstageleague')?'Reg β':
+format.includes('betaparadox')||format.includes('beta')&&format.includes('paradox')?'Reg ζ':
+format.includes('3rdstageleague')?'Reg γ':
+format.includes('norestricted')||format.includes('norestrictedspecial')?'Reg Θ':
+format.includes('restrictedparadox')?'Reg ε':
+format.includes('onerestricted')&&format.includes('mythical')?'Reg ν':
+format.includes('tworestricted')&&format.includes('mythical')?'Reg φ':
+format.includes('onerestricted')?'Reg λ':
+format.includes('tworestricted')?'Reg ψ':
+'Reg γ';
+var currentIndex=tierOrder.indexOf(currentTier);
+var tierRank=function(tier){
+var idx=tierOrder.indexOf(tier);
+if(idx<0)return-999;
+if(idx>currentIndex)return-999;
+return currentIndex-idx;
+};
 
+pokemonRows.sort(function(a,b){
+var tierA=_this4.getTier(a);
+var tierB=_this4.getTier(b);
+var rankDiff=tierRank(tierA)-tierRank(tierB);
+if(rankDiff)return rankDiff;
+
+if(a.num!==b.num)return a.num-b.num;
+return a.name.localeCompare(b.name);
+});
+
+var results=[];
+var lastTier='';for(var _i16=0;_i16<
+pokemonRows.length;_i16++){var _species=pokemonRows[_i16];
+var _tier=this.getTier(_species);
+if(_tier!==lastTier){
+results.push(['header',_tier]);
+lastTier=_tier;
+}
+results.push(['pokemon',_species.id]);
+}
 return results;
 }
 if(format==='ubers'||format==='uber'||format==='ubersuu'||format==='nationaldexdoubles'){tierSet=tierSet.slice(slices.Uber);}else
@@ -1184,8 +1250,8 @@ return tierSet;
 filter=function filter(row,filters){
 if(!filters)return true;
 if(row[0]!=='pokemon')return true;
-var species=this.dex.species.get(row[1]);for(var _i16=0;_i16<
-filters.length;_i16++){var _ref11=filters[_i16];var filterType=_ref11[0];var value=_ref11[1];
+var species=this.dex.species.get(row[1]);for(var _i18=0;_i18<
+filters.length;_i18++){var _ref11=filters[_i18];var filterType=_ref11[0];var value=_ref11[1];
 switch(filterType){
 case'type':if(species.types[0]!==value&&species.types[1]!==value)return false;
 break;
@@ -1300,8 +1366,8 @@ abilities.push(ability.id);
 
 var goodAbilities=[['header',"Abilities"]];
 var poorAbilities=[['header',"Situational Abilities"]];
-var badAbilities=[['header',"Unviable Abilities"]];for(var _i18=0,_abilities$sort$map2=
-abilities.sort().map(function(abil){return dex.abilities.get(abil);});_i18<_abilities$sort$map2.length;_i18++){var _ability=_abilities$sort$map2[_i18];
+var badAbilities=[['header',"Unviable Abilities"]];for(var _i20=0,_abilities$sort$map2=
+abilities.sort().map(function(abil){return dex.abilities.get(abil);});_i20<_abilities$sort$map2.length;_i20++){var _ability=_abilities$sort$map2[_i20];
 var rating=_ability.rating;
 if(_ability.id==='normalize')rating=3;
 if(rating>=3){goodAbilities.push(['ability',_ability.id]);}else
@@ -1317,8 +1383,8 @@ return abilitySet;
 filter=function filter(row,filters){
 if(!filters)return true;
 if(row[0]!=='ability')return true;
-var ability=this.dex.abilities.get(row[1]);for(var _i20=0;_i20<
-filters.length;_i20++){var _ref18=filters[_i20];var filterType=_ref18[0];var value=_ref18[1];switch(filterType){
+var ability=this.dex.abilities.get(row[1]);for(var _i22=0;_i22<
+filters.length;_i22++){var _ref18=filters[_i22];var filterType=_ref18[0];var value=_ref18[1];switch(filterType){
 case'pokemon':if(!Dex.hasAbility(this.dex.species.get(value),ability.name))return false;
 break;
 }
@@ -1381,8 +1447,8 @@ quarkdrive:'boosterenergy'
 
 
 
-}[toID((_this$set=this.set)==null?void 0:_this$set.ability)];for(var _i22=0;_i22<
-results.length;_i22++){var _item$itemUser;var row=results[_i22];
+}[toID((_this$set=this.set)==null?void 0:_this$set.ability)];for(var _i24=0;_i24<
+results.length;_i24++){var _item$itemUser;var row=results[_i24];
 if(row[0]!=='item')continue;
 var item=this.dex.items.get(row[1]);
 if((_item$itemUser=item.itemUser)!=null&&_item$itemUser.includes(speciesName))speciesSpecific.push(row);
@@ -1433,8 +1499,8 @@ return'';
 };_proto5.
 filter=function filter(row,filters){
 if(row[0]!=='item')return true;
-var item=this.dex.items.get(row[1]);for(var _i24=0;_i24<
-filters.length;_i24++){var _ref19=filters[_i24];var filterType=_ref19[0];var value=_ref19[1];
+var item=this.dex.items.get(row[1]);for(var _i26=0;_i26<
+filters.length;_i26++){var _ref19=filters[_i26];var filterType=_ref19[0];var value=_ref19[1];
 if(filterType==='itemclass'){
 var itemClass=this.getItemClass(item);
 var v=value==='berries'?'berry':value;
@@ -1469,9 +1535,9 @@ getFlagWeightsForTypes=function getFlagWeightsForTypes(types){
 
 var table=window.TypeAffinityAversion;
 var weights={};
-if(!table)return weights;for(var _i26=0;_i26<
+if(!table)return weights;for(var _i28=0;_i28<
 
-types.length;_i26++){var typeName=types[_i26];
+types.length;_i28++){var typeName=types[_i28];
 var entry=table[toID(typeName)];
 if(!entry)continue;
 
@@ -1792,15 +1858,15 @@ prevo=prevoSpecies.prevo;
 if(pokemon.battleOnly&&typeof pokemon.battleOnly==='string'){species=dex.species.get(pokemon.battleOnly);}
 var excludedForme=function(s){return['Alola','Alola-Totem','Galar','Galar-Zen','Hisui','Paldea','Paldea-Combat','Paldea-Blaze','Paldea-Aqua'].includes(s.forme);};
 if(baseSpecies.otherFormes&&!['Wormadam','Urshifu'].includes(baseSpecies.baseSpecies)){
-if(!excludedForme(species))speciesTypes.push.apply(speciesTypes,baseSpecies.types);for(var _i28=0,_baseSpecies$otherFor2=
-baseSpecies.otherFormes;_i28<_baseSpecies$otherFor2.length;_i28++){var formeName=_baseSpecies$otherFor2[_i28];
+if(!excludedForme(species))speciesTypes.push.apply(speciesTypes,baseSpecies.types);for(var _i30=0,_baseSpecies$otherFor2=
+baseSpecies.otherFormes;_i30<_baseSpecies$otherFor2.length;_i30++){var formeName=_baseSpecies$otherFor2[_i30];
 var forme=dex.species.get(formeName);
 if(!forme.battleOnly&&!excludedForme(forme))speciesTypes.push.apply(speciesTypes,forme.types);
 }
 }
 }
-var valid=false;for(var _i30=0;_i30<
-moveTypes.length;_i30++){var type=moveTypes[_i30];if(speciesTypes.includes(type)){
+var valid=false;for(var _i32=0;_i32<
+moveTypes.length;_i32++){var type=moveTypes[_i32];if(speciesTypes.includes(type)){
 valid=true;
 break;
 }
@@ -1822,10 +1888,10 @@ var aversion=[];
 
 var allMoveIds=[].concat(
 moves.map(function(x){return x;}),
-sketchMoves.map(function(x){return x;}));for(var _i32=0;_i32<
+sketchMoves.map(function(x){return x;}));for(var _i34=0;_i34<
 
 
-allMoveIds.length;_i32++){var _id9=allMoveIds[_i32];
+allMoveIds.length;_i34++){var _id9=allMoveIds[_i34];
 var _move3=dex.moves.get(_id9);
 var score=this.getMoveAffinityScore(_move3,flagWeights);
 var entry={id:_id9,score:score};
@@ -1858,8 +1924,8 @@ return out;
 filter=function filter(row,filters){
 if(!filters)return true;
 if(row[0]!=='move')return true;
-var move=this.dex.moves.get(row[1]);for(var _i34=0;_i34<
-filters.length;_i34++){var _ref20=filters[_i34];var filterType=_ref20[0];var value=_ref20[1];
+var move=this.dex.moves.get(row[1]);for(var _i36=0;_i36<
+filters.length;_i36++){var _ref20=filters[_i36];var filterType=_ref20[0];var value=_ref20[1];
 switch(filterType){
 case'type':{
 var type2=move.type2;

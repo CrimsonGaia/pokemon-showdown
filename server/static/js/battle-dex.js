@@ -1091,11 +1091,19 @@ return species;
 
 types={
 namesCache:null,
-names:function(){
+names:function(){var _window$BattleTeambui11;
 if(_this2.types.namesCache)return _this2.types.namesCache;
 var names=Dex.types.names();
 if(!names.length)return[];
 var curNames=[].concat(names);
+
+var modTable=(_window$BattleTeambui11=window.BattleTeambuilderTable)==null?void 0:_window$BattleTeambui11[_this2.modid];
+if(modTable!=null&&modTable.overrideTypeChart){for(var _i12=0,_Object$keys2=
+Object.keys(modTable.overrideTypeChart);_i12<_Object$keys2.length;_i12++){var typeId=_Object$keys2[_i12];
+var typeName=typeId.charAt(0).toUpperCase()+typeId.slice(1);
+if(!curNames.includes(typeName))curNames.push(typeName);
+}
+}
 
 if(_this2.gen<6)curNames.splice(curNames.indexOf('Fairy'),1);
 if(_this2.gen<2)curNames.splice(curNames.indexOf('Dark'),1);
@@ -1103,11 +1111,26 @@ if(_this2.gen<2)curNames.splice(curNames.indexOf('Steel'),1);
 _this2.types.namesCache=curNames;
 return curNames;
 },
-get:function(name){
+get:function(name){var _window$BattleTeambui12,_window$BattleTeambui13,_BattleModData,_BattleModData2,_exports;
 var id=toID(name);
 name=id.substr(0,1).toUpperCase()+id.substr(1);
-if(_this2.cache.Types.hasOwnProperty(id))return _this2.cache.Types[id];
+var modTablePre=(_window$BattleTeambui12=window.BattleTeambuilderTable)==null?void 0:_window$BattleTeambui12[_this2.modid];
+var modHasTypePatch=!!(modTablePre!=null&&modTablePre.overrideTypeChart&&id in modTablePre.overrideTypeChart);
+
+if(_this2.cache.Types.hasOwnProperty(id)&&!modHasTypePatch)return _this2.cache.Types[id];
 var data=Object.assign({},Dex.types.get(name));
+
+var modTable=(_window$BattleTeambui13=window.BattleTeambuilderTable)==null?void 0:_window$BattleTeambui13[_this2.modid];
+if(modTable){
+if(modTable.removeType&&id in modTable.removeType){
+data.exists=false;
+}
+if(modTable.overrideTypeChart&&id in modTable.overrideTypeChart){
+data=Object.assign({},data,modTable.overrideTypeChart[id]);
+
+if(data.damageTaken)data.exists=true;
+}
+}
 for(var i=7;i>=_this2.gen;i--){
 var table=window.BattleTeambuilderTable["gen"+i];
 if(id in table.removeType){
@@ -1115,6 +1138,13 @@ data.exists=false;
 break;
 }
 if(id in table.overrideTypeChart)data=Object.assign({},data,table.overrideTypeChart[id]);
+}
+
+var modTypeChart=((_BattleModData=window.BattleModData)==null||(_BattleModData=_BattleModData[_this2.modid])==null?void 0:_BattleModData.TypeChart)||((_BattleModData2=globalThis.BattleModData)==null||(_BattleModData2=_BattleModData2[_this2.modid])==null?void 0:_BattleModData2.TypeChart)||((_exports=globalThis.exports)==null||(_exports=_exports.BattleModData)==null||(_exports=_exports[_this2.modid])==null?void 0:_exports.TypeChart);
+if(modTypeChart&&modTypeChart[id]){
+data=Object.assign({},data,modTypeChart[id]);
+
+if(data.damageTaken)data.exists=true;
 }
 _this2.cache.Types[id]=data;
 return data;
@@ -1124,8 +1154,8 @@ return data;
 getPokeballs=function getPokeballs(){var _window2;
 if(this.pokeballs)return this.pokeballs;
 this.pokeballs=[];
-(_window2=window).BattleItems||(_window2.BattleItems={});for(var _i12=0,_Object$values4=
-Object.values(BattleItems);_i12<_Object$values4.length;_i12++){var data=_Object$values4[_i12];
+(_window2=window).BattleItems||(_window2.BattleItems={});for(var _i14=0,_Object$values4=
+Object.values(BattleItems);_i14<_Object$values4.length;_i14++){var data=_Object$values4[_i14];
 if(data.gen&&data.gen>this.gen)continue;
 if(!data.isPokeball)continue;
 this.pokeballs.push(data.name);

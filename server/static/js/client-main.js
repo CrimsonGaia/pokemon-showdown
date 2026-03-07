@@ -1,10 +1,7 @@
 "use strict";function _inheritsLoose(t,o){t.prototype=Object.create(o.prototype),t.prototype.constructor=t,_setPrototypeOf(t,o);}function _setPrototypeOf(t,e){return _setPrototypeOf=Object.setPrototypeOf?Object.setPrototypeOf.bind():function(t,e){return t.__proto__=e,t;},_setPrototypeOf(t,e);}/**
  * Client main
- *
  * Dependencies: client-core
- *
  * Sets up the main client models: Prefs, Teams, User, and PS.
- *
  * @author Guangcong Luo <guancongluo@gmail.com>
  * @license AGPLv3
  */
@@ -56,20 +53,7 @@
 
 
 
-
-
-
-
-
-
-
-
-
 var PSPrefsDefaults={};var
-
-
-
-
 
 
 
@@ -143,40 +127,14 @@ PSPrefs=function(_PSStreamModel){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function PSPrefs(){var _this;
 _this=_PSStreamModel.call(this)||this;_this.theme='light';_this.nogif=null;_this.noanim=null;_this.bwgfx=null;_this.nopastgens=null;_this.blockPMs=null;_this.blockChallenges=null;_this.inchatpm=null;_this.noselfhighlight=null;_this.temporarynotifications=null;_this.leavePopupRoom=null;_this.refreshprompt=null;_this.language='english';_this.chatformatting={hidegreentext:false,hideme:false,hidespoiler:false,hidelinks:false,hideinterstice:true};_this.nounlink=null;_this.ignorenicks=null;_this.ignorespects=null;_this.ignoreopp=null;_this.autotimer=null;_this.rightpanelbattles=null;_this.disallowspectators=null;_this.starredformats=null;_this.showjoins=null;_this.showdebug=null;_this.showbattles=true;_this.autojoin=null;_this.ignore=null;_this.tournaments=null;_this.onepanel=false;_this.timestamps={};_this.mute=false;_this.effectvolume=50;_this.musicvolume=50;_this.notifvolume=50;_this.uploadprivacy=false;_this.afd=false;_this.highlights=null;_this.logtimes=null;_this.storageEngine='';_this.storage={};_this.origin="https://"+Config.routes.client;
-
 for(var key in _this){
 var value=_this[key];
 if(['storage','subscriptions','origin','storageEngine','updates'].includes(key))continue;
 if(typeof value==='function')continue;
 PSPrefsDefaults[key]=value;
 }
-
 
 try{
 if(window.localStorage){
@@ -185,8 +143,6 @@ _this.load(JSON.parse(localStorage.getItem('showdown_prefs'))||{},true);
 }
 }catch(_unused){}return _this;
 }_inheritsLoose(PSPrefs,_PSStreamModel);var _proto=PSPrefs.prototype;_proto.
-
-
 
 set=function set(key,value){
 if(value===null){
@@ -199,14 +155,11 @@ this[key]=value;
 this.update(key);
 this.save();
 };_proto.
-
 load=function load(newPrefs,noSave){
 this.fixPrefs(newPrefs);
 Object.assign(this,PSPrefsDefaults);
 this.storage=newPrefs;
-for(var key in PSPrefsDefaults){
-if(key in newPrefs)this[key]=newPrefs[key];
-}
+for(var key in PSPrefsDefaults){if(key in newPrefs)this[key]=newPrefs[key];}
 this.setAFD();
 this.update(null);
 if(!noSave)this.save();
@@ -223,94 +176,61 @@ if(oldShowjoins!==undefined&&typeof oldShowjoins!=='object'){
 var showjoins={};
 var serverShowjoins={global:oldShowjoins?1:0};
 var showroomjoins=newPrefs['showroomjoins'];
-for(var _roomid in showroomjoins){
-serverShowjoins[_roomid]=showroomjoins[_roomid]?1:0;
-}
+for(var _roomid in showroomjoins){serverShowjoins[_roomid]=showroomjoins[_roomid]?1:0;}
 delete newPrefs['showroomjoins'];
 showjoins[Config.server.id]=serverShowjoins;
 newPrefs['showjoins']=showjoins;
 }
-
 var isChrome64=navigator.userAgent.includes(' Chrome/64.');
 if(newPrefs['nogif']!==undefined){
-if(!isChrome64){
-delete newPrefs['nogif'];
-}
+if(!isChrome64){delete newPrefs['nogif'];}
 }else if(isChrome64){
 newPrefs['nogif']=true;
 PS.alert('Your version of Chrome has a bug that makes animated GIFs freeze games sometimes, so certain animations have been disabled. Only some people have the problem, so you can experiment and enable them in the Options menu setting "Disable GIFs for Chrome 64 bug".');
 }
-
 var colorSchemeQuerySupported=(window.matchMedia==null?void 0:window.matchMedia('(prefers-color-scheme: dark)').media)!=='not all';
-if(newPrefs['theme']==='system'&&!colorSchemeQuerySupported){
-newPrefs['theme']='light';
-}
+if(newPrefs['theme']==='system'&&!colorSchemeQuerySupported){newPrefs['theme']='light';}
 if(newPrefs['dark']!==undefined){
-if(newPrefs['dark']){
-newPrefs['theme']='dark';
-}
+if(newPrefs['dark']){newPrefs['theme']='dark';}
 delete newPrefs['dark'];
 }
 };_proto.
-
 setAFD=function setAFD(mode){
 if(mode===undefined){var _Config$server;
 
 if(typeof BattleTextAFD!=='undefined'){
 for(var id in BattleTextNotAFD){
-if(!BattleTextAFD[id]){
-BattleTextAFD[id]=BattleTextNotAFD[id];
-}else{
-BattleTextAFD[id]=Object.assign({},BattleTextNotAFD[id],BattleTextAFD[id]);
+if(!BattleTextAFD[id]){BattleTextAFD[id]=BattleTextNotAFD[id];}else
+{BattleTextAFD[id]=Object.assign({},BattleTextNotAFD[id],BattleTextAFD[id]);}
 }
 }
-}
-
-if((_Config$server=Config.server)!=null&&_Config$server.afd){
-mode=true;
-}else if(this.afd!==undefined){
-mode=this.afd;
-}else{
+if((_Config$server=Config.server)!=null&&_Config$server.afd){mode=true;}else
+if(this.afd!==undefined){mode=this.afd;}else
+{
 
 
 }
 }
-
 Dex.afdMode=mode;
-
 if(typeof BattleTextAFD!=='undefined'){
-if(mode===true){
-BattleText=BattleTextAFD;
-}else{
-BattleText=BattleTextNotAFD;
-}
+if(mode===true){BattleText=BattleTextAFD;}else
+{BattleText=BattleTextNotAFD;}
 }
 };_proto.
 doAutojoin=function doAutojoin(){
 var autojoin=PS.prefs.autojoin;
 if(autojoin){var _PS$connection;
-if(typeof autojoin==='string'){
-autojoin={showdown:autojoin};
-}
+if(typeof autojoin==='string'){autojoin={showdown:autojoin};}
 var rooms=autojoin[PS.server.id]||'';for(var _i2=0,_rooms$split2=
-rooms.split(",");_i2<_rooms$split2.length;_i2++){var title=_rooms$split2[_i2];
-PS.addRoom({id:toID(title),title:title,connected:true,autofocus:false});
-};
+rooms.split(",");_i2<_rooms$split2.length;_i2++){var title=_rooms$split2[_i2];PS.addRoom({id:toID(title),title:title,connected:true,autofocus:false});};
 var cmd="/autojoin "+rooms;
-if((_PS$connection=PS.connection)!=null&&_PS$connection.queue.includes(cmd)){
-
-
-return;
-}
+if((_PS$connection=PS.connection)!=null&&_PS$connection.queue.includes(cmd)){return;}
 
 PS.send(cmd);
 }
-
 for(var _roomid2 in PS.rooms){
 var room=PS.rooms[_roomid2];
-if(room.type==='battle'){
-room.connect();
-}
+if(room.type==='battle'){room.connect();}
 }
 };return PSPrefs;}(PSStreamModel);
 
@@ -352,12 +272,7 @@ room.connect();
 
 
 
-
-
 if(!window.BattleFormats)window.BattleFormats={};var
-
-
-
 
 PSTeams=function(_PSStreamModel2){
 
@@ -368,9 +283,7 @@ PSTeams=function(_PSStreamModel2){
 
 function PSTeams(){var _this2;
 _this2=_PSStreamModel2.call(this)||this;_this2.usesLocalLadder=false;_this2.list=[];_this2.byKey={};_this2.deletedTeams=[];_this2.uploading=null;
-try{
-_this2.unpackAll(localStorage.getItem('showdown_teams'));
-}catch(_unused2){}return _this2;
+try{_this2.unpackAll(localStorage.getItem('showdown_teams'));}catch(_unused2){}return _this2;
 }_inheritsLoose(PSTeams,_PSStreamModel2);var _proto2=PSTeams.prototype;_proto2.
 teambuilderFormat=function teambuilderFormat(format){
 var ruleSepIndex=format.indexOf('@@@');
@@ -395,12 +308,10 @@ if(!buffer){
 this.list=[];
 return;
 }
-
 if(buffer.startsWith('[')&&!buffer.trim().includes('\n')){
 this.unpackOldBuffer(buffer);
 return;
 }
-
 this.list=[];for(var _i4=0,_buffer$split2=
 buffer.split('\n');_i4<_buffer$split2.length;_i4++){var line=_buffer$split2[_i4];
 var _team=this.unpackLine(line);
@@ -445,9 +356,7 @@ team.name+"|"+team.packedTeam);}
 ).join('\n');
 };_proto2.
 save=function save(){
-try{
-localStorage.setItem('showdown_teams',this.packAll(this.list));
-}catch(_unused3){}
+try{localStorage.setItem('showdown_teams',this.packAll(this.list));}catch(_unused3){}
 this.update('team');
 };_proto2.
 unpackLine=function unpackLine(line){
@@ -460,9 +369,7 @@ if(leftBracketIndex<0)leftBracketIndex=0;
 var isBox=line.slice(0,bracketIndex).endsWith('-box');
 var slashIndex=line.lastIndexOf('/',pipeIndex);
 if(slashIndex<0)slashIndex=bracketIndex;
-var format=bracketIndex>0?line.slice(
-leftBracketIndex?leftBracketIndex+1:0,isBox?bracketIndex-4:bracketIndex
-):'gen9';
+var format=bracketIndex>0?line.slice(leftBracketIndex?leftBracketIndex+1:0,isBox?bracketIndex-4:bracketIndex):'gen9';
 if(!format.startsWith('gen'))format='gen6'+format;
 var name=line.slice(slashIndex+1,pipeIndex);
 var teamid=leftBracketIndex>0?Number(line.slice(0,leftBracketIndex)):undefined;
@@ -480,21 +387,14 @@ teamid:teamid
 loadRemoteTeams=function loadRemoteTeams(){var _this3=this;
 PSLoginServer.query('getteams').then(function(data){
 if(!data)return;
-if(data.actionerror){
-return PS.alert('Error loading uploaded teams: '+data.actionerror);
-}
+if(data.actionerror){return PS.alert('Error loading uploaded teams: '+data.actionerror);}
 var teams={};for(var _i6=0,_data$teams2=
-data.teams;_i6<_data$teams2.length;_i6++){var _team2=_data$teams2[_i6];
-teams[_team2.teamid]=_team2;
-}for(var _i8=0,_this3$list2=
-
+data.teams;_i6<_data$teams2.length;_i6++){var _team2=_data$teams2[_i6];teams[_team2.teamid]=_team2;}for(var _i8=0,_this3$list2=
 
 _this3.list;_i8<_this3$list2.length;_i8++){var localTeam=_this3$list2[_i8];
 if(localTeam.teamid){
 var _team3=teams[localTeam.teamid];
-if(!_team3){
-continue;
-}
+if(!_team3){continue;}
 localTeam.uploaded={
 teamid:_team3.teamid,
 notLoaded:false,
@@ -504,16 +404,12 @@ delete teams[localTeam.teamid];
 }
 }for(var _i10=0,_Object$values2=
 
-
 Object.values(teams);_i10<_Object$values2.length;_i10++){var _team4=_Object$values2[_i10];
 var matched=false;for(var _i12=0,_this3$list4=
 _this3.list;_i12<_this3$list4.length;_i12++){var _localTeam=_this3$list4[_i12];
 if(_localTeam.teamid)continue;
-
 var compare=_this3.compareTeams(_team4,_localTeam);
-if(compare==='rename'){
-if(!_localTeam.name.endsWith(' (local version)'))_localTeam.name+=' (local version)';
-}else if(compare){
+if(compare==='rename'){if(!_localTeam.name.endsWith(' (local version)'))_localTeam.name+=' (local version)';}else if(compare){
 
 
 matched=true;
@@ -552,11 +448,8 @@ _this3.push(newTeam);
 loadTeam=function loadTeam(team,ifNeeded){
 if(!(team!=null&&team.uploaded)||team.uploadedPackedTeam)return ifNeeded?undefined:Promise.resolve();
 if(team.uploaded.notLoaded&&team.uploaded.notLoaded!==true)return team.uploaded.notLoaded;
-
 var notLoaded=team.uploaded.notLoaded;
-return team.uploaded.notLoaded=PSLoginServer.query('getteam',{
-teamid:team.uploaded.teamid
-}).then(function(data){
+return team.uploaded.notLoaded=PSLoginServer.query('getteam',{teamid:team.uploaded.teamid}).then(function(data){
 if(!team.uploaded)return;
 if(!(data!=null&&data.team)){
 PS.alert("Failed to load team: "+((data==null?void 0:data.actionerror)||"Error unknown. Try again later."));
@@ -576,21 +469,15 @@ compareTeams=function compareTeams(serverTeam,localTeam){
 
 
 
-
 var sanitize=function(name){return(name||"").replace(/\s+\(server version\)/g,'').trim();};
 var nameMatches=sanitize(serverTeam.name)===sanitize(localTeam.name);
-if(!(nameMatches&&serverTeam.format===localTeam.format)){
-return false;
-}
-
+if(!(nameMatches&&serverTeam.format===localTeam.format)){return false;}
 
 var mons=serverTeam.team.split(',').map(toID).sort().join(',');
 var otherMons=Teams.unpackSpeciesOnly(localTeam.packedTeam).map(toID).sort().join(',');
 if(mons!==otherMons)return'rename';
 return true;
 };return PSTeams;}(PSStreamModel);var
-
-
 
 
 
@@ -635,20 +522,11 @@ var normalizeList={
 'A':'ÀÁÂẦẤẪẨÃĀĂẰẮẴẲȦǠÄǞẢÅǺǍȀȂẠẬẶḀĄ','B':'ḂḄḆ','C':'ĆĈĊČÇḈƇ','D':'ḊĎḌḐḒḎ','E':'ÈÉÊỀẾỄỂẼĒḔḖĔĖËẺĚȄȆẸỆȨḜĘḘḚ','F':'Ḟ','G':'ǴĜḠĞĠǦĢǤƓ','H':'ĤḢḦȞḤḨḪ','I':'ÌÍÎĨĪĬİÏḮỈǏȈȊỊĮḬ','J':'Ĵ','K':'ḰǨḲĶḴƘⱩꝀꝂꝄ','L':'ĿĹĽḶḸĻḼḺŁȽⱢⱠꝈ','M':'ḾṀṂ','N':'ǸŃÑṄŇṆŅṊṈ','O':'ÒÓÔỒỐỖỔÕṌȬṎŌṐṒŎȮȰÖȪỎŐǑȌȎƠỜỚỠỞỢỌỘ','P':'ṔṖ','Q':'','R':'ŔṘŘȐȒṚṜŖṞ','S':'ŚṤŜṠŠṦṢṨȘŞⱾ','T':'ṪŤṬȚŢṰṮ','U':'ÙÚÛŨṸŪṺŬÜǛǗǕǙỦŮŰǓȔȖƯỪỨỮỬỰỤṲŲṶṴ','V':'ṼṾ','W':'ẀẂŴẆẄẈ','X':'ẊẌ','Y':'ỲÝŶỸȲẎŸỶỴƳ','Z':'ŹẐŻŽẒẔ','a':'ẚàáâầấẫẩãāăằắẵẳȧǡäǟảåǻǎȁȃạậặḁ','b':'ḃḅḇ','c':'ćĉċčçḉƈ','d':'ḋďḍḑḓḏ','e':'èéêềếễểẽēḕḗĕėëẻěȅȇẹệȩḝęḙḛ','f':'','g':'ǵĝḡğġǧģǥ','h':'ĥḣḧȟḥḩḫẖ','i':'ìíîĩīĭïḯỉǐȉȋịįḭ','j':'ĵǰ','k':'ḱǩḳķḵ','l':'ŀĺľḷḹļḽḻ','m':'ḿṁṃ','n':'ǹńñṅňṇņṋṉ','o':'òóôồốỗổõṍȭṏōṑṓŏȯȱöȫỏőǒȍȏơờớỡởợọộ','p':'ṕṗ','q':'','r':'ŕṙřȑȓṛṝŗṟ','s':'śṥŝṡšṧṣṩșşȿ','t':'ṫẗťṭțţṱṯ','u':'ùúûũṹūṻŭüǜǘǖǚủůűǔȕȗụṳ','v':'ṽṿ','w':'ẁẃŵẇẅẘẉ','x':'ẋẍ','y':'ỳýŷỹȳẏÿỷẙỵƴ','z':'źẑżžẓẕ'
 };
 var replaceRegexes=[];
-for(var i in replaceList){
-replaceRegexes.push([new RegExp('['+replaceList[i]+']','g'),i]);
-}
+for(var i in replaceList){replaceRegexes.push([new RegExp('['+replaceList[i]+']','g'),i]);}
 var normalizeRegexes=[];
-for(var _i13 in normalizeList){
-normalizeRegexes.push([new RegExp('['+normalizeList[_i13]+']','g'),_i13]);
-}for(var _i15=0;_i15<
-
-replaceRegexes.length;_i15++){var _ref2=replaceRegexes[_i15];var regex=_ref2[0];var replacement=_ref2[1];
-name=name.replace(regex,replacement);
-}for(var _i17=0;_i17<
-normalizeRegexes.length;_i17++){var _ref3=normalizeRegexes[_i17];var _regex=_ref3[0];var _replacement=_ref3[1];
-name=name.replace(_regex,_replacement);
-}
+for(var _i13 in normalizeList){normalizeRegexes.push([new RegExp('['+normalizeList[_i13]+']','g'),_i13]);}for(var _i15=0;_i15<
+replaceRegexes.length;_i15++){var _ref2=replaceRegexes[_i15];var regex=_ref2[0];var replacement=_ref2[1];name=name.replace(regex,replacement);}for(var _i17=0;_i17<
+normalizeRegexes.length;_i17++){var _ref3=normalizeRegexes[_i17];var _regex=_ref3[0];var _replacement=_ref3[1];name=name.replace(_regex,_replacement);}
 return name.trim();
 };_proto3.
 changeName=function changeName(name){var _this5=this;
@@ -658,7 +536,6 @@ if(!userid){
 this.updateLogin({name:name,error:"Usernames must contain at least one letter."});
 return;
 }
-
 if(userid===this.userid){
 PS.send("/trn "+name);
 this.update({success:true});
@@ -683,9 +560,7 @@ special)
 );
 }
 this.update(null);
-PSLoginServer.query(
-'login',{name:name,pass:password,challstr:this.challstr}
-).then(function(data){var _data$curuser;
+PSLoginServer.query('login',{name:name,pass:password,challstr:this.challstr}).then(function(data){var _data$curuser;
 _this6.loggingIn=null;
 if(data!=null&&(_data$curuser=data.curuser)!=null&&_data$curuser.loggedin){
 
@@ -710,9 +585,7 @@ special)
 };_proto3.
 updateLogin=function updateLogin(update){
 this.update(update);
-if(!PS.rooms['login']){
-PS.join('login',{args:update});
-}
+if(!PS.rooms['login']){PS.join('login',{args:update});}
 };_proto3.
 handleAssertion=function handleAssertion(name,assertion){
 if(!assertion){
@@ -721,7 +594,6 @@ return;
 }
 this.loggingIn=null;
 if(assertion.slice(0,14).toLowerCase()==='<!doctype html'){
-
 var endIndex=assertion.indexOf('>');
 if(endIndex>0)assertion=assertion.slice(endIndex+1);
 }
@@ -731,26 +603,19 @@ if(assertion.includes('<')){
 PS.alert("Something is interfering with our connection to the login server. Most likely, your internet provider needs you to re-log-in, or your internet provider is blocking Pokémon Showdown.");
 return;
 }
-if(assertion===';'){
-this.updateLogin({name:name,needsPassword:true});
-}else if(assertion===';;@gmail'){
-this.updateLogin({name:name,needsGoogle:true});
-}else if(assertion.startsWith(';;')){
-this.updateLogin({error:assertion.slice(2)});
-}else if(assertion.includes('\n')||!assertion){
-PS.alert("Something is interfering with our connection to the login server.");
-}else{
+if(assertion===';'){this.updateLogin({name:name,needsPassword:true});}else
+if(assertion===';;@gmail'){this.updateLogin({name:name,needsGoogle:true});}else
+if(assertion.startsWith(';;')){this.updateLogin({error:assertion.slice(2)});}else
+if(assertion.includes('\n')||!assertion){PS.alert("Something is interfering with our connection to the login server.");}else
+{
 PS.send("/trn "+name+",0,"+assertion);
 this.update({success:true});
 }
 };_proto3.
 logOut=function logOut(){var _PS$connection2;
-PSLoginServer.query(
-'logout',{userid:this.userid}
-);
+PSLoginServer.query('logout',{userid:this.userid});
 PS.send("/logout");
 (_PS$connection2=PS.connection)==null||_PS$connection2.disconnect();
-
 PS.alert("You have been logged out and disconnected.\n\nIf you wanted to change your name while staying connected, use the 'Change Name' button or the '/nick' command.");
 this.name="";
 this.group='';
@@ -759,27 +624,18 @@ this.named=false;
 this.registered=null;
 this.update(null);
 };_proto3.
-
 updateRegExp=function updateRegExp(){
-if(!this.named){
-this.nameRegExp=null;
-}else{
+if(!this.named){this.nameRegExp=null;}else
+{
 var escaped=this.name.replace(/[^A-Za-z0-9]+$/,'');
 
 
-for(var i=escaped.length-1;i>0;i--){
-if(/[^ -~]/.test(escaped[i])){
-escaped=escaped.slice(0,i)+','+escaped.slice(i+1);
-}
-}
+for(var i=escaped.length-1;i>0;i--){if(/[^ -~]/.test(escaped[i])){escaped=escaped.slice(0,i)+','+escaped.slice(i+1);}}
 escaped=escaped.replace(/[[\]/{}()*+?.\\^$|-]/g,"\\$&");
 escaped=escaped.replace(/,/g,"[^A-Za-z0-9]?");
 this.nameRegExp=new RegExp('(?:\\b|(?!\\w))'+escaped+'(?:\\b|\\B(?!\\w))','i');
 }
 };return PSUser;}(PSStreamModel);var
-
-
-
 
 
 
@@ -861,32 +717,8 @@ type:'punishment',
 order:303
 }
 };this.
-defaultGroup={
-order:108
-};}var _proto4=PSServer.prototype;_proto4.
-getGroup=function getGroup(symbol){
-return this.groups[(symbol||' ').charAt(0)]||this.defaultGroup;
-};return PSServer;}();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+defaultGroup={order:108};}var _proto4=PSServer.prototype;_proto4.
+getGroup=function getGroup(symbol){return this.groups[(symbol||' ').charAt(0)]||this.defaultGroup;};return PSServer;}();
 
 
 
@@ -930,33 +762,12 @@ return this.groups[(symbol||' ').charAt(0)]||this.defaultGroup;
 
 function makeLoadTracker(){
 var resolver;
-var tracker=new Promise(function(resolve){
-resolver=resolve;
-});
-tracker.loaded=function(){
-resolver();
-};
+var tracker=new Promise(function(resolve){resolver=resolve;});
+tracker.loaded=function(){resolver();};
 return tracker;
 }var
 
-
-
-
-
 PSRoom=function(_PSStreamModel4){
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1129,37 +940,6 @@ _this7=_PSStreamModel4.call(this)||this;_this7.id=void 0;_this7.title="";_this7.
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 globalClientCommands=_this7.parseClientCommands({
 'j,join':function(target,cmd,elem){
 target=PS.router.extractRoomID(target)||target;
@@ -1170,7 +950,6 @@ PS.join(roomid,{parentElem:elem});
 var roomid=(/[^a-z0-9-]/.test(target)?toID(target):target)||this.id;
 var room=PS.rooms[roomid];
 var battle=room==null?void 0:room.battle;
-
 if((room==null?void 0:room.type)==="battle"&&!battle.ended&&battle.mySide.id===PS.user.userid&&!battle.isReplay){
 PS.join("forfeitbattle",{parentElem:elem});
 return;
@@ -1179,7 +958,6 @@ if((room==null?void 0:room.type)==="chat"&&room.connected===true&&PS.prefs.leave
 PS.join("confirmleaveroom",{parentElem:elem});
 return;
 }
-
 PS.leave(roomid);
 },
 'closeand':function(target){
@@ -1188,9 +966,7 @@ PS.leave(roomid);
 this.send(target);
 PS.leave(this.id);
 },
-'receivepopup':function(target){
-PS.alert(target);
-},
+'receivepopup':function(target){PS.alert(target);},
 'inopener,inparent':function(target){
 
 var room=this.getParent();
@@ -1202,33 +978,21 @@ room.send(target);
 var roomid=/[^a-z0-9-]/.test(target)?toID(target):target;
 var targetRoom=roomid?PS.rooms[roomid]:this;
 if(!targetRoom)return this.errorReply("Room '"+roomid+"' not found.");
-if(PS.isNormalRoom(targetRoom)){
-this.errorReply("'"+roomid+"' is already maximized.");
-}else if(!PS.isPopup(targetRoom)){
+if(PS.isNormalRoom(targetRoom)){this.errorReply("'"+roomid+"' is already maximized.");}else
+if(!PS.isPopup(targetRoom)){
 PS.moveRoom(targetRoom,'left',false,0);
 PS.update();
-}else{
-this.errorReply("'"+roomid+"' is a popup and can't be maximized.");
-}
+}else{this.errorReply("'"+roomid+"' is a popup and can't be maximized.");}
 },
-'logout':function(){
-PS.user.logOut();
-},
+'logout':function(){PS.user.logOut();},
 'reconnect,connect':function(){var _this8=this;
-if(this.connected&&this.connected!=='autoreconnect'){
-return this.errorReply("You are already connected.");
-}
-
+if(this.connected&&this.connected!=='autoreconnect'){return this.errorReply("You are already connected.");}
 if(!PS.isOffline){
 
-try{
-this.connect();
-}catch(err){
-this.errorReply(err.message);
-}
+try{this.connect();}
+catch(err){this.errorReply(err.message);}
 return;
 }
-
 
 var uptime=Date.now()-PS.startTime;
 if(uptime>24*60*60*1000){
@@ -1241,25 +1005,16 @@ return;
 }
 PSConnection.connect();
 },
-'refresh':function(){
-document.location.reload();
-},
+'refresh':function(){document.location.reload();},
 'workoffline':function(){var _PS$connection3;
-if(PS.isOffline){
-return this.add("|error|You are already offline.");
-}
+if(PS.isOffline){return this.add("|error|You are already offline.");}
 (_PS$connection3=PS.connection)==null||_PS$connection3.disconnect();
 },
 'cancelsearch':function(){
-if(PS.mainmenu.cancelSearch()){
-this.add("||Search cancelled.",true);
-}else{
-this.errorReply("You're not currently searching.");
-}
+if(PS.mainmenu.cancelSearch()){this.add("||Search cancelled.",true);}else
+{this.errorReply("You're not currently searching.");}
 },
-'disallowspectators':function(target){
-PS.prefs.set('disallowspectators',target!=='off');
-},
+'disallowspectators':function(target){PS.prefs.set('disallowspectators',target!=='off');},
 'star':function(target){
 var id=toID(target);
 if(!window.BattleFormats[id]&&!/^gen[1-9]$/.test(id)){
@@ -1291,36 +1046,26 @@ this.update(null);
 'nick':function(target,cmd,element){
 var noNameChange=PS.user.userid===toID(target);
 if(!noNameChange)PS.join('login',{parentElem:element});
-if(target){
-PS.user.changeName(target);
-}
+if(target){PS.user.changeName(target);}
 },
 'avatar':function(target){var _window$BattleAvatarN;
 target=target.toLowerCase();
 if(/[^a-z0-9-]/.test(target))target=toID(target);
 var avatar=((_window$BattleAvatarN=window.BattleAvatarNumbers)==null?void 0:_window$BattleAvatarN[target])||target;
 PS.user.avatar=avatar;
-if(this.type!=='chat'&&this.type!=='battle'){
-PS.send("/avatar "+avatar);
-}else{
-this.sendDirect("/avatar "+avatar);
-}
+if(this.type!=='chat'&&this.type!=='battle'){PS.send("/avatar "+avatar);}else
+{this.sendDirect("/avatar "+avatar);}
 },
 'open,user':function(target){
 var roomid="user-"+toID(target);
-PS.join(roomid,{
-args:{username:target}
-});
+PS.join(roomid,{args:{username:target}});
 },
 'ignore':function(target){
 var ignore=PS.prefs.ignore||{};
 if(!target)return true;
-if(toID(target)===PS.user.userid){
-this.add("||You are not able to ignore yourself.");
-}else if(ignore[toID(target)]){
-this.add("||User '"+target+"' is already on your ignore list. "+"(Moderator messages will not be ignored.)"
-);
-}else{
+if(toID(target)===PS.user.userid){this.add("||You are not able to ignore yourself.");}else
+if(ignore[toID(target)]){this.add("||User '"+target+"' is already on your ignore list. "+"(Moderator messages will not be ignored.)");}else
+{
 ignore[toID(target)]=1;
 this.add("||User '"+target+"' ignored. (Moderator messages will not be ignored.)");
 PS.prefs.set("ignore",ignore);
@@ -1329,9 +1074,8 @@ PS.prefs.set("ignore",ignore);
 'unignore':function(target){
 var ignore=PS.prefs.ignore||{};
 if(!target)return false;
-if(!ignore[toID(target)]){
-this.add("||User '"+target+"' isn't on your ignore list.");
-}else{
+if(!ignore[toID(target)]){this.add("||User '"+target+"' isn't on your ignore list.");}else
+{
 ignore[toID(target)]=0;
 this.add("||User '"+target+"' no longer ignored.");
 PS.prefs.set("ignore",ignore);
@@ -1350,13 +1094,10 @@ this.add("||Your ignore list was cleared.");
 },
 'ignorelist':function(target){
 var ignoreList=Object.keys(PS.prefs.ignore||{});
-if(ignoreList.length===0){
-this.add('||You are currently not ignoring anyone.');
-}else{
+if(ignoreList.length===0){this.add('||You are currently not ignoring anyone.');}else
+{
 var ignoring=[];
-for(var key in PS.prefs.ignore){
-if(PS.prefs.ignore[key]===1)ignoring.push(key);
-}
+for(var key in PS.prefs.ignore){if(PS.prefs.ignore[key]===1)ignoring.push(key);}
 if(!ignoring.length)return this.add('||You are currently not ignoring anyone.');
 this.add("||You are currently ignoring: "+ignoring.join(', '));
 }
@@ -1366,11 +1107,8 @@ var showjoins=PS.prefs.showjoins||{};
 var serverShowjoins=showjoins[PS.server.id]||{};
 if(target){
 var room=toID(target);
-if(serverShowjoins['global']){
-delete serverShowjoins[room];
-}else{
-serverShowjoins[room]=1;
-}
+if(serverShowjoins['global']){delete serverShowjoins[room];}else
+{serverShowjoins[room]=1;}
 this.add("||Join/leave messages in room "+room+": ALWAYS ON");
 }else{
 serverShowjoins={global:1};
@@ -1384,11 +1122,8 @@ var showjoins=PS.prefs.showjoins||{};
 var serverShowjoins=showjoins[PS.server.id]||{};
 if(target){
 var room=toID(target);
-if(!serverShowjoins['global']){
-delete serverShowjoins[room];
-}else{
-serverShowjoins[room]=0;
-}
+if(!serverShowjoins['global']){delete serverShowjoins[room];}else
+{serverShowjoins[room]=0;}
 this.add("||Join/leave messages on room "+room+": OFF");
 }else{
 serverShowjoins={global:0};
@@ -1402,9 +1137,8 @@ PS.prefs.set('showdebug',true);
 this.add('||Debug battle messages: ON');
 var onCSS='.debug {display: block;}';
 var style=document.querySelector('style[id=debugstyle]');
-if(style){
-style.innerHTML=onCSS;
-}else{var _document$querySelect;
+if(style){style.innerHTML=onCSS;}else
+{var _document$querySelect;
 style=document.createElement('style');
 style.id="debugstyle";
 style.innerHTML=onCSS;
@@ -1416,9 +1150,8 @@ PS.prefs.set('showdebug',true);
 this.add('||Debug battle messages: OFF');
 var onCSS='.debug {display: none;}';
 var style=document.querySelector('style[id=debugstyle]');
-if(style){
-style.innerHTML=onCSS;
-}else{var _document$querySelect2;
+if(style){style.innerHTML=onCSS;}else
+{var _document$querySelect2;
 style=document.createElement('style');
 style.id="debugstyle";
 style.innerHTML=onCSS;
@@ -1457,9 +1190,7 @@ this.add('||April Fools\' Day mode set to FULL.');
 PS.prefs.set('afd',false);
 PS.prefs.setAFD(false);
 this.add('||April Fools\' Day mode set to NEVER.');
-if((_Config$server2=Config.server)!=null&&_Config$server2.afd){
-this.add('||You\'re using the AFD URL, which will still override this setting and enable AFD mode on refresh.');
-}
+if((_Config$server2=Config.server)!=null&&_Config$server2.afd){this.add('||You\'re using the AFD URL, which will still override this setting and enable AFD mode on refresh.');}
 }else{
 if(target)this.add('||AFD option "'+target+'" not recognized');
 var curMode=PS.prefs.afd;
@@ -1479,9 +1210,7 @@ battle.resetToCurrentTurn();
 'clearpms':function(){
 var rooms=PS.miniRoomList.filter(function(roomid){return roomid.startsWith('dm-');});
 if(!rooms.length)return this.add('||You do not have any PM windows open.');for(var _i19=0;_i19<
-rooms.length;_i19++){var _roomid5=rooms[_i19];
-PS.leave(_roomid5);
-}
+rooms.length;_i19++){var _roomid5=rooms[_i19];PS.leave(_roomid5);}
 this.add("||All PM windows cleared and closed.");
 },
 'unpackhidden':function(){
@@ -1499,9 +1228,7 @@ var targets=target.split(' ');
 var subCmd=targets[0];
 targets=targets.slice(1).join(' ').match(/([^,]+?({\d*,\d*})?)+/g);
 
-for(var i=0,len=targets.length;i<len;i++){
-targets[i]=targets[i].replace(/\n/g,'').trim();
-}
+for(var i=0,len=targets.length;i<len;i++){targets[i]=targets[i].replace(/\n/g,'').trim();}
 switch(subCmd){
 case'add':case'roomadd':{
 var key=subCmd==='roomadd'?PS.server.id+'#'+this.id:'global';
@@ -1510,15 +1237,10 @@ for(var _i20=0,_len2=targets.length;_i20<_len2;_i20++){
 if(!targets[_i20])continue;
 if(/[\\^$*+?()|{}[\]]/.test(targets[_i20])){
 
-try{
-new RegExp(targets[_i20]);
-}catch(e){
-return this.add("|error|"+(e.message.substr(0,28)==='Invalid regular expression: '?e.message:'Invalid regular expression: /'+targets[_i20]+'/: '+e.message));
+try{new RegExp(targets[_i20]);}
+catch(e){return this.add("|error|"+(e.message.substr(0,28)==='Invalid regular expression: '?e.message:'Invalid regular expression: /'+targets[_i20]+'/: '+e.message));}
 }
-}
-if(highlightList.includes(targets[_i20])){
-return this.add("|error|"+targets[_i20]+" is already on your highlights list.");
-}
+if(highlightList.includes(targets[_i20])){return this.add("|error|"+targets[_i20]+" is already on your highlights list.");}
 }
 highlights[key]=highlightList.concat(targets);
 this.add("||Now highlighting on "+(key==='global'?"(everywhere): ":"(in "+key+"): ")+" "+highlights[key].join(', '));
@@ -1530,11 +1252,7 @@ case'delete':case'roomdelete':{
 var _key2=subCmd==='roomdelete'?PS.server.id+'#'+this.id:'global';
 var _highlightList=highlights[_key2]||[];
 var newHls=[];
-for(var _i21=0,_len3=_highlightList.length;_i21<_len3;_i21++){
-if(!targets.includes(_highlightList[_i21])){
-newHls.push(_highlightList[_i21]);
-}
-}
+for(var _i21=0,_len3=_highlightList.length;_i21<_len3;_i21++){if(!targets.includes(_highlightList[_i21])){newHls.push(_highlightList[_i21]);}}
 highlights[_key2]=newHls;
 this.add("||Now highlighting on "+(_key2==='global'?"(everywhere): ":"(in "+_key2+"): ")+" "+highlights[_key2].join(', '));
 
@@ -1563,11 +1281,8 @@ ChatRoom.updateHighlightRegExp({});
 }else if(['show','list','roomshow','roomlist'].includes(target)){
 
 var _key4=target.startsWith('room')?PS.server.id+'#'+this.id:'global';
-if(highlights[_key4]&&highlights[_key4].length>0){
-this.add("||Current highlight list "+(_key4==='global'?"(everywhere): ":"(in "+_key4+"): ")+highlights[_key4].join(", "));
-}else{
-this.add("||Your highlight list"+(_key4==='global'?'':' in '+_key4)+" is empty.");
-}
+if(highlights[_key4]&&highlights[_key4].length>0){this.add("||Current highlight list "+(_key4==='global'?"(everywhere): ":"(in "+_key4+"): ")+highlights[_key4].join(", "));}else
+{this.add("||Your highlight list"+(_key4==='global'?'':' in '+_key4)+" is empty.");}
 }else{
 
 this.errorReply('Invalid /highlight command.');
@@ -1575,9 +1290,7 @@ this.handleSend('/help highlight');
 }
 }
 },
-'senddirect':function(target){
-this.sendDirect(target);
-},
+'senddirect':function(target){this.sendDirect(target);},
 'h,help':function(target){
 switch(toID(target)){
 case'chal':
@@ -1677,25 +1390,18 @@ default:
 return true;
 }
 },
-'autojoin,cmd,crq,query':function(){
-this.errorReply("This is a PS system command; do not use it.");
-}
+'autojoin,cmd,crq,query':function(){this.errorReply("This is a PS system command; do not use it.");}
 });_this7.
 clientCommands=null;_this7.
 currentElement=null;_this7.id=options.id;_this7.title=options.title||_this7.title||_this7.id;if(options.type)_this7.type=options.type;if(options.location)_this7.location=options.location;if(options.parentElem)_this7.parentElem=options.parentElem;if(options.parentRoomid)_this7.parentRoomid=options.parentRoomid;if(_this7.location!=='popup'&&_this7.location!=='semimodal-popup')_this7.parentElem=null;if(options.rightPopup)_this7.rightPopup=true;if(options.connected)_this7.connected=options.connected;if(options.backlog)_this7.backlog=options.backlog;_this7.noURL=options.noURL||false;_this7.args=options.args||null;return _this7;}_inheritsLoose(PSRoom,_PSStreamModel4);var _proto5=PSRoom.prototype;_proto5.getParent=function getParent(){if(this.parentRoomid)return PS.rooms[this.parentRoomid]||null;return null;};_proto5.notify=function notify(options){var _this9=this;var desktopNotification=null;var roomIsFocused=(document.hasFocus==null?void 0:document.hasFocus())&&PS.isVisible(this);if(roomIsFocused&&!options.noAutoDismiss)return;if(!roomIsFocused){PS.playNotificationSound();try{desktopNotification=new Notification(options.title,{body:options.body});if(desktopNotification){desktopNotification.onclick=function(){window.focus();PS.focusRoom(_this9.id);};if(PS.prefs.temporarynotifications){setTimeout(function(){var _desktopNotification;(_desktopNotification=desktopNotification)==null||_desktopNotification.close();},5000);}}}catch(_unused5){}}if(options.noAutoDismiss&&!options.id){throw new Error("Must specify id for manual dismissing");}if(options.id){this.notifications=this.notifications.filter(function(notification){return notification.id!==options.id;});}this.notifications.push({title:options.title,body:options.body,id:options.id||'',noAutoDismiss:options.noAutoDismiss||false,notification:desktopNotification});PS.update();};_proto5.subtleNotify=function subtleNotify(){var _PS$prefs$logtimes,_room$lastMessage;if(PS.isVisible(this))return;var room=PS.rooms[this.id];var lastSeenTimestamp=((_PS$prefs$logtimes=PS.prefs.logtimes)==null||(_PS$prefs$logtimes=_PS$prefs$logtimes[PS.server.id])==null?void 0:_PS$prefs$logtimes[this.id])||0;var lastMessageTime=+(((_room$lastMessage=room.lastMessage)==null?void 0:_room$lastMessage[1])||0);if(lastMessageTime-room.timeOffset<=lastSeenTimestamp)return;this.isSubtleNotifying=true;PS.update();};_proto5.dismissNotificationAt=function dismissNotificationAt(i){try{var _this$notifications$i;(_this$notifications$i=this.notifications[i].notification)==null||_this$notifications$i.close();}catch(_unused6){}this.notifications.splice(i,1);};_proto5.dismissNotification=function dismissNotification(id){var index=this.notifications.findIndex(function(n){return n.id===id;});if(index!==-1){this.dismissNotificationAt(index);}PS.update();};_proto5.autoDismissNotifications=function autoDismissNotifications(){var room=PS.rooms[this.id];if(room.lastMessageTime){var lastMessageDates=PS.prefs.logtimes||{};if(!lastMessageDates[PS.server.id])lastMessageDates[PS.server.id]={};lastMessageDates[PS.server.id][room.id]=room.lastMessageTime||0;PS.prefs.set('logtimes',lastMessageDates);}for(var i=this.notifications.length-1;i>=0;i--){if(!this.notifications[i].noAutoDismiss){this.dismissNotificationAt(i);}}this.isSubtleNotifying=false;};_proto5.connect=function connect(){throw new Error("This room is not designed to connect to a server room");};_proto5.handleReconnect=function handleReconnect(msg){};_proto5.receiveLine=function receiveLine(args){switch(args[0]){case'title':{this.title=args[1];PS.update();break;}case'notify':{var title=args[1],body=args[2],toHighlight=args[3];if(toHighlight&&!ChatRoom.getHighlight(toHighlight,this.id))break;this.notify({title:title,body:body});break;}case'tempnotify':{var id=args[1],_title=args[2],_body=args[3],_toHighlight=args[4];if(_toHighlight&&!ChatRoom.getHighlight(_toHighlight,this.id))break;this.notify({title:_title,body:_body,id:id});break;}case'tempnotifyoff':{var _id=args[1];this.dismissNotification(_id);break;}default:{if(this.canConnect){this.update(args);}else{throw new Error("This room is not designed to receive messages");}}}};_proto5.add=function add(line,ifChat){if(this.type!=='chat'&&this.type!=='battle'){if(!ifChat){var _PS$rooms;PS.mainmenu.handlePM(PS.user.userid,PS.user.userid);(_PS$rooms=PS.rooms['dm-'])==null||_PS$rooms.receiveLine(BattleTextParser.parseLine(line));}}else{this.receiveLine(BattleTextParser.parseLine(line));}};_proto5.errorReply=function errorReply(message){var element=arguments.length>1&&arguments[1]!==undefined?arguments[1]:this.currentElement;if((element==null?void 0:element.tagName)==='BUTTON'){PS.alert(message,{parentElem:element});}else{this.add("|error|"+message);}};_proto5.parseClientCommands=function parseClientCommands(commands){var parsedCommands={};for(var cmd in commands){var names=cmd.split(',').map(function(name){return name.trim();});for(var _i23=0;_i23<names.length;_i23++){var name=names[_i23];if(name.includes(' '))throw new Error("Client command names cannot contain spaces: "+name);parsedCommands[name]=commands[cmd];}}return parsedCommands;};_proto5.
-
-
-
 
 handleSend=function handleSend(line){var _this$clientCommands;var element=arguments.length>1&&arguments[1]!==undefined?arguments[1]:this.currentElement;
 if(!line.startsWith('/')||line.startsWith('//'))return line;
 var spaceIndex=line.indexOf(' ');
 var cmd=spaceIndex>=0?line.slice(1,spaceIndex):line.slice(1);
 var target=spaceIndex>=0?line.slice(spaceIndex+1).trim():'';
-
 var cmdHandler=this.globalClientCommands[cmd]||((_this$clientCommands=this.clientCommands)==null?void 0:_this$clientCommands[cmd]);
 if(!cmdHandler)return line;
-
 var previousElement=this.currentElement;
 this.currentElement=element;
 var cmdResult=cmdHandler.call(this,target,cmd,element);
@@ -1720,19 +1426,13 @@ this.connected=false;
 }
 };return PSRoom;}(PSStreamModel);var
 
-
 PlaceholderRoom=function(_PSRoom2){
 
 function PlaceholderRoom(options){var _this10;
 _this10=_PSRoom2.call(this,options)||this;_this10.classType='placeholder';
 _this10.isPlaceholder=true;return _this10;
 }_inheritsLoose(PlaceholderRoom,_PSRoom2);var _proto6=PlaceholderRoom.prototype;_proto6.
-receiveLine=function receiveLine(args){
-(this.backlog||(this.backlog=[])).push(args);
-};return PlaceholderRoom;}(PSRoom);
-
-
-
+receiveLine=function receiveLine(args){(this.backlog||(this.backlog=[])).push(args);};return PlaceholderRoom;}(PSRoom);
 
 
 
@@ -1844,69 +1544,18 @@ var PS=new(function(_PSModel){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function _class(){var _document$querySelect3;var _this11;
 _this11=_PSModel.call(this)||this;_this11.down=false;_this11.prefs=new PSPrefs();_this11.teams=new PSTeams();_this11.user=new PSUser();_this11.server=new PSServer();_this11.connection=null;_this11.isOffline=false;_this11.startTime=Date.now();_this11.router=null;_this11.rooms={};_this11.roomTypes={};_this11.routes=Object.assign(Object.create(null),{"teambuilder":"*","news":"*mini-window","":"*","rooms":"*right","user-*":"*popup","viewuser-*":"*popup","volume":"*popup","options":"*popup","*":"*right","battle-*":"*","battles":"*right","teamdropdown":"*semimodal-popup","formatdropdown":"*semimodal-popup","team-*":"*","ladder":"*","ladder-*":"*","view-*":"*","login":"*semimodal-popup","help-*":"chat"});_this11.leftRoomList=[];_this11.rightRoomList=[];_this11.miniRoomList=[];_this11.popups=[];_this11.room=null;_this11.panel=null;_this11.leftPanel=null;_this11.rightPanel=null;_this11.leftPanelWidth=0;_this11.mainmenu=null;_this11.dragging=null;_this11.lastMessageTime='';_this11.arrowKeysUsed=false;_this11.newsHTML=((_document$querySelect3=document.querySelector('#room-news .readable-bg'))==null?void 0:_document$querySelect3.innerHTML)||'';_this11.libsLoaded=makeLoadTracker();
-
 _this11.mainmenu=_this11.addRoom({
 id:'',
 title:"Home"
 });
-
 _this11.addRoom({
 id:'rooms',
 title:"Rooms",
 autofocus:false
 });
 _this11.rightPanel=_this11.rooms['rooms'];
-
 if(_this11.newsHTML){
 _this11.addRoom({
 id:'news',
@@ -1915,37 +1564,17 @@ autofocus:false
 });
 }
 
-
 var autojoin=_this11.prefs.autojoin;
 if(autojoin){
-if(typeof autojoin==='string'){
-autojoin={showdown:autojoin};
-}
+if(typeof autojoin==='string'){autojoin={showdown:autojoin};}
 var rooms=autojoin[_this11.server.id]||'';for(var _i25=0,_rooms$split4=
-rooms.split(",");_i25<_rooms$split4.length;_i25++){var title=_rooms$split4[_i25];
-_this11.addRoom({id:toID(title),title:title,connected:true,autofocus:false});
-}
+rooms.split(",");_i25<_rooms$split4.length;_i25++){var title=_rooms$split4[_i25];_this11.addRoom({id:toID(title),title:title,connected:true,autofocus:false});}
 }
 
-
-if(window.webkitNotification){var _window;
-(_window=window).Notification||(_window.Notification=window.webkitNotification);
-}
-
+if(window.webkitNotification){var _window;(_window=window).Notification||(_window.Notification=window.webkitNotification);}
 _this11.updateLayout();
-window.addEventListener('resize',function(){
-
-if(_this11.updateLayout())_PSModel.prototype.update.call(_this11);
-});return _this11;
+window.addEventListener('resize',function(){if(_this11.updateLayout())_PSModel.prototype.update.call(_this11);});return _this11;
 }_inheritsLoose(_class,_PSModel);var _proto7=_class.prototype;_proto7.
-
-
-
-
-
-
-
-
 
 
 
@@ -2027,23 +1656,15 @@ return false;
 getRoom=function getRoom(elem,skipClickable){var _curElem;
 var curElem=elem;
 
-if(((_curElem=curElem)==null?void 0:_curElem.name)==='closeRoom'&&curElem.value){
-return PS.rooms[curElem.value]||null;
-}
+if(((_curElem=curElem)==null?void 0:_curElem.name)==='closeRoom'&&curElem.value){return PS.rooms[curElem.value]||null;}
 while(curElem){var _curElem$classList,_curElem$classList2;
-if(curElem.id.startsWith('room-')){
-return PS.rooms[curElem.id.slice(5)]||null;
-}
-if(curElem.getAttribute('data-roomid')){
-return PS.rooms[curElem.getAttribute('data-roomid')]||null;
-}
+if(curElem.id.startsWith('room-')){return PS.rooms[curElem.id.slice(5)]||null;}
+if(curElem.getAttribute('data-roomid')){return PS.rooms[curElem.getAttribute('data-roomid')]||null;}
 if(skipClickable&&(
 curElem.tagName==='A'||curElem.tagName==='BUTTON'||curElem.tagName==='INPUT'||
 curElem.tagName==='SELECT'||curElem.tagName==='TEXTAREA'||curElem.tagName==='LABEL'||(_curElem$classList=
 curElem.classList)!=null&&_curElem$classList.contains('textbox')||(_curElem$classList2=curElem.classList)!=null&&_curElem$classList2.contains('username')))
-{
-return null;
-}
+{return null;}
 curElem=curElem.parentElement;
 }
 return null;
@@ -2051,9 +1672,7 @@ return null;
 dragOnto=function dragOnto(fromRoom,toLocation,toIndex){
 
 if(fromRoom.id===''||fromRoom.id==='rooms')return;
-
 var onHome=toLocation==='left'&&toIndex===0;
-
 PS.moveRoom(fromRoom,toLocation,onHome,toIndex);
 PS.update();
 };_proto7.
@@ -2119,9 +1738,7 @@ if(room){
 room.connected=false;
 if(args[1]==='namerequired'){
 room.connectWhenLoggedIn=true;
-if(!PS.user.initializing){
-room.receiveLine(['error',args[2]]);
-}
+if(!PS.user.initializing){room.receiveLine(['error',args[2]]);}
 }else if(args[1]==='nonexistent'){
 
 
@@ -2135,7 +1752,6 @@ this.renameRoom(room,args[2]);
 this.update();
 continue;
 }
-
 }
 (_room=room)==null||_room.receiveLine(args);
 }
@@ -2151,31 +1767,18 @@ return;
 this.connection.send((roomid||'')+"|"+msg);
 };_proto7.
 isVisible=function isVisible(room){
-if(!this.leftPanelWidth){
-
-return room===this.panel||room===this.room;
-}else{
-
-return room===this.rightPanel||room===this.leftPanel||room===this.room;
-}
+if(!this.leftPanelWidth){return room===this.panel||room===this.room;}else
+{return room===this.rightPanel||room===this.leftPanel||room===this.room;}
 };_proto7.
 calculateLeftPanelWidth=function calculateLeftPanelWidth(){
 var available=document.body.offsetWidth;
-if(document.documentElement.clientWidth<800||this.prefs.onepanel==='vertical'){
-return null;
-}
+if(document.documentElement.clientWidth<800||this.prefs.onepanel==='vertical'){return null;}
 
 
-if(!this.leftPanel||!this.rightPanel||this.prefs.onepanel){
-return 0;
-}
-
-
-
+if(!this.leftPanel||!this.rightPanel||this.prefs.onepanel){return 0;}
 
 var left=this.getWidthFor(this.leftPanel);
 var right=this.getWidthFor(this.rightPanel);
-
 var excess=available-(left.width+right.width);
 if(excess>=0){
 
@@ -2186,17 +1789,11 @@ if(leftStretch+rightStretch>=excess)return left.maxWidth;
 
 return left.width+Math.floor(excess*leftStretch/(leftStretch+rightStretch));
 }
-
 if(left.isMainMenu){
-if(available>=left.minWidth+right.width){
-return left.minWidth;
-}
+if(available>=left.minWidth+right.width){return left.minWidth;}
 return 0;
 }
-
-if(available>=left.width+right.minWidth){
-return left.width;
-}
+if(available>=left.width+right.minWidth){return left.width;}
 return 0;
 };_proto7.
 createRoom=function createRoom(options){var _options$noURL;
@@ -2219,9 +1816,7 @@ return null;
 getRouteLocation=function getRouteLocation(roomid){
 
 if(roomid.startsWith('dm-')){
-if(document.documentElement.clientWidth<=818){
-return'left';
-}
+if(document.documentElement.clientWidth<=818){return'left';}
 return'mini-window';
 }
 var routeInfo=this.getRouteInfo(roomid);
@@ -2236,9 +1831,7 @@ return routeInfo!=null&&routeInfo.startsWith('*')?null:routeInfo||null;
 addRoomType=function addRoomType(){for(var _len4=arguments.length,types=new Array(_len4),_key5=0;_key5<_len4;_key5++){types[_key5]=arguments[_key5];}for(var _i29=0;_i29<
 types.length;_i29++){var RoomType=types[_i29];
 this.roomTypes[RoomType.id]=RoomType;for(var _i31=0,_RoomType$routes2=
-RoomType.routes;_i31<_RoomType$routes2.length;_i31++){var route=_RoomType$routes2[_i31];
-this.routes[route]=RoomType.id;
-}
+RoomType.routes;_i31<_RoomType$routes2.length;_i31++){var route=_RoomType$routes2[_i31];this.routes[route]=RoomType.id;}
 }
 this.updateRoomTypes();
 };_proto7.
@@ -2248,13 +1841,10 @@ for(var _roomid6 in this.rooms){
 var room=this.rooms[_roomid6];
 var typeIsGuessed=room.type===this.routes['*']&&!_roomid6.includes('-');
 if(!room.isPlaceholder&&!typeIsGuessed)continue;
-
 var type=!typeIsGuessed&&room.type||this.getRoute(_roomid6)||room.type||'';
 if(!room.isPlaceholder&&type===room.type)continue;
-
 var RoomType=type&&this.roomTypes[type];
 if(!RoomType)continue;
-
 var options=room;
 if(RoomType.title)options.title=RoomType.title;
 options.type=type;
@@ -2269,14 +1859,11 @@ if(this.room===room){
 this.room=newRoom;
 newRoom.focusNextUpdate=true;
 }
-
 updated=true;
 }
 if(updated)this.update();
 };_proto7.
-setFocus=function setFocus(room){
-room.onParentEvent==null||room.onParentEvent('focus');
-};_proto7.
+setFocus=function setFocus(room){room.onParentEvent==null||room.onParentEvent('focus');};_proto7.
 focusRoom=function focusRoom(roomid){
 var room=this.rooms[roomid];
 if(!room)return false;
@@ -2285,20 +1872,13 @@ this.setFocus(room);
 return true;
 }
 this.closePopupsAbove(room,true);
-if(!this.isVisible(room)){
-room.focusNextUpdate=true;
-}
+if(!this.isVisible(room)){room.focusNextUpdate=true;}
 if(PS.isNormalRoom(room)){
-if(room.location==='right'){
-this.rightPanel=room;
-}else{
-this.leftPanel=room;
-}
+if(room.location==='right'){this.rightPanel=room;}else
+{this.leftPanel=room;}
 this.panel=this.room=room;
 }else{
-if(room.location==='mini-window'){
-this.leftPanel=this.panel=PS.mainmenu;
-}
+if(room.location==='mini-window'){this.leftPanel=this.panel=PS.mainmenu;}
 this.room=room;
 }
 this.room.autoDismissNotifications();
@@ -2307,14 +1887,11 @@ this.setFocus(room);
 return true;
 };_proto7.
 horizontalNav=function horizontalNav(){var room=arguments.length>0&&arguments[0]!==undefined?arguments[0]:this.room;
-if(this.leftPanelWidth===null){
-return{rooms:[],index:-1};
-}
+if(this.leftPanelWidth===null){return{rooms:[],index:-1};}
 var rooms=this.leftRoomList.concat(this.rightRoomList);
 var miniRoom=this.miniRoomList[0]!=='news'?this.miniRoomList[0]:null;
 if(miniRoom)rooms.splice(1,0,miniRoom);
 var roomid=room.location==='mini-window'&&miniRoom||room.id;
-
 var index=rooms.indexOf(roomid);
 
 return{rooms:rooms,index:index};
@@ -2325,9 +1902,7 @@ var _rooms=[''].concat(this.miniRoomList,this.leftRoomList.slice(1),this.rightRo
 var _index=_rooms.indexOf(room.id);
 return{rooms:_rooms,index:_index};
 }
-if(room.location!=='mini-window'){
-return{rooms:[],index:-1};
-}
+if(room.location!=='mini-window'){return{rooms:[],index:-1};}
 var rooms=this.miniRoomList;
 var index=rooms.indexOf(room.id);
 
@@ -2336,37 +1911,25 @@ return{rooms:rooms,index:index};
 focusLeftRoom=function focusLeftRoom(){
 var _this$horizontalNav=this.horizontalNav(),rooms=_this$horizontalNav.rooms,index=_this$horizontalNav.index;
 if(index===-1)return;
-
-if(index===0){
-return this.focusRoom(rooms[rooms.length-1]);
-}
+if(index===0){return this.focusRoom(rooms[rooms.length-1]);}
 return this.focusRoom(rooms[index-1]);
 };_proto7.
 focusRightRoom=function focusRightRoom(){
 var _this$horizontalNav2=this.horizontalNav(),rooms=_this$horizontalNav2.rooms,index=_this$horizontalNav2.index;
 if(index===-1)return;
-
-if(index===rooms.length-1){
-return this.focusRoom(rooms[0]);
-}
+if(index===rooms.length-1){return this.focusRoom(rooms[0]);}
 return this.focusRoom(rooms[index+1]);
 };_proto7.
 focusUpRoom=function focusUpRoom(){
 var _this$verticalNav=this.verticalNav(),rooms=_this$verticalNav.rooms,index=_this$verticalNav.index;
 if(index===-1)return;
-
-if(index===0){
-return this.focusRoom(rooms[rooms.length-1]);
-}
+if(index===0){return this.focusRoom(rooms[rooms.length-1]);}
 return this.focusRoom(rooms[index-1]);
 };_proto7.
 focusDownRoom=function focusDownRoom(){
 var _this$verticalNav2=this.verticalNav(),rooms=_this$verticalNav2.rooms,index=_this$verticalNav2.index;
 if(index===-1)return;
-
-if(index===rooms.length-1){
-return this.focusRoom(rooms[0]);
-}
+if(index===rooms.length-1){return this.focusRoom(rooms[0]);}
 return this.focusRoom(rooms[index+1]);
 };_proto7.
 alert=function alert(message){var opts=arguments.length>1&&arguments[1]!==undefined?arguments[1]:{};
@@ -2415,8 +1978,6 @@ return this.rooms[roomid];
 
 
 
-
-
 addRoom=function addRoom(options){var _options$autofocus,_options$autoclosePop,_options$parentRoomid,_this$getRoom;
 (_options$autofocus=options.autofocus)!=null?_options$autofocus:options.autofocus=true;
 (_options$autoclosePop=options.autoclosePopups)!=null?_options$autoclosePop:options.autoclosePopups=options.autofocus;
@@ -2445,9 +2006,7 @@ preexistingRoom=this.rooms[options.id];
 }
 if(preexistingRoom){
 if(options.autofocus){var _options$args;
-if((_options$args=options.args)!=null&&_options$args.challengeMenuOpen){
-preexistingRoom.openChallenge();
-}
+if((_options$args=options.args)!=null&&_options$args.challengeMenuOpen){preexistingRoom.openChallenge();}
 this.focusRoom(preexistingRoom.id);
 }
 return preexistingRoom;
@@ -2455,10 +2014,6 @@ return preexistingRoom;
 if(options.autoclosePopups){var _options$parentElem;
 var parentPopup=parentRoom;
 if(((_options$parentElem=options.parentElem)==null?void 0:_options$parentElem.name)==='closeRoom'){
-
-
-
-
 
 parentPopup=PS.rooms['roomtablist']||parentPopup;
 }
@@ -2469,11 +2024,7 @@ this.rooms[room.id]=room;
 var location=room.location;
 room.location=null;
 this.moveRoom(room,location,!options.autofocus);
-if(options.backlog){for(var _i33=0,_options$backlog2=
-options.backlog;_i33<_options$backlog2.length;_i33++){var args=_options$backlog2[_i33];
-room.receiveLine(args);
-}
-}
+if(options.backlog){for(var _i33=0,_options$backlog2=options.backlog;_i33<_options$backlog2.length;_i33++){var args=_options$backlog2[_i33];room.receiveLine(args);}}
 if(options.autofocus)room.focusNextUpdate=true;
 return room;
 };_proto7.
@@ -2487,24 +2038,18 @@ PS.focusRoom(PS.leftPanel.id);
 }
 };_proto7.
 roomVisible=function roomVisible(room){
-if(PS.isNormalRoom(room)){
-return!this.leftPanelWidth?room===this.panel:room===this.leftPanel||room===this.rightPanel;
-}
-if(room.location==='mini-window'){
-return!this.leftPanelWidth?this.mainmenu===this.panel:this.mainmenu===this.leftPanel;
-}
+if(PS.isNormalRoom(room)){return!this.leftPanelWidth?room===this.panel:room===this.leftPanel||room===this.rightPanel;}
+if(room.location==='mini-window'){return!this.leftPanelWidth?this.mainmenu===this.panel:this.mainmenu===this.leftPanel;}
 
 return true;
 };_proto7.
 renameRoom=function renameRoom(room,id){
 
 if(this.rooms[id])this.removeRoom(this.rooms[id]);
-
 var oldid=room.id;
 room.id=id;
 this.rooms[id]=room;
 delete this.rooms[oldid];
-
 var popupIndex=this.popups.indexOf(oldid);
 if(popupIndex>=0)this.popups[popupIndex]=id;
 var leftRoomIndex=this.leftRoomList.indexOf(oldid);
@@ -2513,7 +2058,6 @@ var rightRoomIndex=this.rightRoomList.indexOf(oldid);
 if(rightRoomIndex>=0)this.rightRoomList[rightRoomIndex]=id;
 var miniRoomIndex=this.miniRoomList.indexOf(oldid);
 if(miniRoomIndex>=0)this.miniRoomList[miniRoomIndex]=id;
-
 this.update();
 };_proto7.
 isPopup=function isPopup(room){
@@ -2534,9 +2078,7 @@ this.panel=this.mainmenu;
 this.rightPanel=this.rooms['rooms']||null;
 this.panel=this.rightPanel||this.leftPanel;
 }
-}else if(background===false){
-this.focusRoom(room.id);
-}
+}else if(background===false){this.focusRoom(room.id);}
 return;
 }
 var POPUPS=['popup','semimodal-popup','modal-popup'];
@@ -2544,39 +2086,28 @@ if(this.isPopup(room)&&POPUPS.includes(location)){
 room.location=location;
 return;
 }
-
 background!=null?background:background=!this.roomVisible(room);
-
 if(room.location==='mini-window'){
 var miniRoomIndex=this.miniRoomList.indexOf(room.id);
-if(miniRoomIndex>=0){
-this.miniRoomList.splice(miniRoomIndex,1);
-}
+if(miniRoomIndex>=0){this.miniRoomList.splice(miniRoomIndex,1);}
 if(this.room===room)this.room=this.panel;
 }else if(POPUPS.includes(room.location)){
 var popupIndex=this.popups.indexOf(room.id);
-if(popupIndex>=0){
-this.popups.splice(popupIndex,1);
-}
+if(popupIndex>=0){this.popups.splice(popupIndex,1);}
 if(this.room===room)this.room=this.panel;
 }else if(room.location==='left'){
 var leftRoomIndex=this.leftRoomList.indexOf(room.id);
-if(leftRoomIndex>=0){
-this.leftRoomList.splice(leftRoomIndex,1);
-}
+if(leftRoomIndex>=0){this.leftRoomList.splice(leftRoomIndex,1);}
 if(this.room===room)this.room=this.mainmenu;
 if(this.panel===room)this.panel=this.mainmenu;
 if(this.leftPanel===room)this.leftPanel=this.mainmenu;
 }else if(room.location==='right'){
 var rightRoomIndex=this.rightRoomList.indexOf(room.id);
-if(rightRoomIndex>=0){
-this.rightRoomList.splice(rightRoomIndex,1);
-}
+if(rightRoomIndex>=0){this.rightRoomList.splice(rightRoomIndex,1);}
 if(this.room===room)this.room=this.rooms['rooms']||this.leftPanel;
 if(this.panel===room)this.panel=this.rooms['rooms']||this.leftPanel;
 if(this.rightPanel===room)this.rightPanel=this.rooms['rooms']||null;
 }
-
 room.location=location;
 switch(location){
 case'left':
@@ -2609,54 +2140,37 @@ removeRoom=function removeRoom(room){
 var wasFocused=this.room===room;
 room.destroy();
 delete PS.rooms[room.id];
-
 var leftRoomIndex=PS.leftRoomList.indexOf(room.id);
-if(leftRoomIndex>=0){
-PS.leftRoomList.splice(leftRoomIndex,1);
-}
+if(leftRoomIndex>=0){PS.leftRoomList.splice(leftRoomIndex,1);}
 if(PS.leftPanel===room){
 PS.leftPanel=this.mainmenu;
 if(PS.panel===room)PS.panel=this.mainmenu;
 if(PS.room===room)PS.room=this.mainmenu;
 }
-
 var rightRoomIndex=PS.rightRoomList.indexOf(room.id);
-if(rightRoomIndex>=0){
-PS.rightRoomList.splice(rightRoomIndex,1);
-}
+if(rightRoomIndex>=0){PS.rightRoomList.splice(rightRoomIndex,1);}
 if(PS.rightPanel===room){
 var newRightRoomid=PS.rightRoomList[rightRoomIndex]||PS.rightRoomList[rightRoomIndex-1];
 PS.rightPanel=newRightRoomid?PS.rooms[newRightRoomid]:null;
 if(PS.panel===room)PS.panel=PS.rightPanel||PS.leftPanel;
 if(PS.room===room)PS.room=PS.panel;
 }
-
 if(room.location==='mini-window'){
 var miniRoomIndex=PS.miniRoomList.indexOf(room.id);
-if(miniRoomIndex>=0){
-PS.miniRoomList.splice(miniRoomIndex,1);
+if(miniRoomIndex>=0){PS.miniRoomList.splice(miniRoomIndex,1);}
+if(PS.room===room){PS.room=PS.rooms[PS.miniRoomList[miniRoomIndex]]||PS.rooms[PS.miniRoomList[miniRoomIndex-1]]||PS.mainmenu;}
 }
-if(PS.room===room){
-PS.room=PS.rooms[PS.miniRoomList[miniRoomIndex]]||PS.rooms[PS.miniRoomList[miniRoomIndex-1]]||PS.mainmenu;
-}
-}
-
 if(this.popups.length&&room.id===this.popups[this.popups.length-1]){
 this.popups.pop();
-if(this.popups.length){
-
-PS.room=PS.rooms[this.popups[this.popups.length-1]];
-}else{var _room$parentRoomid;
+if(this.popups.length){PS.room=PS.rooms[this.popups[this.popups.length-1]];}else
+{var _room$parentRoomid;
 
 PS.room=PS.rooms[(_room$parentRoomid=room.parentRoomid)!=null?_room$parentRoomid:PS.panel.id]||PS.panel;
 
 if(PS.room.location!=='mini-window'||PS.panel!==PS.mainmenu)PS.room=PS.panel;
 }
 }
-
-if(wasFocused){
-this.room.focusNextUpdate=true;
-}
+if(wasFocused){this.room.focusNextUpdate=true;}
 };_proto7.
 
 closePopup=function closePopup(skipUpdate){
@@ -2664,9 +2178,7 @@ if(!this.popups.length)return;
 this.leave(this.popups[this.popups.length-1]);
 if(!skipUpdate)this.update();
 };_proto7.
-closeAllPopups=function closeAllPopups(skipUpdate){
-this.closePopupsAbove(null,skipUpdate);
-};_proto7.
+closeAllPopups=function closeAllPopups(skipUpdate){this.closePopupsAbove(null,skipUpdate);};_proto7.
 closePopupsAbove=function closePopupsAbove(room,skipUpdate){
 if(!this.popups.length)return;
 
@@ -2697,7 +2209,6 @@ this.removeRoom(room);
 this.update();
 }
 };_proto7.
-
 updateAutojoin=function updateAutojoin(){
 if(!PS.server.registered)return;
 var autojoins=[];
@@ -2712,19 +2223,16 @@ if(room.id==='staff'||room.id==='upperstaff'||PS.server.id!=='showdown'&&room.id
 autojoinCount++;
 if(autojoinCount>=15)break;
 }
-
 var thisAutojoin=autojoins.join(',')||null;
 var autojoin=this.prefs.autojoin||null;
 if(this.server.id==='showdown'&&typeof autojoin!=='object'){
 
 if(autojoin===thisAutojoin)return;
-
 this.prefs.set('autojoin',thisAutojoin||null);
 }else{
 
 autojoin=typeof autojoin==='string'?{showdown:autojoin}:autojoin||{};
 if(autojoin[this.server.id]===thisAutojoin)return;
-
 autojoin[this.server.id]=thisAutojoin||'';
 this.prefs.set('autojoin',autojoin);
 }
@@ -2743,10 +2251,6 @@ Notification.requestPermission==null||Notification.requestPermission(function(pe
 }
 }catch(_unused7){}
 };_proto7.
-playNotificationSound=function playNotificationSound(){
-if(window.BattleSound&&!this.prefs.mute){
-window.BattleSound.playSound('audio/notification.wav',this.prefs.notifvolume);
-}
-};return _class;}(PSModel))(
+playNotificationSound=function playNotificationSound(){if(window.BattleSound&&!this.prefs.mute){window.BattleSound.playSound('audio/notification.wav',this.prefs.notifvolume);}};return _class;}(PSModel))(
 );
 //# sourceMappingURL=client-main.js.map

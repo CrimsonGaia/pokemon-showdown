@@ -8,7 +8,7 @@
  */
 
 import { Dex, toID } from './dex';
-import type { MoveSource } from './dex-species';
+import { INFUSIBLE_MOVES, type MoveSource } from './dex-species';
 import { Utils } from '../lib/utils';
 import { Tags } from '../data/tags';
 import { Teams } from './teams';
@@ -2257,14 +2257,24 @@ export class TeamValidator {
 		const problems = [];
 
 		const checkCanLearn = (ruleTable.checkCanLearn?.[0] || this.checkCanLearn);
+		const infusibleSlots = species.infusibleSlots || 0;
+		let usedInfusibleSlots = 0;
+
 		for (const moveName of moves) {
 			const move = dex.moves.get(moveName);
-			if (moveLegalityWhitelist[move.id]) continue;
+			const moveid = move.id;
+
+			if (moveLegalityWhitelist[moveid]) continue;
+
 			const problem = checkCanLearn.call(this, move, species, setSources, set);
-			if (problem) {
-				problems.push(`${name}${problem}`);
-				break;
+			if (!problem) continue;
+
+			if (infusibleSlots > usedInfusibleSlots && INFUSIBLE_MOVES.has(moveid)) {
+				usedInfusibleSlots++;
+				continue;
 			}
+
+			problems.push(`${name}${problem}`);
 		}
 
 		if (setSources.size() && setSources.moveEvoCarryCount > 3) {

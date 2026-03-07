@@ -1363,6 +1363,7 @@ export class Species implements Effect {
 	readonly genderRatio: Readonly<{ M: number, F: number }> | null;
 	readonly eggGroups: readonly string[];
 	readonly tags: readonly string[];
+	readonly infusibleSlots: number;
 	// format data
 	readonly otherFormes: readonly string[] | null;
 	readonly cosmeticFormes: readonly string[] | null;
@@ -1415,6 +1416,7 @@ export class Species implements Effect {
 		this.genderRatio = data.genderRatio || null;
 		this.eggGroups = data.eggGroups || [];
 		this.tags = data.tags || [];
+		this.infusibleSlots = data.infusibleSlots;
 		this.otherFormes = data.otherFormes || null;
 		this.cosmeticFormes = data.cosmeticFormes || null;
 		this.evos = data.evos || null;
