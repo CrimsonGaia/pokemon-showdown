@@ -94,7 +94,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 			1: "Illuminate",
 					// ABILITY SET 2
 			H: "Solar Power",
-			S: "Tough Claws",
+			S: "Anger Point",
 		},
 		heightm: 1.1,
 		weightkg: 19,
@@ -253,11 +253,10 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoType: "levelFriendship",
 		evos: ["Raichu", "Raichu-Alola"],
 		eggGroups: ["Field", "Fairy"],
-		otherFormes: ["Pikachu-Cosplay", "Pikachu-Rock-Star", "Pikachu-Belle", "Pikachu-Pop-Star", "Pikachu-PhD", "Pikachu-Libre", "Pikachu-Original", "Pikachu-Hoenn", "Pikachu-Sinnoh", "Pikachu-Unova", "Pikachu-Kalos", "Pikachu-Alola", "Pikachu-Partner", "Pikachu-Starter", "Pikachu-World"],
+		otherFormes: ["Pikachu-Cosplay", "Pikachu-Rock-Star", "Pikachu-Belle", "Pikachu-Pop-Star", "Pikachu-PhD", "Pikachu-Libre", "Pikachu-Original", "Pikachu-Hoenn", "Pikachu-Sinnoh", "Pikachu-Unova", "Pikachu-Kalos", "Pikachu-Alola", "Pikachu-Partner", "Pikachu-World"],
 		formeOrder: [
 			"Pikachu",
 			"Pikachu-Original", "Pikachu-Hoenn", "Pikachu-Sinnoh", "Pikachu-Unova", "Pikachu-Kalos", "Pikachu-Alola", "Pikachu-Partner", // Gen 7 formes
-			"Pikachu-Starter", // forme 8 in LGPE
 			"Pikachu-World", // Gen 8 forme (indexed as Pikachu 9 in datamine)
 			"Pikachu-Rock-Star", "Pikachu-Belle", "Pikachu-Pop-Star", "Pikachu-PhD", "Pikachu-Libre", "Pikachu-Cosplay", // formes 1-6 from Gen 6
 		],
@@ -1673,7 +1672,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 			0: "Cursed Body",
 			1: "Levitate",
 					// ABILITY SET 2
-			H: "Shadow Walker",
+			H: "EleMental Affinity",
 			S: "Levitate",
 		},
 		heightm: 1.3,
@@ -1692,7 +1691,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 			0: "Cursed Body",
 			1: "Levitate",
 					// ABILITY SET 2
-			H: "Shadow Walker",
+			H: "EleMental Affinity",
 			S: "Levitate",
 		},
 		heightm: 1.6,
@@ -1712,6 +1711,9 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		abilities: { // ABILITY SET 1
 			0: "Cursed Body",
 			1: "Shadow Walker",
+					// ABILITY SET 2
+			H: "EleMental Affinity",
+			S: "Shadow Walker",
 		},
 		heightm: 1.5,
 		weightkg: 40.5,
@@ -2356,8 +2358,6 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Vaporeon", "Jolteon", "Flareon", "Espeon", "Umbreon", "Leafeon", "Glaceon", "Sylveon"],
 		eggGroups: ["Field"],
-		otherFormes: ["Eevee-Starter"],
-		formeOrder: ["Eevee", "Eevee-Starter"],
 		canGigantamax: "G-Max Cuddle",
 		tags: ["1st Stage"],
 	},

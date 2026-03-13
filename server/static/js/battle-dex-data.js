@@ -1036,7 +1036,8 @@ Item=
 
 
 
-function Item(id,name,data){this.effectType='Item';this.id=void 0;this.name=void 0;this.gen=void 0;this.exists=void 0;this.num=void 0;this.spritenum=void 0;this.desc=void 0;this.shortDesc=void 0;this.megaStone=void 0;this.megaEvolves=void 0;this.zMove=void 0;this.zMoveType=void 0;this.zMoveFrom=void 0;this.zMoveUser=void 0;this.onPlate=void 0;this.onMemory=void 0;this.onDrive=void 0;this.fling=void 0;this.naturalGift=void 0;this.isPokeball=void 0;this.itemUser=void 0;this.isFragile=void 0;this.isMildlyFragile=void 0;
+
+function Item(id,name,data){this.effectType='Item';this.id=void 0;this.name=void 0;this.gen=void 0;this.exists=void 0;this.num=void 0;this.spritenum=void 0;this.desc=void 0;this.shortDesc=void 0;this.megaStone=void 0;this.megaEvolves=void 0;this.zMove=void 0;this.zMoveType=void 0;this.zMoveFrom=void 0;this.zMoveUser=void 0;this.onPlate=void 0;this.onMemory=void 0;this.onDrive=void 0;this.fling=void 0;this.naturalGift=void 0;this.isPokeball=void 0;this.itemUser=void 0;this.itemClass=void 0;this.isFragile=void 0;this.isMildlyFragile=void 0;
 if(!data||typeof data!=='object')data={};
 if(data.name)name=data.name;
 this.name=Dex.sanitizeName(name);
@@ -1060,6 +1061,7 @@ this.fling=data.fling||null;
 this.naturalGift=data.naturalGift||null;
 this.isPokeball=!!data.isPokeball;
 this.itemUser=data.itemUser;
+this.itemClass=data.itemClass;
 this.isFragile=!!data.isFragile;
 this.isMildlyFragile=!!data.isMildlyFragile;
 this.isFragile=data.isFragile;

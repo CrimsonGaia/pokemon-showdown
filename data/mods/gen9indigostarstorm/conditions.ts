@@ -522,7 +522,7 @@ export const Conditions = {
 			onEnd(target) { this.add('-end', target, 'magicdust'); },
 		},
 	silverdust: {
-		name: 'Silver Powder',
+		name: 'Silver Dust',
 		effectType: 'SideCondition',
 		duration: 3,
 		onStart() { // Dispel Magic Dust from Pokémon on the affected side
@@ -722,7 +722,7 @@ export const Conditions = {
 		},
 		onEnd(target) { this.add('-end', target, 'luckeffect'); },
 	},
-	//#region Move locking effects
+	//#region Move Locking 
 	lockedmove: { // Outrage, Thrash, Petal Dance...
 		name: 'lockedmove',
 		duration: 2,
@@ -920,7 +920,7 @@ export const Conditions = {
 		},
 		onModifyDefPriority: 10,
 		onModifyDef(def, pokemon) { if (pokemon.hasType('Ice') && this.field.isWeather('hail')) { return this.modify(def, 1.5); } },
-		onModifyWeatherDamage(damage, attacker, defender, move) { if (move.flags && move.flags.wind) { return this.chainModify(1.2); } },
+		onWeatherModifyDamage(damage, attacker, defender, move) { if (move.flags && move.flags.wind) { return this.chainModify(1.2); } },
 		onFieldStart(field, source, effect) {
 			if (effect?.effectType === 'Ability') {
 				if (this.gen <= 5) this.effectState.duration = 0;
@@ -930,7 +930,6 @@ export const Conditions = {
 		onFieldResidualOrder: 1,
 		onFieldResidual() {
 			if (this.field.getPseudoWeather('timebreak')) return;
-			if (target.battle.field.getPseudoWeather('timebreak')) return;
 			this.add('-weather', 'Hail', '[upkeep]');
 			if (this.field.isWeather('hail')) this.eachEvent('Weather');
 		},
@@ -1250,7 +1249,6 @@ export const Conditions = {
 				// Trigger Wind Rider and Wind Power when weather starts - check both ability slots
 				const ability1 = this.toID((pokemon as any).ability1);
 				const ability2 = this.toID((pokemon as any).ability2);
-				this.add('-message', `[DEBUG START] ${pokemon.name}: ability1=${ability1}, ability2=${ability2}`);
 				if (ability1 === 'windrider' || ability2 === 'windrider') {
 					this.add('-message', `${pokemon.name}'s Wind Rider is triggered by Turbulent Winds!`);
 					if (this.boost({ atk: 1 }, pokemon, pokemon)) { this.add('-activate', pokemon, 'ability: Wind Rider', '[from] Turbulent Winds'); }
@@ -1274,7 +1272,6 @@ export const Conditions = {
 				// Trigger Wind Rider and Wind Power - check both ability slots
 				const ability1 = this.toID((pokemon as any).ability1);
 				const ability2 = this.toID((pokemon as any).ability2);
-				this.add('-message', `[DEBUG] ${pokemon.name}: ability1=${ability1}, ability2=${ability2}`);
 				if (ability1 === 'windrider' || ability2 === 'windrider') {
 					this.add('-message', `${pokemon.name}'s Wind Rider is triggered by Turbulent Winds!`);
 					if (this.boost({ atk: 1 }, pokemon, pokemon)) { this.add('-activate', pokemon, 'ability: Wind Rider', '[from] Turbulent Winds'); }
@@ -1696,28 +1693,42 @@ export const Conditions = {
 		name: "Sea of Fire",
 		effectType: "Field",
 		duration: 4,
-		onFieldStart(field, source, effect) { this.add('-fieldstart', 'SeaofFire'); },
-		onFieldResidual() {
-				for (const pokemon of this.getAllActive()) {
-					if (pokemon.hasType('Fire')) continue;
-					// Calculate Fire-type effectiveness
-					const type1 = pokemon.getTypes()[0];
-					const type2 = pokemon.getTypes()[1];
-					let effectiveness = 1;
-					if (type1) effectiveness *= this.dex.getEffectiveness('Fire', type1);
-					if (type2) effectiveness *= this.dex.getEffectiveness('Fire', type2);
-					let divisor;
-					if (effectiveness > 1) divisor = 6; // 4x weak
-					else if (effectiveness === 1) divisor = 10; // 2x weak
-					else if (effectiveness === 0) divisor = 16; // neutral
-					else if (effectiveness === -1) divisor = 24; // 2x resist
-					else divisor = 32; // 4x resist
-					this.damage(pokemon.baseMaxhp / divisor, pokemon);
-				}
+		durationCallback(source, effect) {
+			// Occa Berry specifically creates a shorter Sea of Fire
+			if (effect?.id === 'occaberry') return 2;
+			return 4;
+		},
+		onFieldStart(field, source, effect) {
+			this.add('-fieldstart', 'Sea of Fire');
 		},
 		onFieldResidualOrder: 26,
 		onFieldResidualSubOrder: 8,
-		onFieldEnd() { this.add('-fieldend', 'SeaofFire'); },
+		onFieldResidual() {
+			if (this.field.getPseudoWeather('timebreak')) return;
+
+			for (const pokemon of this.getAllActive()) {
+				if (!pokemon?.hp || pokemon.fainted) continue;
+				if (pokemon.hasType('Fire')) continue;
+
+				const types = pokemon.getTypes();
+				let typeMod = 0;
+				for (const type of types) {
+					typeMod += this.dex.getEffectiveness('Fire', type);
+				}
+
+				let divisor = 16; // neutral by default
+				if (typeMod >= 2) divisor = 6;      // 4x weak
+				else if (typeMod === 1) divisor = 10; // 2x weak
+				else if (typeMod === 0) divisor = 16; // neutral
+				else if (typeMod === -1) divisor = 24; // resist
+				else divisor = 32; // 4x resist or better
+
+				this.damage(pokemon.baseMaxhp / divisor, pokemon);
+			}
+		},
+		onFieldEnd() {
+			this.add('-fieldend', 'Sea of Fire');
+		},
 	},
 	swamp: {
 		name: "Swamp",
@@ -1734,33 +1745,72 @@ export const Conditions = {
 		},
 	},
 	timebreak: {
-			name: "Timebreak",
-			effectType: "Field",
-			onFieldStart(field, source, effect) {
-				this.add('-fieldstart', 'Timebreak');
-				this.effectState.caller = effect;
-				for (const key in this.field.pseudoWeather) {
-					if (key !== 'timebreak' && this.field.pseudoWeather[key]?.duration) {
-						this.field.pseudoWeather[key].pausedDuration = this.field.pseudoWeather[key].duration;
-						delete this.field.pseudoWeather[key].duration;
-					}
+		name: "Timebreak",
+		effectType: "Field",
+		onFieldStart(field, source, effect) {
+			this.add('-fieldstart', 'Timebreak');
+			this.effectState.caller = effect;
+			for (const key in this.field.pseudoWeather) {
+				if (key !== 'timebreak' && this.field.pseudoWeather[key]?.duration) {
+					this.field.pseudoWeather[key].pausedDuration = this.field.pseudoWeather[key].duration;
+					delete this.field.pseudoWeather[key].duration;
 				}
-			},
-			onFieldEnd() {
-				this.add('-fieldend', 'Timebreak');
-				for (const key in this.field.pseudoWeather) {
-					if (key !== 'timebreak' && this.field.pseudoWeather[key]?.pausedDuration) {
-						this.field.pseudoWeather[key].duration = this.field.pseudoWeather[key].pausedDuration;
-						delete this.field.pseudoWeather[key].pausedDuration;
-					}
-				}
-			},
-			// Remove Timebreak when the calling effect leaves the field
-			onResidual() { // Pause residual effect if timebreak is active
-				if (this.field.getPseudoWeather('timebreak')) return;
-				if (this.effectState.caller && !this.field.pseudoWeather[this.effectState.caller.id]) { this.field.removePseudoWeather('timebreak'); }
-			},
+			}
 		},
+		onFieldEnd() {
+			this.add('-fieldend', 'Timebreak');
+			for (const key in this.field.pseudoWeather) {
+				if (key !== 'timebreak' && this.field.pseudoWeather[key]?.pausedDuration) {
+					this.field.pseudoWeather[key].duration = this.field.pseudoWeather[key].pausedDuration;
+					delete this.field.pseudoWeather[key].pausedDuration;
+				}
+			}
+		},
+		// Remove Timebreak when the calling effect leaves the field
+		onResidual() { // Pause residual effect if timebreak is active
+			if (this.field.getPseudoWeather('timebreak')) return;
+			if (this.effectState.caller && !this.field.pseudoWeather[this.effectState.caller.id]) { this.field.removePseudoWeather('timebreak'); }
+		},
+	},
+	wildfyre: {
+		name: "Wildfyre",
+		effectType: "Field",
+		duration: 4,
+		durationCallback(source, effect) {
+			// Occa Berry specifically creates a shorter Sea of Fire
+			if (effect?.id === 'occaberry') return 2;
+			return 4;
+		},
+		onFieldStart(field, source, effect) {
+			this.add('-fieldstart', 'Wildfyre');
+		},
+		onFieldResidualOrder: 26,
+		onFieldResidualSubOrder: 8,
+		onFieldResidual() {
+			if (this.field.getPseudoWeather('timebreak')) return;
+
+			for (const pokemon of this.getAllActive()) {
+				if (!pokemon?.hp || pokemon.fainted) continue;
+				if (pokemon.hasType('Dragon')) continue;
+
+				const types = pokemon.getTypes();
+				let typeMod = 0;
+				for (const type of types) {
+					typeMod += this.dex.getEffectiveness('Dragon', type);
+				}
+
+				let divisor = 16; // neutral by default
+				if (typeMod >= 2) divisor = 6;      // 4x weak
+				else if (typeMod === 1) divisor = 10; // 2x weak
+				else if (typeMod === 0) divisor = 16; // neutral
+				else if (typeMod === -1) divisor = 24; // resist
+				else divisor = 32; // 4x resist or better
+
+				this.damage(pokemon.baseMaxhp / divisor, pokemon);
+			}
+		},
+		onFieldEnd() { this.add('-fieldend', 'Wildfyre'); },
+	},
 	//#region Transformations
 	// Commander needs two conditions so they are implemented here Dondozo
 	commanded: {
@@ -1847,17 +1897,19 @@ export const Conditions = {
 			return false;
 		},
 		onAfterDamage(damage, target, source, effect) {
-			// Track damage dealt by the slipping pokemon
-			if (source && source === this.effectState.target && effect?.effectType === 'Move') { this.effectState.totalDamage += damage; }
-		},
-		onAfterMoveSecondary(target, source, move) {
-			// Apply 1/8 of total damage dealt as recoil
-			if (this.effectState.totalDamage > 0) {
-				const recoil = Math.max(1, Math.floor(this.effectState.totalDamage / 8));
-				this.damage(recoil, pokemon, pokemon, 'slip');
+			if (source && source === this.effectState.target && effect?.effectType === 'Move') {
+				this.effectState.totalDamage += damage;
 			}
 		},
-		onSourceModifyDamage(damage, source, target, move) { if (move && move.id !== 'slip') { return this.chainModify(2); } },
+		onAfterMoveSecondary(target) {
+			if (this.effectState.totalDamage > 0) {
+				const recoil = Math.max(1, Math.floor(this.effectState.totalDamage / 8));
+				this.damage(recoil, target, target, this.dex.conditions.get('slip'));
+			}
+		},
+		onSourceModifyDamage(damage, source, target, move) {
+			if (move && move.id !== 'slip') return this.chainModify(2);
+		},
 	},
 	shapememory: {
   		name: 'Shape Memory',
@@ -1939,9 +1991,15 @@ export const Conditions = {
 		effectType: 'Volatile',
 		duration: 1,
 		onStart(pokemon) {
-			const ability = pokemon.getAbility();
-			if (ability.id === 'windrider') { this.boost({atk: 1}, pokemon, pokemon); } 
-			else if (ability.id === 'windpower') { pokemon.addVolatile('charge'); }
+			const ability1 = this.toID((pokemon as any).ability1);
+			const ability2 = this.toID((pokemon as any).ability2);
+
+			if (ability1 === 'windrider' || ability2 === 'windrider') {
+				this.boost({atk: 1}, pokemon, pokemon);
+			}
+			if (ability1 === 'windpower' || ability2 === 'windpower') {
+				pokemon.addVolatile('charge');
+			}
 		},
 	},
 	nightdazelock: {

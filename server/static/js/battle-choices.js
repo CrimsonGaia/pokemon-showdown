@@ -121,6 +121,8 @@
 
 
 
+
+
 BattleChoiceBuilder=function(){
 
 
@@ -146,7 +148,8 @@ BattleChoiceBuilder=function(){
 
 
 
-function BattleChoiceBuilder(request){this.request=void 0;this.noCancel=void 0;this.choices=[];this.current={choiceType:'move',move:0,targetLoc:0,mega:false,megax:false,megay:false,ultra:false,z:false,max:false,tera:false};this.alreadySwitchingIn=[];this.alreadyMega=false;this.alreadyMax=false;this.alreadyZ=false;this.alreadyTera=false;
+
+function BattleChoiceBuilder(request){this.request=void 0;this.noCancel=void 0;this.choices=[];this.current={choiceType:'move',move:0,targetLoc:0,mega:false,megax:false,megay:false,ultra:false,z:false,max:false,tera:false,teraempower:false};this.alreadySwitchingIn=[];this.alreadyMega=false;this.alreadyMax=false;this.alreadyZ=false;this.alreadyTera=false;
 this.request=request;
 this.noCancel=request.noCancel||request.requestType==='wait';
 this.fillPasses();
@@ -239,7 +242,8 @@ megay:false,
 ultra:false,
 z:false,
 max:false,
-tera:false
+tera:false,
+teraempower:false
 };
 }else if(choice.choiceType==='switch'||choice.choiceType==='team'){var _this$currentMoveRequ2,_this$currentMoveRequ3;
 if((_this$currentMoveRequ2=this.currentMoveRequest())!=null&&_this$currentMoveRequ2.trapped){
@@ -350,7 +354,8 @@ megay:false,
 ultra:false,
 z:false,
 max:false,
-tera:false
+tera:false,
+teraempower:false
 };
 while(true){
 
@@ -388,6 +393,9 @@ choice=choice.slice(0,-13);
 }else if(choice.endsWith(' terastal')){
 current.tera=true;
 choice=choice.slice(0,-9);
+}else if(choice.endsWith(' teraempower')){
+current.teraempower=true;
+choice=choice.slice(0,-13);
 }else{
 break;
 }
@@ -438,6 +446,18 @@ if(current.max&&!moveRequest.canDynamax)current.max=false;
 var move=this.currentMove(current,index);
 if(!move||move.disabled){var _move$name;
 throw new Error("Move "+((_move$name=move==null?void 0:move.name)!=null?_move$name:current.move)+" is disabled");
+}
+if(current.tera&&current.teraempower){
+throw new Error("A move cannot both Terastallize and Tera Empower");
+}
+if(current.tera&&!moveRequest.canTerastallize){
+throw new Error("This Pok\xE9mon cannot Terastallize now");
+}
+if(current.teraempower&&!moveRequest.canTeraEmpower){
+throw new Error("This Pok\xE9mon cannot use Tera Empower now");
+}
+if(current.teraempower&&move.id!=='terablast'&&move.id!=='terastarstorm'){
+throw new Error("Only Tera Blast or Tera Starstorm can be Tera Empowered");
 }
 return current;
 }
@@ -529,7 +549,8 @@ choice.megax?' megax':'')+(
 choice.megay?' megay':'')+(
 choice.ultra?' ultra':'')+(
 choice.z?' zmove':'')+(
-choice.tera?' terastallize':'');
+choice.tera?' terastallize':'')+(
+choice.teraempower?' teraempower':'');
 };BattleChoiceBuilder.
 
 

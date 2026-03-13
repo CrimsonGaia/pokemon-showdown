@@ -41,12 +41,12 @@
 			self.removeFilter(e);
 			if (self.$inputEl) self.$inputEl.focus();
 		});
-		this.$el.on('click', '.itemclasscol[data-tag], .itemconsumecol[data-tag]', function (e) {
+		this.$el.on('click', '.itemclasschip[data-tag]', function (e) {
 			e.preventDefault();
 			e.stopPropagation();
 			e.stopImmediatePropagation();
-			var tag = e.currentTarget.dataset.tag;
-			self.engine.addFilter(['itemclass', tag]);
+			var itemClass = e.currentTarget.dataset.tag;
+			self.engine.addFilter(['itemclass', itemClass]);
 			self.filters = self.engine.filters;
 			self.find('');
 			if (self.$inputEl) self.$inputEl.focus();
@@ -88,10 +88,62 @@
 			self.renderingDone = false;
 			self.updateScroll();
 		});
+		this.$el.on('change', '#dex-display-toggle', function (e) {
+			var value = e.currentTarget.value;
+			Storage.prefs('dexdisplay', value);
+			self.renderedIndex = 0;
+			self.renderingDone = false;
+			self.updateScroll();
+		});
+		this.$el.on('change', '#dex-grid-bg-toggle', function (e) {
+			var value = e.currentTarget.value;
+			Storage.prefs('dexgridbg', value);
+			self.renderedIndex = 0;
+			self.renderingDone = false;
+			self.updateScroll();
+		});
 	}
 	Search.prototype.$ = function (query) {
 		return this.$el.find(query);
 	};
+	var POKEMON_GRID_TYPE_COLORS = {
+		normal: '#d9d7b3',
+		fire: '#f6c19a',
+		water: '#a9c9f7',
+		electric: '#f7e08e',
+		grass: '#b7e0a5',
+		ice: '#bfeaf1',
+		fighting: '#d9a08c',
+		poison: '#c7a4d9',
+		ground: '#dec9a2',
+		flying: '#c7d6f5',
+		psychic: '#f3adc3',
+		bug: '#cfdb95',
+		rock: '#cbb99c',
+		ghost: '#b4acd9',
+		dragon: '#a99cf0',
+		dark: '#b6aca4',
+		steel: '#cbd1de',
+		fairy: '#f4c5e0'
+	};
+	function blendHexWithWhite(hex, amount) {
+	hex = (hex || '#e6e6e6').replace('#', '');
+	if (hex.length !== 6) return '#e6e6e6';
+
+	var r = parseInt(hex.substr(0, 2), 16);
+	var g = parseInt(hex.substr(2, 2), 16);
+	var b = parseInt(hex.substr(4, 2), 16);
+
+	r = Math.round(r + (255 - r) * amount);
+	g = Math.round(g + (255 - g) * amount);
+	b = Math.round(b + (255 - b) * amount);
+
+	var rr = r.toString(16).padStart(2, '0');
+	var gg = g.toString(16).padStart(2, '0');
+	var bb = b.toString(16).padStart(2, '0');
+
+	return '#' + rr + gg + bb;
+}
 	// Helper function to render category based on user preference
 	Search.prototype.getCategoryDisplay = function (category) {
 		var displayMode = Dex.prefs('categorydisplay') || 'icons';
@@ -169,7 +221,7 @@
 		this.resultSet = this.engine.results;
 		if (firstElem) {
 			this.resultSet = [[this.engine.typedSearch.searchType, firstElem]].concat(this.resultSet);
-			if (this.resultSet.length > 1 && ['sortpokemon', 'sortmove'].includes(this.resultSet[1][0])) {
+			if (this.resultSet.length > 1 && ['sortpokemon', 'sortmove', 'sortitem'].includes(this.resultSet[1][0])) {
 				var sortRow = this.resultSet[1];
 				this.resultSet[1] = this.resultSet[0];
 				this.resultSet[0] = sortRow;
@@ -202,7 +254,7 @@
 			var text = this.filters[i][1];
 			if (this.filters[i][0] === 'move') text = Dex.moves.get(text).name;
 			if (this.filters[i][0] === 'pokemon') text = Dex.species.get(text).name;
-			if (this.filters[i][0] === 'itemclass') text = this.filters[i][1]; // Already capitalized
+			if (this.filters[i][0] === 'itemclass') text = ITEM_CLASS_LABELS[this.filters[i][1]] || this.filters[i][1];
 			buf += '<button class="filter" value="' + BattleLog.escapeHTML(this.filters[i].join(':')) + '">' + text + ' <i class="fa fa-times-circle"></i></button> ';
 		}
 		if (!q) buf += '<small style="color: #888">(backspace = delete filter)</small>';
@@ -210,6 +262,53 @@
 	};
 	Search.prototype.updateScroll = function (forceAdd) {
 		if (this.renderingDone) return;
+
+		var resultSet = this.resultSet;
+		var isPokemonGrid = this.isPokemonGridMode();
+		var isItemGrid = this.isItemGridMode();
+		if (isPokemonGrid || isItemGrid) {
+			var i = this.renderedIndex;
+			var finalIndex = i + (forceAdd ? 255 : 255);
+			if (finalIndex > resultSet.length) finalIndex = resultSet.length;
+			var buf = '';
+			while (i < finalIndex) {
+				var row = resultSet[i];
+				var errorMessage = '';
+				var label;
+				if ((label = this.engine.filterLabel(row[0]))) { errorMessage = '<span class="col filtercol"><em>' + label + '</em></span>'; } 
+				else if ((label = this.engine.illegalLabel(row[1]))) { errorMessage = '<span class="col illegalcol"><em>' + label + '</em></span>'; }
+				var mStart = 0;
+				var mEnd = 0;
+				if (row.length > 3) {
+					mStart = row[2];
+					mEnd = row[3];
+				}
+				buf += this.renderRow(
+					row[1],
+					row[0],
+					mStart,
+					mEnd,
+					errorMessage,
+					row[1] in this.cur ? ' class="cur"' : ''
+				);
+				i++;
+			}
+			if (!this.renderedIndex) {
+				this.el.innerHTML = '<ul class="utilichart ' + (isPokemonGrid ? 'pokemon-grid-view' : 'item-grid-view') + '">' + buf + (i < resultSet.length ? '<li class="result more"><p><button class="button big">More</button></p></li>' : '') + '</ul>';
+				this.moreVisible = i < resultSet.length;
+			} else {
+				if (this.moreVisible) {
+					this.$el.find('.more').remove();
+					this.moreVisible = false;
+				}
+				$(this.el.firstChild).append(buf + (i < resultSet.length ? '<li class="result more"><p><button class="button big">More</button></p></li>' : ''));
+				this.moreVisible = i < resultSet.length;
+			}
+			this.renderedIndex = i;
+			this.renderingDone = i >= resultSet.length;
+			return;
+		}
+
 		var top = this.$viewport.scrollTop();
 		var bottom = top + this.$viewport.height();
 		var windowHeight = $(window).height();
@@ -219,7 +318,7 @@
 		if (finalIndex < i + 20) finalIndex = i + 20;
 		if (bottom - top > windowHeight && !i) finalIndex = 20;
 		if (forceAdd && finalIndex > i + 40) finalIndex = i + 40;
-		var resultSet = this.resultSet;
+
 		var buf = '';
 		while (i < finalIndex) {
 			if (!resultSet[i]) {
@@ -229,8 +328,11 @@
 			var row = resultSet[i];
 			var errorMessage = '';
 			var label;
-			if ((label = this.engine.filterLabel(row[0]))) { errorMessage = '<span class="col filtercol"><em>' + label + '</em></span>'; } 
-			else if ((label = this.engine.illegalLabel(row[1]))) { errorMessage = '<span class="col illegalcol"><em>' + label + '</em></span>'; }
+			if ((label = this.engine.filterLabel(row[0]))) {
+				errorMessage = '<span class="col filtercol"><em>' + label + '</em></span>';
+			} else if ((label = this.engine.illegalLabel(row[1]))) {
+				errorMessage = '<span class="col illegalcol"><em>' + label + '</em></span>';
+			}
 			var mStart = 0;
 			var mEnd = 0;
 			if (row.length > 3) {
@@ -264,7 +366,17 @@
 		}
 		this.find('', firstElem);
 	};
-
+	Search.prototype.isPokemonGridMode = function () {
+		return this.engine &&
+			this.engine.typedSearch &&
+			this.engine.typedSearch.searchType === 'pokemon' &&
+			(Dex.prefs('dexdisplay') || 'list') === 'grid';
+	};
+	Search.prototype.isItemGridMode = function () {
+		return this.engine &&
+			this.engine.typedSearch &&
+			this.engine.typedSearch.searchType === 'item';
+	};
 	/*********************************************************
 	 * Rendering functions
 	 *********************************************************/
@@ -282,15 +394,20 @@
 			return this.renderPokemonSortRow();
 		case 'sortmove':
 			return this.renderMoveSortRow();
+		case 'sortitem':
+			return this.renderItemSortRow();
 		case 'pokemon':
 			var pokemon = this.engine.dex.species.get(id);
+			if (this.isPokemonGridMode()) {
+				return this.renderPokemonGridRow(pokemon, matchStart, matchLength, errorMessage, attrs);
+			}
 			return this.renderPokemonRow(pokemon, matchStart, matchLength, errorMessage, attrs);
 		case 'move':
 			var move = this.engine.dex.moves.get(id);
 			return this.renderMoveRow(move, matchStart, matchLength, errorMessage, attrs);
 		case 'item':
 			var item = this.engine.dex.items.get(id);
-			return this.renderItemRow(item, matchStart, matchLength, errorMessage, attrs);
+			return this.renderItemGridRow(item, matchStart, matchLength, errorMessage, attrs);
 		case 'ability':
 			var ability = this.engine.dex.abilities.get(id);
 			return this.renderAbilityRow(ability, matchStart, matchLength, errorMessage, attrs);
@@ -314,45 +431,48 @@
 			var egggroup = { name: egName };
 			return this.renderEggGroupRow(egggroup, matchStart, matchLength, errorMessage);
 		case 'tier':
-			// very hardcode
-			var tierTable = {
-				uber: "Uber",
-				ou: "OU",
-				uu: "UU",
-				ru: "RU",
-				nu: "NU",
-				pu: "PU",
-				zu: "ZU",
-				nfe: "NFE",
-				lc: "LC",
-				cap: "CAP",
-				caplc: "CAP LC",
-				capnfe: "CAP NFE",
-				uubl: "UUBL",
-				rubl: "RUBL",
-				nubl: "NUBL",
-				publ: "PUBL",
-				zubl: "ZUBL"
-			};
-			var tier = { name: tierTable[id] };
-			return this.renderTierRow(tier, matchStart, matchLength, errorMessage);
-	case 'category':
-		var category = { name: id[0].toUpperCase() + id.substr(1), id: id };
-		return this.renderCategoryRow(category, matchStart, matchLength, errorMessage);
-	case 'flag':
-		var flag = { name: id[0].toUpperCase() + id.substr(1), id: id };
-		return this.renderFlagRow(flag, matchStart, matchLength, errorMessage);
-	case 'itemclass':
-		var itemclassNames = {
-			'fragile': 'Fragile',
-			'volatile': 'Volatile',
-			'consumable': 'Consumable',
-			'pokeball': 'Pokéball',
-			'evolution': 'Evolution',
-			'tradeevo': 'Trade Evo'
+		var tierTable = {
+			uber: "Uber",
+			ou: "OU",
+			uu: "UU",
+			ru: "RU",
+			nu: "NU",
+			pu: "PU",
+			zu: "ZU",
+			nfe: "NFE",
+			lc: "LC",
+			cap: "CAP",
+			caplc: "CAP LC",
+			capnfe: "CAP NFE",
+			uubl: "UUBL",
+			rubl: "RUBL",
+			nubl: "NUBL",
+			publ: "PUBL",
+			zubl: "ZUBL",
+			'Reg α': "Reg α",
+			'Reg Δ': "Reg Δ",
+			'Reg ι': "Reg ι",
+			'Reg β': "Reg β",
+			'Reg ζ': "Reg ζ",
+			'Reg γ': "Reg γ",
+			'Reg Θ': "Reg Θ",
+			'Reg ε': "Reg ε",
+			'Reg λ': "Reg λ",
+			'Reg ψ': "Reg ψ",
+			'Reg ν': "Reg ν",
+			'Reg φ': "Reg φ"
 		};
-		var itemclass = { name: itemclassNames[id] || id[0].toUpperCase() + id.substr(1), id: id };
-		return this.renderItemClassRow(itemclass, matchStart, matchLength, errorMessage);
+		var tier = { name: tierTable[id] || id };
+		return this.renderTierRow(tier, matchStart, matchLength, errorMessage);
+		case 'category':
+			var category = { name: id[0].toUpperCase() + id.substr(1), id: id };
+			return this.renderCategoryRow(category, matchStart, matchLength, errorMessage);
+		case 'flag':
+			var flag = { name: id[0].toUpperCase() + id.substr(1), id: id };
+			return this.renderFlagRow(flag, matchStart, matchLength, errorMessage);
+		case 'itemclass':
+			var itemclass = {name: ITEM_CLASS_LABELS[id] || id[0].toUpperCase() + id.substr(1), id: id};
+			return this.renderItemClassRow(itemclass, matchStart, matchLength, errorMessage);
 		case 'article':
 			var articleTitle = (window.BattleArticleTitles && BattleArticleTitles[id]) || (id[0].toUpperCase() + id.substr(1));
 			var article = { name: articleTitle, id: id };
@@ -360,9 +480,9 @@
 		}
 		return 'Error: not found';
 	};
-	Search.prototype.renderPokemonSortRow = function () {
+		Search.prototype.renderPokemonSortRow = function () {
 		var buf = '<li class="result"><div class="sortrow">';
-		buf += '<button class="sortcol numsortcol' + (!this.sortCol ? ' cur' : '') + '">' + (!this.sortCol ? 'Sort: ' : this.engine.firstPokemonColumn) + '</button>';
+		buf += '<button class="sortcol numsortcol' + (this.sortCol === 'tier' ? ' cur' : '') + '" data-sort="tier">Tier</button>';
 		buf += '<button class="sortcol pnamesortcol' + (this.sortCol === 'name' ? ' cur' : '') + '" data-sort="name">Name</button>';
 		buf += '<button class="sortcol typesortcol' + (this.sortCol === 'type' ? ' cur' : '') + '" data-sort="type">Types</button>';
 		buf += '<button class="sortcol abilitysortcol' + (this.sortCol === 'ability' ? ' cur' : '') + '" data-sort="ability">Abilities</button>';
@@ -377,6 +497,27 @@
 		}
 		buf += '<button class="sortcol statsortcol' + (this.sortCol === 'spe' ? ' cur' : '') + '" data-sort="spe">Spe</button>';
 		buf += '<button class="sortcol statsortcol' + (this.sortCol === 'bst' ? ' cur' : '') + '" data-sort="bst">BST</button>';
+		buf += '<span style="margin: 0 5px; color: #999;">|</span>';
+
+		var dexDisplay = Dex.prefs('dexdisplay') || 'list';
+		var dexGridBg = Dex.prefs('dexgridbg') || 'faint';
+
+		buf += '<label style="font-size: 9px; display: inline-flex; align-items: center; vertical-align: middle;">';
+		buf += '<span style="margin-right: 1px; line-height: 1;">View:</span>';
+		buf += '<select id="dex-display-toggle" style="font-size: 9px; padding: 1px 3px 1px 1px; appearance: none; -webkit-appearance: none; -moz-appearance: none; width: 40px;">';
+		buf += '<option value="list"' + (dexDisplay === 'list' ? ' selected' : '') + '>List</option>';
+		buf += '<option value="grid"' + (dexDisplay === 'grid' ? ' selected' : '') + '>Grid</option>';
+		buf += '</select></label>';
+
+		buf += '<span style="margin: 0 4px 0 6px; color: #999;">|</span>';
+
+		buf += '<label style="font-size: 9px; display: inline-flex; align-items: center; vertical-align: middle;">';
+		buf += '<span style="margin-right: 1px; line-height: 1;">BG:</span>';
+		buf += '<select id="dex-grid-bg-toggle" style="font-size: 9px; padding: 1px 3px 1px 1px; appearance: none; -webkit-appearance: none; -moz-appearance: none; width: 48px;">';
+		buf += '<option value="none"' + (dexGridBg === 'none' ? ' selected' : '') + '>None</option>';
+		buf += '<option value="faint"' + (dexGridBg === 'faint' ? ' selected' : '') + '>Faint</option>';
+		buf += '<option value="bright"' + (dexGridBg === 'bright' ? ' selected' : '') + '>Bright</option>';
+		buf += '</select></label>';
 		buf += '</div></li>';
 		return buf;
 	};
@@ -412,6 +553,13 @@
 		buf += '<option value="text"' + (flagTint === 'text' ? ' selected' : '') + '>Text</option>';
 		buf += '<option value="both"' + (flagTint === 'both' ? ' selected' : '') + '>Both</option>';
 		buf += '</select></label>';
+		buf += '</div></li>';
+		return buf;
+	};
+	Search.prototype.renderItemSortRow = function () {
+		var buf = '<li class="result"><div class="sortrow">';
+		buf += '<span class="sortcol itemnamecol" style="cursor: default;">Name</span>';
+		buf += '<span class="sortcol itemclasshead" style="cursor: default;">Class</span>';
 		buf += '</div></li>';
 		return buf;
 	};
@@ -523,49 +671,183 @@
 
 		return buf;
 	};
+	Search.prototype.renderPokemonGridRow = function (pokemon, matchStart, matchLength, errorMessage, attrs) {
+		if (!attrs) attrs = '';
+		if (!pokemon) return '<li class="result pokemon-grid-card">Unrecognized pokemon</li>';
+
+		var id = toID(pokemon.name);
+		if (Search.urlRoot) attrs += ' href="' + Search.urlRoot + 'pokemon/' + id + '" data-target="push"';
+
+		var buf = '<li class="result pokemon-grid-card">';
+
+		var types = pokemon.types || [];
+		var type1 = toID(types[0] || 'normal');
+		var type2 = toID(types[1] || '');
+		var cardClasses = 'pokemon-grid-link';
+
+		var bgMode = Dex.prefs('dexgridbg') || 'faint';
+		var baseColor1 = POKEMON_GRID_TYPE_COLORS[type1] || '#e6e6e6';
+		var baseColor2 = type2 ? (POKEMON_GRID_TYPE_COLORS[type2] || '#e6e6e6') : '';
+
+		var color1 = baseColor1;
+		var color2 = baseColor2;
+
+		if (bgMode === 'faint') {
+			color1 = blendHexWithWhite(baseColor1, 0.72);
+			if (type2) color2 = blendHexWithWhite(baseColor2, 0.72);
+		} else if (bgMode === 'bright') {
+			color1 = blendHexWithWhite(baseColor1, 0.50);
+			if (type2) color2 = blendHexWithWhite(baseColor2, 0.50);
+		}
+
+		var cardStyle = '';
+		if (bgMode !== 'none') {
+			if (type2) {
+				cardStyle = ' style="background: linear-gradient(to bottom right, ' + color1 + ' 0%, ' + color1 + ' calc(50% - 15px), ' + color2 + ' calc(50% + 15px), ' + color2 + ' 100%);"';
+			} else {
+				cardStyle = ' style="background: ' + color1 + ';"';
+			}
+		}
+
+		buf += '<a class="' + cardClasses + '"' + cardStyle + attrs + ' data-entry="pokemon|' + BattleLog.escapeHTML(pokemon.name) + '">';				var name = pokemon.name;
+		var tagStart = (pokemon.forme ? name.length - pokemon.forme.length - 1 : 0);
+		if (tagStart) name = name.substr(0, tagStart);
+		if (matchLength) {
+			name = name.substr(0, matchStart) + '<b>' + name.substr(matchStart, matchLength) + '</b>' + name.substr(matchStart + matchLength);
+		}
+		if (tagStart) {
+			if (matchLength && matchStart + matchLength > tagStart) {
+				if (matchStart < tagStart) {
+					matchLength -= tagStart - matchStart;
+					matchStart = tagStart;
+				}
+				name += '<small>' + pokemon.name.substr(tagStart, matchStart - tagStart) + '<b>' + pokemon.name.substr(matchStart, matchLength) + '</b>' + pokemon.name.substr(matchStart + matchLength) + '</small>';
+			} else {
+				name += '<small>' + pokemon.name.substr(tagStart) + '</small>';
+			}
+		}
+
+		var gen = this.engine ? this.engine.dex.gen : 9;
+		var tier = this.engine ? this.engine.getTier(pokemon) : pokemon.num;
+		var stats = pokemon.baseStats || {};
+		var abilities = pokemon.abilities || {};
+		var types = pokemon.types || [];
+		var height = pokemon.heightm ? pokemon.heightm + ' m' : '&mdash;';
+		var weight = pokemon.weightkg ? pokemon.weightkg + ' kg' : '&mdash;';
+
+		var primaryAbility = abilities['0'] || '&mdash;';
+		var secondaryAbility = abilities['1'] || '&mdash;';
+		var hiddenAbility = abilities['H'] || '&mdash;';
+		var specialAbility = abilities['S'] || '&mdash;';
+
+		var baseSpecies = pokemon;
+		if (this.engine && pokemon.baseSpecies) {
+			baseSpecies = this.engine.dex.species.get(pokemon.baseSpecies || pokemon.name);
+		}
+
+		var tags = [];
+		if (baseSpecies && baseSpecies.tags && baseSpecies.tags.length) {
+			tags = baseSpecies.tags.slice();
+		}
+		if (pokemon.tags && pokemon.tags.length) {
+			for (var t = 0; t < pokemon.tags.length; t++) {
+				if (tags.indexOf(pokemon.tags[t]) < 0) tags.push(pokemon.tags[t]);
+			}
+		}
+
+		var specialCategory = '&nbsp;';
+
+		if (tier === 'Reg λ' || tier === 'Reg ψ' || tags.includes('Restricted Legendary')) {
+			specialCategory = 'Restricted Legendary';
+		} else if (tier === 'Reg ε' || tags.includes('Restricted Paradox')) {
+			specialCategory = 'Restricted Paradox';
+		} else if (tier === 'Reg ν' || tier === 'Reg φ' || tags.includes('Restricted Mythical')) {
+			specialCategory = 'Restricted Mythical';
+		} else if (tier === 'Reg Θ' || tags.includes('Legendary')) {
+			specialCategory = 'Legendary';
+		} else if (tags.includes('Mythical')) {
+			specialCategory = 'Mythical';
+		} else if (tags.includes('Sub-Legendary')) {
+			specialCategory = 'Sub-Legendary';
+		} else if (tags.includes('Paradox')) {
+			specialCategory = 'Paradox';
+		} else if (tags.includes('Powerhouse')) {
+			specialCategory = 'Powerhouse';
+		} else if (tags.length) {
+			specialCategory = tags[0];
+		}
+		buf += '<div class="pokemon-grid-main">';
+		buf += '<div class="pokemon-grid-name"><span class="pokemon-grid-name-dex">#' + (pokemon.num >= 0 ? pokemon.num : 'CAP') + '</span><span class="pokemon-grid-name-text">' + name + '</span></div>';
+		buf += '<div class="pokemon-grid-left">';
+		buf += '<div class="pokemon-grid-type">';
+		for (var i = 0; i < types.length; i++) { buf += Dex.getTypeIcon(types[i]); }
+		buf += '</div>';
+		buf += '<div class="pokemon-grid-icon"><span style="' + Dex.getPokemonIcon(pokemon.name) + '"></span></div>';
+		buf += '<div class="pokemon-grid-measure"><span>' + height + '</span><span>' + weight + '</span></div>';
+		buf += '<div class="pokemon-grid-meta pokemon-grid-tags"><span>' + specialCategory + '</span></div>';
+		buf += '<div class="pokemon-grid-meta pokemon-grid-tier"><span>' + tier + '</span></div>';
+		buf += '</div>';
+		buf += '<div class="pokemon-grid-right">';
+		buf += '<div class="pokemon-grid-abilities">';
+		buf += '<div class="pokemon-grid-abilitygroup">';
+		buf += '<div class="pokemon-grid-abilityhead">Ability Set 1</div>';
+		buf += '<div class="pokemon-grid-abilityslots">';
+		buf += '<div class="pokemon-grid-abilityslot">' + primaryAbility + '</div>';
+		buf += '<div class="pokemon-grid-abilityslot">' + secondaryAbility + '</div>';
+		buf += '</div>';
+		buf += '</div>';
+		buf += '<div class="pokemon-grid-abilitygroup">';
+		buf += '<div class="pokemon-grid-abilityhead">Ability Set 2</div>';
+		buf += '<div class="pokemon-grid-abilityslots">';
+		buf += '<div class="pokemon-grid-abilityslot">' + hiddenAbility + '</div>';
+		buf += '<div class="pokemon-grid-abilityslot">' + specialAbility + '</div>';
+		buf += '</div>';
+		buf += '</div>';
+		buf += '</div>';
+		buf += '</div>'; // close .pokemon-grid-right
+		buf += '<div class="pokemon-grid-stats">';
+		buf += '<div class="pokemon-grid-stat"><label>HP</label><span>' + (stats.hp || 0) + '</span></div>';
+		buf += '<div class="pokemon-grid-stat"><label>ATK</label><span>' + (stats.atk || 0) + '</span></div>';
+		buf += '<div class="pokemon-grid-stat"><label>DEF</label><span>' + (stats.def || 0) + '</span></div>';
+		buf += '<div class="pokemon-grid-stat"><label>' + (gen >= 2 ? 'SP ATK' : 'SPC') + '</label><span>' + (stats.spa || 0) + '</span></div>';
+		buf += '<div class="pokemon-grid-stat"><label>' + (gen >= 2 ? 'SP DEF' : 'SPC') + '</label><span>' + (gen >= 2 ? (stats.spd || 0) : (stats.spa || 0)) + '</span></div>';
+		buf += '<div class="pokemon-grid-stat"><label>SPEED</label><span>' + (stats.spe || 0) + '</span></div>';
+		buf += '</div>';
+		buf += '</div>'; // close .pokemon-grid-main
+		buf += '</a></li>';
+		return buf;
+	};
 	Search.prototype.renderTaggedPokemonRowInner = function (pokemon, tag, errorMessage) {
 		var attrs = '';
 		if (Search.urlRoot) attrs = ' href="' + Search.urlRoot + 'pokemon/' + toID(pokemon.name) + '" data-target="push"';
 		var buf = '<a' + attrs + ' data-entry="pokemon|' + BattleLog.escapeHTML(pokemon.name) + '">';
-
 		// tag
 		buf += '<span class="col tagcol shorttagcol">' + tag + '</span> ';
-
 		// icon
 		buf += '<span class="col iconcol">';
 		buf += '<span style="' + Dex.getPokemonIcon(pokemon.name) + '"></span>';
 		buf += '</span> ';
-
 		// name
 		var name = pokemon.name;
 		var tagStart = (pokemon.forme ? name.length - pokemon.forme.length - 1 : 0);
 		if (tagStart) name = name.substr(0, tagStart) + '<small>' + pokemon.name.substr(tagStart) + '</small>';
 		buf += '<span class="col shortpokemonnamecol">' + name + '</span> ';
-
 		// error
 		if (errorMessage) {
 			buf += errorMessage + '</a></li>';
 			return buf;
 		}
-
 		// type
 		buf += '<span class="col typecol">';
-		for (var i = 0; i < pokemon.types.length; i++) {
-			buf += Dex.getTypeIcon(pokemon.types[i]);
-		}
+		for (var i = 0; i < pokemon.types.length; i++) { buf += Dex.getTypeIcon(pokemon.types[i]); }
 		buf += '</span> ';
-
 		// abilities
 		buf += '<span style="float:left;min-height:26px">';
-		if (pokemon.abilities['1']) {
-			buf += '<span class="col twoabilitycol">';
-		} else {
-			buf += '<span class="col abilitycol">';
-		}
+		if (pokemon.abilities['1']) { buf += '<span class="col twoabilitycol">'; } 
+		else { buf += '<span class="col abilitycol">'; }
 		for (var i in pokemon.abilities) {
 			var ability = pokemon.abilities[i];
 			if (!ability) continue;
-
 			if (i === '1') buf += '<br />';
 			if (i === 'H') ability = '</span><span class="col abilitycol"><em>' + pokemon.abilities[i] + '</em>';
 			buf += ability;
@@ -573,7 +855,6 @@
 		if (!pokemon.abilities['H']) buf += '</span><span class="col abilitycol">';
 		buf += '</span>';
 		buf += '</span>';
-
 		// base stats
 		buf += '<span style="float:left;min-height:26px">';
 		buf += '<span class="col statcol"><em>HP</em><br />' + pokemon.baseStats.hp + '</span> ';
@@ -586,105 +867,147 @@
 		for (i in pokemon.baseStats) bst += pokemon.baseStats[i];
 		buf += '<span class="col bstcol"><em>BST<br />' + bst + '</em></span> ';
 		buf += '</span>';
-
 		buf += '</a>';
-
 		return buf;
 	};
+	const ITEM_CLASS_LABELS = {
+		fragile: 'Fragile',
+		volatile: 'Volatile',
+		berry: 'Berry',
+		consumable: 'Consumable',
+		evolution: 'Evolution',
+		tradeevo: 'Trade Evolution',
+		pokeball: 'Poké Ball',
+		healing: 'Healing',
+		statboost: 'Stat Boost',
+		statuscure: 'Status Cure',
+		resist: 'Resist',
+		reactive: 'Reactive',
+		utility: 'Utility',
+		species: 'Species-specific',
+		megastone: 'Mega Stone',
+		typeplates: 'Type Plates',
+		zcrystals: 'Z-Crystals',
+		evostones: 'Evo Stones',
+		weather: 'Weather',
+		terrain: 'Terrain',
+		sweets: 'Sweets',
+	};
 
+	function normalizeItemClass(tag) {
+		var id = toID(tag || '');
+		var aliases = {
+			tradeevolution: 'tradeevo',
+			tradeevo: 'tradeevo',
+			pokeball: 'pokeball',
+			pokeballs: 'pokeball',
+			speciesspecific: 'species',
+			typeplate: 'typeplates',
+			typeplates: 'typeplates',
+			zcrystal: 'zcrystals',
+			zcrystals: 'zcrystals',
+			evostone: 'evostones',
+			evostones: 'evostones',
+			megastone: 'megastone',
+			statboost: 'statboost',
+			statuscure: 'statuscure',
+			sweet: 'sweets',
+			sweets: 'sweets',
+			alcremiesweet: 'sweets',
+			alcremiesweets: 'sweets',
+		};
+		return aliases[id] || id;
+	}
+	function getItemClassList(item) {
+		var raw = item && item.itemClass;
+		if (Array.isArray(raw)) { return raw.map(normalizeItemClass).filter(function (classId, i, arr) { return ITEM_CLASS_LABELS[classId] && arr.indexOf(classId) === i; }).slice(0, 6); }
+		if (typeof raw === 'string' && raw) {
+			var classId = normalizeItemClass(raw);
+			return ITEM_CLASS_LABELS[classId] ? [classId] : [];
+		}
+		return [];
+	}
+	function getItemClasses(item, id) {
+		var classIds = getItemClassList(item);
+		return classIds.map(function (classId) { return {label: ITEM_CLASS_LABELS[classId], className: classId}; });
+	}
 	Search.prototype.renderItemRow = function (item, matchStart, matchLength, errorMessage, attrs) {
 		if (!attrs) attrs = '';
 		if (!item) return '<li class="result">Unrecognized item</li>';
 		var id = toID(item.name);
-		
-		// Calculate classification and type for later use
-		var classification = '';
-		var classificationClass = '';
-		if (item.isFragile) {
-			classification = 'Fragile';
-			classificationClass = 'fragile';
-		} else if (item.isMildlyFragile) {
-			classification = 'Volatile';
-			classificationClass = 'volatile';
-		}
-		
-		var consumable = '';
-		var consumableClass = '';
-		var isSingleUse = (item.shortDesc || item.desc || '').includes('Single use');
-		var evolutionStones = ['dawnstone', 'duskstone', 'firestone', 'icestone', 'leafstone', 'moonstone', 'shinystone', 'sunstone', 'thunderstone', 'waterstone'];
-		var isEvolutionStone = evolutionStones.includes(id);
-		var isEvolution = (item.shortDesc || item.desc || '').includes('Evolves') || isEvolutionStone;
-		var isTradeEvo = (item.shortDesc || item.desc || '').includes('when traded');
-		var isBerryItem = (item.isBerry || id.endsWith('berry')) && id !== 'berryjuice';
-		if (item.isPokeball) {
-			consumable = 'Pokéball';
-			consumableClass = 'pokeball';
-		} else if (isTradeEvo) {
-			consumable = 'Trade Evo';
-			consumableClass = 'tradeevo';
-		} else if (isEvolution) {
-			consumable = 'Evolution';
-			consumableClass = 'evolution';
-		} else if (isBerryItem) {
-			consumable = 'Berry';
-			consumableClass = 'berry';
-		} else if (item.isGem || isSingleUse) {
-			consumable = 'Consumable';
-			consumableClass = 'consumable';
-		}
-		
+		var itemClasses = getItemClasses(item, id);
 		if (Search.urlRoot) attrs += ' href="' + Search.urlRoot + 'items/' + id + '" data-target="push"';
 		var buf = '<li class="result itemrow"><a' + attrs + ' data-entry="item|' + BattleLog.escapeHTML(item.name) + '">';
-
 		// icon
 		buf += '<span class="col itemiconcol">';
-		buf += '<span style="' + Dex.getItemIcon(item) + '"></span>';
+		buf += '<span class="itemrow-icon" style="' + Dex.getItemIcon(item) + '"></span>';
 		buf += '</span> ';
-
 		// name
 		var name = item.name;
-		if (matchLength) {
-			name = name.substr(0, matchStart) + '<b>' + name.substr(matchStart, matchLength) + '</b>' + name.substr(matchStart + matchLength);
-		}
+		if (matchLength) { name = name.substr(0, matchStart) + '<b>' + name.substr(matchStart, matchLength) + '</b>' + name.substr(matchStart + matchLength); }
 		buf += '<span class="col itemnamecol">' + name + '</span> ';
-
-		// classification buttons container
+		// tag grid
 		buf += '<span class="col itemclasscontainer">';
-		
-		// classification
-		var fragileEmpty = classification ? '' : ' empty';
-		var fragileTag = classification ? ' data-tag="' + classification.toLowerCase() + '"' : '';
-		buf += '<span class="itemclasscol ' + classificationClass + fragileEmpty + '"' + fragileTag + '>' + (classification || '\u2014') + '</span>';
-
-		// consumable
-		var consumableEmpty = consumable ? '' : ' empty';
-		var consumableTag = consumable ? ' data-tag="' + consumable.toLowerCase().replace(' ', '') + '"' : '';
-		buf += '<span class="itemconsumecol ' + consumableClass + consumableEmpty + '"' + consumableTag + '>' + (consumable || '\u2014') + '</span>';
-		
+		for (var i = 0; i < 6; i++) {
+			if (i < itemClasses.length) { buf += '<span class="itemclasschip itemclasschip-' + itemClasses[i].className + '" data-tag="' + itemClasses[i].className + '">' + itemClasses[i].label + '</span>'; }
+			else { buf += '<span class="itemclasschip itemclasschip-empty"></span>'; }
+		}
 		buf += '</span> ';
-
 		// error
 		if (errorMessage) {
 			buf += errorMessage + '</a></li>';
 			return buf;
 		}
 		// desc - split into main and fragile descriptions
-		var fullDesc = item.shortDesc || '';
+		var fullDesc = item.shortDesc || item.desc || '';
 		var mainDesc = fullDesc;
 		var fragileDesc = '';
-		
 		// Extract fragility-related text
 		var fragileMatch = fullDesc.match(/\. (Fragile[^.]*\.|Volatile[^.]*\.)/);
 		if (fragileMatch) {
 			fragileDesc = fragileMatch[1];
 			mainDesc = fullDesc.replace(fragileMatch[0], '.');
 		}
-		
 		buf += '<span class="col itemdesccol">' + BattleLog.escapeHTML(mainDesc) + '</span> ';
 		buf += '<span class="col fragiledesccol">' + BattleLog.escapeHTML(fragileDesc) + '</span> ';
-
 		buf += '</a></li>';
-
+		return buf;
+	};
+	Search.prototype.renderItemGridRow = function (item, matchStart, matchLength, errorMessage, attrs) {
+		if (!attrs) attrs = '';
+		if (!item) return '<li class="result item-grid-card">Unrecognized item</li>';
+		var id = toID(item.name);
+		var itemClasses = getItemClasses(item, id);
+		if (Search.urlRoot) attrs += ' href="' + Search.urlRoot + 'items/' + id + '" data-target="push"';
+		var buf = '<li class="result item-grid-card"><a' + attrs + ' data-entry="item|' + BattleLog.escapeHTML(item.name) + '">';
+		var name = item.name;
+		if (matchLength) { name = name.substr(0, matchStart) + '<b>' + name.substr(matchStart, matchLength) + '</b>' + name.substr(matchStart + matchLength); }
+		var fullDesc = item.shortDesc || item.desc || '';
+		var mainDesc = fullDesc;
+		var fragileDesc = '';
+		var fragileMatch = fullDesc.match(/\. (Fragile[^.]*\.|Volatile[^.]*\.)/);
+		if (fragileMatch) {
+			fragileDesc = fragileMatch[1];
+			mainDesc = fullDesc.replace(fragileMatch[0], '.');
+		}
+		var barClasses = 'item-grid-fragilebar';
+		if (/Fragile/i.test(fragileDesc)) barClasses += ' fragile';
+		if (/Volatile/i.test(fragileDesc)) barClasses += ' volatile';
+		buf += '<div class="item-grid-main">';
+		buf += '<div class="item-grid-icon"><span class="itemrow-icon" style="' + Dex.getItemIcon(item) + '"></span></div>';
+		buf += '<div class="item-grid-top">';
+		buf += '<div class="item-grid-name">' + name + '</div>';
+		buf += '</div>';
+		if (itemClasses.length) {
+			buf += '<div class="item-grid-classes">';
+			for (var i = 0; i < itemClasses.length && i < 6; i++) { buf += '<span class="itemclasschip itemclasschip-' + itemClasses[i].className + '" data-tag="' + itemClasses[i].className + '">' + itemClasses[i].label + '</span>'; }
+			buf += '</div>';
+		}
+		if (errorMessage) { buf += '<div class="item-grid-desc">' + errorMessage + '</div>'; } 
+		else { buf += '<div class="item-grid-desc">' + BattleLog.escapeHTML(mainDesc) + '</div>'; }
+		buf += '</div>';
+		if (fragileDesc) { buf += '<div class="' + barClasses + '">' + BattleLog.escapeHTML(fragileDesc) + '</div>'; }
+		buf += '</a></li>';
 		return buf;
 	};
 	Search.prototype.renderAbilityRow = function (ability, matchStart, matchLength, errorMessage, attrs) {

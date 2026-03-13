@@ -3018,7 +3018,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		shortDesc: "Immune to Powder moves. Reduces damage of incoming supereffective moves by 25%.",
 		rating: 4,
 		num: 111,
-		},
+	},
 	flowergift: {
 		onSwitchInPriority: -2,
 		onStart(pokemon) { this.singleEvent('WeatherChange', this.effect, this.effectState, pokemon); },

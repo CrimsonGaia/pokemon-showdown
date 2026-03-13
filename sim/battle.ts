@@ -922,23 +922,36 @@ export class Battle {
 		// --- Tera Charge resource system: expose canTerastallize only when allowed (0-100 scale) ---
 		if (type === 'move') {
 			for (const side of this.sides) {
-				// Ensure charge exists
 				const s: any = side as any;
 				if (s.teraCharge === undefined) s.teraCharge = 50;
 				if (s.teraChargeMax === undefined) s.teraChargeMax = 100;
 
 				const charge = Number(s.teraCharge) || 0;
 				const max = Number(s.teraChargeMax) || 100;
+				const COST = 10;
 
-				// If ANY of this side's Pokémon is already terastallized, block further tera
-				const hasAnyTera = side.pokemon.some(p => !p.fainted && !!(p as any).terastallized);
-
-				// Full charge required to expose tera
-				const sideCanTeraNow = (charge >= max) && !hasAnyTera;
+				// keep charge visible to the request/UI
+				(side as any).teraCharge = charge;
+				(side as any).teraChargeMax = max;
 
 				for (const p of side.active) {
 					if (!p) continue;
-					(p as any).canTerastallize = sideCanTeraNow ? (p as any).teraType : false;
+
+					// DO NOT rewrite canTerastallize here.
+					// Let the normal tera pipeline keep owning that field.
+
+					const moveSlots = (p as any).moveSlots || [];
+					const hasEmpowerableMove = moveSlots.some((m: any) => {
+						const id = toID(m?.id || m?.move || m?.name);
+						return id === 'terablast' || id === 'terastarstorm';
+					});
+
+					(p as any).canTeraEmpower =
+						this.gen === 9 &&
+						!!hasEmpowerableMove &&
+						!(p as any).terastallized &&
+						charge >= COST &&
+						charge < max;
 				}
 			}
 		}
@@ -1212,17 +1225,24 @@ export class Battle {
 				this.add('-center');
 			}
 		}
-		this.add('turn', this.turn);
-		if (this.gameType === 'multi') {
-			for (const side of this.sides) {
-				if (side.canDynamaxNow()) {
-					if (this.turn === 1) { this.addSplit(side.id, ['-candynamax', side.id]); } 
-					else { this.add('-candynamax', side.id); }
+				this.add('turn', this.turn);
+				if (this.gameType === 'multi') {
+					for (const side of this.sides) {
+						if (side.canDynamaxNow()) {
+							if (this.turn === 1) {
+								this.addSplit(side.id, ['-candynamax', side.id]);
+							} else {
+								this.add('-candynamax', side.id);
+							}
+						}
+					}
 				}
-			}
-		}
-		if (this.gen === 2) this.quickClawRoll = this.randomChance(60, 256);
-		if (this.gen === 3) this.quickClawRoll = this.randomChance(1, 5);
+				if (this.gen === 2) this.quickClawRoll = this.randomChance(60, 256);
+				if (this.gen === 3) this.quickClawRoll = this.randomChance(1, 5);
+
+				if (!this.ended && !this.requestState) {
+					this.makeRequest('move');
+				}
 	}
 	maybeTriggerEndlessBattleClause(trappedBySide: boolean[], stalenessBySide: ('internal' | 'external' | undefined)[]) {
 		// Gen 1 Endless Battle Clause triggers

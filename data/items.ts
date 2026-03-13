@@ -154,7 +154,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	aguavberry: {
 		name: "Aguav Berry",
-		itemClass: 'Berries',
 		spritenum: 5,
 		isBerry: true,
 		naturalGift: {
@@ -264,7 +263,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	apicotberry: {
 		name: "Apicot Berry",
-		itemClass: 'Berries',
 		spritenum: 10,
 		isBerry: true,
 		naturalGift: {
@@ -295,7 +293,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	aspearberry: {
 		name: "Aspear Berry",
-		itemClass: 'Berries',
 		spritenum: 13,
 		isBerry: true,
 		naturalGift: {
@@ -361,7 +358,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	babiriberry: {
 		name: "Babiri Berry",
-		itemClass: 'Berries',
 		spritenum: 17,
 		isBerry: true,
 		naturalGift: {
@@ -414,7 +410,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	beastball: {
 		name: "Beast Ball",
-		itemClass: 'Pokéball',
 		spritenum: 661,
 		num: 851,
 		gen: 7,
@@ -436,7 +431,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	belueberry: {
 		name: "Belue Berry",
-		itemClass: 'Berries',
 		spritenum: 21,
 		isBerry: true,
 		naturalGift: {
@@ -606,7 +600,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	blukberry: {
 		name: "Bluk Berry",
-		itemClass: 'Berries',
 		spritenum: 44,
 		isBerry: true,
 		naturalGift: {
@@ -682,7 +675,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	buggem: {
 		name: "Bug Gem",
-		itemClass: 'Consumable',
 		spritenum: 53,
 		isGem: true,
 		onSourceTryPrimaryHit(target, source, move) {
@@ -829,7 +821,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	chartiberry: {
 		name: "Charti Berry",
-		itemClass: 'Berries',
 		spritenum: 62,
 		isBerry: true,
 		naturalGift: {
@@ -854,7 +845,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	cheriberry: {
 		name: "Cheri Berry",
-		itemClass: 'Berries',
 		spritenum: 63,
 		isBerry: true,
 		naturalGift: {
@@ -876,7 +866,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	cherishball: {
 		name: "Cherish Ball",
-		itemClass: 'Pokéball',
 		spritenum: 64,
 		num: 16,
 		gen: 4,
@@ -899,7 +888,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	chestoberry: {
 		name: "Chesto Berry",
-		itemClass: 'Berries',
 		spritenum: 65,
 		isBerry: true,
 		naturalGift: {
@@ -921,7 +909,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	chilanberry: {
 		name: "Chilan Berry",
-		itemClass: 'Berries',
 		spritenum: 66,
 		isBerry: true,
 		naturalGift: {
@@ -1042,7 +1029,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	chopleberry: {
 		name: "Chople Berry",
-		itemClass: 'Berries',
 		spritenum: 71,
 		isBerry: true,
 		naturalGift: {
@@ -1124,7 +1110,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	cobaberry: {
 		name: "Coba Berry",
-		itemClass: 'Berries',
 		spritenum: 76,
 		isBerry: true,
 		naturalGift: {
@@ -1149,7 +1134,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	colburberry: {
 		name: "Colbur Berry",
-		itemClass: 'Berries',
 		spritenum: 78,
 		isBerry: true,
 		naturalGift: {
@@ -1195,7 +1179,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	cornnberry: {
 		name: "Cornn Berry",
-		itemClass: 'Berries',
 		spritenum: 81,
 		isBerry: true,
 		naturalGift: {
@@ -1241,7 +1224,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	custapberry: {
 		name: "Custap Berry",
-		itemClass: 'Berries',
 		spritenum: 86,
 		isBerry: true,
 		naturalGift: {
@@ -1276,7 +1258,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	darkgem: {
 		name: "Dark Gem",
-		itemClass: 'Consumable',
 		spritenum: 89,
 		isGem: true,
 		onSourceTryPrimaryHit(target, source, move) {
@@ -1319,7 +1300,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	dawnstone: {
 		name: "Dawn Stone",
-		itemClass: 'Evolution',
 		spritenum: 92,
 		fling: {
 			basePower: 80,
@@ -1417,7 +1397,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	diveball: {
 		name: "Dive Ball",
-		itemClass: 'Pokéball',
 		spritenum: 101,
 		num: 7,
 		gen: 3,
@@ -1500,7 +1479,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	dragongem: {
 		name: "Dragon Gem",
-		itemClass: 'Consumable',
 		spritenum: 107,
 		isGem: true,
 		onSourceTryPrimaryHit(target, source, move) {
@@ -1600,7 +1578,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	dreamball: {
 		name: "Dream Ball",
-		itemClass: 'Pokéball',
 		spritenum: 111,
 		num: 576,
 		gen: 5,
@@ -1617,7 +1594,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	durinberry: {
 		name: "Durin Berry",
-		itemClass: 'Berries',
 		spritenum: 114,
 		isBerry: true,
 		naturalGift: {
@@ -1631,7 +1607,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	duskball: {
 		name: "Dusk Ball",
-		itemClass: 'Pokéball',
 		spritenum: 115,
 		num: 13,
 		gen: 4,
@@ -1639,7 +1614,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	duskstone: {
 		name: "Dusk Stone",
-		itemClass: 'Evolution',
 		spritenum: 116,
 		fling: {
 			basePower: 80,
@@ -1779,7 +1753,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	electricgem: {
 		name: "Electric Gem",
-		itemClass: 'Consumable',
 		spritenum: 120,
 		isGem: true,
 		onSourceTryPrimaryHit(target, source, move) {
@@ -1859,7 +1832,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	enigmaberry: {
 		name: "Enigma Berry",
-		itemClass: 'Berries',
 		spritenum: 124,
 		isBerry: true,
 		naturalGift: {
@@ -1958,7 +1930,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	fairygem: {
 		name: "Fairy Gem",
-		itemClass: 'Consumable',
 		spritenum: 611,
 		isGem: true,
 		onSourceTryPrimaryHit(target, source, move) {
@@ -2003,7 +1974,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	fastball: {
 		name: "Fast Ball",
-		itemClass: 'Pokéball',
 		spritenum: 137,
 		num: 492,
 		gen: 2,
@@ -2025,7 +1995,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	fightinggem: {
 		name: "Fighting Gem",
-		itemClass: 'Consumable',
 		spritenum: 139,
 		isGem: true,
 		onSourceTryPrimaryHit(target, source, move) {
@@ -2068,7 +2037,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	figyberry: {
 		name: "Figy Berry",
-		itemClass: 'Berries',
 		spritenum: 140,
 		isBerry: true,
 		naturalGift: {
@@ -2095,7 +2063,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	firegem: {
 		name: "Fire Gem",
-		itemClass: 'Consumable',
 		spritenum: 141,
 		isGem: true,
 		onSourceTryPrimaryHit(target, source, move) {
@@ -2126,7 +2093,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	firestone: {
 		name: "Fire Stone",
-		itemClass: 'Evolution',
 		spritenum: 142,
 		fling: {
 			basePower: 30,
@@ -2238,7 +2204,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	flyinggem: {
 		name: "Flying Gem",
-		itemClass: 'Consumable',
 		spritenum: 149,
 		isGem: true,
 		onSourceTryPrimaryHit(target, source, move) {
@@ -2354,7 +2319,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	friendball: {
 		name: "Friend Ball",
-		itemClass: 'Pokéball',
 		spritenum: 153,
 		num: 497,
 		gen: 2,
@@ -2419,7 +2383,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	ganlonberry: {
 		name: "Ganlon Berry",
-		itemClass: 'Berries',
 		spritenum: 158,
 		isBerry: true,
 		naturalGift: {
@@ -2482,7 +2445,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	ghostgem: {
 		name: "Ghost Gem",
-		itemClass: 'Consumable',
 		spritenum: 161,
 		isGem: true,
 		onSourceTryPrimaryHit(target, source, move) {
@@ -2548,7 +2510,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	grassgem: {
 		name: "Grass Gem",
-		itemClass: 'Consumable',
 		spritenum: 172,
 		isGem: true,
 		onSourceTryPrimaryHit(target, source, move) {
@@ -2614,7 +2575,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	greatball: {
 		name: "Great Ball",
-		itemClass: 'Pokéball',
 		spritenum: 174,
 		num: 3,
 		gen: 1,
@@ -2637,7 +2597,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	grepaberry: {
 		name: "Grepa Berry",
-		itemClass: 'Berries',
 		spritenum: 178,
 		isBerry: true,
 		naturalGift: {
@@ -2696,7 +2655,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	groundgem: {
 		name: "Ground Gem",
-		itemClass: 'Consumable',
 		spritenum: 182,
 		isGem: true,
 		onSourceTryPrimaryHit(target, source, move) {
@@ -2753,7 +2711,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	habanberry: {
 		name: "Haban Berry",
-		itemClass: 'Berries',
 		spritenum: 185,
 		isBerry: true,
 		naturalGift: {
@@ -2807,7 +2764,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	healball: {
 		name: "Heal Ball",
-		itemClass: 'Pokéball',
 		spritenum: 188,
 		num: 14,
 		gen: 4,
@@ -2845,7 +2801,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	heavyball: {
 		name: "Heavy Ball",
-		itemClass: 'Pokéball',
 		spritenum: 194,
 		num: 495,
 		gen: 2,
@@ -2887,7 +2842,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	hondewberry: {
 		name: "Hondew Berry",
-		itemClass: 'Berries',
 		spritenum: 213,
 		isBerry: true,
 		naturalGift: {
@@ -2914,7 +2868,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	iapapaberry: {
 		name: "Iapapa Berry",
-		itemClass: 'Berries',
 		spritenum: 217,
 		isBerry: true,
 		naturalGift: {
@@ -2941,7 +2894,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	icegem: {
 		name: "Ice Gem",
-		itemClass: 'Consumable',
 		spritenum: 218,
 		isGem: true,
 		onSourceTryPrimaryHit(target, source, move) {
@@ -2972,7 +2924,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	icestone: {
 		name: "Ice Stone",
-		itemClass: 'Evolution',
 		spritenum: 693,
 		fling: {
 			basePower: 30,
@@ -3092,7 +3043,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	jabocaberry: {
 		name: "Jaboca Berry",
-		itemClass: 'Berries',
 		spritenum: 230,
 		isBerry: true,
 		naturalGift: {
@@ -3122,7 +3072,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	kasibberry: {
 		name: "Kasib Berry",
-		itemClass: 'Berries',
 		spritenum: 233,
 		isBerry: true,
 		naturalGift: {
@@ -3147,7 +3096,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	kebiaberry: {
 		name: "Kebia Berry",
-		itemClass: 'Berries',
 		spritenum: 234,
 		isBerry: true,
 		naturalGift: {
@@ -3172,7 +3120,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	keeberry: {
 		name: "Kee Berry",
-		itemClass: 'Berries',
 		spritenum: 593,
 		isBerry: true,
 		naturalGift: {
@@ -3193,7 +3140,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	kelpsyberry: {
 		name: "Kelpsy Berry",
-		itemClass: 'Berries',
 		spritenum: 235,
 		isBerry: true,
 		naturalGift: {
@@ -3264,7 +3210,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	lansatberry: {
 		name: "Lansat Berry",
-		itemClass: 'Berries',
 		spritenum: 238,
 		isBerry: true,
 		naturalGift: {
@@ -3329,7 +3274,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	leafstone: {
 		name: "Leaf Stone",
-		itemClass: 'Evolution',
 		spritenum: 241,
 		fling: {
 			basePower: 30,
@@ -3369,7 +3313,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	leppaberry: {
 		name: "Leppa Berry",
-		itemClass: 'Berries',
 		spritenum: 244,
 		isBerry: true,
 		naturalGift: {
@@ -3395,7 +3338,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	levelball: {
 		name: "Level Ball",
-		itemClass: 'Pokéball',
 		spritenum: 246,
 		num: 493,
 		gen: 2,
@@ -3403,7 +3345,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	liechiberry: {
 		name: "Liechi Berry",
-		itemClass: 'Berries',
 		spritenum: 248,
 		isBerry: true,
 		naturalGift: {
@@ -3503,7 +3444,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	loveball: {
 		name: "Love Ball",
-		itemClass: 'Pokéball',
 		spritenum: 258,
 		num: 496,
 		gen: 2,
@@ -3550,7 +3490,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	lumberry: {
 		name: "Lum Berry",
-		itemClass: 'Berries',
 		spritenum: 262,
 		isBerry: true,
 		naturalGift: {
@@ -3603,7 +3542,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	lureball: {
 		name: "Lure Ball",
-		itemClass: 'Pokéball',
 		spritenum: 264,
 		num: 494,
 		gen: 2,
@@ -3647,7 +3585,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	luxuryball: {
 		name: "Luxury Ball",
-		itemClass: 'Pokéball',
 		spritenum: 266,
 		num: 11,
 		gen: 3,
@@ -3704,7 +3641,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	magoberry: {
 		name: "Mago Berry",
-		itemClass: 'Berries',
 		spritenum: 274,
 		isBerry: true,
 		naturalGift: {
@@ -3731,7 +3667,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	magostberry: {
 		name: "Magost Berry",
-		itemClass: 'Berries',
 		spritenum: 275,
 		isBerry: true,
 		naturalGift: {
@@ -3793,7 +3728,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	marangaberry: {
 		name: "Maranga Berry",
-		itemClass: 'Berries',
 		spritenum: 597,
 		isBerry: true,
 		naturalGift: {
@@ -3824,7 +3758,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	masterball: {
 		name: "Master Ball",
-		itemClass: 'Pokéball',
 		spritenum: 276,
 		num: 1,
 		gen: 1,
@@ -4076,7 +4009,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	micleberry: {
 		name: "Micle Berry",
-		itemClass: 'Berries',
 		spritenum: 290,
 		isBerry: true,
 		naturalGift: {
@@ -4228,7 +4160,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	moonball: {
 		name: "Moon Ball",
-		itemClass: 'Pokéball',
 		spritenum: 294,
 		num: 498,
 		gen: 2,
@@ -4236,7 +4167,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	moonstone: {
 		name: "Moon Stone",
-		itemClass: 'Evolution',
 		spritenum: 295,
 		fling: {
 			basePower: 30,
@@ -4276,7 +4206,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	nanabberry: {
 		name: "Nanab Berry",
-		itemClass: 'Berries',
 		spritenum: 302,
 		isBerry: true,
 		naturalGift: {
@@ -4290,7 +4219,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	nestball: {
 		name: "Nest Ball",
-		itemClass: 'Pokéball',
 		spritenum: 303,
 		num: 8,
 		gen: 3,
@@ -4298,7 +4226,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	netball: {
 		name: "Net Ball",
-		itemClass: 'Pokéball',
 		spritenum: 304,
 		num: 6,
 		gen: 3,
@@ -4321,7 +4248,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	nomelberry: {
 		name: "Nomel Berry",
-		itemClass: 'Berries',
 		spritenum: 306,
 		isBerry: true,
 		naturalGift: {
@@ -4335,7 +4261,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	normalgem: {
 		name: "Normal Gem",
-		itemClass: 'Consumable',
 		spritenum: 307,
 		isGem: true,
 		onSourceTryPrimaryHit(target, source, move) {
@@ -4359,7 +4284,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	occaberry: {
 		name: "Occa Berry",
-		itemClass: 'Berries',
 		spritenum: 311,
 		isBerry: true,
 		naturalGift: {
@@ -4410,7 +4334,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	oranberry: {
 		name: "Oran Berry",
-		itemClass: 'Berries',
 		spritenum: 319,
 		isBerry: true,
 		naturalGift: {
@@ -4433,7 +4356,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	ovalstone: {
 		name: "Oval Stone",
-		itemClass: 'Evolution',
 		spritenum: 321,
 		fling: {
 			basePower: 80,
@@ -4443,7 +4365,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	pamtreberry: {
 		name: "Pamtre Berry",
-		itemClass: 'Berries',
 		spritenum: 323,
 		isBerry: true,
 		naturalGift: {
@@ -4457,7 +4378,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	parkball: {
 		name: "Park Ball",
-		itemClass: 'Pokéball',
 		spritenum: 325,
 		num: 500,
 		gen: 4,
@@ -4466,7 +4386,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	passhoberry: {
 		name: "Passho Berry",
-		itemClass: 'Berries',
 		spritenum: 329,
 		isBerry: true,
 		naturalGift: {
@@ -4491,7 +4410,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	payapaberry: {
 		name: "Payapa Berry",
-		itemClass: 'Berries',
 		spritenum: 330,
 		isBerry: true,
 		naturalGift: {
@@ -4516,7 +4434,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	pechaberry: {
 		name: "Pecha Berry",
-		itemClass: 'Berries',
 		spritenum: 333,
 		isBerry: true,
 		naturalGift: {
@@ -4538,7 +4455,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	persimberry: {
 		name: "Persim Berry",
-		itemClass: 'Berries',
 		spritenum: 334,
 		isBerry: true,
 		naturalGift: {
@@ -4558,7 +4474,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	petayaberry: {
 		name: "Petaya Berry",
-		itemClass: 'Berries',
 		spritenum: 335,
 		isBerry: true,
 		naturalGift: {
@@ -4615,7 +4530,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	pinapberry: {
 		name: "Pinap Berry",
-		itemClass: 'Berries',
 		spritenum: 337,
 		isBerry: true,
 		naturalGift: {
@@ -4689,7 +4603,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	poisongem: {
 		name: "Poison Gem",
-		itemClass: 'Consumable',
 		spritenum: 344,
 		isGem: true,
 		onSourceTryPrimaryHit(target, source, move) {
@@ -4732,7 +4645,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	pokeball: {
 		name: "Poke Ball",
-		itemClass: 'Pokéball',
 		spritenum: 345,
 		num: 4,
 		gen: 1,
@@ -4740,7 +4652,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	pomegberry: {
 		name: "Pomeg Berry",
-		itemClass: 'Berries',
 		spritenum: 351,
 		isBerry: true,
 		naturalGift: {
@@ -4848,7 +4759,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	premierball: {
 		name: "Premier Ball",
-		itemClass: 'Pokéball',
 		spritenum: 363,
 		num: 12,
 		gen: 3,
@@ -4904,7 +4814,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	psychicgem: {
 		name: "Psychic Gem",
-		itemClass: 'Consumable',
 		spritenum: 369,
 		isGem: true,
 		onSourceTryPrimaryHit(target, source, move) {
@@ -5004,7 +4913,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	qualotberry: {
 		name: "Qualot Berry",
-		itemClass: 'Berries',
 		spritenum: 371,
 		isBerry: true,
 		naturalGift: {
@@ -5017,7 +4925,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	quickball: {
 		name: "Quick Ball",
-		itemClass: 'Pokéball',
 		spritenum: 372,
 		num: 15,
 		gen: 4,
@@ -5058,7 +4965,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	rabutaberry: {
 		name: "Rabuta Berry",
-		itemClass: 'Berries',
 		spritenum: 375,
 		isBerry: true,
 		naturalGift: {
@@ -5081,7 +4987,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	rawstberry: {
 		name: "Rawst Berry",
-		itemClass: 'Berries',
 		spritenum: 381,
 		isBerry: true,
 		naturalGift: {
@@ -5138,7 +5043,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	razzberry: {
 		name: "Razz Berry",
-		itemClass: 'Berries',
 		spritenum: 384,
 		isBerry: true,
 		naturalGift: {
@@ -5202,7 +5106,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	repeatball: {
 		name: "Repeat Ball",
-		itemClass: 'Pokéball',
 		spritenum: 401,
 		num: 9,
 		gen: 3,
@@ -5219,7 +5122,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	rindoberry: {
 		name: "Rindo Berry",
-		itemClass: 'Berries',
 		spritenum: 409,
 		isBerry: true,
 		naturalGift: {
@@ -5254,7 +5156,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	rockgem: {
 		name: "Rock Gem",
-		itemClass: 'Consumable',
 		spritenum: 415,
 		isGem: true,
 		onSourceTryPrimaryHit(target, source, move) {
@@ -5378,7 +5279,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	roseliberry: {
 		name: "Roseli Berry",
-		itemClass: 'Berries',
 		spritenum: 603,
 		isBerry: true,
 		naturalGift: {
@@ -5403,7 +5303,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	rowapberry: {
 		name: "Rowap Berry",
-		itemClass: 'Berries',
 		spritenum: 420,
 		isBerry: true,
 		naturalGift: {
@@ -5473,7 +5372,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	safariball: {
 		name: "Safari Ball",
-		itemClass: 'Pokéball',
 		spritenum: 425,
 		num: 5,
 		gen: 1,
@@ -5509,7 +5407,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	salacberry: {
 		name: "Salac Berry",
-		itemClass: 'Berries',
 		spritenum: 426,
 		isBerry: true,
 		naturalGift: {
@@ -5689,7 +5586,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	shinystone: {
 		name: "Shiny Stone",
-		itemClass: 'Evolution',
 		spritenum: 439,
 		fling: {
 			basePower: 80,
@@ -5715,7 +5611,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	shucaberry: {
 		name: "Shuca Berry",
-		itemClass: 'Berries',
 		spritenum: 443,
 		isBerry: true,
 		naturalGift: {
@@ -5770,7 +5665,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	sitrusberry: {
 		name: "Sitrus Berry",
-		itemClass: 'Berries',
 		spritenum: 448,
 		isBerry: true,
 		naturalGift: {
@@ -5948,7 +5842,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	spelonberry: {
 		name: "Spelon Berry",
-		itemClass: 'Berries',
 		spritenum: 462,
 		isBerry: true,
 		naturalGift: {
@@ -6002,7 +5895,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	sportball: {
 		name: "Sport Ball",
-		itemClass: 'Pokéball',
 		spritenum: 465,
 		num: 499,
 		gen: 2,
@@ -6010,7 +5902,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	starfberry: {
 		name: "Starf Berry",
-		itemClass: 'Berries',
 		spritenum: 472,
 		isBerry: true,
 		naturalGift: {
@@ -6080,7 +5971,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	steelgem: {
 		name: "Steel Gem",
-		itemClass: 'Consumable',
 		spritenum: 473,
 		isGem: true,
 		onSourceTryPrimaryHit(target, source, move) {
@@ -6181,7 +6071,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	strangeball: {
 		name: "Strange Ball",
-		itemClass: 'Pokéball',
 		spritenum: 308,
 		num: 1785,
 		gen: 8,
@@ -6199,7 +6088,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	sunstone: {
 		name: "Sun Stone",
-		itemClass: 'Evolution',
 		spritenum: 480,
 		fling: {
 			basePower: 30,
@@ -6241,7 +6129,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	tamatoberry: {
 		name: "Tamato Berry",
-		itemClass: 'Berries',
 		spritenum: 486,
 		isBerry: true,
 		naturalGift: {
@@ -6254,7 +6141,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	tangaberry: {
 		name: "Tanga Berry",
-		itemClass: 'Berries',
 		spritenum: 487,
 		isBerry: true,
 		naturalGift: {
@@ -6342,7 +6228,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	thunderstone: {
 		name: "Thunder Stone",
-		itemClass: 'Evolution',
 		spritenum: 492,
 		fling: {
 			basePower: 30,
@@ -6352,7 +6237,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	timerball: {
 		name: "Timer Ball",
-		itemClass: 'Pokéball',
 		spritenum: 494,
 		num: 10,
 		gen: 3,
@@ -7424,7 +7308,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	ultraball: {
 		name: "Ultra Ball",
-		itemClass: 'Pokéball',
 		spritenum: 521,
 		num: 2,
 		gen: 1,
@@ -7518,7 +7401,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	wacanberry: {
 		name: "Wacan Berry",
-		itemClass: 'Berries',
 		spritenum: 526,
 		isBerry: true,
 		naturalGift: {
@@ -7542,7 +7424,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	watergem: {
 		name: "Water Gem",
-		itemClass: 'Consumable',
 		spritenum: 528,
 		isGem: true,
 		onSourceTryPrimaryHit(target, source, move) {
@@ -7573,7 +7454,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	waterstone: {
 		name: "Water Stone",
-		itemClass: 'Evolution',
 		spritenum: 529,
 		fling: {
 			basePower: 30,
@@ -7595,7 +7475,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	watmelberry: {
 		name: "Watmel Berry",
-		itemClass: 'Berries',
 		spritenum: 530,
 		isBerry: true,
 		naturalGift: {
@@ -7664,7 +7543,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	wepearberry: {
 		name: "Wepear Berry",
-		itemClass: 'Berries',
 		spritenum: 533,
 		isBerry: true,
 		naturalGift: {
@@ -7758,7 +7636,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	wikiberry: {
 		name: "Wiki Berry",
-		itemClass: 'Berries',
 		spritenum: 538,
 		isBerry: true,
 		naturalGift: {
@@ -7800,7 +7677,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	yacheberry: {
 		name: "Yache Berry",
-		itemClass: 'Berries',
 		spritenum: 567,
 		isBerry: true,
 		naturalGift: {
@@ -7893,7 +7769,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	berry: {
 		name: "Berry",
-		itemClass: 'Berries',
 		spritenum: 319,
 		isBerry: true,
 		naturalGift: {
@@ -7918,7 +7793,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	bitterberry: {
 		name: "Bitter Berry",
-		itemClass: 'Berries',
 		spritenum: 334,
 		isBerry: true,
 		naturalGift: {
@@ -7939,7 +7813,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	burntberry: {
 		name: "Burnt Berry",
-		itemClass: 'Berries',
 		spritenum: 13,
 		isBerry: true,
 		naturalGift: {
@@ -7962,7 +7835,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	goldberry: {
 		name: "Gold Berry",
-		itemClass: 'Berries',
 		spritenum: 448,
 		isBerry: true,
 		naturalGift: {
@@ -7987,7 +7859,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	iceberry: {
 		name: "Ice Berry",
-		itemClass: 'Berries',
 		spritenum: 381,
 		isBerry: true,
 		naturalGift: {
@@ -8010,7 +7881,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	mintberry: {
 		name: "Mint Berry",
-		itemClass: 'Berries',
 		spritenum: 65,
 		isBerry: true,
 		naturalGift: {
@@ -8033,7 +7903,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	miracleberry: {
 		name: "Miracle Berry",
-		itemClass: 'Berries',
 		spritenum: 262,
 		isBerry: true,
 		naturalGift: {
@@ -8055,7 +7924,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	mysteryberry: {
 		name: "Mystery Berry",
-		itemClass: 'Berries',
 		spritenum: 244,
 		isBerry: true,
 		naturalGift: {
@@ -8119,7 +7987,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	przcureberry: {
 		name: "PRZ Cure Berry",
-		itemClass: 'Berries',
 		spritenum: 63,
 		isBerry: true,
 		naturalGift: {
@@ -8142,7 +8009,6 @@ export const Items: import('../sim/dex-items').ItemDataTable = {
 	},
 	psncureberry: {
 		name: "PSN Cure Berry",
-		itemClass: 'Berries',
 		spritenum: 333,
 		isBerry: true,
 		naturalGift: {

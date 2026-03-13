@@ -4,16 +4,12 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 // #region Berries
 	apicotberry: {
 		name: "Apicot Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'statboost'],
 		shortDesc: "If HP≤2/3, Raises holder's Sp. Def 1 stage. Fragile; if broken, raises Sp. Def 1 stage.",
 		spritenum: 10,
 		isBerry: true,
 		isFragile: true,
 		onFragileBreak(pokemon) { this.boost({ spd: 1 }, pokemon);  },
-		naturalGift: {
-			basePower: 100,
-			type: "Ground",
-		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp * 2 / 3 || (pokemon.hp <= pokemon.maxhp &&
 				((pokemon.ability1 === 'gluttony' && pokemon.abilityState1.gluttony) ||
@@ -25,15 +21,11 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	aspearberry: {
 		name: "Aspear Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry', 'consumable', 'statuscure'],
 		shortDesc: "Cures holder of Freeze or Frostbite. Belch effect: Cures Freeze or Frostbite. 1 time use.",
 		spritenum: 13,
 		isBerry: true,
 		belch: { effect: function(target) { if (target.status === 'frz' || target.status === 'frostbite') { target.cureStatus(); } }, },
-		naturalGift: {
-			basePower: 60,
-			type: "Ice",
-		},
 		onUpdate(pokemon) { if (pokemon.status === 'frz' || pokemon.status === 'frostbite') { pokemon.eatItem(); } },
 		onEat(pokemon) { if (pokemon.status === 'frz' || pokemon.status === 'frostbite') { pokemon.cureStatus(); } },
 		num: 199,
@@ -41,7 +33,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	babiriberry: {
 		name: "Babiri Berry",
-		itemClass: 'Berries',
+		itemClass: ['volatile', 'berry', 'consumable', 'resist', 'healing' ],
 		shortDesc: "1st supereffective Steel hit charges berry and halves incoming damage. 2nd hit consumes berry, halves damage, and heals 75HP. Volatile; if disturbed while charged, sets Caltrops on both sides and loses charge. Belch Effect: 20% chance to Burn target.",
 		spritenum: 17,
 		isBerry: true,
@@ -58,20 +50,18 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			status: 'brn',
 			chance: 20,
 		},
-		naturalGift: {
-		basePower: 80,
-		type: "Steel",
-		},
 		onSourceModifyDamage(damage, source, target, move) {
 				if (move.type === 'Steel' && target.getMoveHitData(move).typeMod > 0) {
 					const hitSub = target.volatiles['substitute'] && !move.flags['bypasssub'] && !(move.infiltrates && this.gen >= 6);
 					if (hitSub) return;
 					if (!target.itemState?.chargeditem) {
-						if (target.itemState) target.itemState.chargeditem = true;
+						if (!target.itemState) target.itemState = {} as any;
+						target.itemState.chargeditem = true;
 						this.add('-message', `${target.name}'s Babiri Berry absorbed the blow! ${target.name}'s Babiri Berry is surging with metallic energy!`);
 						return this.chainModify(0.5);
 					}
 					if (target.eatItem()) {
+						if (target.itemState?.chargeditem) delete target.itemState.chargeditem;
 						this.debug('-50% reduction');
 						this.add('-enditem', target, this.effect, '[weaken]');
 						return this.chainModify(0.5);
@@ -84,7 +74,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	belueberry: {
 		name: "Belue Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable'],
 		shortDesc: "Cannot be eaten by the holder. Fragile. Belch Effect: 20% chance to infatuate target.",
 		spritenum: 21,
 		isBerry: true,
@@ -93,25 +83,16 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			volatileStatus: 'attract',
 			chance: 20,
 		},
-		naturalGift: {
-			basePower: 100,
-			type: "Electric",
-		},
-		onEat: false,
 		num: 183,
 		gen: 3,
 	},
 	blukberry: {
 		name: "Bluk Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry'],
 		shortDesc: "Cannot be eaten by the holder. Fragile.",
 		spritenum: 44,
 		isBerry: true,
 		isFragile: true,
-		naturalGift: {
-			basePower: 90,
-			type: "Fire",
-		},
 		onEat: false,
 		num: 165,
 		gen: 3,
@@ -119,15 +100,15 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	chartiberry: {
 		name: "Charti Berry",
-		itemClass: 'Berries',
+		itemClass: ['volatile', 'berry', 'consumable', 'resist', 'healing' ],
 		shortDesc: "1st supereffective Rock hit charges berry and halves incoming damage. 2nd hit consumes berry, halves damage, and heals 75HP. Volatile; if disturbed while charged, sets Stealth Rock on both sides and loses charge. Belch Effect: 130 BP, 20% flinch chance.",
 		spritenum: 62,
 		isBerry: true,
 		isMildlyFragile: true,
 		onMildlyFragileBreak(pokemon) {
 			if (pokemon.itemState && pokemon.itemState.chargeditem) {
-				pokemon.side.addSideCondition('stealrocks', pokemon);
-				pokemon.side.foe.addSideCondition('stealrocks', pokemon);
+				pokemon.side.addSideCondition('stealthrock', pokemon);
+				pokemon.side.foe.addSideCondition('stealthrock', pokemon);
 				delete pokemon.itemState.chargeditem;
 				this.add('-message', `${pokemon.name}'s Charti Berry returned to normal.`);
 			}
@@ -137,20 +118,18 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			volatileStatus: 'flinch',
 			chance: 20,
 		},
-		naturalGift: {
-			basePower: 80,
-			type: "Rock",
-		},
 		onSourceModifyDamage(damage, source, target, move) {
 			if (move.type === 'Rock' && target.getMoveHitData(move).typeMod > 0) {
 				const hitSub = target.volatiles['substitute'] && !move.flags['bypasssub'] && !(move.infiltrates && this.gen >= 6);
 				if (hitSub) return;
 				if (!target.itemState?.chargeditem) {
-					if (target.itemState) target.itemState.chargeditem = true;
+					if (!target.itemState) target.itemState = {} as any;
+					target.itemState.chargeditem = true;
 					this.add('-message', `The force was absorbed by the core of ${target.name}'s Charti Berry! ${target.name}'s Charti Berry is surging with crystalline energy!`);
 					return this.chainModify(0.5);
 				}
 				if (target.eatItem()) {
+					if (target.itemState?.chargeditem) delete target.itemState.chargeditem;
 					this.debug('-50% reduction');
 					this.add('-enditem', target, this.effect, '[weaken]');
 					return this.chainModify(0.5);
@@ -163,17 +142,13 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	cheriberry: {
 		name: "Cheri Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'statuscure'],
 		shortDesc: "Cures holder of Paralysis. Fragile; if broken while Paralyzed, cures Paralysis. Belch Effect: while Paralyzed, cures target's Paralysis. 1 time use.",
 		spritenum: 63,
 		isBerry: true,
 		isFragile: true,
 		onFragileBreak(pokemon) { if (pokemon.status === 'par') { pokemon.cureStatus(); } },
 		belch: { effect: function(target) { if (target.status === 'par') { target.cureStatus(); } }, },
-		naturalGift: {
-			basePower: 80,
-			type: "Fire",
-		},
 		onUpdate(pokemon) { if (pokemon.status === 'par') { pokemon.eatItem(); } },
 		onEat(pokemon) { if (pokemon.status === 'par') { pokemon.cureStatus(); } },
 		num: 149,
@@ -181,35 +156,28 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	chestoberry: {
 		name: "Chesto Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry', 'consumable', 'statuscure'],
 		shortDesc: "Cures holder of Sleep or Drowsy. Belch Effect: while ASleep/Drowsy, cures target. 1 time use.",
 		spritenum: 65,
 		isBerry: true,
 		belch: {effect: function(target) { if (target.status === 'slp'  || target.status === 'drowsy') { target.cureStatus(); } },},
-		naturalGift: {
-			basePower: 80,
-			type: "Water",
-		},
-		   onUpdate(pokemon) { if (pokemon.status === 'slp' || pokemon.status === 'drowsy') { pokemon.eatItem(); } },
-		   onEat(pokemon) { if (pokemon.status === 'slp' || pokemon.status === 'drowsy') { pokemon.cureStatus(); } },
+		onUpdate(pokemon) { if (pokemon.status === 'slp' || pokemon.status === 'drowsy') { pokemon.eatItem(); } },
+		onEat(pokemon) { if (pokemon.status === 'slp' || pokemon.status === 'drowsy') { pokemon.cureStatus(); } },
 		num: 150,
 		gen: 3,
 	},
 	chilanberry: {
 		name: "Chilan Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'resist'],
 		shortDesc: "Halves damage from a Normal-type attack. Fragile. Belch Effect: 140 BP. 1 time use.",
 		spritenum: 66,
 		isBerry: true,
 		isFragile: true,
 		belch: { basePower: 140 },
-		naturalGift: {
-			basePower: 80,
-			type: "Normal",
-		},
 		onSourceModifyDamage(damage, source, target, move) {
 			if (move.type === 'Normal' && (!target.volatiles['substitute'] || move.flags['bypasssub'] || (move.infiltrates && this.gen >= 6))) 
 			{ if (target.eatItem()) {
+					if (target.itemState?.chargeditem) delete target.itemState.chargeditem;
 					this.debug('-50% reduction');
 					this.add('-enditem', target, this.effect, '[weaken]');
 					return this.chainModify(0.5);
@@ -222,7 +190,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	chopleberry: {
 		name: "Chople Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'resist', 'healing'],
 		shortDesc: "1st supereffective Fighting hit charges berry and halves incoming damage. 2nd hit consumes berry, halves damage, and heals 75HP. Fragile; if broken, Burns holder. If broken while charged, also grants Focus Energy. Belch Effect: 10% chance to Burn target.",
 		spritenum: 71,
 		isBerry: true,
@@ -235,20 +203,18 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			status: 'brn',
 			chance: 10,
 		},
-		naturalGift: {
-			basePower: 80,
-			type: "Fighting",
-		},
 		onSourceModifyDamage(damage, source, target, move) {
 			if (move.type === 'Fighting' && target.getMoveHitData(move).typeMod > 0) {
 				const hitSub = target.volatiles['substitute'] && !move.flags['bypasssub'] && !(move.infiltrates && this.gen >= 6);
 				if (hitSub) return;
 				if (!target.itemState?.chargeditem) {
-					if (target.itemState) target.itemState.chargeditem = true;
+					if (!target.itemState) target.itemState = {} as any;
+					target.itemState.chargeditem = true;
 					this.add('-message', `${target.name}'s Chople Berry absorbed the blow! ${target.name}'s Chople Berry is surging with fighting spirit!`);
 					return this.chainModify(0.5);
 				}
 				if (target.eatItem()) {
+					if (target.itemState?.chargeditem) delete target.itemState.chargeditem;
 					this.debug('-50% reduction');
 					this.add('-enditem', target, this.effect, '[weaken]');
 					return this.chainModify(0.5);
@@ -261,26 +227,24 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	cobaberry: {
 		name: "Coba Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'resist', 'healing'],
 		shortDesc: "1st supereffective Flying hit charges berry and halves incoming damage. 2nd hit consumes berry, halves damage, and heals 75HP. Fragile; if broken while charged, applies Wind Burst.",
 		spritenum: 76,
 		isBerry: true,
 		isFragile: true,
 		onFragileBreak(pokemon) { if (pokemon.itemState && pokemon.itemState.chargeditem) { pokemon.addVolatile('windburst'); } },
-		naturalGift: {
-			basePower: 80,
-			type: "Flying",
-		},
 		onSourceModifyDamage(damage, source, target, move) {
 			if (move.type === 'Flying' && target.getMoveHitData(move).typeMod > 0) {
 				const hitSub = target.volatiles['substitute'] && !move.flags['bypasssub'] && !(move.infiltrates && this.gen >= 6);
 				if (hitSub) return;
 				if (!target.itemState?.chargeditem) {
-					if (target.itemState) target.itemState.chargeditem = true;
+					if (!target.itemState) target.itemState = {} as any;
+					target.itemState.chargeditem = true;
 					this.add('-message', `You can feel the winds surging around ${target.name}'s Coba Berry!`);
 					return this.chainModify(0.5);
 				}
 				if (target.eatItem()) {
+					if (target.itemState?.chargeditem) delete target.itemState.chargeditem;
 					this.debug('-50% reduction');
 					this.add('-enditem', target, this.effect, '[weaken]');
 					return this.chainModify(0.5);
@@ -293,7 +257,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	colburberry: {
 		name: "Colbur Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'resist', 'healing'],
 		shortDesc: "If hit by contact move while holding, transfers to attacker. 1st supereffective Dark hit charges berry and halves incoming damage. 2nd hit consumes berry, halves damage, and heals 75HP. Volatile; if disturbed while charged, sets Spikes on both sides and loses charge. Belch Effect: 20% chance to lower target's Attack 1 stage.",
 		spritenum: 78,
 		isBerry: true,
@@ -310,10 +274,6 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			chance: 20,
 			effect: function(target) { this.boost({atk: -1}, target); }, 
 		},
-		naturalGift: {
-			basePower: 80,
-			type: "Dark",
-		},
 		onHit(target, source, move) {
 			if (source && source !== target && !source.item && move && this.checkMoveMakesContact(move, source, target)) {
 				const berry = target.takeItem();
@@ -326,11 +286,13 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 					const hitSub = target.volatiles['substitute'] && !move.flags['bypasssub'] && !(move.infiltrates && this.gen >= 6);
 					if (hitSub) return;
 					if (!target.itemState?.chargeditem) {
-						if (target.itemState) target.itemState.chargeditem = true;
+						if (!target.itemState) target.itemState = {} as any;
+						target.itemState.chargeditem = true;
 						this.add('-message', `${target.name}'s Colbur Berry absorbed the blow! ${target.name}'s Colbur Berry is surging with malicious intent!`);
 						return this.chainModify(0.5);
 					}
 					if (target.eatItem()) {
+						if (target.itemState?.chargeditem) delete target.itemState.chargeditem;
 						this.debug('-50% reduction');
 						this.add('-enditem', target, this.effect, '[weaken]');
 						return this.chainModify(0.5);
@@ -343,14 +305,10 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	cornnberry: {
 		name: "Cornn Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry'],
 		shortDesc: "Cannot be eaten by the holder. No effect.",
 		spritenum: 81,
 		isBerry: true,
-		naturalGift: {
-			basePower: 90,
-			type: "Bug",
-		},
 		onEat: false,
 		num: 175,
 		gen: 3,
@@ -358,15 +316,11 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	custapberry: {
 		name: "Custap Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'utility', 'healing'],
 		shortDesc: "If HP≤1/3(or 2/3 with Gluttony), Holder moves 1st in its priority bracket, and heals 30HP. Fragile; if broken, heals 20HP and grants Pepped volatile. Belch Effect: inflicts Lagging status. 1 time use.",
 		spritenum: 86,
 		isBerry: true,
 		belch: { effect: function(target) { target.addVolatile('lagging'); }, },
-		naturalGift: {
-			basePower: 100,
-			type: "Ghost",
-		},
         isFragile: true,
 		onFragileBreak(pokemon) {
 			pokemon.heal(20);
@@ -393,14 +347,10 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	durinberry: {
 		name: "Durin Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry'],
 		shortDesc: "Cannot be eaten by the holder. No effect.",
 		spritenum: 114,
 		isBerry: true,
-		naturalGift: {
-			basePower: 100,
-			type: "Water",
-		},
 		onEat: false,
 		num: 182,
 		gen: 3,
@@ -408,17 +358,13 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	figyberry: {
 		name: "Figy Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'healing'],
 		shortDesc: "If HP≤1/3(or 2/3 with Gluttony), Heals 1/3HP; confuses if holder is Dark, Fairy, Grass, or Psychic type. Fragile; if broken, Heals 1/4HP. Belch Effect: target heals 1/16HP. 1 time use.",
 		spritenum: 140,
 		isBerry: true,
 		belch: { effect: function(target) { target.heal(target.maxhp / 16); }, },
         isFragile: true,
         onFragileBreak(pokemon) { this.heal(pokemon.maxhp / 4, pokemon); },
-		naturalGift: {
-			basePower: 80,
-			type: "Bug",
-		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 3 || (pokemon.hp <= pokemon.maxhp * 2 / 3 &&
 				((pokemon.ability1 === 'gluttony' && pokemon.abilityState1.gluttony) ||
@@ -437,14 +383,10 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ganlonberry: {
 		name: "Ganlon Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry', 'consumable', 'statboost'],
 		shortDesc: "If HP≤1/4(or 1/2 with Gluttony), Raises holder's Defense 1 stage. 1 time use.",
 		spritenum: 158,
 		isBerry: true,
-		naturalGift: {
-			basePower: 100,
-			type: "Ice",
-		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 &&
 				((pokemon.ability1 === 'gluttony' && pokemon.abilityState1.gluttony) ||
@@ -458,45 +400,43 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	grepaberry: {
 		name: "Grepa Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry'],
 		shortDesc: "Cannot be eaten by the holder. Fragile. No effect.",
 		spritenum: 178,
 		isBerry: true,
 		isFragile: true,
-		naturalGift: {
-			basePower: 90,
-			type: "Flying",
-		},
 		onEat: false,
 		num: 173,
 		gen: 3,
 	},
 	habanberry: {
 		name: "Haban Berry",
-		itemClass: 'Berries',
+		itemClass: ['volatile', 'berry', 'consumable', 'resist', 'healing'],
 		shortDesc: "1st supereffective Dragon hit charges berry and halves incoming damage. 2nd hit consumes berry, halves damage, and heals 75HP. Volatile; if disturbed while charged, Dragonblights holder and loses charge. Belch Effect: 30% chance to Dragonblight the target.",
 		spritenum: 185,
 		isBerry: true,
 		isMildlyFragile: true,
 		onMildlyFragileBreak(pokemon) {
 			if (pokemon.itemState && pokemon.itemState.chargeditem) {
-			pokemon.trySetStatus('dragonblight');
-			delete pokemon.itemState.chargeditem;
-			this.add('-message', `${pokemon.name}'s Haban Berry returned to normal.`);
+				pokemon.trySetStatus('dragonblight');
+				delete pokemon.itemState.chargeditem;
+				this.add('-message', `${pokemon.name}'s Haban Berry returned to normal.`);
 			}
 		},
 		belch: {effect: function(target) { if (this.randomChance(30, 100)) { target.trySetStatus('dragonblight'); } },},
-		naturalGift: {
-			basePower: 80,
-			type: "Dragon",
-		},
 		onSourceModifyDamage(damage, source, target, move) {
 			if (move.type === 'Dragon' && target.getMoveHitData(move).typeMod > 0) {
 				const hitSub = target.volatiles['substitute'] && !move.flags['bypasssub'] && !(move.infiltrates && this.gen >= 6);
 				if (hitSub) return;
 				if (!target.itemState?.chargeditem) {
-					if (target.itemState) target.itemState.chargeditem = true;
+					if (!target.itemState) target.itemState = {} as any;
+					target.itemState.chargeditem = true;
 					this.add('-message', `You can feel the draconic energy radiating from ${target.name}'s Haban Berry!`);
+					return this.chainModify(0.5);
+				}
+				if (target.eatItem()) {
+					if (target.itemState?.chargeditem) delete target.itemState.chargeditem;
+					this.debug('-50% reduction');
 					this.add('-enditem', target, this.effect, '[weaken]');
 					return this.chainModify(0.5);
 				}
@@ -508,31 +448,23 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	hondewberry: {
 		name: "Hondew Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry'],
 		shortDesc: "Cannot be eaten by the holder. No effect.",
 		spritenum: 213,
 		isBerry: true,
-		naturalGift: {
-			basePower: 90,
-			type: "Ground",
-		},
 		onEat: false,
 		num: 172,
 		gen: 3,
 	},
 	iapapaberry: {
 		name: "Iapapa Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'healing'],
 		shortDesc: "If HP≤1/3(or 2/3 with Gluttony), Heals 1/3HP; confuses if holder is Electric, Fairy, Ghost, or Psychic type. Fragile; if broken, Heals 1/4HP. Belch Effect: target heals 1/16HP. 1 time use.",
 		spritenum: 217,
 		isBerry: true,
 		belch: { effect: function(target) { target.heal(target.maxhp / 16); }, },
         isFragile: true,
         onFragileBreak(pokemon) { this.heal(pokemon.maxhp / 4, pokemon); },
-		naturalGift: {
-			basePower: 80,
-			type: "Dark",
-		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 3 || (pokemon.hp <= pokemon.maxhp * 2 / 3 &&
 				((pokemon.ability1 === 'gluttony' && pokemon.abilityState1.gluttony) ||
@@ -551,7 +483,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	jabocaberry: {
 		name: "Jaboca Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'utility'],
 		shortDesc: "If holder is hit by a physical move, and survives, attacker loses HP equal to the damage dealt. Fragile; if broken, holder loses 1/10HP. Belch Effect: 20% chance to Dragonblight target. 1 time use.",
 		spritenum: 230,
 		isBerry: true,
@@ -561,10 +493,6 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			status: 'dragonblight',
 			chance: 20,
 		},
-		naturalGift: {
-			basePower: 100,
-			type: "Dragon",
-		},
 		onDamagingHit(damage, target, source, move) {if (move.category === 'Physical' && source.hp && source.isActive && !(source.ability1 === 'magicguard' || source.ability2 === 'magicguard')) { if (target.eatItem()) { this.damage(damage, source, target, null); } }},
 		onEat() { },
 		num: 211,
@@ -572,7 +500,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	kasibberry: {
 		name: "Kasib Berry",
-		itemClass: 'Berries',
+		itemClass: ['volatile', 'berry', 'consumable', 'statuscure', 'resist', 'healing'],
 		shortDesc: "1st supereffective Ghost hit charges berry and halves incoming damage. 2nd hit consumes berry, halves damage, and heals 75HP. While held: Grants immunity to Curse. Volatile; if disturbed, holder gains Focus Energy; if disturbed while charged, also inflicts Curse and loses charge. Belch Effect: cures target's Curse. 1 time use.",
 		spritenum: 233,
 		isBerry: true,
@@ -597,17 +525,19 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 				this.add('-message', `The trapped spirits were released from ${pokemon.name}'s Kasib Berry.`);
 			}
 		},
-		naturalGift: {
-			basePower: 80,
-			type: "Ghost",
-		},
 		onSourceModifyDamage(damage, source, target, move) {
 			if (move.type === 'Ghost' && target.getMoveHitData(move).typeMod > 0) {
 				const hitSub = target.volatiles['substitute'] && !move.flags['bypasssub'] && !(move.infiltrates && this.gen >= 6);
 				if (hitSub) return;
 				if (!target.itemState?.chargeditem) {
-					if (target.itemState) target.itemState.chargeditem = true;
+					if (!target.itemState) target.itemState = {} as any;
+					target.itemState.chargeditem = true;
 					this.add('-message', `You can see the spectral wisps emanating from ${target.name}'s Kasib Berry!`);
+					return this.chainModify(0.5);
+				}
+				if (target.eatItem()) {
+					if (target.itemState?.chargeditem) delete target.itemState.chargeditem;
+					this.debug('-50% reduction');
 					this.add('-enditem', target, this.effect, '[weaken]');
 					return this.chainModify(0.5);
 				}
@@ -634,7 +564,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	kebiaberry: {
 		name: "Kebia Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'resist', 'healing'],
 		shortDesc: "1st supereffective Poison hit charges berry and halves incoming damage. 2nd hit consumes berry, halves damage, and heals 75HP. Fragile; if broken, inflicts poison; if broken while charged, inflicts Toxic Poison and sets Toxic Spikes on both sides. Belch Effect: 20% chance each to Toxic Poison or Poison target.",
 		spritenum: 234,
 		isBerry: true,
@@ -652,20 +582,18 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 				else if (this.randomChance(20, 100)) { target.trySetStatus('psn'); }
 			},
 		},
-		naturalGift: {
-			basePower: 80,
-			type: "Poison",
-		},
 		onSourceModifyDamage(damage, source, target, move) {
 			if (move.type === 'Poison' && target.getMoveHitData(move).typeMod > 0) {
 				const hitSub = target.volatiles['substitute'] && !move.flags['bypasssub'] && !(move.infiltrates && this.gen >= 6);
 				if (hitSub) return;
 				if (!target.itemState?.chargeditem) {
-					if (target.itemState) target.itemState.chargeditem = true;
+					if (!target.itemState) target.itemState = {} as any;
+					target.itemState.chargeditem = true;
 					this.add('-message', `${target.name}'s Kebia Berry absorbed the blow! ${target.name}'s Kebia Berry is bubbling with Toxic particles!`);
 					return this.chainModify(0.5);
 				}
 				if (target.eatItem()) {
+					if (target.itemState?.chargeditem) delete target.itemState.chargeditem;
 					this.debug('-50% reduction');
 					this.add('-enditem', target, this.effect, '[weaken]');
 					return this.chainModify(0.5);
@@ -678,17 +606,13 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	keeberry: {
 		name: "Kee Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry', 'consumable', 'healing', 'statboost', 'reactive'],
 		shortDesc: "Raises holder's Defense 1 stage before being hit by a physical attack. Belch Effect: 30% chance to Toxic Poison target. 1 time use.",
 		spritenum: 593,
 		isBerry: true,
 		belch: {
 			status: 'tox',
 			chance: 30,
-		},
-		naturalGift: {
-			basePower: 100,
-			type: "Fairy",
 		},
 		onSourceModifyDamage(damage, source, target, move) {
 			   if (move.category === 'Physical' && target.hp && target.isActive) {
@@ -702,32 +626,24 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	kelpsyberry: {
 		name: "Kelpsy Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry'],
 		shortDesc: "Cannot be eaten by the holder. No effect.",
 		spritenum: 235,
 		isBerry: true,
 		belch: {},
-		naturalGift: {
-			basePower: 90,
-			type: "Fighting",
-		},
 		onEat: false,
 		num: 170,
 		gen: 3,
 	},
 	lansatberry: {
 		name: "Lansat Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'statboost'],
 		shortDesc: "While held, grants Luck Effect. If HP≤2/3 (or 100% with Gluttony), grants Focus Energy and Rainbow Effect. Fragile; if broken, grants holder Focus Energy. Belch Effect: grants Focus Energy to target. 1 time use.",
 		spritenum: 238,
 		isBerry: true,
 		isFragile: true,
 		onFragileBreak(pokemon) { pokemon.addVolatile('focusenergy'); },
 		belch: { effect(target, source, move) { target.addVolatile('focusenergy', source, move); }, },
-		naturalGift: {
-			basePower: 100,
-			type: "Flying",
-		},
 		   onUpdate(pokemon) {
 			   // Passive: always grant luckeffect while holding
 			   if (!pokemon.volatiles['luckeffect']) { pokemon.addVolatile('luckeffect'); }
@@ -744,15 +660,11 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	leppaberry: {
 		name: "Leppa Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'utility'],
 		shortDesc: "Heals 10 PP to a move that reaches 0 PP. Fragile. 1 time use.",
 		spritenum: 244,
 		isBerry: true,
 		isFragile: true,
-		naturalGift: {
-			basePower: 80,
-			type: "Fighting",
-		},
 		onUpdate(pokemon) {
 			if (!pokemon.hp) return;
 			if (pokemon.moveSlots.some(move => move.pp === 0)) { pokemon.eatItem(); }
@@ -769,16 +681,12 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	liechiberry: {
 		name: "Liechi Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'statboost'],
 		shortDesc: "If HP≤1/3(or 2/3 with Gluttony), Raises holder's Attack 1 stage. Fragile; if broken, raises Attack 1 stage.",
 		spritenum: 248,
 		isBerry: true,
 		isFragile: true,
 		onFragileBreak(pokemon) { this.boost({ atk: 1 }, pokemon); },
-		naturalGift: {
-			basePower: 100,
-			type: "Grass",
-		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp * 2 / 3 || (pokemon.hp <= pokemon.maxhp &&
 				((pokemon.ability1 === 'gluttony' && pokemon.abilityState1.gluttony) ||
@@ -792,15 +700,11 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	lumberry: {
 		name: "Lum Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'statuscure'],
 		shortDesc: "Cures holder of any status or Confusion. Fragile. 1 time use.",
 		spritenum: 262,
 		isBerry: true,
 		isFragile: true,
-		naturalGift: {
-			basePower: 80,
-			type: "Flying",
-		},
 		onAfterSetStatusPriority: -1,
 		onAfterSetStatus(status, pokemon) { pokemon.eatItem(); },
 		onUpdate(pokemon) { if (pokemon.status || pokemon.volatiles['confusion']) { pokemon.eatItem(); } },
@@ -813,15 +717,11 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	magoberry: {
 		name: "Mago Berry",
+		itemClass: ['berry', 'consumable', 'healing'],
 		shortDesc: "If HP≤1/4(or 1/2 with Gluttony), Heals 1/3HP; Confuses if holder has a -Speed nature.",
-		itemClass: 'Berries',
 		spritenum: 274,
 		isBerry: true,
-		   belch: { basePower: 35 },
-		naturalGift: {
-			basePower: 80,
-			type: "Ghost",
-		},
+		belch: { basePower: 35 },
 		onUpdate(pokemon) { if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 && ((pokemon.ability1 === 'gluttony' && pokemon.abilityState1.gluttony) || (pokemon.ability2 === 'gluttony' && pokemon.abilityState2.gluttony)))) { pokemon.eatItem(); } },
 		onTryEatItem(item, pokemon) { if (!this.runEvent('TryHeal', pokemon, null, this.effect, pokemon.baseMaxhp / 3)) return false; },
 		onEat(pokemon) {
@@ -833,16 +733,12 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	magostberry: {
 		name: "Magost Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry'],
 		shortDesc: "Cannot be eaten by the holder. Fragile. No effect.",
 		spritenum: 275,
 		isBerry: true,
 		isFragile: true,
 		belch: {},
-		naturalGift: {
-			basePower: 90,
-			type: "Rock",
-		},
 		onEat: false,
 		num: 176,
 		gen: 3,
@@ -850,15 +746,11 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	marangaberry: {
 		name: "Maranga Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry', 'consumable', 'statboost', 'reactive', 'utility'],
 		shortDesc: "Raises holder's Sp.Def 1 stage before being hit by a special attack. If hit by contact move while held, transfers to attacker.",
 		spritenum: 597,
 		isBerry: true,
 		belch: { },
-		naturalGift: {
-			basePower: 100,
-			type: "Dark",
-		},
 		onHit(target, source, move) {
 			if (source && source !== target && !source.item && move && this.checkMoveMakesContact(move, source, target)) {
 				const berry = target.takeItem();
@@ -873,16 +765,12 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	micleberry: {
 		name: "Micle Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'statboost', 'healing'],
 		shortDesc: "If HP≤1/2(or 100% with Gluttony), Raises holder's accuracy 3 stages, heals 75HP, and raises critical hit ratio 3 stages. Fragile; if broken, same effects apply. 1 time use.",
 		spritenum: 290,
 		isBerry: true,
 		isFragile: true,
 		belch: { },
-		naturalGift: {
-			basePower: 100,
-			type: "Rock",
-		},
 		onResidual(pokemon) { if (pokemon.hp <= pokemon.maxhp / 2 || (pokemon.hp <= pokemon.maxhp && ((pokemon.ability1 === 'gluttony' && pokemon.abilityState1.gluttony) || (pokemon.ability2 === 'gluttony' && pokemon.abilityState2.gluttony)))) { pokemon.eatItem(); } },
 		onEat(pokemon) {
 			this.heal(75, pokemon);
@@ -903,16 +791,12 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	nanabberry: {
 		name: "Nanab Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry'],
 		shortDesc: "Cannot be eaten by the holder. Fragile. No effect.",
 		spritenum: 302,
 		isBerry: true,
 		isFragile: true,
 		belch: { },
-		naturalGift: {
-			basePower: 90,
-			type: "Water",
-		},
 		onEat: false,
 		num: 166,
 		gen: 3,
@@ -920,15 +804,11 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	nomelberry: {
 		name: "Nomel Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry'],
 		shortDesc: "Cannot be eaten by the holder. No effect.",
 		spritenum: 306,
 		isBerry: true,
 		belch: { },
-		naturalGift: {
-			basePower: 90,
-			type: "Dragon",
-		},
 		onEat: false,
 		num: 178,
 		gen: 3,
@@ -936,20 +816,16 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	occaberry: {
 		name: "Occa Berry",
-		itemClass: 'Berries',
+		itemClass: ['volatile', 'berry', 'consumable', 'resist', 'healing'],
 		shortDesc: "1st supereffective Fire hit charges berry and halves incoming damage. 2nd hit consumes berry, halves damage, and heals 75HP. Volatile; if disturbed, Burns holder; if broken while charged, sets Sea of Fire on both sides 2 turns. Belch Effect: 20% chance each to Burn target.",
 		spritenum: 311,
 		isBerry: true,
 		isMildlyFragile: true,
 		onMildlyFragileBreak(pokemon) {
 			pokemon.trySetStatus('brn');
-			if (pokemon.itemState && pokemon.itemState.chargeditem) {
-				if (pokemon.side && pokemon.side.foe) {
-					pokemon.side.addSideCondition('SeaofFire', pokemon);
-					pokemon.side.foe.addSideCondition('SeaofFire', pokemon);
-					pokemon.battle.effectState.SeaofFireTurns = 2;
-					this.add('-message', `The flames burst out of ${pokemon.name}'s Occa Berry. The battlefield is engulfed in a Sea of Fire!`);
-				}
+			if (pokemon.itemState?.chargeditem) {
+				pokemon.battle.field.addPseudoWeather('seaoffire', pokemon, this.effect);
+				this.add('-message', `The flames burst out of ${pokemon.name}'s Occa Berry. The battlefield is engulfed in a Sea of Fire!`);
 				delete pokemon.itemState.chargeditem;
 			}
 		},
@@ -957,20 +833,18 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			status: 'brn',
 			chance: 20,
 		},
-		naturalGift: {
-			basePower: 80,
-			type: "Fire",
-		},
 		onSourceModifyDamage(damage, source, target, move) {
 			if (move.type === 'Fire' && target.getMoveHitData(move).typeMod > 0) {
 				const hitSub = target.volatiles['substitute'] && !move.flags['bypasssub'] && !(move.infiltrates && this.gen >= 6);
 				if (hitSub) return;
 				if (!target.itemState?.chargeditem) {
-					if (target.itemState) target.itemState.chargeditem = true;
+					if (!target.itemState) target.itemState = {} as any;
+					target.itemState.chargeditem = true;
 					this.add('-message', `${target.name}'s Occa Berry absorbed thermal energy! ${target.name}'s Occa Berry is radiating heat!`);
 					return this.chainModify(0.5);
 				}
 				if (target.eatItem()) {
+					if (target.itemState?.chargeditem) delete target.itemState.chargeditem;
 					this.debug('-50% reduction');
 					this.add('-enditem', target, this.effect, '[weaken]');
 					return this.chainModify(0.5);
@@ -983,8 +857,8 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	oranberry: {
 		name: "Oran Berry",
+		itemClass: ['fragile', 'berry', 'consumable', 'healing'],
 		shortDesc: "If HP≤1/2, heal 50HP. Fragile; if broken, heal 25HP. Belch Effect: 75% chance to poison target, heals 10HP after damage is dealt",
-		itemClass: 'Berries',
 		spritenum: 319,
 		isBerry: true,
 		isFragile: true,
@@ -992,10 +866,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		belch: {
 			status: 'psn',
 			chance: 75,
-			effect(target, source, move) { if (target && target.hp > 0) target.heal(10); }, },
-		naturalGift: {
-			basePower: 80,
-			type: "Poison",
+			effect(target, source, move) { if (target && target.hp > 0) target.heal(10); }, 
 		},
 		onUpdate(pokemon) { if (pokemon.hp <= pokemon.maxhp / 2) { pokemon.eatItem(); } },
 		onTryEatItem(item, pokemon) { if (!this.runEvent('TryHeal', pokemon, null, this.effect, 50)) return false; },
@@ -1005,15 +876,11 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	pamtreberry: {
 		name: "Pamtre Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry'],
 		shortDesc: "Cannot be eaten by the holder. No effect.",
 		spritenum: 323,
 		isBerry: true,
 		belch: { },
-		naturalGift: {
-			basePower: 90,
-			type: "Steel",
-		},
 		onEat: false,
 		num: 180,
 		gen: 3,
@@ -1021,8 +888,8 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	passhoberry: {
 		name: "Passho Berry",
-		shortDesc: "1st supereffective Water hit charges berry and halves incoming damage. 2nd hit consumes berry, halves damage, and heals 75HP. Fragile; if broken, cures holder of Burn; if broken while charged, Grants holder Aqua Ring. Belch Effect: cures target of Burn.",
-		itemClass: 'Berries',
+		itemClass: ['volatile', 'berry', 'consumable', 'resist', 'healing'],
+		shortDesc: "1st supereffective Water hit charges berry and halves incoming damage. 2nd hit consumes berry, halves damage, and heals 125HP. Fragile; if broken, cures holder of Burn; if broken while charged, Grants holder Aqua Ring. Belch Effect: cures target of Burn.",
 		spritenum: 329,
 		isBerry: true,
 		isFragile: true,
@@ -1031,20 +898,18 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			if (pokemon.itemState && pokemon.itemState.chargeditem) { pokemon.addVolatile('aquaring'); }
 		},
 		belch: { effect: function(target) { if (target.status === 'brn') target.cureStatus(); }, },
-		naturalGift: {
-			basePower: 80,
-			type: "Water",
-		},
 		onSourceModifyDamage(damage, source, target, move) {
 			if (move.type === 'Water' && target.getMoveHitData(move).typeMod > 0) {
 				const hitSub = target.volatiles['substitute'] && !move.flags['bypasssub'] && !(move.infiltrates && this.gen >= 6);
 				if (hitSub) return;
 				if (!target.itemState?.chargeditem) {
-					if (target.itemState) target.itemState.chargeditem = true;
+					if (!target.itemState) target.itemState = {} as any;
+					target.itemState.chargeditem = true;
 					this.add('-message', `${target.name}'s Passho Berry absorbed the flow! ${target.name}'s Passho Berry is swirling with aqueous energy!`);
 					return this.chainModify(0.5);
 				}
 				if (target.eatItem()) {
+					if (target.itemState?.chargeditem) delete target.itemState.chargeditem;
 					this.debug('-50% reduction');
 					this.add('-enditem', target, this.effect, '[weaken]');
 					return this.chainModify(0.5);
@@ -1057,19 +922,14 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	payapaberry: {
 		name: "Payapa Berry",
+		itemClass: ['fragile', 'berry', 'consumable', 'resist', 'utility'],
 		shortDesc: "1st supereffective Psychic type hit's damage is halved. The holder then transforms into the attacker. Fragile; if broken, transforms the holder into the attacker",
-		itemClass: 'Berries',
 		spritenum: 330,
 		isBerry: true,
 		isFragile: true,
 		onFragileBreak(pokemon) {
-			   // Same effect as onEat
-			   const target = pokemon.side.foe.active[pokemon.side.foe.active.length - 1 - pokemon.position];
-			   if (target) {  pokemon.transformInto(target, this.dex.abilities.get('imposter')); }
-		   },
-		naturalGift: {
-			basePower: 80,
-			type: "Psychic",
+			const target = pokemon.side.foe.active[pokemon.side.foe.active.length - 1 - pokemon.position];
+			if (target) {  pokemon.transformInto(target, this.dex.abilities.get('imposter')); }
 		},
 		belch: {
 			chance: 30,
@@ -1080,6 +940,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 				const hitSub = target.volatiles['substitute'] && !move.flags['bypasssub'] && !(move.infiltrates && this.gen >= 6);
 				if (hitSub) return;
 				if (target.eatItem()) {
+					if (target.itemState?.chargeditem) delete target.itemState.chargeditem;
 					this.debug('-50% reduction');
 					this.add('-enditem', target, this.effect, '[weaken]');
 					return this.chainModify(0.5);
@@ -1087,7 +948,6 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			}
 		},
 		   onEat(pokemon) {
-			   // Heal 75HP when eaten
 			   this.heal(75, pokemon);
 			   // Try to transform into the opposing active Pokemon, like Imposter
 			   const target = pokemon.side.foe.active[pokemon.side.foe.active.length - 1 - pokemon.position];
@@ -1098,17 +958,13 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	pechaberry: {
 		name: "Pecha Berry",
+		itemClass: ['fragile', 'berry', 'consumable', 'statuscure'],
 		shortDesc: "Cures holder of Poison or Toxic Poison. Fragile; if broken while Poisoned, cures Poison or Toxic Poison. Belch Effect: while Poisoned, cures target's Poison or Toxic Poison. 1 time use.",
-		itemClass: 'Berries',
 		spritenum: 333,
 		isBerry: true,
 		isFragile: true,
 		onFragileBreak(pokemon) { if (pokemon.status === 'psn' || pokemon.status === 'tox') pokemon.cureStatus(); },
 		belch: { effect: function(target) { if (target.status === 'psn' || target.status === 'tox') { target.cureStatus(); } }, },
-		naturalGift: {
-			basePower: 80,
-			type: "Electric",
-		},
 		onUpdate(pokemon) { if (pokemon.status === 'psn' || pokemon.status === 'tox') { pokemon.eatItem(); } },
 		onEat(pokemon) { if (pokemon.status === 'psn' || pokemon.status === 'tox') { pokemon.cureStatus(); } },
 		num: 151,
@@ -1116,17 +972,13 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	persimberry: {
 		name: "Persim Berry",
+		itemClass: ['fragile', 'berry', 'consumable', 'statuscure'],
 		shortDesc: "Cures holder of Confusion. Fragile; if broken while Confused, cures Confusion. Belch Effect: while Confused, cures target's Confusion. 1 time use.",
-		itemClass: 'Berries',
 		spritenum: 334,
 		isBerry: true,
 		isFragile: true,
 		onFragileBreak(pokemon) { if (pokemon.volatiles['confusion']) pokemon.removeVolatile('confusion'); },
 		belch: { effect(target) { if (target && target.volatiles['confusion']) { target.removeVolatile('confusion'); } }, },
-		naturalGift: {
-			basePower: 80,
-			type: "Ground",
-		},
 		onUpdate(pokemon) { if (pokemon.volatiles['confusion']) { pokemon.eatItem(); } },
 		onEat(pokemon) { pokemon.removeVolatile('confusion'); },
 		num: 156,
@@ -1134,15 +986,11 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	petayaberry: {
 		name: "Petaya Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry', 'consumable', 'statboost'],
 		shortDesc: "If HP≤1/4(or 1/2 with Gluttony), Raises holder's Sp. Atk 1 stage. 1 time use.",
 		spritenum: 335,
 		isBerry: true,
 		belch: { },
-		naturalGift: {
-			basePower: 100,
-			type: "Poison",
-		},
 		onUpdate(pokemon) { if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 && ((pokemon.ability1 === 'gluttony' && pokemon.abilityState1.gluttony) || (pokemon.ability2 === 'gluttony' && pokemon.abilityState2.gluttony)))) { pokemon.eatItem(); } },
 		onEat(pokemon) { this.boost({ spa: 1 }); },
 		num: 204,
@@ -1150,15 +998,11 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	pinapberry: {
 		name: "Pinap Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry'],
 		shortDesc: "Cannot be eaten by the holder. No effect.",
 		spritenum: 337,
 		isBerry: true,
 		belch: { },
-		naturalGift: {
-			basePower: 90,
-			type: "Grass",
-		},
 		onEat: false,
 		num: 168,
 		gen: 3,
@@ -1166,46 +1010,34 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	pomegberry: {
 		name: "Pomeg Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry'],
 		shortDesc: "Cannot be eaten by the holder. Fragile. No effect.",
 		spritenum: 351,
 		isBerry: true,
 		isFragile: true,
 		belch: { },
-		naturalGift: {
-			basePower: 90,
-			type: "Ice",
-		},
 		onEat: false,
 		num: 169,
 		gen: 3,
 	},
 	qualotberry: {
 		name: "Qualot Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry'],
 		shortDesc: "Cannot be eaten by the holder. No effect.",
 		spritenum: 371,
 		isBerry: true,
 		belch: { },
-		naturalGift: {
-			basePower: 90,
-			type: "Poison",
-		},
 		onEat: false,
 		num: 171,
 		gen: 3,
 	},
 	rabutaberry: {
 		name: "Rabuta Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry'],
 		shortDesc: "Cannot be eaten by the holder. No effect.",
 		spritenum: 375,
 		isBerry: true,
 		belch: { },
-		naturalGift: {
-			basePower: 90,
-			type: "Ghost",
-		},
 		onEat: false,
 		num: 177,
 		gen: 3,
@@ -1213,17 +1045,13 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	rawstberry: {
 		name: "Rawst Berry",
+		itemClass: ['fragile', 'berry', 'consumable', 'statuscure'],
 		shortDesc: "Cures holder of Burn. Fragile; if broken while Burnt, cures Burn. Belch Effect: while Burnt, cures target's Burn. 1 time use.",
-		itemClass: 'Berries',
 		spritenum: 381,
 		isBerry: true,
 		isFragile: true,
 		onFragileBreak(pokemon) { if (pokemon.status === 'brn') pokemon.cureStatus(); },
 		belch: { effect: function(target) { if (target.status === 'brn') { target.cureStatus(); } }, },
-		naturalGift: {
-			basePower: 80,
-			type: "Grass",
-		},
 		onUpdate(pokemon) { if (pokemon.status === 'brn') { pokemon.eatItem(); } },
 		onEat(pokemon) { if (pokemon.status === 'brn') { pokemon.cureStatus(); } },
 		num: 152,
@@ -1231,17 +1059,13 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	razzberry: {
 		name: "Razz Berry",
+		itemClass: ['fragile', 'berry', 'consumable', 'statuscure'],
 		shortDesc: "Cures holder of Dragonblight. Fragile; if broken while inflicted with Dragonblight, cures Dragonblight. Belch Effect: while inflicted with Dragonblight, cures target's Dragonblight. 1 time use.",
-		itemClass: 'Berries',
 		spritenum: 384,
 		isBerry: true,
 		isFragile: true,
 		onFragileBreak(pokemon) { if (pokemon.status === 'dragonblight') pokemon.cureStatus(); },
 		belch: { effect: function(target) { if (target.status === 'dragonblight') { target.cureStatus(); } }, },
-		naturalGift: {
-			basePower: 80,
-			type: "Steel",
-		},
 		onUpdate(pokemon) { if (pokemon.status === 'dragonblight') { pokemon.eatItem(); } },
 		onEat(pokemon) { if (pokemon.status === 'dragonblight') { pokemon.cureStatus(); } },
 		num: 164,
@@ -1249,8 +1073,8 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	rindoberry: {
 		name: "Rindo Berry",
+		itemClass: ['gragile', 'berry', 'consumable', 'resist', 'healing', 'statuscure'],
 		shortDesc: "1st supereffective Grass hit charges berry and halves incoming damage. 2nd hit consumes berry, halves damage, cures holder of Drowsy or Sleep, and heals 125HP. Fragile; if broken while charged, cures holder of Drowsy or Sleep, and Grants holder Ingrain. Belch Effect: 30% chance to inflict Drowsy.",
-		itemClass: 'Berries',
 		spritenum: 409,
 		isBerry: true,
 		isFragile: true,
@@ -1264,20 +1088,18 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			chance: 30,
 			status: 'drowsy',
 		},
-		naturalGift: {
-			basePower: 80,
-			type: "Grass",
-		},
 		onSourceModifyDamage(damage, source, target, move) {
 			if (move.type === 'Grass' && target.getMoveHitData(move).typeMod > 0) {
 				const hitSub = target.volatiles['substitute'] && !move.flags['bypasssub'] && !(move.infiltrates && this.gen >= 6);
 				if (hitSub) return;
 				if (!target.itemState?.chargeditem) {
-					if (target.itemState) target.itemState.chargeditem = true;
+					if (!target.itemState) target.itemState = {} as any;
+					target.itemState.chargeditem = true;
 					this.add('-message', `${target.name}'s Rindo Berry absorbed the blow! ${target.name}'s Rindo Berry is glowing with life energy!`);
 					return this.chainModify(0.5);
 				}
 				if (target.eatItem()) {
+					if (target.itemState?.chargeditem) delete target.itemState.chargeditem;
 					this.debug('-50% reduction');
 					this.add('-enditem', target, this.effect, '[weaken]');
 					return this.chainModify(0.5);
@@ -1295,8 +1117,8 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	roseliberry: {
 		name: "Roseli Berry",
+		itemClass: ['fragile', 'berry', 'consumable', 'resist', 'healing'],
 		shortDesc: "1st supereffective Fairy hit charges berry and halves incoming damage. 2nd hit consumes berry, halves damage, and heals 75HP. Fragile; if broken, cures holder of Dragonblight; if broken while charged, Inflicts holder with Magic Dust. Belch Effect: Supereffective on Dragon Type targets.",
-		itemClass: 'Berries',
 		spritenum: 603,
 		isBerry: true,
 		isFragile: true,
@@ -1317,20 +1139,18 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			   }
 		   },
 	   },
-		naturalGift: {
-			basePower: 80,
-			type: "Fairy",
-		},
 		onSourceModifyDamage(damage, source, target, move) {
 			if (move.type === 'Fairy' && target.getMoveHitData(move).typeMod > 0) {
 				const hitSub = target.volatiles['substitute'] && !move.flags['bypasssub'] && !(move.infiltrates && this.gen >= 6);
 				if (hitSub) return;
 				if (!target.itemState?.chargeditem) {
-					if (target.itemState) target.itemState.chargeditem = true;
+					if (!target.itemState) target.itemState = {} as any;
+					target.itemState.chargeditem = true;
 					this.add('-message', `${target.name}'s Roseli Berry absorbed the spell! ${target.name}'s Roseli Berry is swirling with magical energy!`);
 					return this.chainModify(0.5);
 				}
 				if (target.eatItem()) {
+					if (target.itemState?.chargeditem) delete target.itemState.chargeditem;
 					this.debug('-50% reduction');
 					this.add('-enditem', target, this.effect, '[weaken]');
 					return this.chainModify(0.5);
@@ -1346,45 +1166,34 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	rowapberry: {
 		name: "Rowap Berry",
+		itemClass: ['fragile', 'berry', 'consumable', 'utility'],
 		shortDesc: "If holder is hit by a special move, and survives, attacker loses HP equal to the damage dealt. Fragile; if broken, clears grounded hazards. Belch Effect: remove target's active aura. 1 time use.",
-		itemClass: 'Berries',
 		spritenum: 420,
 		isBerry: true,
 		isFragile: true,
-		onFragileBreak(pokemon) {
-			// Remove grounded hazards from the user's side
+		onFragileBreak(pokemon) { // Remove GROUNDED hazards from the user's side
 		   const hazards = ['spikes', 'toxicspikes', 'stickyweb', 'steelspikes'];
 		   for (const hazard of hazards) { if (pokemon.side.removeSideCondition(hazard)) { this.add('-message', `Rowap pods broke loose and spun the ${this.dex.conditions.get(hazard).name} away!`); } }
 	   },
 		belch: { effect(target) { if (target && target.status === 'aura') { target.cureStatus(); } }, },
-		naturalGift: {
-			basePower: 100,
-			type: "Dark",
-		},
-		   onDamagingHit(damage, target, source, move) {
-			   if (move.category === 'Special' && source.hp && source.isActive && !(source.ability1 === 'magicguard' || source.ability2 === 'magicguard')) {
-				   if (target.eatItem()) {
-					   // Reflect the damage dealt back to the attacker
-					   this.damage(damage, source, target, null);
-					   // Boost the holder's Sp. Def 1 stage
-					   this.boost({spd: 1}, target);
-				   }
+		onDamagingHit(damage, target, source, move) {
+			if (move.category === 'Special' && source.hp && source.isActive && !(source.ability1 === 'magicguard' || source.ability2 === 'magicguard')) {
+				if (target.eatItem()) {  // Reflect the damage dealt back to the attacker
+					this.damage(damage, source, target, null);
+					this.boost({spd: 1}, target);
 			   }
-		   },
+		   }
+		},
 		onEat() { },
 		num: 212,
 		gen: 4,
 	},
 	salacberry: {
 		name: "Salac Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry', 'consumable', 'statboost'],
 		shortDesc: "If HP≤1/4(or 1/2 with Gluttony), Raises holder's Speed 1 stage. 1 time use.",
 		spritenum: 426,
 		isBerry: true,
-		naturalGift: {
-			basePower: 100,
-			type: "Fighting",
-		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 &&
 				((pokemon.ability1 === 'gluttony' && pokemon.abilityState1.gluttony) ||
@@ -1398,25 +1207,23 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	shucaberry: {
 		name: "Shuca Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'resist', 'healing'],
 		shortDesc: "1st supereffective Ground hit charges berry and halves incoming damage. 2nd hit consumes berry, halves damage, and heals 75HP. Fragile.",
 		spritenum: 443,
 		isBerry: true,
 		isFragile: true,
-		naturalGift: {
-			basePower: 80,
-			type: "Ground",
-		},
 		onSourceModifyDamage(damage, source, target, move) {
 			if (move.type === 'Ground' && target.getMoveHitData(move).typeMod > 0) {
 				const hitSub = target.volatiles['substitute'] && !move.flags['bypasssub'] && !(move.infiltrates && this.gen >= 6);
 				if (hitSub) return;
 				if (!target.itemState?.chargeditem) {
-					if (target.itemState) target.itemState.chargeditem = true;
+					if (!target.itemState) target.itemState = {} as any;
+					target.itemState.chargeditem = true;
 					this.add('-message', `${target.name}'s Shuca Berry absorbed the blow! ${target.name}'s Shuca Berry is shaking with terrestrial energy!`);
 					return this.chainModify(0.5);
 				}
 				if (target.eatItem()) {
+					if (target.itemState?.chargeditem) delete target.itemState.chargeditem;
 					this.debug('-50% reduction');
 					this.add('-enditem', target, this.effect, '[weaken]');
 					this.heal(75, target);
@@ -1430,17 +1237,13 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	sitrusberry: {
 		name: "Sitrus Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'healing'],
 		shortDesc: "If HP≤1/2, Heals 1/4HP. Fragile; if broken, heals 1/8HP. Belch Effect: target heals 1/24HP. 1 time use.",
 		spritenum: 448,
 		isBerry: true,
 		isFragile: true,
 		belch: { effect: function(target) { target.heal(target.maxhp / 24); }, },
         onFragileBreak(pokemon) { this.heal(pokemon.maxhp / 8, pokemon); },
-		naturalGift: {
-			basePower: 80,
-			type: "Psychic",
-		},
 		onUpdate(pokemon) { if (pokemon.hp <= pokemon.maxhp / 2) { pokemon.eatItem(); } },
 		onTryEatItem(item, pokemon) { if (!this.runEvent('TryHeal', pokemon, null, this.effect, pokemon.baseMaxhp / 4)) return false; },
 		onEat(pokemon) { this.heal(pokemon.baseMaxhp / 4); },
@@ -1449,49 +1252,42 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	spelonberry: {
 		name: "Spelon Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable'],
 		shortDesc: "Cannot be eaten by the holder. Fragile; if broken, Burns holder. Belch Effect: becomes a Poison/Fire type move that can hit Steel types with a 30% chance to Burn target.",
 		spritenum: 462,
 		isBerry: true,
 		isFragile: true,
 		onFragileBreak(pokemon) { pokemon.trySetStatus('brn'); },
-		naturalGift: {
-		   basePower: 90,
-		   type: "Dark",
-		},
-	   belch: {
-		   effect(target, source, move) {
-			   if (this.randomChance(30, 100)) { target.trySetStatus('brn', source, move); }
-			   // Only apply Poison/Fire type the 1st time after consumption
-			   if (move && move.type === 'Poison' && source && !source.volatiles['spelonberrybelch']) {
-				   move.type = 'Poison/Fire';
-				   this.add('-activate', source, 'item: Spelon Berry', '[dualtype]', 'Poison/Fire');
-				   source.addVolatile('spelonberrybelch');
-              // Override onImmunity to ignore Steel's Poison immunity
+	   	belch: {
+			effect(target, source, move) {
+				if (this.randomChance(30, 100)) { target.trySetStatus('brn', source, move); }
+				if (move && source && !source.volatiles['spelonberrybelch']) {
+					move.type = 'Poison/Fire';
+					this.add('-activate', source, 'item: Spelon Berry', '[dualtype]', 'Poison/Fire');
+					source.addVolatile('spelonberrybelch');
 					const origOnTryImmunity = move.onTryImmunity;
 					move.onTryImmunity = function(target, source, move_) {
-						// Only override for Poison type moves, Steel targets, and spelonberrybelch volatile
-						if (move_ && move_.type === 'Poison' && target.hasType && target.hasType('Steel') && target.volatiles['spelonberrybelch']) { return false; } // Ignore Steel's Poison immunity
+						if (
+							move_ &&
+							move_.id === 'belch' &&
+							source?.volatiles?.['spelonberrybelch'] &&
+							target?.hasType?.('Steel')
+						) { return false; }
 						if (typeof origOnTryImmunity === 'function') { return origOnTryImmunity.call(this, target, source, move_); }
 						return undefined;
 					};
 				}
-		   },
-	   },
- 		onEat: false,
+			},
+		},
 		num: 179,
 		gen: 3,
 	},
 	starfberry: {
 		name: "Starf Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry', 'consumable', 'statboost'],
 		shortDesc: "If HP≤1/4(or 1/2 with Gluttony), Raises a random stat 2 stages. 1 time use.",
 		spritenum: 472,
 		isBerry: true,
-		naturalGift: {
-			basePower: 100,
-			type: "Psychic",
-		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 &&
 				((pokemon.ability1 === 'gluttony' && pokemon.abilityState1.gluttony) ||
@@ -1515,23 +1311,19 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	tamatoberry: {
 		name: "Tamato Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry'],
 		shortDesc: "Cannot be eaten by the holder. Fragile. No effect.",
 		spritenum: 486,
 		isBerry: true,
 		isFragile: true,
-		naturalGift: {
-			basePower: 90,
-			type: "Psychic",
-		},
 		onEat: false,
 		num: 174,
 		gen: 3,
 	},
 	tangaberry: {
 		name: "Tanga Berry",
+		itemClass: ['volatile', 'berry', 'consumable', 'resist', 'healing'],
 		shortDesc: "1st supereffective Bug hit charges berry and halves incoming damage. 2nd hit consumes berry, halves damage, and heals 75HP. Fragile; if broken, Confuses the holder; if broken while charged, spreads Sticky Web on both sides. Belch Effect: 20% chance to Confuse.",
-		itemClass: 'Berries',
 		spritenum: 487,
 		isBerry: true,
 		isMildlyFragile: true,
@@ -1546,20 +1338,18 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			chance: 20,
 			volatileStatus: 'confusion',
 		},
-		naturalGift: {
-			basePower: 80,
-			type: "Bug",
-		},
 		onSourceModifyDamage(damage, source, target, move) {
 			if (move.type === 'Bug' && target.getMoveHitData(move).typeMod > 0) {
 				const hitSub = target.volatiles['substitute'] && !move.flags['bypasssub'] && !(move.infiltrates && this.gen >= 6);
 				if (hitSub) return;
 				if (!target.itemState?.chargeditem) {
-					if (target.itemState) target.itemState.chargeditem = true;
+					if (!target.itemState) target.itemState = {} as any;
+					target.itemState.chargeditem = true;
 					this.add('-message', `${target.name}'s Tanga Berry absorbed the blow! ${target.name}'s Tanga Berry is swarming with energy!`);
 					return this.chainModify(0.5);
 				}
 				if (target.eatItem()) {
+					if (target.itemState?.chargeditem) delete target.itemState.chargeditem;
 					this.debug('-50% reduction');
 					this.add('-enditem', target, this.effect, '[weaken]');
 					return this.chainModify(0.5);
@@ -1572,7 +1362,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	wacanberry: {
 		name: "Wacan Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'resist', 'healing'],
 		shortDesc: "1st supereffective Electric hit charges berry and negates all damage. 2nd hit consumes berry, halves damage, and heals 75HP. Fragile; if broken, Paralyzes holder; if broken while charged, holder also loses 1/3HP. Belch Effect: 10% chance to Paralyze target.",
 		spritenum: 526,
 		isBerry: true,
@@ -1589,24 +1379,22 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			status: 'par',
 			chance: 10,
 		},
-		naturalGift: {
-			basePower: 80,
-			type: "Electric",
-		},
 		   onSourceModifyDamage(damage, source, target, move) {
 			   if (move.type === 'Electric' && target.getMoveHitData(move).typeMod > 0) {
 				   const hitSub = target.volatiles['substitute'] && !move.flags['bypasssub'] && !(move.infiltrates && this.gen >= 6);
 				   if (hitSub) return;
 				   if (!target.itemState?.chargeditem) {
-					   if (target.itemState) target.itemState.chargeditem = true;
+					   if (!target.itemState) target.itemState = {} as any;
+						target.itemState.chargeditem = true;
 					   this.add('-message', `${target.name}'s Wacan Berry absorbed the shock! ${target.name}'s Wacan Berry is surging with electricity!`);
 					   return 0;
-				   }
-				   if (target.eatItem()) {
-					   this.debug('-50% reduction');
-					   this.add('-enditem', target, this.effect, '[weaken]');
-					   return this.chainModify(0.5);
-				   }
+					}
+					if (target.eatItem()) {
+						if (target.itemState?.chargeditem) delete target.itemState.chargeditem;
+						this.debug('-50% reduction');
+						this.add('-enditem', target, this.effect, '[weaken]');
+						return this.chainModify(0.5);
+					}
 			   }
 		   },
 		onEat(pokemon) { if (pokemon.itemState && pokemon.itemState.chargeditem) { this.heal(75, pokemon); } },
@@ -1615,16 +1403,12 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	watmelberry: {
 		name: "Watmel Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry'],
 		shortDesc: "Cannot be eaten by the holder. Fragile. No effect.",
 		spritenum: 530,
 		isBerry: true,
 		isFragile: true,
 		belch: { },
-		naturalGift: {
-			basePower: 100,
-			type: "Fire",
-		},
 		onEat: false,
 		num: 181,
 		gen: 3,
@@ -1632,15 +1416,11 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	wepearberry: {
 		name: "Wepear Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry'],
 		shortDesc: "Cannot be eaten by the holder. No effect.",
 		spritenum: 533,
 		isBerry: true,
 		belch: { },
-		naturalGift: {
-			basePower: 90,
-			type: "Electric",
-		},
 		onEat: false,
 		num: 167,
 		gen: 3,
@@ -1648,15 +1428,11 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	wikiberry: {
 		name: "Wiki Berry",
-		itemClass: 'Berries',
+		itemClass: ['berry', 'consumable', 'healing'],
 		shortDesc: "If HP≤1/4(or 1/2 with Gluttony), Heals 1/3HP; confuses if -Sp. Atk Nature. 1 time use.",
 		spritenum: 538,
 		isBerry: true,
 		belch: { },
-		naturalGift: {
-			basePower: 80,
-			type: "Rock",
-		},
 		onUpdate(pokemon) {
 			if (pokemon.hp <= pokemon.maxhp / 4 || (pokemon.hp <= pokemon.maxhp / 2 &&
 				((pokemon.ability1 === 'gluttony' && pokemon.abilityState1.gluttony) ||
@@ -1674,7 +1450,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	yacheberry: {
 		name: "Yache Berry",
-		itemClass: 'Berries',
+		itemClass: ['fragile', 'berry', 'consumable', 'resist', 'healing'],
 		shortDesc: "1st supereffective Ice hit charges berry and halves incoming damage. 2nd hit consumes berry, halves damage, and heals 75HP. Fragile; if broken, Freezes holder; if broken while charged, holder also loses 1/3HP. Belch Effect: 10% chance to Freeze target.",
 		spritenum: 567,
 		isBerry: true,
@@ -1691,20 +1467,18 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			status: 'frz',
 			chance: 10,
 		},
-		naturalGift: {
-			basePower: 80,
-			type: "Ice",
-		},
 		onSourceModifyDamage(damage, source, target, move) {
 			if (move.type === 'Ice' && target.getMoveHitData(move).typeMod > 0) {
 				const hitSub = target.volatiles['substitute'] && !move.flags['bypasssub'] && !(move.infiltrates && this.gen >= 6);
 				if (hitSub) return;
 				   if (!target.itemState?.chargeditem) {
-					   if (target.itemState) target.itemState.chargeditem = true;
+					   if (!target.itemState) target.itemState = {} as any;
+						target.itemState.chargeditem = true;
 					   this.add('-message', `${target.name}'s Yache Berry absorbed the cold! ${target.name}'s Yache Berry is surging with icy energy!`);
 					   return this.chainModify(0.5);
 				   }
 				if (target.eatItem()) {
+					if (target.itemState?.chargeditem) delete target.itemState.chargeditem;
 					this.debug('-50% reduction');
 					this.add('-enditem', target, this.effect, '[weaken]');
 					return this.chainModify(0.5);
@@ -1718,28 +1492,25 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 // #region Battle Items
 	abilityshield: {
 		name: "Ability Shield",
-		shortDesc: "Protects holder from the effects of enemy abilities in defensive calcs. Immune to protection breaking effects.",
+		itemClass: ['statboost'],
+		shortDesc: "Protects holder from the effects of enemy abilities in defensive calcs. Immune to protection-breaking effects.",
 		spritenum: 746,
 		fling: { basePower: 30, },
 		ignoreKlutz: true,
 		onTryBoost(boost, target, source, effect) {
-			if (effect && effect.effectType === 'Ability') {
+			if (effect?.effectType === 'Ability') {
 				let blocked = false;
-				for (const stat in boost) { if (boost[stat as BoostID]! < 0) { blocked = true; } }
-				if (blocked) { this.add('-block', target, 'item: Ability Shield');
+				for (const stat in boost) { if (boost[stat as BoostID]! < 0) blocked = true; }
+				if (blocked) {
+					this.add('-block', target, 'item: Ability Shield');
 					return null;
 				}
 			}
 		},
-		onTryAddVolatile(status, pokemon, source, effect) { if (effect && effect.effectType === 'Ability') { this.add('-block', pokemon, 'item: Ability Shield');
-			return null;
-			}
-		},
-		// Prevents damage modifiers from opponent abilities
-		onSourceModifyDamage(damage, source, target, move) { if (source && source !== target && source.ability1 && source.ability2) { return damage; } },
-		onTryHit(target, source, move) { // Immunity to protection breaking effects
-			if (move && (move.breaksProtect || move.flags['bypasssub'] || move.flags['pierce'] || move.pierce1 || move.pierce2 || move.pierce3 || source.hasAbility('infiltrator'))) {
-				this.add('-block', target, 'item: Ability Shield');
+
+		onTryAddVolatile(status, pokemon, source, effect) {
+			if (effect?.effectType === 'Ability') {
+				this.add('-block', pokemon, 'item: Ability Shield');
 				return null;
 			}
 		},
@@ -1748,34 +1519,65 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	absorbbulb: {
 		name: "Absorb Bulb",
+		itemClass: ['healing'],
 		shortDesc: "1.2x power on Holder's draining moves. Immune to Water-type damage; when hit by Water moves, heals 1/8HP. After absorbing 2 Water moves, item breaks, and grants Aqua Ring.",
 		spritenum: 2,
 		fling: { basePower: 30, },
 		onBasePowerPriority: 23,
-		onBasePower(basePower, pokemon, target, move) { if (move.flags['drain']) { return this.chainModify([6144, 4096]);  } },
-		onEffectiveness(typeMod, target, type, move) { if (type === 'Water') { return 0; } },
-		onDamagingHit(damage, target, source, move) { if (move.type === 'Water') { 
-			this.heal(target.baseMaxhp / 8, target);
-			this.add('-message', `${target.name}'s Absorb Bulb absorbed the flow! ${target.name}'s Absorb Bulb is swirling with aqueous energy!`);
-			if (!this.effectState.absorbCount) this.effectState.absorbCount = 0;
-			this.effectState.absorbCount++;
-			if (this.effectState.absorbCount >= 2) { // After absorbing 2 moves, burst and grant aqua ring
-				target.addVolatile('aquaring');
-				this.add('-message', `${target.name}'s Absorb Bulb burst! ${target.name} is surrounded by a veil of water!`);
-				target.useItem();
+		onBasePower(basePower, pokemon, target, move) { if (move.flags['drain']) return this.chainModify([6144, 4096]); },
+		onTryHit(target, source, move) {
+			if (target !== source && move.type === 'Water') {
+				if (!target.itemState) target.itemState = {} as any;
+				if (!target.itemState.absorbCount) target.itemState.absorbCount = 0;
+				this.heal(target.baseMaxhp / 8, target);
+				this.add('-immune', target, '[from] item: Absorb Bulb');
+				this.add('-message', `${target.name}'s Absorb Bulb absorbed the flow! ${target.name}'s Absorb Bulb is swirling with aqueous energy!`);
+				target.itemState.absorbCount++;
+				if (target.itemState.absorbCount >= 2) {
+					target.addVolatile('aquaring');
+					this.add('-message', `${target.name}'s Absorb Bulb burst! ${target.name} is surrounded by a veil of water!`);
+					target.useItem();
+				}
+				return null;
 			}
-		} },
+		},
 		num: 545,
 		gen: 5,
 	},
 	airballoon: {
 		name: "Air Balloon",
-		shortDesc: "Holder is immune to grounded effects. Balloon pops when holder is hit by a damaging move.",
+		itemClass: ['fragile', 'reactive'],
+		shortDesc: "Holder is immune to grounded effects. Pops when hit by a damaging bind, bullet, contact, slice, beam, claw, or pierce move. When popped, triggers wind effects. Fragile.",
 		spritenum: 541,
+		isFragile: true,
+		onFragileBreak(pokemon) {
+			if (pokemon.item !== 'airballoon') return;
+			pokemon.item = '';
+			this.clearEffectState(pokemon.itemState);
+			this.runEvent('AfterUseItem', pokemon, null, null, this.dex.items.get('airballoon'));
+			pokemon.addVolatile('windburst');
+			this.add('-message', `${pokemon.name}'s Air Balloon popped and released a gust of wind!`);
+		},
 		onAfterMoveSecondary(target, source, move) {
-			if (target.volatiles['airballoon'] && move && move.flags['contact']) { target.item = '';
+			if (
+				target.item === 'airballoon' &&
+				move &&
+				move.category !== 'Status' &&
+				(
+					move.flags['binding'] ||
+					move.flags['bullet'] ||
+					move.flags['contact'] ||
+					move.flags['slicing'] ||
+					move.flags['beam'] ||
+					move.flags['claw'] ||
+					move.flags['pierce']
+				)
+			) {
+				target.item = '';
 				this.clearEffectState(target.itemState);
 				this.runEvent('AfterUseItem', target, null, null, this.dex.items.get('airballoon'));
+				target.addVolatile('windburst');
+				this.add('-message', `${target.name}'s Air Balloon popped and released a gust of wind!`);
 			}
 		},
 		num: 541,
@@ -1783,6 +1585,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	bigroot: {
 		name: "Big Root",
+		itemClass: ['healing'],
 		shortDesc: "1.5x healing on Holder's draining moves, Leech Seed, Ingrain, Aqua Ring, and Strength Sap.",
 		spritenum: 29,
 		fling: { basePower: 10, },
@@ -1796,6 +1599,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	bindingband: { // implemented in conditions.ts
 		name: "Binding Band",
+		itemClass: ['utility'],
 		shortDesc: "1.2x power on Holder's binding moves. Holder's bind deals 1/5HP per turn [instead of 1/8]",
 		spritenum: 31,
 		fling: { basePower: 30, },
@@ -1805,6 +1609,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	blacksludge: {
 		name: "Black Sludge",
+		itemClass: ['healing'],
 		shortDesc: "If Poison type: at the end of every turn, holder Heals 1/16HP, loses 1/8HP otherwise.",
 		spritenum: 34,
 		fling: { basePower: 30, },
@@ -1819,6 +1624,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	blunderpolicy: { // Item activation located in scripts.js
 		name: "Blunder Policy",
+		itemClass: ['statboost'],
 		shortDesc: "If holder misses a move, Boost holder's Attack and Sp. Atk 2 stages.",
 		spritenum: 716,
 		fling: { basePower: 80, },
@@ -1827,7 +1633,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	boosterenergy: {
 		name: "Booster Energy",
-		itemClass: 'Consumable',
+		itemClass: ['statboost', 'weather', 'terrain'],
 		shortDesc: "Activates Protosynthesis outside of sun or Quark Drive outside of Electric Terrain. 1 time use.",
 		spritenum: 745,
 		fling: { basePower: 30, },
@@ -1843,6 +1649,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	brightpowder: {
 		name: "Bright Powder",
+		itemClass: ['statboost'],
 		shortDesc: "1.1x Evasion.",
 		spritenum: 51,
 		fling: { basePower: 10, },
@@ -1857,6 +1664,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	cellbattery: {
 		name: "Cell Battery",
+		itemClass: ['statboost', 'reactive'],
 		shortDesc: "When hit by an Electric type move: raises holder's Attack, Sp. Atk, Sp. Def 1 stage, grants Charge, and charges the Cell Battery. While charged: Grants Charge status at end of turn, discharges battery. If hit by an Electric type move while charged: causes 40 BP Electric explosion hitting all Pokemon and destroys item.",
 		spritenum: 60,
 		fling: { basePower: 30, },
@@ -1869,7 +1677,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		},
 		onDamagingHit(damage, target, source, move) {
 			if (move.type === 'Electric') { // Check if the item itself is charged (stored in itemState)
-				if (target.itemState && target.itemState.charged) { // Battery explodes - 40 BP Electric explosion to all Pokemon
+				if (target.itemState && target.itemState.charged) {
 					this.add('-message', `${target.name}'s Cell Battery exploded!`);
 					const explosionMove = {
 						name: 'Cell Battery Explosion',
@@ -1902,6 +1710,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	choiceband: {
 		name: "Choice Band",
+		itemClass: ['statboost'],
 		shortDesc: "1.5x ATK. Holder is locked into the 1st move it chooses.",
 		spritenum: 68,
 		fling: { basePower: 10, },
@@ -1920,6 +1729,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	choicescarf: {
 		name: "Choice Scarf",
+		itemClass: ['statboost'],
 		shortDesc: "1.5x Speed. Holder is locked into the 1st move it chooses.",
 		spritenum: 69,
 		fling: { basePower: 10, },
@@ -1938,6 +1748,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	choicespecs: {
 		name: "Choice Specs",
+		itemClass: ['statboost'],
 		shortDesc: "1.5x Sp. Atk. Holder is locked into the 1st move it chooses.",
 		spritenum: 70,
 		fling: { basePower: 10, },
@@ -1957,6 +1768,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	clearamulet: {
 		name: "Clear Amulet",
+		itemClass: ['utility'],
 		shortDesc: "Prevents other Pokemon from lowering the holder's stat stages.",
 		spritenum: 747,
 		fling: { basePower: 30, },
@@ -1973,6 +1785,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	covertcloak: {
 		name: "Covert Cloak",
+		itemClass: ['utility'],
 		shortDesc: "Holder is immune to the secondary effects of other Pokemon's moves.",
 		spritenum: 750,
 		fling: { basePower: 30, },
@@ -1985,6 +1798,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	destinyknot: {
 		name: "Destiny Knot",
+		itemClass: ['utility'],
 		shortDesc: "If holder becomes infatuated, the other Pokemon also becomes infatuated.",
 		spritenum: 95,
 		fling: { basePower: 10, },
@@ -1999,7 +1813,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ejectbutton: {
 		name: "Eject Button",
-		itemClass: 'Consumable',
+		itemClass: ['reactive', 'utility'],
 		shortDesc: "If holder is hit by an attack, it immediately switches out. 1 time use.",
 		spritenum: 118,
 		fling: { basePower: 30, },
@@ -2019,14 +1833,16 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ejectpack: {
 		name: "Eject Pack",
-		itemClass: 'Consumable',
+		itemClass: ['reactive', 'utility'],
 		shortDesc: "If holder's stats are lowered, it switches out. 1 time use.",
 		spritenum: 714,
 		fling: { basePower: 50, },
 		onAfterBoost(boost, pokemon) {
 			if (this.effectState.eject || this.activeMove?.id === 'partingshot') return;
 			let i: BoostID;
-			for (i in boost) { if (boost[i]! < 0) { this.effectState.eject = true;
+			for (i in boost) { 
+				if (boost[i]! < 0) { 
+					this.effectState.eject = true;
 					break;
 				}
 			}
@@ -2050,6 +1866,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	eviolite: {
 		name: "Eviolite",
+		itemClass: ['statboost'],
 		shortDesc: "If holder's species is NOT fully evolved: 1.5x Defense and Sp. Def.",
 		spritenum: 130,
 		fling: { basePower: 40, },
@@ -2062,6 +1879,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	expertbelt: {
 		name: "Expert Belt",
+		itemClass: ['utility'],
 		shortDesc: "Holder's super effective attacks are boosed in power 1.3x.",
 		spritenum: 132,
 		fling: { basePower: 10, },
@@ -2085,6 +1903,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	floatstone: {
 		name: "Float Stone",
+		itemClass: ['statboost'],
 		shortDesc: "1/2 weight, 1.2x Speed. Holder takes 1.2x more damage from Crash and Launch moves.",
 		spritenum: 147,
 		fling: { basePower: 30, },
@@ -2096,6 +1915,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	focusband: {
 		name: "Focus Band",
+		itemClass: ['utility'],
 		shortDesc: "10% chance to survive a lethal hit with 1HP.",
 		spritenum: 150,
 		fling: { basePower: 10, },
@@ -2111,7 +1931,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	focussash: {
 		name: "Focus Sash",
-		itemClass: 'Consumable',
+		itemClass: ['utility'],
 		shortDesc: "If holder is at full HP and is hit by an attack that would KO it, it survives with 1HP. 1 time use.",
 		spritenum: 151,
 		fling: { basePower: 10, },
@@ -2122,6 +1942,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	gripclaw: {
 		name: "Grip Claw",
+		itemClass: ['utility'],
 		shortDesc: "At the end of every turn, holder loses 1/6HP. 1.2x power on holder's Claw moves.",
 		spritenum: 179,
 		fling: { basePower: 90, },
@@ -2134,6 +1955,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	heavydutyboots: { // Hazard Immunity implemented in moves.ts
 		name: "Heavy-Duty Boots",
+		itemClass: ['utility'],
 		shortDesc: "Holder is immune to grounded hazards.",
 		spritenum: 715,
 		fling: { basePower: 80, },
@@ -2151,6 +1973,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	leftovers: {
 		name: "Leftovers",
+		itemClass: ['healing'],
 		shortDesc: "At the end of every turn, holder Heals 1/16HP.",
 		spritenum: 242,
 		fling: { basePower: 10, },
@@ -2162,6 +1985,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	lifeorb: {
 		name: "Life Orb",
+		itemClass: ['statboost'],
 		shortDesc: "Holder's attacks have 1.3x power, and it loses 1/10 itsHP after the attack.",
 		spritenum: 249,
 		fling: { basePower: 30, },
@@ -2204,6 +2028,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	lightclay: { // implemented in the corresponding thing
 		name: "Light Clay",
+		itemClass: ['utility'],
 		shortDesc: "Holder's use of Light Screen or Reflect lasts 8 turns instead of 5.",
 		spritenum: 252,
 		fling: { basePower: 30, },
@@ -2212,6 +2037,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	loadeddice: { // partially implemented in sim/battle-actions.ts:BattleActions#hitStepMoveHitLoop
 		name: "Loaded Dice",
+		itemClass: ['utility'],
 		shortDesc: "Holder's multi-hit moves always hit the maximum number of times. No accuracy checks on multi-hit moves.",
 		spritenum: 751,
 		fling: { basePower: 30, },
@@ -2221,6 +2047,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	luminousmoss: {
 		name: "Luminous Moss",
+		itemClass: ['statboost', 'reactive', 'weather'],
 		shortDesc: "1.2x power on holder's Light moves. If hit by Water-type move or in rain, raises Sp. Def 1 stage [2 when charged] and consumes item; If holder is hight by a Light move, item is charged.",
 		spritenum: 595,
 		fling: { basePower: 30, },
@@ -2243,7 +2070,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	mentalherb: {
 		name: "Mental Herb",
-		itemClass: 'Consumable',
+		itemClass: ['consumable', 'statuscure'],
 		shortDesc: "Cures holder of infatuated, taunted, encored, tormented, disabled, or heal blocked. 1 time use.",
 		spritenum: 285,
 		fling: {
@@ -2264,8 +2091,9 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			for (const FirstCondition of conditions) {
 				if (pokemon.volatiles[FirstCondition]) {
 					if (!pokemon.useItem()) return;
-					for (const SecondCondition of conditions) { pokemon.removeVolatile(SecondCondition);
-					if (FirstCondition === 'attract' && SecondCondition === 'attract') { this.add('-end', pokemon, 'move: Attract', '[from] item: Mental Herb'); }
+					for (const SecondCondition of conditions) { 
+						pokemon.removeVolatile(SecondCondition);
+						if (FirstCondition === 'attract' && SecondCondition === 'attract') { this.add('-end', pokemon, 'move: Attract', '[from] item: Mental Herb'); }
 					} return;
 				}
 			}
@@ -2275,6 +2103,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	metronome: {
 		name: "Metronome",
+		itemClass: ['statboost'],
 		shortDesc: "Damage of moves used on consecutive turns is increased by 30% per use, up to 150% (5 consecutive uses). Resets when a different move is used.",
 		spritenum: 289,
 		fling: { basePower: 30, },
@@ -2291,15 +2120,11 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 				}
 				if (move.callsMove) return;
 				// Counter doesn't reset due to move failing or switching - only track when it's the same move
-				if (this.effectState.lastMove === move.id) {
-					this.effectState.numConsecutive++;
-				} else {
-					this.effectState.numConsecutive = 1;
-				}
+				if (this.effectState.lastMove === move.id) { this.effectState.numConsecutive++; } 
+				else { this.effectState.numConsecutive = 1; }
 				this.effectState.lastMove = move.id;
 			},
-			onModifyDamage(damage, source, target, move) {
-				// 30% stacking bonus per consecutive use, max 5x (2.5x = 1 + 0.3 * 5 consecutive uses)
+			onModifyDamage(damage, source, target, move) { // 30% stacking bonus per consecutive use, max 5x (2.5x = 1 + 0.3 * 5 consecutive uses)
 				const maxConsecutive = 5;
 				const numConsecutive = Math.min(this.effectState.numConsecutive, maxConsecutive);
 				const multiplier = 1 + (0.3 * (numConsecutive - 1));
@@ -2312,7 +2137,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	mirrorherb: {
 		name: "Mirror Herb",
-		itemClass: 'Consumable',
+		itemClass: ['consumable', 'statboost'],
 		shortDesc: "When an opponent raises its stats, holder copies all positive stat boosts. 1 time use.",
 		spritenum: 748,
 		fling: { basePower: 30, },
@@ -2321,8 +2146,10 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			if (!this.effectState.boosts) this.effectState.boosts = {} as SparseBoostsTable;
 			const boostPlus = this.effectState.boosts;
 			let i: BoostID;
-			for (i in boost) { if (boost[i]! > 0) { boostPlus[i] = (boostPlus[i] || 0) + boost[i]!;
-				this.effectState.ready = true;
+			for (i in boost) { 
+				if (boost[i]! > 0) { 
+					boostPlus[i] = (boostPlus[i] || 0) + boost[i]!;
+					this.effectState.ready = true;
 				}
 			}
 		},
@@ -2343,6 +2170,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	muscleband: {
 		name: "Muscle Band",
+		itemClass: ['statboost'],
 		shortDesc: "Holder's physical attacks have 1.1x power.",
 		spritenum: 297,
 		fling: { basePower: 10, },
@@ -2352,6 +2180,11 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		gen: 4,
 	},
 	powerherb: {
+		name: "Power Herb",
+		itemClass: ['consumable', 'utility'],
+		shortDesc: "Holder's two-turn moves complete in one turn. 1 time use.",
+		spritenum: 358,
+		fling: { basePower: 10, },
 		onChargeMove(pokemon, target, move) {
 			if (pokemon.useItem()) {
 				this.debug('power herb - remove charge turn for ' + move.id);
@@ -2360,69 +2193,59 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 				return false; // skip charge turn
 			}
 		},
-		name: "Power Herb",
-		itemClass: 'Consumable',
-		shortDesc: "Holder's two-turn moves complete in one turn. 1 time use.",
-		spritenum: 358,
-		fling: { basePower: 10, },
 		num: 271,
 		gen: 4,
 	},
 	protectivepads: { // protective effect handled in Battle#checkMoveMakesContact
 		name: "Protective Pads",
-		shortDesc: "Holder's contact moves do not activate contact effects. Recoil and crash damage is halved. Immune to protection-breaking effects.",
+		itemClass: ['resist', 'utility'],
+		shortDesc: "Holder's contact moves do not activate contact effects. Recoil and crash damage is halved.",
 		spritenum: 663,
 		fling: { basePower: 30, },
 		onDamagePriority: -40,
 		onDamage(damage, target, source, effect) { if (effect && (effect.id === 'recoil' || effect.id === 'crash')) { return Math.ceil(damage * 0.5); } },
-		onTryHit(target, source, move) { if (move && (move.breaksProtect || move.flags['bypasssub'] || move.flags['pierce'])) { 
-				this.add('-block', target, 'item: Protective Pads');
-				return null;
-			}
-		},
 		num: 880,
 		gen: 7,
 	},
 	punchingglove: {
 		name: "Punching Glove",
-		shortDesc: "Holder's Punch moves have 1.2x power and do not make contact. Damage taken from Punch moves is halved. Immune to protection-breaking effects.",
+		itemClass: ['resist', 'statboost'],
+		shortDesc: "Holder's Punch moves have 1.2x power and do not make contact. Damage taken from Punch moves is halved.",
 		spritenum: 749,
 		fling: { basePower: 30, },
 		onBasePowerPriority: 23,
-		onBasePower(basePower, attacker, defender, move) { if (move.flags['punch']) { 
-			this.debug('Punching Glove boost');
-			return this.chainModify(1.2);
+		onBasePower(basePower, attacker, defender, move) {
+			if (move.flags['punch']) {
+				this.debug('Punching Glove boost');
+				return this.chainModify(1.2);
 			}
 		},
 		onModifyMovePriority: 1,
 		onModifyMove(move) { if (move.flags['punch']) delete move.flags['contact']; },
-		onSourceModifyDamage(damage, source, target, move) { if (move.flags['punch']) { return this.chainModify(0.5); } },
-		onTryHit(target, source, move) { if (move && (move.breaksProtect || move.flags['bypasssub'] || move.flags['pierce'])) { 
-			this.add('-block', target, 'item: Punching Glove');
-			return null;
-			}
-		},
+		onSourceModifyDamage(damage, source, target, move) { if (move.flags['punch']) return this.chainModify(0.5); },
 		num: 1884,
 		gen: 9,
 	},
 	quickclaw: {
-		onFractionalPriorityPriority: -2,
-		onFractionalPriority(priority, pokemon, target, move) {
-			if (move.category === "Status" && (pokemon.ability1 === "myceliummight" || pokemon.ability2 === "myceliummight")) return;
-			if (priority <= 0 && this.randomChance(1, 5)) { this.add('-activate', pokemon, 'item: Quick Claw');
-				return 0.1;
-			}
-		},
 		name: "Quick Claw",
+		itemClass: ['utility'],
 		shortDesc: "Holder has a 20% chance to move 1st in its priority bracket.",
 		spritenum: 373,
 		fling: { basePower: 80, },
+		onFractionalPriorityPriority: -2,
+		onFractionalPriority(priority, pokemon, target, move) {
+			if (move.category === "Status" && (pokemon.ability1 === "myceliummight" || pokemon.ability2 === "myceliummight")) return;
+			if (priority <= 0 && this.randomChance(1, 5)) { 
+				this.add('-activate', pokemon, 'item: Quick Claw');
+				return 0.1;
+			}
+		},
 		num: 217,
 		gen: 2,
 	},
 	redcard: {
 		name: "Red Card",
-		itemClass: 'Consumable',
+		itemClass: ['consumable', 'utility'],
 		shortDesc: "If holder is hit by an attack, the attacker is forced to switch out. 1 time use.",
 		spritenum: 387,
 		fling: { basePower: 10, },
@@ -2446,6 +2269,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	rockyhelmet: {
 		name: "Rocky Helmet",
+		itemClass: ['reactive'],
 		shortDesc: "If holder is hit by a contact move, the attacker loses 1/6HP.",
 		spritenum: 417,
 		fling: { basePower: 60, },
@@ -2456,6 +2280,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	roomservice: {
 		name: "Room Service",
+		itemClass: ['healing', 'utility'],
 		shortDesc: "While Trick Room, Magic Room, or Wonder Room is active, holder moves 1st in its priority bracket; otherwise moves last. While room is active, heals ally 1/16HP each turn.",
 		spritenum: 717,
 		fling: { basePower: 100, },
@@ -2468,23 +2293,28 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		onResidualOrder: 5,
 		onResidualSubOrder: 4,
 		onResidual(pokemon) { const hasRoom = this.field.getPseudoWeather('trickroom') || this.field.getPseudoWeather('magicroom') || this.field.getPseudoWeather('wonderroom');
-			if (hasRoom) { const ally = pokemon.side.active.find(p => p && p !== pokemon && p.hp);
-			if (ally) {
-				this.heal(ally.baseMaxhp / 16, ally);
-				this.add('-activate', pokemon, 'item: Room Service');
-			} }
+			if (hasRoom) { 
+				const ally = pokemon.side.active.find(p => p && p !== pokemon && p.hp);
+				if (ally) {
+					this.heal(ally.baseMaxhp / 16, ally);
+					this.add('-activate', pokemon, 'item: Room Service');
+				} 
+			}
 		},
 		num: 1122,
 		gen: 8,
 	},
 	safetygoggles: {
 		name: "Safety Goggles",
+		itemClass: ['weather'],
 		shortDesc: "Holder is immune to powder moves and damage from Sandstorm or Hail.",
 		spritenum: 604,
 		fling: { basePower: 80, },
 		onImmunity(type, pokemon) { if (type === 'sandstorm' || type === 'hail' || type === 'powder') return false; },
-		onTryHit(pokemon, source, move) { if (move.flags['powder'] && pokemon !== source && this.dex.getImmunity('powder', pokemon)) { this.add('-activate', pokemon, 'item: Safety Goggles', move.name);
-			return null;
+		onTryHit(pokemon, source, move) { 
+			if (move.flags['powder'] && pokemon !== source && this.dex.getImmunity('powder', pokemon)) { 
+				this.add('-activate', pokemon, 'item: Safety Goggles', move.name);
+				return null;
 			}
 		},
 		num: 650,
@@ -2492,15 +2322,17 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	scopelens: {
 		name: "Scope Lens",
-		shortDesc: "Holder's critical hit ratio is raised 1 stage stage.",
+		itemClass: ['statboost'],
+		shortDesc: "Holder's critical hit ratio is raised 3 stages.",
 		spritenum: 429,
 		fling: { basePower: 30, },
-		onModifyCritRatio(critRatio) { return critRatio + 1; },
+		onModifyCritRatio(critRatio) { return critRatio + 3; },
 		num: 232,
 		gen: 2,
 	},
 	shedshell: {
 		name: "Shed Shell",
+		itemClass: ['utility'],
 		shortDesc: "Holder may switch out even when trapped.",
 		spritenum: 437,
 		fling: { basePower: 10, },
@@ -2513,6 +2345,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	shellbell: {
 		name: "Shell Bell",
+		itemClass: ['healing'],
 		shortDesc: "After an attack, holder Heals 1/8 of the damage dealt inHP.",
 		spritenum: 438,
 		fling: { basePower: 30, },
@@ -2523,6 +2356,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	stickybarb: {
 		name: "Sticky Barb",
+		itemClass: ['reactive'],
 		shortDesc: "At the end of every turn, holder loses 1/8HP. If hit by a contact move, attacker loses 1/6HP and receives the barb if it has no item.",
 		spritenum: 476,
 		fling: { basePower: 80, },
@@ -2544,7 +2378,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	throatspray: {
 		name: "Throat Spray",
-		itemClass: 'Consumable',
+		itemClass: ['consumable', 'statboost'],
 		shortDesc: "Raises holder's Sp. Atk 1 stage if it uses a sound move. 1 time use.",
 		spritenum: 713,
 		fling: { basePower: 30, },
@@ -2569,6 +2403,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	utilityumbrella: {
 		name: "Utility Umbrella",
+		itemClass: ['reactive', 'weather'],
 		shortDesc: "Holder is immune to weather effects. Beam, breath, and pulse moves against holder deal 0.8x damage. If hit by launch move, holder becomes airborne. Breaks if hit by a critical beam, breath, or pulse move.",
 		spritenum: 718,
 		fling: { basePower: 60, },
@@ -2601,7 +2436,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	weaknesspolicy: {
 		name: "Weakness Policy",
-		itemClass: 'Consumable',
+		itemClass: ['consumable', 'reactive', 'statboost'],
 		shortDesc: "If holder is hit by a super effective attack, its Attack and Sp. Atk raise 2 stages. 1 time use.",
 		spritenum: 609,
 		fling: { basePower: 80, },
@@ -2615,7 +2450,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	whiteherb: {
 		name: "White Herb",
-		itemClass: 'Consumable',
+		itemClass: ['consumable', 'utility'],
 		shortDesc: "Heals all lowered stats to 0 when any stat is lowered. 1 time use.",
 		spritenum: 535,
 		fling: {
@@ -2664,6 +2499,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	widelens: {
 		name: "Wide Lens",
+		itemClass: ['statboost'],
 		shortDesc: "Holder's move accuracy is 1.1x.",
 		spritenum: 537,
 		fling: { basePower: 10, },
@@ -2674,6 +2510,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	wiseglasses: {
 		name: "Wise Glasses",
+		itemClass: ['statboost'],
 		shortDesc: "Holder's special attacks have 1.1x power.",
 		spritenum: 539,
 		fling: { basePower: 10, },
@@ -2684,6 +2521,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	zoomlens: {
 		name: "Zoom Lens",
+		itemClass: ['statboost'],
 		shortDesc: "Holder's move accuracy is 1.2x if holder moves after target.",
 		spritenum: 574,
 		fling: { basePower: 10, },
@@ -2700,6 +2538,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	// #region Weather/Terrain
 	damprock: {
 		name: "Damp Rock",
+		itemClass: ['weather'],
 		shortDesc: "Holder's use of Rain Dance lasts 8 turns instead of 5.",
 		spritenum: 88,
 		fling: { basePower: 60, },
@@ -2708,6 +2547,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	heatrock: {
 		name: "Heat Rock",
+		itemClass: ['weather'],
 		shortDesc: "Holder's use of Sunny Day lasts 8 turns instead of 5.",
 		spritenum: 193,
 		fling: { basePower: 60, },
@@ -2716,6 +2556,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	icyrock: {
 		name: "Icy Rock",
+		itemClass: ['weather'],
 		shortDesc: "Holder's use of Hail or Snowscape lasts 11 turns instead of 7.",
 		spritenum: 221,
 		fling: { basePower: 40, },
@@ -2724,6 +2565,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	smoothrock: {
 		name: "Smooth Rock",
+		itemClass: ['weather'],
 		shortDesc: "Holder's use of Sandstorm lasts 11 turns instead of 7.",
 		spritenum: 453,
 		fling: {
@@ -2734,6 +2576,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	aeolicrock: {
 		name: "Aeolic Rock",
+		itemClass: ['weather'],
 		shortDesc: "Holder's use of Turbulent Winds lasts 11 turns instead of 7.",
 		spritenum: 0,
 		fling: {
@@ -2744,6 +2587,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	terrainextender: { // implemented in conditions.t9ol
 		name: "Terrain Extender",
+		itemClass: ['terrain'],
 		shortDesc: "Holder's use of terrain moves lasts 8 turns instead of 5. Fragile.",
 		spritenum: 662,
 		fling: { basePower: 60, },
@@ -2754,7 +2598,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	electricseed: {
 		name: "Electric Seed",
-		itemClass: 'Consumable',
+		itemClass: ['statboost', 'terrain'],
 		shortDesc: "Raises holder's Defense 1 stage when Electric Terrain is active. 1 time use.",
 		spritenum: 664,
 		fling: { basePower: 10, },
@@ -2767,7 +2611,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	grassyseed: {
 		name: "Grassy Seed",
-		itemClass: 'Consumable',
+		itemClass: ['statboost', 'terrain'],
 		shortDesc: "Raises holder's Defense 1 stage when Grassy Terrain is active. 1 time use.",
 		spritenum: 667,
 		fling: { basePower: 10, },
@@ -2780,7 +2624,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	mistyseed: {
 		name: "Misty Seed",
-		itemClass: 'Consumable',
+		itemClass: ['statboost', 'terrain'],
 		shortDesc: "Raises holder's Sp. Def 1 stage when Misty Terrain is active. 1 time use.",
 		spritenum: 666,
 		fling: { basePower: 10,},
@@ -2793,7 +2637,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	psychicseed: {
 		name: "Psychic Seed",
-		itemClass: 'Consumable',
+		itemClass: ['statboost', 'terrain'],
 		shortDesc: "Raises holder's Sp. Def 1 stage when Psychic Terrain is active. 1 time use.",
 		spritenum: 665,
 		fling: { basePower: 10, },
@@ -2806,7 +2650,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	toxicseed: {
 		name: "Toxic Seed",
-		itemClass: 'Consumable',
+		itemClass: ['statboost', 'terrain'],
 		shortDesc: "Raises holder's Sp. Def 1 stage when Toxic Terrain is active. 1 time use.",
 		spritenum: 0,
 		fling: { basePower: 10, },
@@ -2819,6 +2663,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	// #region Signature Items
 	adamantcrystal: {
 		name: "Adamant Crystal",
+		itemClass: ['species', 'statboost'],
 		shortDesc: "If held by Dialga, its Steel- and Dragon-type attacks have 1.35x power, and transforms it into Dialga-Origin.",
 		spritenum: 741,
 		onBasePowerPriority: 15,
@@ -2840,6 +2685,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	adamantorb: {
 		name: "Adamant Orb",
+		itemClass: ['species', 'statboost'],
 		shortDesc: "If held by Dialga, its Steel- and Dragon-type attacks have 1.35x power.",
 		spritenum: 4,
 		fling: { basePower: 60, },
@@ -2851,6 +2697,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	cornerstonemask: {
 		name: "Cornerstone Mask",
+		itemClass: ['species'],
 		shortDesc: "If held by Ogerpon, 1.2x power of Weapon moves, transforms it into Ogerpon-Cornerstone, changes holder's Tera type to Rock. When Terastallized: Ability 2 is replaced with Embody Aspect [Cornerstone].",
 		spritenum: 758,
 		fling: { basePower: 60, },
@@ -2866,6 +2713,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	griseouscore: {
 		name: "Griseous Core",
+		itemClass: ['species', 'statboost'],
 		shortDesc: "If held by Giratina, its Ghost- and Dragon-type attacks have 1.35x power, and transforms it into Giratina-Origin.",
 		spritenum: 743,
 		onBasePowerPriority: 15,
@@ -2880,6 +2728,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	griseousorb: {
 		name: "Griseous Orb",
+		itemClass: ['species', 'statboost'],
 		shortDesc: "If held by Giratina, its Ghost- and Dragon-type attacks have 1.35x power.",
 		spritenum: 180,
 		fling: { basePower: 60, },
@@ -2891,6 +2740,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	hearthflamemask: {
 		name: "Hearthflame Mask",
+		itemClass: ['species'],
 		shortDesc: "If held by Ogerpon, 1.2x power of Weapon moves, transforms it into Ogerpon-Hearthflame, changes holder's Tera type to Fire. When Terastallized: Ability 2 is replaced with Embody Aspect [Hearthflame].",
 		spritenum: 760,
 		fling: { basePower: 60, },
@@ -2906,6 +2756,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	lustrousglobe: {
 		name: "Lustrous Globe",
+		itemClass: ['species', 'statboost'],
 		shortDesc: "If held by Palkia, its Water- and Dragon-type attacks have 1.35x power, and transforms it into Palkia-Origin.",
 		spritenum: 742,
 		onBasePowerPriority: 15,
@@ -2921,6 +2772,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	lustrousorb: {
 		name: "Lustrous Orb",
+		itemClass: ['species', 'statboost'],
 		shortDesc: "If held by Palkia, its Water- and Dragon-type attacks have 1.35x power.",
 		spritenum: 265,
 		fling: { basePower: 60, },
@@ -2932,6 +2784,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	lightball: {
 		name: "Light Ball",
+		itemClass: ['species', 'statboost'],
 		shortDesc: "If held by Pikachu, its Attack and Sp. Atk are doubled. Boosts light moves 1.5x.",
 		spritenum: 251,
 		fling: {
@@ -2950,6 +2803,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	rustedshield: {
 		name: "Rusted Shield",
+		itemClass: ['species'],
 		shortDesc: "If held by Zamazenta, this item transforms it into its Crowned Forme.",
 		spritenum: 699,
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 889) || pokemon.baseSpecies.num === 889) { return false; }
@@ -2961,6 +2815,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	rustedsword: {
 		name: "Rusted Sword",
+		itemClass: ['species'],
 		shortDesc: "If held by Zacian, this item transforms it into its Crowned Forme.",
 		spritenum: 698,
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 888) || pokemon.baseSpecies.num === 888) { return false; }
@@ -2972,6 +2827,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	souldew: {
 		name: "Soul Dew",
+		itemClass: ['species', 'statboost'],
 		shortDesc: "If held by Latios or Latias: 1.35x power for Psychic, Dragon, Aura moves. Protects their Ability.",
 		spritenum: 459,
 		fling: { basePower: 30, },
@@ -2989,6 +2845,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	wellspringmask: {
 		name: "Wellspring Mask",
+		itemClass: ['species'],
 		shortDesc: "If held by Ogerpon, 1.2x power of Weapon moves, transforms it into Ogerpon-Wellspring, changes holder's Tera type to Water. When Terastallized: Ability 2 is replaced with Embody Aspect [Wellspring].",
 		spritenum: 759,
 		fling: { basePower: 60, },
@@ -3005,6 +2862,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	//region unused 
 	blueorb: {
 		name: "Blue Orb",
+		itemClass: ['species'],
 		shortDesc: "If held by Kyogre, this item triggers its Primal Reversion.",
 		spritenum: 41,
 		onSwitchInPriority: -1,
@@ -3020,6 +2878,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	leek: {
 		name: "Leek",
+		itemClass: ['species', 'statboost'],
 		shortDesc: "If held by Farfetch'd or Sirfetch'd, its critical hit ratio is raised 2 stages.",
 		fling: { basePower: 60, },
 		spritenum: 475,
@@ -3031,6 +2890,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	luckypunch: {
 		name: "Lucky Punch",
+		itemClass: ['species', 'statboost'],
 		shortDesc: "If held by Chansey, its critical hit ratio is raised 2 stages.",
 		spritenum: 261,
 		fling: { basePower: 40, },
@@ -3042,6 +2902,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	deepseascale: {
 		name: "Deep Sea Scale",
+		itemClass: ['species', 'statboost'],
 		shortDesc: "If held by Clamperl, its Sp. Def is doubled.",
 		spritenum: 93,
 		fling: { basePower: 30, },
@@ -3054,6 +2915,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	deepseatooth: {
 		name: "Deep Sea Tooth",
+		itemClass: ['species', 'statboost'],
 		shortDesc: "If held by Clamperl, its Sp. Atk is doubled.",
 		spritenum: 94,
 		fling: { basePower: 90, },
@@ -3066,6 +2928,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	redorb: {
 		name: "Red Orb",
+		itemClass: ['species'],
 		shortDesc: "If held by Groudon, this item triggers its Primal Reversion.",
 		spritenum: 390,
 		onSwitchInPriority: -1,
@@ -3081,6 +2944,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	stick: {
 		name: "Stick",
+		itemClass: ['species', 'statboost'],
 		shortDesc: "If held by Farfetch'd, its critical hit ratio is raised 2 stages.",
 		fling: { basePower: 60, },
 		spritenum: 475,
@@ -3092,6 +2956,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	thickclub: {
 		name: "Thick Club",
+		itemClass: ['species', 'statboost'],
 		shortDesc: "If held by Cubone or Marowak, its Attack is doubled.",
 		spritenum: 491,
 		fling: { basePower: 90, },
@@ -3105,7 +2970,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	// #region Evolution Stones
 	dawnstone: {
 		name: "Dawn Stone",
-		itemClass: 'Evolution',
+		itemClass: ['evostones', 'evolution'],
 		shortDesc: "1.2x power on holder's Light, Solar moves. Reduces damage from incoming Dark type, Lunar, Shadow moves 20%. Holder's Dark type, Lunar, and Shadow moves fail.",
 		spritenum: 92,
 		fling: { basePower: 80, },
@@ -3123,7 +2988,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	duskstone: {
 		name: "Dusk Stone",
-		itemClass: 'Evolution',
+		itemClass: ['evostones', 'evolution'],
 		shortDesc: "1.2x power on holder's Dark type, Shadow moves. Reduces damage from incoming Light, Solar moves 20%. Holder's Light, Solar moves fail.",
 		spritenum: 116,
 		fling: { basePower: 80, },
@@ -3141,7 +3006,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	firestone: {
 		name: "Fire Stone",
-		itemClass: 'Evolution',
+		itemClass: ['evostones', 'evolution', 'weather'],
 		shortDesc: "1.2x power on holder's Fire type moves. Reduces damage from incoming Ice type moves 20%. Immune to Freeze and Frostbite. Ice type holders take 1/16HP per turn. Item's effect is dulled under rain, or for 2 turns after being hit by a Water type move.",
 		spritenum: 142,
 		fling: { basePower: 30, },
@@ -3180,7 +3045,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	icestone: {
 		name: "Ice Stone",
-		itemClass: 'Evolution',
+		itemClass: ['evostones', 'evolution', 'weather'],
 		shortDesc: "1.2x power on holder's Ice type moves. Reduces damage from incoming Water type moves 20%. Immune to Burn. Fire, Grass type holders take 1/16HP per turn. Item's effect is dulled under Sun, or over Sea of Fire, or for 2 turns after being hit by a Fire type move.",
 		spritenum: 693,
 		fling: { basePower: 30, },
@@ -3192,7 +3057,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		onBasePower(basePower, user, target, move) { if (move.type === 'Ice' && user.itemState && user.itemState.charge === 0) { return this.chainModify([4915, 4096]); } },
 		onSourceModifyDamage(damage, source, target, move) { if (move.type === 'Fire' && target.itemState && target.itemState.charge === 0) { return this.chainModify(0.8); } },
 		onUpdate(pokemon) {
-			if (this.field.isWeather(['sunnyday', 'desolateland']) || this.field.isTerrain('seaoffire')) {
+			if (this.field.isWeather(['sunnyday', 'desolateland']) || this.field.getPseudoWeather('seaoffire')) {
 				if (!pokemon.itemState) pokemon.itemState = {id: '', effectOrder: 0};
 				if (pokemon.itemState.charge === undefined) {
 					pokemon.itemState.charge = 3;
@@ -3219,7 +3084,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	leafstone: {
 		name: "Leaf Stone",
-		itemClass: 'Evolution',		
+		itemClass: ['evostones', 'evolution', 'healing', 'statuscure', 'weather'],
 		shortDesc: "1.2x power on holder's Grass type moves. Reduces damage from incoming Water type moves 20%. Under Sun, heal holder 1/24HP and 1/6 chance to cure status at end of every turn. Item's effect is dulled under Hail or Snow, or for 2 turns after being hit by a Ice type move.",
 		spritenum: 241,
 		fling: { basePower: 30, },
@@ -3262,7 +3127,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	moonstone: {
 		name: "Moon Stone",
-		itemClass: 'Evolution',
+		itemClass: ['evostones', 'evolution', 'statboost', 'statuscure', 'utility', 'weather'],
 		shortDesc: "Boosts light/lunar/shadow moves 1.2x. Increases damage from incoming Solar, Magic moves 20%. Under Sun, 1.4x damage on holder's Light, Lunar moves; 1.2x damage on Magic moves; 0.8x damage on Shadow moves; 1/2 chance to cure holder's Status at end of turn. Item's effect is dulled under Hail, Rain, Sandstorm, Snow, or for 2 turns after being hit by a Dark type, or Solar move.",
 		spritenum: 295,
 		fling: { basePower: 30, },
@@ -3309,7 +3174,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	shinystone: {
 		name: "Shiny Stone",
-		itemClass: 'Evolution',
+		itemClass: ['evostones', 'evolution'],
 		shortDesc: "1.2x power on holder's Light, Pulse moves. Reduces damage from incoming Dark type, Shadow moves 20%. and blocks those moves. Holder's Dark type, Shadow moves fail.",
 		spritenum: 439,
 		fling: { basePower: 80, },
@@ -3329,7 +3194,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	sunstone: {
 		name: "Sun Stone",
-		itemClass: 'Evolution',
+		itemClass: ['evostones', 'evolution', 'utility', 'weather'],
 		shortDesc: "1.2x[1.3x under Sun] power on holder's Fire type, Explosive, Light, Solar moves. Increases damage from incoming Water type, Lunar moves 20%[50% under Sun]. Reduces damage from incoming Dark type, Shadow moves 20%[50% under Sun]. Item's effect is dulled under Hail, Rain, Sandstorm Snow, or for 2 turns after being hit by a Dark type or Lunar move.",
 		spritenum: 480,
 		fling: { basePower: 30, },
@@ -3382,7 +3247,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	thunderstone: {
 		name: "Thunder Stone",
-		itemClass: 'Evolution',
+		itemClass: ['evostones', 'evolution'],
 		shortDesc: "1.2x power on holder's Electric type moves. Immune to Drowsy, Sleep. Flying, Water type holders take 1/12HP per turn. Item's effect dulls for 2 turns if holder's Electric type move targets a Ground type.",
 		spritenum: 492,
 		fling: { basePower: 30, },
@@ -3413,7 +3278,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	waterstone: {
 		name: "Water Stone",
-		itemClass: 'Evolution',
+		itemClass: ['evostones', 'evolution', 'utility', 'terrain'],
 		shortDesc: "1.2x power on holder's Water type, Pulse, Sweeping moves. Reduces damage from incoming Fire type moves 20%. Immune to Burn. Fire, Poison type holders take 1/12HP per turn. Item's effect is dulled over Electric, Grassy, Toxic terrains, or for 2 turns after being hit by an Electric, Grass, or Poison type move.",
 		spritenum: 529,
 		fling: { basePower: 30, },
@@ -3456,16 +3321,17 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	// #region Unique Evo Items
 	auspiciousarmor: {
-	name: "Auspicious Armor",
-	shortDesc: "Evolves Charcadet into Armarouge when used.",
-	spritenum: 753,
-	fling: { basePower: 30, },
-	num: 2344,
-	gen: 9,
+		name: "Auspicious Armor",
+		itemClass: ['evolution'],
+		shortDesc: "Evolves Charcadet into Armarouge when used.",
+		spritenum: 753,
+		fling: { basePower: 30, },
+		num: 2344,
+		gen: 9,
 	},
 	berryjuice: {
 		name: "Berry Juice",
-		itemClass: 'Consumable',
+		itemClass: ['healing'],
 		shortDesc: "Heals 20HP when the holder'sHP is at 50% or less. 1 time use.",
 		spritenum: 22,
 		fling: { basePower: 30, },
@@ -3476,6 +3342,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	chippedpot: {
 		name: "Chipped Pot",
+		itemClass: ['evolution'],
 		shortDesc: "Evolves Poltchageist into Sinistcha when used.",
 		spritenum: 720,
 		fling: { basePower: 80, },
@@ -3484,6 +3351,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	crackedpot: {
 		name: "Cracked Pot",
+		itemClass: ['evolution'],
 		shortDesc: "Evolves Sinistea into Polteageist when used.",
 		spritenum: 719,
 		fling: { basePower: 80, },
@@ -3492,6 +3360,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	galaricacuff: {
 		name: "Galarica Cuff",
+		itemClass: ['evolution'],
 		shortDesc: "Evolves Galarian Slowpoke into Galarian Slowbro when used.",
 		spritenum: 739,
 		fling: { basePower: 30, },
@@ -3500,6 +3369,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	galaricawreath: {
 		name: "Galarica Wreath",
+		itemClass: ['evolution'],
 		shortDesc: "Evolves Galarian Slowpoke into Galarian Slowking when used.",
 		spritenum: 740,
 		fling: { basePower: 30, },
@@ -3508,6 +3378,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	maliciousarmor: {
 		name: "Malicious Armor",
+		itemClass: ['evolution'],
 		shortDesc: "Evolves Charcadet into Ceruledge when used.",
 		spritenum: 744,
 		fling: { basePower: 30, },
@@ -3516,6 +3387,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	masterpieceteacup: {
 		name: "Masterpiece Teacup",
+		itemClass: ['evolution'],
 		shortDesc: "Evolves Poltchageist into Sinistcha-Masterpiece when used.",
 		spritenum: 757,
 		fling: { basePower: 80, },
@@ -3524,6 +3396,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	metalalloy: {
 		name: "Metal Alloy",
+		itemClass: ['evolution', 'statboost', 'resist'],
 		shortDesc: "1.2x power on holder's Steel type moves. Reduces incoming Fire type damage 20%, increases incoming Electric type damage 20%.",
 		spritenum: 761,
 		num: 2482,
@@ -3538,6 +3411,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	sweetapple: {
 		name: "Sweet Apple",
+		itemClass: ['evolution'],
 		shortDesc: "Evolves Applin into Appletun when used.",
 		spritenum: 711,
 		fling: { basePower: 30, },
@@ -3546,6 +3420,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	syrupyapple: {
 		name: "Syrupy Apple",
+		itemClass: ['evolution'],
 		shortDesc: "Evolves Applin into Dipplin when used.",
 		spritenum: 755,
 		fling: { basePower: 30, },
@@ -3554,6 +3429,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	tartapple: {
 		name: "Tart Apple",
+		itemClass: ['evolution'],
 		shortDesc: "Evolves Applin into Flapple when used.",
 		spritenum: 712,
 		fling: { basePower: 30, },
@@ -3562,16 +3438,17 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	unremarkableteacup: {
 		name: "Unremarkable Teacup",
+		itemClass: ['evolution'],
 		shortDesc: "Evolves Poltchageist into Sinistcha when used.",
 		spritenum: 756,
 		fling: { basePower: 80, },
 		num: 2403,
 		gen: 9,
 	},
-// #region Held Evolution Items
+// #region Trade Evolution Items
 	dragonscale: {
 		name: "Dragon Scale",
-		itemClass: 'Trade Evo',
+		itemClass: ['tradeevo'],
 		shortDesc: "Evolves Seadra into Kingdra when traded.",
 		spritenum: 108,
 		fling: { basePower: 30, },
@@ -3580,7 +3457,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	dubiousdisc: {
 		name: "Dubious Disc",
-		itemClass: 'Trade Evo',
+		itemClass: ['tradeevo'],
 		shortDesc: "Evolves Porygon2 into Porygon-Z when traded.",
 		spritenum: 113,
 		fling: { basePower: 50, },
@@ -3589,6 +3466,8 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	electirizer: {
 		name: "Electirizer",
+		itemClass: ['tradeevo'],
+		shortDesc: "Evolves Electabuzz into Electivire when traded.",
 		spritenum: 119,
 		fling: { basePower: 80, },
 		num: 322,
@@ -3596,7 +3475,8 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	kingsrock: {
 		name: "King's Rock",
-		shortDesc: "Holder's attacks without a chance to flinch gain a 10% chance to flinch.",
+		itemClass: ['tradeevo', 'utility'],
+		shortDesc: "Holder's attacks without a chance to flinch gain a 10% chance to flinch. Evolves Poliwhirl into Politoed, or Slowpoke into Slowking when traded.",
 		spritenum: 236,
 		fling: {
 			basePower: 30,
@@ -3618,7 +3498,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	magmarizer: {
 		name: "Magmarizer",
-		itemClass: 'Trade Evo',
+		itemClass: ['tradeevo'],
 		shortDesc: "Evolves Magmar into Magmortar when traded.",
 		spritenum: 272,
 		fling: { basePower: 80, },
@@ -3627,7 +3507,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ovalstone: {
 		name: "Oval Stone",
-		itemClass: 'Evolution',
+		itemClass: ['tradeevo'],
 		shortDesc: "Evolves Happiny into Chansey when leveled up during the day.",
 		spritenum: 321,
 		fling: { basePower: 80, },
@@ -3636,7 +3516,8 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	prismscale: {
 		name: "Prism Scale",
-		shortDesc: "Extends duration of holder's Rainbow to 7 turns [from 4]. Holder's critical hit ratio is raised 2 stages.",
+		itemClass: ['tradeevo', 'statboost'],
+		shortDesc: "Extends duration of holder's Rainbow to 7 turns [from 4]. Holder's critical hit ratio is raised 2 stages. Evolves Feebas into Milotic when traded.",
 		spritenum: 365,
 		fling: { basePower: 30, },
 		onModifyCritRatio(critRatio) { return critRatio + 2; },
@@ -3645,7 +3526,8 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	protector: {
 		name: "Protector",
-		shortDesc: "Holder's Defense is 1.2x, weight +100kg. Immune to protection breaking effects Speed reduction varies by weight ratio and type (100%-50% based on species weight; Bug types carry 4x weight, Fighting/Dragon 2x, Flying 0.5x).",
+		itemClass: ['tradeevo', 'statboost'],
+		shortDesc: "Holder's Defense is 1.2x, weight +100kg. Immune to protection breaking effects Speed reduction varies by weight ratio and type (100%-50% based on species weight; Bug types carry 4x weight, Fighting/Dragon 2x, Flying 0.5x). Evolves Rhydon into Rhyperior when traded.",
 		spritenum: 367,
 		fling: { basePower: 80, },
 		onModifyDefPriority: 1,
@@ -3674,6 +3556,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	razorclaw: {
 		name: "Razor Claw",
+		itemClass: ['statboost'],
 		shortDesc: "Holder's critical hit ratio is raised 5 stages.",
 		spritenum: 382,
 		fling: { basePower: 80,},
@@ -3683,6 +3566,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	razorfang: {
 		name: "Razor Fang",
+		
 		shortDesc: "Holder's attacks without a chance to flinch gain a 10% chance to flinch.",
 		spritenum: 383,
 		fling: {
@@ -3705,7 +3589,8 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	reapercloth: {
 		name: "Reaper Cloth",
-		shortDesc: "Boosts Ghost/aura moves 1.2x, increases incoming aura/magic damage taken 20%. Curses non-Ghosts. Torn if holder is hit by a slicing/claw move.",
+		itemClass: ['tradeevo', 'statboost', 'utility'],
+		shortDesc: "Boosts Ghost/aura moves 1.2x, increases incoming aura/magic damage taken 20%. Curses non-Ghosts. Torn if holder is hit by a slicing/claw move. Evolves Dusclops into Dusknoir when traded.",
 		spritenum: 385,
 		fling: { basePower: 10, },
 		onBasePowerPriority: 15,
@@ -3726,7 +3611,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	sachet: {
 		name: "Sachet",
-		itemClass: 'Trade Evo',
+		itemClass: ['tradeevo'],
 		shortDesc: "Evolves Spritzee into Aromatisse when traded.",
 		spritenum: 691,
 		fling: { basePower: 80, },
@@ -3736,7 +3621,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	upgrade: {
 		name: "Up-Grade",
-		itemClass: 'Trade Evo',
+		itemClass: ['tradeevo'],
 		shortDesc: "Evolves Porygon into Porygon2 when traded.",
 		spritenum: 523,
 		fling: { basePower: 30, },
@@ -3745,7 +3630,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	whippeddream: {
 		name: "Whipped Dream",
-		itemClass: 'Trade Evo',
+		itemClass: ['tradeevo'],
 		shortDesc: "Evolves Swirlix into Slurpuff when traded.",
 		spritenum: 692,
 		fling: { basePower: 80, },
@@ -3756,19 +3641,19 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	// #region Type Boosting Items
 	blackbelt: {
 		name: "Black Belt",
+		
 		shortDesc: "1.2x power on holder's Fighting type, Punch, Kick, Sweep, Throw moves.",
 		spritenum: 32,
 		fling: { basePower: 30, },
 		onBasePowerPriority: 15,
-		onBasePower(basePower, user, target, move) { if (move && (move.type === 'Fighting' || move.flags['punch'] || move.flags['kick'] || move.flags['sweep'] || move.flags['throw'])) {
-			return this.chainModify([4915, 4096]);
-		}
+		onBasePower(basePower, user, target, move) { if (move && (move.type === 'Fighting' || move.flags['punch'] || move.flags['kick'] || move.flags['sweep'] || move.flags['throw'])) { return this.chainModify([4915, 4096]); }
 		},
 		num: 241,
 		gen: 2,
 	},
 	blackglasses: {
 		name: "Black Glasses",
+		
 		shortDesc: "1.2x power on holder's Dark type, Aura moves. Reduces incoming Light damage 20%.",
 		spritenum: 35,
 		fling: { basePower: 30, },
@@ -3780,6 +3665,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	charcoal: {
 		name: "Charcoal",
+		
 		shortDesc: "1.2x power on holder's Fire type moves. Reduces incoming Dark/Ghost damage 20%. Dark, Ghost type holders take 1/16HP per turn.",
 		spritenum: 61,
 		fling: { basePower: 30, },
@@ -3794,6 +3680,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	dragonfang: {
 		name: "Dragon Fang",
+		
 		shortDesc: "1.2x power on holder's Dragon type, Bite moves. Bite moves have 10% chance to inflict Dragonblight.",
 		spritenum: 106,
 		fling: { basePower: 70, },
@@ -3813,6 +3700,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	fairyfeather: {
 		name: "Fairy Feather",
+		
 		shortDesc: "1.2x power on holder's Fairy type, Wind moves.",
 		spritenum: 754,
 		fling: { basePower: 10, },
@@ -3823,6 +3711,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	hardstone: {
 		name: "Hard Stone",
+		
 		shortDesc: "1.2x power on holder's Rock type, Throw moves.",
 		spritenum: 187,
 		fling: { basePower: 100, },
@@ -3833,6 +3722,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	magnet: {
 		name: "Magnet",
+		
 		shortDesc: "1.2x power on holder's Electric type moves. The moves of Electric type pokemon, and Electric and Steel Type moves are redirected to the holder",
 		spritenum: 273,
 		fling: { basePower: 30, },
@@ -3844,6 +3734,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	metalcoat: {
 		name: "Metal Coat",
+		
 		shortDesc: "1.2x power on holder's Steel type moves. Reduces incoming Water damage 20%, increases incoming Electric damage 20%.",
 		spritenum: 286,
 		fling: { basePower: 30, },
@@ -3858,6 +3749,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	miracleseed: {
 		name: "Miracle Seed",
+		itemClass: ['healing'],
 		shortDesc: "1.2x power on holder's Grass type moves. Holder heals 1/24HP each turn.",
 		fling: { basePower: 30, },
 		spritenum: 292,
@@ -3871,6 +3763,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	mysticwater: {
 		name: "Mystic Water",
+		itemClass: ['healing'],
 		shortDesc: "1.2x power on holder's Water type moves. Charges when hit by Water. When charged: grants Aqua Ring and Immunity to the immunity breaking effect of Magic moves.",
 		spritenum: 300,
 		fling: { basePower: 30, },
@@ -3898,6 +3791,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	nevermeltice: {
 		name: "Never-Melt Ice",
+		itemClass: ['weather'],
 		shortDesc: "1.2x power on holder's Ice type moves. Reduces incoming Fire damage by 30%. Ice type holders become immune to Sun damage.",
 		spritenum: 305,
 		fling: { basePower: 30, },
@@ -3910,6 +3804,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	poisonbarb: {
 		name: "Poison Barb",
+		
 		shortDesc: "1.2x power on holder's Poison type, Pierce moves. Deals 1/12HP and Poisons attackers on contact.",
 		spritenum: 343,
 		fling: {
@@ -3929,6 +3824,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	sharpbeak: {
 		name: "Sharp Beak",
+		
 		shortDesc: "1.2x power on holder's Flying type, Pierce moves. Holder's Bite moves consume opponent's held berries.",
 		spritenum: 436,
 		fling: { basePower: 50, },
@@ -3946,6 +3842,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	silkscarf: {
 		name: "Silk Scarf",
+		
 		shortDesc: "1.2x power on holder's Normal type moves, and moves without a secondary effect. Holder's Bind moves deal 1/7 damage per turn [instead of 1/8].",
 		spritenum: 444,
 		fling: { basePower: 10, },
@@ -3957,18 +3854,20 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	silverpowder: {
 		name: "Silver Powder",
+		
 		shortDesc: "1.2x power on holder's Bug type moves. Reduces incoming Light damage 20%, increases power against Dark, Fairy, Ghost type targets 20%.",
 		spritenum: 447,
 		fling: { basePower: 10, },
 		onBasePowerPriority: 15,
-		onBasePower(basePower, user, target, move) { if (move.type === 'Bug') { return this.chainModify([4915, 4096]); } },
-		onSourceModifyDamage(damage, target, source, move) { if (target.hasType('Dark') || target.hasType('Fairy') || target.hasType('Ghost')) { return this.chainModify(1.1); } },
-		onDamagingHit(damage, target, source, move) { if (move.flags['light']) { return this.chainModify(0.8); } },
+		onBasePower(basePower, user, target, move) { if (move.type === 'Bug') return this.chainModify([4915, 4096]); },
+		onSourceModifyDamage(damage, source, target, move) { if (move.flags?.light) return this.chainModify(0.8); },
+		onModifyDamage(damage, source, target, move) { if (target.hasType('Dark') || target.hasType('Fairy') || target.hasType('Ghost')) { return this.chainModify([4915, 4096]); } },
 		num: 222,
 		gen: 2,
 	},
 	softsand: {
 		name: "Soft Sand",
+		
 		shortDesc: "1.2x power on holder's Ground type moves. Reduces incoming Water damage by 30%.",
 		spritenum: 456,
 		fling: { basePower: 10, },
@@ -3980,6 +3879,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	spelltag: {
 		name: "Spell Tag",
+		itemClass: ['utility', 'terrain'],
 		shortDesc: "1.2x power on holder's Ghost type moves. Immune to magic moves. Holder's Magic moves fail. Supresses Magic Bounce, Magic Guard, Magician, and Misty Terrain.  Dragon, Fairy type holders take 1/12HP per turn. Ghost type holders are bound.",
 		spritenum: 461,
 		fling: { basePower: 30, },
@@ -4005,6 +3905,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	snowball: {
 		name: "Snowball",
+		itemClass: ['utility', 'weather'],
 		shortDesc: "1.2x power (1.5x in snow) on holder's Ice/throw moves. Melts in sun.",
 		spritenum: 606,
 		fling: { basePower: 30, },
@@ -4012,7 +3913,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		onBasePower(basePower, user, target, move) {
 			if (move.type === 'Ice' || move.flags['throw']) {
 				let modifier = 1.2;
-				if (this.field.isWeather('snow') && move.type === 'Ice'|| move.flags['throw']) { modifier = 1.5; }
+				if (this.field.isWeather('snow') && (move.type === 'Ice' || move.flags['throw'])) { modifier = 1.5; }
 				return this.chainModify(modifier);
 			}
 		},
@@ -4034,6 +3935,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	// #region Type Plates
 	dracoplate: {
 		name: "Draco Plate",
+		itemClass: ['typeplates'],
 		shortDesc: "1.2x power on holder's Dragon type moves. Judgment is Dragon type.",
 		spritenum: 105,
 		onPlate: 'Dragon',
@@ -4048,6 +3950,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	dreadplate: {
 		name: "Dread Plate",
+		itemClass: ['typeplates'],
 		shortDesc: "1.2x power on holder's Dark type moves. Judgment is Dark type.",
 		spritenum: 110,
 		onPlate: 'Dark',
@@ -4062,6 +3965,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	earthplate: {
 		name: "Earth Plate",
+		itemClass: ['typeplates'],
 		shortDesc: "1.2x power on holder's Ground type moves. Judgment is Ground type.",
 		spritenum: 117,
 		onPlate: 'Ground',
@@ -4076,6 +3980,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	fistplate: {
 		name: "Fist Plate",
+		itemClass: ['typeplates'],
 		shortDesc: "1.2x power on holder's Fighting type moves. Judgment is Fighting type.",
 		spritenum: 143,
 		onPlate: 'Fighting',
@@ -4090,6 +3995,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	flameplate: {
 		name: "Flame Plate",
+		itemClass: ['typeplates'],
 		shortDesc: "1.2x power on holder's Fire type moves. Judgment is Fire type.",
 		spritenum: 146,
 		onPlate: 'Fire',
@@ -4104,6 +4010,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	icicleplate: {
 		name: "Icicle Plate",
+		itemClass: ['typeplates'],
 		shortDesc: "1.2x power on holder's Ice type moves. Judgment is Ice type.",
 		spritenum: 220,
 		onPlate: 'Ice',
@@ -4118,6 +4025,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	insectplate: {
 		name: "Insect Plate",
+		itemClass: ['typeplates'],
 		shortDesc: "1.2x power on holder's Bug type moves. Judgment is Bug type.",
 		spritenum: 223,
 		onPlate: 'Bug',
@@ -4132,6 +4040,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ironplate: {
 		name: "Iron Plate",
+		itemClass: ['typeplates'],
 		shortDesc: "1.2x power on holder's Steel type moves. Judgment is Steel type.",
 		spritenum: 225,
 		onPlate: 'Steel',
@@ -4146,6 +4055,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	meadowplate: {
 		name: "Meadow Plate",
+		itemClass: ['typeplates'],
 		shortDesc: "1.2x power on holder's Grass type moves. Judgment is Grass type.",
 		spritenum: 282,
 		onPlate: 'Grass',
@@ -4160,6 +4070,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	mindplate: {
 		name: "Mind Plate",
+		itemClass: ['typeplates'],
 		shortDesc: "1.2x power on holder's Psychic type moves. Judgment is Psychic type.",
 		spritenum: 291,
 		onPlate: 'Psychic',
@@ -4174,6 +4085,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	pixieplate: {
 		name: "Pixie Plate",
+		itemClass: ['typeplates'],
 		shortDesc: "1.2x power on holder's Fairy type moves. Judgment is Fairy type.",
 		spritenum: 610,
 		onPlate: 'Fairy',
@@ -4188,6 +4100,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	skyplate: {
 		name: "Sky Plate",
+		itemClass: ['typeplates'],
 		shortDesc: "1.2x power on holder's Flying type moves. Judgment is Flying type.",
 		spritenum: 450,
 		onPlate: 'Flying',
@@ -4202,6 +4115,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	splashplate: {
 		name: "Splash Plate",
+		itemClass: ['typeplates'],
 		shortDesc: "1.2x power on holder's Water type moves. Judgment is Water type.",
 		spritenum: 463,
 		onPlate: 'Water',
@@ -4216,6 +4130,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	spookyplate: {
 		name: "Spooky Plate",
+		itemClass: ['typeplates'],
 		shortDesc: "1.2x power on holder's Ghost type moves. Judgment is Ghost type.",
 		spritenum: 464,
 		onPlate: 'Ghost',
@@ -4230,6 +4145,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	stoneplate: {
 		name: "Stone Plate",
+		itemClass: ['typeplates'],
 		shortDesc: "1.2x power on holder's Rock type moves. Judgment is Rock type.",
 		spritenum: 477,
 		onPlate: 'Rock',
@@ -4244,6 +4160,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	toxicplate: {
 		name: "Toxic Plate",
+		itemClass: ['typeplates'],
 		shortDesc: "1.2x power on holder's Poison type moves. Judgment is Poison type.",
 		spritenum: 516,
 		onPlate: 'Poison',
@@ -4258,6 +4175,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	zapplate: {
 		name: "Zap Plate",
+		itemClass: ['typeplates'],
 		shortDesc: "1.2x power on holder's Electric type moves. Judgment is Electric type.",
 		spritenum: 572,
 		onPlate: 'Electric',
@@ -4273,7 +4191,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	// #region Poké Balls
 	beastball: {
 		name: "Beast Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 661,
 		num: 851,
 		gen: 7,
@@ -4281,7 +4199,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	cherishball: {
 		name: "Cherish Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 64,
 		num: 16,
 		gen: 4,
@@ -4290,7 +4208,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	diveball: {
 		name: "Dive Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 101,
 		num: 7,
 		gen: 3,
@@ -4298,7 +4216,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},	
 	dreamball: {
 		name: "Dream Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 111,
 		num: 576,
 		gen: 5,
@@ -4306,7 +4224,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	duskball: {
 		name: "Dusk Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 115,
 		num: 13,
 		gen: 4,
@@ -4314,7 +4232,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	fastball: {
 		name: "Fast Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 137,
 		num: 492,
 		gen: 2,
@@ -4322,7 +4240,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	friendball: {
 		name: "Friend Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 153,
 		num: 497,
 		gen: 2,
@@ -4330,7 +4248,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	greatball: {
 		name: "Great Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 174,
 		num: 3,
 		gen: 1,
@@ -4338,7 +4256,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	healball: {
 		name: "Heal Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball', 'healing'],
 		spritenum: 188,
 		num: 14,
 		gen: 4,
@@ -4346,7 +4264,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	heavyball: {
 		name: "Heavy Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 194,
 		num: 495,
 		gen: 2,
@@ -4354,7 +4272,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	levelball: {
 		name: "Level Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 246,
 		num: 493,
 		gen: 2,
@@ -4362,7 +4280,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	loveball: {
 		name: "Love Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 258,
 		num: 496,
 		gen: 2,
@@ -4370,7 +4288,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	lureball: {
 		name: "Lure Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 264,
 		num: 494,
 		gen: 2,
@@ -4378,7 +4296,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	luxuryball: {
 		name: "Luxury Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 266,
 		num: 11,
 		gen: 3,
@@ -4386,7 +4304,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	masterball: {
 		name: "Master Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 276,
 		num: 1,
 		gen: 1,
@@ -4394,7 +4312,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	moonball: {
 		name: "Moon Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 294,
 		num: 498,
 		gen: 2,
@@ -4402,7 +4320,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	nestball: {
 		name: "Nest Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 303,
 		num: 8,
 		gen: 3,
@@ -4410,7 +4328,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	netball: {
 		name: "Net Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 304,
 		num: 6,
 		gen: 3,
@@ -4418,7 +4336,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	parkball: {
 		name: "Park Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 325,
 		num: 500,
 		gen: 4,
@@ -4427,7 +4345,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	pokeball: {
 		name: "Poke Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 345,
 		num: 4,
 		gen: 1,
@@ -4435,7 +4353,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	premierball: {
 		name: "Premier Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 363,
 		num: 12,
 		gen: 3,
@@ -4443,7 +4361,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	quickball: {
 		name: "Quick Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 372,
 		num: 15,
 		gen: 4,
@@ -4451,7 +4369,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	repeatball: {
 		name: "Repeat Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 401,
 		num: 9,
 		gen: 3,
@@ -4459,7 +4377,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	safariball: {
 		name: "Safari Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 425,
 		num: 5,
 		gen: 1,
@@ -4467,7 +4385,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	sportball: {
 		name: "Sport Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 465,
 		num: 499,
 		gen: 2,
@@ -4475,7 +4393,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	strangeball: {
 		name: "Strange Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 308,
 		num: 1785,
 		gen: 8,
@@ -4484,7 +4402,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	timerball: {
 		name: "Timer Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 494,
 		num: 10,
 		gen: 3,
@@ -4492,7 +4410,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ultraball: {
 		name: "Ultra Ball",
-		itemClass: 'Pokéball',
+		itemClass: ['pokeball'],
 		spritenum: 521,
 		num: 2,
 		gen: 1,
@@ -4501,6 +4419,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 // #region Silvally Memories
 	bugmemory: {
 		name: "Bug Memory",
+		itemClass: ['species'],
 		shortDesc: "Holder's type changes to Bug. Multi-Attack is Bug type.",
 		spritenum: 673,
 		onMemory: 'Bug',
@@ -4515,6 +4434,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	darkmemory: {
 		name: "Dark Memory",
+		itemClass: ['species'],
 		shortDesc: "Holder's type changes to Dark. Multi-Attack is Dark type.",
 		spritenum: 683,
 		onMemory: 'Dark',
@@ -4529,6 +4449,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	dragonmemory: {
 		name: "Dragon Memory",
+		itemClass: ['species'],
 		shortDesc: "Holder's type changes to Dragon. Multi-Attack is Dragon type.",
 		spritenum: 682,
 		onMemory: 'Dragon',
@@ -4543,6 +4464,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	electricmemory: {
 		name: "Electric Memory",
+		itemClass: ['species'],
 		shortDesc: "Holder's type changes to Electric. Multi-Attack is Electric type.",
 		spritenum: 679,
 		onMemory: 'Electric',
@@ -4557,6 +4479,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	fairymemory: {
 		name: "Fairy Memory",
+		itemClass: ['species'],
 		shortDesc: "Holder's type changes to Fairy. Multi-Attack is Fairy type.",
 		spritenum: 684,
 		onMemory: 'Fairy',
@@ -4571,6 +4494,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	fightingmemory: {
 		name: "Fighting Memory",
+		itemClass: ['species'],
 		shortDesc: "Holder's type changes to Fighting. Multi-Attack is Fighting type.",
 		spritenum: 668,
 		onMemory: 'Fighting',
@@ -4585,6 +4509,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	firememory: {
 		name: "Fire Memory",
+		itemClass: ['species'],
 		shortDesc: "Holder's type changes to Fire. Multi-Attack is Fire type.",
 		spritenum: 676,
 		onMemory: 'Fire',
@@ -4599,6 +4524,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	flyingmemory: {
 		name: "Flying Memory",
+		itemClass: ['species'],
 		shortDesc: "Holder's type changes to Flying. Multi-Attack is Flying type.",
 		spritenum: 669,
 		onMemory: 'Flying',
@@ -4613,6 +4539,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	ghostmemory: {
 		name: "Ghost Memory",
+		itemClass: ['species'],
 		shortDesc: "Holder's type changes to Ghost. Multi-Attack is Ghost type.",
 		spritenum: 674,
 		onMemory: 'Ghost',
@@ -4627,6 +4554,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	grassmemory: {
 		name: "Grass Memory",
+		itemClass: ['species'],
 		shortDesc: "Holder's type changes to Grass. Multi-Attack is Grass type.",
 		spritenum: 678,
 		onMemory: 'Grass',
@@ -4641,6 +4569,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	groundmemory: {
 		name: "Ground Memory",
+		itemClass: ['species'],
 		shortDesc: "Holder's type changes to Ground. Multi-Attack is Ground type.",
 		spritenum: 671,
 		onMemory: 'Ground',
@@ -4655,6 +4584,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	icememory: {
 		name: "Ice Memory",
+		itemClass: ['species'],
 		shortDesc: "Holder's type changes to Ice. Multi-Attack is Ice type.",
 		spritenum: 681,
 		onMemory: 'Ice',
@@ -4669,6 +4599,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	poisonmemory: {
 		name: "Poison Memory",
+		itemClass: ['species'],
 		shortDesc: "Holder's type changes to Poison. Multi-Attack is Poison type.",
 		spritenum: 670,
 		onMemory: 'Poison',
@@ -4683,6 +4614,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	psychicmemory: {
 		name: "Psychic Memory",
+		itemClass: ['species'],
 		shortDesc: "Holder's type changes to Psychic. Multi-Attack is Psychic type.",
 		spritenum: 680,
 		onMemory: 'Psychic',
@@ -4697,6 +4629,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	rockmemory: {
 		name: "Rock Memory",
+		itemClass: ['species'],
 		shortDesc: "Holder's type changes to Rock. Multi-Attack is Rock type.",
 		spritenum: 672,
 		onMemory: 'Rock',
@@ -4711,6 +4644,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	steelmemory: {
 		name: "Steel Memory",
+		itemClass: ['species'],
 		shortDesc: "Holder's type changes to Steel. Multi-Attack is Steel type.",
 		spritenum: 675,
 		onMemory: 'Steel',
@@ -4725,6 +4659,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	watermemory: {
 		name: "Water Memory",
+		itemClass: ['species'],
 		shortDesc: "Holder's type changes to Water. Multi-Attack is Water type.",
 		spritenum: 677,
 		onMemory: 'Water',
@@ -4737,9 +4672,81 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		gen: 7,
 		isNonstandard: "Past",
 	},
+//region Sweets
+	berrysweet: {
+		name: "Berry Sweet",
+		itemClass: ['sweets', 'evolution'],
+		spritenum: 706,
+		fling: {
+			basePower: 10,
+		},
+		num: 1111,
+		gen: 8,
+	},
+	cloversweet: {
+		name: "Clover Sweet",
+		itemClass: ['sweets', 'evolution'],
+		spritenum: 707,
+		fling: {
+			basePower: 10,
+		},
+		num: 1112,
+		gen: 8,
+	},
+	flowersweet: {
+		name: "Flower Sweet",
+		itemClass: ['sweets', 'evolution'],
+		spritenum: 708,
+		fling: {
+			basePower: 0,
+		},
+		num: 1113,
+		gen: 8,
+	},
+	lovesweet: {
+		name: "Love Sweet",
+		itemClass: ['sweets', 'evolution'],
+		spritenum: 705,
+		fling: {
+			basePower: 10,
+		},
+		num: 1110,
+		gen: 8,
+	},
+	ribbonsweet: {
+		name: "Ribbon Sweet",
+		itemClass: ['sweets', 'evolution'],
+		spritenum: 710,
+		fling: {
+			basePower: 10,
+		},
+		num: 1115,
+		gen: 8,
+	},
+	starsweet: {
+		name: "Star Sweet",
+		itemClass: ['sweets', 'evolution'],
+		spritenum: 709,
+		fling: {
+			basePower: 10,
+		},
+		num: 1114,
+		gen: 8,
+	},
+	strawberrysweet: {
+		name: "Strawberry Sweet",
+		itemClass: ['sweets', 'evolution'],
+		spritenum: 704,
+		fling: {
+			basePower: 10,
+		},
+		num: 1109,
+		gen: 8,
+	},
 // #region Genesect Drives
 	burndrive: {
 		name: "Burn Drive",
+		itemClass: ['species'],
 		shortDesc: "Holder's Techno Blast is Fire type.",
 		spritenum: 54,
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 649) || pokemon.baseSpecies.num === 649) { return false; }
@@ -4754,6 +4761,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	chilldrive: {
 		name: "Chill Drive",
+		itemClass: ['species'],
 		shortDesc: "Holder's Techno Blast is Ice type.",
 		spritenum: 67,
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 649) || pokemon.baseSpecies.num === 649) { return false; }
@@ -4768,6 +4776,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	dousedrive: {
 		name: "Douse Drive",
+		itemClass: ['species'],
 		shortDesc: "Holder's Techno Blast is Water type.",
 		spritenum: 103,
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 649) || pokemon.baseSpecies.num === 649) { return false; }
@@ -4782,6 +4791,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	},
 	shockdrive: {
 		name: "Shock Drive",
+		itemClass: ['species'],
 		shortDesc: "Holder's Techno Blast is Electric type.",
 		spritenum: 442,
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 649) || pokemon.baseSpecies.num === 649) { return false; }
@@ -4794,79 +4804,959 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		gen: 5,
 		isNonstandard: "Past",
 	},
-	// #region Incense
-	fullincense: {
-		name: "Full Incense",
-		spritenum: 155,
-		fling: { basePower: 10, },
-		onFractionalPriority: -0.1,
-		num: 316,
-		gen: 4,
-		isNonstandard: "Past",
-	},
-	laxincense: {
-		name: "Lax Incense",
-		spritenum: 240,
-		fling: { basePower: 10, },
-		onModifyAccuracyPriority: -2,
-		onModifyAccuracy(accuracy) {
-			if (typeof accuracy !== 'number') return;
-			this.debug('lax incense - decreasing accuracy');
-			return this.chainModify([3686, 4096]);
+	// #region Mega Stones
+	abomasite: {
+		name: "Abomasite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 575,
+		megaStone: "Abomasnow-Mega",
+		megaEvolves: "Abomasnow",
+		itemUser: ["Abomasnow"],
+		onTakeItem(item, source) {
+			if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
 		},
-		num: 255,
-		gen: 3,
-		isNonstandard: "Past",
+		num: 674,
+		gen: 6,
 	},
-	oddincense: {
-		name: "Odd Incense",
-		spritenum: 312,
-		fling: { basePower: 10, },
-		onBasePowerPriority: 15,
-		onBasePower(basePower, user, target, move) { if (move.type === 'Psychic') { return this.chainModify([4915, 4096]); } },
-		num: 314,
-		gen: 4,
-		isNonstandard: "Past",
+	absolite: {
+		name: "Absolite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 576,
+		megaStone: "Absol-Mega",
+		megaEvolves: "Absol",
+		itemUser: ["Absol"],
+		onTakeItem(item, source) {
+			if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 677,
+		gen: 6,
 	},
-	rockincense: {
-		name: "Rock Incense",
-		spritenum: 416,
-		fling: { basePower: 10, },
-		onBasePowerPriority: 15,
-		onBasePower(basePower, user, target, move) { if (move.type === 'Rock') { return this.chainModify([4915, 4096]); } },
-		num: 315,
-		gen: 4,
-		isNonstandard: "Past",
+	aerodactylite: {
+		name: "Aerodactylite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 577,
+		megaStone: "Aerodactyl-Mega",
+		megaEvolves: "Aerodactyl",
+		itemUser: ["Aerodactyl"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 672,
+		gen: 6,
 	},
-	roseincense: {
-		name: "Rose Incense",
-		spritenum: 419,
-		fling: { basePower: 10, },
-		onBasePowerPriority: 15,
-		onBasePower(basePower, user, target, move) { if (move.type === 'Grass') { return this.chainModify([4915, 4096]); } },
-		num: 318,
-		gen: 4,
-		isNonstandard: "Past",
+	aggronite: {
+		name: "Aggronite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 578,
+		megaStone: "Aggron-Mega",
+		megaEvolves: "Aggron",
+		itemUser: ["Aggron"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 667,
+		gen: 6,
 	},
-	seaincense: {
-		name: "Sea Incense",
-		spritenum: 430,
-		fling: { basePower: 10, },
-		onBasePowerPriority: 15,
-		onBasePower(basePower, user, target, move) { if (move && move.type === 'Water') { return this.chainModify([4915, 4096]); } },
-		num: 254,
-		gen: 3,
-		isNonstandard: "Past",
+	alakazite: {
+		name: "Alakazite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 579,
+		megaStone: "Alakazam-Mega",
+		megaEvolves: "Alakazam",
+		itemUser: ["Alakazam"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 679,
+		gen: 6,
 	},
-	waveincense: {
-		name: "Wave Incense",
-		spritenum: 531,
-		fling: { basePower: 10, },
-		onBasePowerPriority: 15,
-		onBasePower(basePower, user, target, move) { if (move.type === 'Water') { return this.chainModify([4915, 4096]); } },
-		num: 317,
-		gen: 4,
-		isNonstandard: "Past",
+	altarianite: {
+		name: "Altarianite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 615,
+		megaStone: "Altaria-Mega",
+		megaEvolves: "Altaria",
+		itemUser: ["Altaria"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 755,
+		gen: 6,
+	},
+	ampharosite: {
+		name: "Ampharosite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 580,
+		megaStone: "Ampharos-Mega",
+		megaEvolves: "Ampharos",
+		itemUser: ["Ampharos"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 658,
+		gen: 6,
+	},
+	audinite: {
+		name: "Audinite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 617,
+		megaStone: "Audino-Mega",
+		megaEvolves: "Audino",
+		itemUser: ["Audino"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 757,
+		gen: 6,
+	},
+	banettite: {
+		name: "Banettite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 582,
+		megaStone: "Banette-Mega",
+		megaEvolves: "Banette",
+		itemUser: ["Banette"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 668,
+		gen: 6,
+	},
+   barbaracite: {
+       name: "Barbaracite",
+	   itemClass: ['megastone', 'species'],
+       spritenum: 564,
+       megaStone: "Barbaracle-Mega",
+       megaEvolves: "Barbaracle",
+       itemUser: ["Barbaracle"],
+       onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+           return true;
+       },
+       num: 2581,
+       gen: 9,
+   },
+   beedrillite: {
+       name: "Beedrillite",
+	   itemClass: ['megastone', 'species'],
+       spritenum: 628,
+       megaStone: "Beedrill-Mega",
+       megaEvolves: "Beedrill",
+       itemUser: ["Beedrill"],
+       onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+           return true;
+       },
+       num: 770,
+       gen: 6,
+   },
+   blastoisinite: {
+       name: "Blastoisinite",
+	   itemClass: ['megastone', 'species'],
+       spritenum: 583,
+       megaStone: "Blastoise-Mega",
+       megaEvolves: "Blastoise",
+       itemUser: ["Blastoise"],
+       onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+           return true;
+       },
+       num: 661,
+       gen: 6,
+   },
+   blazikenite: {
+       name: "Blazikenite",
+	   itemClass: ['megastone', 'species'],
+       spritenum: 584,
+       megaStone: "Blaziken-Mega",
+       megaEvolves: "Blaziken",
+       itemUser: ["Blaziken"],
+       onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+           return true;
+       },
+       num: 664,
+       gen: 6,
+   },
+   cameruptite: {
+       name: "Cameruptite",
+	   itemClass: ['megastone', 'species'],
+       spritenum: 625,
+       megaStone: "Camerupt-Mega",
+       megaEvolves: "Camerupt",
+       itemUser: ["Camerupt"],
+       onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+           return true;
+       },
+       num: 767,
+       gen: 6,
+   },
+   chandelurite: {
+       name: "Chandelurite",
+	   itemClass: ['megastone', 'species'],
+       spritenum: 557,
+       megaStone: "Chandelure-Mega",
+       megaEvolves: "Chandelure",
+       itemUser: ["Chandelure"],
+       onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+           return true;
+       },
+       num: 2574,
+       gen: 9,
+   },
+   charizarditex: {
+		name: "Charizardite X",
+		itemClass: ['megastone', 'species'],
+		spritenum: 585,
+		megaStone: "Charizard-Mega-X",
+		megaEvolves: "Charizard",
+		itemUser: ["Charizard"],
+		onTakeItem(item, source) {
+			if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 660,
+		gen: 6,
+	},
+	charizarditey: {
+		name: "Charizardite Y",
+		itemClass: ['megastone', 'species'],
+		spritenum: 586,
+		megaStone: "Charizard-Mega-Y",
+		megaEvolves: "Charizard",
+		itemUser: ["Charizard"],
+		onTakeItem(item, source) {
+			if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 678,
+		gen: 6,
+	},
+   chesnaughtite: {
+       name: "Chesnaughtite",
+	   itemClass: ['megastone', 'species'],
+       spritenum: 558,
+       megaStone: "Chesnaught-Mega",
+       megaEvolves: "Chesnaught",
+       itemUser: ["Chesnaught"],
+       onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+           return true;
+       },
+       num: 2575,
+       gen: 9,
+   },
+   clefablite: {
+		name: "Clefablite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 544,
+		megaStone: "Clefable-Mega",
+		megaEvolves: "Clefable",
+		itemUser: ["Clefable"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2559,
+		gen: 9,
+	},
+	delphoxite: {
+		name: "Delphoxite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 559,
+		megaStone: "Delphox-Mega",
+		megaEvolves: "Delphox",
+		itemUser: ["Delphox"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2576,
+		gen: 9,
+	},
+	diancite: {
+		name: "Diancite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 624,
+		megaStone: "Diancie-Mega",
+		megaEvolves: "Diancie",
+		itemUser: ["Diancie"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 764,
+		gen: 6,
+	},
+	dragalgite: {
+		name: "Dragalgite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 565,
+		megaStone: "Dragalge-Mega",
+		megaEvolves: "Dragalge",
+		itemUser: ["Dragalge"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2582,
+		gen: 9,
+	},
+	dragoninite: {
+		name: "Dragoninite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 547,
+		megaStone: "Dragonite-Mega",
+		megaEvolves: "Dragonite",
+		itemUser: ["Dragonite"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2562,
+		gen: 9,
+	},
+	drampanite: {
+		name: "Drampanite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 569,
+		megaStone: "Drampa-Mega",
+		megaEvolves: "Drampa",
+		itemUser: ["Drampa"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2585,
+		gen: 9,
+	},
+	eelektrossite: {
+		name: "Eelektrossite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 556,
+		megaStone: "Eelektross-Mega",
+		megaEvolves: "Eelektross",
+		itemUser: ["Eelektross"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2573,
+		gen: 9,
+	},
+	emboarite: {
+		name: "Emboarite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 552,
+		megaStone: "Emboar-Mega",
+		megaEvolves: "Emboar",
+		itemUser: ["Emboar"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2569,
+		gen: 9,
+	},
+	excadrite: {
+		name: "Excadrite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 553,
+		megaStone: "Excadrill-Mega",
+		megaEvolves: "Excadrill",
+		itemUser: ["Excadrill"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2570,
+		gen: 9,
+	},
+	falinksite: {
+		name: "Falinksite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 570,
+		megaStone: "Falinks-Mega",
+		megaEvolves: "Falinks",
+		itemUser: ["Falinks"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2586,
+		gen: 9,
+	},
+	feraligite: {
+		name: "Feraligite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 549,
+		megaStone: "Feraligatr-Mega",
+		megaEvolves: "Feraligatr",
+		itemUser: ["Feraligatr"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2564,
+		gen: 9,
+	},
+	floettite: {
+		name: "Floettite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 562,
+		megaStone: "Floette-Mega",
+		megaEvolves: "Floette-Eternal",
+		itemUser: ["Floette-Eternal"],
+		onTakeItem(item, source) { if ([item.megaEvolves, item.megaStone].includes(source.baseSpecies.name)) return false;
+			return true;
+		},
+		num: 2579,
+		gen: 9,
+	},
+	froslassite: {
+		name: "Froslassite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 551,
+		megaStone: "Froslass-Mega",
+		megaEvolves: "Froslass",
+		itemUser: ["Froslass"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2566,
+		gen: 9,
+	},
+	galladite: {
+		name: "Galladite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 616,
+		megaStone: "Gallade-Mega",
+		megaEvolves: "Gallade",
+		itemUser: ["Gallade"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 756,
+		gen: 6,
+	},
+	garchompite: {
+		name: "Garchompite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 573,
+		megaStone: "Garchomp-Mega",
+		megaEvolves: "Garchomp",
+		itemUser: ["Garchomp"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 683,
+		gen: 6,
+	},
+	gardevoirite: {
+		name: "Gardevoirite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 587,
+		megaStone: "Gardevoir-Mega",
+		megaEvolves: "Gardevoir",
+		itemUser: ["Gardevoir"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 657,
+		gen: 6,
+	},
+	gengarite: {
+		name: "Gengarite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 588,
+		megaStone: "Gengar-Mega",
+		megaEvolves: "Gengar",
+		itemUser: ["Gengar"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 656,
+		gen: 6,
+	},
+	glalitite: {
+		name: "Glalitite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 623,
+		megaStone: "Glalie-Mega",
+		megaEvolves: "Glalie",
+		itemUser: ["Glalie"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 763,
+		gen: 6,
+	},
+	greninjite: { // TODO: Figure out if this works on Greninja-Bond
+		name: "Greninjite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 560,
+		megaStone: "Greninja-Mega",
+		megaEvolves: "Greninja",
+		itemUser: ["Greninja"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2577,
+		gen: 9,
+	},
+	gyaradosite: {
+		name: "Gyaradosite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 589,
+		megaStone: "Gyarados-Mega",
+		megaEvolves: "Gyarados",
+		itemUser: ["Gyarados"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 676,
+		gen: 6,
+	},
+	hawluchanite: {
+		name: "Hawluchanite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 566,
+		megaStone: "Hawlucha-Mega",
+		megaEvolves: "Hawlucha",
+		itemUser: ["Hawlucha"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2583,
+		gen: 9,
+	},
+	heracronite: {
+		name: "Heracronite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 590,
+		megaStone: "Heracross-Mega",
+		megaEvolves: "Heracross",
+		itemUser: ["Heracross"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 680,
+		gen: 6,
+	},
+	houndoominite: {
+		name: "Houndoominite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 591,
+		megaStone: "Houndoom-Mega",
+		megaEvolves: "Houndoom",
+		itemUser: ["Houndoom"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 666,
+		gen: 6,
+	},
+	kangaskhanite: {
+		name: "Kangaskhanite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 592,
+		megaStone: "Kangaskhan-Mega",
+		megaEvolves: "Kangaskhan",
+		itemUser: ["Kangaskhan"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 675,
+		gen: 6,
+	},
+	latiasite: {
+		name: "Latiasite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 629,
+		megaStone: "Latias-Mega",
+		megaEvolves: "Latias",
+		itemUser: ["Latias"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 684,
+		gen: 6,
+	},
+	latiosite: {
+		name: "Latiosite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 630,
+		megaStone: "Latios-Mega",
+		megaEvolves: "Latios",
+		itemUser: ["Latios"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 685,
+		gen: 6,
+	},
+	lopunnite: {
+		name: "Lopunnite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 626,
+		megaStone: "Lopunny-Mega",
+		megaEvolves: "Lopunny",
+		itemUser: ["Lopunny"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 768,
+		gen: 6,
+	},
+	lucarionite: {
+		name: "Lucarionite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 594,
+		megaStone: "Lucario-Mega",
+		megaEvolves: "Lucario",
+		itemUser: ["Lucario"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 673,
+		gen: 6,
+	},
+	malamarite: {
+		name: "Malamarite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 563,
+		megaStone: "Malamar-Mega",
+		megaEvolves: "Malamar",
+		itemUser: ["Malamar"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2580,
+		gen: 9,
+	},
+	manectite: {
+		name: "Manectite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 596,
+		megaStone: "Manectric-Mega",
+		megaEvolves: "Manectric",
+		itemUser: ["Manectric"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 682,
+		gen: 6,
+	},
+	mawilite: {
+		name: "Mawilite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 598,
+		megaStone: "Mawile-Mega",
+		megaEvolves: "Mawile",
+		itemUser: ["Mawile"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 681,
+		gen: 6,
+	},
+	medichamite: {
+		name: "Medichamite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 599,
+		megaStone: "Medicham-Mega",
+		megaEvolves: "Medicham",
+		itemUser: ["Medicham"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 665,
+		gen: 6,
+	},
+	meganiumite: {
+		name: "Meganiumite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 548,
+		megaStone: "Meganium-Mega",
+		megaEvolves: "Meganium",
+		itemUser: ["Meganium"],
+		onTakeItem(item, source) {if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2563,
+		gen: 9,
+	},
+	metagrossite: {
+		name: "Metagrossite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 618,
+		megaStone: "Metagross-Mega",
+		megaEvolves: "Metagross",
+		itemUser: ["Metagross"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 758,
+		gen: 6,
+	},
+	mewtwonitex: {
+		name: "Mewtwonite X",
+		itemClass: ['megastone', 'species'],
+		spritenum: 600,
+		megaStone: "Mewtwo-Mega-X",
+		megaEvolves: "Mewtwo",
+		itemUser: ["Mewtwo"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 662,
+		gen: 6,
+	},
+	mewtwonitey: {
+		name: "Mewtwonite Y",
+		itemClass: ['megastone', 'species'],
+		spritenum: 601,
+		megaStone: "Mewtwo-Mega-Y",
+		megaEvolves: "Mewtwo",
+		itemUser: ["Mewtwo"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 663,
+		gen: 6,
+	},
+	pidgeotite: {
+		name: "Pidgeotite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 622,
+		megaStone: "Pidgeot-Mega",
+		megaEvolves: "Pidgeot",
+		itemUser: ["Pidgeot"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 762,
+		gen: 6,
+	},
+	pinsirite: {
+		name: "Pinsirite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 602,
+		megaStone: "Pinsir-Mega",
+		megaEvolves: "Pinsir",
+		itemUser: ["Pinsir"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 671,
+		gen: 6,
+	},
+	pyroarite: {
+		name: "Pyroarite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 561,
+		megaStone: "Pyroar-Mega",
+		megaEvolves: "Pyroar",
+		itemUser: ["Pyroar"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2578,
+		gen: 9,
+	},
+	sablenite: {
+		name: "Sablenite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 614,
+		megaStone: "Sableye-Mega",
+		megaEvolves: "Sableye",
+		itemUser: ["Sableye"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 754,
+		gen: 6,
+	},
+	salamencite: {
+		name: "Salamencite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 627,
+		megaStone: "Salamence-Mega",
+		megaEvolves: "Salamence",
+		itemUser: ["Salamence"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 769,
+		gen: 6,
+	},
+	sceptilite: {
+		name: "Sceptilite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 613,
+		megaStone: "Sceptile-Mega",
+		megaEvolves: "Sceptile",
+		itemUser: ["Sceptile"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 753,
+		gen: 6,
+	},
+	scizorite: {
+		name: "Scizorite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 605,
+		megaStone: "Scizor-Mega",
+		megaEvolves: "Scizor",
+		itemUser: ["Scizor"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 670,
+		gen: 6,
+	},
+	scolipite: {
+		name: "Scolipite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 554,
+		megaStone: "Scolipede-Mega",
+		megaEvolves: "Scolipede",
+		itemUser: ["Scolipede"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2571,
+		gen: 9,
+	},
+	scraftinite: {
+		name: "Scraftinite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 555,
+		megaStone: "Scrafty-Mega",
+		megaEvolves: "Scrafty",
+		itemUser: ["Scrafty"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2572,
+		gen: 9,
+	},
+	sharpedonite: {
+		name: "Sharpedonite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 619,
+		megaStone: "Sharpedo-Mega",
+		megaEvolves: "Sharpedo",
+		itemUser: ["Sharpedo"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 759,
+		gen: 6,
+	},
+	skarmorite: {
+		name: "Skarmorite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 550,
+		megaStone: "Skarmory-Mega",
+		megaEvolves: "Skarmory",
+		itemUser: ["Skarmory"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2565,
+		gen: 9,
+	},
+	slowbronite: {
+		name: "Slowbronite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 620,
+		megaStone: "Slowbro-Mega",
+		megaEvolves: "Slowbro",
+		itemUser: ["Slowbro"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 760,
+		gen: 6,
+	},
+	starminite: {
+		name: "Starminite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 546,
+		megaStone: "Starmie-Mega",
+		megaEvolves: "Starmie",
+		itemUser: ["Starmie"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2561,
+		gen: 9,
+	},
+	steelixite: {
+		name: "Steelixite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 621,
+		megaStone: "Steelix-Mega",
+		megaEvolves: "Steelix",
+		itemUser: ["Steelix"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 761,
+		gen: 6,
+	},
+	swampertite: {
+		name: "Swampertite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 612,
+		megaStone: "Swampert-Mega",
+		megaEvolves: "Swampert",
+		itemUser: ["Swampert"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 752,
+		gen: 6,
+	},
+	tyranitarite: {
+		name: "Tyranitarite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 607,
+		megaStone: "Tyranitar-Mega",
+		megaEvolves: "Tyranitar",
+		itemUser: ["Tyranitar"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 669,
+		gen: 6,
+	},
+	venusaurite: {
+		name: "Venusaurite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 608,
+		megaStone: "Venusaur-Mega",
+		megaEvolves: "Venusaur",
+		itemUser: ["Venusaur"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 659,
+		gen: 6,
+	},
+	victreebelite: {
+		name: "Victreebelite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 545,
+		megaStone: "Victreebel-Mega",
+		megaEvolves: "Victreebel",
+		itemUser: ["Victreebel"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2560,
+		gen: 9,
+	},
+	zygardite: {
+		name: "Zygardite",
+		itemClass: ['megastone', 'species'],
+		spritenum: 568,
+		megaStone: "Zygarde-Mega",
+		megaEvolves: "Zygarde-Complete",
+		itemUser: ["Zygarde-Complete"],
+		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
+			return true;
+		},
+		num: 2584,
+		gen: 9,
 	},
 	// #region EV Training Items
 	poweranklet: {
@@ -4970,1049 +5860,274 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		num: 106,
 		gen: 4,
 	},
-	// #region Mega Stones
-	aerodactylite: {
-		name: "Aerodactylite",
-		spritenum: 577,
-		megaStone: "Aerodactyl-Mega",
-		megaEvolves: "Aerodactyl",
-		itemUser: ["Aerodactyl"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 672,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	aggronite: {
-		name: "Aggronite",
-		spritenum: 578,
-		megaStone: "Aggron-Mega",
-		megaEvolves: "Aggron",
-		itemUser: ["Aggron"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 667,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	alakazite: {
-		name: "Alakazite",
-		spritenum: 579,
-		megaStone: "Alakazam-Mega",
-		megaEvolves: "Alakazam",
-		itemUser: ["Alakazam"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 679,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	altarianite: {
-		name: "Altarianite",
-		spritenum: 615,
-		megaStone: "Altaria-Mega",
-		megaEvolves: "Altaria",
-		itemUser: ["Altaria"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 755,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	ampharosite: {
-		name: "Ampharosite",
-		spritenum: 580,
-		megaStone: "Ampharos-Mega",
-		megaEvolves: "Ampharos",
-		itemUser: ["Ampharos"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 658,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	audinite: {
-		name: "Audinite",
-		spritenum: 617,
-		megaStone: "Audino-Mega",
-		megaEvolves: "Audino",
-		itemUser: ["Audino"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 757,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	banettite: {
-		name: "Banettite",
-		spritenum: 582,
-		megaStone: "Banette-Mega",
-		megaEvolves: "Banette",
-		itemUser: ["Banette"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 668,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-   barbaracite: {
-       name: "Barbaracite",
-       spritenum: 564,
-       megaStone: "Barbaracle-Mega",
-       megaEvolves: "Barbaracle",
-       itemUser: ["Barbaracle"],
-       onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-           return true;
-       },
-       num: 2581,
-       gen: 9,
-       isNonstandard: "Future",
-   },
-   beedrillite: {
-       name: "Beedrillite",
-       spritenum: 628,
-       megaStone: "Beedrill-Mega",
-       megaEvolves: "Beedrill",
-       itemUser: ["Beedrill"],
-       onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-           return true;
-       },
-       num: 770,
-       gen: 6,
-       isNonstandard: "Past",
-   },
-   blastoisinite: {
-       name: "Blastoisinite",
-       spritenum: 583,
-       megaStone: "Blastoise-Mega",
-       megaEvolves: "Blastoise",
-       itemUser: ["Blastoise"],
-       onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-           return true;
-       },
-       num: 661,
-       gen: 6,
-       isNonstandard: "Past",
-   },
-   blazikenite: {
-       name: "Blazikenite",
-       spritenum: 584,
-       megaStone: "Blaziken-Mega",
-       megaEvolves: "Blaziken",
-       itemUser: ["Blaziken"],
-       onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-           return true;
-       },
-       num: 664,
-       gen: 6,
-       isNonstandard: "Past",
-   },
-   cameruptite: {
-       name: "Cameruptite",
-       spritenum: 625,
-       megaStone: "Camerupt-Mega",
-       megaEvolves: "Camerupt",
-       itemUser: ["Camerupt"],
-       onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-           return true;
-       },
-       num: 767,
-       gen: 6,
-       isNonstandard: "Past",
-   },
-   chandelurite: {
-       name: "Chandelurite",
-       spritenum: 557,
-       megaStone: "Chandelure-Mega",
-       megaEvolves: "Chandelure",
-       itemUser: ["Chandelure"],
-       onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-           return true;
-       },
-       num: 2574,
-       gen: 9,
-       isNonstandard: "Future",
-   },
-   charizarditex: {
-       name: "Charizardite X",
-       spritenum: 585,
-       megaStone: "Charizard-Mega-X",
-       megaEvolves: "Charizard",
-       itemUser: ["Charizard"],
-       onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-           return true;
-       },
-       num: 660,
-       gen: 6,
-       isNonstandard: "Past",
-   },
-   charizarditey: {
-       name: "Charizardite Y",
-       spritenum: 586,
-       megaStone: "Charizard-Mega-Y",
-       megaEvolves: "Charizard",
-       itemUser: ["Charizard"],
-       onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-           return true;
-       },
-       num: 678,
-       gen: 6,
-       isNonstandard: "Past",
-   },
-   chesnaughtite: {
-       name: "Chesnaughtite",
-       spritenum: 558,
-       megaStone: "Chesnaught-Mega",
-       megaEvolves: "Chesnaught",
-       itemUser: ["Chesnaught"],
-       onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-           return true;
-       },
-       num: 2575,
-       gen: 9,
-       isNonstandard: "Future",
-   },
-   clefablite: {
-		name: "Clefablite",
-		spritenum: 544,
-		megaStone: "Clefable-Mega",
-		megaEvolves: "Clefable",
-		itemUser: ["Clefable"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2559,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	delphoxite: {
-		name: "Delphoxite",
-		spritenum: 559,
-		megaStone: "Delphox-Mega",
-		megaEvolves: "Delphox",
-		itemUser: ["Delphox"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2576,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	diancite: {
-		name: "Diancite",
-		spritenum: 624,
-		megaStone: "Diancie-Mega",
-		megaEvolves: "Diancie",
-		itemUser: ["Diancie"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 764,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	dragalgite: {
-		name: "Dragalgite",
-		spritenum: 565,
-		megaStone: "Dragalge-Mega",
-		megaEvolves: "Dragalge",
-		itemUser: ["Dragalge"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2582,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	dragoninite: {
-		name: "Dragoninite",
-		spritenum: 547,
-		megaStone: "Dragonite-Mega",
-		megaEvolves: "Dragonite",
-		itemUser: ["Dragonite"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2562,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	drampanite: {
-		name: "Drampanite",
-		spritenum: 569,
-		megaStone: "Drampa-Mega",
-		megaEvolves: "Drampa",
-		itemUser: ["Drampa"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2585,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	eelektrossite: {
-		name: "Eelektrossite",
-		spritenum: 556,
-		megaStone: "Eelektross-Mega",
-		megaEvolves: "Eelektross",
-		itemUser: ["Eelektross"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2573,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	emboarite: {
-		name: "Emboarite",
-		spritenum: 552,
-		megaStone: "Emboar-Mega",
-		megaEvolves: "Emboar",
-		itemUser: ["Emboar"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2569,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	excadrite: {
-		name: "Excadrite",
-		spritenum: 553,
-		megaStone: "Excadrill-Mega",
-		megaEvolves: "Excadrill",
-		itemUser: ["Excadrill"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2570,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	falinksite: {
-		name: "Falinksite",
-		spritenum: 570,
-		megaStone: "Falinks-Mega",
-		megaEvolves: "Falinks",
-		itemUser: ["Falinks"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2586,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	feraligite: {
-		name: "Feraligite",
-		spritenum: 549,
-		megaStone: "Feraligatr-Mega",
-		megaEvolves: "Feraligatr",
-		itemUser: ["Feraligatr"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2564,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	floettite: {
-		name: "Floettite",
-		spritenum: 562,
-		megaStone: "Floette-Mega",
-		megaEvolves: "Floette-Eternal",
-		itemUser: ["Floette-Eternal"],
-		onTakeItem(item, source) { if ([item.megaEvolves, item.megaStone].includes(source.baseSpecies.name)) return false;
-			return true;
-		},
-		num: 2579,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	froslassite: {
-		name: "Froslassite",
-		spritenum: 551,
-		megaStone: "Froslass-Mega",
-		megaEvolves: "Froslass",
-		itemUser: ["Froslass"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2566,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	galladite: {
-		name: "Galladite",
-		spritenum: 616,
-		megaStone: "Gallade-Mega",
-		megaEvolves: "Gallade",
-		itemUser: ["Gallade"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 756,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	garchompite: {
-		name: "Garchompite",
-		spritenum: 573,
-		megaStone: "Garchomp-Mega",
-		megaEvolves: "Garchomp",
-		itemUser: ["Garchomp"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 683,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	gardevoirite: {
-		name: "Gardevoirite",
-		spritenum: 587,
-		megaStone: "Gardevoir-Mega",
-		megaEvolves: "Gardevoir",
-		itemUser: ["Gardevoir"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 657,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	gengarite: {
-		name: "Gengarite",
-		spritenum: 588,
-		megaStone: "Gengar-Mega",
-		megaEvolves: "Gengar",
-		itemUser: ["Gengar"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 656,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	glalitite: {
-		name: "Glalitite",
-		spritenum: 623,
-		megaStone: "Glalie-Mega",
-		megaEvolves: "Glalie",
-		itemUser: ["Glalie"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 763,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	greninjiite: { // TODO: Figure out if this works on Greninja-Bond
-		name: "Greninjite",
-		spritenum: 560,
-		megaStone: "Greninja-Mega",
-		megaEvolves: "Greninja",
-		itemUser: ["Greninja"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2577,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	gyaradosite: {
-		name: "Gyaradosite",
-		spritenum: 589,
-		megaStone: "Gyarados-Mega",
-		megaEvolves: "Gyarados",
-		itemUser: ["Gyarados"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 676,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	hawluchanite: {
-		name: "Hawluchanite",
-		spritenum: 566,
-		megaStone: "Hawlucha-Mega",
-		megaEvolves: "Hawlucha",
-		itemUser: ["Hawlucha"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2583,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	heracronite: {
-		name: "Heracronite",
-		spritenum: 590,
-		megaStone: "Heracross-Mega",
-		megaEvolves: "Heracross",
-		itemUser: ["Heracross"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 680,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	houndoominite: {
-		name: "Houndoominite",
-		spritenum: 591,
-		megaStone: "Houndoom-Mega",
-		megaEvolves: "Houndoom",
-		itemUser: ["Houndoom"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 666,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	kangaskhanite: {
-		name: "Kangaskhanite",
-		spritenum: 592,
-		megaStone: "Kangaskhan-Mega",
-		megaEvolves: "Kangaskhan",
-		itemUser: ["Kangaskhan"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 675,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	latiasite: {
-		name: "Latiasite",
-		spritenum: 629,
-		megaStone: "Latias-Mega",
-		megaEvolves: "Latias",
-		itemUser: ["Latias"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 684,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	latiosite: {
-		name: "Latiosite",
-		spritenum: 630,
-		megaStone: "Latios-Mega",
-		megaEvolves: "Latios",
-		itemUser: ["Latios"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 685,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	lopunnite: {
-		name: "Lopunnite",
-		spritenum: 626,
-		megaStone: "Lopunny-Mega",
-		megaEvolves: "Lopunny",
-		itemUser: ["Lopunny"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 768,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	lucarionite: {
-		name: "Lucarionite",
-		spritenum: 594,
-		megaStone: "Lucario-Mega",
-		megaEvolves: "Lucario",
-		itemUser: ["Lucario"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 673,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	malamarite: {
-		name: "Malamarite",
-		spritenum: 563,
-		megaStone: "Malamar-Mega",
-		megaEvolves: "Malamar",
-		itemUser: ["Malamar"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2580,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	manectite: {
-		name: "Manectite",
-		spritenum: 596,
-		megaStone: "Manectric-Mega",
-		megaEvolves: "Manectric",
-		itemUser: ["Manectric"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 682,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	mawilite: {
-		name: "Mawilite",
-		spritenum: 598,
-		megaStone: "Mawile-Mega",
-		megaEvolves: "Mawile",
-		itemUser: ["Mawile"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 681,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	medichamite: {
-		name: "Medichamite",
-		spritenum: 599,
-		megaStone: "Medicham-Mega",
-		megaEvolves: "Medicham",
-		itemUser: ["Medicham"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 665,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	meganiumite: {
-		name: "Meganiumite",
-		spritenum: 548,
-		megaStone: "Meganium-Mega",
-		megaEvolves: "Meganium",
-		itemUser: ["Meganium"],
-		onTakeItem(item, source) {if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2563,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	metagrossite: {
-		name: "Metagrossite",
-		spritenum: 618,
-		megaStone: "Metagross-Mega",
-		megaEvolves: "Metagross",
-		itemUser: ["Metagross"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 758,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	mewtwonitex: {
-		name: "Mewtwonite X",
-		spritenum: 600,
-		megaStone: "Mewtwo-Mega-X",
-		megaEvolves: "Mewtwo",
-		itemUser: ["Mewtwo"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 662,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	mewtwonitey: {
-		name: "Mewtwonite Y",
-		spritenum: 601,
-		megaStone: "Mewtwo-Mega-Y",
-		megaEvolves: "Mewtwo",
-		itemUser: ["Mewtwo"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 663,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	pidgeotite: {
-		name: "Pidgeotite",
-		spritenum: 622,
-		megaStone: "Pidgeot-Mega",
-		megaEvolves: "Pidgeot",
-		itemUser: ["Pidgeot"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 762,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	pinsirite: {
-		name: "Pinsirite",
-		spritenum: 602,
-		megaStone: "Pinsir-Mega",
-		megaEvolves: "Pinsir",
-		itemUser: ["Pinsir"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 671,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	pyroarite: {
-		name: "Pyroarite",
-		spritenum: 561,
-		megaStone: "Pyroar-Mega",
-		megaEvolves: "Pyroar",
-		itemUser: ["Pyroar"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2578,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	sablenite: {
-		name: "Sablenite",
-		spritenum: 614,
-		megaStone: "Sableye-Mega",
-		megaEvolves: "Sableye",
-		itemUser: ["Sableye"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 754,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	salamencite: {
-		name: "Salamencite",
-		spritenum: 627,
-		megaStone: "Salamence-Mega",
-		megaEvolves: "Salamence",
-		itemUser: ["Salamence"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 769,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	sceptilite: {
-		name: "Sceptilite",
-		spritenum: 613,
-		megaStone: "Sceptile-Mega",
-		megaEvolves: "Sceptile",
-		itemUser: ["Sceptile"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 753,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	scizorite: {
-		name: "Scizorite",
-		spritenum: 605,
-		megaStone: "Scizor-Mega",
-		megaEvolves: "Scizor",
-		itemUser: ["Scizor"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 670,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	scolipite: {
-		name: "Scolipite",
-		spritenum: 554,
-		megaStone: "Scolipede-Mega",
-		megaEvolves: "Scolipede",
-		itemUser: ["Scolipede"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2571,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	scraftinite: {
-		name: "Scraftinite",
-		spritenum: 555,
-		megaStone: "Scrafty-Mega",
-		megaEvolves: "Scrafty",
-		itemUser: ["Scrafty"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2572,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	sharpedonite: {
-		name: "Sharpedonite",
-		spritenum: 619,
-		megaStone: "Sharpedo-Mega",
-		megaEvolves: "Sharpedo",
-		itemUser: ["Sharpedo"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 759,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	skarmorite: {
-		name: "Skarmorite",
-		spritenum: 550,
-		megaStone: "Skarmory-Mega",
-		megaEvolves: "Skarmory",
-		itemUser: ["Skarmory"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2565,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	slowbronite: {
-		name: "Slowbronite",
-		spritenum: 620,
-		megaStone: "Slowbro-Mega",
-		megaEvolves: "Slowbro",
-		itemUser: ["Slowbro"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 760,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	starminite: {
-		name: "Starminite",
-		spritenum: 546,
-		megaStone: "Starmie-Mega",
-		megaEvolves: "Starmie",
-		itemUser: ["Starmie"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2561,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	steelixite: {
-		name: "Steelixite",
-		spritenum: 621,
-		megaStone: "Steelix-Mega",
-		megaEvolves: "Steelix",
-		itemUser: ["Steelix"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 761,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	swampertite: {
-		name: "Swampertite",
-		spritenum: 612,
-		megaStone: "Swampert-Mega",
-		megaEvolves: "Swampert",
-		itemUser: ["Swampert"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 752,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	tyranitarite: {
-		name: "Tyranitarite",
-		spritenum: 607,
-		megaStone: "Tyranitar-Mega",
-		megaEvolves: "Tyranitar",
-		itemUser: ["Tyranitar"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 669,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	venusaurite: {
-		name: "Venusaurite",
-		spritenum: 608,
-		megaStone: "Venusaur-Mega",
-		megaEvolves: "Venusaur",
-		itemUser: ["Venusaur"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 659,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	victreebelite: {
-		name: "Victreebelite",
-		spritenum: 545,
-		megaStone: "Victreebel-Mega",
-		megaEvolves: "Victreebel",
-		itemUser: ["Victreebel"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2560,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	zygardite: {
-		name: "Zygardite",
-		spritenum: 568,
-		megaStone: "Zygarde-Mega",
-		megaEvolves: "Zygarde-Complete",
-		itemUser: ["Zygarde-Complete"],
-		onTakeItem(item, source) { if (item.megaEvolves === source.baseSpecies.baseSpecies) return false;
-			return true;
-		},
-		num: 2584,
-		gen: 9,
-		isNonstandard: "Future",
-	},
-	// #region Fossils
-	armorfossil: {
-		name: "Armor Fossil",
-		spritenum: 12,
-		fling: { basePower: 100, },
-		num: 104,
-		gen: 4,
-		isNonstandard: "Past",
-	},
-	clawfossil: {
-		name: "Claw Fossil",
-		spritenum: 72,
-		fling: { basePower: 100, },
-		num: 100,
-		gen: 3,
-		isNonstandard: "Past",
-	},
-	coverfossil: {
-		name: "Cover Fossil",
-		spritenum: 85,
-		fling: { basePower: 100, },
-		num: 572,
-		gen: 5,
-		isNonstandard: "Past",
-	},
-	domefossil: {
-		name: "Dome Fossil",
-		spritenum: 102,
-		fling: { basePower: 100, },
-		num: 102,
-		gen: 3,
-		isNonstandard: "Past",
-	},
-	fossilizedbird: {
-		name: "Fossilized Bird",
-		spritenum: 700,
-		fling: { basePower: 100, },
-		num: 1105,
-		gen: 8,
-		isNonstandard: "Past",
-	},
-	fossilizeddino: {
-		name: "Fossilized Dino",
-		spritenum: 703,
-		fling: { basePower: 100, },
-		num: 1108,
-		gen: 8,
-		isNonstandard: "Past",
-	},
-	fossilizeddrake: {
-		name: "Fossilized Drake",
-		spritenum: 702,
-		fling: { basePower: 100, },
-		num: 1107,
-		gen: 8,
-		isNonstandard: "Past",
-	},
-	fossilizedfish: {
-		name: "Fossilized Fish",
-		spritenum: 701,
-		fling: { basePower: 100, },
-		num: 1106,
-		gen: 8,
-		isNonstandard: "Past",
-	},
-	helixfossil: {
-		name: "Helix Fossil",
-		spritenum: 195,
-		fling: { basePower: 100, },
-		num: 101,
-		gen: 3,
-		isNonstandard: "Past",
-	},
-	jawfossil: {
-		name: "Jaw Fossil",
-		spritenum: 694,
-		fling: { basePower: 100, },
-		num: 710,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	oldamber: {
-		name: "Old Amber",
-		spritenum: 314,
-		fling: { basePower: 100, },
-		num: 103,
-		gen: 3,
-		isNonstandard: "Past",
-	},
-	plumefossil: {
-		name: "Plume Fossil",
-		spritenum: 339,
-		fling: { basePower: 100, },
-		num: 573,
-		gen: 5,
-		isNonstandard: "Past",
-	},
-	rootfossil: {
-		name: "Root Fossil",
-		spritenum: 418,
-		fling: { basePower: 100, },
-		num: 99,
-		gen: 3,
-		isNonstandard: "Past",
-	},
-	sailfossil: {
-		name: "Sail Fossil",
-		spritenum: 695,
-		fling: { basePower: 100, },
-		num: 711,
-		gen: 6,
-		isNonstandard: "Past",
-	},
-	skullfossil: {
-		name: "Skull Fossil",
-		spritenum: 449,
-		fling: { basePower: 100, },
-		num: 105,
-		gen: 4,
-		isNonstandard: "Past",
-	},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	//region Gen 2 items
+berserkgene: {
+	name: "Berserk Gene",
+	spritenum: 388,
+	onUpdate(pokemon) { if (pokemon.useItem()) { pokemon.addVolatile('confusion'); } },
+	boosts: { atk: 2, },
+	num: 0,
+	gen: 2,
+	isNonstandard: "Past",
+},
+berry: {
+	name: "Berry",
+	itemClass: ['berry'],
+	spritenum: 319,
+	isBerry: true,
+	onResidualOrder: 10,
+	onResidual(pokemon) { if (pokemon.hp <= pokemon.maxhp / 2) { pokemon.eatItem(); } },
+	onTryEatItem(item, pokemon) { if (!this.runEvent('TryHeal', pokemon, null, this.effect, 10)) return false; },
+	onEat(pokemon) { this.heal(10); },
+	num: 155,
+	gen: 2,
+	isNonstandard: "Past",
+},
+bitterberry: {
+	name: "Bitter Berry",
+	itemClass: ['berry'],
+	spritenum: 334,
+	isBerry: true,
+	onUpdate(pokemon) { if (pokemon.volatiles['confusion']) { pokemon.eatItem(); } },
+	onEat(pokemon) { pokemon.removeVolatile('confusion'); },
+	num: 156,
+	gen: 2,
+	isNonstandard: "Past",
+},
+burntberry: {
+	name: "Burnt Berry",
+	itemClass: ['berry'],
+	spritenum: 13,
+	isBerry: true,
+	onUpdate(pokemon) { if (pokemon.status === 'frz') { pokemon.eatItem(); } },
+	onEat(pokemon) { if (pokemon.status === 'frz') { pokemon.cureStatus(); } },
+	num: 153,
+	gen: 2,
+	isNonstandard: "Past",
+},
+goldberry: {
+	name: "Gold Berry",
+	itemClass: ['berry'],
+	spritenum: 448,
+	isBerry: true,
+	onResidualOrder: 10,
+	onResidual(pokemon) { if (pokemon.hp <= pokemon.maxhp / 2) {  pokemon.eatItem(); } },
+	onTryEatItem(item, pokemon) { if (!this.runEvent('TryHeal', pokemon, null, this.effect, 30)) return false; },
+	onEat(pokemon) { this.heal(30); },
+	num: 158,
+	gen: 2,
+	isNonstandard: "Past",
+},
+iceberry: {
+	name: "Ice Berry",
+	itemClass: ['berry'],
+	spritenum: 381,
+	isBerry: true,
+	onUpdate(pokemon) { if (pokemon.status === 'brn') { pokemon.eatItem(); } },
+	onEat(pokemon) { if (pokemon.status === 'brn') { pokemon.cureStatus(); } },
+	num: 152,
+	gen: 2,
+	isNonstandard: "Past",
+},
+mintberry: {
+	name: "Mint Berry",
+	itemClass: ['berry'],
+	spritenum: 65,
+	isBerry: true,
+	onUpdate(pokemon) { if (pokemon.status === 'slp') { pokemon.eatItem(); } },
+	onEat(pokemon) { if (pokemon.status === 'slp') { pokemon.cureStatus(); } },
+	num: 150,
+	gen: 2,
+	isNonstandard: "Past",
+},
+miracleberry: {
+	name: "Miracle Berry",
+	itemClass: ['berry'],
+	spritenum: 262,
+	isBerry: true,
+	onUpdate(pokemon) { if (pokemon.status || pokemon.volatiles['confusion']) { pokemon.eatItem(); } },
+	onEat(pokemon) {
+		pokemon.cureStatus();
+		pokemon.removeVolatile('confusion');
+	},
+	num: 157,
+	gen: 2,
+	isNonstandard: "Past",
+},
+mysteryberry: {
+	name: "Mystery Berry",
+	itemClass: ['berry'],
+	spritenum: 244,
+	isBerry: true,
+	onUpdate(pokemon) {
+		if (!pokemon.hp) return;
+		const moveSlot = pokemon.lastMove && pokemon.getMoveData(pokemon.lastMove.id);
+		if (moveSlot && moveSlot.pp === 0) {
+			pokemon.addVolatile('leppaberry');
+			pokemon.volatiles['leppaberry'].moveSlot = moveSlot;
+			pokemon.eatItem();
+		}
+	},
+	onEat(pokemon) {
+		let moveSlot;
+		if (pokemon.volatiles['leppaberry']) {
+			moveSlot = pokemon.volatiles['leppaberry'].moveSlot;
+			pokemon.removeVolatile('leppaberry');
+		} else {
+			let pp = 99;
+			for (const possibleMoveSlot of pokemon.moveSlots) {
+				if (possibleMoveSlot.pp < pp) {
+					moveSlot = possibleMoveSlot;
+					pp = moveSlot.pp;
+				}
+			}
+		}
+		moveSlot.pp += 5;
+		if (moveSlot.pp > moveSlot.maxpp) moveSlot.pp = moveSlot.maxpp;
+		this.add('-activate', pokemon, 'item: Mystery Berry', moveSlot.move);
+	},
+	num: 154,
+	gen: 2,
+	isNonstandard: "Past",
+},
+pinkbow: {
+	name: "Pink Bow",
+	spritenum: 444,
+	onBasePower(basePower, user, target, move) { if (move.type === 'Normal') { return basePower * 1.1; } },
+	num: 251,
+	gen: 2,
+	isNonstandard: "Past",
+},
+polkadotbow: {
+	name: "Polkadot Bow",
+	spritenum: 444,
+	onBasePower(basePower, user, target, move) { if (move.type === 'Normal') { return basePower * 1.1; } },
+	num: 251,
+	gen: 2,
+	isNonstandard: "Past",
+},
+przcureberry: {
+	name: "PRZ Cure Berry",
+	itemClass: ['berry'],
+	spritenum: 63,
+	isBerry: true,
+	onUpdate(pokemon) { if (pokemon.status === 'par') { pokemon.eatItem(); } },
+	onEat(pokemon) { if (pokemon.status === 'par') { pokemon.cureStatus(); } },
+	num: 149,
+	gen: 2,
+	isNonstandard: "Past",
+},
+psncureberry: {
+	name: "PSN Cure Berry",
+	itemClass: ['berry'],
+	spritenum: 43,
+	isBerry: true,
+	onUpdate(pokemon) { if (pokemon.status === 'psn' || pokemon.status === 'tox') { pokemon.eatItem(); } },
+	onEat(pokemon) { if (pokemon.status === 'psn' || pokemon.status === 'tox') { pokemon.cureStatus(); } },
+	num: 151,
+	gen: 2,
+	isNonstandard: "Past",
+},
+
+//region CAP Items
+crucibellite: {
+		inherit: true,
+		isNonstandard: "CAP",
+	},
+vilevial: {
+	inherit: true,
+	isNonstandard: "CAP",
+},
 };

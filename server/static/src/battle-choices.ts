@@ -50,6 +50,7 @@ export interface BattleRequestActivePokemon {
 	canMegaEvoY?: boolean;
 	canUltraBurst?: boolean;
 	canTerastallize?: string;
+	canTeraEmpower?: boolean;
 	trapped?: boolean;
 	maybeTrapped?: boolean;
 	maybeDisabled?: boolean;
@@ -104,6 +105,7 @@ interface BattleMoveChoice {
 	max: boolean;
 	// gen 9
 	tera: boolean;
+	teraempower: boolean;
 }
 interface BattleSwitchChoice {
 	choiceType: 'switch' | 'team';
@@ -139,6 +141,7 @@ export class BattleChoiceBuilder {
 		z: false,
 		max: false,
 		tera: false,
+		teraempower: false,
 	};
 	alreadySwitchingIn: number[] = [];
 	alreadyMega = false;
@@ -240,6 +243,7 @@ export class BattleChoiceBuilder {
 				z: false,
 				max: false,
 				tera: false,
+				teraempower: false,
 			};
 		} else if (choice.choiceType === 'switch' || choice.choiceType === 'team') {
 			if (this.currentMoveRequest()?.trapped) {
@@ -351,6 +355,7 @@ export class BattleChoiceBuilder {
 				z: false,
 				max: false,
 				tera: false,
+				teraempower: false,
 			};
 			while (true) {
 				// If data ends with a number, treat it as a target location.
@@ -388,6 +393,9 @@ export class BattleChoiceBuilder {
 				} else if (choice.endsWith(' terastal')) {
 					current.tera = true;
 					choice = choice.slice(0, -9);
+				} else if (choice.endsWith(' teraempower')) {
+					current.teraempower = true;
+					choice = choice.slice(0, -13);
 				} else {
 					break;
 				}
@@ -438,6 +446,18 @@ export class BattleChoiceBuilder {
 			const move = this.currentMove(current, index);
 			if (!move || move.disabled) {
 				throw new Error(`Move ${move?.name ?? current.move} is disabled`);
+			}
+			if (current.tera && current.teraempower) {
+				throw new Error(`A move cannot both Terastallize and Tera Empower`);
+			}
+			if (current.tera && !moveRequest.canTerastallize) {
+				throw new Error(`This Pokémon cannot Terastallize now`);
+			}
+			if (current.teraempower && !moveRequest.canTeraEmpower) {
+				throw new Error(`This Pokémon cannot use Tera Empower now`);
+			}
+			if (current.teraempower && move.id !== 'terablast' && move.id !== 'terastarstorm') {
+				throw new Error(`Only Tera Blast or Tera Starstorm can be Tera Empowered`);
 			}
 			return current;
 		}
@@ -529,7 +549,8 @@ export class BattleChoiceBuilder {
 			(choice.megay ? ' megay' : '') +
 			(choice.ultra ? ' ultra' : '') +
 			(choice.z ? ' zmove' : '') +
-			(choice.tera ? ' terastallize' : '');
+			(choice.tera ? ' terastallize' : '') +
+			(choice.teraempower ? ' teraempower' : '');
 	}
 
 	/**

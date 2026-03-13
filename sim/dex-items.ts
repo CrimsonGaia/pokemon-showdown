@@ -17,7 +17,7 @@ interface FlingData {
 export interface ItemData extends Partial<Item>, PokemonEventMethods {
 	name: string;
 	/** If true, this item is considered fragile and may break/disappear under certain conditions. */
-	itemClass?: string;
+	itemClass?: string[];
 	isFragile?: boolean;
 	/** If true, this item is considered mildly fragile and will trigger its effect when disturbed, but will not break. */
 	isMildlyFragile?: boolean;
@@ -44,6 +44,8 @@ export class Item extends BasicEffect implements Readonly<BasicEffect> {
 	readonly onFragileBreak?: (this: Battle, pokemon: Pokemon, source?: Pokemon, effect?: Effect) => void;
 	// Function called when this item is mildly disturbed (mildly fragile effect).
 	readonly onMildlyFragileBreak?: (this: Battle, pokemon: Pokemon, source?: Pokemon, effect?: Effect) => void;
+
+	readonly itemClass?: string[];
 	// A Move-like object depicting what happens when Fling is used on this item.
 	readonly fling?: FlingData;
 	// A Move-like object depicting what happens when Belch is used on this item.
@@ -128,6 +130,7 @@ export class Item extends BasicEffect implements Readonly<BasicEffect> {
 		this.isMildlyFragile = !!data.isMildlyFragile;
 		this.onFragileBreak = data.onFragileBreak;
 		this.onMildlyFragileBreak = data.onMildlyFragileBreak;
+		this.itemClass = data.itemClass || undefined;
 		if (!this.gen) {
 			if (this.num >= 1124) { this.gen = 9; } 
 			else if (this.num >= 927) { this.gen = 8; } 

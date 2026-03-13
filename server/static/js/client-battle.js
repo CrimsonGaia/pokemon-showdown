@@ -10,6 +10,9 @@
 			this.choice = undefined;
 			/** are move/switch/team-preview controls currently being shown? */
 			this.controlsShown = false;
+			this.terastallizeArmedIndex = null;
+			this.teraEmpowerArmedIndex = null;
+			this.canTeraEmpower = false;
 			this.battlePaused = false;
 			this.autoTimerActivated = false;
 			this.isSideRoom = Dex.prefs('rightpanelbattles');
@@ -365,28 +368,25 @@
 		},
 		updateControlsForPlayer: function () {
 			this.callbackWaiting = true;
+
 			var act = '';
 			var switchables = [];
 			if (this.request) {
-				// TODO: investigate when to do this
 				this.updateSide();
-				if (this.request.ally) { this.addAlly(this.request.ally); }
+				if (this.request.ally) this.addAlly(this.request.ally);
 
 				act = this.request.requestType;
-				if (this.request.side) { switchables = this.battle.myPokemon; }
+				if (this.request.side) switchables = this.battle.myPokemon;
 				if (!this.finalDecision) this.finalDecision = !!this.request.noCancel;
 			}
-			if (this.choice && this.choice.waiting) { act = ''; }
+
+			if (this.choice && this.choice.waiting) {
+				act = '';
+			}
+
 			var type = this.choice ? this.choice.type : '';
 			this.canTerastallize = null;
-			// The choice object:
-			// !this.choice = nothing has been chosen
-			// this.choice.choices = array of choice strings
-			// this.choice.switchFlags = dict of pokemon indexes that have a switch pending
-			// this.choice.switchOutFlags = ???
-			// this.choice.freedomDegrees = in a switch request: number of empty slots that can't be replaced
-			// this.choice.type = determines what the current choice screen to be displayed is
-			// this.choice.waiting = true if the choice has been sent and we're just waiting for the next turn
+
 			switch (act) {
 			case 'move':
 				if (!this.choice) {
@@ -398,6 +398,7 @@
 				}
 				this.updateMoveControls(type);
 				break;
+
 			case 'switch':
 				if (!this.choice) {
 					this.choice = {
@@ -410,17 +411,19 @@
 
 					if (this.request.forceSwitch !== true) {
 						var faintedLength = _.filter(this.request.forceSwitch, function (fainted) { return fainted; }).length;
-						var freedomDegrees = faintedLength - _.filter(switchables.slice(this.battle.pokemonControlled), function (mon) { return !mon.fainted; }).length;
+						var freedomDegrees = faintedLength - _.filter(
+							switchables.slice(this.battle.pokemonControlled),
+							function (mon) { return !mon.fainted; }
+						).length;
 						this.choice.freedomDegrees = Math.max(freedomDegrees, 0);
 						this.choice.canSwitch = faintedLength - this.choice.freedomDegrees;
 					}
 				}
 				this.updateSwitchControls(type);
 				break;
+
 			case 'team':
 				if (this.battle.mySide.pokemon && !this.battle.mySide.pokemon.length) {
-					// too early, we can't determine `this.choice.count` yet
-					// TODO: send teamPreviewCount in the request object
 					this.controlsShown = false;
 					return;
 				}
@@ -431,19 +434,21 @@
 						done: 0,
 						count: 1
 					};
-					if (this.battle.gameType === 'multi') { this.choice.count = 1; }
-					if (this.battle.gameType === 'doubles') { this.choice.count = 2; }
-					if (this.battle.gameType === 'triples' || this.battle.gameType === 'rotation') { this.choice.count = 3; }
-					// Request full team order if one of our Pokémon has Illusion
-					for (var i = 0; i < switchables.length && i < 6; i++) { if (toID(switchables[i].baseAbility) === 'illusion') { this.choice.count = this.battle.myPokemon.length; } }
+					if (this.battle.gameType === 'multi') this.choice.count = 1;
+					if (this.battle.gameType === 'doubles') this.choice.count = 2;
+					if (this.battle.gameType === 'triples' || this.battle.gameType === 'rotation') this.choice.count = 3;
+					for (var i = 0; i < switchables.length && i < 6; i++) {
+						if (toID(switchables[i].baseAbility) === 'illusion') this.choice.count = this.battle.myPokemon.length;
+					}
 					if (this.battle.teamPreviewCount) {
 						var requestCount = parseInt(this.battle.teamPreviewCount, 10);
-						if (requestCount > 0 && requestCount <= switchables.length) { this.choice.count = requestCount; }
+						if (requestCount > 0 && requestCount <= switchables.length) this.choice.count = requestCount;
 					}
 					this.choice.choices = new Array(this.choice.count);
 				}
 				this.updateTeamControls(type);
 				break;
+
 			default:
 				this.updateWaitControls();
 				break;
@@ -734,12 +739,19 @@
 			var choiceIndex = (this.choice && this.choice.choices) ? this.choice.choices.length : 0;
 			var teraType = this.canTerastallize;
 
-			// Single armed state now
 			var isTeraArmed = (this.terastallizeArmedIndex === choiceIndex);
+			var isEmpowerArmed = (this.teraEmpowerArmedIndex === choiceIndex);
 
 			// Reset visuals every time
 			$fill.css({background: '', 'background-color': ''});
 			$iconWrap.hide();
+			if (isEmpowerArmed && !isTeraArmed) {
+				$fill.css({
+					'background-color': '#c0392b'
+				});
+				$iconWrap.hide();
+				$btn.attr('title', 'Tera Empower armed');
+			}
 
 			// Show the type icon when armed (either full tera OR below-full spend preview)
 			if (isTeraArmed && teraType) {
@@ -785,9 +797,39 @@
 			var choiceIndex = this.choice.choices.length;
 			// Toggle for THIS slot; only one slot can be armed at a time
 			if (this.terastallizeArmedIndex === choiceIndex) { this.terastallizeArmedIndex = null; } 
-			else { this.terastallizeArmedIndex = choiceIndex; }
+			else {
+				this.terastallizeArmedIndex = choiceIndex;
+				this.teraEmpowerArmedIndex = null;
+			}
 			// Keep the hidden checkbox in sync (purely cosmetic now)
 			this.$('input[name=terastallize]').prop('checked', this.terastallizeArmedIndex === choiceIndex);
+			this.updateTeraCharge();
+		},
+		toggleTeraEmpower: function (e) {
+			if (e) { e.preventDefault(); e.stopPropagation(); }
+
+			// Only allow during move selection
+			if (!this.request || !this.request.active || !this.choice || !this.choice.choices) return;
+
+			var st = this.getMyTeraChargeState();
+			if (!st) return;
+
+			var cur = st.cur;
+			var max = st.max;
+
+			// Empower only when not full and request says it's legal
+			if (!(this.canTeraEmpower && cur < max && cur >= 10)) return;
+
+			var choiceIndex = this.choice.choices.length;
+
+			// Toggle for THIS slot; only one slot can be armed at a time
+			if (this.teraEmpowerArmedIndex === choiceIndex) {
+				this.teraEmpowerArmedIndex = null;
+			} else {
+				this.teraEmpowerArmedIndex = choiceIndex;
+				this.terastallizeArmedIndex = null;
+			}
+
 			this.updateTeraCharge();
 		},
 		teraChargeHoverOn: function (e) {
@@ -802,13 +844,25 @@
 			this.updateTeraCharge();
 		},
 		toggleTeraCharge: function (e) {
-				if (e) { e.preventDefault(); e.stopPropagation(); }
-				this.toggleTerastallize(e);
-				this.updateControlsForPlayer();
-				this.updateTeraCharge();
-			},
+			if (e) { e.preventDefault(); e.stopPropagation(); }
 
-			uncheckMegaEvoX: function () { this.$('input[name=megaevox]').prop('checked', false); },
+			var st = this.getMyTeraChargeState();
+			if (!st) return;
+
+			var cur = st.cur;
+			var max = st.max;
+
+			if (this.canTerastallize && cur >= max) {
+				this.toggleTerastallize(e);
+			} else if (this.canTeraEmpower && cur < max && cur >= 10) {
+				this.toggleTeraEmpower(e);
+			}
+
+			this.updateControlsForPlayer();
+			this.updateTeraCharge();
+		},
+
+		uncheckMegaEvoX: function () { this.$('input[name=megaevox]').prop('checked', false); },
 		uncheckMegaEvoY: function () { this.$('input[name=megaevoy]').prop('checked', false); },
 		updateMaxMove: function () {
 			var dynaChecked = this.$('input[name=dynamax]')[0].checked;
@@ -834,6 +888,17 @@
 		openTimer: function () { app.addPopup(TimerPopup, { room: this }); },
 		updateMoveControls: function (type) {
 	var switchables = this.request && this.request.side ? this.battle.myPokemon : [];
+
+	// Fresh move requests must never reuse a team-preview choice object.
+	if (!this.choice || this.choice.teamPreview || !Array.isArray(this.choice.choices)) {
+		this.choice = {
+			choices: [],
+			switchFlags: {},
+			switchOutFlags: {}
+		};
+		type = '';
+	}
+
 	if (type !== 'movetarget') {
 		while (
 			switchables[this.choice.choices.length] &&
@@ -849,7 +914,20 @@
 	if (type === 'movetarget') pos--;
 
 	var curActive = this.request && this.request.active && this.request.active[pos];
-	if (!curActive) return;
+
+	// If pos somehow drifted out of range, reset to the current slot instead of leaving stale UI onscreen.
+	if (!curActive) {
+		this.choice.choices = [];
+		this.choice.type = '';
+		pos = 0;
+		curActive = this.request && this.request.active && this.request.active[pos];
+		if (!curActive) {
+			this.$controls.html(
+				'<div class="controls"><p>Waiting for a valid move request...</p></div>'
+			);
+			return;
+		}
+	}
 
 	var hpRatio = switchables[pos].hp / switchables[pos].maxhp;
 	var trapped = curActive.trapped;
@@ -865,6 +943,8 @@
 
 	var canTerastallize = curActive.canTerastallize || switchables[pos].canTerastallize;
 	this.canTerastallize = canTerastallize;
+	var canTeraEmpower = !!curActive.canTeraEmpower;
+	this.canTeraEmpower = canTeraEmpower;
 
 	if (canZMove && typeof canZMove[0] === 'string') {
 		canZMove = _.map(canZMove, function (m) {
@@ -1053,8 +1133,13 @@
 	var stTC = this.getMyTeraChargeState();
 	var tcCur = stTC ? stTC.cur : 0;
 	var tcMax = stTC ? stTC.max : 0;
+
 	var canTerastalNow = !!(canTerastallize && tcMax && tcCur >= tcMax);
+	var canEmpowerNow = !!(canTeraEmpower && tcCur < tcMax && tcCur >= 10);
+
 	if (!canTerastalNow) this.terastallizeArmedIndex = null;
+	if (!canEmpowerNow) this.teraEmpowerArmedIndex = null;
+	
 
 	if (checkboxes.length) moveMenu += '<div class="megaevo-box">' + checkboxes.join('') + '</div>';
 	if (this.finalDecisionMove) moveMenu += '<em class="movewarning">You <strong>might</strong> have some moves disabled, so you won\'t be able to cancel an attack!</em>';
@@ -1235,27 +1320,39 @@
 		},
 		getPlayerChoicesHTML: function () {
 			var buf = '<p>' + this.getTimerHTML() + this.getTeraChargeHTML();
-			if (!this.choice || !this.choice.waiting) { return buf + '<em>Waiting for opponent...</em></p>'; }
+
+			// Only show the waiting summary when we are actually waiting.
+			if (!this.choice || !this.choice.waiting) return buf + '</p>';
+
 			buf += '<small>';
+
 			if (this.choice.teamPreview) {
 				var myPokemon = this.battle.mySide.pokemon;
 				var leads = [];
 				var back = [];
 				var leadCount = this.battle.gameType === 'doubles' ? 2 : (this.battle.gameType === 'triples' ? 3 : 1);
-				for (var i = 0; i < leadCount; i++) { leads.push(myPokemon[this.choice.teamPreview[i] - 1].speciesForme); }
+				for (var i = 0; i < leadCount; i++) {
+					leads.push(myPokemon[this.choice.teamPreview[i] - 1].speciesForme);
+				}
 				buf += leads.join(', ') + ' will be sent out first.<br />';
-				for (var i = leadCount; i < this.choice.count; i++) { back.push(myPokemon[this.choice.teamPreview[i] - 1].speciesForme); }
+				for (var i = leadCount; i < this.choice.count; i++) {
+					back.push(myPokemon[this.choice.teamPreview[i] - 1].speciesForme);
+				}
 				if (back.length) buf += back.join(', ') + ' are in the back.<br />';
 			} else if (this.choice.choices && this.request && this.battle.myPokemon) {
 				var myPokemon = this.battle.myPokemon;
 				for (var i = 0; i < this.choice.choices.length; i++) {
+					if (!this.choice.choices[i]) continue;
+
 					var parts = this.choice.choices[i].split(' ');
-					// normalize our custom flag so it doesn't get treated like a target
 					switch (parts[0]) {
 					case 'move':
 						var move;
-						if (this.request.active[i].maxMoves && !this.request.active[i].canDynamax) { move = this.request.active[i].maxMoves.maxMoves[parseInt(parts[1], 10) - 1].move; } 
-						else {  move = this.request.active[i].moves[parseInt(parts[1], 10) - 1].move; }
+						if (this.request.active[i].maxMoves && !this.request.active[i].canDynamax) {
+							move = this.request.active[i].maxMoves.maxMoves[parseInt(parts[1], 10) - 1].move;
+						} else {
+							move = this.request.active[i].moves[parseInt(parts[1], 10) - 1].move;
+						}
 						var target = '';
 						buf += myPokemon[i].speciesForme + ' will ';
 						if (parts.length > 2) {
@@ -1289,36 +1386,45 @@
 								buf += 'Terastallize, then ';
 								targetPos = parts[3];
 							}
+							if (targetPos === 'teraempower') {
+								buf += 'Tera Empower, then ';
+								targetPos = parts[3];
+							}
 							if (targetPos) {
 								var targetActive = this.battle.farSide.active;
 								if (targetPos < 0) {
-									// Targeting your own side in doubles / triples
 									targetActive = this.battle.nearSide.active;
 									targetPos = -targetPos;
-									if (this.battle.gameType !== 'freeforall') { target += 'your '; }
+									if (this.battle.gameType !== 'freeforall') target += 'your ';
 								}
-								if (targetActive[targetPos - 1]) { target += targetActive[targetPos - 1].speciesForme; } 
-								else { target += 'slot ' + targetPos; } // targeting an empty slot
+								if (targetActive[targetPos - 1]) target += targetActive[targetPos - 1].speciesForme;
+								else target += 'slot ' + targetPos;
 							}
 						}
 						buf += 'use ' + Dex.moves.get(move).name + (target ? ' at ' + target : '') + '.<br />';
 						break;
+
 					case 'switch':
-						buf += '' + myPokemon[parts[1] - 1].speciesForme + ' will switch in';
-						if (myPokemon[i]) { buf += ', replacing ' + myPokemon[i].speciesForme; }
+						buf += myPokemon[parts[1] - 1].speciesForme + ' will switch in';
+						if (myPokemon[i]) buf += ', replacing ' + myPokemon[i].speciesForme;
 						buf += '.<br />';
 						break;
+
 					case 'shift':
 						buf += myPokemon[i].speciesForme + ' will shift position.<br />';
 						break;
+
 					case 'testfight':
 						buf += myPokemon[i].speciesForme + ' is locked into a move.<br />';
 						break;
 					}
 				}
 			}
+
 			buf += '</small></p>';
-			if (!this.finalDecision && !this.battle.hardcoreMode) { buf += '<p><small><em>Waiting for opponent...</em></small> <button class="button" name="undoChoice">Cancel</button></p>'; }
+			if (!this.finalDecision && !this.battle.hardcoreMode) {
+				buf += '<p><small><em>Waiting for opponent...</em></small> <button class="button" name="undoChoice">Cancel</button></p>';
+			}
 			return buf;
 		},
 		/**
@@ -1341,14 +1447,22 @@
 				this.setTimer('on');
 				this.autoTimerActivated = true;
 			}
+
 			request.requestType = 'move';
-			if (request.forceSwitch) { request.requestType = 'switch'; } 
-			else if (request.teamPreview) { request.requestType = 'team'; } 
-			else if (request.wait) { request.requestType = 'wait'; }
-			this.choice = choiceText ? { waiting: true } : null;
+			if (request.forceSwitch) {
+				request.requestType = 'switch';
+			} else if (request.teamPreview) {
+				request.requestType = 'team';
+			} else if (request.wait) {
+				request.requestType = 'wait';
+			}
+
+			this.choice = choiceText ? {waiting: true} : null;
 			this.finalDecision = this.finalDecisionMove = this.finalDecisionSwitch = false;
 			this.request = request;
-			if (request.side) { this.updateSideLocation(request.side); }
+			if (request.side) {
+				this.updateSideLocation(request.side);
+			}
 			this.notifyRequest();
 			this.controlsShown = false;
 			this.updateControls();
@@ -1501,8 +1615,9 @@
 	var isUltraBurst = !!(this.$('input[name=ultraburst]')[0] || '').checked;
 	var isDynamax = !!(this.$('input[name=dynamax]')[0] || '').checked;
 
-	// Only apply terastallize to the ONE slot that was armed
+	// Only apply tera mode to the ONE slot that was armed
 	var isTerastal = (this.terastallizeArmedIndex === choiceIndex);
+	var isTeraEmpower = (this.teraEmpowerArmedIndex === choiceIndex);
 
 	// Safely read target + move id from the clicked button (dispatchClickButton passes the element)
 	var target = 'normal';
@@ -1514,6 +1629,10 @@
 	var choosableTargets = { normal: 1, any: 1, adjacentAlly: 1, adjacentAllyOrSelf: 1, adjacentFoe: 1 };
 	if (this.battle.gameType === 'freeforall') delete choosableTargets['adjacentAllyOrSelf'];
 
+	// safety: never send both
+	if (isTerastal) this.teraEmpowerArmedIndex = null;
+	if (isTeraEmpower) this.terastallizeArmedIndex = null;
+
 	this.choice.choices.push(
 		'move ' + pos +
 		(isMega ? ' mega' : '') +
@@ -1521,13 +1640,13 @@
 		(isZMove ? ' zmove' : '') +
 		(isUltraBurst ? ' ultra' : '') +
 		(isDynamax ? ' dynamax' : '') +
-		(isTerastal ? ' terastallize' : '')
+		(isTerastal ? ' terastallize' : '') +
+		(isTeraEmpower ? ' teraempower' : '')
 	);
 
-	// consume arming for this slot (single mechanism now)
-	if (isTerastal) {
-		this.terastallizeArmedIndex = null;
-	}
+	// consume arming for this slot
+	this.terastallizeArmedIndex = null;
+	this.teraEmpowerArmedIndex = null;
 
 	// Targeting prompt (doubles/triples)
 	if (nearActive.length > 1 && (target in choosableTargets)) {
@@ -1684,6 +1803,8 @@
 		},
 		clearChoice: function () {
 			this.choice = null;
+			this.terastallizeArmedIndex = null;
+			this.teraEmpowerArmedIndex = null;
 			this.updateControlsForPlayer();
 		},
 		leaveBattle: function () {

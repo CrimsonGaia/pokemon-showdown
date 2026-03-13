@@ -1856,52 +1856,75 @@ this.battle.singleEvent('End', oldActive.getAbility(), (oldActive as any).abilit
 
 			return [damage, targets];
 		},
-		getDamage(
-			source, target, move,
-			suppressMessages = false
-		) {
+		getDamage(source, target, move, suppressMessages = false) {
 			if (typeof move === 'string') move = this.dex.getActiveMove(move);
-			if (typeof move === 'number') {
-				// @ts-ignore - normal damage calculation for number
-				return this.constructor.prototype.getDamage.call(this, source, target, move, suppressMessages);
+			if (typeof move === 'number') { return this.constructor.prototype.getDamage.call(this, source, target, move, suppressMessages); }
+			// Ability Shield: ignore enemy abilities during defensive damage calculation
+			if (
+				source && target && source !== target &&
+				target.hasItem && target.hasItem('abilityshield')
+			) {
+				const s = source as any;
+				const saved = {
+					ability: s.ability,
+					baseAbility: s.baseAbility,
+					ability1: s.ability1,
+					ability2: s.ability2,
+					abilityState: s.abilityState,
+					abilityState1: s.abilityState1,
+					abilityState2: s.abilityState2,
+				};
+				s.ability = 'noability';
+				s.baseAbility = 'noability';
+				s.ability1 = 'noability';
+				s.ability2 = '';
+				s.abilityState = this.battle.initEffectState({id: 'noability', target: source});
+				s.abilityState1 = s.abilityState;
+				delete s.abilityState2;
+				try {
+					// Fusion Bolt / Fusion Flare special handling still needs to respect the shield
+					const isFusionMode =
+						(move.id === 'fusionbolt' || move.id === 'fusionflare') &&
+						(move as any).fusionMode;
+					if (isFusionMode) {
+						const baseDamageCalc = this.constructor.prototype.getDamage;
+						const originalOverride = (move as any).overrideDefensiveStat;
+						(move as any).overrideDefensiveStat = 'def';
+						const damageWithDef = baseDamageCalc.call(this, source, target, move, suppressMessages);
+						(move as any).overrideDefensiveStat = 'spd';
+						const damageWithSpD = baseDamageCalc.call(this, source, target, move, suppressMessages);
+						if (originalOverride) { (move as any).overrideDefensiveStat = originalOverride; } 
+						else { delete (move as any).overrideDefensiveStat; }
+						if (typeof damageWithDef === 'number' && typeof damageWithSpD === 'number') { return Math.floor((damageWithDef + damageWithSpD) / 2); }
+						return damageWithDef === false || damageWithSpD === false ? false : damageWithDef || damageWithSpD;
+					}
+					// @ts-ignore
+					return this.constructor.prototype.getDamage.call(this, source, target, move, suppressMessages);
+				} finally {
+					s.ability = saved.ability;
+					s.baseAbility = saved.baseAbility;
+					s.ability1 = saved.ability1;
+					s.ability2 = saved.ability2;
+					s.abilityState = saved.abilityState;
+					s.abilityState1 = saved.abilityState1;
+					s.abilityState2 = saved.abilityState2;
+				}
 			}
-
 			// Check if this is Fusion Bolt or Fusion Flare in fusion mode - if so, we need custom defense calculation
 			const isFusionMode = (move.id === 'fusionbolt' || move.id === 'fusionflare') && (move as any).fusionMode;
-			
 			if (isFusionMode) {
-				// We need to manually calculate damage with averaged defense
-				// First get the base damage calculation
-				// @ts-ignore - call parent getDamage to get most of the calculation
 				const baseDamageCalc = this.constructor.prototype.getDamage;
-				
-				// Temporarily modify the move to use averaged defense
 				const originalOverride = move.overrideDefensiveStat;
-				
-				// Calculate with def
 				(move as any).overrideDefensiveStat = 'def';
 				const damageWithDef = baseDamageCalc.call(this, source, target, move, suppressMessages);
-				
-				// Calculate with spd  
 				(move as any).overrideDefensiveStat = 'spd';
 				const damageWithSpD = baseDamageCalc.call(this, source, target, move, suppressMessages);
-				
-				// Restore original
-				if (originalOverride) {
-					(move as any).overrideDefensiveStat = originalOverride;
-				} else {
-					delete (move as any).overrideDefensiveStat;
-				}
-				
-				// Average the two damage values
-				if (typeof damageWithDef === 'number' && typeof damageWithSpD === 'number') {
-					return Math.floor((damageWithDef + damageWithSpD) / 2);
-				}
-				// If either failed, return the failure
+				if (originalOverride) { (move as any).overrideDefensiveStat = originalOverride; } 
+				else { delete (move as any).overrideDefensiveStat; }
+				if (typeof damageWithDef === 'number' && typeof damageWithSpD === 'number') { return Math.floor((damageWithDef + damageWithSpD) / 2); }
 				return damageWithDef === false || damageWithSpD === false ? false : damageWithDef || damageWithSpD;
 			}
-			
-			// @ts-ignore - normal damage calculation
+			// @ts-ignore
 			return this.constructor.prototype.getDamage.call(this, source, target, move, suppressMessages);
 		},
 	},

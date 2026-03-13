@@ -398,7 +398,7 @@ export class BattleActions {
 			charge < max
 		) {
 			// CRITICAL: this is what your moves.ts checks
-			(pokemon as any).teraEmpowered = true;
+			pokemon.addVolatile('teraempowered');
 			teraEmpoweredThisMove = true;
 			// spend later only if BeforeMove succeeds
 			shouldSpendTeraCharge = true;
@@ -632,7 +632,7 @@ export class BattleActions {
 		if (move.breaksProtect) {
 			for (const target of targets) {
 				let broke = false;
-				for (const effectid of [ 'banefulbunker', 'burningbulwark', 'kingsshield', 'obstruct', 'protect', 'silktrap', 'spikyshield', ]) { if (target.removeVolatile(effectid)) broke = true; }
+				for (const effectid of [ 'banefulbunker', 'burningbulwark', 'kingsshield', 'obstruct', 'protect', 'silktrap', 'spikyshield', 'mirrorshield', ]) { if (target.removeVolatile(effectid)) broke = true; }
 				if (this.battle.gen >= 6 || !target.isAlly(pokemon)) { for (const effectid of ['craftyshield', 'matblock', 'quickguard', 'wideguard']) { if (target.side.removeSideCondition(effectid)) broke = true; } }
 				if (broke) {
 					if (move.id === 'feint') { this.battle.add('-activate', target, 'move: Feint'); } 

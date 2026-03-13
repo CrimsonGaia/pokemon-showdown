@@ -49,6 +49,7 @@
 
 
 var ISL_ALLOWED_CACHE=new WeakMap();
+var ISL_ALLOWED_ITEM_CACHE=new WeakMap();
 
 
 
@@ -166,6 +167,7 @@ Species=Species;this.
 gen=9;this.
 modid='gen9';this.
 cache=null;this.
+formats=null;this.
 REGULAR=0;this.
 WEAK=1;this.
 RESIST=2;this.
@@ -862,7 +864,8 @@ ModdedDex=function(){
 
 
 
-function ModdedDex(modid){var _this2=this;this.gen=void 0;this.modid=void 0;this.cache={Moves:{},Flags:{},Items:{},Abilities:{},Species:{},Types:{}};this.pokeballs=null;this.
+
+function ModdedDex(modid){var _this2=this;this.gen=void 0;this.modid=void 0;this.cache={Moves:{},Flags:{},Items:{},Abilities:{},Species:{},Types:{}};this.pokeballs=null;this.formats=void 0;this.
 
 
 
@@ -891,8 +894,6 @@ if(table!=null&&table.overrideMoveData&&id in table.overrideMoveData)Object.assi
 var modTable=(_window$BattleTeambui2=window.BattleTeambuilderTable)==null?void 0:_window$BattleTeambui2[_this2.modid];
 var modHas=!!(modTable!=null&&modTable.overrideMoveData&&id in modTable.overrideMoveData);
 if(modHas)Object.assign(data,modTable.overrideMoveData[id]);
-
-
 if(modHas&&base&&base.exists===false){
 data.exists=true;
 data.id||(data.id=id);
@@ -941,32 +942,57 @@ return flag;
 };this.
 
 items={
-get:function(name){var _window$BattleTeambui6;
+get:function(name){var _window$BattleTeambui6,_BattleModData,_BattleModData2,_exports;
 var id=toID(name);
 if(window.BattleAliases&&id in BattleAliases){
 name=BattleAliases[id];
 id=toID(name);
 }
 if(_this2.cache.Items.hasOwnProperty(id))return _this2.cache.Items[id];
-
 var base=Dex.items.get(name);
 var data=Object.assign({},base);
-
 for(var i=Dex.gen-1;i>=_this2.gen;i--){var _window$BattleTeambui5;
 var table=(_window$BattleTeambui5=window.BattleTeambuilderTable)==null?void 0:_window$BattleTeambui5["gen"+i];
 if(table!=null&&table.overrideItemData&&id in table.overrideItemData)Object.assign(data,table.overrideItemData[id]);
 }
-
 var modTable=(_window$BattleTeambui6=window.BattleTeambuilderTable)==null?void 0:_window$BattleTeambui6[_this2.modid];
 var modHas=!!(modTable!=null&&modTable.overrideItemData&&id in modTable.overrideItemData);
 if(modHas)Object.assign(data,modTable.overrideItemData[id]);
-
-if(modHas&&base&&base.exists===false){
+var modItems=
+((_BattleModData=window.BattleModData)==null||(_BattleModData=_BattleModData[_this2.modid])==null?void 0:_BattleModData.Items)||((_BattleModData2=
+globalThis.BattleModData)==null||(_BattleModData2=_BattleModData2[_this2.modid])==null?void 0:_BattleModData2.Items)||((_exports=
+globalThis.exports)==null||(_exports=_exports.BattleModData)==null||(_exports=_exports[_this2.modid])==null?void 0:_exports.Items);
+var modHasItemPatch=!!(modItems&&id in modItems);
+if(modHasItemPatch)Object.assign(data,modItems[id]);
+if((modHas||modHasItemPatch)&&base&&base.exists===false){
 data.exists=true;
 data.id||(data.id=id);
 data.name||(data.name=name);
 }
 
+
+
+if(_this2.modid==='gen9indigostarstorm'){var _data$num;
+var allowedSet=ISL_ALLOWED_ITEM_CACHE.get(_this2);
+if(!allowedSet){
+allowedSet=new Set();
+
+if(modItems){
+for(var itemid in modItems){
+allowedSet.add(toID(itemid));
+}
+}
+
+ISL_ALLOWED_ITEM_CACHE.set(_this2,allowedSet);
+}
+
+var num=(_data$num=data.num)!=null?_data$num:base==null?void 0:base.num;
+var isCustom=typeof num==='number'&&(num>=10000||num<0);
+
+if(!isCustom&&!allowedSet.has(id)){
+data.isNonstandard='Past';
+}
+}
 var item=new Item(id,data.name||name,data);
 _this2.cache.Items[id]=item;
 return item;
@@ -1038,7 +1064,7 @@ data.name||(data.name=name);
 
 
 
-if(_this2.modid==='gen9indigostarstorm'){var _data$num;
+if(_this2.modid==='gen9indigostarstorm'){var _data$num2;
 var allowedSet=ISL_ALLOWED_CACHE.get(_this2);
 if(!allowedSet){
 var allowedIds=[];
@@ -1061,7 +1087,7 @@ ISL_ALLOWED_CACHE.set(_this2,allowedSet);
 }
 
 
-var num=(_data$num=data.num)!=null?_data$num:base==null?void 0:base.num;
+var num=(_data$num2=data.num)!=null?_data$num2:base==null?void 0:base.num;
 var isCustom=typeof num==='number'&&(num>=10000||num<0);
 
 
@@ -1111,7 +1137,7 @@ if(_this2.gen<2)curNames.splice(curNames.indexOf('Steel'),1);
 _this2.types.namesCache=curNames;
 return curNames;
 },
-get:function(name){var _window$BattleTeambui12,_window$BattleTeambui13,_BattleModData,_BattleModData2,_exports;
+get:function(name){var _window$BattleTeambui12,_window$BattleTeambui13,_BattleModData3,_BattleModData4,_exports2;
 var id=toID(name);
 name=id.substr(0,1).toUpperCase()+id.substr(1);
 var modTablePre=(_window$BattleTeambui12=window.BattleTeambuilderTable)==null?void 0:_window$BattleTeambui12[_this2.modid];
@@ -1140,7 +1166,7 @@ break;
 if(id in table.overrideTypeChart)data=Object.assign({},data,table.overrideTypeChart[id]);
 }
 
-var modTypeChart=((_BattleModData=window.BattleModData)==null||(_BattleModData=_BattleModData[_this2.modid])==null?void 0:_BattleModData.TypeChart)||((_BattleModData2=globalThis.BattleModData)==null||(_BattleModData2=_BattleModData2[_this2.modid])==null?void 0:_BattleModData2.TypeChart)||((_exports=globalThis.exports)==null||(_exports=_exports.BattleModData)==null||(_exports=_exports[_this2.modid])==null?void 0:_exports.TypeChart);
+var modTypeChart=((_BattleModData3=window.BattleModData)==null||(_BattleModData3=_BattleModData3[_this2.modid])==null?void 0:_BattleModData3.TypeChart)||((_BattleModData4=globalThis.BattleModData)==null||(_BattleModData4=_BattleModData4[_this2.modid])==null?void 0:_BattleModData4.TypeChart)||((_exports2=globalThis.exports)==null||(_exports2=_exports2.BattleModData)==null||(_exports2=_exports2[_this2.modid])==null?void 0:_exports2.TypeChart);
 if(modTypeChart&&modTypeChart[id]){
 data=Object.assign({},data,modTypeChart[id]);
 

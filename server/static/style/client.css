@@ -9,8 +9,7 @@ html, body {
 	overflow: visible;
 	overflow-x: auto;
 	scroll-behavior: auto;
-}
-body {
+}body {
 	color: white;
 	font-size: 11pt;
 	font-family: Verdana, Helvetica, Arial, sans-serif;
@@ -24,7 +23,6 @@ body {
 	-o-background-size: cover;
 	background-size: cover;
 }
-
 .pad {
 	margin: 0;
 	padding: 5px 15px;
@@ -39,13 +37,10 @@ body {
 .buttonbar {
 	margin-top: 1em;
 	text-align: center;
-}
-
-select {
+}select {
 	font-size: 9pt;
 	font-family: Verdana, Helvetica, Arial, sans-serif;
 }
-
 .dark .tabbar a.button,
 .dark .tabbar a.button:hover {
 	box-shadow: inset 0.5px 1px 1px rgba(255, 255, 255, 0.5);
@@ -60,9 +55,7 @@ select {
 	background: #555555;
 	border-color: #5A5A5A;
 	border-top-color: #34373b;
-}
-
-/*********************************************************
+}/*********************************************************
  * Header
  *********************************************************/
 
@@ -79,7 +72,6 @@ select {
 	float: left;
 	margin: 2px 0 0 2px;
 }
-
 .userbar {
 	position: absolute;
 	top: 12px;
@@ -92,12 +84,10 @@ select {
 }
 .username {
 	cursor: pointer;
-}
-@media (max-width: 500px) {
+}@media (max-width: 500px) {
 	.usernametext {
 		display: none
-	}
-}
+	}}
 .userbar button.icon {
 	height: 25px;
 	width: 27px;
@@ -108,7 +98,6 @@ select {
 .userbar button.icon i {
 	margin: 0 -5px;
 }
-
 .tabbar {
 	position: absolute;
 	bottom: 1px;
@@ -169,12 +158,10 @@ select {
 	margin: 0;
 	border-radius: 0;
 }
-
 .button.subtle-notifying .fa-comment-o:before,
 .button.notifying .fa-comment-o:before {
 	content: "\f0e6";
 }
-
 .tabbar li,
 .tabbar ul {
 	display: block;
@@ -277,8 +264,7 @@ select {
 }
 .dark .closebutton:hover {
 	color: #EE7777;
-}
-span.header-username:hover {
+}span.header-username:hover {
 	color: #333333;
 }
 .minimizebutton:hover,
@@ -305,7 +291,6 @@ summary:hover .expandbutton,
 	/** replace the minus with a plus when PM is minimized */
 	content: "\f055";
 }
-
 .tablist li, .tablist ul {
 	/** tablist is the menu that's displayed when the window is too wide for all the tabs */
 	list-style: none;
@@ -365,9 +350,7 @@ summary:hover .expandbutton,
 }
 .tablist i.text::after {
 	content: ']';
-}
-
-/*********************************************************
+}/*********************************************************
  * Rooms
  *********************************************************/
 
@@ -395,13 +378,11 @@ summary:hover .expandbutton,
 .ps-room[data-side="left"] {
 	right: auto;
 	width: 860px;
-}
-/* Fallback: position even-indexed rooms to the right */
+}/* Fallback: position even-indexed rooms to the right */
 .mainmenuwrapper > .ps-room:nth-child(even) {
 	left: 860px !important;
 	width: auto;
-}
-/* Force right-side rooms regardless of layout mode */
+}/* Force right-side rooms regardless of layout mode */
 body .mainmenuwrapper > .ps-room.ps-room-right,
 body .mainmenuwrapper > .ps-room[data-side="right"],
 body .mainmenuwrapper > .ps-room:nth-child(even) {
@@ -426,7 +407,6 @@ body .mainmenuwrapper > .ps-room:nth-child(even) {
 	background: #EEF2F5;
 	color: black;
 }
-
 .ps-overlay {
 	position: absolute;
 	top: 0;
@@ -466,16 +446,14 @@ body .mainmenuwrapper > .ps-room:nth-child(even) {
 }
 .ps-popup h3 {
 	font-size: 12pt;
-}
-p.or {
+}p.or {
 	font-size: 12pt;
 	font-style: italic;
 	font-weight: bold;
 	color: #444444;
 	margin: 20px 0;
 	text-align: center;
-}
-p.or:before,
+}p.or:before,
 p.or:after {
 	content: "";
 	font-size: 10px;
@@ -484,15 +462,13 @@ p.or:after {
 	border-bottom: 1px solid #777777;
 	position: relative;
 	top: -7px;
-}
-p.or:after {
+}p.or:after {
 	margin: 0 0 0 9px;
 }
 .ps-popup p.error {
 	font-weight: bold;
 	color: #EE4422;
 }
-
 .popupmenu {
 	margin: -2px 0 -1px 0;
 	padding: 0;
@@ -507,21 +483,15 @@ p.or:after {
 }
 .popupmenu li:first-child h3 {
 	margin-top: 0;
-}
-@media (max-height:590px) {
+}@media (max-height:590px) {
 	.popupmenu h3 {
 		margin-top: 2px;
-	}
-	.popupmenu, popupmenu li {
+	}	.popupmenu, popupmenu li {
 		margin: -3px 0 -2px 0;
-	}
-}
-@media (max-height:518px) {
+	}}@media (max-height:518px) {
 	.popupmenu h3 {
 		margin-top: 1px;
-	}
-}
-
+	}}
 .popupmenu .option {
 	width: 204px;
 }
@@ -538,7 +508,6 @@ p.or:after {
 	opacity: 1.0;
 	filter: alpha(opacity=100);
 }
-
 .popupmenu .button {
 	margin: 2px auto 5px;
 	width: 184px;
@@ -623,9 +592,7 @@ p.or:after {
 .select.preselected,
 .select:disabled.preselected {
 	color: black;
-}
-
-/*********************************************************
+}/*********************************************************
  * Main menu
  *********************************************************/
 
@@ -649,7 +616,6 @@ p.or:after {
 .mainmenu {
 	padding: 0 0 51px 0;
 }
-
 .battleform {
 	width: 230px;
 	text-align: left;
@@ -658,7 +624,6 @@ p.or:after {
 .battleform .buttonbar {
 	text-align: center;
 }
-
 .mainmenuwrapper {
 	position: relative;
 	min-height: 100%;
@@ -689,7 +654,6 @@ p.or:after {
 	text-decoration: underline;
 	color: #CCDDFF;
 }
-
 .pmbox {
 	width: 270px;
 	margin: 0 auto;
@@ -812,7 +776,6 @@ p.or:after {
 .unread {
 	background: rgba(255,240,130,0.33);
 }
-
 .tiny-layout .leftmenu,
 .tiny-layout .activitymenu {
 	position: static;
@@ -828,8 +791,7 @@ p.or:after {
 }
 .tiny-layout .activitymenu {
 	padding-bottom: 8px;
-}
-/* Force right menu and right panels to stay at 860px even in tiny layout */
+}/* Force right menu and right panels to stay at 860px even in tiny layout */
 .tiny-layout .rightmenu {
 	position: absolute !important;
 	left: 860px !important;
@@ -844,7 +806,6 @@ p.or:after {
 	left: 860px !important;
 	width: auto !important;
 }
-
 .mainmessage {
 	display: block;
 	padding: 10px 15px;
@@ -867,7 +828,6 @@ p.or:after {
 	text-shadow: 0 1px 0 black;
 	text-align: center;
 }
-
 .mainmessage p,
 .menugroup p {
 	margin: 10px 0;
@@ -927,64 +887,49 @@ p.or:after {
 	text-shadow: none;
 	box-shadow: 0 1px 2px rgba(0,0,0,.1);
 }
-
 .button.mainmenu1 { background: linear-gradient(to bottom,  hsl(5,40%,72%),  hsl(5,40%,52%)); border-color: hsl(5,40%,40%); }
 .button.mainmenu1:hover { background: linear-gradient(to bottom,  hsl(5,40%,62%),  hsl(5,40%,42%)); }
 .button.mainmenu1:active { background: linear-gradient(to bottom,  hsl(5,40%,42%),  hsl(5,40%,58%)); }
-
 .button.mainmenu2 { background: linear-gradient(to bottom,  hsl(30,40%,72%),  hsl(30,40%,52%)); border-color: hsl(30,40%,40%); }
 .button.mainmenu2:hover { background: linear-gradient(to bottom,  hsl(30,40%,62%),  hsl(30,40%,42%)); }
 .button.mainmenu2:active { background: linear-gradient(to bottom,  hsl(30,40%,42%),  hsl(30,40%,58%)); }
-
 .button.mainmenu3 { background: linear-gradient(to bottom,  hsl(60,40%,72%),  hsl(60,40%,52%)); border-color: hsl(60,40%,40%); }
 .button.mainmenu3:hover { background: linear-gradient(to bottom,  hsl(60,40%,62%),  hsl(60,40%,42%)); }
 .button.mainmenu3:active { background: linear-gradient(to bottom,  hsl(60,40%,42%),  hsl(60,40%,58%)); }
-
 .button.mainmenu4 { background: linear-gradient(to bottom,  hsl(130,40%,72%),  hsl(130,40%,52%)); border-color: hsl(130,40%,40%); }
 .button.mainmenu4:hover { background: linear-gradient(to bottom,  hsl(130,40%,62%),  hsl(130,40%,42%)); }
 .button.mainmenu4:active { background: linear-gradient(to bottom,  hsl(130,40%,42%),  hsl(130,40%,58%)); }
-
 .button.mainmenu5 { background: linear-gradient(to bottom,  hsl(210,40%,72%),  hsl(210,40%,52%)); border-color: hsl(210,40%,40%); }
 .button.mainmenu5:hover { background: linear-gradient(to bottom,  hsl(210,40%,62%),  hsl(210,40%,42%)); }
 .button.mainmenu5:active { background: linear-gradient(to bottom,  hsl(210,40%,42%),  hsl(210,40%,58%)); }
-
 .button.mainmenu6 { background: linear-gradient(to bottom,  hsl(270,40%,72%),  hsl(270,40%,52%)); border-color: hsl(270,40%,40%); }
 .button.mainmenu6:hover { background: linear-gradient(to bottom,  hsl(270,40%,62%),  hsl(270,40%,42%)); }
 .button.mainmenu6:active { background: linear-gradient(to bottom,  hsl(270,40%,42%),  hsl(300,40%,58%)); }
-
 .rightmenu {
 	width: 294px;
 }
 .rightmenu .menugroup .button {
 	width: 180px;
-}
-@media (max-width:895px) {
+}@media (max-width:895px) {
 	.mainmenu {
 		padding-bottom: 1px;
-	}
-	.rightmenu, .tiny-layout .rightmenu {
+	}	.rightmenu, .tiny-layout .rightmenu {
 		position: static;
 		top: 0;
 		right: 0;
 		padding-bottom: 51px;
-	}
-	.rightmenu {
+	}	.rightmenu {
 		width: 324px;
-	}
-	.rightmenu .menugroup .button {
+	}	.rightmenu .menugroup .button {
 		width: 200px;
-	}
-	/* Override: force right panels to stay at 860px */
+	}	/* Override: force right panels to stay at 860px */
 	.ps-room-right,
 	.ps-room[data-side="right"],
 	.mainmenuwrapper > .ps-room:nth-child(even) {
 		position: absolute !important;
 		left: 860px !important;
 		width: auto !important;
-	}
-}
-
-/*********************************************************
+	}}/*********************************************************
  * Ladder
  *********************************************************/
 
@@ -1004,12 +949,9 @@ p.or:after {
 .ladder span {
 	color: gray;
 }
-
 .hidden {
 	display: none;
-}
-
-/*********************************************************
+}/*********************************************************
  * Room list
  *********************************************************/
 
@@ -1021,12 +963,10 @@ p.or:after {
 	max-width: 480px;
 	margin: 8px 0 15px 0;
 	text-align: center;
-}
-@media (max-width: 382px) {
+}@media (max-width: 382px) {
 	.roomcounters {
 		margin: 38px 0 15px 0;
-	}
-}
+	}}
 .roomcounters button {
 	margin: 0 auto;
 	width: 120px;
@@ -1041,8 +981,7 @@ p.or:after {
 	display: block;
 	font-size: 18pt;
 	font-weight: normal;
-}
- .roomcounters .usercount {
+} .roomcounters .usercount {
 	display: block;
 	width: 49px;
 	height: 63px;
@@ -1087,9 +1026,7 @@ p.or:after {
 	margin: 0;
 	vertical-align: middle;
 	font-size: 8pt;
-}
-
-/*********************************************************
+}/*********************************************************
  * Chat
  *********************************************************/
 
@@ -1170,7 +1107,6 @@ p.or:after {
 .pm-log .inner {
 	padding: 4px 8px 6px 8px;
 }
-
 .chatbox {
 	margin: 0 10px 0 80px;
 	padding: 5px 0 0 0;
@@ -1200,16 +1136,13 @@ p.or:after {
 	font-family: Verdana, Helvetica, Arial, sans-serif;
 	overflow-x: hidden;
 	overflow-wrap: break-word;
-}
-
-/* Tournaments */
+}/* Tournaments */
 
 .tournaments-info > ul {
 	list-style: none;
 	margin: 0;
 	padding: 0;
 }
-
 .tournament-wrapper {
 	display: none;
 	position: absolute;
@@ -1227,7 +1160,6 @@ p.or:after {
 .tournament-wrapper.active + .chat-log {
 	top: 2.4em;
 }
-
 .tournament-title {
 	font-weight: bold;
 	cursor: pointer;
@@ -1238,7 +1170,6 @@ p.or:after {
 .dark .tournament-title:hover {
 	background: rgba(50, 50, 50, 0.85);
 }
-
 .tournament-status, .tournament-toggle {
 	position: absolute;
 	top: 0;
@@ -1255,7 +1186,6 @@ p.or:after {
 	right: 0;
 	border-left: 1px #aaa solid;
 }
-
 .tournament-box {
 	position: absolute;
 	top: 2em;
@@ -1272,7 +1202,6 @@ p.or:after {
 	-webkit-transition: max-height 0.15s;
 	touch-action: none;
 }
-
 .tournament-bracket {
 	max-height: 200px;
 	padding: 10px;
@@ -1280,7 +1209,6 @@ p.or:after {
 	font-size: 8pt;
 	touch-action: none;
 }
-
 .tournament-bracket-overflowing {
 	height: 200px;
 	padding: 0;
@@ -1289,8 +1217,6 @@ p.or:after {
 	top: 0;
 	touch-action: none;
 }
-
-
 .tournament-popout-link {
 	position: absolute;
 	bottom: 0.5em;
@@ -1319,7 +1245,6 @@ p.or:after {
 	right: 0.5em;
 	bottom: 0;
 }
-
 .tournament-bracket-table {
 	margin: 0 auto;
 	empty-cells: hide;
@@ -1349,7 +1274,6 @@ p.or:after {
 	background-color: rgba(255, 128, 128, 0.7);
 	color: black;
 }
-
 .tournament-bracket-tree {
 	text-align: center;
 }
@@ -1414,7 +1338,6 @@ p.or:after {
 .tournament-bracket-tree-team-loss, .tournament-bracket-tree-team-draw, .tournament-bracket-tree-score {
 	font-weight: normal;
 }
-
 .tournament-tools {
 	padding: 10px;
 	display: none;
@@ -1436,7 +1359,6 @@ p.or:after {
 .tournament-tools .button {
 	font-size: 9pt;
 }
-
 .tournament-join,
 .tournament-leave,
 .tournament-validate {
@@ -1447,7 +1369,6 @@ p.or:after {
 .tournament-validate.active {
 	display: inline;
 }
-
 .tournament-nomatches,
 .tournament-challenge,
 .tournament-challengeby,
@@ -1462,7 +1383,6 @@ p.or:after {
 .tournament-challenged.active {
 	display: block;
 }
-
 .tournament-message-create,
 .tournament-message-start,
 .tournament-message-forceend,
@@ -1480,9 +1400,7 @@ p.or:after {
 	position: relative;
 	left: 0;
 	top: 0;
-}
-
-/* Userlist */
+}/* Userlist */
 
 .userlist {
 	display: block;
@@ -1577,8 +1495,7 @@ p.or:after {
 	white-space: nowrap;
 	font: 9pt Verdana, sans-serif;
 	text-align: left;
-}
-/* Remove Firefox's magic padding */
+}/* Remove Firefox's magic padding */
 .userlist li button::-moz-focus-inner {
 	padding: 0;
 }
@@ -1595,9 +1512,7 @@ p.or:after {
 .userlist li.cur button:hover {
 	background: white;
 	margin: 0 0 0 -1px;
-}
-
-/*********************************************************
+}/*********************************************************
  * Battle
  *********************************************************/
 
@@ -1702,9 +1617,7 @@ p.or:after {
 	border-color: #BB2222;
 	background: #BB2222;
 	text-shadow: none;
-}
-
-/* Tera charge meter button (next to Timer) */
+}/* Tera charge meter button (next to Timer) */
 .terachargebutton {
 	float: right;          /* pairs with Timer’s float:right */
 	width: 190px;          /* wider than Timer */
@@ -1713,8 +1626,7 @@ p.or:after {
 	padding: 0 10px;
 	height: 24px;
 	line-height: 24px;
-}
-/* background track */
+}/* background track */
 .terachargebutton .teracharge-meter {
 	position: absolute;
 	left: 0;
@@ -1736,7 +1648,6 @@ p.or:after {
 	z-index: 1;
 	font-weight: bolder;
 }
-
 .battle-controls p {
 	margin: 2px 0 8px 0;
 	padding: 0 8px;
@@ -1832,7 +1743,6 @@ p.or:after {
 	margin: -6px -3px -6px -4px;
 	opacity: 0.8;
 }
-
 .allyparty button .hpbar,
 .switchmenu button .hpbar {
 	position: absolute;
@@ -1843,9 +1753,7 @@ p.or:after {
 	bottom: 2px; left: 4px; right: 2px;
 	border-radius: 2px;
 	opacity: .8;
-}
-
-/* The declaration order of these three hpbar* classes is significant. */
+}/* The declaration order of these three hpbar* classes is significant. */
 
 .allyparty button .hpbar span,
 .switchmenu button .hpbar span {
@@ -1855,20 +1763,16 @@ p.or:after {
 	border-top: 1px solid #3C0;
 	border-radius: 1px;
 }
-
 .allyparty button .hpbar-yellow span,
 .switchmenu button .hpbar-yellow span {
 	border-top-color: #a5aa53;
 	background-color: #a2a822;
 }
-
 .allyparty button .hpbar-red span,
 .switchmenu button .hpbar-red span {
 	border-top-color: #faa;
 	background-color: #f55;
-}
-
-/****************/
+}/****************/
 
 .allyparty button .status,
 .switchmenu button .status {
@@ -1903,7 +1807,6 @@ p.or:after {
 .status.frz {
 	background: #009AA4;
 }
-
 .movebutton {
 	float: left;
 	display: block;
@@ -2025,7 +1928,6 @@ p.or:after {
 .movebutton.pressed {
 	background: linear-gradient(to bottom,  #cfcfcf,  #f2f2f2);
 }
-
 .allyparty button.disabled,
 .allyparty button:disabled,
 .switchmenu button.disabled,
@@ -2038,9 +1940,7 @@ p.or:after {
 	-moz-box-shadow: none !important;
 	box-shadow: none !important;
 	color: #777777 !important;
-}
-
-@media (max-height:570px) and (min-width: 440px) {
+}@media (max-height:570px) and (min-width: 440px) {
 	/*
 	 * This is the black move/switch menu for low-res screens
 	 */
@@ -2055,81 +1955,61 @@ p.or:after {
 		background: rgba(40,40,40,.85);
 		color: #FFFFFF;
 		padding: 4px 8px;
-	}
-	.battle-controls .whatdo {
+	}	.battle-controls .whatdo {
 		color: #FFFFFF;
-	}
-	.battle-controls .whatdo small.weak {
+	}	.battle-controls .whatdo small.weak {
 		color: #DDDD55;
 		border-color: #DDDD55;
-	}
-	.battle-controls .whatdo small.critical {
+	}	.battle-controls .whatdo small.critical {
 		color: #FF7766;
 		border-color: #FF7766;
-	}
-	.battle-controls .movecontrols, .battle-controls .shiftcontrols, .battle-controls .switchcontrols {
+	}	.battle-controls .movecontrols, .battle-controls .shiftcontrols, .battle-controls .switchcontrols {
 		max-width: 640px;
-	}
-	.movemenu {
+	}	.movemenu {
 		display: none;
 		padding: 0 75px 0 85px;
-	}
-	.allyparty,
+	}	.allyparty,
 	.switchmenu {
 		display: none;
 		max-width: 325px;
 		padding: 0 75px 0 85px;
 		margin: 0 0 0 auto;
-	}
-	.moveselect {
+	}	.moveselect {
 		position: absolute;
 		left: 20px;
 		bottom: 20px;
-	}
-	.allyTeam,
+	}	.allyTeam,
 	.switchselect {
 		position: absolute;
 		right: 20px;
 		bottom: 20px;
-	}
-	.shiftselect {
+	}	.shiftselect {
 		position: absolute;
 		right: 150px;
 		bottom: 20px;
-	}
-	.moveselect button, .switchselect button, .shiftselect button {
+	}	.moveselect button, .switchselect button, .shiftselect button {
 		padding: 4px 8px;
 		border-radius: 6px;
 		background: #E5E5E5;
-	}
-	.megaevo-box {
+	}	.megaevo-box {
 		text-align: left;
-	}
-
-	.battle-controls .whatdo {
+	}	.battle-controls .whatdo {
 		padding-bottom: 50px;
-	}
-	.battle-controls .move-controls .whatdo,
+	}	.battle-controls .move-controls .whatdo,
 	.battle-controls .switch-controls .whatdo {
 		padding-bottom: 5px;
-	}
-	.move-controls .movemenu,
+	}	.move-controls .movemenu,
 	.switch-controls .switchmenu {
 		display: block;
 		margin-right: 0;
-	}
-	.move-controls .moveselect button,
+	}	.move-controls .moveselect button,
 	.switch-controls .switchselect button,
 	.shiftselect button {
 		background: #BBBBBB;
-	}
-	.controls .timer {
+	}	.controls .timer {
 		float: right;
 		margin-top: -25px;
-	}
-}
-
-/*********************************************************
+	}}/*********************************************************
   Teambuilder
  *********************************************************/
 
@@ -2152,16 +2032,12 @@ p.or:after {
 	bottom: 0;
 	padding: 5px 0 5px 8px;
 	overflow: auto;
-}
-@media (max-width:649px) {
+}@media (max-width:649px) {
 	.folderpane {
 		display: none;
-	}
-	.teampane {
+	}	.teampane {
 		left: 0;
-	}
-}
-
+	}}
 .folderlist {
 	height: 100%;
 	width: 154px;
@@ -2213,7 +2089,6 @@ p.or:after {
 	border-right: 1px solid #888888;
 	content: '';
 }
-
 .folderpane i {
 	display: inline-block;
 	width: 16px;
@@ -2279,9 +2154,7 @@ p.or:after {
 	border-top-left-radius: 3px;
 	border-bottom-left-radius: 3px;
 	text-decoration: none;
-}
-
-/* believe me, there was no other way to do this */
+}/* believe me, there was no other way to do this */
 .folderhack1,
 .folderhack2 {
 	position: absolute;
@@ -2302,7 +2175,6 @@ p.or:after {
 	position: relative;
 	height: 30px;
 }
-
 .teamlist {
 	list-style: none;
 	margin: 0;
@@ -2312,7 +2184,6 @@ p.or:after {
 	margin: 3px 0;
 	padding: 0;
 }
-
 .teamlist .team {
 	display: inline-block;
 	white-space: nowrap;
@@ -2358,7 +2229,6 @@ p.or:after {
 	min-height: 139px;
 	height: auto;
 }
-
 .teamedit {
 	position: absolute;
 	display: block;
@@ -2376,12 +2246,10 @@ p.or:after {
 	width: 100%;
 	height: 100%;
 }
-
 .teamwrapper {
 	transform-origin: top left;
 	-webkit-transform-origin: top left;
 }
-
 .teambar {
 	position: absolute;
 	top: 0;
@@ -2452,11 +2320,9 @@ p.or:after {
 .teamchart li.format-select option {
 	margin-right: 5px;
 }
-
 .majorbutton {
 	font-size: 14pt;
 }
-
 .setmenu {
 	position: absolute;
 	top: 5px;
@@ -2639,8 +2505,7 @@ p.or:after {
 	float: left;
 	font-size: 9pt;
 	text-align: center;
-}
-/* Position +/- small icons when EV has 3 digits */
+}/* Position +/- small icons when EV has 3 digits */
 .setstats em.ev-3 small,
 .statrow em.ev-3 small,
 .setcell .ev-3 small {
@@ -2753,7 +2618,6 @@ p.or:after {
 .setchart .setcol-moves input {
 	width: 129px;
 }
-
 .teambuilder-clipboard-container {
 	height: 58px;
 	max-width: 463px;
@@ -2855,7 +2719,7 @@ p.or:after {
 }
 .teambuilder-results {
 	position: absolute;
-	top: 242px;
+	top: 230px;
 	left: 0;
 	bottom: 0;
 	right: 0;
@@ -2863,32 +2727,25 @@ p.or:after {
 
 	overflow-y: scroll;
 	-webkit-overflow-scrolling: touch;
-}
-@media (max-height:410px) {
+}@media (max-height:410px) {
 	.teambuilder-results {
 		bottom: auto;
 		overflow-y: visible;
 		background: #EEF2F5;
 		color: black;
-	}
-	.dark .teambuilder-results {
+	}	.dark .teambuilder-results {
 		background: #0E1215;
 		color: #DDD;
-	}
-}
-@media (max-width:639px) {
+	}}@media (max-width:639px) {
 	.teambuilder-results {
 		bottom: auto;
 		overflow-y: visible;
 		background: #EEF2F5;
 		color: black;
-	}
-	.dark .teambuilder-results {
+	}	.dark .teambuilder-results {
 		background: #0E1215;
 		color: #DDD;
-	}
-}
-
+	}}
 .teamchartbox {
 	position: absolute;
 	top: 42px;
@@ -2935,11 +2792,9 @@ p.or:after {
 	border-color: #555555;
 	background: #F8F8F8;
 }
-
 .teambuilder-results .resultheader h3 {
 	border-right: 0;
 }
-
 .teambuilder-pokemon-import {
 	display: none;
 	position: absolute;
@@ -2948,14 +2803,12 @@ p.or:after {
 	padding: 2px;
 	overflow: hidden;
 }
-
 .pokemonedit {
 	width: 626px;
 	text-align: left;
 	font-size: inherit;
 	font-family: inherit;
 }
-
 .statform {
 	padding: 3px 13px 10px 13px;
 	font-size: 10pt;
@@ -3028,7 +2881,6 @@ p.or:after {
 	height: 16px;
 	font-size: 9pt;
 }
-
 .detailsform .formrow {
 	padding-left: 100px;
 }
@@ -3059,10 +2911,7 @@ p.or:after {
 .altform {
 	margin-left: 4px;
 	margin-top: 4px;
-}
-
-
-/*********************************************************
+}/*********************************************************
  * Popups
  *********************************************************/
 
@@ -3073,7 +2922,6 @@ p.or:after {
 .ps-popup .textbox {
 	width: 200px;
 }
-
 .userstatus {
 	font-style: italic;
 	font-size: 8pt;
@@ -3087,7 +2935,6 @@ p.or:after {
 	font-size: 8pt;
 	font-weight: bold;
 }
-
 .userdetails {
 	min-height: 80px;
 	width: 191px;
@@ -3110,7 +2957,6 @@ p.or:after {
 .buttonbar {
 	clear: both;
 }
-
 .bglist {
 	margin: 0 -7px;
 }
@@ -3136,7 +2982,6 @@ p.or:after {
 .formlist button {
 	background-repeat: no-repeat;
 }
-
 .effect-volume,
 .music-volume,
 .notif-volume {
@@ -3155,19 +3000,15 @@ p.or:after {
 	padding-left: 5px;
 	color: #555555;
 }
-
 .preview {
 	float: right;
-}
-
-/*********************************************************
+}/*********************************************************
  * Dark mode!
  *********************************************************/
 
 .dark .header {
 	background: rgba(0,0,0,.30);
 }
-
 .dark .ps-room.ps-room-light,
 .dark .tournament-box,
 .dark .tournament-status,
@@ -3177,13 +3018,11 @@ p.or:after {
 	color: #DDD;
 	border-color: #5A5A5A;
 }
-
 .dark .pm-log {
 	background: rgba(0,0,0,.85);
 	color: #DDD;
 	backdrop-filter: blur(4px);
 }
-
 .dark .userlist-maximized {
 	background: #333333;
 	color: #DDD;
@@ -3204,7 +3043,6 @@ p.or:after {
 .dark .pm-buttonbar button:hover {
 	background: #666666;
 }
-
 .dark .moveselect button {
 	color: #AA6644;
 }
@@ -3214,19 +3052,15 @@ p.or:after {
 .dark .whatdo {
 	color: #999999;
 }
-
 .dark .chat-log {
 	background: rgba(0,0,0,.5);
 	color: #DDD;
 	backdrop-filter: blur(4px);
 }
-
 .dark .userbar .username {
 	color: #DDD;
 	text-shadow: 1px 1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, -1px -1px 0 #000;
-}
-
-/* popups */
+}/* popups */
 
 .dark .ps-popup {
 	background: #0D151E;
@@ -3235,11 +3069,9 @@ p.or:after {
 
 	box-shadow: 2px 2px 3px rgba(0,0,0,.5), inset 0.5px 1px 1px rgba(255, 255, 255, 0.5);
 }
-
 .dark .usergroup {
 	color: #BBB;
 }
-
 .dark .changeform i {
 	border-color: #bbb;
 	color: #bbb;
@@ -3249,12 +3081,9 @@ p.or:after {
 	border-color: #EEE;
 	color: #EEE;
 }
-
 .dark .ps-overlay {
 	background: rgba(40, 40, 40, .5);
-}
-
-/* semi-generic */
+}/* semi-generic */
 
 .dark .select, .dark .team {
 	border-color: #000000;
@@ -3284,17 +3113,13 @@ p.or:after {
 }
 .dark .select:disabled:after {
 	color: #888888;
-}
-
-/* main menu */
+}/* main menu */
 
 .dark .pm-window.focused h3,
 .dark .pm-window.focused .pm-log,
 .dark .pm-window.focused .pm-log-add {
 	border-color: #CCC;
-}
-
-/* chat */
+}/* chat */
 
 .dark .userlist strong,
 .dark .userlist span {
@@ -3309,7 +3134,6 @@ p.or:after {
 .dark .userlist li button:active {
 	background: black;
 }
-
 .dark .highlighted {
 	background: rgba(120,220,255,0.25);
 }
@@ -3321,14 +3145,11 @@ p.or:after {
 }
 .dark .chat.mine {
 	background: rgba(255,255,255,0.08);
-}
-
-/* teambuilder */
+}/* teambuilder */
 
 .dark .folderpane {
 	border-left-color: #484848;
 }
-
 .dark .folderlist .foldersep:before,
 .dark .folderlistafter:before,
 .dark .folderlistbefore:before,
@@ -3340,26 +3161,20 @@ p.or:after {
 	background: #484848;
 	color: #ddd;
 }
-
 .dark .folder .selectFolder:hover {
 	background: #686868;
 }
-
 .dark .folderpane i {
 	color: #ddd;
 }
-
 .dark .folder .selectFolder.active,
 .dark .folder .selectFolder:active {
 	background: #27333c;
 	color: white;
 }
-
 .dark .folder.cur .selectFolder {
 	background: transparent;
-}
-
-/* teambuilder set */
+}/* teambuilder set */
 
 .dark .utilichart h3, .dark .dexentry h3, .dark .resultheader h3 {
 	background: #636363;
@@ -3369,7 +3184,6 @@ p.or:after {
 	box-shadow: inset 0px 1px 0 rgb(49, 49, 49);
 	border-right: none;
 }
-
 .dex-badge {
 	margin-left: 8px;
 	padding: 2px 6px;
@@ -3379,26 +3193,215 @@ p.or:after {
 	opacity: 0.85;
 	white-space: nowrap;
 }
+.itemrow {
+	position: relative;
+}
 
+.itemrow .itemiconcol {
+	position: absolute;
+	left: 6px;
+	top: 6px;
+	width: 24px;
+	height: 24px;
+}
+
+.itemrow .itemnamecol {
+	display: block;
+	margin-left: 34px;
+	margin-right: 0;
+	min-height: 16px;
+	line-height: 16px;
+}
+
+.itemrow .itemclasscontainer {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	grid-template-rows: repeat(2, 16px);
+	gap: 1px;
+	margin: 4px 0 0 34px;
+	width: calc(100% - 34px);
+	box-sizing: border-box;
+	align-content: start;
+}
+
+.itemrow .itemclasscontainer.col {
+	display: grid !important;
+	grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+	grid-template-rows: repeat(2, 16px) !important;
+	gap: 1px !important;
+	width: calc(100% - 34px) !important;
+	height: auto !important;
+	padding-top: 0 !important;
+	box-sizing: border-box !important;
+}
+
+.itemclasschip {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	min-width: 0;
+	height: 16px;
+	min-height: 16px;
+	padding: 0 2px;
+	border-radius: 3px;
+	font-size: 8px;
+	font-weight: bold;
+	line-height: 1;
+	text-align: center;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	border: 1px solid rgba(0, 0, 0, 0.15);
+	box-sizing: border-box;
+}
+
+.itemclasschip-empty {
+	visibility: hidden;
+}
+
+.itemclasschip-fragile {
+	background: #ff3b30;
+	color: #ffffff;
+}
+
+.itemclasschip-volatile {
+	background: #ffee93;
+	color: #ff3c00;
+}
+
+.itemclasschip-berry {
+	background: #f45cab;
+	color: #ffffff;
+}
+
+.itemclasschip-consumable {
+	background: #46b946;
+	color: #ffffff;
+}
+
+.itemclasschip-evolution {
+	background: #4d88ff;
+	color: #ffffff;
+}
+
+.itemclasschip-tradeevo {
+	background: #8f4cff;
+	color: #ffffff;
+}
+
+.itemclasschip-pokeball {
+	background: #ff4136;
+	color: #ffffff;
+}
+
+.itemclasschip-healing {
+	background: #00a951;
+	color: #ffffff;
+}
+
+.itemclasschip-statboost {
+	background: #ffb347;
+	color: #5a2a00;
+}
+
+.itemclasschip-statuscure {
+	background: #4fd4c8;
+	color: #ffffff;
+}
+
+.itemclasschip-resist {
+	background: #328eff;
+	color: #000000;
+}
+
+.itemclasschip-reactive {
+	background: #f7dc6f;
+	color: #ad1d1d;
+}
+
+.itemclasschip-utility {
+	background: #b9b28a;
+	color: #ffffff;
+}
+
+.itemclasschip-species {
+	background: #7dcea0;
+	color: #0b4f2f;
+}
+.itemclasschip-megastone {
+	background:
+		linear-gradient(135deg,
+			rgba(255, 64, 64, 0.22) 0%,
+			rgba(255, 166, 0, 0.22) 18%,
+			rgba(255, 230, 64, 0.22) 34%,
+			rgba(64, 200, 120, 0.22) 50%,
+			rgba(64, 160, 255, 0.22) 66%,
+			rgba(160, 96, 255, 0.22) 82%,
+			rgba(255, 64, 160, 0.22) 100%
+		),
+		#f4f1e8;
+	color: #5a5448;
+}
+.itemclasschip-typeplates {
+	background: #7d6ad6;
+	color: #ffffff;
+}
+.itemclasschip-zcrystals {
+	background: #f7f7f2;
+	color: #5c5648;
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+.itemclasschip-evostones {
+	background: #3f7fff;
+	color: #ffffff;
+}
+.itemclasschip-weather {
+	background: #5dade2;
+	color: #ffffff;
+}
+.itemclasschip-terrain {
+	background: #58d68d;
+	color: #114d2c;
+}
+.itemclasschip-sweets {
+	background: #d86ad3;
+	color: #ffffff;
+}
+
+.itemiconcol {
+	width: 26px;
+	min-width: 26px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.itemrow-icon {
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	background-repeat: no-repeat;
+	background-position: center center;
+	opacity: 1;
+	vertical-align: middle;
+	image-rendering: pixelated;
+}
 .dark .teambar button {
 	background: #5A6570;
 	color: #F1F1F1;
 	border: 1px solid #AAAAAA;
 }
-
 .dark .teambar button:hover {
 	background: #444C54;
 	color: #F1F1F1;
 	border: 1px solid #AAAAAA;
 }
-
 .dark .teambar button:disabled, .dark .teambar button:disabled:hover, .dark .teambar button:disabled:active {
 		color: #ffffff;
 		background: #2d343a;
 		border-color: #6bacc5;
 		opacity: 1;
 }
-
 .dark .teambuilder-results .result a.hover,
 .dark .teambuilder-results .result a:hover,
 .dark .setmenu button:hover,
@@ -3416,7 +3419,6 @@ p.or:after {
 	background: rgba(100, 100, 100, 0.4);
 	color: #FFFFFF;
 }
-
 .dark .setmenu button,
 .dark .teamlist button,
 .dark .folder.cur .selectFolder,
@@ -3434,7 +3436,6 @@ p.or:after {
 .dark .utilichart a:hover .col {
 	color: #FFF;
 }
-
 .dark .setchart,
 .dark .setchart-nickname {
 	background-color: #5A6570;
@@ -3447,11 +3448,520 @@ p.or:after {
 .dark .setchart-nickname label,
 .dark .setchart .statrow-head em {
 	color: #BBB;
-}
-
-/* for testclient */
+}/* for testclient */
 .dark iframe.textbox,
 .dark iframe.textbox:hover,
 .dark iframe.textbox:focus {
 	background: #DDDDDD;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Dex Grid View */
+.utilichart.pokemon-grid-view {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 2px;
+	padding: 0;
+	height: auto !important;
+}
+
+.utilichart.pokemon-grid-view::after {
+	display: none;
+	content: none;
+}
+
+.utilichart.pokemon-grid-view > li.result {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.utilichart.pokemon-grid-view > li.result:not(.pokemon-grid-card) {
+	grid-column: 1 / -1;
+}
+
+.utilichart.pokemon-grid-view > li.result > h3,
+.utilichart.pokemon-grid-view > li.result > .sortrow {
+	clear: none;
+}
+
+.utilichart.pokemon-grid-view > li.result.pokemon-grid-card {
+	float: none;
+	clear: none;
+	width: auto !important;
+	height: 225px;
+	margin: 0;
+	box-sizing: border-box;
+}
+.utilichart.pokemon-grid-view > li.result.pokemon-grid-card > a {
+	display: block;
+	width: 100%;
+	height: 100% !important;
+	max-height: none;
+	line-height: normal;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	border: 1px solid #a7a7a7;
+	border-radius: 4px;
+	background: rgba(240, 240, 240, 0.92);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7);
+	color: inherit;
+	text-decoration: none;
+	overflow: hidden;
+}
+
+.utilichart.pokemon-grid-view > li.result.pokemon-grid-card > a:hover {
+	border-color: #777;
+}
+.utilichart.pokemon-grid-view > li.result.pokemon-grid-card > a.cur {
+	border-color: #5b9dd9;
+}
+.utilichart.pokemon-grid-view li.pokemon-grid-card,
+.utilichart.pokemon-grid-view li.pokemon-grid-card > a {
+	max-height: none;
+	line-height: normal;
+}
+.utilichart > li.result > h3 {
+	margin: 0;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.utilichart > li.result:first-child + li.result > h3 {
+	border-top: none;
+	margin-top: 0;
+}
+
+.item-grid-name {
+	font-weight: bold;
+	font-size: 12px;
+	line-height: 1.2;
+	margin-bottom: 4px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	padding-left: 0;
+}
+.pokemon-grid-main {
+	display: grid;
+	grid-template-columns: 84px minmax(0, 1fr);
+	min-height: 100%;
+	box-sizing: border-box;
+}
+
+.pokemon-grid-name {
+	grid-column: 1 / -1;
+	grid-row: 1;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 6px;
+	min-height: 22px;
+	box-sizing: border-box;
+	border-bottom: 1px solid #b8b8b8;
+	background: rgba(255, 255, 255, 0.35);
+	font-weight: bold;
+	font-size: 12px;
+	line-height: 1.1;
+}
+.pokemon-grid-name-dex {
+	flex: 0 0 auto;
+	font-size: 14px;
+	font-weight: bold;
+	line-height: 1;
+}
+.pokemon-grid-name-text {
+	flex: 1 1 auto;
+	text-align: center;
+	padding-right: 18px;
+}
+
+.pokemon-grid-right {
+	grid-column: 2;
+	grid-row: 2;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+.pokemon-grid-left {
+	grid-column: 1;
+	grid-row: 2;
+	display: grid;
+	grid-template-rows: 15px 65px 18px 29px 28px;
+	border-right: 1px solid #b8b8b8;
+	background: rgba(255, 255, 255, 0.35);
+}
+.pokemon-grid-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: visible; /* or hidden, depending on the effect you want */
+}
+
+.pokemon-grid-icon > span {
+	display: block;
+	width: 40px;
+	height: 30px;
+	background-repeat: no-repeat;
+	background-position: center;
+	transform: scale(2);
+	transform-origin: center center;
+	image-rendering: pixelated;
+}
+.pokemon-grid-measure {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 6px;
+	font-size: 10px;
+	border-bottom: 1px solid #b8b8b8;
+}
+.pokemon-grid-measure label {
+	display: none;
+}
+
+.pokemon-grid-type,
+.pokemon-grid-meta {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: 0 6px;
+	border-bottom: 1px solid #b8b8b8;
+}
+.pokemon-grid-type {
+	background: transparent;
+}
+
+.pokemon-grid-dex {
+	font-size: 18px;
+	font-weight: bold;
+	line-height: 1;
+}
+.pokemon-grid-tier {
+	font-size: 18px;
+	line-height: 1;
+	font-weight: bold;
+	border-bottom: none;
+}
+.pokemon-grid-tags {
+	font-size: 11px;
+	line-height: 1.15;
+	padding: 4px 6px;
+	border-bottom: 1px solid #b8b8b8;
+	font-weight: bold;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+.pokemon-grid-abilities {
+	display: flex;
+	flex-direction: column;
+	background: rgba(255, 255, 255, 0.15);
+	flex: 1 1 auto;
+}
+
+.pokemon-grid-abilitygroup {
+	display: flex;
+	flex-direction: column;
+	border-right: none;
+	border-bottom: 1px solid #b8b8b8;
+}
+.pokemon-grid-abilityhead {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: 3px 6px;
+	font-size: 11px;
+	font-weight: bold;
+	background: rgba(255, 255, 255, 0.25);
+	border-bottom: 1px solid #b8b8b8;
+}
+
+.pokemon-grid-abilitygroup:last-child {
+	border-bottom: none;
+}
+
+.pokemon-grid-abilityslots {
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.pokemon-grid-abilityslot {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: 1px 4px;
+	font-size: 10px;
+	border-right: none;
+	border-bottom: 1px solid #b8b8b8;
+	min-height: 26px;
+}
+
+.pokemon-grid-abilityslot:last-child {
+	border-bottom: none;
+}
+
+.pokemon-grid-stats {
+	grid-column: 1 / -1;
+	grid-row: 3;
+	display: grid;
+	grid-template-columns: repeat(6, 1fr);
+	min-height: 32px;
+	border-top: 1px solid #b8b8b8;
+}
+.pokemon-grid-stat {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-width: 0;
+	box-sizing: border-box;
+}
+.pokemon-grid-stat:last-child {
+	border-right: none;
+}
+.pokemon-grid-stat label {
+	font-size: 7px;
+	line-height: 1;
+	margin-bottom: 5px;
+	font-weight: bold;
+}
+.pokemon-grid-stat span {
+	font-size: 12px;
+	line-height: 1;
+	font-weight: bold;
+}
+.pokemon-grid-stat:nth-child(1) {
+	background: #b7d78a;
+}
+.pokemon-grid-stat:nth-child(2) {
+	background: #e9a2a2;
+}
+.pokemon-grid-stat:nth-child(3) {
+	background: #e8c18d;
+}
+.pokemon-grid-stat:nth-child(4) {
+	background: #e3b6e9;
+}
+.pokemon-grid-stat:nth-child(5) {
+	background: #c6b2e6;
+}
+.pokemon-grid-stat:nth-child(6) {
+	background: #b7d4f5;
+}
+
+/*Item Grid View*/
+
+
+.utilichart.item-grid-view::after {
+	display: none;
+	content: none;
+}
+
+.utilichart.item-grid-view > li.result {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.utilichart.item-grid-view {
+	display: block !important;
+	column-count: 4;
+	column-gap: 4px;
+	padding: 0 5px;
+	height: auto;
+}
+
+.utilichart.item-grid-view > li.result:not(.item-grid-card) {
+	flex: 0 0 100%;
+	width: 100%;
+}
+
+
+.utilichart.item-grid-view > li.result.item-grid-card {
+	display: inline-block;
+	float: none;
+	clear: none;
+	width: 100% !important;
+	margin: 0 0 4px 0 !important;
+	box-sizing: border-box;
+
+	break-inside: avoid;
+	-webkit-column-break-inside: avoid;
+	page-break-inside: avoid;
+
+	min-height: 0 !important;
+	height: auto !important;
+	contain: none !important;
+}
+
+.utilichart.item-grid-view > li.result:not(.item-grid-card) {
+	display: block;
+	width: 100% !important;
+	margin: 0 0 6px 0;
+	break-inside: avoid;
+	-webkit-column-break-inside: avoid;
+	page-break-inside: avoid;
+	column-span: all;
+	-webkit-column-span: all;
+}
+
+.item-grid-classes {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	grid-auto-rows: 14px;
+	gap: 1px;
+	margin-bottom: 3px;
+	align-content: start;
+	padding-right: 26px;
+	box-sizing: border-box;
+}
+
+.item-grid-classes .itemclasschip {
+	width: 100%;
+	min-width: 0;
+	height: 14px;
+	min-height: 14px;
+	font-size: 7px;
+	line-height: 1;
+	box-sizing: border-box;
+}
+
+.utilichart.item-grid-view > li.result.item-grid-card > a {
+	display: block;
+	width: 100%;
+	height: auto !important;
+	min-height: 0 !important;
+	margin: 0 !important;
+	padding: 0;
+	box-sizing: border-box;
+	border: 1px solid #a7a7a7;
+	border-radius: 4px;
+	background: rgba(240, 240, 240, 0.62);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7);
+	color: inherit;
+	text-decoration: none;
+}
+
+.utilichart.item-grid-view > li.result.item-grid-card > a:hover {
+	border-color: #777;
+}
+
+.utilichart.item-grid-view > li.result.item-grid-card > a.cur {
+	border-color: #5b9dd9;
+}
+
+.utilichart.item-grid-view li.item-grid-card > a,
+.utilichart.item-grid-view li.item-grid-card .item-grid-main,
+.utilichart.item-grid-view li.item-grid-card .item-grid-desc,
+.utilichart.item-grid-view li.item-grid-card .item-grid-fragilebar {
+	height: auto;
+	max-height: none;
+	overflow: visible;
+}
+
+.item-grid-main {
+	position: relative;
+	display: block;
+	padding: 3px 2px 0px 2px;
+	min-width: 0;
+	height: auto !important;
+	min-height: 0 !important;
+	max-height: none !important;
+	overflow: visible !important;
+}
+.item-grid-top {
+	margin-bottom: 3px;
+	padding-right: 26px;
+}
+
+.item-grid-icon {
+	position: absolute;
+	top: 3px;
+	right: 2px;
+	display: flex;
+	align-items: flex-start;
+	justify-content: flex-end;
+	width: 24px;
+	height: 24px;
+	pointer-events: none;
+}
+
+.item-grid-name {
+	font-weight: bold;
+	font-size: 12px;
+	line-height: 1.2;
+	margin: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.item-grid-desc {
+	display: block;
+	font-size: 10px;
+	line-height: 1.25;
+	color: #444;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	border-top: 1px solid #d0d0d0;
+	height: auto !important;
+	min-height: 0 !important;
+	max-height: none !important;
+	overflow: visible !important;
+	white-space: normal;
+	overflow-wrap: anywhere;
+	word-wrap: break-word;
+}
+
+.item-grid-fragilebar {
+	background: rgba(80, 80, 80, 0.55);
+	color: #f2f2f2;
+	font-size: 9px;
+	line-height: 1.2;
+	padding: 4px 8px;
+	border-top: 1px solid rgba(0, 0, 0, 0.15);
+	height: auto !important;
+	min-height: 0 !important;
+	max-height: none !important;
+	overflow: visible !important;
+}
+
+.item-grid-fragilebar.fragile {
+	background: rgba(167, 91, 91, 0.82);
+}
+
+.item-grid-fragilebar.volatile {
+	background: rgba(173, 128, 28, 0.86);
+	color: #fff8d8;
+}
+
+.item-grid-fragilebar.fragile.volatile {
+	background: linear-gradient(
+		90deg,
+		rgba(120, 32, 32, 0.84) 0%,
+		rgba(140, 110, 20, 0.86) 100%
+	);
+	color: #fff8d8;
 }

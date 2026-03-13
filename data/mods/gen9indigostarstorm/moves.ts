@@ -2834,6 +2834,91 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		secondary: null,
 		target: "normal",
 	},
+	holddown: {
+		num: -12001,
+		accuracy: 100,
+		basePower: 0,
+		type: "Fighting",
+		type2: "Ground",
+		category: "Status",
+		name: "Hold Down",
+		pp: 10,
+		priority: 0,
+		critRatio: 0,
+		flags: { contact: 1, charge: 1, protect: 1, mirror: 1, distance: 1, metronome: 1, nosleeptalk: 1, noassist: 1, failinstruct: 1 },
+		onModifyMove(move, source) {
+			if (!source.volatiles['holddown']) {
+				move.accuracy = true;
+				delete move.flags['contact'];
+			}
+		},
+		onMoveFail(target, source) {
+			if (source.volatiles['twoturnmove'] && source.volatiles['twoturnmove'].duration === 1) {
+				source.removeVolatile('holddown');
+				source.removeVolatile('twoturnmove');
+				if (target === this.effectState.target) {
+					this.add('-end', target, 'Hold Down', '[interrupt]');
+				}
+			}
+		},
+		onTry(source, target) {
+			return !target.fainted;
+		},
+		onTryHit(target, source, move) {
+			if (source.removeVolatile(move.id)) {
+				if (target !== source.volatiles['twoturnmove'].source) return false;
+			} else {
+				if (target.volatiles['substitute'] || target.isAlly(source)) return false;
+				this.add('-prepare', source, move.name, target);
+				source.addVolatile('twoturnmove', target);
+				return null;
+			}
+		},
+		onHit(target, source) {
+			if (!target.hp) return;
+			const sourceAtk = source.getStat('atk', false, true);
+			const targetAtk = target.getStat('atk', false, true);
+			if (targetAtk >= sourceAtk + 100) {
+				source.removeVolatile('holddown');
+				source.removeVolatile('twoturnmove');
+				this.add('-end', target, 'Hold Down');
+			}
+		},
+		condition: {
+			duration: 3,
+			durationCallback(target, source) {
+				const sourceAtk = source.getStat('atk', false, true);
+				const targetAtk = target.getStat('atk', false, true);
+				return targetAtk >= sourceAtk + 100 ? 2 : 3;
+			},
+			onAnyDragOut(pokemon) {
+				if (pokemon === this.effectState.target || pokemon === this.effectState.source) return false;
+			},
+			onFoeTrapPokemonPriority: -15,
+			onFoeTrapPokemon(defender) {
+				if (defender !== this.effectState.source) return;
+				defender.trapped = true;
+			},
+			onFoeBeforeMovePriority: 12,
+			onFoeBeforeMove(attacker) {
+				if (attacker === this.effectState.source) {
+					attacker.activeMoveActions--;
+					this.debug('Hold Down nullifying.');
+					return null;
+				}
+			},
+			onRedirectTargetPriority: 99,
+			onRedirectTarget(target, source) {
+				if (source !== this.effectState.target) return;
+				if (this.effectState.source.fainted) return;
+				return this.effectState.source;
+			},
+		},
+		secondary: null,
+		desc: "User pins the target in place for 2 turns. The user and target remains vulnerable the entire time. If the target's Attack is 100 or more higher than the user's, it breaks free after 1 turn instead.",
+		shortDesc: "Sky Drop-style pin for 2 turns, but user and target stays vulnerable; 1 turn if target has 100+ more Atk",
+		target: "any",
+	},
 	hornattack: {
 		num: 30,
 		accuracy: 100,
@@ -5122,6 +5207,23 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		shortDesc: "User annd target fly up turn 1. Hits turn 2. Fails if Target≥200kg",
 		target: "any",
 	},
+	skyuppercut: {
+		num: 327,
+		accuracy: 90,
+		basePower: 95,
+		type: "Fighting",
+		category: "Physical",
+		name: "Sky Uppercut",
+		pp: 15,
+		priority: 0,
+		critRatio: 6,
+		flags: { contact: 1, airborne: 1, punch: 1, protect: 1, mirror: 1,  metronome: 1 },
+		onEffectiveness(typeMod, target, type) { if (type === 'Flying') return 1; },
+		secondary: null,
+		desc: "Ignores Flying resistance, hits neutrally. Can hit during invul phase of Bounce/Fly/Sky Drop",
+		shortDesc: "Ignores Flying resistance, hits neutrally. Can hit during invul phase of Bounce/Fly/Sky Drop",
+		target: "normal",
+	},
 	slam: {
 		num: 21,
 		accuracy: 75,
@@ -5333,14 +5435,16 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		critRatio: 5,
 		flags: { contact: 1, crush: 1, protect: 1, mirror: 1, metronome: 1 },
 		secondary: { chance: 30, volatileStatus: 'flinch', },
-		desc: "30% chance to Flinch target",
-		shortDesc: "30% Flinch",
+		onAfterHit(target, source) { if (source.hp) { this.field.clearTerrain(); } },
+		onAfterSubDamage(damage, target, source) { if (source.hp) { this.field.clearTerrain(); } },
+		desc: "30% chance to Flinch target. Removes terrain on-hit",
+		shortDesc: "30% Flinch. Removes terrain on-hit",
 		target: "normal",
 	},
 	steelroller: {
 		num: 798,
 		accuracy: 100,
-		basePower: 85,
+		basePower: 100,
 		type: "Steel",
 		category: "Physical",
 		name: "Steel Roller",
@@ -7197,6 +7301,28 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		shortDesc: "Always deals 40HP as damage. Grants user 'Dragon's Fury' Aura for 3 turns",
 		target: "normal",
 	},
+	dragonraze: {
+		num: 12000,
+		accuracy: 85,
+		basePower: 85,
+		type: "Dragon",
+		category: "Special",
+		name: "Dragon Raze",
+		pp: 5,
+		priority: 0,
+		flags: { breath: 1, protect: 1, mirror: 1, metronome: 1 },
+		secondary: null,
+		onHit(target, source, move) {
+			const terrain = this.field.getTerrain();
+			if (!terrain) return;
+			this.add('-message', `Dragon Raze destroyed the ${terrain.name}!`);
+			this.field.clearTerrain();
+			if (!this.field.getTerrain()) { this.field.addPseudoWeather('wildfyre'); }
+		},
+		desc: "Destroys terrain. If terrain is destroyed by this effect, set Wildfyre for 4 turns",
+		shortDesc: "Destroys terrain. If effect procs, set Wildfyre for 4 turns",
+		target: "allAdjacent",
+	},
 	drainingkiss: {
 		num: 577,
 		accuracy: 100,
@@ -8907,6 +9033,33 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		],
 		desc: "Lowers target's Attack and Special Attack [-1 stage]; SOUND: This move bypasses substitutes",
 		shortDesc: "-1 ATK & Sp.ATK: Target",
+		target: "allAdjacentFoes",
+	},
+	ominouswind: {
+		num: 466,
+		accuracy: 100,
+		basePower: 85,
+		type: "Ghost",
+		category: "Special",
+		name: "Ominous Wind",
+		pp: 15,
+		priority: 0,
+		critRatio: 3,
+		flags: { wind: 1, protect: 1, mirror: 1, metronome: 1 },
+		secondary: { chance: 10, status: 'fear' },
+		onHit(target, source, move) {
+			if (target.removeVolatile('magicdust')) { this.add('-end', target, 'magicdust', '[silent]'); }
+			const misty = this.field.pseudoWeather['mistyterrain'];
+			if (misty && typeof misty.duration === 'number') {
+				misty.duration = Math.max(0, misty.duration - 2);
+				if (misty.duration === 0) {
+					this.field.removePseudoWeather('mistyterrain');
+					this.add('-fieldend', 'move: Misty Terrain');
+				}
+			}
+		},
+		desc: "10% chance to Fear target. Dispels Magic Dust, reduces Misty Terrain duration 2 turns on hit",
+		shortDesc: "10% Fear. Dispels Magic Dust, reduces Misty Terrain duration 2 turns on hit", 
 		target: "allAdjacentFoes",
 	},
 	originpulse: {
@@ -15852,7 +16005,10 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			},
 			onTryPrimaryHitPriority: -1,
 			onTryPrimaryHit(target, source, move) {
-				if (target === source || move.flags['bypasssub'] || move.infiltrates) { return; }
+				const shielded = target.hasItem?.('Ability Shield') || target.hasItem?.('abilityshield');
+				if (target === source) return;
+				if ((move.flags['bypasssub'] || move.infiltrates) && !shielded) { return; }
+				if ((move.flags['bypasssub'] || move.infiltrates) && shielded) { this.add('-block', target, 'item: Ability Shield'); }
 				let damage = this.actions.getDamage(source, target, move);
 				if (!damage && damage !== 0) {
 					this.add('-fail', source);
@@ -17388,20 +17544,6 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		shortDesc: "Charges up turn 1. Hits turn 2",
 		target: "normal",
 	},
-	skyuppercut: {
-		num: 327,
-		accuracy: 90,
-		basePower: 85,
-		type: "Fighting",
-		category: "Physical",
-		isNonstandard: "Past",
-		name: "Sky Uppercut",
-		pp: 15,
-		priority: 0,
-		flags: { contact: 1, protect: 1, mirror: 1, punch: 1, metronome: 1 },
-		secondary: null,
-		target: "normal",
-	},
 	smellingsalts: {
 		num: 265,
 		accuracy: 100,
@@ -17709,20 +17851,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		secondary: { chance: 50, boosts: {accuracy: -1,}, },
 		target: "normal",
 	},
-	ominouswind: {
-		num: 466,
-		accuracy: 100,
-		basePower: 60,
-		type: "Ghost",
-		category: "Special",
-		isNonstandard: "Past",
-		name: "Ominous Wind",
-		pp: 5,
-		priority: 0,
-		flags: { protect: 1, mirror: 1, metronome: 1 },
-		secondary: { chance: 10, self: {boosts: {atk: 1, def: 1, spa: 1, spd: 1, spe: 1,},}, },
-		target: "normal",
-	},
+	
 	razorwind: {
 		num: 13,
 		accuracy: 100,
