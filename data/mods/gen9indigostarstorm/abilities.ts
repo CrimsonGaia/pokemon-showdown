@@ -53,13 +53,14 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		onModifySpD(spd, pokemon) { if ((this.field.isWeather('sunnyday') || this.field.isWeather('desolateland')) && pokemon.hasAbility('astralaspect')) { return this.chainModify(1.15); } },
 		onModifySpe(spe, pokemon) { if ((this.field.isWeather('sunnyday') || this.field.isWeather('desolateland')) && pokemon.hasAbility('astralaspect')) { return this.chainModify(1.15); } },
 		onResidual(pokemon) { if (pokemon.hasAbility('astralaspect') && (this.field.isWeather('sunnyday') || this.field.isWeather('desolateland'))) { this.heal(pokemon.baseMaxhp / 16, pokemon, pokemon); } },
+		onTryHitPriority: 1,
 		onTryHit(target, source, move) { if (move.flags?.aura || move.flags?.lunar || move.flags?.solar) { if (target !== source) { if (target.hp && target.hp < target.maxhp) { this.heal(target.baseMaxhp / 4, target, target); }
 		this.add('-immune', target, '[from] ability: Astral Aspect');
 		return null;
 			}
 		}
 		},
-		flags: {},
+		flags: { breakable: 1 },
 		name: "Astral Aspect",
 		shortDesc: "1.2x power with Aura/Lunar/Solar moves; Immune to Aura/Lunar/Solar moves, heals 25% when hit. Sun: 1.15x all stats, heals 1/16 HP.",
 		rating: 2.5,
@@ -70,6 +71,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		onResidualOrder: 10,
 		onResidual(pokemon) { if (pokemon.status === 'aura' && pokemon.statusState.time !== undefined) { pokemon.statusState.time += 0.5; } },
 		onFlinch(target) { return false; },
+		onTryHitPriority: 1,
 		onTryHit(target, source, move) { if (move.flags?.aura && target !== source) { this.add('-immune', target, '[from] ability: Aura Master');
 		return null;
 			}
@@ -93,13 +95,14 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 				}
 			}
 		},
-		flags: {},
+		flags: { breakable: 1 },
 		name: "Aura Master",
 		shortDesc: "1.5x power on Aura moves; Immune to Flinch and Aura moves, heal 25%HP and extend own aura 1 turn when hit by an Aura move. When another pokemon gains an Aura, copy it. User auras deplete at half the usual rate.",
 		rating: 3,
 		num: 1004,
 	},
 	balloonphysics: {
+		onTryHitPriority: 1,
 		onTryHit(target, source, move) { if ((move.flags?.launching || move.flags?.sweep) && target !== source) { this.add('-immune', target, '[from] ability: Balloon Physics');
 			return null;
 			}
@@ -112,7 +115,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 			onImmunity(type) { if (type === 'Ground') return false; },
 			onEnd(target) { this.add('-end', target, 'Balloon Physics (Airborne)'); },
 		},
-		flags: {},
+		flags: { breakable: 1 },
 		name: "Balloon Physics",
 		shortDesc: "Immune to Launch/Sweep moves. When hit by a Launch/Sweep move, or after using an Airborne move, become airborne for 2 turns.",
 		rating: 2.5,
@@ -398,11 +401,12 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		num: 1023,
 	},
 	hardtopcarapace: {
+		onTryHitPriority: 1,
 		onTryHit(target, source, move) { if (move && (move.flags?.bomb || move.flags?.crush)) { this.add('-immune', target, '[from] ability: Hardtop Carapace');
 			return null;
 			}
 		},
-		flags: {},
+		flags: { breakable: 1 },
 		name: "Hardtop Carapace",
 		shortDesc: "Immune to Bomb and Crush moves.",
 		rating: 2.5,
@@ -557,6 +561,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 				return this.chainModify(2);
 			}
 		},
+		onTryHitPriority: 1,
 		onTryHit(target, source, move) { if (move.flags?.lunar && target !== source) {
 				if (target.hp && target.hp < target.maxhp) { this.heal(target.baseMaxhp / 4, target, target); }
 				this.add('-immune', target, '[from] ability: Lunar Aspect');
@@ -569,7 +574,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		onModifySpD(spd, pokemon) { if ((this.field.isWeather('sunnyday') || this. field.isWeather('desolateland')) && pokemon.hasAbility('lunaraspect')) { return this.chainModify(1.15); } },
 		onModifySpe(spe, pokemon) { if ((this.field.isWeather('sunnyday') || this.field.isWeather('desolateland')) && pokemon.hasAbility('lunaraspect')) { return this.chainModify(1.15); } },
 		onResidual(pokemon) { if (pokemon.hasAbility('lunaraspect') && (this.field.isWeather('sunnyday') || this.field.isWeather('desolateland'))) { this.heal(pokemon.baseMaxhp / 16, pokemon, pokemon); } },
-		flags: {},
+		flags: { breakable: 1 },
 		name: "Lunar Aspect",
 		shortDesc: "Immune to Lunar moves; When hit by a Lunar move: Heal 1/4HP; 1.3x power on Lunar moves; 2x damage from incoming Solar moves. Under Sun: Boost all stats 1.15x, and heal 1/16 every turn.",
 		rating: 3.5,
@@ -685,17 +690,19 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 	       num: 1042,
 	},
 	nightbloom: {
-		onBasePower(basePower, attacker, defender, move) { if (move.flags?.lunar) { return this.chainModify(1.3); } },
-		onTryHit(target, source, move) { if (move.flags?.lunar && target !== source) {
-				this.boost({spe: 1}, target, target, this.effect);
-				this.heal(target.baseMaxhp / 4, target, target);
+		onBasePower(basePower, attacker, defender, move) { if (move.flags?.lunar) return this.chainModify(1.3); },
+		onTryHitPriority: 1,
+		onTryHit(target, source, move) {
+			if (target !== source && move.flags?.lunar) {
 				this.add('-immune', target, '[from] ability: Nightbloom');
+				this.boost({spe: 1}, target);
+				this.heal(target.baseMaxhp / 4, target);
 				return null;
 			}
 		},
 		onModifySpe(spe, pokemon) { if (this.field.isWeather('sunnyday') || this.field.isWeather('desolateland')) { return this.chainModify(2); } },
-		onTrapPrevention(pokemon, trapper) { if (trapper.hasAbility('shadowtag')) { return false; } },
-		flags: {},
+		onTrapPrevention(pokemon, trapper) { if (trapper.hasAbility('shadowtag')) return false; },
+		flags: { breakable: 1 },
 		name: "Nightbloom",
 		shortDesc: "Immune to Lunar moves and Shadow Tag, When hit by a Lunar move: Heal 1/4HP and +1 Speed; 1.3x power on Lunar moves; Under Sun: 2x Speed",
 		rating: 4,
@@ -808,11 +815,12 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 			return this.chainModify(2);
 			}
 		},
+		onTryHitPriority: 1,
 		onTryHit(target, source, move) { if (move.flags?.pierce || move.breaksProtect) { this.add('-immune', target, '[from] ability: Ramparts');
 				return null;
 			}
 		},
-		flags: {},
+		flags: { breakable: 1 },
 		name: "Ramparts",
 		shortDesc: "0.5x damage from Breath/Contact/Wind moves. 2x damage from Bomb/Bullet/Explosive. Immune to Piercing moves.",
 		rating: 4,
@@ -828,6 +836,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		num: -1,
 	},
 	resonance: {
+		onTryHitPriority: 1,
 		onTryHit(target, source, move) {
 			if (move.flags?.sound || move.flags?.wind) { this.add('-immune', target, '[from] ability: Resonance');
 				return null;
@@ -846,7 +855,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 				}
 			}
 		},
-		flags: {},
+		flags: { breakable: 1 },
 		name: "Resonance",
 		shortDesc: "Immune to Sound/Wind moves. When hit by Wind moves, reflects 1.2x damage as Sound damage to all foes.",
 		rating: 4,
@@ -984,6 +993,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 			return this.chainModify(2);
 			}
 		},
+		onTryHitPriority: 1,
 		onTryHit(target, source, move) { if (move.flags?.solar && target !== source) { if (target.hp && target.hp < target.maxhp) { this.heal(target.baseMaxhp / 4, target, target); }
 				this.add('-immune', target, '[from] ability: Solar Aspect');
 				return null;
@@ -995,7 +1005,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		onModifySpD(spd, pokemon) { if ((this.field.isWeather('sunnyday') || this.field.isWeather('desolateland')) && pokemon.hasAbility('solaraspect')) { return this.chainModify(1.15); } },
 		onModifySpe(spe, pokemon) { if ((this.field.isWeather('sunnyday') || this.field.isWeather('desolateland')) && pokemon.hasAbility('solaraspect')) { return this.chainModify(1.15); } },
 		onResidual(pokemon) { if (pokemon.hasAbility('solaraspect') && (this.field.isWeather('sunnyday') || this.field.isWeather('desolateland'))) { this.heal(pokemon.baseMaxhp / 16, pokemon, pokemon); } },
-		flags: {},
+		flags: { breakable: 1 },
 		name: "Solar Aspect",
 		shortDesc: "1.3x Solar move power, immune to Solar. Sun: 1.15x all stats, heals 1/16 HP/turn. Takes 2x Lunar damage.",
 		rating: 3.5,

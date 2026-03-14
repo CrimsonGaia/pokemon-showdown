@@ -32,6 +32,7 @@ export interface ChosenAction {
 	zmove?: string; // if zmoving, the name of the zmove
 	maxMove?: string; // if dynamaxed, the name of the max move
 	terastallize?: string; // if terastallizing, tera type
+	teraempower?: boolean; // true if Tera Empowering this move
 	priority?: number; // priority of the action
 }
 /** One single turn's choice for one single player. */
@@ -268,6 +269,7 @@ export class Side {
 				if (action.zmove) details += ` zmove`;
 				if (action.maxMove) details += ` dynamax`;
 				if (action.terastallize) details += ` terastallize`;
+				if (action.teraempower) details += ` teraempower`;
 				return `move ${action.moveid}${details}`;
 			case 'switch':
 			case 'instaswitch':
@@ -642,6 +644,7 @@ export class Side {
 			zmove: zMove,
 			maxMove: maxMove ? maxMove.id : undefined,
 			terastallize: terastallize ? pokemon.teraType : undefined,
+			teraempower: isTeraEmpower,
 		});
 		if (pokemon.maybeDisabled && (this.battle.gameType === 'singles' || (this.battle.gen <= 3 && !this.battle.actions.targetTypeChoices(targetType)))) { this.choice.cantUndo = true; }
 		if (mega || megax || megay) this.choice.mega = true;

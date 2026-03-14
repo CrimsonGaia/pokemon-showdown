@@ -395,7 +395,7 @@ current.tera=true;
 choice=choice.slice(0,-9);
 }else if(choice.endsWith(' teraempower')){
 current.teraempower=true;
-choice=choice.slice(0,-13);
+choice=choice.slice(0,-12);
 }else{
 break;
 }

@@ -16,7 +16,7 @@ import type { Battle } from './battle';
  */
 export interface MoveAction {
 	choice: 'move' | 'beforeTurnMove' | 'priorityChargeMove';
-	order: 3 | 5 | 200 | 201 | 199 | 106;
+	order: 3 | 5 | 106 | 107 | 108 | 199 | 200 | 201;
 	priority: number; /** priority of the action (higher first) */
 	fractionalPriority: number; /** fractional priority of the action (higher first) */
 	speed: number; /** speed of pokemon using move (higher first if priority tie) */
@@ -29,6 +29,7 @@ export interface MoveAction {
 	zmove?: string; /** if zmoving, the name of the zmove */
 	maxMove?: string; /** if dynamaxed, the name of the max move */
 	sourceEffect?: Effect | null; /** effect that called the move (eg Instruct) if any */
+	teraempower?: boolean;
 }
 export interface SwitchAction {
 	/** action type */
@@ -70,8 +71,7 @@ export interface FieldAction {
 }
 /** A generic action done by a single pokemon */
 export interface PokemonAction {
-	/** action type */
-	choice: 'megaEvo' | 'megaEvoX' | 'megaEvoY' | 'shift' | 'runSwitch' | 'event' | 'runDynamax' | 'terastallize';
+	choice: 'megaEvo' | 'megaEvoX' | 'megaEvoY' | 'shift' | 'runSwitch' | 'event' | 'runDynamax' | 'terastallize' | 'teraEmpower';
 	/** priority of the action (higher first) */
 	priority: number;
 	/** speed of pokemon doing action (higher first if priority tie) */
@@ -82,6 +82,9 @@ export interface PokemonAction {
 	dragger?: Pokemon;
 	/** `event` only: the event to run */
 	event?: string;
+	/** `teraEmpower` only: the move being empowered */
+	move?: Move;
+	moveid?: ID;
 }
 export type Action = MoveAction | SwitchAction | TeamAction | FieldAction | PokemonAction;
 /**
@@ -137,7 +140,8 @@ export class BattleQueue {
 				megaEvoY: 104,
 				runDynamax: 105,
 				terastallize: 106,
-				priorityChargeMove: 107,
+				teraEmpower: 107,
+				priorityChargeMove: 108,
 				shift: 200,
 				// default is 200 (for moves)
 				residual: 300,
@@ -175,6 +179,14 @@ export class BattleQueue {
 						pokemon: action.pokemon,
 					}));
 				}
+				if (action.teraempower) {
+					actions.unshift(...this.resolveAction({
+						choice: 'teraEmpower',
+						pokemon: action.pokemon,
+						move: action.move,
+						moveid: action.moveid,
+					}));
+				}
 				if (action.maxMove && !action.pokemon.volatiles['dynamax']) {
 					actions.unshift(...this.resolveAction({
 						choice: 'runDynamax',
@@ -188,6 +200,7 @@ export class BattleQueue {
 						move: action.move,
 					}));
 				}
+				(actions[actions.length - 1] as any).teraempower = !!action.teraempower;
 				action.fractionalPriority = this.battle.runEvent('FractionalPriority', action.pokemon, null, action.move, 0);
 			} else if (['switch', 'instaswitch'].includes(action.choice)) {
 				if (typeof action.pokemon.switchFlag === 'string') { action.sourceEffect = this.battle.dex.moves.get(action.pokemon.switchFlag as ID) as any; }

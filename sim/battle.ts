@@ -923,7 +923,7 @@ export class Battle {
 		if (type === 'move') {
 			for (const side of this.sides) {
 				const s: any = side as any;
-				if (s.teraCharge === undefined) s.teraCharge = 50;
+				if (s.teraCharge === undefined) s.teraCharge = 30;
 				if (s.teraChargeMax === undefined) s.teraChargeMax = 100;
 
 				const charge = Number(s.teraCharge) || 0;
@@ -999,8 +999,14 @@ export class Battle {
 			for (let i = 0; i < this.sides.length; i++) {
 				const side = this.sides[i];
 				if (!side.pokemonLeft) continue;
-				const activeData = side.active.map(pokemon => pokemon?.getMoveRequestData());
-				requests[i] = { active: activeData, side: side.getRequestData() };
+				const activeData = side.active.map(pokemon => {
+				const data = pokemon?.getMoveRequestData();
+				if (!pokemon || !data) return data;
+
+				(data as any).canTeraEmpower = !!(pokemon as any).canTeraEmpower;
+				return data;
+			});
+			requests[i] = { active: activeData, side: side.getRequestData() };
 				if (side.allySide) { (requests[i] as MoveRequest).ally = side.allySide.getRequestData(true); }
 			}
 			break;
@@ -1237,12 +1243,30 @@ export class Battle {
 						}
 					}
 				}
-				if (this.gen === 2) this.quickClawRoll = this.randomChance(60, 256);
-				if (this.gen === 3) this.quickClawRoll = this.randomChance(1, 5);
-
-				if (!this.ended && !this.requestState) {
-					this.makeRequest('move');
-				}
+		if (this.gen === 2) this.quickClawRoll = this.randomChance(60, 256);
+		if (this.gen === 3) this.quickClawRoll = this.randomChance(1, 5);
+		if (!this.ended && !this.requestState) {
+			for (const side of this.sides) {
+				const s = side as any;
+				if (s.teraCharge === undefined) s.teraCharge = 30;
+				if (s.teraChargeMax === undefined) s.teraChargeMax = 100;
+				const max = Number(s.teraChargeMax) || 100;
+				const hasAnyTera = side.pokemon.some(p => !!(p as any).terastallized);
+				const teraOnFieldMon = side.active.find(p => p && !!(p as any).terastallized);
+				let delta = 0;
+				if (teraOnFieldMon) {
+					const isTerapagos =
+						teraOnFieldMon.species.id === 'terapagosstellar' ||
+						teraOnFieldMon.species.name === 'Terapagos-Stellar';
+					delta = -(isTerapagos ? 30 : 40);
+				} else { delta = hasAnyTera ? 10 : 20; }
+				let next = Number(s.teraCharge) + delta;
+				if (next < 0) next = 0;
+				if (next > max) next = max;					s.teraCharge = next;
+				if (next === 0) { for (const p of side.active) { if (p?.terastallized) { this.actions.unterastallize(p); } } }
+			}
+			this.makeRequest('move');
+		}
 	}
 	maybeTriggerEndlessBattleClause(trappedBySide: boolean[], stalenessBySide: ('internal' | 'external' | undefined)[]) {
 		// Gen 1 Endless Battle Clause triggers
@@ -2145,15 +2169,17 @@ export class Battle {
 		case 'move': {
 			if (!action.pokemon.isActive) return false;
 			if (action.pokemon.fainted) return false;
-			this.add('message', 'SENTINEL: battle.ts case move executing');
+
+			const pokemon = action.pokemon;
+
 			const moveOptions = {
 				sourceEffect: action.sourceEffect,
 				zMove: action.zmove,
 				maxMove: action.maxMove,
 				originalTarget: action.originalTarget,
-				teraempower: !!(action as any).teraempower,
 			};
-			this.actions.runMove(action.move, action.pokemon, action.targetLoc, moveOptions);
+
+			this.actions.runMove(action.move, pokemon, action.targetLoc, moveOptions);
 			break;
 		}
 		case 'megaEvo':
@@ -2181,6 +2207,28 @@ export class Battle {
 				};
 			}
 			this.actions.terastallize(action.pokemon);
+			break;
+		}
+		case 'teraEmpower': {
+			const pokemon = action.pokemon;
+			if (!pokemon.isActive) return false;
+			if (pokemon.fainted) return false;
+			if (pokemon.terastallized) return false;
+
+			const move = action.move || this.dex.getActiveMove((action as any).moveid);
+			const moveid = move.id;
+			if (moveid !== 'terablast' && moveid !== 'terastarstorm') return false;
+
+			const sideAny = pokemon.side as any;
+			const charge = Number(sideAny.teraCharge ?? 0);
+			const max = Number(sideAny.teraChargeMax ?? 100);
+			const COST = 10;
+
+			if (charge < COST || charge >= max) return false;
+
+			sideAny.teraCharge = Math.max(0, charge - COST);
+			this.add('-message', `${pokemon.side.name} charged ${pokemon.name} with Tera energy!`);
+			pokemon.addVolatile('teraempowered');
 			break;
 		}
 		case 'beforeTurnMove':
@@ -2263,33 +2311,7 @@ export class Battle {
 			this.updateSpeed();
 			residualPokemon = this.getAllActive().map(pokemon => [pokemon, pokemon.getUndynamaxedHP()] as const);
 			this.fieldEvent('Residual');
-			if (!this.ended) {
-				const TERA_CHARGE_MAX = 100;
-				for (const side of this.sides) {
-				// init
-				const s = side as any;
-				if (s.teraCharge === undefined) s.teraCharge = 50;
-				// any tera currently active on this side (field OR back)
-				const hasAnyTera = side.pokemon.some(p => !!(p as any).terastallized);
-				// which mon is terastallized on-field (if any)
-				const teraOnFieldMon = side.active.find(p => p && !!(p as any).terastallized);
-				// compute delta (use your existing rules exactly)
-				let delta = 0;
-				if (teraOnFieldMon) {
-					const isTerapagos = teraOnFieldMon.species.id === 'terapagosstellar' || teraOnFieldMon.species.name === 'Terapagos-Stellar';
-					delta = -(isTerapagos ? 30 : 40);
-				} else { delta = hasAnyTera ? 10 : 20; }
-				// apply + clamp
-				let next = s.teraCharge + delta;
-				if (next < 0) next = 0;
-				if (next > TERA_CHARGE_MAX) next = TERA_CHARGE_MAX;
-				s.teraCharge = next;
-				// if your server logic ends tera when charge hits 0, keep that logic here too
-				if (hasAnyTera && next === 0) { }
-				// broadcast ONLY here (end-of-turn), not in makeRequest
-				}
-				this.add('upkeep');
-			}
+			this.add('upkeep');
 			break;
 		}
 		// phazing (Roar, etc)
@@ -2602,7 +2624,7 @@ export class Battle {
 			if (options.avatar) side.avatar = `${options.avatar}`;
 			this.sides[slotNum] = side;
 			// --- Tera Charge resource system (per-side) ---
-			(side as any).teraCharge = 50;
+			(side as any).teraCharge = 30;
 		} else {
 			// edit player
 			side = this.sides[slotNum];

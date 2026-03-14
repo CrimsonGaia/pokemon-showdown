@@ -187,32 +187,11 @@ export class BattleActions {
 		if (zMove) { move = this.getActiveZMove(baseMove, pokemon); } 
 		else if (maxMove) { move = this.getActiveMaxMove(baseMove, pokemon); }
 		move.isExternal = externalMove;
-		// ===== Tera Empower: ARM EARLY so move hooks can see it =====
-		let teraEmpoweredThisMove = false;
-		let shouldSpendTeraCharge = false;
-		if (options?.teraempower) {
-		const sideAny = pokemon.side as any;
-		const charge = Number(sideAny.teraCharge ?? 0);     // 0..100
-		const max = Number(sideAny.teraChargeMax ?? 100);   // 100
-		const COST = 10;
-		const moveid = move.id;
-		if (
-			this.battle.gen === 9 &&
-			(moveid === 'terablast' || moveid === 'terastarstorm') &&
-			!pokemon.terastallized &&
-			charge >= COST &&
-			charge < max
-		) {
-			// mark empowered state for the move hooks
-			pokemon.addVolatile('teraempowered');
-			teraEmpoweredThisMove = true;
-			// spend later (only if BeforeMove succeeds)
-			shouldSpendTeraCharge = true;
-		}
-		}
 		this.battle.setActiveMove(move, pokemon, target);
 		const activeMove = this.battle.activeMove;
-		if (activeMove && teraEmpoweredThisMove) { (activeMove as any).teraEmpowered = true; }
+		if (activeMove && pokemon.volatiles['teraempowered']) {
+			(activeMove as any).teraEmpowered = true;
+		}
 		/* if (pokemon.moveThisTurn) {
 			// THIS IS PURELY A SANITY CHECK
 			// DO NOT TAKE ADVANTAGE OF THIS TO PREVENT A POKEMON FROM MOVING;
@@ -229,101 +208,88 @@ export class BattleActions {
 			// false indicates that this counts as a move failing for the purpose of calculating Stomping Tantrum's base power
 			// null indicates the opposite, as the Pokemon didn't have an option to choose anything
 			pokemon.moveThisTurnResult = willTryMove;
-			if (teraEmpoweredThisMove) pokemon.removeVolatile('teraempowered');
 			return;
 		}
-		// ===== Tera Empower: SPEND only after BeforeMove succeeded =====
-		if (shouldSpendTeraCharge) {
-			const sideAny = pokemon.side as any;
-			const charge = Number(sideAny.teraCharge ?? 0);
-			const max = Number(sideAny.teraChargeMax ?? 100);
-			const COST = 10;
-
-			// Re-check invariants just to be safe
-			if (charge >= COST && charge < max) {
-				sideAny.teraCharge = Math.max(0, charge - COST);
-			} else {
-				// undo the arm if spend fails
-				pokemon.removeVolatile('teraempowered');
-				teraEmpoweredThisMove = false;
-				shouldSpendTeraCharge = false;
-			}
-		}
 		try {
-		// Used exclusively for a hint later
-		if (move.flags['cantusetwice'] && pokemon.lastMove?.id === move.id) { pokemon.addVolatile(move.id); }
-		if (move.beforeMoveCallback) {
-			if (move.beforeMoveCallback.call(this.battle, pokemon, target, move)) {
-				this.battle.clearActiveMove(true);
-				pokemon.moveThisTurnResult = false;
-				return;
-			}
-		}
-		pokemon.lastDamage = 0;
-		let lockedMove;
-		if (!externalMove) {
-			lockedMove = this.battle.runEvent('LockMove', pokemon);
-			if (lockedMove === true) lockedMove = false;
-			if (!lockedMove) {
-				if (!pokemon.deductPP(baseMove, null, target) && (move.id !== 'struggle')) {
-					this.battle.add('cant', pokemon, 'nopp', move);
+			// Used exclusively for a hint later
+			if (move.flags['cantusetwice'] && pokemon.lastMove?.id === move.id) { pokemon.addVolatile(move.id); }
+			if (move.beforeMoveCallback) {
+				if (move.beforeMoveCallback.call(this.battle, pokemon, target, move)) {
 					this.battle.clearActiveMove(true);
 					pokemon.moveThisTurnResult = false;
 					return;
 				}
-			} else { sourceEffect = this.dex.conditions.get('lockedmove'); }
-			pokemon.moveUsed(move, targetLoc);
-		}
-		// Dancer Petal Dance hack
-		// TODO: implement properly
-		const noLock = externalMove && !pokemon.volatiles['lockedmove'];
-		if (zMove) {
-			if (pokemon.illusion) {
-				// Check which ability slot has Illusion
-				const illusionSlot = pokemon.ability1 === 'illusion' ? 1 : 2;
-				const abilityStateKey = illusionSlot === 1 ? 'abilityState1' : 'abilityState2';
-				this.battle.singleEvent('End', this.dex.abilities.get('Illusion'), pokemon[abilityStateKey], pokemon);
 			}
-			this.battle.add('-zpower', pokemon);
-			pokemon.side.zMoveUsed = true;
-		}
-		const oldActiveMove = move;
-		const moveDidSomething = this.useMove(baseMove, pokemon, { target, sourceEffect, zMove, maxMove });
-		this.battle.lastSuccessfulMoveThisTurn = moveDidSomething ? this.battle.activeMove && this.battle.activeMove.id : null;
-		if (this.battle.activeMove) move = this.battle.activeMove;
-		this.battle.singleEvent('AfterMove', move, null, pokemon, target, move);
-		this.battle.runEvent('AfterMove', pokemon, target, move);
-		if (move.flags['cantusetwice'] && pokemon.removeVolatile(move.id)) { this.battle.add('-hint', `Some effects can force a Pokemon to use ${move.name} again in a row.`); }
-		// TODO: Refactor to use BattleQueue#prioritizeAction in onAnyAfterMove handlers
-		// Dancer's activation order is completely different from any other event, so it's handled separately
-		if (move.flags['dance'] && moveDidSomething && !move.isExternal) {
-			const dancers = [];
-			for (const currentPoke of this.battle.getAllActive()) {
-				if (pokemon === currentPoke) continue;
-				if (currentPoke.hasAbility('dancer') && !currentPoke.isSemiInvulnerable()) { dancers.push(currentPoke); }
+			pokemon.lastDamage = 0;
+			let lockedMove;
+			if (!externalMove) {
+				lockedMove = this.battle.runEvent('LockMove', pokemon);
+				if (lockedMove === true) lockedMove = false;
+				if (!lockedMove) {
+					if (!pokemon.deductPP(baseMove, null, target) && (move.id !== 'struggle')) {
+						this.battle.add('cant', pokemon, 'nopp', move);
+						this.battle.clearActiveMove(true);
+						pokemon.moveThisTurnResult = false;
+						return;
+					}
+				} else { sourceEffect = this.dex.conditions.get('lockedmove'); }
+				pokemon.moveUsed(move, targetLoc);
 			}
-			// Dancer activates in order of lowest speed stat to highest
-			// Note that the speed stat used is after any volatile replacements like Speed Swap,
-			// but before any multipliers like Agility or Choice Scarf
-			// Ties go to whichever Pokemon has had the ability for the least amount of time
-			dancers.sort( (a, b) => -(b.storedStats['spe'] - a.storedStats['spe']) || b.abilityState1.effectOrder - a.abilityState1.effectOrder );
-			const targetOf1stDance = this.battle.activeTarget!;
-			for (const dancer of dancers) {
-				if (this.battle.faintMessages()) break;
-				if (dancer.fainted) continue;
-				this.battle.add('-activate', dancer, 'ability: Dancer');
-				const dancersTarget = !targetOf1stDance.isAlly(dancer) && pokemon.isAlly(dancer) ?
-					targetOf1stDance :
-					pokemon;
-				const dancersTargetLoc = dancer.getLocOf(dancersTarget);
-				this.runMove(move.id, dancer, dancersTargetLoc, { sourceEffect: this.dex.abilities.get('dancer'), externalMove: true });
+			// Dancer Petal Dance hack
+			// TODO: implement properly
+			const noLock = externalMove && !pokemon.volatiles['lockedmove'];
+			if (zMove) {
+				if (pokemon.illusion) {
+					// Check which ability slot has Illusion
+					const illusionSlot = pokemon.ability1 === 'illusion' ? 1 : 2;
+					const abilityStateKey = illusionSlot === 1 ? 'abilityState1' : 'abilityState2';
+					this.battle.singleEvent('End', this.dex.abilities.get('Illusion'), pokemon[abilityStateKey], pokemon);
+				}
+				this.battle.add('-zpower', pokemon);
+				pokemon.side.zMoveUsed = true;
 			}
-		}
-		if (noLock && pokemon.volatiles['lockedmove']) delete pokemon.volatiles['lockedmove'];
-		this.battle.faintMessages();
-		this.battle.checkWin();
-		if (this.battle.gen <= 4) { this.battle.activeMove = oldActiveMove; }
-		} finally { if (teraEmpoweredThisMove) pokemon.removeVolatile('teraempowered'); }
+			const oldActiveMove = move;
+			const moveDidSomething = this.useMove(baseMove, pokemon, {
+				target,
+				sourceEffect,
+				zMove,
+				maxMove,
+			} as any);
+			this.battle.lastSuccessfulMoveThisTurn = moveDidSomething ? this.battle.activeMove && this.battle.activeMove.id : null;
+			if (this.battle.activeMove) move = this.battle.activeMove;
+			this.battle.singleEvent('AfterMove', move, null, pokemon, target, move);
+			this.battle.runEvent('AfterMove', pokemon, target, move);
+			if (move.flags['cantusetwice'] && pokemon.removeVolatile(move.id)) { this.battle.add('-hint', `Some effects can force a Pokemon to use ${move.name} again in a row.`); }
+			// TODO: Refactor to use BattleQueue#prioritizeAction in onAnyAfterMove handlers
+			// Dancer's activation order is completely different from any other event, so it's handled separately
+			if (move.flags['dance'] && moveDidSomething && !move.isExternal) {
+				const dancers = [];
+				for (const currentPoke of this.battle.getAllActive()) {
+					if (pokemon === currentPoke) continue;
+					if (currentPoke.hasAbility('dancer') && !currentPoke.isSemiInvulnerable()) { dancers.push(currentPoke); }
+				}
+				// Dancer activates in order of lowest speed stat to highest
+				// Note that the speed stat used is after any volatile replacements like Speed Swap,
+				// but before any multipliers like Agility or Choice Scarf
+				// Ties go to whichever Pokemon has had the ability for the least amount of time
+				dancers.sort( (a, b) => -(b.storedStats['spe'] - a.storedStats['spe']) || b.abilityState1.effectOrder - a.abilityState1.effectOrder );
+				const targetOf1stDance = this.battle.activeTarget!;
+				for (const dancer of dancers) {
+					if (this.battle.faintMessages()) break;
+					if (dancer.fainted) continue;
+					this.battle.add('-activate', dancer, 'ability: Dancer');
+					const dancersTarget = !targetOf1stDance.isAlly(dancer) && pokemon.isAlly(dancer) ?
+						targetOf1stDance :
+						pokemon;
+					const dancersTargetLoc = dancer.getLocOf(dancersTarget);
+					this.runMove(move.id, dancer, dancersTargetLoc, { sourceEffect: this.dex.abilities.get('dancer'), externalMove: true });
+				}
+			}
+			if (noLock && pokemon.volatiles['lockedmove']) delete pokemon.volatiles['lockedmove'];
+			this.battle.faintMessages();
+			this.battle.checkWin();
+			if (this.battle.gen <= 4) { this.battle.activeMove = oldActiveMove; }
+		} finally {}
 	}
 	/**
 	 * useMove is the "inside" move caller. It handles effects of the move itself, but not the idea of using the move.
@@ -334,6 +300,7 @@ export class BattleActions {
 		move: Move | string, pokemon: Pokemon, options?: {
 			target?: Pokemon | null, sourceEffect?: Effect | null,
 			zMove?: string, maxMove?: string,
+			teraempower?: boolean,
 		}
 	) {
 		pokemon.moveThisTurnResult = undefined;
@@ -346,6 +313,7 @@ export class BattleActions {
 		moveOrMoveName: Move | string, pokemon: Pokemon, options?: {
 			target?: Pokemon | null, sourceEffect?: Effect | null,
 			zMove?: string, maxMove?: string,
+			teraempower?: boolean,
 		},
 	) {
 		let target = options?.target;
@@ -381,32 +349,11 @@ export class BattleActions {
 			move.ignoreAbility = (sourceEffect as ActiveMove).ignoreAbility;
 		}
 		let moveResult = false;
-		// ===== Tera Empower: arm BEFORE active move setup =====
-		let teraEmpoweredThisMove = false;
-		let shouldSpendTeraCharge = false;
-		if ((options as any)?.teraempower) {
-		const sideAny = pokemon.side as any;
-		const charge = Number(sideAny.teraCharge ?? 0);
-		const max = Number(sideAny.teraChargeMax ?? 100);
-		const COST = 10;
-		const moveid = move.id;
-		if (
-			this.battle.gen === 9 &&
-			(moveid === 'terablast' || moveid === 'terastarstorm') &&
-			!pokemon.terastallized &&
-			charge >= COST &&
-			charge < max
-		) {
-			// CRITICAL: this is what your moves.ts checks
-			pokemon.addVolatile('teraempowered');
-			teraEmpoweredThisMove = true;
-			// spend later only if BeforeMove succeeds
-			shouldSpendTeraCharge = true;
-		}
-		}
+		
 		this.battle.setActiveMove(move, pokemon, target);
 		const activeMove = this.battle.activeMove;
-		if (activeMove && teraEmpoweredThisMove) { (activeMove as any).teraEmpowered = true; }
+		if (activeMove && pokemon.volatiles['teraempowered']) { (activeMove as any).teraEmpowered = true; }
+		
 		this.battle.singleEvent('ModifyType', move, null, pokemon, target, move, move);
 		this.battle.singleEvent('ModifyMove', move, null, pokemon, target, move, move);
 		if (baseTarget !== move.target) { target = this.battle.getRandomTarget(pokemon, move); } // Target changed in ModifyMove, so we must adjust it here. Adjust before the next event so the correct target is passed to the event

@@ -1939,11 +1939,12 @@ export const Conditions = {
 	},
 	//region misc
 	teraempowered: {
-  name: 'Tera Empowered',
-  duration: 1,
-  onStart(pokemon) { this.add('-start', pokemon, 'teraempowered'); },
-  onEnd(pokemon) { this.add('-end', pokemon, 'teraempowered'); },
-},
+		name: 'Tera Empowered',
+		duration: 1,
+		effectType: 'Volatile',
+		onStart(pokemon) { this.add('-start', pokemon, 'teraempowered'); },
+		onEnd(pokemon) { this.add('-end', pokemon, 'teraempowered'); },
+	},
 
 
 	discombobulated: {

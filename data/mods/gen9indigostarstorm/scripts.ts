@@ -251,6 +251,15 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 			action.speed = action.pokemon.getActionSpeed();
 		}
 	},
+	runTryHitAbilities(target: Pokemon, source: Pokemon | null, move: ActiveMove) {
+		const slots = (target as any).getActiveAbilitySlots?.() || [];
+		for (const slot of slots) {
+			if (!slot.state) continue;
+			const result = (this as any).singleEvent('TryHit', slot.effect, slot.state, target, source, move);
+			if (result === false || result === null) return result;
+		}
+		return true;
+	},
 	// For some god forsaken reason removing the boolean declarations causes the "battles dont end automatically" bug
 	// I don't know why but in any case please don't touch this unless you know how to fix this
 	faintMessages(lastFirst = false, forceCheck = false, checkWin = true) {
@@ -280,11 +289,9 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 				if (pokemon.side.pokemonLeft) pokemon.side.pokemonLeft--;
 				if (pokemon.side.totalFainted < 100) pokemon.side.totalFainted++;
 				this.runEvent('Faint', pokemon, faintData.source, faintData.effect);
-				this.singleEvent('End', pokemon.getAbility(), (pokemon as any).abilityState1, pokemon);
-				// Trigger End event for ability2 if it exists
-				if ((pokemon as any).ability2 && (pokemon as any).abilityState2) {
-					const ability2 = this.dex.abilities.get((pokemon as any).ability2);
-					this.singleEvent('End', ability2, (pokemon as any).abilityState2, pokemon);
+				for (const slot of (pokemon as any).getAbilitySlots()) {
+					if (!slot.state) continue;
+					this.singleEvent('End', slot.effect, slot.state, pokemon);
 				}
 				pokemon.clearVolatile(false);
 				pokemon.fainted = true;
@@ -925,11 +932,9 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 				// will definitely switch out at this point
 
 				oldActive.illusion = null;
-this.battle.singleEvent('End', oldActive.getAbility(), (oldActive as any).abilityState1, oldActive);
-			// Trigger End event for ability2 if it exists
-			if ((oldActive as any).ability2 && (oldActive as any).abilityState2) {
-				const ability2 = this.battle.dex.abilities.get((oldActive as any).ability2);
-				this.battle.singleEvent('End', ability2, (oldActive as any).abilityState2, oldActive);
+				for (const slot of (oldActive as any).getAbilitySlots()) {
+					if (!slot.state) continue;
+					this.battle.singleEvent('End', slot.effect, slot.state, oldActive);
 				}
 
 				// if a pokemon is forced out by Whirlwind/etc or Eject Button/Pack, it can't use its chosen move
@@ -976,13 +981,19 @@ this.battle.singleEvent('End', oldActive.getAbility(), (oldActive as any).abilit
 			}
 			console.log(`[ISL] After init: ability1=${(pokemon as any).ability1}, ability2=${(pokemon as any).ability2}, pokemon.ability=${(pokemon as any).ability}`);
 			
-			// Initialize both abilities for ability set system
-			(pokemon as any).abilityState1 = this.battle.initEffectState({ id: (pokemon as any).ability1, target: pokemon });
-			// Base game expects pokemon.abilityState - point it to abilityState1 so ability1 works normally
+			const ability1 = toID((pokemon as any).ability1 || (pokemon as any).ability);
+			(pokemon as any).ability1 = ability1;
+			(pokemon as any).ability = ability1;
+			(pokemon as any).baseAbility = (pokemon as any).baseAbility || ability1;
+
+			(pokemon as any).abilityState1 = this.battle.initEffectState({id: ability1, target: pokemon});
 			(pokemon as any).abilityState = (pokemon as any).abilityState1;
-			if ((pokemon as any).ability2) {
-				(pokemon as any).abilityState2 = this.battle.initEffectState({ id: (pokemon as any).ability2, target: pokemon });
-				console.log(`[ISL] Initialized abilityState2 for ${(pokemon as any).ability2}`);
+
+			const ability2 = toID((pokemon as any).ability2 || '');
+			if (ability2) {
+				(pokemon as any).abilityState2 = this.battle.initEffectState({id: ability2, target: pokemon});
+			} else {
+				(pokemon as any).abilityState2 = undefined;
 			}
 			pokemon.itemState = this.battle.initEffectState({ id: pokemon.item, target: pokemon });
 			
@@ -1005,19 +1016,11 @@ this.battle.singleEvent('End', oldActive.getAbility(), (oldActive as any).abilit
 			return true;
 		},
 		runSwitch(pokemon) {
-			// Manually trigger Start event for ability1 (primary ability)
-			if ((pokemon as any).ability1 && (pokemon as any).abilityState1) {
-				const ability1 = this.battle.dex.abilities.get((pokemon as any).ability1);
-				this.battle.singleEvent('Start', ability1, (pokemon as any).abilityState1, pokemon);
+			for (const slot of (pokemon as any).getAbilitySlots()) {
+				if (!slot.state) continue;
+				this.battle.singleEvent('Start', slot.effect, slot.state, pokemon);
 			}
-			
-			// Also trigger Start event for ability2 (secondary ability)
-			if ((pokemon as any).ability2 && (pokemon as any).abilityState2) {
-				const ability2 = this.battle.dex.abilities.get((pokemon as any).ability2);
-				this.battle.singleEvent('Start', ability2, (pokemon as any).abilityState2, pokemon);
-			}
-			
-			// Run any other switch-in effects
+
 			this.battle.runEvent('AfterSwitchInSelf', pokemon);
 			if (!pokemon.hp) return false;
 			pokemon.isStarted = true;
@@ -1767,7 +1770,8 @@ this.battle.singleEvent('End', oldActive.getAbility(), (oldActive as any).abilit
 			} else if ((move.target === 'foeSide' || move.target === 'allySide' || move.target === 'allyTeam') && !isSelf) {
 				hitResult = this.battle.singleEvent('TryHitSide', moveData, {}, target || null, pokemon, move);
 			} else if (target) {
-				hitResult = this.battle.singleEvent('TryHit', moveData, {}, target, pokemon, move);
+				hitResult = this.battle.singleEvent('TryHit', moveData, {}, target, pokemon, move); 
+				if (hitResult !== false && hitResult !== null) { hitResult = (this.battle as any).runTryHitAbilities(target, pokemon, move); }
 			}
 			if (!hitResult) {
 				if (hitResult === false) {
@@ -2217,18 +2221,40 @@ this.battle.singleEvent('End', oldActive.getAbility(), (oldActive as any).abilit
 		},
 		// Check if Pokemon has an ability (checks both ability slots)
 		hasAbility(ability: string | string[]) {
-			if (this.ignoringAbility()) return false;
-			const abilityid = Array.isArray(ability) ? ability.map(toID) : toID(ability);
-			
-			// Check both ability slots
-			const hasAbility1 = Array.isArray(abilityid) ? 
-				abilityid.includes(toID((this as any).ability1)) : 
-				toID((this as any).ability1) === abilityid;
-			const hasAbility2 = (this as any).ability2 && (Array.isArray(abilityid) ? 
-				abilityid.includes(toID((this as any).ability2)) : 
-				toID((this as any).ability2) === abilityid);
-				
-			return !!(hasAbility1 || hasAbility2);
+			const wanted = Array.isArray(ability) ? ability.map(a => toID(a)) : [toID(ability)];
+			const ability1 = toID((this as any).ability1 || (this as any).ability);
+			const ability2 = toID((this as any).ability2 || '');
+			return wanted.includes(ability1) || (!!ability2 && wanted.includes(ability2));
+		},
+		getAbilitySlots() {
+			const slots: any[] = [];
+
+			const ability1 = toID((this as any).ability1 || (this as any).ability);
+			if (ability1) {
+				slots.push({
+					slot: 1,
+					id: ability1,
+					effect: (this as any).battle.dex.abilities.get(ability1),
+					state: (this as any).abilityState1 || (this as any).abilityState,
+				});
+			}
+
+			const ability2 = toID((this as any).ability2 || '');
+			if (ability2) {
+				slots.push({
+					slot: 2,
+					id: ability2,
+					effect: (this as any).battle.dex.abilities.get(ability2),
+					state: (this as any).abilityState2,
+				});
+			}
+
+			return slots;
+		},
+		getActiveAbilitySlots() {
+			if ((this as any).fainted) return [];
+			if (typeof (this as any).ignoringAbility === 'function' && (this as any).ignoringAbility()) return [];
+			return (this as any).getAbilitySlots().filter((slot: any) => slot.effect?.id);
 		},
 	},
 	//#region Side

@@ -1633,16 +1633,25 @@
 	if (isTerastal) this.teraEmpowerArmedIndex = null;
 	if (isTeraEmpower) this.terastallizeArmedIndex = null;
 
-	this.choice.choices.push(
-		'move ' + pos +
-		(isMega ? ' mega' : '') +
-		(isMegaX ? ' megax' : isMegaY ? ' megay' : '') +
-		(isZMove ? ' zmove' : '') +
-		(isUltraBurst ? ' ultra' : '') +
-		(isDynamax ? ' dynamax' : '') +
-		(isTerastal ? ' terastallize' : '') +
-		(isTeraEmpower ? ' teraempower' : '')
-	);
+	var builtChoice =
+	'move ' + pos +
+	(isMega ? ' mega' : '') +
+	(isMegaX ? ' megax' : isMegaY ? ' megay' : '') +
+	(isZMove ? ' zmove' : '') +
+	(isUltraBurst ? ' ultra' : '') +
+	(isDynamax ? ' dynamax' : '') +
+	(isTerastal ? ' terastallize' : '') +
+	(isTeraEmpower ? ' teraempower' : '');
+
+console.log('CLIENT built move choice:', builtChoice, {
+	choiceIndex: choiceIndex,
+	isTeraEmpower: isTeraEmpower,
+	isTerastal: isTerastal,
+	teraEmpowerArmedIndex: this.teraEmpowerArmedIndex,
+	terastallizeArmedIndex: this.terastallizeArmedIndex,
+});
+
+this.choice.choices.push(builtChoice);
 
 	// consume arming for this slot
 	this.terastallizeArmedIndex = null;
