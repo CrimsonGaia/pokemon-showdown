@@ -251,14 +251,66 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 			action.speed = action.pokemon.getActionSpeed();
 		}
 	},
-	runTryHitAbilities(target: Pokemon, source: Pokemon | null, move: ActiveMove) {
-		const slots = (target as any).getActiveAbilitySlots?.() || [];
+	getAbilityEffectOrder(pokemon: Pokemon, abilityIds?: string[]) {
+		const wanted = abilityIds?.map(id => toID(id));
+		const slots = (pokemon as any).getAbilitySlots?.() || [];
 		for (const slot of slots) {
 			if (!slot.state) continue;
-			const result = (this as any).singleEvent('TryHit', slot.effect, slot.state, target, source, move);
+			if (!wanted || wanted.includes(slot.id)) {
+				return slot.state.effectOrder ?? 0;
+			}
+		}
+		return 0;
+	},
+	runAbilityEventNotify(
+		eventid: string,
+		holder: Pokemon,
+		target?: Pokemon | null,
+		source?: Pokemon | null,
+		effect?: Effect | null,
+		...args: any[]
+	) {
+		const slots = (holder as any).getActiveAbilitySlots?.() || [];
+		for (const slot of slots) {
+			if (!slot.state) continue;
+			(this as any).singleEvent(eventid, slot.effect, slot.state, target ?? holder, source, effect, ...args);
+		}
+	},
+	runAbilityEventCancel(
+		eventid: string,
+		holder: Pokemon,
+		target?: Pokemon | null,
+		source?: Pokemon | null,
+		effect?: Effect | null,
+		...args: any[]
+	) {
+		const slots = (holder as any).getActiveAbilitySlots?.() || [];
+		for (const slot of slots) {
+			if (!slot.state) continue;
+			const result = (this as any).singleEvent(eventid, slot.effect, slot.state, target ?? holder, source, effect, ...args);
 			if (result === false || result === null) return result;
 		}
 		return true;
+	},
+	runAbilityEventChain(
+		eventid: string,
+		holder: Pokemon,
+		value: any,
+		target?: Pokemon | null,
+		source?: Pokemon | null,
+		effect?: Effect | null,
+		...args: any[]
+	) {
+		let cur = value;
+		const slots = (holder as any).getActiveAbilitySlots?.() || [];
+		for (const slot of slots) {
+			if (!slot.state) continue;
+			const result = (this as any).singleEvent(
+				eventid, slot.effect, slot.state, target ?? holder, source, effect, cur, ...args
+			);
+			if (result !== undefined) cur = result;
+		}
+		return cur;
 	},
 	// For some god forsaken reason removing the boolean declarations causes the "battles dont end automatically" bug
 	// I don't know why but in any case please don't touch this unless you know how to fix this
@@ -353,75 +405,70 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 		let residualPokemon: (readonly [Pokemon, number])[] = [];
 		// returns whether or not we ended in a callback
 		switch (action.choice) {
-		case 'start': {
-			for (const side of this.sides) {
-				if (side.pokemonLeft) side.pokemonLeft = side.pokemon.length;
-				this.add('teamsize', side.id, side.pokemon.length);
-			}
-
-			this.add('start');
-
-			// Change Zacian/Zamazenta into their Crowned formes
-			for (const pokemon of this.getAllPokemon()) {
-				let rawSpecies: Species | null = null;
-				if (pokemon.species.id === 'zacian' && pokemon.item === 'rustedsword') {
-					rawSpecies = this.dex.species.get('Zacian-Crowned');
-				} else if (pokemon.species.id === 'zamazenta' && pokemon.item === 'rustedshield') {
-					rawSpecies = this.dex.species.get('Zamazenta-Crowned');
+			case 'start': {
+				for (const side of this.sides) {
+					const fullTeam = side.pokemon.slice();
+					const selected = ((side as any).selectedPokemon || fullTeam).slice();
+					(side as any).fullTeam = fullTeam;
+					side.pokemon = selected;
+					for (let i = 0; i < side.pokemon.length; i++) { side.pokemon[i].position = i; }
+					side.pokemonLeft = side.pokemon.length;
+					this.add('teamsize', side.id, fullTeam.length);
 				}
-				if (!rawSpecies) continue;
-				const species = pokemon.setSpecies(rawSpecies);
-				if (!species) continue;
-				pokemon.baseSpecies = rawSpecies;
-				pokemon.details = pokemon.getUpdatedDetails();
-				// pokemon.setAbility(species.abilities['0'], null, null, true);
-				// pokemon.baseAbility = pokemon.ability;
-
-				const behemothMove: { [k: string]: string } = {
-					'Zacian-Crowned': 'behemothblade', 'Zamazenta-Crowned': 'behemothbash',
+	this.add('start');
+	// Change Zacian/Zamazenta into their Crowned formes
+	for (const pokemon of this.getAllPokemon()) {
+		let rawSpecies: Species | null = null;
+		if (pokemon.species.id === 'zacian' && pokemon.item === 'rustedsword') { rawSpecies = this.dex.species.get('Zacian-Crowned'); } 
+		else if (pokemon.species.id === 'zamazenta' && pokemon.item === 'rustedshield') { rawSpecies = this.dex.species.get('Zamazenta-Crowned'); }
+		if (!rawSpecies) continue;
+		const species = pokemon.setSpecies(rawSpecies);
+		if (!species) continue;
+		pokemon.baseSpecies = rawSpecies;
+		pokemon.details = pokemon.getUpdatedDetails();
+		// pokemon.setAbility(species.abilities['0'], null, null, true);
+		// pokemon.baseAbility = pokemon.ability;
+		const behemothMove: { [k: string]: string } = { 'Zacian-Crowned': 'behemothblade', 'Zamazenta-Crowned': 'behemothbash', };
+		const ironHead = pokemon.baseMoves.indexOf('ironhead');
+			if (ironHead >= 0) {
+				const move = this.dex.moves.get(behemothMove[rawSpecies.name]);
+				pokemon.baseMoveSlots[ironHead] = {
+					move: move.name,
+					id: move.id,
+					pp: move.noPPBoosts ? move.pp : move.pp * 8 / 5,
+					maxpp: move.noPPBoosts ? move.pp : move.pp * 8 / 5,
+					target: move.target,
+					disabled: false,
+					disabledSource: '',
+					used: false,
 				};
-				const ironHead = pokemon.baseMoves.indexOf('ironhead');
-				if (ironHead >= 0) {
-					const move = this.dex.moves.get(behemothMove[rawSpecies.name]);
-					pokemon.baseMoveSlots[ironHead] = {
-						move: move.name,
-						id: move.id,
-						pp: move.noPPBoosts ? move.pp : move.pp * 8 / 5,
-						maxpp: move.noPPBoosts ? move.pp : move.pp * 8 / 5,
-						target: move.target,
-						disabled: false,
-						disabledSource: '',
-						used: false,
-					};
-					pokemon.moveSlots = pokemon.baseMoveSlots.slice();
-				}
+				pokemon.moveSlots = pokemon.baseMoveSlots.slice();
 			}
-
-			this.format.onBattleStart?.call(this);
-			for (const rule of this.ruleTable.keys()) {
-				if ('+*-!'.includes(rule.charAt(0))) continue;
-				const subFormat = this.dex.formats.get(rule);
-				subFormat.onBattleStart?.call(this);
-			}
-
-			for (const side of this.sides) {
-				for (let i = 0; i < side.active.length; i++) {
-					if (!side.pokemonLeft) {
-						// forfeited before starting
-						side.active[i] = side.pokemon[i];
+		}
+		this.format.onBattleStart?.call(this);
+		for (const rule of this.ruleTable.keys()) {
+			if ('+*-!'.includes(rule.charAt(0))) continue;
+			const subFormat = this.dex.formats.get(rule);
+			subFormat.onBattleStart?.call(this);
+		}
+		for (const side of this.sides) {
+			for (let i = 0; i < side.active.length; i++) {
+				if (!side.pokemonLeft) {
+					side.active[i] = side.pokemon[i];
+					if (side.active[i]) {
 						side.active[i].fainted = true;
 						side.active[i].hp = 0;
-					} else {
-						this.actions.switchIn(side.pokemon[i], i);
 					}
+				} else if (side.pokemon[i]) {
+					this.actions.switchIn(side.pokemon[i], i);
 				}
 			}
-			for (const pokemon of this.getAllPokemon()) {
-				this.singleEvent('Start', this.dex.conditions.getByID(pokemon.species.id), pokemon.speciesState, pokemon);
-			}
-			this.midTurn = true;
-			break;
+			delete (side as any).selectedPokemon;
 		}
+		for (const pokemon of this.getAllPokemon()) { this.singleEvent('Start', this.dex.conditions.getByID(pokemon.species.id), pokemon.speciesState, pokemon); }
+		this.midTurn = true;
+		break;
+	}
 
 		case 'move':
 			if (!action.pokemon.isActive) return false;
@@ -463,13 +510,10 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 			this.runEvent(action.event!, action.pokemon);
 			break;
 		case 'team':
-			if (action.index === 0) {
-				action.pokemon.side.pokemon = [];
-			}
-			action.pokemon.side.pokemon.push(action.pokemon);
-			action.pokemon.position = action.index;
-			// we return here because the update event would crash since there are no active pokemon yet
-			return;
+			if (action.index === 0) { (action.pokemon.side as any).selectedPokemon = []; }
+			(action.pokemon.side as any).selectedPokemon.push(action.pokemon);
+			break;
+
 
 		case 'pass':
 			return;
@@ -478,24 +522,27 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 			if (action.choice === 'switch' && action.pokemon.status) {
 				this.singleEvent('CheckShow', this.dex.abilities.getByID('naturalcure' as ID), null, action.pokemon);
 			}
-			if (this.actions.switchIn(action.target, action.pokemon.position, action.sourceEffect) === 'pursuitfaint') {
-				// a pokemon fainted from Pursuit before it could switch
-				if (this.gen <= 4) {
-					// in gen 2-4, the switch still happens
-					this.hint("Previously chosen switches continue in Gen 2-4 after a Pursuit target faints.");
-					action.priority = -101;
-					this.queue.unshift(action);
-					break;
-				} else {
-					// in gen 5+, the switch is cancelled
-					this.hint("A Pokemon can't switch between when it runs out of HP and when it faints");
-					break;
+			{
+				if (this.actions.switchIn(action.target, action.pokemon.position, action.sourceEffect) === 'pursuitfaint') {
+					// a pokemon fainted from Pursuit before it could switch
+					if (this.gen <= 4) {
+						// in gen 2-4, the switch still happens
+						this.hint("Previously chosen switches continue in Gen 2-4 after a Pursuit target faints.");
+						action.priority = -101;
+						this.queue.unshift(action);
+						break;
+					} else {
+						// in gen 5+, the switch is cancelled
+						this.hint("A Pokemon can't switch between when it runs out of HP and when it faints");
+						break;
+					}
 				}
 			}
 			break;
 		case 'revivalblessing':
 			action.pokemon.side.pokemonLeft++;
-			if (action.target.position < action.pokemon.side.active.length) {
+			const slot = action.target.side.active.indexOf(action.target);
+			if (slot >= 0) {
 				this.queue.addChoice({
 					choice: 'instaswitch',
 					pokemon: action.target,
@@ -551,17 +598,16 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 			this.add('upkeep');
 			break;
 		}
-
 		// phazing (Roar, etc)
 		for (const side of this.sides) {
 			for (const pokemon of side.active) {
+				if (!pokemon) continue;
 				if (pokemon.forceSwitchFlag) {
 					if (pokemon.hp) this.actions.dragIn(pokemon.side, pokemon.position);
 					pokemon.forceSwitchFlag = false;
 				}
 			}
 		}
-
 		this.clearActiveMove();
 
 		// fainting
@@ -616,6 +662,7 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 			let reviveSwitch = false; // Used to ignore the fake switch for Revival Blessing
 			if (switches[i] && !this.canSwitch(this.sides[i])) {
 				for (const pokemon of this.sides[i].active) {
+					if (!pokemon) continue;
 					if (
 						this.sides[i].slotConditions[pokemon.position]['revivalblessing'] ||
 						this.sides[i].slotConditions[pokemon.position]['scapegoat']
@@ -666,7 +713,11 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 	actions: {
 		terastallize(pokemon) {
 			if (pokemon.illusion && ['Ogerpon', 'Terapagos'].includes(pokemon.illusion.species.baseSpecies)) {
-				this.battle.singleEvent('End', this.dex.abilities.get('Illusion'), (pokemon as any).abilityState1, pokemon);
+				const illusionState =
+					(pokemon as any).ability1 === 'illusion' ? (pokemon as any).abilityState1 :
+					(pokemon as any).ability2 === 'illusion' ? (pokemon as any).abilityState2 :
+					null;
+				if (illusionState) { this.battle.singleEvent('End', this.dex.abilities.get('Illusion'), illusionState, pokemon); }
 			}
 
 			const type = pokemon.teraType;
@@ -679,9 +730,7 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 				}
 				pokemon.volatiles['stellaroriginal'].types = pokemon.getTypes(false, true);
 			}
-			for (const ally of pokemon.side.pokemon) {
-				ally.canTerastallize = null;
-			}
+			for (const ally of pokemon.side.pokemon) { ally.canTerastallize = null; }
 			pokemon.addedType = '';
 			pokemon.knownType = true;
 			pokemon.apparentType = type;
@@ -959,7 +1008,10 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 				// ptoad
 				delete oldActive.m.usedPleek;
 				delete oldActive.m.usedPlagiarism;
-				oldActive.position = pokemon.position;
+
+				const oldPos = oldActive.position;
+				const newPos = pokemon.position;
+				oldActive.position = newPos;
 				pokemon.position = pos;
 				side.pokemon[pokemon.position] = pokemon;
 				side.pokemon[oldActive.position] = oldActive;
@@ -1062,7 +1114,10 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 				this.battle.add('-start', pokemon, 'typechange', pokemon.getTypes(true).join('/'), '[silent]');
 			}
 
-			this.battle.add('-ability', pokemon, `${pokemon.getAbility().name}`);
+			const displayAbility =
+				(pokemon as any).getAbilitySlots?.()?.find((slot: any) => slot.id === (pokemon as any).ability1)?.effect?.name ||
+				pokemon.getAbility().name;
+			this.battle.add('-ability', pokemon, `${displayAbility}`);
 
 			return true;
 		},
@@ -1298,15 +1353,19 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 
 			if (zMove) {
 				if (pokemon.illusion) {
-					this.battle.singleEvent('End', this.dex.abilities.get('Illusion'), (pokemon as any).abilityState1, pokemon);
+					const illusionState =
+						(pokemon as any).ability1 === 'illusion' ? (pokemon as any).abilityState1 :
+						(pokemon as any).ability2 === 'illusion' ? (pokemon as any).abilityState2 :
+						null;
+					if (illusionState) {
+						this.battle.singleEvent('End', this.dex.abilities.get('Illusion'), illusionState, pokemon);
+					}
 				}
 				this.battle.add('-zpower', pokemon);
-				// 1 z move per poke
 				pokemon.m.zMoveUsed = true;
 			}
 
 			const oldActiveMove = move;
-
 			const moveDidSomething = this.useMove(baseMove, pokemon, { target, sourceEffect, zMove, maxMove });
 			this.battle.lastSuccessfulMoveThisTurn = moveDidSomething ? this.battle.activeMove && this.battle.activeMove.id : null;
 			if (this.battle.activeMove) move = this.battle.activeMove;
@@ -1327,18 +1386,32 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 				// but before any multipliers like Agility or Choice Scarf
 				// Ties go to whichever Pokemon has had the ability for the least amount of time
 				dancers.sort(
-					(a, b) => -(b.storedStats['spe'] - a.storedStats['spe']) || b.abilityState1.effectOrder - a.abilityState1.effectOrder
+					(a, b) =>
+						-(b.storedStats['spe'] - a.storedStats['spe']) ||
+						((this.battle as any).getAbilityEffectOrder(b, ['dancer', 'virtualidol']) -
+						(this.battle as any).getAbilityEffectOrder(a, ['dancer', 'virtualidol']))
 				);
 				const targetOf1stDance = this.battle.activeTarget!;
 				for (const dancer of dancers) {
 					if (this.battle.faintMessages()) break;
 					if (dancer.fainted) continue;
-					this.battle.add('-activate', dancer, 'ability: ' + dancer.getAbility().name);
-					const dancersTarget = !targetOf1stDance.isAlly(dancer) && pokemon.isAlly(dancer) ?
-						targetOf1stDance :
-						pokemon;
-					const dancersTargetLoc = dancer.getLocOf(dancersTarget);
-					this.runMove(move.id, dancer, dancersTargetLoc, { sourceEffect: dancer.getAbility(), externalMove: true });
+					for (const dancer of dancers) {
+						if (this.battle.faintMessages()) break;
+						if (dancer.fainted) continue;
+						const dancerAbilitySlot =
+							dancer.ability1 === 'dancer' ? 1 :
+							dancer.ability2 === 'dancer' ? 2 :
+							dancer.ability1 === 'virtualidol' ? 1 :
+							dancer.ability2 === 'virtualidol' ? 2 :
+							1;
+						const dancerAbility = dancer.getAbility(dancerAbilitySlot as 1 | 2);
+						this.battle.add('-activate', dancer, 'ability: ' + dancerAbility.name);
+						const dancersTarget = !targetOf1stDance.isAlly(dancer) && pokemon.isAlly(dancer) ?
+							targetOf1stDance :
+							pokemon;
+						const dancersTargetLoc = dancer.getLocOf(dancersTarget);
+						this.runMove(move.id, dancer, dancersTargetLoc, { sourceEffect: dancerAbility, externalMove: true });
+					}
 				}
 			}
 			// Musician works identically to Dancer, but for sound moves
@@ -1351,18 +1424,30 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 					}
 				}
 				musicians.sort(
-					(a, b) => -(b.storedStats['spe'] - a.storedStats['spe']) || b.abilityState1.effectOrder - a.abilityState1.effectOrder
+					(a, b) =>
+						-(b.storedStats['spe'] - a.storedStats['spe']) ||
+						((this.battle as any).getAbilityEffectOrder(b, ['musician']) -
+						(this.battle as any).getAbilityEffectOrder(a, ['musician']))
 				);
 				const targetOf1stSound = this.battle.activeTarget!;
 				for (const musician of musicians) {
 					if (this.battle.faintMessages()) break;
 					if (musician.fainted) continue;
-					this.battle.add('-activate', musician, 'ability: ' + musician.getAbility().name);
-					const musiciansTarget = !targetOf1stSound.isAlly(musician) && pokemon.isAlly(musician) ?
-						targetOf1stSound :
-						pokemon;
-					const musiciansTargetLoc = musician.getLocOf(musiciansTarget);
-					this.runMove(move.id, musician, musiciansTargetLoc, { sourceEffect: musician.getAbility(), externalMove: true });
+					for (const musician of musicians) {
+						if (this.battle.faintMessages()) break;
+						if (musician.fainted) continue;
+						const musicianAbilitySlot =
+							musician.ability1 === 'musician' ? 1 :
+							musician.ability2 === 'musician' ? 2 :
+							1;
+						const musicianAbility = musician.getAbility(musicianAbilitySlot as 1 | 2);
+						this.battle.add('-activate', musician, 'ability: ' + musicianAbility.name);
+						const musiciansTarget = !targetOf1stSound.isAlly(musician) && pokemon.isAlly(musician) ?
+							targetOf1stSound :
+							pokemon;
+						const musiciansTargetLoc = musician.getLocOf(musiciansTarget);
+						this.runMove(move.id, musician, musiciansTargetLoc, { sourceEffect: musicianAbility, externalMove: true });
+					}
 				}
 			}
 			if (noLock && pokemon.volatiles['lockedmove']) delete pokemon.volatiles['lockedmove'];
@@ -1771,7 +1856,7 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 				hitResult = this.battle.singleEvent('TryHitSide', moveData, {}, target || null, pokemon, move);
 			} else if (target) {
 				hitResult = this.battle.singleEvent('TryHit', moveData, {}, target, pokemon, move); 
-				if (hitResult !== false && hitResult !== null) { hitResult = (this.battle as any).runTryHitAbilities(target, pokemon, move); }
+				if (hitResult !== false && hitResult !== null) { hitResult = (this.battle as any).runAbilityEventCancel('TryHit', target, target, pokemon, move); }
 			}
 			if (!hitResult) {
 				if (hitResult === false) {

@@ -156,6 +156,7 @@ export class Side {
 	allySide: Side | null = null; // set in battle.start()
 	team: PokemonSet[];
 	pokemon: Pokemon[];
+	fullTeam?: Pokemon[];
 	active: Pokemon[];
 	pokemonLeft: number;
 	zMoveUsed: boolean;
@@ -376,7 +377,8 @@ export class Side {
 	) {
 		source ??= this.battle.event?.target || null;
 		if (source === 'debug') source = this.active[0];
-		if (target instanceof Pokemon) target = target.position;
+		if (target instanceof Pokemon) { target = target.position; }
+		if (target < 0 || target >= this.active.length) return false;
 		if (!source) throw new Error(`setting sidecond without a source`);
 		status = this.battle.dex.conditions.get(status);
 		if (this.slotConditions[target][status.id]) {
@@ -399,13 +401,15 @@ export class Side {
 		return true;
 	}
 	getSlotCondition(target: Pokemon | number, status: string | Effect) {
-		if (target instanceof Pokemon) target = target.position;
+		if (target instanceof Pokemon) { target = target.position; }
+		if (target < 0 || target >= this.active.length) return null;
 		status = this.battle.dex.conditions.get(status) as Effect;
 		if (!this.slotConditions[target][status.id]) return null;
 		return status;
 	}
 	removeSlotCondition(target: Pokemon | number, status: string | Effect) {
-		if (target instanceof Pokemon) target = target.position;
+		if (target instanceof Pokemon) { target = target.position; }
+		if (target < 0 || target >= this.active.length) return false;
 		status = this.battle.dex.conditions.get(status) as Effect;
 		if (!this.slotConditions[target][status.id]) return false;
 		this.battle.singleEvent('End', status, this.slotConditions[target][status.id], this.active[target]);

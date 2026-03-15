@@ -359,7 +359,7 @@ private renderStatusIcon(status: string): string {
 		let $elem;
 		if (hoveredElem) { $elem = $(hoveredElem); } 
 		else {
-			$elem = (this.battle.scene as BattleScene).$turn;
+			$elem = (this.battle.scene as unknown as unknown as BattleScene).$turn;
 			notRelativeToParent = true;
 		}
 		let hoveredX1 = $elem.offset()!.left;
@@ -784,7 +784,7 @@ private renderStatusIcon(status: string): string {
 		return text;
 	}
 	showFieldTooltip() {
-		const scene = this.battle.scene as BattleScene;
+		const scene = this.battle.scene as unknown as BattleScene;
 		let buf = `<table style="border: 0; border-collapse: collapse; vertical-align: top; padding: 0; width: 100%"><tr>`;
 		let atLeastOne = false;
 		for (const side of this.battle.sides) {
@@ -1775,27 +1775,25 @@ private renderStatusIcon(status: string): string {
 		if (isISLFormat && (clientPokemon || serverPokemon)) {
 			const status = (clientPokemon as any)?.status || (serverPokemon as any)?.status || '';
 			const abilityData = this.getPokemonAbilityData(clientPokemon, serverPokemon);
-			// Current + base per-slot
-			const cur1 = abilityData.ability || abilityData.baseAbility;
-			const base1 = abilityData.baseAbility || cur1;
-			const cur2 = abilityData.ability2 || abilityData.baseAbility2;
-			const base2 = abilityData.baseAbility2 || cur2;
+
 			const nameOf = (id: string) => id ? this.battle.dex.abilities.get(id).name : '';
+			const esc = (s: string) => BattleLog.escapeHTML(s);
+
+			const cur1 = abilityData.ability || abilityData.baseAbility || '';
+			const base1 = abilityData.baseAbility || cur1 || '';
+			const cur2 = abilityData.ability2 || abilityData.baseAbility2 || '';
+			const base2 = abilityData.baseAbility2 || cur2 || '';
+
 			const cur1Name = nameOf(cur1);
 			const cur2Name = nameOf(cur2);
+			const base1Name = nameOf(base1);
 			const base2Name = nameOf(base2);
-			// If Aura is active, it *defines* slot 2 right now.
-			// Show the actual current pair immediately, and (optionally) note what it replaced.
-			if (status === 'aura' && cur1Name && cur2Name) {
-				let out = `<small>Ability Set:</small><br />`;
-				out += `<span class="ability-line">${BattleLog.escapeHTML(cur1Name)}</span><br />`;
-				// If we know what Aura replaced, annotate it
-				if (base2Name && base2Name !== cur2Name) {
-				out += `<span class="ability-line">${BattleLog.escapeHTML(cur2Name)} <small>(replaces ${BattleLog.escapeHTML(base2Name)})</small></span><br />`;
-				} else { out += `<span class="ability-line">${BattleLog.escapeHTML(cur2Name)}</span><br />`; }
-				return out;
-			}
-			// Build possible sets from the flat list (pairs)
+
+			// If we have serverPokemon, this is our own/ally Pokémon and the set is already known.
+			// Never show "possible ability sets" for our own mons.
+			const isOwnPokemon = !!serverPokemon;
+
+			// Build possible sets from the flat list [a1, a2, a1, a2, ...]
 			const sets: string[][] = [];
 			for (let i = 0; i < abilityData.possibilities.length; i += 2) {
 				const a1 = abilityData.possibilities[i];
@@ -1805,40 +1803,83 @@ private renderStatusIcon(status: string): string {
 				if (a2) set.push(a2);
 				if (set.length) sets.push(set);
 			}
-			// Known abilities (IDs, not names) – use base1/base2 when present.
-			// IMPORTANT: we only narrow if we have an *exclusive* signal.
-			const known: string[] = [];
-			if (base1) known.push(base1);
-			if (base2) known.push(base2);
-			// Filter sets: a set remains possible if it contains ALL known abilities we’ve actually confirmed.
-			// But if the only known ability is shared between sets, both remain -> ambiguity preserved.
-			let possible = sets;
-			if (known.length && sets.length) {
-				possible = sets.filter(set => known.every(k => set.includes(k)));
-				if (!possible.length) possible = sets;
-			}
-			// If we can narrow to one set, show it as Ability Set
-			if (possible.length === 1) {
-				const s = possible[0].map(nameOf).filter(Boolean);
+
+			// Abilities that are actually revealed/known right now.
+			// Use currently revealed slots first; only fall back to base slot if current is absent.
+			const revealed: string[] = [];
+			if (cur1) revealed.push(cur1);
+			else if (base1) revealed.push(base1);
+			if (cur2) revealed.push(cur2);
+			else if (base2) revealed.push(base2);
+
+			const revealedSet = new Set(revealed);
+			const boldIfRevealed = (id: string) => {
+				const n = nameOf(id);
+				if (!n) return '';
+				const rendered = esc(n);
+				return revealedSet.has(id) ? `<strong>${rendered}</strong>` : rendered;
+			};
+
+			// Own Pokémon: always show the actual set, never the possible-set view.
+			if (isOwnPokemon) {
 				let out = `<small>Ability Set:</small><br />`;
-				for (const a of s) out += `<span class="ability-line">${BattleLog.escapeHTML(a)}</span><br />`;
+
+				if (cur1Name) {
+					out += `<span class="ability-line">${esc(cur1Name)}</span><br />`;
+				} else if (base1Name) {
+					out += `<span class="ability-line">${esc(base1Name)}</span><br />`;
+				}
+
+				if (status === 'aura' && cur2Name) {
+					if (base2Name && base2Name !== cur2Name) {
+						out += `<span class="ability-line"><strong>${esc(cur2Name)}</strong> <small>(replaces ${esc(base2Name)})</small></span><br />`;
+					} else {
+						out += `<span class="ability-line"><strong>${esc(cur2Name)}</strong></span><br />`;
+					}
+				} else if (cur2Name) {
+					out += `<span class="ability-line">${esc(cur2Name)}</span><br />`;
+				} else if (base2Name) {
+					out += `<span class="ability-line">${esc(base2Name)}</span><br />`;
+				}
+
 				return out;
 			}
-			// Otherwise show possible sets (with Set 1/2 colors you requested)
+
+			// Opponent/unknown Pokémon:
+			// Narrow only by revealed abilities. If ambiguity remains, keep all matching sets.
+			let possible = sets;
+			if (revealed.length && sets.length) {
+				possible = sets.filter(set => revealed.every(r => set.includes(r)));
+				if (!possible.length) possible = sets;
+			}
+
+			// Aura defines slot 2 right now; if that uniquely identifies the set, show the single set.
+			if (possible.length === 1) {
+				const s = possible[0];
+				let out = `<small>Ability Set:</small><br />`;
+				for (const id of s) {
+					out += `<span class="ability-line">${boldIfRevealed(id)}</span><br />`;
+				}
+				if (status === 'aura' && cur2Name && base2Name && base2Name !== cur2Name) {
+					out += `<span class="ability-line"><small>${esc(cur2Name)} currently replaces ${esc(base2Name)}</small></span><br />`;
+				}
+				return out;
+			}
+
 			if (possible.length && !hidePossible) {
 				let out = `<small>Possible ability sets:</small><br />`;
 				for (let s = 0; s < possible.length; s++) {
-				const setNum = s + 1;
-				const setClass = setNum === 1 ? 'set-1' : (setNum === 2 ? 'set-2' : '');
-				out += `<span class="abilityset-title ${setClass}">Set ${setNum}</span><br />`;
-				for (const id of possible[s]) {
-					const n = nameOf(id);
-					if (n) out += `<span class="ability-line">${BattleLog.escapeHTML(n)}</span><br />`;
-				}
+					const setNum = s + 1;
+					const setClass = setNum === 1 ? 'set-1' : (setNum === 2 ? 'set-2' : '');
+					out += `<span class="abilityset-title ${setClass}">Set ${setNum}</span><br />`;
+					for (const id of possible[s]) {
+						out += `<span class="ability-line">${boldIfRevealed(id)}</span><br />`;
+					}
 				}
 				return out;
 			}
 		}
+
 		if (!isActive) {
 			// for switch tooltips, only show the original ability
 			const ability = abilityData.baseAbility || abilityData.ability;

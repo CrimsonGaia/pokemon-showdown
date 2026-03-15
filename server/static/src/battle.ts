@@ -644,7 +644,8 @@ export class Side {
 	active = [null] as (Pokemon | null)[];
 	lastPokemon = null as Pokemon | null;
 	pokemon = [] as Pokemon[];
-
+	fullTeam = [] as Pokemon[];
+	sidebarPokemon = [] as Pokemon[];
 	sideConditions: {
 		[id: string]: [effectName: string, levels: number, minDuration: number, maxDuration: number],
 	} = {};
@@ -678,6 +679,8 @@ export class Side {
 	clearPokemon() {
 		for (const pokemon of this.pokemon) pokemon.destroy();
 		this.pokemon = [];
+		this.fullTeam = [];
+		this.sidebarPokemon = [];
 		for (let i = 0; i < this.active.length; i++) this.active[i] = null;
 		this.lastPokemon = null;
 	}
@@ -849,7 +852,7 @@ export class Side {
 				this.pokemon.splice(toRemove, 1);
 			}
 		}
-		this.battle.scene.updateSidebar(this);
+		this.battle.scene.updateSidebars();
 
 		return poke;
 	}
@@ -1833,7 +1836,7 @@ export class Battle {
 					const side = this.sides[siden];
 					poke.fainted = false;
 					poke.status = '';
-					this.scene.updateSidebar(side);
+					this.scene.updateSidebars();
 					break;
 				}
 			}
@@ -3657,7 +3660,7 @@ export class Battle {
 			if (args[4]) side.rating = args[4];
 			if (this.joinButtons) this.scene.hideJoinButtons();
 			this.log(args);
-			this.scene.updateSidebar(side);
+			this.scene.updateSidebars();
 			break;
 		}
 		case 'badge': {
@@ -3666,13 +3669,13 @@ export class Battle {
 			const badge = args.slice(2).join('|');
 			// (don't allow duping)
 			if (!side.badges.includes(badge)) side.badges.push(badge);
-			this.scene.updateSidebar(side);
+			this.scene.updateSidebars();
 			break;
 		}
 		case 'teamsize': {
 			let side = this.getSide(args[1]);
 			side.totalPokemon = parseInt(args[2], 10);
-			this.scene.updateSidebar(side);
+			this.scene.updateSidebars();
 			break;
 		}
 		case 'win': case 'tie': {

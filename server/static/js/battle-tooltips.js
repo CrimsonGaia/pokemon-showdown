@@ -1776,25 +1776,23 @@ if(isISLFormat&&(clientPokemon||serverPokemon)){
 var status=(clientPokemon==null?void 0:clientPokemon.status)||(serverPokemon==null?void 0:serverPokemon.status)||'';
 var _abilityData=this.getPokemonAbilityData(clientPokemon,serverPokemon);
 
-var cur1=_abilityData.ability||_abilityData.baseAbility;
-var base1=_abilityData.baseAbility||cur1;
-var cur2=_abilityData.ability2||_abilityData.baseAbility2;
-var base2=_abilityData.baseAbility2||cur2;
 var nameOf=function(id){return id?_this4.battle.dex.abilities.get(id).name:'';};
+var esc=function(s){return BattleLog.escapeHTML(s);};
+
+var cur1=_abilityData.ability||_abilityData.baseAbility||'';
+var base1=_abilityData.baseAbility||cur1||'';
+var cur2=_abilityData.ability2||_abilityData.baseAbility2||'';
+var base2=_abilityData.baseAbility2||cur2||'';
+
 var cur1Name=nameOf(cur1);
 var cur2Name=nameOf(cur2);
+var base1Name=nameOf(base1);
 var base2Name=nameOf(base2);
 
 
-if(status==='aura'&&cur1Name&&cur2Name){
-var out="<small>Ability Set:</small><br />";
-out+="<span class=\"ability-line\">"+BattleLog.escapeHTML(cur1Name)+"</span><br />";
 
-if(base2Name&&base2Name!==cur2Name){
-out+="<span class=\"ability-line\">"+BattleLog.escapeHTML(cur2Name)+" <small>(replaces "+BattleLog.escapeHTML(base2Name)+")</small></span><br />";
-}else{out+="<span class=\"ability-line\">"+BattleLog.escapeHTML(cur2Name)+"</span><br />";}
-return out;
-}
+var isOwnPokemon=!!serverPokemon;
+
 
 var sets=[];
 for(var i=0;i<_abilityData.possibilities.length;i+=2){
@@ -1807,21 +1805,64 @@ if(set.length)sets.push(set);
 }
 
 
-var known=[];
-if(base1)known.push(base1);
-if(base2)known.push(base2);
+
+var revealed=[];
+if(cur1)revealed.push(cur1);else
+if(base1)revealed.push(base1);
+if(cur2)revealed.push(cur2);else
+if(base2)revealed.push(base2);
+
+var revealedSet=new Set(revealed);
+var boldIfRevealed=function(id){
+var n=nameOf(id);
+if(!n)return'';
+var rendered=esc(n);
+return revealedSet.has(id)?"<strong>"+rendered+"</strong>":rendered;
+};
+
+
+if(isOwnPokemon){
+var out="<small>Ability Set:</small><br />";
+
+if(cur1Name){
+out+="<span class=\"ability-line\">"+esc(cur1Name)+"</span><br />";
+}else if(base1Name){
+out+="<span class=\"ability-line\">"+esc(base1Name)+"</span><br />";
+}
+
+if(status==='aura'&&cur2Name){
+if(base2Name&&base2Name!==cur2Name){
+out+="<span class=\"ability-line\"><strong>"+esc(cur2Name)+"</strong> <small>(replaces "+esc(base2Name)+")</small></span><br />";
+}else{
+out+="<span class=\"ability-line\"><strong>"+esc(cur2Name)+"</strong></span><br />";
+}
+}else if(cur2Name){
+out+="<span class=\"ability-line\">"+esc(cur2Name)+"</span><br />";
+}else if(base2Name){
+out+="<span class=\"ability-line\">"+esc(base2Name)+"</span><br />";
+}
+
+return out;
+}
+
 
 
 var possible=sets;
-if(known.length&&sets.length){
-possible=sets.filter(function(set){return known.every(function(k){return set.includes(k);});});
+if(revealed.length&&sets.length){
+possible=sets.filter(function(set){return revealed.every(function(r){return set.includes(r);});});
 if(!possible.length)possible=sets;
 }
 
+
 if(possible.length===1){
-var s=possible[0].map(nameOf).filter(Boolean);
+var s=possible[0];
 var _out="<small>Ability Set:</small><br />";for(var _i58=0;_i58<
-s.length;_i58++){var a=s[_i58];_out+="<span class=\"ability-line\">"+BattleLog.escapeHTML(a)+"</span><br />";}
+s.length;_i58++){var id=s[_i58];
+_out+="<span class=\"ability-line\">"+boldIfRevealed(id)+"</span><br />";
+}
+if(status==='aura'&&cur2Name&&base2Name&&base2Name!==cur2Name){
+_out+="<span class=\"ability-line\"><small>"+esc(cur2Name)+" currently replaces "+esc(base2Name)+"</small></span><br />";
+}
 return _out;
 }
 
@@ -1831,14 +1872,14 @@ for(var _s=0;_s<possible.length;_s++){
 var setNum=_s+1;
 var setClass=setNum===1?'set-1':setNum===2?'set-2':'';
 _out2+="<span class=\"abilityset-title "+setClass+"\">Set "+setNum+"</span><br />";for(var _i60=0,_possible$_s2=
-possible[_s];_i60<_possible$_s2.length;_i60++){var id=_possible$_s2[_i60];
-var n=nameOf(id);
-if(n)_out2+="<span class=\"ability-line\">"+BattleLog.escapeHTML(n)+"</span><br />";
+possible[_s];_i60<_possible$_s2.length;_i60++){var _id=_possible$_s2[_i60];
+_out2+="<span class=\"ability-line\">"+boldIfRevealed(_id)+"</span><br />";
 }
 }
 return _out2;
 }
 }
+
 if(!isActive){
 
 var ability=abilityData.baseAbility||abilityData.ability;

@@ -52,7 +52,6 @@ startAnimations=function startAnimations(){};_proto.
 teamPreview=function teamPreview(){};_proto.
 resetSides=function resetSides(){};_proto.
 updateGen=function updateGen(){};_proto.
-updateSidebar=function updateSidebar(side){};_proto.
 updateSidebars=function updateSidebars(){};_proto.
 updateStatbars=function updateStatbars(){};_proto.
 updateWeather=function updateWeather(instant){};_proto.

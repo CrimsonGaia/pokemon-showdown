@@ -517,113 +517,193 @@ export class BattleScene implements BattleSceneStub {
 		return BattleLog.escapeHTML(name);
 	}
 	getTeamBarHTML(side: Side, isP1: boolean): string {
-	let html = '';
+		let html = '';
 
-	// Use stable team size (important after refresh)
-	const teamSize = side.totalPokemon || side.pokemon.length;
+		const isISLFormat =
+			this.battle.tier?.toLowerCase().includes('indigostarstorm') ||
+			this.battle.tier?.toLowerCase().includes('isl');
 
-	for (let i = 0; i < teamSize; i++) {
-		const pokemon = side.pokemon[i];
+		const teamSource = isISLFormat ? side.fullTeam : side.pokemon;
+		const teamSize = teamSource.length;
 
-		// If the slot is missing after refresh, render a placeholder instead of dropping the slot
-		if (!pokemon) {
-			html += `<span class="picon battleteambar-sprite empty" style="${Dex.getPokemonIcon('pokeball')}">` +
-				`<span class="itemicon itemicon-unknown">?</span></span>`;
-			continue;
+		for (let i = 0; i < teamSize; i++) {
+			const pokemon = teamSource[i];
+			if (!pokemon) continue;
+
+			const status = pokemon.fainted ? ' fainted' : (pokemon.status ? ' status' : '');
+			const iconStyle = Dex.getPokemonIcon(pokemon);
+
+			let itemIconHTML = '';
+			if (pokemon.item && pokemon.item !== '(exists)') {
+				itemIconHTML = `<span class="itemicon" style="${Dex.getItemIcon(pokemon.item)}"></span>`;
+			} else {
+				itemIconHTML = `<span class="itemicon itemicon-unknown">?</span>`;
+			}
+
+			html += `<span class="picon battleteambar-sprite${status}" style="${iconStyle}">${itemIconHTML}</span>`;
 		}
 
-		const status = pokemon.fainted ? ' fainted' : (pokemon.status ? ' status' : '');
-		const iconStyle = Dex.getPokemonIcon(pokemon);
-
-		let itemIconHTML = '';
-		if (pokemon.item && pokemon.item !== '(exists)') {
-			itemIconHTML = `<span class="itemicon" style="${Dex.getItemIcon(pokemon.item)}"></span>`;
-		} else {
-			itemIconHTML = `<span class="itemicon itemicon-unknown">?</span>`;
-		}
-
-		html += `<span class="picon battleteambar-sprite${status}" style="${iconStyle}">${itemIconHTML}</span>`;
+		return html;
 	}
-
-	return html;
-}
 	getSidebarHTML(side: Side, posStr: string): string {
 		let noShow = this.battle.hardcoreMode && this.battle.gen < 7;
-		// Check if this is an ISL format
-		const isISLFormat = this.battle.tier?.toLowerCase().includes('indigostarstorm') || this.battle.tier?.toLowerCase().includes('isl');
-		// Filter to only show Pokemon that have been revealed (have ident)
-		const revealedPokemon = side.pokemon.filter(p => p.ident);
-		// In ISL formats, only show revealed Pokemon. In other formats, show all Pokemon.
-		const pokemonToShow = isISLFormat ? revealedPokemon : side.pokemon;
-		let speciesOverage = this.battle.speciesClause ? Infinity : Math.max(pokemonToShow.length - side.totalPokemon, 0);
-		const sidebarIcons: ( ['pokemon' | 'pokemon-illusion', number] | ['unrevealed' | 'empty' | 'pseudo-zoroark', null] )[] = [];
+
+		const isISLFormat =
+			this.battle.tier?.toLowerCase().includes('indigostarstorm') ||
+			this.battle.tier?.toLowerCase().includes('isl');
+
+		if (isISLFormat) {
+			const sidebarCount = 6;
+			const sidebarIcons: (Pokemon | null)[] = [];
+
+			let pokemonToShow: Pokemon[] = [];
+			if (this.battle.started) {
+				if (!side.isFar) {
+					// Your side: exactly the brought 6
+					pokemonToShow = side.sidebarPokemon || [];
+				} else {
+					// Opponent side: only actually revealed brought mons
+					pokemonToShow = (side.pokemon || []).filter(p => !!p?.searchid);
+				}
+			}
+
+			for (let i = 0; i < sidebarCount; i++) {
+				sidebarIcons.push(pokemonToShow[i] || null);
+			}
+
+			let pokemonhtml = '<div class="teamicons">';
+			for (let i = 0; i < sidebarIcons.length; i++) {
+				const poke = sidebarIcons[i];
+				if (!poke) {
+					pokemonhtml += `<span class="picon" style="${Dex.getPokemonIcon('pokeball')}" title="Not revealed" aria-label="Not revealed"></span>`;
+				} else {
+					const fainted = poke.fainted ? ' fainted' : '';
+					const status = !poke.fainted && poke.status ? ' status' : '';
+					const details = this.getDetailsText(poke);
+					pokemonhtml += `<span class="picon has-tooltip${fainted}${status}" data-tooltip="pokemon|${side.n}|${i}" style="${Dex.getPokemonIcon(poke, !side.isFar)}" aria-label="${details}"></span>`;
+				}
+				if (i % 3 === 2 && i !== sidebarIcons.length - 1) {
+					pokemonhtml += `</div><div class="teamicons">`;
+				}
+			}
+			pokemonhtml += `</div>`;
+
+			const ratinghtml = side.rating ? ` title="Rating: ${BattleLog.escapeHTML(side.rating)}"` : ``;
+			const faded = side.name ? `` : ` style="opacity: 0.4"`;
+			let badgehtml = '';
+			if (side.badges.length) {
+				badgehtml = '<span class="badges">';
+				for (const badgeData of side.badges.slice(0, 3)) {
+					const [type, format, details] = badgeData.split('|');
+					const [threshold] = details.split('-');
+					const hover = `User is Top ${threshold} on the ${format} Ladder`;
+					let formatType = format.split(/gen\d+/)[1] || 'none';
+					if (!['ou', 'randombattle'].includes(formatType)) formatType = 'rotating';
+					badgehtml += `<img src="${Dex.resourcePrefix}/sprites/misc/${formatType}_${type}.png" style="padding: 0px 1px 0px 1px" width="16px" height="16px" title="${hover}" />`;
+				}
+				badgehtml += '</span>';
+			}
+
+			return (
+				`<div class="trainer trainer-${posStr}"${faded}><strong>${BattleLog.escapeHTML(side.name)}</strong>` +
+				`<div class="trainersprite"${ratinghtml} style="background-image:url(${Dex.resolveAvatar(side.avatar)})">` +
+				`</div>${badgehtml}${pokemonhtml}</div>`
+			);
+		}
+
+		const sidebarCount = side.totalPokemon;
+		const pokemonToShow = side.pokemon;
+
+		let speciesOverage = this.battle.speciesClause
+			? Infinity
+			: Math.max(pokemonToShow.length - sidebarCount, 0);
+
+		const sidebarIcons: (
+			['pokemon' | 'pokemon-illusion', number] |
+			['unrevealed' | 'empty' | 'pseudo-zoroark', null]
+		)[] = [];
 		const speciesTable: string[] = [];
 		let zoroarkRevealed = false;
 		let hasIllusion = false;
-		// Build list of icons for revealed Pokemon
+
 		if (speciesOverage) {
 			for (let i = 0; i < pokemonToShow.length; i++) {
 				const species = pokemonToShow[i].getBaseSpecies().baseSpecies;
 				if (speciesOverage && speciesTable.includes(species)) {
-					for (const sidebarIcon of sidebarIcons) { if (pokemonToShow[sidebarIcon[1]!].getBaseSpecies().baseSpecies === species) { sidebarIcon[0] = 'pokemon-illusion'; } }
+					for (const sidebarIcon of sidebarIcons) {
+						if (sidebarIcon[1] !== null && side.pokemon[sidebarIcon[1]]?.getBaseSpecies().baseSpecies === species) {
+							sidebarIcon[0] = 'pokemon-illusion';
+						}
+					}
 					hasIllusion = true;
 					speciesOverage--;
 				} else {
-					// Store the actual index in side.pokemon array
 					const actualIndex = side.pokemon.indexOf(pokemonToShow[i]);
 					sidebarIcons.push(['pokemon', actualIndex]);
 					speciesTable.push(species);
-					if (['Zoroark', 'Zorua'].includes(species)) { zoroarkRevealed = true; }
+					if (['Zoroark', 'Zorua'].includes(species)) zoroarkRevealed = true;
 				}
 			}
-		} else { for (let i = 0; i < pokemonToShow.length; i++) {
-			const actualIndex = side.pokemon.indexOf(pokemonToShow[i]);
-			sidebarIcons.push(['pokemon', actualIndex]);
+		} else {
+			for (let i = 0; i < pokemonToShow.length; i++) {
+				const actualIndex = side.pokemon.indexOf(pokemonToShow[i]);
+				sidebarIcons.push(['pokemon', actualIndex]);
 			}
 		}
-		if (!zoroarkRevealed && hasIllusion && sidebarIcons.length < side.totalPokemon) { sidebarIcons.push(['pseudo-zoroark', null]); }
-		// Fill remaining slots with unrevealed/empty icons
-		// In ISL, show empty slots for unrevealed Pokemon up to totalPokemon (usually 6)
-		while (sidebarIcons.length < side.totalPokemon) { sidebarIcons.push(['unrevealed', null]); }
-		while (sidebarIcons.length < 6) { sidebarIcons.push(['empty', null]); }
+
+		if (!zoroarkRevealed && hasIllusion && sidebarIcons.length < sidebarCount) {
+			sidebarIcons.push(['pseudo-zoroark', null]);
+		}
+
+		while (sidebarIcons.length < sidebarCount) {
+			sidebarIcons.push(['unrevealed', null]);
+		}
+		while (sidebarIcons.length < 6) {
+			sidebarIcons.push(['empty', null]);
+		}
+
 		let pokemonhtml = '';
 		for (let i = 0; i < sidebarIcons.length; i++) {
 			const [iconType, pokeIndex] = sidebarIcons[i];
 			const poke = pokeIndex !== null ? side.pokemon[pokeIndex] : null;
-			const tooltipCode = ` class="picon has-tooltip" data-tooltip="pokemon|${side.n}|${pokeIndex!}${iconType === 'pokemon-illusion' ? '|illusion' : ''}"`;
-			if (iconType === 'empty') { pokemonhtml += `<span class="picon" style="${Dex.getPokemonIcon('pokeball-none')}"></span>`; } 
-			else if (noShow) {
-				if (poke?.fainted) { pokemonhtml += `<span${tooltipCode} style="${Dex.getPokemonIcon('pokeball-fainted')}" aria-label="Fainted"></span>`; } 
-				else if (poke?.status) { pokemonhtml += `<span${tooltipCode} style="${Dex.getPokemonIcon('pokeball-statused')}" aria-label="Statused"></span>`; } 
-				else { pokemonhtml += `<span${tooltipCode} style="${Dex.getPokemonIcon('pokeball')}" aria-label="Non-statused"></span>`; }
-			} else if (iconType === 'pseudo-zoroark') { pokemonhtml += `<span class="picon" style="${Dex.getPokemonIcon('zoroark')}" title="Unrevealed Illusion user" aria-label="Unrevealed Illusion user"></span>`; } 
-			else if (!poke) { pokemonhtml += `<span class="picon" style="${Dex.getPokemonIcon('pokeball')}" title="Not revealed" aria-label="Not revealed"></span>`;
-			} else if (!poke.ident && this.battle.teamPreviewCount && this.battle.teamPreviewCount < side.pokemon.length) {
-				// in VGC (bring 6 pick 4) and other pick-less-than-you-bring formats, this is a pokemon that's been brought but not necessarily picked
-				const details = this.getDetailsText(poke);
-				pokemonhtml += `<span${tooltipCode} style="${Dex.getPokemonIcon(poke, !side.isFar)};opacity:0.6" aria-label="${details}"></span>`;
+			const tooltipCode =
+				` class="picon has-tooltip" data-tooltip="pokemon|${side.n}|${pokeIndex!}${iconType === 'pokemon-illusion' ? '|illusion' : ''}"`;
+
+			if (iconType === 'empty') {
+				pokemonhtml += `<span class="picon" style="${Dex.getPokemonIcon('pokeball-none')}"></span>`;
+			} else if (iconType === 'unrevealed') {
+				pokemonhtml += `<span class="picon" style="${Dex.getPokemonIcon('pokeball')}" title="Not revealed" aria-label="Not revealed"></span>`;
+			} else if (noShow) {
+				if (poke?.fainted) {
+					pokemonhtml += `<span${tooltipCode} style="${Dex.getPokemonIcon('pokeball-fainted')}" aria-label="Fainted"></span>`;
+				} else if (poke?.status) {
+					pokemonhtml += `<span${tooltipCode} style="${Dex.getPokemonIcon('pokeball-statused')}" aria-label="Statused"></span>`;
+				} else {
+					pokemonhtml += `<span${tooltipCode} style="${Dex.getPokemonIcon('pokeball')}" aria-label="Non-statused"></span>`;
+				}
+			} else if (iconType === 'pseudo-zoroark') {
+				pokemonhtml += `<span class="picon" style="${Dex.getPokemonIcon('zoroark')}" title="Unrevealed Illusion user" aria-label="Unrevealed Illusion user"></span>`;
+			} else if (!poke) {
+				pokemonhtml += `<span class="picon" style="${Dex.getPokemonIcon('pokeball')}" title="Not revealed" aria-label="Not revealed"></span>`;
 			} else {
 				const details = this.getDetailsText(poke);
 				pokemonhtml += `<span${tooltipCode} style="${Dex.getPokemonIcon(poke, !side.isFar)}" aria-label="${details}"></span>`;
 			}
-			if (i % 3 === 2) pokemonhtml += `</div><div class="teamicons">`;
+			if (i % 3 === 2 && i !== sidebarIcons.length - 1) { pokemonhtml += `</div><div class="teamicons">`; }
 		}
+
 		pokemonhtml = '<div class="teamicons">' + pokemonhtml + '</div>';
 		const ratinghtml = side.rating ? ` title="Rating: ${BattleLog.escapeHTML(side.rating)}"` : ``;
 		const faded = side.name ? `` : ` style="opacity: 0.4"`;
 		let badgehtml = '';
 		if (side.badges.length) {
 			badgehtml = '<span class="badges">';
-			// hard limiting it to only ever 3 allowed at a time that's what the server limit is anyway but there should be a client limit too just in case
 			for (const badgeData of side.badges.slice(0, 3)) {
-				// ${badge.type}|${badge.format}|${BADGE_THRESHOLDS[badge.type]}-${badge.season}
 				const [type, format, details] = badgeData.split('|');
-				// todo, maybe make this more easily configured if we ever add badges for other stuff? but idk that we're planning that for now so
 				const [threshold] = details.split('-');
 				const hover = `User is Top ${threshold} on the ${format} Ladder`;
-				// ou and randbats get diff badges from everyone else, find it (regex futureproofs for double digit gens)
 				let formatType = format.split(/gen\d+/)[1] || 'none';
-				if (!['ou', 'randombattle'].includes(formatType)) { formatType = 'rotating'; }
+				if (!['ou', 'randombattle'].includes(formatType)) formatType = 'rotating';
 				badgehtml += `<img src="${Dex.resourcePrefix}/sprites/misc/${formatType}_${type}.png" style="padding: 0px 1px 0px 1px" width="16px" height="16px" title="${hover}" />`;
 			}
 			badgehtml += '</span>';
@@ -634,19 +714,6 @@ export class BattleScene implements BattleSceneStub {
 			`</div>${badgehtml}${pokemonhtml}</div>`
 		);
 	}
-	updateSidebar(side: Side) {
-	if (this.battle.gameType === 'freeforall') {
-		this.updateLeftSidebar();
-		this.updateRightSidebar();
-	} else if (side === this.battle.nearSide || side === this.battle.nearSide.ally) {
-		this.updateLeftSidebar();
-	} else {
-		this.updateRightSidebar();
-	}
-
-	// ✅ keep TOP teambar in sync (items, fainted, etc.)
-	this.updateTeamBar();
-}
 	updateLeftSidebar() {
 		const side = this.battle.nearSide;
 		if (side.ally) {
@@ -735,6 +802,11 @@ export class BattleScene implements BattleSceneStub {
 		let newBGNum = 0;
 		for (let siden = 0; siden < 2 || (this.battle.gameType === 'multi' && siden < 4); siden++) {
 			let side = this.battle.sides[siden];
+			const isISLFormat =
+				this.battle.tier?.toLowerCase().includes('indigostarstorm') ||
+				this.battle.tier?.toLowerCase().includes('isl');
+
+			if (isISLFormat) { side.fullTeam = side.pokemon.slice(); }
 			const spriteIndex = +this.battle.viewpointSwitched ^ (siden % 2);
 			let textBuf = '';
 			let buf = '';
@@ -1932,7 +2004,7 @@ export class PokemonSprite extends Sprite {
 			}, this.sp), 300);
 		}
 		this.resetStatbar(pokemon, true);
-		this.scene.updateSidebar(pokemon.side);
+		this.scene.updateSidebars();
 		this.$statbar!.css({
 			display: 'block',
 			left: this.statbarLeft,
@@ -1967,7 +2039,7 @@ export class PokemonSprite extends Sprite {
 		this.scene.waitFor(this.$el);
 		this.scene.timeOffset = 700;
 		this.resetStatbar(pokemon, true);
-		this.scene.updateSidebar(pokemon.side);
+		this.scene.updateSidebars();
 		this.$statbar!.css({
 			display: 'block',
 			left: this.statbarLeft + (this.isFrontSprite ? -100 : 100),
@@ -2074,7 +2146,7 @@ export class PokemonSprite extends Sprite {
 			return;
 		}
 		this.updateStatbar(pokemon, false, true);
-		this.scene.updateSidebar(pokemon.side);
+		this.scene.updateSidebars();
 		if (this.cryurl) { BattleSound.playEffect(this.cryurl); }
 		this.anim({
 			y: this.y - 80,
@@ -2173,7 +2245,7 @@ export class PokemonSprite extends Sprite {
 			});
 			this.scene.wait(500);
 		}
-		this.scene.updateSidebar(pokemon.side);
+		this.scene.updateSidebars();
 		if (isPermanent) { this.resetStatbar(pokemon); } 
 		else { this.updateStatbar(pokemon); }
 	}

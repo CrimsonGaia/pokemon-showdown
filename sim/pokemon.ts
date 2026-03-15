@@ -618,17 +618,33 @@ export class Pokemon {
 	}
 	ignoringAbility() {
 		if (this.battle.gen >= 5 && !this.isActive) return true;
-		// Certain Abilities won't activate while Transformed, even if they ordinarily couldn't be suppressed (e.g. Disguise)
-		if (this.getAbility().flags['notransform'] && this.transformed) return true;
-		if (this.getAbility().flags['cantsuppress']) return false;
+
+		const abilitySlots = (this as any).getAbilitySlots?.() || [];
+
+		// Certain Abilities won't activate while Transformed, even if they ordinarily
+		// couldn't be suppressed (e.g. Disguise).
+		if (this.transformed && abilitySlots.some((slot: any) => slot.effect.flags['notransform'])) {
+			return true;
+		}
+
+		// If any ability slot is unsuppressible, abilities are not being ignored.
+		if (abilitySlots.some((slot: any) => slot.effect.flags['cantsuppress'])) {
+			return false;
+		}
+
 		if (this.volatiles['gastroacid']) return true;
-		// Check if any active pokemon have the ability Neutralizing Gas
-		if (this.hasItem('Ability Shield') || this.ability1 === 'neutralizinggas' || this.ability2 === 'neutralizinggas') return false;
+
+		if (this.hasItem('Ability Shield') || this.ability1 === 'neutralizinggas' || this.ability2 === 'neutralizinggas') {
+			return false;
+		}
+
 		for (const pokemon of this.battle.getAllActive()) {
-			// can't use hasAbility because it would lead to infinite recursion
-			if ((pokemon.ability1 === 'neutralizinggas' || pokemon.ability2 === 'neutralizinggas') && 
-				!pokemon.volatiles['gastroacid'] && !pokemon.transformed && 
-				!pokemon.abilityState1.ending && !pokemon.abilityState2.ending && !this.volatiles['commanding']) {
+			if (
+				(pokemon.ability1 === 'neutralizinggas' || pokemon.ability2 === 'neutralizinggas') &&
+				!pokemon.volatiles['gastroacid'] &&
+				!pokemon.transformed &&
+				pokemon !== this
+			) {
 				return true;
 			}
 		}
@@ -860,7 +876,8 @@ export class Pokemon {
 		}
 		if (this.battle.gen >= 9) {
 			entry.commanding = !!this.volatiles['commanding'] && !this.fainted;
-			entry.reviving = this.isActive && !!this.side.slotConditions[this.position]['revivalblessing'];
+			const activeSlot = this.side.active.indexOf(this);
+			entry.reviving = activeSlot >= 0 && !!this.side.slotConditions[activeSlot]?.['revivalblessing'];
 		}
 		if (this.battle.gen === 9) {
 			entry.teraType = this.teraType;
@@ -1161,7 +1178,8 @@ export class Pokemon {
 			const ability = species.abilities[abilitySlot] || species.abilities['0'];
 			const ability2 = species.abilities[abilitySlot + 1] || species.abilities['1'] || '';
 			// Ogerpon's forme change doesn't override permanent abilities
-			if (source || !this.getAbility().flags['cantsuppress']) {
+			const abilitySlots = (this as any).getAbilitySlots?.() || [];
+			if (source || !abilitySlots.some((slot: any) => slot.effect.flags['cantsuppress'])) {
 				this.setAbility(ability, null, null, true, false, 1);
 				if (ability2) { this.setAbility(ability2, null, null, true, false, 2); }
 			}

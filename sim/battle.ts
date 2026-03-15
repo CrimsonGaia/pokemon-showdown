@@ -299,9 +299,8 @@ export class Battle {
 	static compareRedirectOrder(this: void, a: AnyObject, b: AnyObject) {
 		return ((b.priority || 0) - (a.priority || 0)) ||
 			((b.speed || 0) - (a.speed || 0)) ||
-			((a.effectHolder?.abilityState1 && b.effectHolder?.abilityState1) ?
-				-(b.effectHolder.abilityState1.effectOrder - a.effectHolder.abilityState1.effectOrder) : 0) ||
-				0;
+			-(((b.effectOrder ?? b.state?.effectOrder ?? 0) - (a.effectOrder ?? a.state?.effectOrder ?? 0))) ||
+			0;
 	}
 	static compareLeftToRightOrder(this: void, a: AnyObject, b: AnyObject) {
 		return -((b.order || 4294967296) - (a.order || 4294967296)) ||
@@ -383,12 +382,22 @@ export class Battle {
 			}
 			// effect may have been removed by a prior handler, i.e. Toxic Spikes being absorbed during a double switch
 			if (handler.state?.target instanceof Pokemon) {
-				let expectedStateLocation;
-				if (effect.effectType === 'Ability' && !handler.state.id.startsWith('ability:')) { expectedStateLocation = handler.state.target.abilityState1; } 
-				else if (effect.effectType === 'Item' && !handler.state.id.startsWith('item:')) { expectedStateLocation = handler.state.target.itemState; } 
-				else if (effect.effectType === 'Status') { expectedStateLocation = handler.state.target.statusState; } 
-				else { expectedStateLocation = handler.state.target.volatiles[effect.id]; }
-				if (expectedStateLocation !== handler.state) { continue; }
+				if (effect.effectType === 'Ability' && !handler.state.id.startsWith('ability:')) {
+					const target = handler.state.target;
+					if (target.abilityState1 !== handler.state && target.abilityState2 !== handler.state) {
+						continue;
+					}
+				} else {
+					let expectedStateLocation;
+					if (effect.effectType === 'Item' && !handler.state.id.startsWith('item:')) {
+						expectedStateLocation = handler.state.target.itemState;
+					} else if (effect.effectType === 'Status') {
+						expectedStateLocation = handler.state.target.statusState;
+					} else {
+						expectedStateLocation = handler.state.target.volatiles[effect.id];
+					}
+					if (expectedStateLocation !== handler.state) continue;
+				}
 			} else if (handler.state?.target instanceof Side && !handler.state.isSlotCondition) { if ((handler.state.target.sideConditions[effect.id] !== handler.state)) { continue; } } 
 			else if (handler.state?.target instanceof Field) {
 				let expectedStateLocation;
@@ -1189,9 +1198,25 @@ export class Battle {
 						if (pokemon.addedType) { this.add('-start', pokemon, 'typeadd', pokemon.addedType, '[silent]'); } // The typechange message removes the added type, so put it back
 					}
 				}
+
 				pokemon.trapped = pokemon.maybeTrapped = false;
-				this.runEvent('TrapPokemon', pokemon);
-				if (!pokemon.knownType || this.dex.getImmunity('trapped', pokemon)) { this.runEvent('MaybeTrapPokemon', pokemon); }
+
+				// foe-side trapping first
+				for (const source of pokemon.foes()) {
+					(this as any).runAbilityEventNotify('FoeTrapPokemon', source, pokemon, source);
+				}
+				if (!pokemon.knownType || this.dex.getImmunity('trapped', pokemon)) {
+					for (const source of pokemon.foes()) {
+						(this as any).runAbilityEventNotify('FoeMaybeTrapPokemon', source, pokemon, source);
+					}
+				}
+
+				// self-side trap immunity / clearing last
+				(this as any).runAbilityEventNotify('TrapPokemon', pokemon, pokemon);
+				if (!pokemon.knownType || this.dex.getImmunity('trapped', pokemon)) {
+					(this as any).runAbilityEventNotify('MaybeTrapPokemon', pokemon, pokemon);
+				}
+
 				// canceling switches would leak information if a foe might have a trapping ability
 				if (this.gen > 2) {
 					for (const source of pokemon.foes()) {
@@ -2008,8 +2033,10 @@ export class Battle {
 				if (pokemon.side.pokemonLeft) pokemon.side.pokemonLeft--;
 				if (pokemon.side.totalFainted < 100) pokemon.side.totalFainted++;
 				this.runEvent('Faint', pokemon, faintData.source, faintData.effect);
-				this.singleEvent('End', pokemon.getAbility(1), pokemon.abilityState1, pokemon);
-				this.singleEvent('End', pokemon.getAbility(2), pokemon.abilityState2, pokemon);
+				for (const slot of (pokemon as any).getAbilitySlots()) {
+					if (!slot.state) continue;
+					this.singleEvent('End', slot.effect, slot.state, pokemon);
+				}
 				this.singleEvent('End', pokemon.getItem(), pokemon.itemState, pokemon);
 				if (pokemon.formeRegression && !pokemon.transformed) { // before clearing volatiles
 					pokemon.baseSpecies = this.dex.species.get(pokemon.set.species || pokemon.set.name);

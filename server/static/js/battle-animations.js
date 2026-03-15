@@ -516,21 +516,19 @@ if(statustext){name+=' ('+statustext+')';}
 }
 return BattleLog.escapeHTML(name);
 };_proto.
-getTeamBarHTML=function getTeamBarHTML(side,isP1){
+getTeamBarHTML=function getTeamBarHTML(side,isP1){var _this$battle$tier,_this$battle$tier2;
 var html='';
 
+var isISLFormat=
+((_this$battle$tier=this.battle.tier)==null?void 0:_this$battle$tier.toLowerCase().includes('indigostarstorm'))||((_this$battle$tier2=
+this.battle.tier)==null?void 0:_this$battle$tier2.toLowerCase().includes('isl'));
 
-var teamSize=side.totalPokemon||side.pokemon.length;
+var teamSource=isISLFormat?side.fullTeam:side.pokemon;
+var teamSize=teamSource.length;
 
 for(var i=0;i<teamSize;i++){
-var pokemon=side.pokemon[i];
-
-
-if(!pokemon){
-html+="<span class=\"picon battleteambar-sprite empty\" style=\""+Dex.getPokemonIcon('pokeball')+"\">"+"<span class=\"itemicon itemicon-unknown\">?</span></span>";
-
-continue;
-}
+var pokemon=teamSource[i];
+if(!pokemon)continue;
 
 var status=pokemon.fainted?' fainted':pokemon.status?' status':'';
 var iconStyle=Dex.getPokemonIcon(pokemon);
@@ -547,84 +545,166 @@ html+="<span class=\"picon battleteambar-sprite"+status+"\" style=\""+iconStyle+
 
 return html;
 };_proto.
-getSidebarHTML=function getSidebarHTML(side,posStr){var _this$battle$tier,_this$battle$tier2;
+getSidebarHTML=function getSidebarHTML(side,posStr){var _this$battle$tier3,_this$battle$tier4;
 var noShow=this.battle.hardcoreMode&&this.battle.gen<7;
 
-var isISLFormat=((_this$battle$tier=this.battle.tier)==null?void 0:_this$battle$tier.toLowerCase().includes('indigostarstorm'))||((_this$battle$tier2=this.battle.tier)==null?void 0:_this$battle$tier2.toLowerCase().includes('isl'));
+var isISLFormat=
+((_this$battle$tier3=this.battle.tier)==null?void 0:_this$battle$tier3.toLowerCase().includes('indigostarstorm'))||((_this$battle$tier4=
+this.battle.tier)==null?void 0:_this$battle$tier4.toLowerCase().includes('isl'));
 
-var revealedPokemon=side.pokemon.filter(function(p){return p.ident;});
+if(isISLFormat){
+var _sidebarCount=6;
+var _sidebarIcons=[];
 
-var pokemonToShow=isISLFormat?revealedPokemon:side.pokemon;
-var speciesOverage=this.battle.speciesClause?Infinity:Math.max(pokemonToShow.length-side.totalPokemon,0);
-var sidebarIcons=[];
+var _pokemonToShow=[];
+if(this.battle.started){
+if(!side.isFar){
+
+_pokemonToShow=side.sidebarPokemon||[];
+}else{
+
+_pokemonToShow=(side.pokemon||[]).filter(function(p){return!!(p!=null&&p.searchid);});
+}
+}
+
+for(var i=0;i<_sidebarCount;i++){
+_sidebarIcons.push(_pokemonToShow[i]||null);
+}
+
+var _pokemonhtml='<div class="teamicons">';
+for(var _i5=0;_i5<_sidebarIcons.length;_i5++){
+var poke=_sidebarIcons[_i5];
+if(!poke){
+_pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('pokeball')+"\" title=\"Not revealed\" aria-label=\"Not revealed\"></span>";
+}else{
+var fainted=poke.fainted?' fainted':'';
+var status=!poke.fainted&&poke.status?' status':'';
+var details=this.getDetailsText(poke);
+_pokemonhtml+="<span class=\"picon has-tooltip"+fainted+status+"\" data-tooltip=\"pokemon|"+side.n+"|"+_i5+"\" style=\""+Dex.getPokemonIcon(poke,!side.isFar)+"\" aria-label=\""+details+"\"></span>";
+}
+if(_i5%3===2&&_i5!==_sidebarIcons.length-1){
+_pokemonhtml+="</div><div class=\"teamicons\">";
+}
+}
+_pokemonhtml+="</div>";
+
+var _ratinghtml=side.rating?" title=\"Rating: "+BattleLog.escapeHTML(side.rating)+"\"":"";
+var _faded=side.name?"":" style=\"opacity: 0.4\"";
+var _badgehtml='';
+if(side.badges.length){
+_badgehtml='<span class="badges">';for(var _i7=0,_side$badges$slice2=
+side.badges.slice(0,3);_i7<_side$badges$slice2.length;_i7++){var badgeData=_side$badges$slice2[_i7];
+var _badgeData$split=badgeData.split('|'),type=_badgeData$split[0],format=_badgeData$split[1],_details=_badgeData$split[2];
+var _details$split=_details.split('-'),threshold=_details$split[0];
+var hover="User is Top "+threshold+" on the "+format+" Ladder";
+var formatType=format.split(/gen\d+/)[1]||'none';
+if(!['ou','randombattle'].includes(formatType))formatType='rotating';
+_badgehtml+="<img src=\""+Dex.resourcePrefix+"/sprites/misc/"+formatType+"_"+type+".png\" style=\"padding: 0px 1px 0px 1px\" width=\"16px\" height=\"16px\" title=\""+hover+"\" />";
+}
+_badgehtml+='</span>';
+}
+
+return(
+"<div class=\"trainer trainer-"+posStr+"\""+_faded+"><strong>"+BattleLog.escapeHTML(side.name)+"</strong>"+("<div class=\"trainersprite\""+
+_ratinghtml+" style=\"background-image:url("+Dex.resolveAvatar(side.avatar)+")\">")+("</div>"+
+_badgehtml+_pokemonhtml+"</div>"));
+
+}
+
+var sidebarCount=side.totalPokemon;
+var pokemonToShow=side.pokemon;
+
+var speciesOverage=this.battle.speciesClause?
+Infinity:
+Math.max(pokemonToShow.length-sidebarCount,0);
+
+var sidebarIcons=
+
+
+[];
 var speciesTable=[];
 var zoroarkRevealed=false;
 var hasIllusion=false;
 
 if(speciesOverage){
-for(var i=0;i<pokemonToShow.length;i++){
-var species=pokemonToShow[i].getBaseSpecies().baseSpecies;
-if(speciesOverage&&speciesTable.includes(species)){for(var _i6=0;_i6<
-sidebarIcons.length;_i6++){var sidebarIcon=sidebarIcons[_i6];if(pokemonToShow[sidebarIcon[1]].getBaseSpecies().baseSpecies===species){sidebarIcon[0]='pokemon-illusion';}}
+for(var _i8=0;_i8<pokemonToShow.length;_i8++){
+var species=pokemonToShow[_i8].getBaseSpecies().baseSpecies;
+if(speciesOverage&&speciesTable.includes(species)){for(var _i10=0;_i10<
+sidebarIcons.length;_i10++){var _side$pokemon$sidebar;var sidebarIcon=sidebarIcons[_i10];
+if(sidebarIcon[1]!==null&&((_side$pokemon$sidebar=side.pokemon[sidebarIcon[1]])==null?void 0:_side$pokemon$sidebar.getBaseSpecies().baseSpecies)===species){
+sidebarIcon[0]='pokemon-illusion';
+}
+}
 hasIllusion=true;
 speciesOverage--;
 }else{
-
-var actualIndex=side.pokemon.indexOf(pokemonToShow[i]);
+var actualIndex=side.pokemon.indexOf(pokemonToShow[_i8]);
 sidebarIcons.push(['pokemon',actualIndex]);
 speciesTable.push(species);
-if(['Zoroark','Zorua'].includes(species)){zoroarkRevealed=true;}
+if(['Zoroark','Zorua'].includes(species))zoroarkRevealed=true;
 }
 }
-}else{for(var _i7=0;_i7<pokemonToShow.length;_i7++){
-var _actualIndex=side.pokemon.indexOf(pokemonToShow[_i7]);
+}else{
+for(var _i11=0;_i11<pokemonToShow.length;_i11++){
+var _actualIndex=side.pokemon.indexOf(pokemonToShow[_i11]);
 sidebarIcons.push(['pokemon',_actualIndex]);
 }
 }
-if(!zoroarkRevealed&&hasIllusion&&sidebarIcons.length<side.totalPokemon){sidebarIcons.push(['pseudo-zoroark',null]);}
 
+if(!zoroarkRevealed&&hasIllusion&&sidebarIcons.length<sidebarCount){
+sidebarIcons.push(['pseudo-zoroark',null]);
+}
 
-while(sidebarIcons.length<side.totalPokemon){sidebarIcons.push(['unrevealed',null]);}
-while(sidebarIcons.length<6){sidebarIcons.push(['empty',null]);}
+while(sidebarIcons.length<sidebarCount){
+sidebarIcons.push(['unrevealed',null]);
+}
+while(sidebarIcons.length<6){
+sidebarIcons.push(['empty',null]);
+}
+
 var pokemonhtml='';
-for(var _i8=0;_i8<sidebarIcons.length;_i8++){
-var _sidebarIcons$_i=sidebarIcons[_i8],iconType=_sidebarIcons$_i[0],pokeIndex=_sidebarIcons$_i[1];
-var poke=pokeIndex!==null?side.pokemon[pokeIndex]:null;
-var tooltipCode=" class=\"picon has-tooltip\" data-tooltip=\"pokemon|"+side.n+"|"+pokeIndex+(iconType==='pokemon-illusion'?'|illusion':'')+"\"";
-if(iconType==='empty'){pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('pokeball-none')+"\"></span>";}else
-if(noShow){
-if(poke!=null&&poke.fainted){pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon('pokeball-fainted')+"\" aria-label=\"Fainted\"></span>";}else
-if(poke!=null&&poke.status){pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon('pokeball-statused')+"\" aria-label=\"Statused\"></span>";}else
-{pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon('pokeball')+"\" aria-label=\"Non-statused\"></span>";}
-}else if(iconType==='pseudo-zoroark'){pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('zoroark')+"\" title=\"Unrevealed Illusion user\" aria-label=\"Unrevealed Illusion user\"></span>";}else
-if(!poke){pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('pokeball')+"\" title=\"Not revealed\" aria-label=\"Not revealed\"></span>";
-}else if(!poke.ident&&this.battle.teamPreviewCount&&this.battle.teamPreviewCount<side.pokemon.length){
+for(var _i12=0;_i12<sidebarIcons.length;_i12++){
+var _sidebarIcons$_i=sidebarIcons[_i12],iconType=_sidebarIcons$_i[0],pokeIndex=_sidebarIcons$_i[1];
+var _poke=pokeIndex!==null?side.pokemon[pokeIndex]:null;
+var tooltipCode=" class=\"picon has-tooltip\" data-tooltip=\"pokemon|"+
+side.n+"|"+pokeIndex+(iconType==='pokemon-illusion'?'|illusion':'')+"\"";
 
-var details=this.getDetailsText(poke);
-pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon(poke,!side.isFar)+";opacity:0.6\" aria-label=\""+details+"\"></span>";
+if(iconType==='empty'){
+pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('pokeball-none')+"\"></span>";
+}else if(iconType==='unrevealed'){
+pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('pokeball')+"\" title=\"Not revealed\" aria-label=\"Not revealed\"></span>";
+}else if(noShow){
+if(_poke!=null&&_poke.fainted){
+pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon('pokeball-fainted')+"\" aria-label=\"Fainted\"></span>";
+}else if(_poke!=null&&_poke.status){
+pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon('pokeball-statused')+"\" aria-label=\"Statused\"></span>";
 }else{
-var _details=this.getDetailsText(poke);
-pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon(poke,!side.isFar)+"\" aria-label=\""+_details+"\"></span>";
+pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon('pokeball')+"\" aria-label=\"Non-statused\"></span>";
 }
-if(_i8%3===2)pokemonhtml+="</div><div class=\"teamicons\">";
+}else if(iconType==='pseudo-zoroark'){
+pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('zoroark')+"\" title=\"Unrevealed Illusion user\" aria-label=\"Unrevealed Illusion user\"></span>";
+}else if(!_poke){
+pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('pokeball')+"\" title=\"Not revealed\" aria-label=\"Not revealed\"></span>";
+}else{
+var _details2=this.getDetailsText(_poke);
+pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon(_poke,!side.isFar)+"\" aria-label=\""+_details2+"\"></span>";
 }
+if(_i12%3===2&&_i12!==sidebarIcons.length-1){pokemonhtml+="</div><div class=\"teamicons\">";}
+}
+
 pokemonhtml='<div class="teamicons">'+pokemonhtml+'</div>';
 var ratinghtml=side.rating?" title=\"Rating: "+BattleLog.escapeHTML(side.rating)+"\"":"";
 var faded=side.name?"":" style=\"opacity: 0.4\"";
 var badgehtml='';
 if(side.badges.length){
-badgehtml='<span class="badges">';for(var _i10=0,_side$badges$slice2=
-
-side.badges.slice(0,3);_i10<_side$badges$slice2.length;_i10++){var badgeData=_side$badges$slice2[_i10];
-
-var _badgeData$split=badgeData.split('|'),type=_badgeData$split[0],format=_badgeData$split[1],_details2=_badgeData$split[2];
-
-var _details2$split=_details2.split('-'),threshold=_details2$split[0];
-var hover="User is Top "+threshold+" on the "+format+" Ladder";
-
-var formatType=format.split(/gen\d+/)[1]||'none';
-if(!['ou','randombattle'].includes(formatType)){formatType='rotating';}
-badgehtml+="<img src=\""+Dex.resourcePrefix+"/sprites/misc/"+formatType+"_"+type+".png\" style=\"padding: 0px 1px 0px 1px\" width=\"16px\" height=\"16px\" title=\""+hover+"\" />";
+badgehtml='<span class="badges">';for(var _i14=0,_side$badges$slice4=
+side.badges.slice(0,3);_i14<_side$badges$slice4.length;_i14++){var _badgeData=_side$badges$slice4[_i14];
+var _badgeData$split2=_badgeData.split('|'),_type=_badgeData$split2[0],_format=_badgeData$split2[1],_details3=_badgeData$split2[2];
+var _details3$split=_details3.split('-'),_threshold=_details3$split[0];
+var _hover="User is Top "+_threshold+" on the "+_format+" Ladder";
+var _formatType=_format.split(/gen\d+/)[1]||'none';
+if(!['ou','randombattle'].includes(_formatType))_formatType='rotating';
+badgehtml+="<img src=\""+Dex.resourcePrefix+"/sprites/misc/"+_formatType+"_"+_type+".png\" style=\"padding: 0px 1px 0px 1px\" width=\"16px\" height=\"16px\" title=\""+_hover+"\" />";
 }
 badgehtml+='</span>';
 }
@@ -633,19 +713,6 @@ return(
 ratinghtml+" style=\"background-image:url("+Dex.resolveAvatar(side.avatar)+")\">")+("</div>"+
 badgehtml+pokemonhtml+"</div>"));
 
-};_proto.
-updateSidebar=function updateSidebar(side){
-if(this.battle.gameType==='freeforall'){
-this.updateLeftSidebar();
-this.updateRightSidebar();
-}else if(side===this.battle.nearSide||side===this.battle.nearSide.ally){
-this.updateLeftSidebar();
-}else{
-this.updateRightSidebar();
-}
-
-
-this.updateTeamBar();
 };_proto.
 updateLeftSidebar=function updateLeftSidebar(){
 var side=this.battle.nearSide;
@@ -679,9 +746,9 @@ var p1HTML=this.getTeamBarHTML(p1Side,true);
 var p2HTML=this.getTeamBarHTML(p2Side,false);
 this.$battleteambar.html("<div class=\"battleteambar-p1\">"+p1HTML+"</div>"+("<div class=\"battleteambar-p2\">"+p2HTML+"</div>"));
 };_proto.
-updateStatbars=function updateStatbars(){for(var _i12=0,_this$battle$sides4=
-this.battle.sides;_i12<_this$battle$sides4.length;_i12++){var side=_this$battle$sides4[_i12];for(var _i14=0,_side$active2=
-side.active;_i14<_side$active2.length;_i14++){var active=_side$active2[_i14];
+updateStatbars=function updateStatbars(){for(var _i16=0,_this$battle$sides4=
+this.battle.sides;_i16<_this$battle$sides4.length;_i16++){var side=_this$battle$sides4[_i16];for(var _i18=0,_side$active2=
+side.active;_i18<_side$active2.length;_i18++){var active=_side$active2[_i18];
 if(active)active.sprite.updateStatbar(active);
 }
 }
@@ -690,8 +757,8 @@ if(active)active.sprite.updateStatbar(active);
 this.updateTeamBar();
 };_proto.
 resetSides=function resetSides(skipEmpty){
-if(!skipEmpty){for(var _i16=0,_this$$sprites2=this.$sprites;_i16<_this$$sprites2.length;_i16++){var $spritesContainer=_this$$sprites2[_i16];$spritesContainer.empty();}}for(var _i18=0,_this$battle$sides6=
-this.battle.sides;_i18<_this$battle$sides6.length;_i18++){var _side$missedPokemon;var side=_this$battle$sides6[_i18];
+if(!skipEmpty){for(var _i20=0,_this$$sprites2=this.$sprites;_i20<_this$$sprites2.length;_i20++){var $spritesContainer=_this$$sprites2[_i20];$spritesContainer.empty();}}for(var _i22=0,_this$battle$sides6=
+this.battle.sides;_i22<_this$battle$sides6.length;_i22++){var _side$missedPokemon;var side=_this$battle$sides6[_i22];
 side.z=side.isFar?200:0;
 (_side$missedPokemon=side.missedPokemon)==null||(_side$missedPokemon=_side$missedPokemon.sprite)==null||_side$missedPokemon.destroy();
 side.missedPokemon={
@@ -733,8 +800,13 @@ this.$tooltips.html(tooltipBuf);
 };_proto.
 teamPreview=function teamPreview(){
 var newBGNum=0;
-for(var siden=0;siden<2||this.battle.gameType==='multi'&&siden<4;siden++){
+for(var siden=0;siden<2||this.battle.gameType==='multi'&&siden<4;siden++){var _this$battle$tier5,_this$battle$tier6;
 var side=this.battle.sides[siden];
+var isISLFormat=
+((_this$battle$tier5=this.battle.tier)==null?void 0:_this$battle$tier5.toLowerCase().includes('indigostarstorm'))||((_this$battle$tier6=
+this.battle.tier)==null?void 0:_this$battle$tier6.toLowerCase().includes('isl'));
+
+if(isISLFormat){side.fullTeam=side.pokemon.slice();}
 var spriteIndex=+this.battle.viewpointSwitched^siden%2;
 var textBuf='';
 var buf='';
@@ -844,8 +916,8 @@ if(this.battle.weatherMinTimeLeft!==0){weatherhtml+=" <small>("+this.battle.weat
 if(this.battle.weatherTimeLeft!==0){weatherhtml+=" <small>("+this.battle.weatherTimeLeft+" turn"+(this.battle.weatherTimeLeft===1?'':'s')+")</small>";}
 var nullifyWeather=this.battle.abilityActive(['Air Lock','Cloud Nine']);
 weatherhtml=""+(nullifyWeather?'<s>':'')+weatherhtml+(nullifyWeather?'</s>':'');
-}for(var _i20=0,_this$battle$pseudoWe2=
-this.battle.pseudoWeather;_i20<_this$battle$pseudoWe2.length;_i20++){var pseudoWeather=_this$battle$pseudoWe2[_i20];weatherhtml+=this.pseudoWeatherLeft(pseudoWeather);}
+}for(var _i24=0,_this$battle$pseudoWe2=
+this.battle.pseudoWeather;_i24<_this$battle$pseudoWe2.length;_i24++){var pseudoWeather=_this$battle$pseudoWe2[_i24];weatherhtml+=this.pseudoWeatherLeft(pseudoWeather);}
 return weatherhtml;
 };_proto.
 sideConditionsLeft=function sideConditionsLeft(side,all){
@@ -864,14 +936,14 @@ var isIntense=false;
 var weather=this.battle.weather;
 if(this.battle.abilityActive(['Air Lock','Cloud Nine'])){weather='';}
 var terrain='';
-var terrainTurns=0;for(var _i22=0,_this$battle$pseudoWe4=
-this.battle.pseudoWeather;_i22<_this$battle$pseudoWe4.length;_i22++){var pseudoWeatherData=_this$battle$pseudoWe4[_i22];
+var terrainTurns=0;for(var _i26=0,_this$battle$pseudoWe4=
+this.battle.pseudoWeather;_i26<_this$battle$pseudoWe4.length;_i26++){var pseudoWeatherData=_this$battle$pseudoWe4[_i26];
 terrain=toID(pseudoWeatherData[0]);
 if(pseudoWeatherData[1])terrainTurns=pseudoWeatherData[1];
 }
 if(weather==='desolateland'||weather==='primordialsea'||weather==='deltastream'||weather==='turbulentwinds'){isIntense=true;}
-var weatherhtml=this.weatherLeft();for(var _i24=0,_this$battle$sides8=
-this.battle.sides;_i24<_this$battle$sides8.length;_i24++){var side=_this$battle$sides8[_i24];weatherhtml+=this.sideConditionsLeft(side);}
+var weatherhtml=this.weatherLeft();for(var _i28=0,_this$battle$sides8=
+this.battle.sides;_i28<_this$battle$sides8.length;_i28++){var side=_this$battle$sides8[_i28];weatherhtml+=this.sideConditionsLeft(side);}
 if(weatherhtml)weatherhtml="<br />"+weatherhtml;
 
 var terrainNameTable={
@@ -1115,8 +1187,8 @@ break;
 };_proto.
 removeSideCondition=function removeSideCondition(siden,id){
 if(!this.animating)return;
-if(this.sideConditions[siden][id]){for(var _i26=0,_this$sideConditions$2=
-this.sideConditions[siden][id];_i26<_this$sideConditions$2.length;_i26++){var sprite=_this$sideConditions$2[_i26];sprite.destroy();}
+if(this.sideConditions[siden][id]){for(var _i30=0,_this$sideConditions$2=
+this.sideConditions[siden][id];_i30<_this$sideConditions$2.length;_i30++){var sprite=_this$sideConditions$2[_i30];sprite.destroy();}
 delete this.sideConditions[siden][id];
 }
 };_proto.
@@ -1668,8 +1740,8 @@ x:this.leftof(-50),
 y:this.y,
 z:this.z,
 opacity:0.5
-},this.subsp),300);for(var _i28=0,_this$scene$battle$si2=
-this.scene.battle.sides;_i28<_this$scene$battle$si2.length;_i28++){var side=_this$scene$battle$si2[_i28];for(var _i30=0,_side$active4=side.active;_i30<_side$active4.length;_i30++){var active=_side$active4[_i30];if(active&&active.sprite!==this){active.sprite.delay(300);}}}
+},this.subsp),300);for(var _i32=0,_this$scene$battle$si2=
+this.scene.battle.sides;_i32<_this$scene$battle$si2.length;_i32++){var side=_this$scene$battle$si2[_i32];for(var _i34=0,_side$active4=side.active;_i34<_side$active4.length;_i34++){var active=_side$active4[_i34];if(active&&active.sprite!==this){active.sprite.delay(300);}}}
 this.scene.wait(300);
 this.scene.waitFor(this.$el);
 return true;
@@ -1932,7 +2004,7 @@ opacity:0.3
 },this.sp),300);
 }
 this.resetStatbar(pokemon,true);
-this.scene.updateSidebar(pokemon.side);
+this.scene.updateSidebars();
 this.$statbar.css({
 display:'block',
 left:this.statbarLeft,
@@ -1967,7 +2039,7 @@ if(!!this.scene.animating&&this.sp.shiny)BattleOtherAnims.shiny.anim(this.scene,
 this.scene.waitFor(this.$el);
 this.scene.timeOffset=700;
 this.resetStatbar(pokemon,true);
-this.scene.updateSidebar(pokemon.side);
+this.scene.updateSidebars();
 this.$statbar.css({
 display:'block',
 left:this.statbarLeft+(this.isFrontSprite?-100:100),
@@ -2074,7 +2146,7 @@ this.$statbar=null;
 return;
 }
 this.updateStatbar(pokemon,false,true);
-this.scene.updateSidebar(pokemon.side);
+this.scene.updateSidebars();
 if(this.cryurl){BattleSound.playEffect(this.cryurl);}
 this.anim({
 y:this.y-80,
@@ -2173,7 +2245,7 @@ opacity:1
 });
 this.scene.wait(500);
 }
-this.scene.updateSidebar(pokemon.side);
+this.scene.updateSidebars();
 if(isPermanent){this.resetStatbar(pokemon);}else
 {this.updateStatbar(pokemon);}
 };_proto3.
@@ -2252,8 +2324,8 @@ time:instant?0:300
 removeEffect=function removeEffect(id,instant){
 if(id==='formechange')this.removeTransform();
 if(id==='substitute')this.animSubFade(instant);
-if(this.effects[id]){for(var _i32=0,_this$effects$id2=
-this.effects[id];_i32<_this$effects$id2.length;_i32++){var sprite=_this$effects$id2[_i32];sprite.destroy();}
+if(this.effects[id]){for(var _i36=0,_this$effects$id2=
+this.effects[id];_i36<_this$effects$id2.length;_i36++){var sprite=_this$effects$id2[_i36];sprite.destroy();}
 delete this.effects[id];
 }
 };_proto3.
@@ -2370,20 +2442,20 @@ pokemon.status+"\" /> ";
 }
 if(pokemon.terastallized){status+="<img src=\""+Dex.resourcePrefix+"sprites/types/"+encodeURIComponent(pokemon.terastallized)+".png\" alt=\""+pokemon.terastallized+"\" class=\"pixelated\" /> ";}else
 if(pokemon.volatiles.typechange&&pokemon.volatiles.typechange[1]){
-var types=pokemon.volatiles.typechange[1].split('/');for(var _i34=0;_i34<
-types.length;_i34++){var type=types[_i34];status+='<img src="'+Dex.resourcePrefix+'sprites/types/'+encodeURIComponent(type)+'.png" alt="'+type+'" class="pixelated" /> ';}
+var types=pokemon.volatiles.typechange[1].split('/');for(var _i38=0;_i38<
+types.length;_i38++){var type=types[_i38];status+='<img src="'+Dex.resourcePrefix+'sprites/types/'+encodeURIComponent(type)+'.png" alt="'+type+'" class="pixelated" /> ';}
 }
 if(pokemon.volatiles.typeadd){
-var _type=pokemon.volatiles.typeadd[1];
-status+='+<img src="'+Dex.resourcePrefix+'sprites/types/'+_type+'.png" alt="'+_type+'" class="pixelated" /> ';
+var _type2=pokemon.volatiles.typeadd[1];
+status+='+<img src="'+Dex.resourcePrefix+'sprites/types/'+_type2+'.png" alt="'+_type2+'" class="pixelated" /> ';
 }
 for(var stat in pokemon.boosts){if(pokemon.boosts[stat]){status+='<span class="'+pokemon.getBoostType(stat)+'">'+pokemon.getBoost(stat)+'</span> ';}}
 for(var i in pokemon.volatiles){status+=PokemonSprite.getEffectTag(i);}
-for(var _i35 in pokemon.turnstatuses){
-if(_i35==='roost'&&!pokemon.getTypeList().includes('Flying'))continue;
-status+=PokemonSprite.getEffectTag(_i35);
+for(var _i39 in pokemon.turnstatuses){
+if(_i39==='roost'&&!pokemon.getTypeList().includes('Flying'))continue;
+status+=PokemonSprite.getEffectTag(_i39);
 }
-for(var _i36 in pokemon.movestatuses){status+=PokemonSprite.getEffectTag(_i36);}
+for(var _i40 in pokemon.movestatuses){status+=PokemonSprite.getEffectTag(_i40);}
 var statusbar=this.$statbar.find('.status');
 statusbar.html(status);
 };PokemonSprite.

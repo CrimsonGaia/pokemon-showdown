@@ -349,7 +349,7 @@ License: GPLv2
 	position: absolute;
 	top: 0;
 	left: 0;
-	height: 450px;
+	height: 400px;
 	width: 100px;
 	background-color: #CCCCCC;
 	background-color: rgba(255,255,255,0.5);
@@ -360,7 +360,7 @@ License: GPLv2
 	position: absolute;
 	top: 0;
 	right: 0;
-	height: 450px;
+	height: 400px;
 	width: 100px;
 	background-color: #CCCCCC;
 	background-color: rgba(255,255,255,0.5);

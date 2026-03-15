@@ -272,7 +272,11 @@ export class BattleActions {
 				// Note that the speed stat used is after any volatile replacements like Speed Swap,
 				// but before any multipliers like Agility or Choice Scarf
 				// Ties go to whichever Pokemon has had the ability for the least amount of time
-				dancers.sort( (a, b) => -(b.storedStats['spe'] - a.storedStats['spe']) || b.abilityState1.effectOrder - a.abilityState1.effectOrder );
+				dancers.sort((a, b) =>
+					-(b.storedStats['spe'] - a.storedStats['spe']) ||
+					(this.battle as any).getAbilityEffectOrder(b, ['dancer', 'virtualidol']) -
+					(this.battle as any).getAbilityEffectOrder(a, ['dancer', 'virtualidol'])
+				);
 				const targetOf1stDance = this.battle.activeTarget!;
 				for (const dancer of dancers) {
 					if (this.battle.faintMessages()) break;

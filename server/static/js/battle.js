@@ -650,7 +650,8 @@ Side=function(){
 
 
 
-function Side(battle,n){this.battle=void 0;this.name='';this.id='';this.sideid=void 0;this.n=void 0;this.isFar=void 0;this.foe=null;this.ally=null;this.avatar='unknown';this.badges=[];this.rating='';this.totalPokemon=6;this.x=0;this.y=0;this.z=0;this.missedPokemon=null;this.wisher=null;this.active=[null];this.lastPokemon=null;this.pokemon=[];this.sideConditions={};this.faintCounter=0;
+
+function Side(battle,n){this.battle=void 0;this.name='';this.id='';this.sideid=void 0;this.n=void 0;this.isFar=void 0;this.foe=null;this.ally=null;this.avatar='unknown';this.badges=[];this.rating='';this.totalPokemon=6;this.x=0;this.y=0;this.z=0;this.missedPokemon=null;this.wisher=null;this.active=[null];this.lastPokemon=null;this.pokemon=[];this.fullTeam=[];this.sidebarPokemon=[];this.sideConditions={};this.faintCounter=0;
 this.battle=battle;
 this.n=n;
 this.sideid=['p1','p2','p3','p4'][n];
@@ -678,6 +679,8 @@ return this.z+(!this.isFar?-1:1)*offset;
 clearPokemon=function clearPokemon(){for(var _i8=0,_this$pokemon2=
 this.pokemon;_i8<_this$pokemon2.length;_i8++){var pokemon=_this$pokemon2[_i8];pokemon.destroy();}
 this.pokemon=[];
+this.fullTeam=[];
+this.sidebarPokemon=[];
 for(var i=0;i<this.active.length;i++)this.active[i]=null;
 this.lastPokemon=null;
 };_proto2.
@@ -849,7 +852,7 @@ illusionFound.status='';
 this.pokemon.splice(toRemove,1);
 }
 }
-this.battle.scene.updateSidebar(this);
+this.battle.scene.updateSidebars();
 
 return poke;
 };_proto2.
@@ -1833,7 +1836,7 @@ var _this$parsePokemonId=this.parsePokemonId(args[1]),siden=_this$parsePokemonId
 var side=this.sides[siden];
 _poke.fainted=false;
 _poke.status='';
-this.scene.updateSidebar(side);
+this.scene.updateSidebars();
 break;
 }
 }
@@ -3657,7 +3660,7 @@ if(args[3])_side4.setAvatar(args[3]);
 if(args[4])_side4.rating=args[4];
 if(this.joinButtons)this.scene.hideJoinButtons();
 this.log(args);
-this.scene.updateSidebar(_side4);
+this.scene.updateSidebars();
 break;
 }
 case'badge':{
@@ -3666,13 +3669,13 @@ var _side5=this.getSide(args[1]);
 var badge=args.slice(2).join('|');
 
 if(!_side5.badges.includes(badge))_side5.badges.push(badge);
-this.scene.updateSidebar(_side5);
+this.scene.updateSidebars();
 break;
 }
 case'teamsize':{
 var _side6=this.getSide(args[1]);
 _side6.totalPokemon=parseInt(args[2],10);
-this.scene.updateSidebar(_side6);
+this.scene.updateSidebars();
 break;
 }
 case'win':case'tie':{

@@ -1494,6 +1494,45 @@
 			var sideData = this.request.side;
 			this.battle.myPokemon = sideData.pokemon;
 			this.battle.setViewpoint(sideData.id);
+			var mySide = this.battle.mySide;
+
+			// Preserve full team only for preview + top bar.
+			// Only initialize it once, before battle-start reshaping would matter.
+			if (!mySide.fullTeam || !mySide.fullTeam.length) {
+				mySide.fullTeam = [];
+				for (var i = 0; i < sideData.pokemon.length; i++) {
+					var previewData = sideData.pokemon[i];
+					if (!previewData || !previewData.ident) continue;
+					var previewPokemon = this.battle.getPokemon(previewData.ident);
+					if (previewPokemon) mySide.fullTeam.push(previewPokemon);
+				}
+			}
+
+			// Sidebar/live battle should always use the brought team only.
+			mySide.sidebarPokemon = [];
+			for (var j = 0; j < sideData.pokemon.length; j++) {
+				var broughtData = sideData.pokemon[j];
+				if (!broughtData || !broughtData.ident) continue;
+				var broughtPokemon = this.battle.getPokemon(broughtData.ident);
+				if (broughtPokemon) mySide.sidebarPokemon.push(broughtPokemon);
+			}
+
+			this.battle.scene.updateSidebars();
+			// Keep the battlefield sidebar on the brought roster only.
+			if (this.battle.mySide && this.battle.mySide.pokemon) {
+				var broughtIdents = {};
+				for (var i = 0; i < sideData.pokemon.length; i++) {
+					var reqMon = sideData.pokemon[i];
+					if (reqMon && reqMon.ident) broughtIdents[reqMon.ident] = true;
+				}
+				this.battle.mySide.sidebarPokemon = this.battle.mySide.pokemon.filter(function (pokemon) {
+					return pokemon && broughtIdents[pokemon.ident];
+				});
+				if (this.battle.scene && this.battle.scene.updateSidebar) {
+					this.battle.scene.updateSidebar(this.battle.mySide);
+				}
+			}
+
 			// Sync terastallized flags from the request into the live Battle Pokemon objects.
 			// This fixes tooltips/UI still showing "(Terastallized)" after server ended it.
 			if (sideData && sideData.pokemon) {
@@ -1512,7 +1551,7 @@
 				pokemonData.hpDisplay = Pokemon.prototype.hpDisplay;
 				pokemonData.getPixelRange = Pokemon.prototype.getPixelRange;
 				pokemonData.getFormattedRange = Pokemon.prototype.getFormattedRange;
-				pokemonData.getHPColorClass = Pokemon.prototype.getHPColorClass;
+				pokemonData.getHPColorClass = Pokemon.prototype.getHPColorClass;``
 				pokemonData.getHPColor = Pokemon.prototype.getHPColor;
 			}
 		},

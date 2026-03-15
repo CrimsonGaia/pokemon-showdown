@@ -15060,7 +15060,12 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		flags: { bypasssub: 1, allyanim: 1, metronome: 1 },
 		onTryHit(target, source) {
 			if (target.ability1 === source.ability1 && target.ability2 === source.ability2) return false;
-			if (target.getAbility().flags['failroleplay'] || source.getAbility().flags['cantsuppress']) return false;
+
+			const targetAbilities = [target.getAbility(1), target.getAbility(2)].filter(a => a.id);
+			const sourceAbilities = [source.getAbility(1), source.getAbility(2)].filter(a => a.id);
+
+			if (targetAbilities.some(a => a.flags['failroleplay'])) return false;
+			if (sourceAbilities.some(a => a.flags['cantsuppress'])) return false;
 		},
 		onHit(target, source) {
 			const oldAbility = source.setAbility(target.ability1, target, undefined, false, false, 1);
@@ -15432,7 +15437,12 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		pp: 15,
 		priority: 0,
 		flags: { beam: 1, protect: 1, reflectable: 1, mirror: 1, allyanim: 1, metronome: 1 },
-		onTryHit(target) { if (target.getAbility().flags['cantsuppress'] || target.hasAbility('simple') || target.hasAbility('truant')) { return false; } },
+		onTryHit(target) {
+			const targetAbilities = [target.getAbility(1), target.getAbility(2)].filter(a => a.id);
+			if (targetAbilities.some(a => a.flags['cantsuppress']) || target.hasAbility('simple') || target.hasAbility('truant')) {
+				return false;
+			}
+		},
 		onHit(target, source) {
 			const oldAbility = target.setAbility('simple');
 			if (!oldAbility) return oldAbility as false | null;
@@ -15500,13 +15510,23 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		priority: 0,
 		flags: { protect: 1, mirror: 1, bypasssub: 1, allyanim: 1, metronome: 1 },
 		onTryHit(target, source) {
-			const targetAbility = target.getAbility();
-			const sourceAbility = source.getAbility();
-			if (sourceAbility.flags['failskillswap'] || targetAbility.flags['failskillswap'] || target.volatiles['dynamax']) { return false; }
-			const sourceCanBeSet = this.runEvent('SetAbility', source, source, this.effect, targetAbility);
-			if (!sourceCanBeSet) return sourceCanBeSet;
-			const targetCanBeSet = this.runEvent('SetAbility', target, source, this.effect, sourceAbility);
-			if (!targetCanBeSet) return targetCanBeSet;
+			const targetAbilities = [target.getAbility(1), target.getAbility(2)].filter(a => a.id);
+			const sourceAbilities = [source.getAbility(1), source.getAbility(2)].filter(a => a.id);
+
+			if (
+				sourceAbilities.some(a => a.flags['failskillswap']) ||
+				targetAbilities.some(a => a.flags['failskillswap']) ||
+				target.volatiles['dynamax']
+			) return false;
+
+			for (const ability of targetAbilities) {
+				const sourceCanBeSet = this.runEvent('SetAbility', source, source, this.effect, ability);
+				if (!sourceCanBeSet) return sourceCanBeSet;
+			}
+			for (const ability of sourceAbilities) {
+				const targetCanBeSet = this.runEvent('SetAbility', target, source, this.effect, ability);
+				if (!targetCanBeSet) return targetCanBeSet;
+			}
 		},
 		onHit(target, source, move) {
 			const targetAbility1 = target.getAbility(1);
@@ -17037,7 +17057,10 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		priority: 0,
 		flags: { protect: 1, reflectable: 1, mirror: 1, allyanim: 1, metronome: 1 },
 		onTryImmunity(target) { if (target.hasAbility('truant') || target.hasAbility('insomnia')) { return false; } }, // Truant and Insomnia have special treatment; they fail before checking accuracy and will double Stomping Tantrum's BP
-		onTryHit(target) { if (target.getAbility().flags['cantsuppress']) { return false; } },
+		onTryHit(target) {
+			const targetAbilities = [target.getAbility(1), target.getAbility(2)].filter(a => a.id);
+			if (targetAbilities.some(a => a.flags['cantsuppress'])) return false;
+		},
 		onHit(target, source) {
 			const oldAbility = target.setAbility('insomnia');
 			if (!oldAbility) return oldAbility as false | null;
@@ -17735,12 +17758,14 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		priority: 0,
 		flags: { protect: 1, mirror: 1, metronome: 1, nosketch: 1, },
 		onHit(target) {
-			if (target.getAbility().flags['cantsuppress']) return;
+			const targetAbilities = [target.getAbility(1), target.getAbility(2)].filter(a => a.id);
+			if (targetAbilities.some(a => a.flags['cantsuppress'])) return;
 			if (target.newlySwitched || this.queue.willMove(target)) return;
 			target.addVolatile('gastroacid');
 		},
 		onAfterSubDamage(damage, target) {
-			if (target.getAbility().flags['cantsuppress']) return;
+			const targetAbilities = [target.getAbility(1), target.getAbility(2)].filter(a => a.id);
+			if (targetAbilities.some(a => a.flags['cantsuppress'])) return;
 			if (target.newlySwitched || this.queue.willMove(target)) return;
 			target.addVolatile('gastroacid');
 		},

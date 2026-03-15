@@ -52,7 +52,6 @@ export class BattleSceneStub {
 	teamPreview(): void { }
 	resetSides(): void { }
 	updateGen(): void { }
-	updateSidebar(side: Side): void { }
 	updateSidebars(): void { }
 	updateStatbars(): void { }
 	updateWeather(instant?: boolean): void { }
