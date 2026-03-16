@@ -1789,9 +1789,15 @@ private renderStatusIcon(status: string): string {
 			const base1Name = nameOf(base1);
 			const base2Name = nameOf(base2);
 
-			// If we have serverPokemon, this is our own/ally Pokémon and the set is already known.
-			// Never show "possible ability sets" for our own mons.
-			const isOwnPokemon = !!serverPokemon;
+			// Only our own / ally Pokémon should force the fully-known "Ability Set" view.
+			// Enemy Pokémon can still have partial/revealed ability data, so serverPokemon
+			// existing does NOT by itself mean the set is fully known.
+			const isOwnPokemon =
+				!!clientPokemon &&
+				(
+					clientPokemon.side === this.battle.mySide ||
+					clientPokemon.side === this.battle.mySide.ally
+				);
 
 			// Build possible sets from the flat list [a1, a2, a1, a2, ...]
 			const sets: string[][] = [];

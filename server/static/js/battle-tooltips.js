@@ -1791,7 +1791,13 @@ var base2Name=nameOf(base2);
 
 
 
-var isOwnPokemon=!!serverPokemon;
+
+var isOwnPokemon=
+!!clientPokemon&&(
+
+clientPokemon.side===this.battle.mySide||
+clientPokemon.side===this.battle.mySide.ally);
+
 
 
 var sets=[];
