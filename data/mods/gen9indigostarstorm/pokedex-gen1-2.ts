@@ -2309,7 +2309,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 131,
 		name: "Lapras",
 		types: ["Water", "Ice"],
-		baseStats: { hp: 130, atk: 75, def: 80, spa: 95, spd: 95, spe: 60 },
+		baseStats: { hp: 130, atk: 95, def: 80, spa: 95, spd: 95, spe: 60 },
 		abilities: { // ABILITY SET 1
 			0: "Hailstorm",
 			1: "Liquid Voice",

@@ -919,7 +919,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 765,
 		name: "Oranguru",
 		types: ["Normal", "Psychic"],
-		baseStats: { hp: 90, atk: 60, def: 80, spa: 90, spd: 110, spe: 60 },
+		baseStats: { hp: 100, atk: 60, def: 80, spa: 100, spd: 120, spe: 40 },
 		abilities: { // ABILITY SET 1
             0: "Inner Focus",
             1: "Telepathy",
@@ -937,7 +937,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 766,
 		name: "Passimian",
 		types: ["Fighting"],
-		baseStats: { hp: 100, atk: 120, def: 90, spa: 40, spd: 60, spe: 80 },
+		baseStats: { hp: 80, atk: 120, def: 100, spa: 40, spd: 60, spe: 90 },
 		abilities: { // ABILITY SET 1
             0: "Defiant",
             1: "Receiver",
@@ -1066,7 +1066,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		forme: "Meteor",
 		types: ["Rock", "Flying"],
 		gender: "N",
-		baseStats: { hp: 60, atk: 60, def: 100, spa: 60, spd: 100, spe: 60 },
+		baseStats: { hp: 60, atk: 60, def: 130, spa: 60, spd: 130, spe: 60 },
 		abilities: { // ABILITY SET 1
             0: "Shell Armor",
             1: "Shields Down",
@@ -2348,7 +2348,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 871,
 		name: "Pincurchin",
 		types: ["Electric"],
-		baseStats: { hp: 48, atk: 101, def: 115, spa: 81, spd: 95, spe: 3 },
+		baseStats: { hp: 48, atk: 101, def: 115, spa: 88, spd: 95, spe: 3 },
 		abilities: { // ABILITY SET 1
             0: "Electric Surge",
             1: "Tipped Thorns",

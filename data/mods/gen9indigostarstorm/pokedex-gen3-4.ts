@@ -1066,7 +1066,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 335,
 		name: "Zangoose",
 		types: ["Normal"],
-		baseStats: { hp: 73, atk: 115, def: 60, spa: 60, spd: 60, spe: 90 },
+		baseStats: { hp: 73, atk: 115, def: 73, spa: 73, spd: 73, spe: 90 },
 		abilities: { // ABILITY SET 1
             0: "Tough Claws",
             1: "Toxic Boost",
@@ -1084,9 +1084,9 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 336,
 		name: "Seviper",
 		types: ["Poison"],
-		baseStats: { hp: 73, atk: 100, def: 60, spa: 100, spd: 60, spe: 65 },
+		baseStats: { hp: 73, atk: 105, def: 87, spa: 70, spd: 87, spe: 65 },
 		abilities: { // ABILITY SET 1
-            0: "Sharpness",
+            0: "Sword Tail",
             1: "Shed Skin",
                     // ABILITY SET 2
             H: "Infiltrator",
@@ -3305,7 +3305,26 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		gender: "N",
 		baseStats: { hp: 50, atk: 65, def: 107, spa: 105, spd: 107, spe: 86 },
 		abilities: { // ABILITY SET 1
-            0: "Grassy Surge",
+            0: "Landscaper",
+            1: "Levitate",
+        },
+		heightm: 0.3,
+		weightkg: 0.3,
+		color: "Red",
+		eggGroups: ["Amorphous"],
+		changesFrom: "Rotom",
+		tags: ["Single Stage Pokemon", "Fully Evolved"],
+	},
+	rotomstereo: {
+		num: 479,
+		name: "Rotom-Stereo",
+		baseSpecies: "Rotom",
+		forme: "Stereo",
+		types: ["Electric", "Normal"],
+		gender: "N",
+		baseStats: { hp: 50, atk: 65, def: 107, spa: 105, spd: 107, spe: 86 },
+		abilities: { // ABILITY SET 1
+            0: "Amplifier",
             1: "Levitate",
         },
 		heightm: 0.3,
@@ -3320,7 +3339,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		name: "Uxie",
 		types: ["Psychic"],
 		gender: "N",
-		baseStats: { hp: 75, atk: 50, def: 130, spa: 84, spd: 130, spe: 111 },
+		baseStats: { hp: 85, atk: 30, def: 135, spa: 84, spd: 135, spe: 111 },
 		abilities: { // ABILITY SET 1
             0: "Memory Wipe",
             1: "Levitate",
@@ -3336,7 +3355,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		name: "Mesprit",
 		types: ["Psychic"],
 		gender: "N",
-		baseStats: { hp: 80, atk: 65, def: 105, spa: 113, spd: 105, spe: 112 },
+		baseStats: { hp: 93, atk: 60, def: 105, spa: 105, spd: 105, spe: 112 },
 		abilities: { // ABILITY SET 1
             0: "Misty Surge",
             1: "Levitate",
@@ -3352,7 +3371,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		name: "Azelf",
 		types: ["Psychic"],
 		gender: "N",
-		baseStats: { hp: 75, atk: 125, def: 70, spa: 125, spd: 70, spe: 115 },
+		baseStats: { hp: 85, atk: 90, def: 80, spa: 130, spd: 80, spe: 115 },
 		abilities: { // ABILITY SET 1
             0: "Vital Spirit",
             1: "Levitate",

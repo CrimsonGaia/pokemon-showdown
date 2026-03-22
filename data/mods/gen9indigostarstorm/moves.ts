@@ -4222,28 +4222,95 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 	},
 	present: {
 		num: 217,
-		accuracy: 90,
-		basePower: 0,
+		accuracy: 100,
+		basePower: 80,
 		type: "Normal",
 		category: "Physical",
 		name: "Present",
 		pp: 15,
 		priority: 0,
 		critRatio: 0,
-		flags: { throw: 1, protect: 1, mirror: 1, metronome: 1 },
-		onModifyMove(move, pokemon, target) {
-			const rand = this.random(10);
-			if (rand < 2) {
-				move.heal = [1, 4];
+		flags: { throw: 1, protect: 1, mirror: 1, allyanim: 1, metronome: 1 },
+		onTryHit(target, source, move) {
+			if (source.isAlly(target)) {
+				move.basePower = 0;
 				move.infiltrates = true;
-			} 
-			else if (rand < 6) { move.basePower = 40; } 
-			else if (rand < 9) { move.basePower = 80; } 
-			else { move.basePower = 120; }
+			}
+		},
+		onTryMove(source, target, move) {
+			if (source.isAlly(target) && source.volatiles['healblock']) {
+				this.attrLastMove('[still]');
+				this.add('cant', source, 'move: Heal Block', move);
+				return false;
+			}
+		},
+		onHit(target, source, move) {
+			if (source.isAlly(target)) {
+				if (!this.heal(Math.floor(target.baseMaxhp / 3), target, source, move)) {
+					return this.NOT_FAIL;
+				}
+				return;
+			}
+			const result = this.random(12);
+			switch (result) {
+			case 0:
+				if (target.side.addSideCondition('stealthrock')) {
+					this.add('-message', `Pointed stones exploded out of the package!`);
+				}
+				break;
+			case 1:
+				if (target.side.addSideCondition('spikes')) {
+					this.add('-message', `Spikes exploded out of the package!`);
+				}
+				break;
+			case 2:
+				if (target.side.addSideCondition('steelspikes')) {
+					this.add('-message', `Caltrops exploded out of the package!`);
+				}
+				break;
+			case 3:
+				if (target.side.addSideCondition('stickyweb')) {
+					this.add('-message', `Webs exploded out of the package!`);
+				}
+				break;
+			case 4:
+				if (target.trySetStatus('brn', source, move)) {
+					this.add('-message', `The Present hid hot coals!`);
+				}
+				break;
+			case 5:
+				if (target.trySetStatus('frostbite', source, move)) {
+					this.add('-message', `The Present hid a freezing ice ball!`);
+				}
+				break;
+			case 6:
+				if (this.heal(Math.floor(target.baseMaxhp / 3), target, source, move)) {
+					this.add('-message', `${target.name} unwrapped a chocolate!`);
+				}
+				break;
+			case 7:
+				if (target.addVolatile('windburst')) {
+					this.add('-message', `A burst of wind exploded out of the package!`);
+				}
+				break;
+			case 8:
+				if (target.addVolatile('magicdust', source, move)) {
+					this.add('-message', `Magic Powder exploded out of the package!`);
+				}
+				break;
+			case 9:
+				if (target.side.addSideCondition('silverdust')) {
+					this.add('-message', `Silver powder exploded out of the package!`);
+				}
+				break;
+			default:
+				this.add('-message', `It was empty...`);
+				break;
+			}
 		},
 		secondary: null,
-		desc: "",
-		shortDesc: "",
+		desc: "If an ally is targeted, heals 1/3 of its max HP. Otherwise, after hitting, one random effect may occur: set Stealth Rock, Spikes, Steelspikes, or Sticky Web; burn the target; frostbite the target; heal the target by 1/3 of its max HP; apply Windburst; apply Magic Dust; apply Silver Powder to the target's side; or nothing. Each listed effect has equal odds, and nothing is twice as likely as any one listed effect.",
+		shortDesc: "Ally: heals 1/3 HP. Foe: random gift effect, or nothing.",
 		target: "normal",
 	},
 	psyblade: {
@@ -6425,7 +6492,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 	aircutter: {
 		num: 314,
 		accuracy: 95,
-		basePower: 75,
+		basePower: 85,
 		type: "Flying",
 		category: "Special",
 		name: "Air Cutter",
@@ -9980,7 +10047,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		basePower: 0,
 		basePowerCallback(pokemon) {
 			if (!pokemon.volatiles['stockpile']?.layers) return false;
-			return pokemon.volatiles['stockpile'].layers * 100;
+			return pokemon.volatiles['stockpile'].layers * 70;
 		},
 		type: "Normal",
 		category: "Special",
@@ -9997,8 +10064,8 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 			}
 		},
 		secondary: null,
-		desc: "Fails without Stockpile stocks. Damage is multiplied by the number of stocks. After use: lose 1 stock",
-		shortDesc: "Fails without Stockpile stocks. Damage is multiplied by the number of stocks. After use: lose 1 stock",
+		desc: "Fails without Stockpile stocks. Damage is 70x the number of stocks. After use: lose 1 stock",
+		shortDesc: "Fails without Stockpile stocks. Damage is 70x the number of stocks. After use: lose 1 stock",
 		target: "normal",
 	},
 	springtidestorm: {
@@ -10159,14 +10226,14 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 	synchronoise: {
 		num: 485,
 		accuracy: 100,
-		basePower: 75,
+		basePower: 80,
 		type: "Psychic",
 		category: "Special",
 		name: "Synchronoise",
 		pp: 10,
 		priority: 0,
 		critRatio: 1,
-		flags: { protect: 1, mirror: 1, metronome: 1, heal: 1 },
+		flags: { sound: 1, protect: 1, mirror: 1, metronome: 1, heal: 1 },
 		// Don't damage allies, only enemies
 		onModifyMove(move, source) { move.onTryHit = function (target, source) { if (source.isAlly(target)) return null; }; },
 		// 2x damage if target shares a type with user
@@ -15219,6 +15286,97 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		shortDesc: "Lowers target's Defense [-2 stages]",
 		target: "normal",
 	},
+		shadowclone: {
+		num: -12003,
+		accuracy: true,
+		basePower: 0,
+		type: "Ghost",
+		category: "Status",
+		name: "Shadow Clone",
+		pp: 10,
+		priority: 0,
+		flags: { snatch: 1, metronome: 1, failencore: 1, noassist: 1, failcopycat: 1, failmimic: 1, failinstruct: 1, nosketch: 1 },
+		volatileStatus: 'shadowclone',
+		onTryHit(target, source) {
+			if (source.volatiles['substitute'] || source.volatiles['shadowclone']) {
+				this.add('-fail', source, 'move: Shadow Clone');
+				return this.NOT_FAIL;
+			}
+			if (source.hp <= source.maxhp / 4 || source.maxhp === 1) {
+				this.add('-fail', source, 'move: Shadow Clone', '[weak]');
+				return this.NOT_FAIL;
+			}
+			if (source === target) {
+				this.add('-fail', source, 'move: Shadow Clone');
+				return this.NOT_FAIL;
+			}
+		},
+		onHit(target, source) {
+			if (!source.transformInto(target)) return false;
+			source.addVolatile('shadowclone', target);
+			this.directDamage(source.maxhp / 4);
+		},
+		condition: {
+			onStart(target, source, effect) {
+				this.add('-start', target, 'Substitute', '[from] move: Shadow Clone');
+				this.effectState.hp = Math.floor(target.maxhp / 4);
+				this.effectState.cloneTarget = source;
+				if (target.volatiles['partiallytrapped']) {
+					this.add('-end', target, target.volatiles['partiallytrapped'].sourceEffect, '[partiallytrapped]', '[silent]');
+					delete target.volatiles['partiallytrapped'];
+				}
+			},
+			onTryPrimaryHitPriority: -1,
+			onTryPrimaryHit(target, source, move) {
+				const shielded = target.hasItem?.('Ability Shield') || target.hasItem?.('abilityshield');
+				if (target === source) return;
+				if ((move.flags['bypasssub'] || move.infiltrates) && !shielded) return;
+				if ((move.flags['bypasssub'] || move.infiltrates) && shielded) {
+					this.add('-block', target, 'item: Ability Shield');
+				}
+				let damage = this.actions.getDamage(source, target, move);
+				if (!damage && damage !== 0) {
+					this.add('-fail', source);
+					this.attrLastMove('[still]');
+					return null;
+				}
+				if (damage > target.volatiles['shadowclone'].hp) {
+					damage = target.volatiles['shadowclone'].hp as number;
+				}
+				target.volatiles['shadowclone'].hp -= damage;
+				source.lastDamage = damage;
+
+				if (target.volatiles['shadowclone'].hp <= 0) {
+					if (move.ohko) this.add('-ohko');
+					target.removeVolatile('shadowclone');
+				} else {
+					this.add('-activate', target, 'move: Shadow Clone', '[damage]');
+				}
+
+				if (move.recoil || move.id === 'chloroblast') {
+					this.damage(this.actions.calcRecoilDamage(damage, move, source), source, target, 'recoil');
+				}
+				if (move.drain) {
+					this.heal(Math.ceil(damage * move.drain[0] / move.drain[1]), source, target, 'drain');
+				}
+				this.singleEvent('AfterSubDamage', move, null, target, source, move, damage);
+				this.runEvent('AfterSubDamage', target, source, move, damage);
+				return this.HIT_SUBSTITUTE;
+			},
+			onEnd(target) {
+				this.add('-end', target, 'Substitute');
+				if (target.transformed) {
+					target.formeChange(target.baseSpecies, this.effect, true);
+					target.transformed = false;
+					this.add('-transform', target, target, '[silent]');
+				}
+			},
+		},
+		secondary: null,
+		desc: "User transforms into the target, then creates a Substitute at the cost of 1/4 max HP. When the clone breaks or ends, the transformation ends as well.",
+		shortDesc: "Transforms into target, then makes a Substitute. Reverts when it breaks.",
+		target: "normal",
+	},
 	sharpen: {
 		num: 159,
 		accuracy: true,
@@ -15912,36 +16070,29 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		volatileStatus: 'stockpile',
 		condition: {
 			noCopy: true,
-			onStart(target) {
+			onStart(pokemon) {
 				this.effectState.layers = 1;
-				this.effectState.def = 0;
-				this.effectState.spd = 0;
-				this.add('-start', target, 'stockpile' + this.effectState.layers);
-				const [curDef, curSpD] = [target.boosts.def, target.boosts.spd];
-				this.boost({ def: 1, spd: 1 }, target, target);
-				if (curDef !== target.boosts.def) this.effectState.def--;
-				if (curSpD !== target.boosts.spd) this.effectState.spd--;
+				this.add('-start', pokemon, 'stockpile' + this.effectState.layers);
 			},
-			onRestart(target) {
+			onRestart(pokemon) {
 				if (this.effectState.layers >= 6) return false;
 				this.effectState.layers++;
-				this.add('-start', target, 'stockpile' + this.effectState.layers);
-				const curDef = target.boosts.def;
-				const curSpD = target.boosts.spd;
-				this.boost({ def: 1, spd: 1 }, target, target);
-				if (curDef !== target.boosts.def) this.effectState.def--;
-				if (curSpD !== target.boosts.spd) this.effectState.spd--;
+				this.add('-end', pokemon, 'stockpile' + (this.effectState.layers - 1));
+				this.add('-start', pokemon, 'stockpile' + this.effectState.layers);
 			},
-			onEnd(target) {
-				if (this.effectState.def || this.effectState.spd) {
-					const boosts: SparseBoostsTable = {};
-					if (this.effectState.def) boosts.def = this.effectState.def;
-					if (this.effectState.spd) boosts.spd = this.effectState.spd;
-					this.boost(boosts, target, target);
-				}
-				this.add('-end', target, 'Stockpile');
-				if (this.effectState.def !== this.effectState.layers * -1 || this.effectState.spd !== this.effectState.layers * -1) { this.hint("In Gen 7, Stockpile keeps track of how many times it successfully altered each stat individually"); }
+			onModifyDefPriority: 6,
+			onModifyDef(def, pokemon) {
+				const layers = pokemon.volatiles['stockpile']?.layers || 0;
+				if (!layers) return;
+				return this.chainModify(1 + 0.3 * layers);
 			},
+			onModifySpDPriority: 6,
+			onModifySpD(spd, pokemon) {
+				const layers = pokemon.volatiles['stockpile']?.layers || 0;
+				if (!layers) return;
+				return this.chainModify(1 + 0.3 * layers);
+			},
+			onEnd(pokemon) { this.add('-end', pokemon, 'Stockpile'); },
 		},
 		secondary: null,
 		target: "self",
@@ -16121,7 +16272,7 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		secondary: null,
 		target: "normal",
 	},
-	swallow: {
+		swallow: {
 		num: 256,
 		accuracy: true,
 		basePower: 0,
@@ -16137,17 +16288,16 @@ export const Moves: import('../../../sim/dex-moves').ModdedMoveDataTable = {
 		},
 		onHit(pokemon) {
 			const layers = pokemon.volatiles['stockpile']?.layers || 1;
-			const healAmount = [0.25, 0.5, 1];
+			const healAmount = [1/8, 1/4, 3/8, 1/2, 3/4, 1];
 			const success = !!this.heal(this.modify(pokemon.maxhp, healAmount[layers - 1]));
 			if (!success) this.add('-fail', pokemon, 'heal');
-			// Only reduce stockpile by 1 layer instead of removing completely
 			if (pokemon.volatiles['stockpile']) {
 				pokemon.volatiles['stockpile'].layers--;
-				if (pokemon.volatiles['stockpile'].layers <= 0) { pokemon.removeVolatile('stockpile'); } 
-				else {
+				if (pokemon.volatiles['stockpile'].layers <= 0) {
+					pokemon.removeVolatile('stockpile');
+				} else {
 					this.add('-end', pokemon, 'stockpile' + (pokemon.volatiles['stockpile'].layers + 1));
 					this.add('-start', pokemon, 'stockpile' + pokemon.volatiles['stockpile'].layers);
-					// Adjust stat boost tracking
 					if (pokemon.volatiles['stockpile'].def) pokemon.volatiles['stockpile'].def++;
 					if (pokemon.volatiles['stockpile'].spd) pokemon.volatiles['stockpile'].spd++;
 				}
