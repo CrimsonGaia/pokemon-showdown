@@ -80,8 +80,8 @@ export function changeMoves(context: Battle, pokemon: Pokemon, newMoves: (string
 		const moveSlot = {
 			move: move.name,
 			id: move.id,
-			pp: Math.floor((move.noPPBoosts ? move.pp : move.pp * 8 / 5) * carryOver[slot]),
-			maxpp: (move.noPPBoosts ? move.pp : move.pp * 8 / 5),
+			pp: Math.floor(move.pp * carryOver[slot]),
+			maxpp: move.pp,
 			target: move.target,
 			disabled: false,
 			disabledSource: '',
@@ -1839,89 +1839,46 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 			return hitResults;
 		},
 		spreadMoveHit(targets, pokemon, moveOrMoveName, hitEffect, isSecondary, isSelf) {
-			// Hardcoded for single-target purposes
-			// (no spread moves have any kind of onTryHit handler)
+			// Hardcoded for single-target purposes (no spread moves have any kind of onTryHit handler)
 			const target = targets[0];
 			let damage: (number | boolean | undefined)[] = [];
-			for (const i of targets.keys()) {
-				damage[i] = true;
-			}
+			for (let i = 0; i < targets.length; i++) { damage[i] = true; }
 			const move = this.dex.getActiveMove(moveOrMoveName);
 			let hitResult: boolean | number | null = true;
 			const moveData = hitEffect || move;
 			if (!moveData.flags) moveData.flags = {};
-			if (move.target === 'all' && !isSelf) {
-				hitResult = this.battle.singleEvent('TryHitField', moveData, {}, target || null, pokemon, move);
-			} else if ((move.target === 'foeSide' || move.target === 'allySide' || move.target === 'allyTeam') && !isSelf) {
-				hitResult = this.battle.singleEvent('TryHitSide', moveData, {}, target || null, pokemon, move);
-			} else if (target) {
-				hitResult = this.battle.singleEvent('TryHit', moveData, {}, target, pokemon, move); 
-				if (hitResult !== false && hitResult !== null) { hitResult = (this.battle as any).runAbilityEventCancel('TryHit', target, target, pokemon, move); }
-			}
+			if (move.target === 'all' && !isSelf) { hitResult = this.battle.singleEvent('TryHitField', moveData, {}, target || null, pokemon, move); } 
+			else if ((move.target === 'foeSide' || move.target === 'allySide' || move.target === 'allyTeam') && !isSelf) { hitResult = this.battle.singleEvent('TryHitSide', moveData, {}, target || null, pokemon, move); } 
+			else if (target) { hitResult = this.battle.singleEvent('TryHit', moveData, {}, target, pokemon, move); }
 			if (!hitResult) {
 				if (hitResult === false) {
+					if (move.weaponmove && move.weaponDamageOnProtect !== false) { this.applyWeaponMoveDamage(pokemon, move, 'protect'); }
 					this.battle.add('-fail', pokemon);
 					this.battle.attrLastMove('[still]');
 				}
-				return [[false], targets]; // single-target only
+				return [[false], targets];
 			}
-
-			// 0. check for substitute
-			if (!isSecondary && !isSelf) {
-				if (move.target !== 'all' && move.target !== 'allyTeam' && move.target !== 'allySide' && move.target !== 'foeSide') {
-					damage = this.tryPrimaryHitEvent(damage, targets, pokemon, move, moveData, isSecondary);
-				}
-			}
-
-			for (const i of targets.keys()) {
+			if (!isSecondary && !isSelf) { if (move.target !== 'all' && move.target !== 'allyTeam' && move.target !== 'allySide' && move.target !== 'foeSide') { damage = this.tryPrimaryHitEvent(damage, targets, pokemon, move, moveData, isSecondary); } }
+			for (let i = 0; i < targets.length; i++) {
 				if (damage[i] === this.battle.HIT_SUBSTITUTE) {
 					damage[i] = true;
 					targets[i] = null;
 				}
-				if (targets[i] && isSecondary && !moveData.self) {
-					damage[i] = true;
-				}
+				if (targets[i] && isSecondary && !moveData.self) damage[i] = true;
 				if (!damage[i]) targets[i] = false;
 			}
-			// 1. call to this.battle.getDamage
 			damage = this.getSpreadDamage(damage, targets, pokemon, move, moveData, isSecondary, isSelf);
-
-			for (const i of targets.keys()) {
-				if (damage[i] === false) targets[i] = false;
-			}
-
-			// 2. call to this.battle.spreadDamage
+			for (let i = 0; i < targets.length; i++) { if (damage[i] === false) targets[i] = false; }
 			damage = this.battle.spreadDamage(damage, targets, pokemon, move);
-
-			for (const i of targets.keys()) {
-				if (damage[i] === false) targets[i] = false;
-			}
-
-			// 3. onHit event happens here
+			for (let i = 0; i < targets.length; i++) { if (damage[i] === false) targets[i] = false; }
 			damage = this.runMoveEffects(damage, targets, pokemon, move, moveData, isSecondary, isSelf);
-
-			for (const i of targets.keys()) {
-				if (!damage[i] && damage[i] !== 0) targets[i] = false;
-			}
-
-			// steps 4 and 5 can mess with this.battle.activeTarget, which needs to be preserved for Dancer
+			for (let i = 0; i < targets.length; i++) { if (!damage[i] && damage[i] !== 0) targets[i] = false; }
 			const activeTarget = this.battle.activeTarget;
-
-			// 4. self drops (start checking for targets[i] === false here)
 			if (moveData.self && !move.selfDropped) this.selfDrops(targets, pokemon, move, moveData, isSecondary);
-
-			// 5. secondary effects
 			if (moveData.secondaries) this.secondaries(targets, pokemon, move, moveData, isSelf);
-
 			this.battle.activeTarget = activeTarget;
-
-			// 6. force switch
 			if (moveData.forceSwitch) damage = this.forceSwitch(damage, targets, pokemon, move);
-
-			for (const i of targets.keys()) {
-				if (!damage[i] && damage[i] !== 0) targets[i] = false;
-			}
-
+			for (let i = 0; i < targets.length; i++) { if (!damage[i] && damage[i] !== 0) targets[i] = false; }
 			const damagedTargets: Pokemon[] = [];
 			const damagedDamage = [];
 			for (const [i, t] of targets.entries()) {
@@ -1933,16 +1890,17 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 			const pokemonOriginalHP = pokemon.hp;
 			if (damagedDamage.length && !isSecondary && !isSelf) {
 				this.battle.runEvent('DamagingHit', damagedTargets, pokemon, move, damagedDamage);
-				if (moveData.onAfterHit) {
-					for (const t of damagedTargets) {
-						this.battle.singleEvent('AfterHit', moveData, {}, t, pokemon, move);
+				for (const t of damagedTargets) {
+					if (move.type === 'Electric' && t.hasType('Electric')) {
+						if (!t.volatiles['charged']) {
+							t.addVolatile('charged');
+							this.battle.add('-start', t, 'charged', '[from] Electric type');
+						}
 					}
 				}
-				if (pokemon.hp && pokemon.hp <= pokemon.maxhp / 2 && pokemonOriginalHP > pokemon.maxhp / 2) {
-					this.battle.runEvent('EmergencyExit', pokemon);
-				}
+				if (moveData.onAfterHit) { for (const t of damagedTargets) { this.battle.singleEvent('AfterHit', moveData, {}, t, pokemon, move); } }
+				if (pokemon.hp && pokemon.hp <= pokemon.maxhp / 2 && pokemonOriginalHP > pokemon.maxhp / 2) { this.battle.runEvent('EmergencyExit', pokemon); }
 			}
-
 			return [damage, targets];
 		},
 		getDamage(source, target, move, suppressMessages = false) {
@@ -2514,9 +2472,10 @@ console.log('[DEBUG] banal in TypeChart:', Object.prototype.hasOwnProperty.call(
 					runSwitch: 101,
 					// runPrimal: 102,
 					switch: 103,
-					megaEvo: 104,
+					megaEvo: 103,
 					runDynamax: 105,
 					terastallize: 106,
+					teraEmpower: 107,
 					priorityChargeMove: 107,
 
 					shift: 200,

@@ -563,6 +563,32 @@ export const Conditions = {
 		},
 		onEnd() { this.add('-sideend', this.effectState.target, 'move: Silver Powder'); },
 	},
+	sweetextract: {
+		name: 'sweetextract',
+		duration: 2,
+		onStart(target, source) {
+			this.effectState.source = source;
+			this.add('-start', target, 'Sweet Extract', `[of] ${source}`);
+		},
+		onAnyRedirectTargetPriority: 2,
+		onAnyRedirectTarget(target, source, source2, move) {
+			const afflicted = this.effectState.target;
+			const user = this.effectState.source;
+			if (!afflicted || !user || !user.isActive || user.fainted) return;
+			if (source !== afflicted) return;
+			if (!move || move.category === 'Status') return;
+			if (target !== user) return;
+
+			const ally = user.adjacentAllies().find(pokemon => pokemon && pokemon.isActive && !pokemon.fainted);
+			if (ally) {
+				this.add('-activate', afflicted, 'move: Sweet Extract');
+				return ally;
+			}
+		},
+		onEnd(target) {
+			this.add('-end', target, 'Sweet Extract');
+		},
+	},
 	fairylockfree: {
 		name: 'fairylockfree',
 		noCopy: true,
@@ -908,6 +934,20 @@ export const Conditions = {
 		effectType: 'Volatile',
 		onStart(pokemon) { this.add('-start', pokemon, 'Windswept'); },
 		onEnd(pokemon) { this.add('-end', pokemon, 'Windswept'); },
+	},
+	// #region PP Exhaution
+	defeathered: {
+		name: 'Defeathered',
+		effectType: 'Volatile',
+		noCopy: true,
+		onStart(target) {
+			this.add('-start', target, 'Defeathered');
+		},
+		onTypePriority: -1,
+		onType(types, pokemon) {
+			this.effectState.typeWas = types;
+			return types.filter(type => type !== 'Flying');
+		},
 	},
 	// #region Weather 
 	hail: {

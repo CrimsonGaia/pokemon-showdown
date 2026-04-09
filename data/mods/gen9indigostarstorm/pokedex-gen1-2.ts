@@ -3023,7 +3023,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 171,
 		name: "Lanturn",
 		types: ["Water", "Electric"],
-		baseStats: { hp: 125, atk: 46, def: 46, spa: 88, spd: 88, spe: 79 },
+		baseStats: { hp: 125, atk: 58, def: 46, spa: 88, spd: 88, spe: 79 },
 		abilities: { // ABILITY SET 1
 			0: "Volt Absorb",
 			1: "Illuminate",
@@ -4253,7 +4253,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		name: "Raikou",
 		types: ["Electric"],
 		gender: "N",
-		baseStats: { hp: 90, atk: 85, def: 75, spa: 115, spd: 100, spe: 115 },
+		baseStats: { hp: 90, atk: 70, def: 80, spa: 115, spd: 100, spe: 115 },
 		abilities: { // ABILITY SET 1
             0: "Inner Focus",
             1: "Pressure",
@@ -4272,7 +4272,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		name: "Entei",
 		types: ["Fire"],
 		gender: "N",
-		baseStats: { hp: 115, atk: 115, def: 85, spa: 90, spd: 75, spe: 100 },
+		baseStats: { hp: 115, atk: 115, def: 90, spa: 70, spd: 80, spe: 100 },
 		abilities: { // ABILITY SET 1
             0: "Inner Focus",
             1: "Pressure",
@@ -4291,7 +4291,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		name: "Suicune",
 		types: ["Water"],
 		gender: "N",
-		baseStats: { hp: 100, atk: 75, def: 115, spa: 90, spd: 115, spe: 85 },
+		baseStats: { hp: 100, atk: 70, def: 115, spa: 90, spd: 115, spe: 80 },
 		abilities: { // ABILITY SET 1
             0: "Inner Focus",
             1: "Pressure",

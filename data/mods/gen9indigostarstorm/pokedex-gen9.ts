@@ -61,6 +61,8 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Floragato",
 		evoLevel: 36,
 		eggGroups: ["Field", "Grass"],
+		weapondurability: 1,
+		weaponrecovery: 2,
 		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	fuecoco: {
@@ -996,7 +998,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 952,
 		name: "Scovillain",
 		types: ["Grass", "Fire"],
-		baseStats: { hp: 82, atk: 112, def: 62, spa: 112, spd: 72, spe: 92 },
+		baseStats: { hp: 82, atk: 92, def: 82, spa: 112, spd: 72, spe: 92 },
 		abilities: { // ABILITY SET 1
             0: "Anger Point",
             1: "Chlorophyll",
@@ -1154,6 +1156,8 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Tinkatuff",
 		evoLevel: 38,
 		eggGroups: ["Fairy"],
+		weapondurability: 84,
+		weaponrecovery: 2,
 		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	wiglett: {
@@ -1700,7 +1704,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		gender: "N",
 		baseStats: { hp: 111, atk: 127, def: 99, spa: 79, spd: 99, spe: 55 },
 		abilities: { // ABILITY SET 1
-            0: "Effect Spore",
+            0: "Protective Pads",
             1: "Protosynthesis",
         },
 		heightm: 1.2,
@@ -1842,7 +1846,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		name: "Iron Thorns",
 		types: ["Rock", "Electric"],
 		gender: "N",
-		baseStats: { hp: 108, atk: 134, def: 122, spa: 43, spd: 91, spe: 72 },
+		baseStats: { hp: 108, atk: 134, def: 110, spa: 55, spd: 91, spe: 72 },
 		abilities: { // ABILITY SET 1
             0: "Sand Stream",
             1: "Quark Drive",
@@ -2309,6 +2313,8 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Undiscovered"],
 		otherFormes: ["Ogerpon-Wellspring", "Ogerpon-Hearthflame", "Ogerpon-Cornerstone", "Ogerpon-Teal-Tera", "Ogerpon-Wellspring-Tera", "Ogerpon-Hearthflame-Tera", "Ogerpon-Cornerstone-Tera"],
 		formeOrder: ["Ogerpon", "Ogerpon-Wellspring", "Ogerpon-Hearthflame", "Ogerpon-Cornerstone", "Ogerpon-Teal-Tera", "Ogerpon-Wellspring-Tera", "Ogerpon-Hearthflame-Tera", "Ogerpon-Cornerstone-Tera"],
+		weapondurability: 65,
+		weaponrecovery: 2,
 		requiredTeraType: "Grass",
 	},
 	ogerponwellspring: {
@@ -2330,6 +2336,8 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItem: "Wellspring Mask",
 		changesFrom: "Ogerpon",
 		requiredTeraType: "Water",
+		weapondurability: 65,
+		weaponrecovery: 2,
 		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	ogerponhearthflame: {
@@ -2351,6 +2359,8 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItem: "Hearthflame Mask",
 		changesFrom: "Ogerpon",
 		requiredTeraType: "Fire",
+		weapondurability: 65,
+		weaponrecovery: 2,
 		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	ogerponcornerstone: {
@@ -2372,6 +2382,8 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItem: "Cornerstone Mask",
 		changesFrom: "Ogerpon",
 		requiredTeraType: "Rock",
+		weapondurability: 65,
+		weaponrecovery: 2,
 		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	ogerpontealtera: {

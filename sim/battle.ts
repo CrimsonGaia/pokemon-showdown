@@ -19,6 +19,9 @@ import { State } from './state';
 import { BattleQueue, type Action } from './battle-queue';
 import { BattleActions } from './battle-actions';
 import { Utils } from '../lib/utils';
+type BoostID = import('./dex').Dex.BoostID;
+type BoostsTable = import('./dex').Dex.BoostsTable;
+type SparseBoostsTable = import('./dex').Dex.SparseBoostsTable;
 declare const __version: any;
 export type ChannelID = 0 | 1 | 2 | 3 | 4;
 export type ChannelMessages<T extends ChannelID | -1> = Record<T, string[]>;
@@ -357,7 +360,10 @@ export class Battle {
 			if (side.n < 2 || !side.allySide) { handlers = handlers.concat(this.findSideEventHandlers(side, `onSide${eventid}`, getKey)); }
 			for (const active of side.active) {
 				if (!active) continue;
-				if (eventid === 'SwitchIn') { handlers = handlers.concat(this.findPokemonEventHandlers(active, `onAny${eventid}`)); }
+				if (eventid === 'SwitchIn') {
+					if ((active as any).featherDanceSpent && !active.volatiles['defeathered']) { active.addVolatile('defeathered'); }
+					handlers = handlers.concat(this.findPokemonEventHandlers(active, `onAny${eventid}`));
+				}
 				if (targets && !targets.includes(active)) continue;
 				handlers = handlers.concat(this.findPokemonEventHandlers(active, callbackName, getKey));
 				handlers = handlers.concat(this.findSideEventHandlers(side, callbackName, undefined, active));
@@ -1270,6 +1276,12 @@ export class Battle {
 				}
 		if (this.gen === 2) this.quickClawRoll = this.randomChance(60, 256);
 		if (this.gen === 3) this.quickClawRoll = this.randomChance(1, 5);
+		if (!this.ended) {
+			for (const pokemon of this.getAllPokemon()) {
+				if (!pokemon || pokemon.fainted) continue;
+				pokemon.tickWeaponRecovery();
+			}
+		}
 		if (!this.ended && !this.requestState) {
 			for (const side of this.sides) {
 				const s = side as any;
@@ -1497,7 +1509,8 @@ export class Battle {
 			const currentBoost: SparseBoostsTable = { [boostName]: boost[boostName], };
 			let boostBy = target.boostBy(currentBoost);
 			let msg = '-boost';
-			if (boost[boostName]! < 0 || target.boosts[boostName] === -6) {
+			const min = boostName === 'crit' ? -4 : -6;
+			if (boost[boostName]! < 0 || target.boosts[boostName] === min) {
 				msg = '-unboost';
 				boostBy = -boostBy;
 			}

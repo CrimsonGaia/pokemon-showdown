@@ -525,7 +525,7 @@ export declare namespace Dex {
 	export type StatsExceptHPTable = { [stat in StatIDExceptHP]: number };
 	export type StatsTable = { [stat in StatID]: number };
 	export type SparseStatsTable = Partial<StatsTable>;
-	export type BoostID = StatIDExceptHP | 'accuracy' | 'evasion';
+	export type BoostID = StatIDExceptHP | 'accuracy' | 'evasion' | 'crit';
 	export type BoostsTable = { [boost in BoostID]: number };
 	export type SparseBoostsTable = Partial<BoostsTable>;
 }

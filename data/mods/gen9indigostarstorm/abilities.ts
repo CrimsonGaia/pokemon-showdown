@@ -201,7 +201,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		rating: 4,
 		num: 1009,
 	},
-	bountifulharvest: {
+		bountifulharvest: {
 		onStart(pokemon) { // Upon entering the field, heal ally for 1/6 of their MaxHP (reference: Harvest berry restoration)
 			for (const ally of pokemon.adjacentAllies()) { if (ally.hp && ally.hp < ally.maxhp) {
 				this.heal(ally.baseMaxhp / 6, ally, pokemon);
@@ -209,26 +209,37 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 				}
 			}
 		},
-		onEatItem(item, pokemon) { if (item.isBerry) pokemon.addVolatile('stockpile'); },
 		onResidualOrder: 28,
 		onResidualSubOrder: 2,
 		onResidual(pokemon) {
-			if (!pokemon.hp || pokemon.item || !this.dex.items.get(pokemon.lastItem).isBerry) { if (pokemon.hp && pokemon.hp < pokemon.maxhp) { this.heal(pokemon.baseMaxhp / 16, pokemon, pokemon); }
+			if (!pokemon.hp || !this.dex.items.get(pokemon.lastItem).isBerry) { if (pokemon.hp && pokemon.hp < pokemon.maxhp) { this.heal(pokemon.baseMaxhp / 16, pokemon, pokemon); }
 				return;
 			}
 			if (this.field.isWeather(['sunnyday', 'desolateland']) || this.field.isTerrain('grassyterrain')) {
+				if (pokemon.item) {
+					pokemon.addVolatile('stockpile');
+					return;
+				}
 				pokemon.setItem(pokemon.lastItem);
 				pokemon.lastItem = '';
 				this.add('-item', pokemon, pokemon.getItem(), '[from] ability: Bountiful Harvest');
 				return;
 			}
 			if ((this.field.isWeather(['hail', 'sandstorm', 'snowscape']) || this.field.isTerrain('toxicterrain')) && this.randomChance(1, 4)) {
+				if (pokemon.item) {
+					pokemon.addVolatile('stockpile');
+					return;
+				}
 				pokemon.setItem(pokemon.lastItem);
 				pokemon.lastItem = '';
 				this.add('-item', pokemon, pokemon.getItem(), '[from] ability: Bountiful Harvest');
 				return;
 			}
 			if (this.randomChance(1, 2)) {
+				if (pokemon.item) {
+					pokemon.addVolatile('stockpile');
+					return;
+				}
 				pokemon.setItem(pokemon.lastItem);
 				pokemon.lastItem = '';
 				this.add('-item', pokemon, pokemon.getItem(), '[from] ability: Bountiful Harvest');
@@ -238,7 +249,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		},
 		flags: {},
 		name: "Bountiful Harvest",
-		shortDesc: "On switch-in, heals adjacent allies 1/6 HP. May restore berries (better in sun/Grassy Terrain). Heals 1/16 HP/turn.",
+		shortDesc: "On switch-in, heals adjacent allies 1/6 HP. May restore berries (better in sun/Grassy Terrain). If it would restore while holding an item, gain 1 Stockpile instead. Heals 1/16 HP/turn.",
 		rating: 3.5,
 		num: 1010,
 	},
@@ -859,6 +870,14 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		rating: 2.5,
 		num: 1048,
 	},
+	protectivepads: {
+		onModifyMove(move) { delete move.flags['contact']; },
+		flags: {},
+		name: "Protective Pads",
+		shortDesc: "User's Contact moves do not trigger contact effects.",
+		rating: 1,
+		num: 1049,
+	},
 	proudtusks: {
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.pierce) { return this.chainModify(1.3); } },
 		onModifyMove(move, pokemon) {
@@ -876,7 +895,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Proud Tusks",
 		shortDesc: "1.3x power with Piercing moves. Improves Piercing levels of moves (Pierce3→Pierce2→Pierce1).",
 		rating: 3,
-		num: 1049,
+		num: 1050,
 	},
 	rainbowwings: {
 		onStart(source) {
@@ -901,7 +920,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Rainbow Wings",
 		shortDesc: "On switch-in, summons Rainbow for 4 turns. 1.5x power with Wing moves. Immune to Shadow Tag.",
 		rating: 4,
-		num: 1050,
+		num: 1051,
 	},
 	ramparts: {
 		onSourceModifyDamage(damage, source, target, move) {
@@ -924,7 +943,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Ramparts",
 		shortDesc: "0.5x damage from Breath/Contact/Wind moves. 2x damage from Bomb/Bullet/Explosive. Immune to Piercing moves.",
 		rating: 4,
-		num: 1051,
+		num: 1052,
 	},
 	rejuvenation: {
 		onStart(pokemon) { if (!pokemon.volatiles['aquaring']) { pokemon.addVolatile('aquaring'); } },
@@ -932,7 +951,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Rejuvenation",
 		shortDesc: "On switch-in, the user surrounds itself with Aqua Ring.",
 		rating: 3.5,
-		num: 1052,
+		num: 1053,
 	},
 	resonance: {
 		onTryHitPriority: 1,
@@ -958,7 +977,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Resonance",
 		shortDesc: "Immune to Sound/Wind moves. When hit by Wind moves, reflects 1.2x damage as Sound damage to all foes.",
 		rating: 4,
-		num: 1053,
+		num: 1054,
 	},
 	rockbody: {
 		onTryHit(target, source, move) {
@@ -979,7 +998,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Rock Body",
 		shortDesc: "This Pokemon heals 1/4 max HP when hit by Rock-type moves; immunity if already at full HP.",
 		rating: 3.5,
-		num: 1054,
+		num: 1055,
 	},
 	seaguardianscurse: {
 		onStart(pokemon) { this.add('-ability', pokemon, 'Sea Guardian\'s Curse');
@@ -998,7 +1017,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Sea Guardian's Curse",
 		shortDesc: "On switch-in, inflicts Mental Surge Aura (4 turns) on itself. Foes using moves on this Pokemon consume 2 PP.",
 		rating: 4.5,
-		num: 1055,
+		num: 1056,
 	},
 	seedgift: {
 		onSwitchInPriority: -2,
@@ -1029,7 +1048,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Seed Gift",
 		shortDesc: "On switch-in, heals adjacent allies by 1/3 max HP (max 6 times per battle).",
 		rating: 0,
-		num: 1056,
+		num: 1057,
 	},
 	seismiccore: {
 		onResidualOrder: 28,
@@ -1068,7 +1087,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Seismic Core",
 		shortDesc: "Every other turn, launches a 55 BP Fire-type Bomb attack at a random foe (category based on lower attacking stat).",
 		rating: 3.5,
-		num: 1057,
+		num: 1058,
 	},
 	shadowwalker: {
 		onModifyMove(move) { if (move.flags?.shadow) { move.infiltrates = true; } },
@@ -1089,7 +1108,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Shadow Walker",
 		shortDesc: "1.3x power with Shadow moves; they bypass Protect/Detect/Substitute. Immune to Shadow Tag.",
 		rating: 3,
-		num: 1058,
+		num: 1059,
 	},
 	shapememory: {
   		name: "Shape Memory",
@@ -1102,7 +1121,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
   			if (w !== 1) pokemon.weighthg = Math.max(1, Math.round(pokemon.weighthg * w));
 		},
  	 	rating: 1,
-  		num: 1059,
+  		num: 1060,
 	},
 	shellsword: {
 		onModifyMove(move, pokemon) {  if (move.flags?.slice) {
@@ -1113,7 +1132,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		flags: {},
 		name: "Shell Sword",
 		rating: 3,
-		num: 1060,
+		num: 1061,
 	},
 	solaraspect: {
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.solar) { return this.chainModify(1.3); } },
@@ -1145,7 +1164,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Solar Aspect",
 		shortDesc: "1.3x Solar move power, immune to Solar. Sun: 1.15x all stats, heals 1/16 HP/turn. Takes 2x Lunar damage.",
 		rating: 3.5,
-		num: 1061,
+		num: 1062,
 	},
 	souleater: {
 		onAnyFaintPriority: 1,
@@ -1157,7 +1176,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Soul Eater",
 		shortDesc: "When opposing Pokemon faints, holder heals 1/4 max HP.",
 		rating: 3.5,
-		num: 1062,
+		num: 1063,
 	},
 	soothingfeelers: {
 		onDamagingHit(damage, target, source, move) { if (this.checkMoveMakesContact(move, source, target)) { if (this.randomChance(3, 10)) { source.trySetStatus('aura', target, {
@@ -1179,7 +1198,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		flags: {},
 		name: "Soothing Feelers",
 		rating: 3.5,
-		num: 1063,
+		num: 1064,
 	},
 	spellhorizon: {
 		onStart(source) {
@@ -1190,7 +1209,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Spell Horizon",
 		shortDesc: "On switch-in, sets Magic Room for 5 turns.",
 		rating: 4,
-		num: 1064,
+		num: 1065,
 	},
 	spritiguide: {
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.aura) { return this.chainModify(1.5); } },
@@ -1220,7 +1239,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Spirit Guide",
 		shortDesc: "1.5x Aura move power. Aura moves bounce back to the attacker.",
 		rating: 3,
-		num: 1065,
+		num: 1066,
 	},
 	starterdough: {
 		onStart(pokemon) {
@@ -1283,7 +1302,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Starter Dough",
 		shortDesc: "Immune to Fire moves; becomes Baked on 1st hit, gains Rock type on 2nd. Breath moves heal target.",
 		rating: 4,
-		num: 1066,
+		num: 1067,
 	},
 	steelwings: {
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.slice) { return this.chainModify(1.5); } },
@@ -1292,7 +1311,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Steel Wings",
 		shortDesc: "1.5x power with Slice moves. Wing moves gain Slice flag.",
 		rating: 3,
-		num: 1067,
+		num: 1068,
 	},
 	steelgirder: {
 		onBasePower(basePower, attacker, defender, move) { if (move.type === 'Steel') { return this.chainModify(1.5); } },
@@ -1305,7 +1324,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Steel Girder",
 		shortDesc: "1.5x power with Steel moves. Contact moves do not make contact and gain weapon flag.",
 		rating: 3,
-		num: 1068,
+		num: 1069,
 	},
 	superconductor: {
 		onModifySpe(spe, pokemon) { if (this.field.isWeather(['hail', 'snow', 'snowscape'])) { return this.chainModify(1.25); } },
@@ -1331,7 +1350,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Superconductor",
 		shortDesc: "In hail: 1.25x Speed, immune to Electric, becomes airborne 1 turn and gains Ground immunity.",
 		rating: 4,
-		num: 1069,
+		num: 1070,
 	},
 	surgingmigraine: {
 		onStart(pokemon) {
@@ -1357,7 +1376,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Surging Migraine",
 		shortDesc: "On switch-in and each turn, sets Wonder Room. Other rooms cannot be set while active.",
 		rating: 3.5,
-		num: 1070,
+		num: 1071,
 	},
 	swordtail: {
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.slice) { return this.chainModify(1.3); } },
@@ -1366,7 +1385,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Sword Tail",
 		shortDesc: "1.3x power with Slice moves. Sweep moves gain Slice flag.",
 		rating: 3,
-		num: 1071,
+		num: 1072,
 	},
 	thorns: {
 		onDamagingHitOrder: 1,
@@ -1375,7 +1394,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Thorns",
 		shortDesc: "If holder is hit by a contact move, attacker loses 1/12 max HP.",
 		rating: 2.5,
-		num: 1072,
+		num: 1073,
 	},
 	threeminded: {
 		onPrepareHit(source, target, move) {
@@ -1392,7 +1411,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Three Minded",
 		shortDesc: "Bite/Piercing moves hit 3 times at 0.5x power each. Can use moves while asleep.",
 		rating: 3,
-		num: 1073,
+		num: 1074,
 	},
 	thunderhead: {
 		onBasePower(basePower, attacker, defender, move) { if (move.type === 'Electric' && this.field.isWeather(['hail', 'snow', 'snowscape', 'raindance', 'primordialsea'])) { return this.chainModify(1.3); } },
@@ -1401,7 +1420,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Thunderhead",
 		shortDesc: "1.3x Electric move power in hail/snow/rain. Immune to hail/snow damage.",
 		rating: 3,
-		num: 1074,
+		num: 1075,
 	},
 	thunderthighs: {
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.kick) { return this.chainModify(1.3); } },
@@ -1411,7 +1430,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Thunder Thighs",
 		shortDesc: "1.3x Kick move power. 20% chance to Paralyze on contact. Adds Charge after contact move.",
 		rating: 3,
-		num: 1075,
+		num: 1076,
 	},
 	timebreak: {
 		onStart(source) {
@@ -1431,7 +1450,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Time Break",
 		shortDesc: "On switch-in, summons Time Break field. Removed if no active user remains.",
 		rating: 5,
-		num: 1076,
+		num: 1077,
 	},
 	tippedthorns: {
 		onDamagingHitOrder: 1,
@@ -1443,7 +1462,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "TippedThorns",
 		shortDesc: "If holder is hit by a contact move, attacker loses 1/16 max HP and 20% chance to be Paralyzed.",
 		rating: 3,
-		num: 1077,
+		num: 1078,
 	},
 	toxicpollen: {
 		onDamagingHit(damage, target, source, move) { if (this.randomChance(3, 10)) { source.trySetStatus('tox', target); } },
@@ -1451,7 +1470,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Toxic Pollen",
 		shortDesc: "30% chance to badly poison attacker when hit by a move.",
 		rating: 3,
-		num: 1078,
+		num: 1079,
 	},
 	toxicsurge: {
 		onStart(source) { this.field.setTerrain('toxicterrain'); },
@@ -1459,7 +1478,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Toxic Surge",
 		shortDesc: "On switch-in, sets Toxic Terrain for 4 turns [11 if Terrain Extender is held].",
 		rating: 4,
-		num: 1079,
+		num: 1080,
 	},
 	twominded: {
 		onBeforeMovePriority: 11,
@@ -1468,7 +1487,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Two Minded",
 		shortDesc: "Can use moves while asleep.",
 		rating: 3,
-		num: 1080,
+		num: 1081,
 	},
 	volvation: {
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.spin) { return this.chainModify(1.5); } },
@@ -1486,7 +1505,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Volvation",
 		shortDesc: "1.5x Spin move power. Opposing Bullet/Bite/Bomb/Claw/Kick/Pierce/Punch/Slice moves have 0.5x power.",
 		rating: 3,
-		num: 1081,
+		num: 1082,
 	},
 	waterlogged: {
 		onStart(source) {
@@ -1497,7 +1516,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Waterlogged",
 		shortDesc: "On switch-in, summons Swamp field. Reduces Water move power to 0.5x.",
 		rating: 3.5,
-		num: 1082,
+		num: 1083,
 	},
 	webarmor: {
 		onModifyDefPriority: 6,
@@ -1514,7 +1533,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Web Armor",
 		shortDesc: "2x Defense. Armor breaks on Fire/Slice moves. Contact moves reduce Speed 1 stage. Airborne Moves +1 priority.",
 		rating: 4,
-		num: 1083,
+		num: 1084,
 	},
 	woodpillar: {
 		onBasePower(basePower, attacker, defender, move) { if (move.type === 'Grass') { return this.chainModify(1.5); } },
@@ -1527,7 +1546,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		name: "Wood Pillar",
 		shortDesc: "1.5x power with Grass moves. Contact moves do not make contact and gain weapon flag.",
 		rating: 3,
-		num: 1084,
+		num: 1085,
 	},
 
 
@@ -2683,7 +2702,6 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 	},
 	shadowtag: {
 		onFoeDisableMove(pokemon) {
-			// Prevent trapped foes from using Shadow moves
 			if (pokemon.trapped) { for (const moveSlot of pokemon.moveSlots) { const move = this.dex.moves.get(moveSlot.id);
 				if (move.flags && move.flags.shadow) {
 					moveSlot.disabled = true;
@@ -2905,9 +2923,13 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 			return this.chainModify(0.5);
 			}
 		},
+		onDamage(damage, target, source, effect) { if (effect && (effect.id === 'recoil' || effect.id === 'crash')) { this.debug('Reckless halves recoil/crash damage');
+				return Math.floor(damage / 2);
+			}
+		},
 		flags: { breakable: 1 },
 		name: "Thick Fat",
-		shortDesc: "Resist Fire, Ice type, and Punching moves.",
+		shortDesc: "Resist Fire, Ice type, and Punching moves. Halves recoil and crash damage.",
 		rating: 3.5,
 		num: 47,
 	},
@@ -4020,24 +4042,36 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		num: 132,
 	},
 	harvest: {
-		onEatItem(item, pokemon) { if (item.isBerry) pokemon.addVolatile('stockpile'); },
 		onResidualOrder: 28,
 		onResidualSubOrder: 2,
 		onResidual(pokemon) {
-			if (!pokemon.hp || pokemon.item || !this.dex.items.get(pokemon.lastItem).isBerry) return;
+			if (!pokemon.hp || !this.dex.items.get(pokemon.lastItem).isBerry) return;
+
 			if (this.field.isWeather(['sunnyday', 'desolateland']) || this.field.isTerrain('grassyterrain')) {
+				if (pokemon.item) {
+					pokemon.addVolatile('stockpile');
+					return;
+				}
 				pokemon.setItem(pokemon.lastItem);
 				pokemon.lastItem = '';
 				this.add('-item', pokemon, pokemon.getItem(), '[from] ability: Harvest');
 				return;
 			}
 			if ((this.field.isWeather(['hail', 'sandstorm', 'snowscape']) || this.field.isTerrain('toxicterrain')) && this.randomChance(1, 4)) {
+				if (pokemon.item) {
+					pokemon.addVolatile('stockpile');
+					return;
+				}
 				pokemon.setItem(pokemon.lastItem);
 				pokemon.lastItem = '';
 				this.add('-item', pokemon, pokemon.getItem(), '[from] ability: Harvest');
 				return;
 			}
 			if (this.randomChance(1, 2)) {
+				if (pokemon.item) {
+					pokemon.addVolatile('stockpile');
+					return;
+				}
 				pokemon.setItem(pokemon.lastItem);
 				pokemon.lastItem = '';
 				this.add('-item', pokemon, pokemon.getItem(), '[from] ability: Harvest');
@@ -4045,7 +4079,7 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		},
 		flags: {},
 		name: "Harvest",
-		shortDesc: "50% chance [100% under Sun or over Grassy Terrain|25% chance under Hail, Sandstorm, Snow, or over Toxic Terrain] to restore a used berry at the end of every turn.",
+		shortDesc: "50% chance [100% under Sun or over Grassy Terrain|25% chance under Hail, Sandstorm, Snow, or over Toxic Terrain] to restore a used berry at the end of every turn. If it would restore while holding an item, gain 1 Stockpile instead.",
 		rating: 2.5,
 		num: 139,
 	},
@@ -6437,16 +6471,24 @@ export const Abilities: import('../../sim/dex-abilities').AbilityDataTable = {
 		onStart(pokemon) {
 			const ally = pokemon.allies()[0];
 			if (!ally) return;
-			let i: BoostID;
-			for (i in ally.boosts) { pokemon.boosts[i] = ally.boosts[i]; }
-			const volatilesToCopy = ['dragoncheer', 'focusenergy', 'gmaxchistrike', 'laserfocus'];
+
+			for (const i in ally.boosts) {
+				pokemon.boosts[i as BoostID] = ally.boosts[i as BoostID];
+			}
+
+			const volatilesToCopy = ['focusenergy', 'gmaxchistrike', 'laserfocus'];
 			for (const volatile of volatilesToCopy) pokemon.removeVolatile(volatile);
-			for (const volatile of volatilesToCopy) { if (ally.volatiles[volatile]) {
+			for (const volatile of volatilesToCopy) {
+				if (ally.volatiles[volatile]) {
 					pokemon.addVolatile(volatile);
-					if (volatile === 'gmaxchistrike') pokemon.volatiles[volatile].layers = ally.volatiles[volatile].layers;
-					if (volatile === 'dragoncheer') pokemon.volatiles[volatile].hasDragonType = ally.volatiles[volatile].hasDragonType;
+					if (volatile === 'gmaxchistrike') {
+						pokemon.volatiles[volatile].layers = ally.volatiles[volatile].layers;
+					}
 				}
 			}
+
+			pokemon.m.dragoncheer = ally.m.dragoncheer || 0;
+
 			this.add('-copyboost', pokemon, ally, '[from] ability: Costar');
 		},
 		flags: {},

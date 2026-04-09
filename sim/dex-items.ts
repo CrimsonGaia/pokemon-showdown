@@ -1,6 +1,7 @@
 import type { PokemonEventMethods, ConditionData } from './dex-conditions';
 import { assignMissingFields, BasicEffect, toID } from './dex-data';
 import { Utils } from '../lib/utils';
+type SparseBoostsTable = import('./dex').Dex.SparseBoostsTable;
 interface BelchData {
 	basePower?: number;
 	status?: string;
@@ -25,6 +26,7 @@ export interface ItemData extends Partial<Item>, PokemonEventMethods {
 	onFragileBreak?: (this: Battle, pokemon: Pokemon, source?: Pokemon, effect?: Effect) => void;
 	// Function called when this item is mildly disturbed (mildly fragile effect).
 	onMildlyFragileBreak?: (this: Battle, pokemon: Pokemon, source?: Pokemon, effect?: Effect) => void;
+	onWeaponBreak?: (this: Battle, pokemon: Pokemon) => void;
 }
 export type ModdedItemData = ItemData | Partial<Omit<ItemData, 'name'>> & {
 	inherit: true,
@@ -44,6 +46,8 @@ export class Item extends BasicEffect implements Readonly<BasicEffect> {
 	readonly onFragileBreak?: (this: Battle, pokemon: Pokemon, source?: Pokemon, effect?: Effect) => void;
 	// Function called when this item is mildly disturbed (mildly fragile effect).
 	readonly onMildlyFragileBreak?: (this: Battle, pokemon: Pokemon, source?: Pokemon, effect?: Effect) => void;
+
+	readonly onWeaponBreak?: (this: Battle, pokemon: Pokemon) => void;
 
 	readonly itemClass?: string[];
 	// A Move-like object depicting what happens when Fling is used on this item.
@@ -130,6 +134,7 @@ export class Item extends BasicEffect implements Readonly<BasicEffect> {
 		this.isMildlyFragile = !!data.isMildlyFragile;
 		this.onFragileBreak = data.onFragileBreak;
 		this.onMildlyFragileBreak = data.onMildlyFragileBreak;
+		this.onWeaponBreak = data.onWeaponBreak;
 		this.itemClass = data.itemClass || undefined;
 		if (!this.gen) {
 			if (this.num >= 1124) { this.gen = 9; } 

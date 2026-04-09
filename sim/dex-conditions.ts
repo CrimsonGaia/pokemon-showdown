@@ -1,6 +1,7 @@
 import { Utils } from '../lib/utils';
 import { assignMissingFields, BasicEffect, toID } from './dex-data';
 import type { SecondaryEffect, MoveEventMethods } from './dex-moves';
+type SparseBoostsTable = import('./dex').Dex.SparseBoostsTable;
 /**
  * Event method prefixes:
  * Ally: triggers for each ally (including the effect holder itself) that is a target of the event, i.e. Pastel Veil

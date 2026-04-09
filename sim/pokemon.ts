@@ -6,6 +6,10 @@
 import { State } from './state';
 import { toID } from './dex';
 import type { DynamaxOptions, PokemonMoveRequestData, PokemonSwitchRequestData } from './side';
+type BoostID = import('./dex').Dex.BoostID;
+type BoostsTable = import('./dex').Dex.BoostsTable;
+type SparseBoostsTable = import('./dex').Dex.SparseBoostsTable;
+
 /** A Pokemon's move slot. */
 interface MoveSlot {
 	id: ID;
@@ -32,6 +36,7 @@ export interface EffectState {
 	duration?: number;
 	[k: string]: any;
 }
+
 // Berries which restore PP/HP and thus inflict external staleness when given to an opponent as there are very few non-malicious competitive reasons to do so
 export const RESTORATIVE_BERRIES = new Set(['leppaberry', 'aguavberry', 'enigmaberry', 'figyberry', 'iapapaberry', 'magoberry', 'sitrusberry', 'wikiberry', 'oranberry',] as ID[]);
 export class Pokemon {
@@ -190,6 +195,13 @@ export class Pokemon {
 	/** Have this pokemon's Start events run yet? (Start events run every switch-in) */
 	isStarted: boolean;
 	duringMove: boolean;
+	//IS PP depletion effects
+	featherDanceSpent: boolean;
+	// end of pp effects
+	weaponDurability: number;
+	maxWeaponDurability: number;
+	weaponRecovery: number;
+	weaponRecoveryLeft: number;
 	weighthg: number;
 	heightmm: number;
 	shapeMemoryHeightScale?: number;
@@ -259,8 +271,7 @@ export class Pokemon {
 				if (!set.hpType) set.hpType = move.type;
 				move = this.battle.dex.moves.get('hiddenpower');
 			}
-			let basepp = move.noPPBoosts ? move.pp : move.pp * 8 / 5;
-			if (this.battle.gen < 3) basepp = Math.min(61, basepp);
+			let basepp = move.pp;
 			this.baseMoveSlots.push({
 				move: move.name,
 				id: move.id,
@@ -297,7 +308,7 @@ export class Pokemon {
 		// initialized in this.setSpecies(this.baseSpecies)
 		this.baseStoredStats = null!;
 		this.storedStats = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
-		this.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0 };
+		this.boosts = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0, accuracy: 0, evasion: 0, crit: 0, };
 		this.baseAbility1 = toID(set.ability);
 		this.baseAbility2 = toID(set.ability2);
 		this.ability1 = this.baseAbility1;
@@ -358,6 +369,13 @@ export class Pokemon {
 		this.stellarBoostedTypes = [];
 		this.isStarted = false;
 		this.duringMove = false;
+		//IS PP Depletion effects
+		this.featherDanceSpent = false;
+		//end 
+		this.maxWeaponDurability = this.species.weapondurability || 0;
+		this.weaponDurability = this.maxWeaponDurability;
+		this.weaponRecovery = this.species.weaponrecovery || 0;
+		this.weaponRecoveryLeft = 0;
 		this.weighthg = 1;
 		this.heightmm = 10;
 		this.speed = 0;
@@ -494,7 +512,7 @@ export class Pokemon {
 		return this.battle.clampIntRange(combatPower, 0, 10000);
 	}
 	*/
-		getWeight(): number { // canonical current weight is stored in hg
+	getWeight(): number { // canonical current weight is stored in hg
 		let hg = this.weighthg;
 		if (hg < 1) hg = 1; // 0.1kg minimum (1 hg = 0.1 kg)
 		return hg / 10;
@@ -504,6 +522,55 @@ export class Pokemon {
 		if (mm < 10) mm = 10; // 0.01m minimum
 		return mm / 1000;
 	}
+
+	hasWeapon() { return this.weaponDurability > 0; }
+	sendWeaponState() {
+		if (this.maxWeaponDurability <= 0) return;
+		let message = `${this.weaponDurability}/${this.maxWeaponDurability}`;
+		if (this.weaponDurability === 0 && this.weaponRecoveryLeft > 0) { message += `|[recover]${this.weaponRecoveryLeft}`; }
+		this.battle.add('-weapon', this, message);
+	}
+	tickWeaponRecovery() {
+		if (this.maxWeaponDurability <= 0) return false;
+		if (this.weaponDurability > 0) return false;
+		if (this.weaponRecoveryLeft <= 0) return false;
+		this.weaponRecoveryLeft--;
+		if (this.weaponRecoveryLeft <= 0) {
+			this.weaponDurability = this.maxWeaponDurability;
+			this.weaponRecoveryLeft = 0;
+			this.sendWeaponState();
+			this.battle.add('-message', `${this.name}'s weapon recovered!`);
+			return true;
+		}
+		this.sendWeaponState();
+		return false;
+	}
+	damageWeapon(amount: number) {
+		if (this.maxWeaponDurability <= 0 || amount <= 0) return 0;
+		const oldDurability = this.weaponDurability;
+		this.weaponDurability = Math.max(0, this.weaponDurability - amount);
+		if (oldDurability > 0 && this.weaponDurability === 0) {
+			if (this.weaponRecovery > 0) { this.weaponRecoveryLeft = this.weaponRecovery; }
+			this.breakWeapon();
+		}
+		if (oldDurability !== this.weaponDurability) { this.sendWeaponState(); }
+		return oldDurability - this.weaponDurability;
+	}
+	breakWeapon() {
+		if (this.weaponDurability > 0) return;
+		const item = this.getItem();
+		if (!item || !item.id || !item.onWeaponBreak) return;
+		this.battle.singleEvent('WeaponBreak', item, this.itemState, this);
+	}
+	restoreWeapon(amount: number) {
+		if (this.maxWeaponDurability <= 0 || amount <= 0) return 0;
+		const oldDurability = this.weaponDurability;
+		this.weaponDurability = Math.min(this.maxWeaponDurability, this.weaponDurability + amount);
+		if (this.weaponDurability > 0) this.weaponRecoveryLeft = 0;
+		if (oldDurability !== this.weaponDurability) { this.sendWeaponState(); }
+		return this.weaponDurability - oldDurability;
+	}
+	
 	getMoveData(move: string | Move) {
 		move = this.battle.dex.moves.get(move);
 		for (const moveSlot of this.moveSlots) { if (moveSlot.id === move.id) { return moveSlot; } }
@@ -665,11 +732,16 @@ export class Pokemon {
 		if (!ppData) return 0;
 		ppData.used = true;
 		if (!ppData.pp && gen > 1) return 0;
+		const oldPP = ppData.pp;
 		if (!amount) amount = 1;
 		ppData.pp -= amount;
 		if (ppData.pp < 0 && gen > 1) {
 			amount += ppData.pp;
 			ppData.pp = 0;
+		}
+		if (move.id === 'featherdance' && oldPP > 0 && ppData.pp === 0) {
+			this.featherDanceSpent = true;
+			this.addVolatile('defeathered');
 		}
 		return amount;
 	}
@@ -761,6 +833,9 @@ export class Pokemon {
 				const canCauseStruggle = ['Encore', 'Disable', 'Taunt', 'Assault Vest', 'Belch', 'Stuff Cheeks'];
 				disabled = this.maxMoveDisabled(moveSlot.id) || disabled && canCauseStruggle.includes(moveSlot.disabledSource!);
 			} else if (moveSlot.pp <= 0 && !this.volatiles['partialtrappinglock']) { disabled = true; }
+			const move = this.battle.dex.moves.get(moveSlot.id);
+			const requiresWeapon = move.weaponmoveCallback ? move.weaponmoveCallback(this) : move.weaponmove;
+			if (requiresWeapon && this.weaponDurability <= 0) { disabled = true; }
 			if (disabled === 'hidden') { disabled = !restrictData; }
 			if (!disabled) { hasValidMove = true; }
 			moves.push({
@@ -903,7 +978,12 @@ export class Pokemon {
 		for (boostName in boosts) {
 			const boost = boosts[boostName];
 			if (!boost) continue;
-			cappedBoost[boostName] = this.battle.clampIntRange(this.boosts[boostName] + boost, -6, 6) - this.boosts[boostName];
+
+			const min = boostName === 'crit' ? -4 : -6;
+			const max = boostName === 'crit' ? 11 : 6;
+
+			cappedBoost[boostName] =
+				this.battle.clampIntRange(this.boosts[boostName] + boost, min, max) - this.boosts[boostName];
 		}
 		return cappedBoost;
 	}
@@ -1028,15 +1108,15 @@ export class Pokemon {
 		for (boostName in pokemon.boosts) { this.boosts[boostName] = pokemon.boosts[boostName]; }
 		if (this.battle.gen >= 6) {
 			// we need to remove all of the overlapping crit volatiles before adding any of them
-			const volatilesToCopy = ['dragoncheer', 'focusenergy', 'gmaxchistrike', 'laserfocus'];
+			const volatilesToCopy = ['focusenergy', 'gmaxchistrike', 'laserfocus'];
 			for (const volatile of volatilesToCopy) this.removeVolatile(volatile);
 			for (const volatile of volatilesToCopy) {
 				if (pokemon.volatiles[volatile]) {
 					this.addVolatile(volatile);
 					if (volatile === 'gmaxchistrike') this.volatiles[volatile].layers = pokemon.volatiles[volatile].layers;
-					if (volatile === 'dragoncheer') this.volatiles[volatile].hasDragonType = pokemon.volatiles[volatile].hasDragonType;
 				}
 			}
+			this.m.dragoncheer = pokemon.m.dragoncheer || 0;
 		}
 		if (effect) { this.battle.add('-transform', this, pokemon, '[from] ' + effect.fullname); } 
 		else { this.battle.add('-transform', this, pokemon); }
@@ -1211,6 +1291,7 @@ export class Pokemon {
 			spe: 0,
 			accuracy: 0,
 			evasion: 0,
+			crit: 0,
 		};
 		// Shape Memory: persist size scaling across switching/untransform
 		// Must happen BEFORE volatiles are cleared and BEFORE setSpecies(this.baseSpecies).

@@ -140,6 +140,8 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Blue",
 		evos: ["Dewott"],
 		eggGroups: ["Field"],
+		weapondurability: 35,
+		weaponrecovery: 1,
 		tags: ["1st Stage"],
 	},
 	dewott: {
@@ -162,6 +164,8 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 17,
 		evos: ["Samurott", "Samurott-Hisui"],
 		eggGroups: ["Field"],
+		weapondurability: 48,
+		weaponrecovery: 1,
 		tags: ["2nd Stage"],
 	},
 	samurott: {
@@ -185,6 +189,8 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field"],
 		otherFormes: ["Samurott-Hisui"],
 		formeOrder: ["Samurott", "Samurott-Hisui"],
+		weapondurability: 140,
+		weaponrecovery: 1,
 		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	samurotthisui: {
@@ -208,6 +214,8 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Dewott",
 		evoLevel: 36,
 		eggGroups: ["Field"],
+		weapondurability: 140,
+		weaponrecovery: 1,
 		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	blitzle: {
@@ -728,7 +736,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		name: "Zoroark",
 		types: ["Dark"],
 		genderRatio: { M: 0.875, F: 0.125 },
-		baseStats: { hp: 66, atk: 105, def: 66, spa: 127, spd: 66, spe: 105 },
+		baseStats: { hp: 66, atk: 127, def: 66, spa: 127, spd: 66, spe: 105 },
 		abilities: { // ABILITY SET 1
             0: "Illusion",
             1: "Pack Mentality",
@@ -750,7 +758,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		forme: "Hisui",
 		types: ["Normal", "Ghost"],
 		genderRatio: { M: 0.875, F: 0.125 },
-		baseStats: { hp: 55, atk: 100, def: 65, spa: 135, spd: 70, spe: 110 },
+		baseStats: { hp: 55, atk: 120, def: 65, spa: 130, spd: 70, spe: 110 },
 		abilities: { // ABILITY SET 1
             0: "Illusion",
             1: "Pack Mentality",
@@ -1423,13 +1431,13 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		name: "Golurk",
 		types: ["Ground", "Ghost"],
 		gender: "N",
-		baseStats: { hp: 89, atk: 124, def: 117, spa: 55, spd: 117, spe: 41 },
+		baseStats: { hp: 89, atk: 124, def: 124, spa: 55, spd: 117, spe: 41 },
 		abilities: { // ABILITY SET 1
             0: "Iron Fist",
             1: "No Guard",
                     // ABILITY SET 2
             H: "Cannonfire",
-            S: "No Guard",
+            S: "Levitate",
         },
 		heightm: 2.8,
 		weightkg: 330,
@@ -1563,6 +1571,8 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Brown",
 		evos: ["Mandibuzz"],
 		eggGroups: ["Flying"],
+		weapondurability: 12,
+		weaponrecovery: 1,
 		tags: ["1st Stage"],
 	},
 	mandibuzz: {
@@ -1584,6 +1594,8 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		prevo: "Vullaby",
 		evoLevel: 54,
 		eggGroups: ["Flying"],
+		weapondurability: 20,
+		weaponrecovery: 1,
 		tags: ["2nd Stage", "Fully Evolved"],
 	},
 	deino: {
@@ -3118,7 +3130,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 709,
 		name: "Trevenant",
 		types: ["Ghost", "Grass"],
-		baseStats: { hp: 98, atk: 123, def: 89, spa: 56, spd: 82, spe: 56 },
+		baseStats: { hp: 98, atk: 110, def: 76, spa: 95, spd: 82, spe: 56 },
 		abilities: { // ABILITY SET 1
             0: "Natural Cure",
             1: "Forest's Curse",
@@ -3223,10 +3235,10 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseStats: { hp: 85, atk: 70, def: 80, spa: 97, spd: 80, spe: 123 },
 		abilities: { // ABILITY SET 1
             0: "Telepathy",
-            1: "Punk Rock",
+            1: "Amplifier",
                     // ABILITY SET 2
             H: "Frisk",
-            S: "Punk Rock",
+            S: "Amplifier",
         },
 		heightm: 1.5,
 		weightkg: 85,

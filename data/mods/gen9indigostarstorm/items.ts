@@ -197,7 +197,10 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		isFragile: true,
 		onFragileBreak(pokemon) {
 			pokemon.trySetStatus('brn');
-			if (pokemon.itemState && pokemon.itemState.chargeditem) { pokemon.addVolatile('focusenergy'); }
+			if (pokemon.itemState && pokemon.itemState.chargeditem) {
+				this.boost({crit: 2}, pokemon);
+				pokemon.addVolatile('focusenergy');
+			}
 		},
 		belch: {
 			status: 'brn',
@@ -514,12 +517,11 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			},
 		},
 		onMildlyFragileBreak(pokemon) {
+			this.boost({crit: 2}, pokemon);
 			pokemon.addVolatile('focusenergy');
 			if (pokemon.itemState && pokemon.itemState.chargeditem) {
-				// Temporarily disable curse immunity
 				pokemon.m.kasibBerryCurseImmunityDisabled = true;
 				pokemon.trySetStatus('curse');
-				// Re-enable immunity after infliction
 				pokemon.m.kasibBerryCurseImmunityDisabled = false;
 				delete pokemon.itemState.chargeditem;
 				this.add('-message', `The trapped spirits were released from ${pokemon.name}'s Kasib Berry.`);
@@ -545,6 +547,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		},
 		onEat(pokemon) {
 			if (pokemon.itemState && pokemon.itemState.chargeditem) {
+				this.boost({crit: 2}, pokemon);
 				pokemon.addVolatile('focusenergy');
 				this.heal(75, pokemon);
 			}
@@ -642,18 +645,20 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		spritenum: 238,
 		isBerry: true,
 		isFragile: true,
-		onFragileBreak(pokemon) { pokemon.addVolatile('focusenergy'); },
-		belch: { effect(target, source, move) { target.addVolatile('focusenergy', source, move); }, },
-		   onUpdate(pokemon) {
-			   // Passive: always grant luckeffect while holding
-			   if (!pokemon.volatiles['luckeffect']) { pokemon.addVolatile('luckeffect'); }
-			   if (pokemon.hp <= (pokemon.maxhp * 2) / 3 || (pokemon.hp <= pokemon.maxhp &&
-				   ((pokemon.ability1 === 'gluttony' && pokemon.abilityState1.gluttony) ||
-				(pokemon.ability2 === 'gluttony' && pokemon.abilityState2.gluttony)))) { pokemon.eatItem(); }
-		   },
-		onEat(pokemon) {
-		   pokemon.addVolatile('focusenergy');
-		   pokemon.addVolatile('rainboweffect');
+				onFragileBreak(pokemon) {
+			this.boost({crit: 2}, pokemon);
+			pokemon.addVolatile('focusenergy');
+		},
+		belch: {
+			effect(target, source, move) {
+				this.boost({crit: 2}, target, source, move);
+				target.addVolatile('focusenergy', source, move);
+			},
+		},
+				onEat(pokemon) {
+			this.boost({crit: 2}, pokemon);
+			pokemon.addVolatile('focusenergy');
+			pokemon.addVolatile('rainboweffect');
 		},
 		   num: 206,
 		   gen: 3,
@@ -763,28 +768,35 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		num: 688,
 		gen: 6,
 	},
-	micleberry: {
+		micleberry: {
 		name: "Micle Berry",
 		itemClass: ['fragile', 'berry', 'consumable', 'statboost', 'healing'],
-		shortDesc: "If HP≤1/2(or 100% with Gluttony), Raises holder's accuracy 3 stages, heals 75HP, and raises critical hit ratio 3 stages. Fragile; if broken, same effects apply. 1 time use.",
+		shortDesc: "If HP≤1/2(or 100% with Gluttony), raises holder's Accuracy 3 stages, heals 75HP, and raises Crit 3 stages. Fragile; if broken, same effects apply. 1 time use.",
 		spritenum: 290,
 		isBerry: true,
 		isFragile: true,
-		belch: { },
-		onResidual(pokemon) { if (pokemon.hp <= pokemon.maxhp / 2 || (pokemon.hp <= pokemon.maxhp && ((pokemon.ability1 === 'gluttony' && pokemon.abilityState1.gluttony) || (pokemon.ability2 === 'gluttony' && pokemon.abilityState2.gluttony)))) { pokemon.eatItem(); } },
+		belch: {},
+		onResidual(pokemon) {
+			if (
+				pokemon.hp <= pokemon.maxhp / 2 ||
+				(
+					pokemon.hp <= pokemon.maxhp &&
+					(
+						(pokemon.ability1 === 'gluttony' && pokemon.abilityState1.gluttony) ||
+						(pokemon.ability2 === 'gluttony' && pokemon.abilityState2.gluttony)
+					)
+				)
+			) {
+				pokemon.eatItem();
+			}
+		},
 		onEat(pokemon) {
 			this.heal(75, pokemon);
-			this.boost({accuracy: 3}, pokemon);
-			pokemon.addVolatile('micleberry');
+			this.boost({accuracy: 3, crit: 3}, pokemon);
 		},
 		onFragileBreak(pokemon) {
 			this.heal(75, pokemon);
-			this.boost({accuracy: 3}, pokemon);
-			pokemon.addVolatile('micleberry');
-		},
-		condition: {
-			noCopy: true,
-			onModifyCritRatio(critRatio) { return critRatio + 3; },
+			this.boost({accuracy: 3, crit: 3}, pokemon);
 		},
 		num: 209,
 		gen: 4,
@@ -1297,8 +1309,7 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		},
 		onEat(pokemon) {
 			const stats: BoostID[] = [];
-			let stat: BoostID;
-			for (stat in pokemon.boosts) { if (stat !== 'accuracy' && stat !== 'evasion' && pokemon.boosts[stat] < 6) { stats.push(stat); } }
+			for (const stat in pokemon.boosts) { if (stat !== 'accuracy' && stat !== 'evasion' && pokemon.boosts[stat as BoostID] < 6) { stats.push(stat as BoostID); } }
 			if (stats.length) {
 				const randomStat = this.sample(stats);
 				const boost: SparseBoostsTable = {};
@@ -1776,8 +1787,12 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		onTryBoost(boost, target, source, effect) {
 			if (source && target === source) return;
 			let showMsg = false;
-			let i: BoostID;
-			for (i in boost) { if (boost[i]! < 0) { delete boost[i]; showMsg = true; } }
+			for (const i in boost) {
+				if (boost[i as BoostID]! < 0) {
+					delete boost[i as BoostID];
+					showMsg = true;
+				}
+			}
 			if (showMsg && !(effect as ActiveMove).secondaries && effect.id !== 'octolock') { this.add('-fail', target, 'unboost', '[from] item: Clear Amulet', `[of] ${target}`); } 
 		},
 		num: 1882,
@@ -1839,9 +1854,8 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		fling: { basePower: 50, },
 		onAfterBoost(boost, pokemon) {
 			if (this.effectState.eject || this.activeMove?.id === 'partingshot') return;
-			let i: BoostID;
-			for (i in boost) { 
-				if (boost[i]! < 0) { 
+			for (const i in boost) {
+				if (boost[i as BoostID]! < 0) {
 					this.effectState.eject = true;
 					break;
 				}
@@ -2145,10 +2159,9 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			if (effect?.name === 'Opportunist' || effect?.name === 'Mirror Herb') return;
 			if (!this.effectState.boosts) this.effectState.boosts = {} as SparseBoostsTable;
 			const boostPlus = this.effectState.boosts;
-			let i: BoostID;
-			for (i in boost) { 
-				if (boost[i]! > 0) { 
-					boostPlus[i] = (boostPlus[i] || 0) + boost[i]!;
+			for (const i in boost) {
+				if (boost[i as BoostID]! > 0) {
+					boostPlus[i as BoostID] = (boostPlus[i as BoostID] || 0) + boost[i as BoostID]!;
 					this.effectState.ready = true;
 				}
 			}
@@ -2346,11 +2359,11 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 	shellbell: {
 		name: "Shell Bell",
 		itemClass: ['healing'],
-		shortDesc: "After an attack, holder Heals 1/8 of the damage dealt inHP.",
+		shortDesc: "After an attack, holder Heals 1/5 of the damage dealt inHP.",
 		spritenum: 438,
 		fling: { basePower: 30, },
 		onAfterMoveSecondarySelfPriority: -1,
-		onAfterMoveSecondarySelf(pokemon, target, move) { if (move.totalDamage && !pokemon.forceSwitchFlag) { this.heal(move.totalDamage / 8, pokemon); } },
+		onAfterMoveSecondarySelf(pokemon, target, move) { if (move.totalDamage && !pokemon.forceSwitchFlag) { this.heal(move.totalDamage / 5, pokemon); } },
 		num: 253,
 		gen: 3,
 	},
@@ -2458,11 +2471,10 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 			effect(pokemon) {
 				let activate = false;
 				const boosts: SparseBoostsTable = {};
-				let i: BoostID;
-				for (i in pokemon.boosts) {
-					if (pokemon.boosts[i] < 0) {
+				for (const i in pokemon.boosts) {
+					if (pokemon.boosts[i as BoostID] < 0) {
 						activate = true;
-						boosts[i] = 0;
+						boosts[i as BoostID] = 0;
 					}
 				}
 				if (activate) {
@@ -2474,11 +2486,10 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		onStart(pokemon) {
 			this.effectState.boosts = {} as SparseBoostsTable;
 			let ready = false;
-			let i: BoostID;
-			for (i in pokemon.boosts) {
-				if (pokemon.boosts[i] < 0) {
+			for (const i in pokemon.boosts) {
+				if (pokemon.boosts[i as BoostID] < 0) {
 					ready = true;
-					this.effectState.boosts[i] = 0;
+					this.effectState.boosts[i as BoostID] = 0;
 				}
 			}
 			if (ready) (this.effectState.target as Pokemon).useItem();
@@ -2809,6 +2820,13 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 889) || pokemon.baseSpecies.num === 889) { return false; }
 			return true;
 		},
+		onWeaponBreak(pokemon) {
+			this.add('-message', `${pokemon.name}'s Rusted Shield ran out of energy!`);
+			this.add('-enditem', pokemon, 'Rusted Shield', '[from] weapon break');
+			pokemon.item = '';
+			pokemon.itemState = this.initEffectState({ id: '', target: pokemon });
+			if (pokemon.species.id === 'zamazentacrowned') { pokemon.formeChange('Zamazenta', this.effect, true); }
+		},
 		itemUser: ["Zamazenta-Crowned"],
 		num: 1104,
 		gen: 8,
@@ -2820,6 +2838,13 @@ export const Items: import('../../../sim/dex-items').ModdedItemDataTable = {
 		spritenum: 698,
 		onTakeItem(item, pokemon, source) { if ((source && source.baseSpecies.num === 888) || pokemon.baseSpecies.num === 888) { return false; }
 			return true;
+		},
+		onWeaponBreak(pokemon) {
+			this.add('-message', `${pokemon.name}'s Rusted Sword ran out of energy!`);
+			this.add('-enditem', pokemon, 'Rusted Sword', '[from] weapon break');
+			pokemon.item = '';
+			pokemon.itemState = this.initEffectState({ id: '', target: pokemon });
+			if (pokemon.species.id === 'zaciancrowned') { pokemon.formeChange('Zacian', this.effect, true); }
 		},
 		itemUser: ["Zacian-Crowned"],
 		num: 1103,

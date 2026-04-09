@@ -354,7 +354,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 738,
 		name: "Vikavolt",
 		types: ["Bug", "Electric"],
-		baseStats: { hp: 77, atk: 36, def: 70, spa: 138, spd: 75, spe: 104 },
+		baseStats: { hp: 77, atk: 56, def: 90, spa: 138, spd: 55, spe: 104 },
 		abilities: { // ABILITY SET 1
             0: "Lightning Rod",
             1: "Levitate",
@@ -879,7 +879,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		name: "Tsareena",
 		types: ["Grass"],
 		gender: "F",
-		baseStats: { hp: 88, atk: 120, def: 98, spa: 50, spd: 98, spe: 72 },
+		baseStats: { hp: 88, atk: 120, def: 88, spa: 88, spd: 88, spe: 88 },
 		abilities: { // ABILITY SET 1
             0: "Graceful Step",
             1: "Leaf Guard",
@@ -1092,6 +1092,8 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		weightkg: 19.9,
 		color: "Blue",
 		eggGroups: ["Field"],
+		weapondurability: 40,
+		weaponrecovery: 2,
 		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	mimikyu: {
@@ -1388,6 +1390,8 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		color: "Green",
 		evos: ["Thwackey"],
 		eggGroups: ["Field", "Grass"],
+		weapondurability: 8,
+		weaponrecovery: 1,
 		tags: ["1st Stage"],
 	},
 	thwackey: {
@@ -1410,6 +1414,8 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 16,
 		evos: ["Rillaboom"],
 		eggGroups: ["Field", "Grass"],
+		weapondurability: 20,
+		weaponrecovery: 1,
 		tags: ["2nd Stage"],
 	},
 	rillaboom: {
@@ -1432,6 +1438,8 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		evoLevel: 35,
 		eggGroups: ["Field", "Grass"],
 		canGigantamax: "G-Max Drum Solo",
+		weapondurability: 36,
+		weaponrecovery: 2,
 		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	scorbunny: {
@@ -1780,7 +1788,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 841,
 		name: "Flapple",
 		types: ["Grass", "Dragon"],
-		baseStats: { hp: 70, atk: 110, def: 80, spa: 95, spd: 60, spe: 70 },
+		baseStats: { hp: 75, atk: 115, def: 80, spa: 110, spd: 60, spe: 70 },
 		abilities: { // ABILITY SET 1
             0: "Gluttony",
             1: "Ripen",
@@ -1802,7 +1810,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 842,
 		name: "Appletun",
 		types: ["Grass", "Dragon"],
-		baseStats: { hp: 110, atk: 85, def: 80, spa: 100, spd: 80, spe: 30 },
+		baseStats: { hp: 114, atk: 65, def: 105, spa: 100, spd: 105, spe: 16 },
 		abilities: { // ABILITY SET 1
             0: "Gluttony",
             1: "Ripen",
@@ -2679,6 +2687,8 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItem: "Rusted Sword",
 		battleOnly: "Zacian",
 		cannotDynamax: true,
+		weapondurability: 80,
+		weaponrecovery: 3,
 		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	zamazenta: {
@@ -2714,6 +2724,8 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		requiredItem: "Rusted Shield",
 		battleOnly: "Zamazenta",
 		cannotDynamax: true,
+		weapondurability: 100,
+		weaponrecovery: 3,
 		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
 	eternatus: {

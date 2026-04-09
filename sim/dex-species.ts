@@ -32,6 +32,8 @@ export interface SpeciesData extends Partial<Species> {
 	eggGroups: string[];
 	weightkg: number;
 	sizeWeightModifier?: number;
+	weapondurability?: number;
+	weaponrecovery?: number;
 	infusibleSlots?: 1 | 2;
 }
 export interface CosmeticFormeData {
@@ -199,6 +201,9 @@ export class Species extends BasicEffect implements Readonly<BasicEffect & Speci
 	readonly weighthg: number;
 	/** Size weight modifier - percentage change per size tier (default 0.1 = 10%) */
 	readonly sizeWeightModifier: number;
+
+	readonly weapondurability: number;
+	readonly weaponrecovery: number;
 	/** Height (in m). */
 	readonly heightm: number;
 
@@ -302,6 +307,8 @@ export class Species extends BasicEffect implements Readonly<BasicEffect & Speci
 		this.weightkg = data.weightkg || 0;
 		this.weighthg = this.weightkg * 10;
 		this.sizeWeightModifier = data.sizeWeightModifier !== undefined ? data.sizeWeightModifier : 0.1;
+		this.weapondurability = data.weapondurability || 0;
+		this.weaponrecovery = data.weaponrecovery || 0;
 		this.heightm = data.heightm || 0;
 		this.infusibleSlots = data.infusibleSlots || undefined;
 		this.color = data.color || '';
@@ -405,6 +412,7 @@ export const INFUSIBLE_MOVES = new Set<ID>([
 	'aurasphere' as ID,
 	'aurorabeam' as ID,
 	'belch' as ID,
+	'bitterextract' as ID,
 	'boneclub' as ID,
 	'bonerush' as ID,
 	'bonemerang' as ID,
@@ -440,6 +448,7 @@ export const INFUSIBLE_MOVES = new Set<ID>([
 	'pollenpuff' as ID,
 	'powdersnow' as ID,
 	'ragepowder' as ID,
+	'saltyextract' as ID,
 	'silverpowder' as ID,
 	'simplebeam' as ID,
 	'sleeppowder' as ID,
@@ -448,11 +457,14 @@ export const INFUSIBLE_MOVES = new Set<ID>([
 	'sludgewave' as ID,
 	'smog' as ID,
 	'soak' as ID,
+	'sourextract' as ID,
 	'sparklingaria' as ID,
 	'spicyextract' as ID,
 	'stunspore' as ID,
+	'sweetextract' as ID,
 	'syrupbomb' as ID,
 	'toxic' as ID,
+	'umamiextract' as ID,
 	'venomdrench' as ID,
 	'waterpledge' as ID,
 	'worryseed' as ID,

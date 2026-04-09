@@ -1,6 +1,7 @@
 import { Utils } from '../lib/utils';
 import type { ConditionData } from './dex-conditions';
 import { assignMissingFields, BasicEffect, toID } from './dex-data';
+type SparseBoostsTable = import('./dex').Dex.SparseBoostsTable;
 /**
  * Describes the acceptable target(s) of a move.
  * adjacentAlly - Only relevant to Doubles or Triples, the move only targets an ally of the user.
@@ -179,6 +180,10 @@ export interface MoveData extends EffectData, MoveEventMethods, HitEffect {
 	priority: number;
 	target: MoveTarget;
 	flags: MoveFlags;
+	weaponmove?: boolean;
+	weaponmoveCallback?: (pokemon: Pokemon) => boolean;
+	weaponDamage?: number;
+	weaponDamageOnProtect?: boolean;
 	selfSwitch?: 'copyvolatile' | 'shedtail' | boolean;
 	selfBoost?: { boosts?: SparseBoostsTable };
 	selfdestruct?: 'always' | 'ifHit' | boolean;
@@ -387,6 +392,10 @@ export class DataMove extends BasicEffect implements Readonly<BasicEffect & Move
 	/** Max/G-Max move fields */
 	declare readonly maxMove?: { basePower: number, };
 	readonly flags: MoveFlags;
+	readonly weaponmove: boolean;
+	readonly weaponmoveCallback?: (pokemon: Pokemon) => boolean;
+	readonly weaponDamage: number;
+	readonly weaponDamageOnProtect: boolean;
 	/** Whether or not the user must switch after using this move. */
 	readonly selfSwitch?: 'copyvolatile' | 'shedtail' | boolean;
 	/** Move target used if the user is not a Ghost type (for Curse). */
@@ -439,6 +448,10 @@ export class DataMove extends BasicEffect implements Readonly<BasicEffect & Move
 		this.isZ = data.isZ || false;
 		this.isMax = data.isMax || false;
 		this.flags = data.flags || {};
+		this.weaponmove = !!data.weaponmove;
+		this.weaponmoveCallback = data.weaponmoveCallback || undefined;
+		this.weaponDamage = data.weaponDamage || 0;
+		this.weaponDamageOnProtect = data.weaponDamageOnProtect ?? true;
 		this.selfSwitch = (typeof data.selfSwitch === 'string' ? (data.selfSwitch as ID) : data.selfSwitch) || undefined;
 		this.nonGhostTarget = data.nonGhostTarget || '';
 		this.ignoreAbility = data.ignoreAbility || false;

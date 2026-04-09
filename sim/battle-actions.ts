@@ -50,6 +50,24 @@ export class BattleActions {
 		if (this.dex.data.Scripts.actions) Object.assign(this, this.dex.data.Scripts.actions);
 		if (battle.format.actions) Object.assign(this, battle.format.actions);
 	}
+		canUseWeaponMove(pokemon: Pokemon, move: ActiveMove) {
+		if (!move.weaponmove) return true;
+		if (pokemon.maxWeaponDurability > 0 && pokemon.weaponDurability > 0) return true;
+		if (move.weaponmoveCallback?.call(this.battle, pokemon)) return true;
+		return false;
+	}
+
+	getWeaponMoveDamage(move: ActiveMove, reason: 'hit' | 'protect') {
+		if (!move.weaponmove) return 0;
+		if (reason === 'protect' && move.weaponDamageOnProtect === false) return 0;
+		return move.weaponDamage || 0;
+	}
+
+	applyWeaponMoveDamage(pokemon: Pokemon, move: ActiveMove, reason: 'hit' | 'protect') {
+		const amount = this.getWeaponMoveDamage(move, reason);
+		if (amount <= 0) return 0;
+		return pokemon.damageWeapon(amount);
+	}
 	// #region SWITCH
 	switchIn(pokemon: Pokemon, pos: number, sourceEffect: Effect | null = null, isDrag?: boolean) {
 		if (!pokemon || pokemon.isActive) {
@@ -186,6 +204,12 @@ export class BattleActions {
 		let move = baseMove;
 		if (zMove) { move = this.getActiveZMove(baseMove, pokemon); } 
 		else if (maxMove) { move = this.getActiveMaxMove(baseMove, pokemon); }
+		if (!this.canUseWeaponMove(pokemon, move)) {
+			this.battle.add('-fail', pokemon, 'move: ' + move.name);
+			this.battle.attrLastMove('[still]');
+			pokemon.moveThisTurnResult = false;
+			return;
+		}
 		move.isExternal = externalMove;
 		this.battle.setActiveMove(move, pokemon, target);
 		const activeMove = this.battle.activeMove;
@@ -497,17 +521,18 @@ export class BattleActions {
 	}
 	hitStepTryHitEvent(targets: Pokemon[], pokemon: Pokemon, move: ActiveMove) {
 		const hitResults = this.battle.runEvent('TryHit', targets, pokemon, move);
+		if (move.weaponmove && move.weaponDamageOnProtect !== false) { for (let i = 0; i < targets.length; i++) { if (hitResults[i] === false) { this.applyWeaponMoveDamage(pokemon, move, 'protect'); } } }
 		if (!hitResults.includes(true) && hitResults.includes(false)) {
 			this.battle.add('-fail', pokemon);
 			this.battle.attrLastMove('[still]');
 		}
-		for (const i of targets.keys()) { if (hitResults[i] !== this.battle.NOT_FAIL) hitResults[i] = hitResults[i] || false; }
+		for (let i = 0; i < targets.length; i++) { if (hitResults[i] !== this.battle.NOT_FAIL) hitResults[i] = hitResults[i] || false; }
 		return hitResults;
 	}
 	hitStepTypeImmunity(targets: Pokemon[], pokemon: Pokemon, move: ActiveMove) {
 		if (move.ignoreImmunity === undefined) { move.ignoreImmunity = (move.category === 'Status'); }
 		const hitResults = [];
-		for (const i of targets.keys()) { hitResults[i] = targets[i].runImmunity(move, !move.smartTarget); }
+		for (let i = 0; i < targets.length; i++) { hitResults[i] = targets[i].runImmunity(move, !move.smartTarget); }
 		return hitResults;
 	}
 	hitStepTryImmunity(targets: Pokemon[], pokemon: Pokemon, move: ActiveMove) {
@@ -599,20 +624,24 @@ export class BattleActions {
 		if (move.stealsBoosts) {
 			const boosts: SparseBoostsTable = {};
 			let stolen = false;
-			let statName: BoostID;
-			for (statName in target.boosts) {
+
+			for (const statName of Object.keys(target.boosts) as BoostID[]) {
 				const stage = target.boosts[statName];
 				if (stage > 0) {
 					boosts[statName] = stage;
 					stolen = true;
 				}
 			}
+
 			if (stolen) {
 				this.battle.attrLastMove('[still]');
 				this.battle.add('-clearpositiveboost', target, pokemon, 'move: ' + move.name);
 				this.battle.boost(boosts, pokemon, pokemon);
-				let statName2: BoostID;
-				for (statName2 in boosts) { boosts[statName2] = 0; }
+
+				for (const statName of Object.keys(boosts) as BoostID[]) {
+					boosts[statName] = 0;
+				}
+
 				target.setBoost(boosts);
 				if (move.id === "spectralthief") { this.battle.addMove('-anim', pokemon, "Spectral Thief", target); }
 			}
@@ -645,12 +674,15 @@ export class BattleActions {
 		if (move.target === 'all') { hitResult = this.battle.runEvent('TryHitField', target, pokemon, move); } 
 		else if (isFFAHazard) {
 			const hitResults: any[] = this.battle.runEvent('TryHitSide', targets, pokemon, move);
-			// if some side blocked the move, prevent the move from executing against any other sides
-			if (hitResults.some(result => !result)) return false;
+			if (hitResults.some(result => !result)) {
+				if (move.weaponmove && move.weaponDamageOnProtect !== false) { for (const result of hitResults) { if (result === false) this.applyWeaponMoveDamage(pokemon, move, 'protect'); } }
+				return false;
+			}
 			hitResult = true;
 		} else { hitResult = this.battle.runEvent('TryHitSide', target, pokemon, move); }
 		if (!hitResult) {
 			if (hitResult === false) {
+				if (move.weaponmove && move.weaponDamageOnProtect !== false) { this.applyWeaponMoveDamage(pokemon, move, 'protect'); }
 				this.battle.add('-fail', pokemon);
 				this.battle.attrLastMove('[still]');
 			}
@@ -660,7 +692,7 @@ export class BattleActions {
 	}
 	hitStepMoveHitLoop(targets: Pokemon[], pokemon: Pokemon, move: ActiveMove) { // Temporary name
 		let damage: (number | boolean | undefined)[] = [];
-		for (const i of targets.keys()) { damage[i] = 0; }
+		for (let i = 0; i < targets.length; i++) { damage[i] = 0; }
 		move.totalDamage = 0;
 		pokemon.lastDamage = 0;
 		let targetHits = move.multihit || 1;
@@ -676,7 +708,6 @@ export class BattleActions {
 		targetHits = Math.floor(targetHits);
 		let nullDamage = true;
 		let moveDamage: (number | boolean | undefined)[] = [];
-		// There is no need to recursively check the ´sleepUsable´ flag as Sleep Talk can only be used while asleep.
 		const isSleepUsable = move.sleepUsable || this.dex.moves.get(move.sourceEffect).sleepUsable;
 		let targetsCopy: (Pokemon | false | null)[] = targets.slice(0);
 		let hit: number;
@@ -689,12 +720,11 @@ export class BattleActions {
 				targetsCopy = [targets[hit - 1]];
 				damage = [damage[hit - 1]];
 			} else { targetsCopy = targets.slice(0); }
-			const target = targetsCopy[0]; // some relevant-to-single-target-moves-only things are hardcoded
+			const target = targetsCopy[0];
 			if (target && typeof move.smartTarget === 'boolean') {
 				if (hit > 1) { this.battle.addMove('-anim', pokemon, move.name, target); } 
 				else { this.battle.retargetLastMove(target); }
 			}
-			// like this (Triple Kick)
 			if (target && move.multiaccuracy && hit > 1) {
 				let accuracy = move.accuracy;
 				const boostTable = [1, 4 / 3, 5 / 3, 2, 7 / 3, 8 / 3, 3];
@@ -721,22 +751,27 @@ export class BattleActions {
 			const moveData = move;
 			if (!moveData.flags) moveData.flags = {};
 			let moveDamageThisHit;
-			// Modifies targetsCopy (which is why it's a copy)
 			[moveDamageThisHit, targetsCopy] = this.spreadMoveHit(targetsCopy, pokemon, move, moveData);
-			// When Dragon Darts targets two different pokemon, targetsCopy is a length 1 array each hit so spreadMoveHit returns a length 1 damage array
 			if (move.smartTarget) { moveDamage.push(...moveDamageThisHit); } 
 			else { moveDamage = moveDamageThisHit; }
 			if (!moveDamage.some(val => val !== false)) break;
 			nullDamage = false;
+
+			if (move.weaponmove) {
+				for (const md of moveDamageThisHit) {
+					if (md !== false) {
+						this.applyWeaponMoveDamage(pokemon, move, 'hit');
+						if (pokemon.maxWeaponDurability > 0 && pokemon.weaponDurability <= 0) break;
+					}
+				}
+			}
+
 			for (const [i, md] of moveDamage.entries()) {
 				if (move.smartTarget && i !== hit - 1) continue;
-				// Damage from each hit is individually counted for the purposes of Counter, Metal Burst, and Mirror Coat.
 				damage[i] = md === true || !md ? 0 : md;
-				// For recoil moves, also track intended (uncapped) damage for correct recoil calculation.
 				if (move.recoil) {
 					if (!move.intendedTotalDamage) move.intendedTotalDamage = 0;
-					// md can be true/false/number; only add if number
-					if (typeof md === 'number') { move.intendedTotalDamage += md; } // If md > target.hp, intended damage is md, actual is capped at target.hp
+					if (typeof md === 'number') { move.intendedTotalDamage += md; }
 				}
 				move.totalDamage += damage[i];
 			}
@@ -748,11 +783,10 @@ export class BattleActions {
 			}
 			this.battle.eachEvent('Update');
 			if (!pokemon.hp && targets.length === 1) {
-				hit++; // report the correct number of hits for multihit moves
+				hit++;
 				break;
 			}
 		}
-		// hit is 1 higher than the actual hit count
 		if (hit === 1) return damage.fill(false);
 		if (nullDamage) damage.fill(false);
 		this.battle.faintMessages(false, false, !pokemon.hp);
@@ -772,7 +806,6 @@ export class BattleActions {
 			this.battle.directDamage(recoilDamage, pokemon, pokemon, { id: 'strugglerecoil' } as Condition);
 			if (pokemon.hp <= pokemon.maxhp / 2 && hpBeforeRecoil > pokemon.maxhp / 2) { this.battle.runEvent('EmergencyExit', pokemon, pokemon); }
 		}
-		// smartTarget messes up targetsCopy, but smartTarget should in theory ensure that targets will never fail, anyway
 		if (move.smartTarget) { targetsCopy = targets.slice(0); }
 		for (const [i, target] of targetsCopy.entries()) {
 			if (target && pokemon !== target) {
@@ -786,8 +819,6 @@ export class BattleActions {
 		this.afterMoveSecondaryEvent(targetsCopy.filter(val => !!val), pokemon, move);
 		if (!(move.hasSheerForce && pokemon.hasAbility('sheerforce'))) {
 			for (const [i, d] of damage.entries()) {
-				// There are no multihit spread moves, so it's safe to use move.totalDamage for multihit moves
-				// The previous check was for `move.multihit`, but that fails for Dragon Darts
 				const curDamage = targets.length === 1 ? move.totalDamage : d;
 				if (typeof curDamage === 'number' && targets[i].hp) {
 					const targetHPBeforeDamage = (targets[i].hurtThisTurn || 0) + curDamage;
@@ -797,33 +828,43 @@ export class BattleActions {
 		}
 		return damage;
 	}
-	spreadMoveHit(
+		spreadMoveHit(
 		targets: SpreadMoveTargets, pokemon: Pokemon, moveOrMoveName: ActiveMove,
 		hitEffect?: Dex.HitEffect, isSecondary?: boolean, isSelf?: boolean
 	): [SpreadMoveDamage, SpreadMoveTargets] {
-		// Hardcoded for single-target purposes (no spread moves have any kind of onTryHit handler)
 		const target = targets[0];
 		let damage: (number | boolean | undefined)[] = [];
-		for (const i of targets.keys()) { damage[i] = true; }
+		for (let i = 0; i < targets.length; i++) {
+			damage[i] = true;
+		}
 		const move = this.dex.getActiveMove(moveOrMoveName);
 		let hitResult: boolean | number | null = true;
 		let moveData = hitEffect as ActiveMove;
 		if (!moveData) moveData = move;
 		if (!moveData.flags) moveData.flags = {};
+
 		if (move.target === 'all' && !isSelf) { hitResult = this.battle.singleEvent('TryHitField', moveData, {}, target || null, pokemon, move); } 
 		else if ((move.target === 'foeSide' || move.target === 'allySide' || move.target === 'allyTeam') && !isSelf) { hitResult = this.battle.singleEvent('TryHitSide', moveData, {}, target || null, pokemon, move); } 
 		else if (target) { hitResult = this.battle.singleEvent('TryHit', moveData, {}, target, pokemon, move); }
+
 		if (!hitResult) {
 			if (hitResult === false) {
+				if (move.weaponmove && move.weaponDamageOnProtect !== false) {
+					this.applyWeaponMoveDamage(pokemon, move, 'protect');
+				}
 				this.battle.add('-fail', pokemon);
 				this.battle.attrLastMove('[still]');
 			}
-			return [[false], targets]; // single-target only
+			return [[false], targets];
 		}
-		// 0. check for substitute
+
 		if (!isSecondary && !isSelf) {
-			if (move.target !== 'all' && move.target !== 'allyTeam' && move.target !== 'allySide' && move.target !== 'foeSide') { damage = this.tryPrimaryHitEvent(damage, targets, pokemon, move, moveData, isSecondary); } }
-		for (const i of targets.keys()) {
+			if (move.target !== 'all' && move.target !== 'allyTeam' && move.target !== 'allySide' && move.target !== 'foeSide') {
+				damage = this.tryPrimaryHitEvent(damage, targets, pokemon, move, moveData, isSecondary);
+			}
+		}
+
+		for (let i = 0; i < targets.length; i++) {
 			if (damage[i] === this.battle.HIT_SUBSTITUTE) {
 				damage[i] = true;
 				targets[i] = null;
@@ -831,25 +872,32 @@ export class BattleActions {
 			if (targets[i] && isSecondary && !moveData.self) { damage[i] = true; }
 			if (!damage[i]) targets[i] = false;
 		}
-		// 1. call to this.battle.getDamage
+
 		damage = this.getSpreadDamage(damage, targets, pokemon, move, moveData, isSecondary, isSelf);
-		for (const i of targets.keys()) { if (damage[i] === false) targets[i] = false; }
-		// 2. call to this.battle.spreadDamage
+		for (let i = 0; i < targets.length; i++) {
+			if (damage[i] === false) targets[i] = false;
+		}
+
 		damage = this.battle.spreadDamage(damage, targets, pokemon, move);
-		for (const i of targets.keys()) { if (damage[i] === false) targets[i] = false; }
-		// 3. onHit event happens here
+		for (let i = 0; i < targets.length; i++) {
+			if (damage[i] === false) targets[i] = false;
+		}
+
 		damage = this.runMoveEffects(damage, targets, pokemon, move, moveData, isSecondary, isSelf);
-		for (const i of targets.keys()) { if (!damage[i] && damage[i] !== 0) targets[i] = false; }
-		// steps 4 and 5 can mess with this.battle.activeTarget, which needs to be preserved for Dancer
+		for (let i = 0; i < targets.length; i++) {
+			if (!damage[i] && damage[i] !== 0) targets[i] = false;
+		}
+
 		const activeTarget = this.battle.activeTarget;
-		// 4. self drops (start checking for targets[i] === false here)
 		if (moveData.self && !move.selfDropped) this.selfDrops(targets, pokemon, move, moveData, isSecondary);
-		// 5. secondary effects
 		if (moveData.secondaries) this.secondaries(targets, pokemon, move, moveData, isSelf);
 		this.battle.activeTarget = activeTarget;
-		// 6. force switch
+
 		if (moveData.forceSwitch) damage = this.forceSwitch(damage, targets, pokemon, move);
-		for (const i of targets.keys()) { if (!damage[i] && damage[i] !== 0) targets[i] = false; }
+		for (let i = 0; i < targets.length; i++) {
+			if (!damage[i] && damage[i] !== 0) targets[i] = false;
+		}
+
 		const damagedTargets: Pokemon[] = [];
 		const damagedDamage = [];
 		for (const [i, t] of targets.entries()) {
@@ -858,10 +906,10 @@ export class BattleActions {
 				damagedDamage.push(damage[i]);
 			}
 		}
+
 		const pokemonOriginalHP = pokemon.hp;
 		if (damagedDamage.length && !isSecondary && !isSelf) {
 			this.battle.runEvent('DamagingHit', damagedTargets, pokemon, move, damagedDamage);
-			// Electric types become charged when hit by Electric-type moves
 			for (const t of damagedTargets) {
 				if (move.type === 'Electric' && t.hasType('Electric')) {
 					if (!t.volatiles['charged']) {
@@ -870,7 +918,11 @@ export class BattleActions {
 					}
 				}
 			}
-			if (moveData.onAfterHit) { for (const t of damagedTargets) { this.battle.singleEvent('AfterHit', moveData, {}, t, pokemon, move); } }
+			if (moveData.onAfterHit) {
+				for (const t of damagedTargets) {
+					this.battle.singleEvent('AfterHit', moveData, {}, t, pokemon, move);
+				}
+			}
 			if (pokemon.hp && pokemon.hp <= pokemon.maxhp / 2 && pokemonOriginalHP > pokemon.maxhp / 2) { this.battle.runEvent('EmergencyExit', pokemon); }
 		}
 		return [damage, targets];
@@ -1202,13 +1254,16 @@ export class BattleActions {
 				break;
 			case 'healreplacement': pokemon.side.addSlotCondition(pokemon, 'healreplacement', pokemon, move);
 				break;
-			case 'clearnegativeboost':
-				const boosts: SparseBoostsTable = {};
-				let i: BoostID;
-				for (i in pokemon.boosts) { if (pokemon.boosts[i] < 0) { boosts[i] = 0; } }
-				pokemon.setBoost(boosts);
-				this.battle.add('-clearnegativeboost', pokemon, '[zeffect]');
-				break;
+				case 'clearnegativeboost':
+					const boosts: SparseBoostsTable = {};
+					for (const boostid of Object.keys(pokemon.boosts) as BoostID[]) {
+						if (pokemon.boosts[boostid] < 0) {
+							boosts[boostid] = 0;
+						}
+					}
+					pokemon.setBoost(boosts);
+					this.battle.add('-clearnegativeboost', pokemon, '[zeffect]');
+					break;
 			case 'redirect': pokemon.addVolatile('followme', pokemon, zPower);
 				break;
 			case 'crit2': pokemon.addVolatile('focusenergy', pokemon, zPower);
@@ -1261,9 +1316,9 @@ export class BattleActions {
 		if (!basePower) return basePower === 0 ? undefined : basePower;
 		basePower = this.battle.clampIntRange(basePower, 1);
 		let critMult;
-		let critRatio = this.battle.runEvent('ModifyCritRatio', source, target, move, move.critRatio || 0);
-		// Custom crit tiers for Indigo Starstorm
-		critRatio = Math.max(0, Math.min(critRatio, 15));
+		let critRatio = (move.critRatio || 0) + (source.boosts.crit || 0);
+		if (source.m.dragoncheer) { critRatio += source.m.dragoncheer * (source.hasType('Dragon') ? 5 : 2); }
+		critRatio = this.battle.runEvent('ModifyCritRatio', source, target, move, critRatio);
 		critMult = [96, 64, 48, 24, 16, 12, 8, 6, 4, 3, 2, 1.5, 1.333, 1.2, 1];
 		const moveHit = target.getMoveHitData(move);
 		moveHit.crit = move.willCrit || false;

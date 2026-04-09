@@ -193,7 +193,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 261,
 		name: "Poochyena",
 		types: ["Dark"],
-		baseStats: { hp: 35, atk: 55, def: 35, spa: 30, spd: 30, spe: 68 },
+		baseStats: { hp: 35, atk: 67, def: 35, spa: 155, spd: 30, spe: 68 },
 		abilities: { // ABILITY SET 1
             0: "Pack Mentality",
             1: "Rattled",
@@ -212,7 +212,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 262,
 		name: "Mightyena",
 		types: ["Dark"],
-		baseStats: { hp: 70, atk: 90, def: 70, spa: 60, spd: 60, spe: 70 },
+		baseStats: { hp: 71, atk: 95, def: 60, spa: 25, spd: 80, spe: 89 },
 		abilities: { // ABILITY SET 1
             0: "Pack Mentality",
             1: "Intimidate",
@@ -701,7 +701,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 308,
 		name: "Medicham",
 		types: ["Fighting", "Psychic"],
-		baseStats: { hp: 60, atk: 60, def: 75, spa: 60, spd: 75, spe: 80 },
+		baseStats: { hp: 60, atk: 60, def: 60, spa: 80, spd: 80, spe: 80 },
 		abilities: { // ABILITY SET 1
             0: "Pure Power",
             1: "Telepathy",
@@ -1693,7 +1693,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseForme: "Normal",
 		types: ["Psychic"],
 		gender: "N",
-		baseStats: { hp: 70, atk: 130, def: 70, spa: 130, spd: 70, spe: 150 },
+		baseStats: { hp: 70, atk: 140, def: 50, spa: 140, spd: 50, spe: 150 },
 		abilities: { // ABILITY SET 1
             0: "Trace",
             1: "Inner Focus",
@@ -1713,7 +1713,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		forme: "Attack",
 		types: ["Psychic"],
 		gender: "N",
-		baseStats: { hp: 70, atk: 180, def: 10, spa: 180, spd: 10, spe: 150 },
+		baseStats: { hp: 70, atk: 180, def: 20, spa: 180, spd: 20, spe: 130 },
 		abilities: { // ABILITY SET 1
             0: "Trace",
             1: "Adaptability",
@@ -1732,7 +1732,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		forme: "Defense",
 		types: ["Psychic"],
 		gender: "N",
-		baseStats: { hp: 70, atk: 90, def: 150, spa: 90, spd: 150, spe: 80 },
+		baseStats: { hp: 70, atk: 100, def: 150, spa: 100, spd: 150, spe: 30 },
 		abilities: { // ABILITY SET 1
             0: "Trace",
             1: "Battle Armor",
@@ -1751,7 +1751,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		forme: "Speed",
 		types: ["Psychic"],
 		gender: "N",
-		baseStats: { hp: 70, atk: 105, def: 70, spa: 105, spd: 70, spe: 180 },
+		baseStats: { hp: 70, atk: 100, def: 40, spa: 100, spd: 40, spe: 250 },
 		abilities: { // ABILITY SET 1
             0: "Trace",
             1: "Limber",
@@ -1763,9 +1763,6 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		changesFrom: "Deoxys",
 		tags: ["Single Stage Pokemon", "Fully Evolved"],
 	},
-
-
-
 	//region Gen 4 [Sinnoh]
 	turtwig: {
 		num: 387,
@@ -2030,7 +2027,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 402,
 		name: "Kricketune",
 		types: ["Bug"],
-		baseStats: { hp: 77, atk: 85, def: 81, spa: 55, spd: 81, spe: 58 },
+		baseStats: { hp: 77, atk: 85, def: 76, spa: 77, spd: 67, spe: 58 },
 		abilities: { // ABILITY SET 1
             0: "Swarm",
             1: "Musician",
@@ -2699,7 +2696,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		name: "Lucario",
 		types: ["Fighting", "Steel"],
 		genderRatio: { M: 0.875, F: 0.125 },
-		baseStats: { hp: 70, atk: 110, def: 70, spa: 115, spd: 70, spe: 90 },
+		baseStats: { hp: 70, atk: 110, def: 70, spa: 115, spd: 95, spe: 90 },
 		abilities: { // ABILITY SET 1
             0: "Aura Master",
                     // ABILITY SET 2
@@ -3550,7 +3547,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		name: "Cresselia",
 		types: ["Psychic"],
 		gender: "F",
-		baseStats: { hp: 122, atk: 32, def: 122, spa: 92, spd: 132, spe: 92 },
+		baseStats: { hp: 122, atk: 42, def: 112, spa: 92, spd: 122, spe: 92 },
 		abilities: { // ABILITY SET 1
             0: "Telepathy",
             1: "Levitate",
