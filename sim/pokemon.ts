@@ -219,6 +219,17 @@ export class Pokemon {
 	terastallized?: string;
 	/** Track which types have been used by Tera Shell ability */
 	teraShellUsedTypes?: string[];
+	/**
+	 * Cooldown counter for Guard action; decrements each turn
+	 * Guard is a standalone battle action that provides protection with +2 priority
+	 * After using Guard, this is set to 2 and decrements at end of each turn
+	 * Persists through switches - if a Pokemon switches, its cooldown continues
+	 * When guardCooldown reaches 0, Guard can be used again
+	 * @see BattleActions.guard() - sets to 2 on use
+	 * @see BattleActions.canGuard() - checks if == 0 or undefined
+	 * @see Battle.endTurn() - decrements for active and inactive pokemon
+	 */
+	guardCooldown?: number;
 	/** A Pokemon's currently 'staleness' with respect to the Endless Battle Clause. */
 	staleness?: 'internal' | 'external';
 	/** Staleness that will be set once a future action occurs (eg. eating a berry). */
@@ -1836,6 +1847,9 @@ export class Pokemon {
 		// If a Fire/Flying type uses Burn Up and Roost, it becomes ???/Flying-type, but it's still grounded.
 		if (!negateImmunity && this.hasType('Flying') && !(this.hasType('???') && 'roost' in this.volatiles)) return false;
 		if (this.hasAbility('levitate') && !this.battle.suppressingAbility(this)) return null;
+		if (this.hasAbility('icestilts') && !this.battle.suppressingAbility(this)) return null;
+		if (this.hasAbility('aerodynamic') && !this.battle.suppressingAbility(this)) return null;
+		if (this.hasAbility('cargoflier') && !this.battle.suppressingAbility(this)) return null;
 		if ('magnetrise' in this.volatiles) return false;
 		if ('telekinesis' in this.volatiles) return false;
 		return item !== 'airballoon';
@@ -1855,7 +1869,7 @@ export class Pokemon {
 		);
 	}
 	// Like Field.effectiveWeather(), but ignores sun and rain if the Utility Umbrella is active for the Pokemon.
-	effectiveWeather() {
+	effectiveWeather(message?: string | boolean) {
 		const weather = this.battle.field.effectiveWeather();
 		switch (weather) {
 		case 'sunnyday':
@@ -1863,6 +1877,19 @@ export class Pokemon {
 		case 'desolateland':
 		case 'primordialsea':
 			if (this.hasItem('utilityumbrella')) return '';
+		}
+		// TODO: check interactions of Mega Sol with Utility Umbrella and Desolate Land
+		if (this.hasAbility('megasol') && this.battle.activePokemon === this && weather !== 'sunnyday') {
+			if (message) this.battle.add('-activate', this, 'ability: Mega Sol');
+			return 'sunnyday' as ID;
+		}
+		if (this.hasAbility('hellfire') && this.battle.activePokemon === this && weather !== 'sunnyday') {
+			if (message) this.battle.add('-activate', this, 'ability: Hellfire');
+			return 'sunnyday' as ID;
+		}
+		if (this.hasAbility('megablizzard') && this.battle.activePokemon === this && weather !== 'snowscape') {
+			if (message) this.battle.add('-activate', this, 'ability: Mega Blizzard');
+			return 'snowscape' as ID;
 		}
 		return weather;
 	}

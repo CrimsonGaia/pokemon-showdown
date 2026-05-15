@@ -21,7 +21,7 @@ interface SpeciesAbility {
 	H?: string;
 	S?: string;
 }
-type SpeciesTag = "Powerhouse" | "Legendary" | "Restricted Legendary" | "Mythical" | "Restricted Mythical" | "Paradox" | "Restricted Paradox" | "Ultra Beast" | "Single Stage Pokemon" | "1st Stage" | "2nd Stage" | "3rd Stage" | "Fully Evolved";
+type SpeciesTag = "Powerhouse" | "Legendary" | "Restricted Legendary" | "Mythical" | "Restricted Mythical" | "Paradox" | "Restricted Paradox" | "Mega" | "Ultra Beast" | "Single Stage Pokemon" | "1st Stage" | "2nd Stage" | "3rd Stage" | "Fully Evolved";
 export interface SpeciesData extends Partial<Species> {
 	name: string;
 	/** National Dex number */
@@ -93,8 +93,9 @@ export interface PokemonGoDataTable { [speciesid: IDEntry]: PokemonGoData }
  * it lets the pokemon be a valid father for teaching the move, but
  * is otherwise ignored by the learnset checker (which will actually
  * check prevos for compatibility).
+ * - X = prevo-exclusive moves, cannot be inherited by evolutions
  */
-export type MoveSource = `${1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}${ 'M' | 'T' | 'L' | 'R' | 'E' | 'D' | 'S' | 'V' | 'C' }${string}`;
+export type MoveSource = `${1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}${ 'M' | 'T' | 'L' | 'R' | 'E' | 'D' | 'S' | 'V' | 'C' | 'X' }${string}`;
 export class Species extends BasicEffect implements Readonly<BasicEffect & SpeciesFormatsData> {
 	declare readonly effectType: 'Pokemon';
 	/**
@@ -278,8 +279,7 @@ export class Species extends BasicEffect implements Readonly<BasicEffect & Speci
 		this.cosmeticFormes = data.cosmeticFormes || undefined;
 		this.otherFormes = data.otherFormes || undefined;
 		this.formeOrder = data.formeOrder || undefined;
-		this.spriteid = data.spriteid ||
-			(toID(this.baseSpecies) + (this.baseSpecies !== this.name ? `-${toID(this.forme)}` : ''));
+		this.spriteid = data.spriteid || (toID(this.baseSpecies) + (this.baseSpecies !== this.name ? `-${toID(this.forme)}` : ''));
 		this.abilities = data.abilities || { 0: "" };
 		this.types = data.types || ['???'];
 		this.addedType = data.addedType || undefined;
@@ -302,8 +302,7 @@ export class Species extends BasicEffect implements Readonly<BasicEffect & Speci
 		this.requiredItem = data.requiredItem || undefined;
 		this.requiredItems = data.requiredItems || (this.requiredItem ? [this.requiredItem] : undefined);
 		this.baseStats = data.baseStats || { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
-		this.bst = this.baseStats.hp + this.baseStats.atk + this.baseStats.def +
-			this.baseStats.spa + this.baseStats.spd + this.baseStats.spe;
+		this.bst = this.baseStats.hp + this.baseStats.atk + this.baseStats.def + this.baseStats.spa + this.baseStats.spd + this.baseStats.spe;
 		this.weightkg = data.weightkg || 0;
 		this.weighthg = this.weightkg * 10;
 		this.sizeWeightModifier = data.sizeWeightModifier !== undefined ? data.sizeWeightModifier : 0.1;
@@ -323,8 +322,7 @@ export class Species extends BasicEffect implements Readonly<BasicEffect & Speci
 		this.gmaxUnreleased = !!data.gmaxUnreleased;
 		this.cannotDynamax = !!data.cannotDynamax;
 		this.battleOnly = data.battleOnly || (this.isMega || this.isPrimal ? this.baseSpecies : undefined);
-		this.changesFrom = data.changesFrom ||
-			(this.battleOnly !== this.baseSpecies ? this.battleOnly : this.baseSpecies);
+		this.changesFrom = data.changesFrom || (this.battleOnly !== this.baseSpecies ? this.battleOnly : this.baseSpecies);
 		if (Array.isArray(this.changesFrom)) this.changesFrom = this.changesFrom[0];
 		this.pokemonGoData = data.pokemonGoData || undefined;
 		if (!this.gen && this.num >= 1) {
@@ -378,7 +376,6 @@ export class Learnset {
 	readonly exists: boolean;
 	readonly species: Species;
 	readonly infusibleSlots?: 1 | 2;
-
 	constructor(data: AnyObject, species: Species) {
 		this.exists = true;
 		this.effectType = 'Learnset';
@@ -682,12 +679,9 @@ export class DexSpecies {
 						!learnset[moveid].some(source => parseInt(source.charAt(0)) >= 4 && parseInt(source.charAt(0)) <= this.dex.gen)
 					) { continue; }
 				}
-				if (eggMovesOnly) {
-					if (learnset[moveid].some(source => source.startsWith('9E'))) { movePool.add(moveid as ID); }
-				} else if (maxGen >= 9) {
-					// Pokemon Home now strips learnsets on withdrawal
-					if (isNatDex || learnset[moveid].some(source => source.startsWith('9'))) { movePool.add(moveid as ID); }
-				} else { if (learnset[moveid].some(source => parseInt(source.charAt(0)) <= maxGen)) { movePool.add(moveid as ID); } }
+				if (eggMovesOnly) { if (learnset[moveid].some(source => source.startsWith('9E'))) { movePool.add(moveid as ID); } } 
+				else if (maxGen >= 9) { if (isNatDex || learnset[moveid].some(source => source.startsWith('9'))) { movePool.add(moveid as ID); } } 
+				else { if (learnset[moveid].some(source => parseInt(source.charAt(0)) <= maxGen)) { movePool.add(moveid as ID); } }
 				if (moveid === 'sketch' && movePool.has('sketch' as ID)) {
 					if (species.isNonstandard === 'CAP') {
 						// Given what this function is generally used for, adding all sketchable moves to Necturna and Necturine's

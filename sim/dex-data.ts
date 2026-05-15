@@ -89,7 +89,6 @@ export abstract class BasicEffect implements EffectData {
 		this.weather = data.weather as ID || undefined;
 		this.sourceEffect = data.sourceEffect || '';
 	}
-
 	toString() { return this.name; }
 }
 export class Nature extends BasicEffect implements Readonly<BasicEffect & NatureData> {

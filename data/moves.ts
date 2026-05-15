@@ -5553,6 +5553,46 @@ export const Moves: import('../sim/dex-moves').ModdedMoveDataTable = {
 		secondary: null,
 		target: "randomNormal",
 	},
+	guardblock: {
+		num: -1, // Pseudo move, not a real Pokemon move (like struggle)
+		accuracy: true,
+		basePower: 0,
+		type: "Normal",
+		category: "Status",
+		name: "Guard Block",
+		pp: 1,
+		noPPBoosts: true,
+		priority: 2, // +2 priority (lower than Protect's +4, allowing some priority moves to bypass)
+		flags: { noassist: 1, failcopycat: 1 },
+		stallingMove: true,
+		volatileStatus: 'protect',
+		onPrepareHit(pokemon) { return !!this.queue.willAct() && this.runEvent('StallMove', pokemon); },
+		onHit(pokemon) { pokemon.addVolatile('stall'); },
+		condition: {
+			duration: 1,
+			onStart(target) { this.add('-singleturn', target, 'Protect'); },
+			onTryHitPriority: 3,
+			onTryHit(target, source, move) {
+				// Guard mechanic: Only protect against moves with protect flag (attacking moves)
+				// Do NOT protect against status moves (Toxic, Thunder Wave, etc.)
+				// This is the key difference from Protect which blocks all flag-less moves
+				// Status moves (which don't have protect flag) return early and pass through
+				if (!move.flags['protect']) {
+					if (['gmaxoneblow', 'gmaxrapidflow'].includes(move.id)) return;
+					if (move.isZ || move.isMax) target.getMoveHitData(move).zBrokeProtect = true;
+					return;
+				}
+				// Block the attacking move
+				if (move.smartTarget) { move.smartTarget = false; } 
+				else { this.add('-activate', target, 'move: Protect'); }
+				const lockedmove = source.getVolatile('lockedmove');
+				if (lockedmove) { if (source.volatiles['lockedmove'].duration === 2) { delete source.volatiles['lockedmove']; } }
+				return this.NOT_FAIL;
+			},
+		},
+		secondary: null,
+		target: "self",
+	},
 	suckerpunch: {
 		num: 389,
 		accuracy: 100,

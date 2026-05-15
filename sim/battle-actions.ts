@@ -283,6 +283,9 @@ export class BattleActions {
 			if (this.battle.activeMove) move = this.battle.activeMove;
 			this.battle.singleEvent('AfterMove', move, null, pokemon, target, move);
 			this.battle.runEvent('AfterMove', pokemon, target, move);
+			// Guard cooldown only decrements when Pokemon successfully use a move
+			// This ensures cooldown doesn't decrease when Pokemon are switched out or immobilized by flinch, para etc
+			if (moveDidSomething && pokemon.guardCooldown && pokemon.guardCooldown > 0) { pokemon.guardCooldown--; }
 			if (move.flags['cantusetwice'] && pokemon.removeVolatile(move.id)) { this.battle.add('-hint', `Some effects can force a Pokemon to use ${move.name} again in a row.`); }
 			// TODO: Refactor to use BattleQueue#prioritizeAction in onAnyAfterMove handlers
 			// Dancer's activation order is completely different from any other event, so it's handled separately
@@ -1393,6 +1396,11 @@ export class BattleActions {
 			const bondModifier = this.battle.gen > 6 ? 0.25 : 0.5;
 			this.battle.debug(`Parental Bond modifier: ${bondModifier}`);
 			baseDamage = this.battle.modify(baseDamage, bondModifier);
+		} else if (move.multihitType === 'sixminded') {
+			// Six Minded modifier
+			const sixmindModifier = 0.2;
+			this.battle.debug(`Six Minded modifier: ${sixmindModifier}`);
+			baseDamage = this.battle.modify(baseDamage, sixmindModifier);
 		}
 		// weather modifier
 		baseDamage = this.battle.runEvent('WeatherModifyDamage', pokemon, target, move, baseDamage);
@@ -1596,5 +1604,41 @@ export class BattleActions {
 		const origSpecies = (pokemon as any).teraOriginalSpecies as string | undefined;
 		if (origSpecies && origSpecies !== pokemon.species.id) { pokemon.formeChange(origSpecies, null, true); }
 		(pokemon as any).teraOriginalSpecies = undefined;
+	}
+	/**
+	 * Guard: Standalone battle action that provides +2 priority protection
+	 * - Only blocks attacking moves (those with protect flag)
+	 * - 2-turn cooldown
+	 * - Cooldown persists through switches
+	 * @param pokemon - The Pokemon attempting to use Guard
+	 * @returns true if can use Guard (cooldown is 0 or undefined), null otherwise
+	 */
+	canGuard(pokemon: Pokemon) {
+		// Guard can only be used if the cooldown is 0 or undefined
+		if (pokemon.guardCooldown && pokemon.guardCooldown > 0) return null;
+		return true;
+	}
+	/**
+	 * Execute the Guard action for a Pokemon
+	 * This is a standalone battle action (not a regular move)
+	 * Uses the guardblock pseudo-move which:
+	 * - Has +2 priority (vs Protect's +4)
+	 * - Only blocks moves with protect flag (attacking moves)
+	 * - Allows status moves to bypass (unique to Guard)
+	 * @param pokemon - The Pokemon using Guard
+	 */
+	guard(pokemon: Pokemon) {
+		// Use the guardblock pseudo-move to perform the Guard action
+		const guardMove = this.dex.getActiveMove('guardblock');
+		if (!guardMove) {
+			this.battle.debug('Guard move not found');
+			return;
+		}
+		// Use the move on the pokemon itself
+		this.useMove(guardMove, pokemon, { sourceEffect: null });
+		// Set the cooldown to 2 turns (will decrement at end of each turn)
+		// This cooldown persists even if the Pokemon switches out
+		pokemon.guardCooldown = 2;
+		this.battle.add('-message', `${pokemon.name} used Guard!`);
 	}
 }

@@ -1019,6 +1019,7 @@ export class Battle {
 				if (!pokemon || !data) return data;
 
 				(data as any).canTeraEmpower = !!(pokemon as any).canTeraEmpower;
+				(data as any).canGuard = this.actions.canGuard(pokemon) !== null;
 				return data;
 			});
 			requests[i] = { active: activeData, side: side.getRequestData() };
@@ -1295,8 +1296,12 @@ export class Battle {
 					const isTerapagos =
 						teraOnFieldMon.species.id === 'terapagosstellar' ||
 						teraOnFieldMon.species.name === 'Terapagos-Stellar';
-					delta = -(isTerapagos ? 30 : 40);
-				} else { delta = hasAnyTera ? 10 : 20; }
+						const isGlimmmegastellara =
+						teraOnFieldMon.species.id === 'glimmoramegastellar' ||
+						teraOnFieldMon.species.name === 'Glimmora-Mega-Stellar';
+					delta = -(isTerapagos ? 35 : 40); // gain : drain
+					delta = -(isGlimmmegastellara ? 20 : 30); 
+				} else { delta = hasAnyTera ? 10 : 20; } 
 				let next = Number(s.teraCharge) + delta;
 				if (next < 0) next = 0;
 				if (next > max) next = max;					s.teraCharge = next;
@@ -2116,6 +2121,7 @@ export class Battle {
 		}
 	}
 	getActionSpeed(action: AnyObject) {
+		if (action.choice === 'guard') { action.priority = 2; }
 		if (action.choice === 'move') {
 			let move = action.move;
 			if (action.zmove) {
@@ -2141,6 +2147,7 @@ export class Battle {
 			// In Gen 6, Quick Guard blocks moves with artificially enhanced priority.
 			if (this.gen > 5) action.move.priority = priority;
 		}
+		if (action.choice === 'guard') { action.priority = 2; }
 		if (!action.pokemon) { action.speed = 1; } 
 		else { action.speed = action.pokemon.getActionSpeed(); }
 	}
@@ -2269,6 +2276,14 @@ export class Battle {
 			sideAny.teraCharge = Math.max(0, charge - COST);
 			this.add('-message', `${pokemon.side.name} charged ${pokemon.name} with Tera energy!`);
 			pokemon.addVolatile('teraempowered');
+			break;
+		}
+		case 'guard': {
+			const pokemon = action.pokemon;
+			if (!pokemon.isActive) return false;
+			if (pokemon.fainted) return false;
+			if (!this.actions.canGuard(pokemon)) return false;
+			this.actions.guard(pokemon);
 			break;
 		}
 		case 'beforeTurnMove':

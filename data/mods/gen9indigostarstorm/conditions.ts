@@ -696,9 +696,9 @@ export const Conditions = {
 					else { pokemon.trySetStatus('psn', side.foe.active[0]); }
 				}
 			}
-			if (side.sideConditions['steelspikes']) {
+			if (side.sideConditions['caltrops']) {
 				if (!pokemon.hasItem('heavydutyboots')) {
-					const layers = side.sideConditions['steelspikes'].layers || 1;
+					const layers = side.sideConditions['caltrops'].layers || 1;
 					const damageAmounts = [0, 3, 4, 6]; // 1/8, 1/6, 1/4
 					this.damage(damageAmounts[layers] * pokemon.maxhp / 24);
 				}
@@ -935,6 +935,13 @@ export const Conditions = {
 		onStart(pokemon) { this.add('-start', pokemon, 'Windswept'); },
 		onEnd(pokemon) { this.add('-end', pokemon, 'Windswept'); },
 	},
+	magnetriseairborne: {
+		name: 'Magnet Rise (Airborne)',
+		effectType: 'Volatile',
+		noCopy: true,
+		onStart(pokemon) { this.add('-start', pokemon, 'Magnet Rise'); },
+		onEnd(pokemon) { this.add('-end', pokemon, 'Magnet Rise'); },
+	},
 	// #region PP Exhaution
 	defeathered: {
 		name: 'Defeathered',
@@ -982,7 +989,7 @@ export const Conditions = {
 	snowscape: {
 		name: 'Snowscape',
 		effectType: 'Weather',
-		duration: 5,
+		duration: 7,
 		durationCallback(source, effect) {
 			if (source?.hasItem('icyrock')) { return 11; }
 			return 7;
@@ -1009,6 +1016,82 @@ export const Conditions = {
 		},
 		onWeather(target) { if (target.hasType('ice')) { this.heal(target.baseMaxhp / 16); } },
 		onFieldEnd() { this.add('-weather', 'none'); },
+	},
+	eclipse: {
+		name: 'Eclipse',
+		effectType: 'Weather',
+		duration: 0,
+		onTryMovePriority: 1,
+		onTryMove(attacker, defender, move) {
+			if (move.flags && (move.flags.light || move.flags.shadow)) {
+				this.debug('eclipse light/shadow suppress');
+				this.add('-fail', attacker, move, '[from] Eclipse');
+				this.attrLastMove('[still]');
+				return null;
+			}
+		},
+		onFieldStart(field, source, effect) {
+			this.add('-weather', 'Eclipse', '[from] ability: ' + effect.name, `[of] ${source}`);
+			const suppressed = ['illuminate', 'shadowtag', 'shadowshield', 'shadowwalker', 'illuminate'];
+			for (const target of this.getAllActive()) {
+				if (target.hasItem('abilityshield')) continue;
+				const activeSlots = (target as any).getActiveAbilitySlots?.() || [];
+				for (const slot of activeSlots) {
+					if (!slot.state) continue;
+					if (!suppressed.includes(slot.id)) continue;
+					if (slot.effect.flags['cantsuppress']) continue;
+					this.singleEvent('End', slot.effect, slot.state, target, source, 'eclipse');
+				}
+			}
+		},
+		onSwitchIn(pokemon) {
+			if (!this.field.isWeather('eclipse')) return;
+			const suppressed = ['shadowtag', 'shadowshield', 'shadowwalker', 'illuminate'];
+			if (pokemon.hasItem('abilityshield')) return;
+			const activeSlots = (pokemon as any).getActiveAbilitySlots?.() || [];
+			for (const slot of activeSlots) {
+				if (!slot.state) continue;
+				if (!suppressed.includes(slot.id)) continue;
+				if (slot.effect.flags['cantsuppress']) continue;
+				this.singleEvent('End', slot.effect, slot.state, pokemon, null, 'eclipse');
+			}
+		},
+		onWeatherModifyDamage(damage, attacker, defender, move) {
+			if (move.type === 'Dark' || move.type === 'Fairy') {
+				this.debug('eclipse dark/fairy boost');
+				return this.chainModify(1.3);
+			}
+		},
+		onFieldResidualOrder: 1,
+		onFieldResidual() {
+			if (this.field.getPseudoWeather('timebreak')) return;
+			this.add('-weather', 'Eclipse', '[upkeep]');
+			if (this.field.isWeather('eclipse')) this.eachEvent('Weather');
+		},
+		onUpdate(pokemon) {
+			if (!this.field.isWeather('eclipse')) return;
+			if (['illuminate', 'shadowtag', 'shadowwalker'].includes(pokemon.getAbility().id)) { pokemon.trapped = false; }
+		},
+		onWeather(target) {
+			if (target.hasAbility(['illuminate', 'astralaspect', 'lunaraspect', 'lunamancy', 'nightbloom'])) { this.heal(target.baseMaxhp / 12); } 
+			else if (target.hasAbility(['chlorophyll', 'solaraspect', 'solarpower'])) { this.damage(target.baseMaxhp / 12); }
+		},
+		onFieldEnd() {
+			this.add('-weather', 'none');
+			const suppressed = ['shadowtag', 'shadowshield', 'shadowwalker', 'illuminate'];
+			const sortedActive = this.getAllActive();
+			this.speedSort(sortedActive);
+			for (const pokemon of sortedActive) {
+				if (pokemon.hasItem('abilityshield')) continue;
+				const activeSlots = (pokemon as any).getActiveAbilitySlots?.() || [];
+				for (const slot of activeSlots) {
+					if (!slot.state) continue;
+					if (!suppressed.includes(slot.id)) continue;
+					if (slot.effect.flags['cantsuppress']) continue;
+					this.singleEvent('Start', slot.effect, slot.state, pokemon);
+				}
+			}
+		},
 	},
 	raindance: {
 		name: 'RainDance',
@@ -1216,7 +1299,6 @@ export const Conditions = {
 			this.eachEvent('Weather');
 		},
 		onWeather(target) {
-			// Double healing and damage effects compared to SunnyDay
 			if (target.hasType('Ice') && !target.hasType('Fire')) { this.damage(target.baseMaxhp / 8); }
 			if (target.hasType('Steel') && !target.hasType('Fire')) { this.damage(target.baseMaxhp / 16); }
 			if (target.hasType('grass')) { this.heal(target.baseMaxhp / 8);}
@@ -1231,15 +1313,15 @@ export const Conditions = {
 			if (source?.hasItem('floatstone')) { return 11; }
 			return 7;
 		},
-		// Make Bug types airborne while Turbulent Winds is active (immune to all grounded effects)
+		// Make Bug types airborne
 		onImmunity(type, pokemon) {
 			if (this.field.isWeather('turbulentwinds') && pokemon.hasType('Bug')) { // Bug types are treated as airborne for all grounded effects
 				const groundedEffects = [
-					'ground', // Ground-type moves
-					'spikes', 'toxicspikes', // Entry hazards
-					'arenatrap', // Trapping ability
-					'stickyweb', // Sticky Web
-					'terrain', // Terrain effects
+					'ground', 
+					'spikes', 'toxicspikes', 
+					'arenatrap',
+					'stickyweb',
+					'terrain', 
 				];
 				if (groundedEffects.includes(type)) { return false; }
 			}
@@ -1628,6 +1710,23 @@ export const Conditions = {
 		onFieldEnd() { this.add('-fieldend', 'terrain', 'toxicterrain'); },
 	},
 	//#region Other Field Effects
+	magnetrise: {
+		name: "Magnet Rise",
+		effectType: "Field",
+		duration: 4,
+		onFieldStart(field, source, effect) {
+			if (effect?.effectType === 'Ability') { this.add('-fieldstart', 'move: Magnet Rise', '[from] ability: Magnet Rise'); }
+			else { this.add('-fieldstart', 'move: Magnet Rise'); }
+			for (const pokemon of this.getAllActive()) { if (pokemon.hasType('Steel') || pokemon.hasAbility(['magnetrise', 'magneticpulse', 'magnetpull', 'minus', 'plus'])) { pokemon.addVolatile('magnetriseairborne'); } }
+		},
+		onImmunity(type, pokemon) { if (type === 'Ground' && (pokemon.hasType('Steel') ||  pokemon.hasAbility(['magnetrise', 'magneticpulse', 'magnetpull', 'minus', 'plus']))) { return false; } },
+		onFieldResidualOrder: 27,
+		onFieldResidualSubOrder: 7,
+		onFieldEnd() { 
+			this.add('-fieldend', 'move: Magnet Rise');
+			for (const pokemon of this.getAllActive()) { if (pokemon.volatiles['magnetriseairborne']) { pokemon.removeVolatile('magnetriseairborne'); } }
+		},
+	},
 	gravity: {
 		name: "Gravity",
 		effectType: "Field",

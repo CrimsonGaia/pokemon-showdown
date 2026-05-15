@@ -4,7 +4,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 495,
 		name: "Snivy",
 		types: ["Grass"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "F",
 		baseStats: { hp: 45, atk: 45, def: 55, spa: 30, spd: 55, spe: 88 },
 		abilities: { // ABILITY SET 1
             0: "Overgrow",
@@ -24,7 +24,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 496,
 		name: "Servine",
 		types: ["Grass"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "F",
 		baseStats: { hp: 60, atk: 60, def: 75, spa: 60, spd: 75, spe: 83 },
 		abilities: { // ABILITY SET 1
             0: "Overgrow",
@@ -46,7 +46,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 497,
 		name: "Serperior",
 		types: ["Grass"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "F",
 		baseStats: { hp: 75, atk: 88, def: 83, spa: 88, spd: 83, spe: 113 },
 		abilities: { // ABILITY SET 1
             0: "Queenly Majesty",
@@ -67,7 +67,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 498,
 		name: "Tepig",
 		types: ["Fire"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "M",
 		baseStats: { hp: 65, atk: 63, def: 45, spa: 45, spd: 45, spe: 45 },
 		abilities: { // ABILITY SET 1
             0: "Thick Fat",
@@ -84,7 +84,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 499,
 		name: "Pignite",
 		types: ["Fire", "Fighting"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "M",
 		baseStats: { hp: 90, atk: 93, def: 55, spa: 70, spd: 55, spe: 55 },
 		abilities: { // ABILITY SET 1
             0: "Thick Fat",
@@ -103,7 +103,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 500,
 		name: "Emboar",
 		types: ["Fire", "Fighting"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "M",
 		baseStats: { hp: 113, atk: 123, def: 75, spa: 83, spd: 75, spe: 65 },
 		abilities: { // ABILITY SET 1
             0: "Reckless",
@@ -302,7 +302,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 532,
 		name: "Timburr",
 		types: ["Fighting"],
-		genderRatio: { M: 0.75, F: 0.25 },
+		gender: "M",
 		baseStats: { hp: 75, atk: 80, def: 55, spa: 25, spd: 35, spe: 45 },
 		abilities: { // ABILITY SET 1
             0: "Guts",
@@ -322,7 +322,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 533,
 		name: "Gurdurr",
 		types: ["Fighting"],
-		genderRatio: { M: 0.75, F: 0.25 },
+		gender: "M",
 		baseStats: { hp: 85, atk: 105, def: 85, spa: 25, spd: 65, spe: 40 },
 		abilities: { // ABILITY SET 1
             0: "Guts",
@@ -344,7 +344,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 534,
 		name: "Conkeldurr",
 		types: ["Fighting"],
-		genderRatio: { M: 0.75, F: 0.25 },
+		gender: "M",
 		baseStats: { hp: 105, atk: 140, def: 97, spa: 55, spd: 75, spe: 33 },
 		abilities: { // ABILITY SET 1
             0: "Guts",
@@ -365,6 +365,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 540,
 		name: "Sewaddle",
 		types: ["Bug", "Grass"],
+		gender: "F",
 		baseStats: { hp: 45, atk: 53, def: 70, spa: 40, spd: 60, spe: 42 },
 		abilities: { // ABILITY SET 1
             0: "Swarm",
@@ -384,6 +385,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 541,
 		name: "Swadloon",
 		types: ["Bug", "Grass"],
+		gender: "F",
 		baseStats: { hp: 60, atk: 53, def: 90, spa: 74, spd: 80, spe: 42 },
 		abilities: { // ABILITY SET 1
             0: "Leaf Guard",
@@ -405,6 +407,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 542,
 		name: "Leavanny",
 		types: ["Bug", "Grass"],
+		gender: "F",
 		baseStats: { hp: 75, atk: 108, def: 80, spa: 74, spd: 80, spe: 92 },
 		abilities: { // ABILITY SET 1
             0: "Swarm",
@@ -425,6 +428,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 546,
 		name: "Cottonee",
 		types: ["Grass", "Fairy"],
+		gender: "F",
 		baseStats: { hp: 40, atk: 27, def: 60, spa: 37, spd: 50, spe: 66 },
 		abilities: { // ABILITY SET 1
             0: "Infiltrator",
@@ -444,6 +448,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 547,
 		name: "Whimsicott",
 		types: ["Grass", "Fairy"],
+		gender: "F",
 		baseStats: { hp: 60, atk: 67, def: 85, spa: 77, spd: 75, spe: 116 },
 		abilities: { // ABILITY SET 1
             0: "Infiltrator",
@@ -596,6 +601,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 551,
 		name: "Sandile",
 		types: ["Ground", "Dark"],
+		gender: "M",
 		baseStats: { hp: 50, atk: 72, def: 35, spa: 35, spd: 35, spe: 65 },
 		abilities: { // ABILITY SET 1
             0: "Intimidate",
@@ -615,6 +621,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 552,
 		name: "Krokorok",
 		types: ["Ground", "Dark"],
+		gender: "M",
 		baseStats: { hp: 60, atk: 82, def: 45, spa: 45, spd: 45, spe: 74 },
 		abilities: { // ABILITY SET 1
             0: "Intimidate",
@@ -636,6 +643,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 553,
 		name: "Krookodile",
 		types: ["Ground", "Dark"],
+		gender: "M",
 		baseStats: { hp: 95, atk: 117, def: 80, spa: 65, spd: 70, spe: 92 },
 		abilities: { // ABILITY SET 1
             0: "Intimidate",
@@ -656,6 +664,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 559,
 		name: "Scraggy",
 		types: ["Dark", "Fighting"],
+		gender: "M",
 		baseStats: { hp: 50, atk: 75, def: 70, spa: 35, spd: 70, spe: 48 },
 		abilities: { // ABILITY SET 1
             0: "Intimidate",
@@ -675,6 +684,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 560,
 		name: "Scrafty",
 		types: ["Dark", "Fighting"],
+		gender: "M",
 		baseStats: { hp: 65, atk: 90, def: 115, spa: 45, spd: 115, spe: 58 },
 		abilities: { // ABILITY SET 1
             0: "Intimidate",
@@ -697,7 +707,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 570,
 		name: "Zorua",
 		types: ["Dark"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "F",
 		baseStats: { hp: 40, atk: 65, def: 40, spa: 80, spd: 40, spe: 65 },
 		abilities: { // ABILITY SET 1
             0: "Illusion",
@@ -718,7 +728,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Zorua",
 		forme: "Hisui",
 		types: ["Normal", "Ghost"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "F",
 		baseStats: { hp: 35, atk: 60, def: 40, spa: 85, spd: 40, spe: 70 },
 		abilities: { // ABILITY SET 1
             0: "Illusion",
@@ -735,7 +745,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 571,
 		name: "Zoroark",
 		types: ["Dark"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "F",
 		baseStats: { hp: 66, atk: 127, def: 66, spa: 127, spd: 66, spe: 105 },
 		abilities: { // ABILITY SET 1
             0: "Illusion",
@@ -757,7 +767,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Zoroark",
 		forme: "Hisui",
 		types: ["Normal", "Ghost"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "F",
 		baseStats: { hp: 55, atk: 120, def: 65, spa: 130, spd: 70, spe: 110 },
 		abilities: { // ABILITY SET 1
             0: "Illusion",
@@ -775,7 +785,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 572,
 		name: "Minccino",
 		types: ["Normal"],
-		genderRatio: { M: 0.25, F: 0.75 },
+		gender: "F",
 		baseStats: { hp: 55, atk: 50, def: 40, spa: 40, spd: 40, spe: 75 },
 		abilities: { // ABILITY SET 1
             0: "Technician",
@@ -795,7 +805,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 573,
 		name: "Cinccino",
 		types: ["Normal"],
-		genderRatio: { M: 0.25, F: 0.75 },
+		gender: "F",
 		baseStats: { hp: 75, atk: 95, def: 60, spa: 65, spd: 60, spe: 115 },
 		abilities: { // ABILITY SET 1
             0: "Technician",
@@ -817,7 +827,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 574,
 		name: "Gothita",
 		types: ["Psychic"],
-		genderRatio: { M: 0.25, F: 0.75 },
+		gender: "F",
 		baseStats: { hp: 45, atk: 30, def: 50, spa: 55, spd: 65, spe: 45 },
 		abilities: { // ABILITY SET 1
             0: "Frisk",
@@ -837,7 +847,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 575,
 		name: "Gothorita",
 		types: ["Psychic"],
-		genderRatio: { M: 0.25, F: 0.75 },
+		gender: "F",
 		baseStats: { hp: 60, atk: 45, def: 70, spa: 75, spd: 85, spe: 55 },
 		abilities: { // ABILITY SET 1
             0: "Frisk",
@@ -859,7 +869,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 576,
 		name: "Gothitelle",
 		types: ["Psychic"],
-		genderRatio: { M: 0.25, F: 0.75 },
+		gender: "F",
 		baseStats: { hp: 70, atk: 55, def: 95, spa: 95, spd: 110, spe: 65 },
 		abilities: { // ABILITY SET 1
             0: "Frisk",
@@ -940,6 +950,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 580,
 		name: "Ducklett",
 		types: ["Water", "Flying"],
+		gender: "F",
 		baseStats: { hp: 62, atk: 59, def: 50, spa: 59, spd: 50, spe: 55 },
 		abilities: { // ABILITY SET 1
             0: "Hydration",
@@ -959,6 +970,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 581,
 		name: "Swanna",
 		types: ["Water", "Flying"],
+		gender: "F",
 		baseStats: { hp: 92, atk: 93, def: 67, spa: 87, spd: 84, spe: 98 },
 		abilities: { // ABILITY SET 1
             0: "Hydration",
@@ -1081,6 +1093,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 594,
 		name: "Alomomola",
 		types: ["Water"],
+		gender: "F",
 		baseStats: { hp: 165, atk: 75, def: 80, spa: 40, spd: 45, spe: 65 },
 		abilities: { // ABILITY SET 1
             0: "Healer",
@@ -1154,7 +1167,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 603,
 		name: "Eelektrik",
 		types: ["Electric"],
-		baseStats: { hp: 65, atk: 85, def: 70, spa: 75, spd: 70, spe: 40 },
+		baseStats: { hp: 65, atk: 85, def: 70, spa: 75, spd: 70, spe: 80 },
 		abilities: { // ABILITY SET 1
             0: "Swift Swim",
             1: "Levitate",
@@ -1175,7 +1188,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 604,
 		name: "Eelektross",
 		types: ["Electric"],
-		baseStats: { hp: 85, atk: 115, def: 80, spa: 105, spd: 80, spe: 50 },
+		baseStats: { hp: 85, atk: 115, def: 80, spa: 105, spd: 80, spe: 75 },
 		abilities: { // ABILITY SET 1
             0: "Sticky Hold",
             1: "Levitate",
@@ -1198,6 +1211,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 607,
 		name: "Litwick",
 		types: ["Ghost", "Fire"],
+		gender: "N",
 		baseStats: { hp: 50, atk: 30, def: 55, spa: 65, spd: 55, spe: 20 },
 		abilities: { // ABILITY SET 1
             0: "Soul Eater",
@@ -1217,6 +1231,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 608,
 		name: "Lampent",
 		types: ["Ghost", "Fire"],
+		gender: "N",
 		baseStats: { hp: 60, atk: 40, def: 60, spa: 95, spd: 60, spe: 55 },
 		abilities: { // ABILITY SET 1
             0: "Soul Eater",
@@ -1238,6 +1253,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 609,
 		name: "Chandelure",
 		types: ["Ghost", "Fire"],
+		gender: "N",
 		baseStats: { hp: 60, atk: 55, def: 90, spa: 145, spd: 90, spe: 80 },
 		abilities: { // ABILITY SET 1
             0: "Soul Eater",
@@ -1405,7 +1421,6 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		eggGroups: ["Field", "Human-Like"],
 		tags: ["2nd Stage", "Fully Evolved"],
 	},
-	
 	golett: {
 		num: 622,
 		name: "Golett",
@@ -1451,6 +1466,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 624,
 		name: "Pawniard",
 		types: ["Dark", "Steel"],
+		gender: "M",
 		baseStats: { hp: 45, atk: 85, def: 70, spa: 40, spd: 40, spe: 60 },
 		abilities: { // ABILITY SET 1
             0: "Sharpness",
@@ -1470,6 +1486,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 625,
 		name: "Bisharp",
 		types: ["Dark", "Steel"],
+		gender: "M",
 		baseStats: { hp: 65, atk: 125, def: 100, spa: 60, spd: 70, spe: 70 },
 		abilities: { // ABILITY SET 1
             0: "Sharpness",
@@ -1701,7 +1718,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 638,
 		name: "Cobalion",
 		types: ["Steel", "Fighting"],
-		gender: "N",
+		gender: "M",
 		baseStats: { hp: 91, atk: 100, def: 129, spa: 100, spd: 72, spe: 108 },
 		abilities: { // ABILITY SET 1
             0: "Aura Break",
@@ -1717,7 +1734,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 639,
 		name: "Terrakion",
 		types: ["Rock", "Fighting"],
-		gender: "N",
+		gender: "M",
 		baseStats: { hp: 109, atk: 129, def: 92, spa: 72, spd: 90, spe: 108 },
 		abilities: { // ABILITY SET 1
             0: "Sheer Force",
@@ -1736,7 +1753,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 640,
 		name: "Virizion",
 		types: ["Grass", "Fighting"],
-		gender: "N",
+		gender: "M",
 		baseStats: { hp: 91, atk: 104, def: 72, spa: 80, spd: 129, spe: 114 },
 		abilities: { // ABILITY SET 1
             0: "Quick Feet",
@@ -1831,7 +1848,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 643,
 		name: "Reshiram",
 		types: ["Dragon", "Fire"],
-		gender: "N",
+		gender: "F",
 		baseStats: { hp: 122, atk: 92, def: 102, spa: 152, spd: 122, spe: 90 },
 		abilities: { // ABILITY SET 1
             0: "Cloud Nine",
@@ -1847,7 +1864,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 644,
 		name: "Zekrom",
 		types: ["Dragon", "Electric"],
-		gender: "N",
+		gender: "M",
 		baseStats: { hp: 122, atk: 152, def: 122, spa: 92, spd: 102, spe: 90 },
 		abilities: { // ABILITY SET 1
             0: "Motor Drive",
@@ -1921,7 +1938,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Kyurem",
 		forme: "Black",
 		types: ["Dragon", "Ice"],
-		gender: "N",
+		gender: "M",
 		baseStats: { hp: 127, atk: 172, def: 112, spa: 92, spd: 102, spe: 95 },
 		abilities: { // ABILITY SET 1
             0: "Motor Drive",
@@ -1940,7 +1957,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseSpecies: "Kyurem",
 		forme: "White",
 		types: ["Dragon", "Ice"],
-		gender: "N",
+		gender: "F",
 		baseStats: { hp: 127, atk: 92, def: 102, spa: 172, spd: 112, spe: 95 },
 		abilities: { // ABILITY SET 1
             0: "Flash Fire",
@@ -1958,7 +1975,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		name: "Keldeo",
 		baseForme: "Ordinary",
 		types: ["Water", "Fighting"],
-		gender: "N",
+		gender: "M",
 		baseStats: { hp: 91, atk: 72, def: 90, spa: 129, spd: 90, spe: 108 },
 		abilities: { // ABILITY SET 1
             0: "Quick Feet",
@@ -2033,7 +2050,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 650,
 		name: "Chespin",
 		types: ["Grass"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "M",
 		baseStats: { hp: 56, atk: 61, def: 65, spa: 48, spd: 45, spe: 38 },
 		abilities: { // ABILITY SET 1
             0: "Thorns",
@@ -2050,7 +2067,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 651,
 		name: "Quilladin",
 		types: ["Grass"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "M",
 		baseStats: { hp: 61, atk: 78, def: 95, spa: 56, spd: 58, spe: 57 },
 		abilities: { // ABILITY SET 1
             0: "Thorns",
@@ -2072,7 +2089,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 652,
 		name: "Chesnaught",
 		types: ["Grass", "Fighting"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "M",
 		baseStats: { hp: 88, atk: 107, def: 122, spa: 64, spd: 85, spe: 64 },
 		abilities: { // ABILITY SET 1
             0: "Thorns",
@@ -2095,7 +2112,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 653,
 		name: "Fennekin",
 		types: ["Fire"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "F",
 		baseStats: { hp: 40, atk: 45, def: 40, spa: 62, spd: 60, spe: 60 },
 		abilities: { // ABILITY SET 1
             0: "Flame Body",
@@ -2112,7 +2129,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 654,
 		name: "Braixen",
 		types: ["Fire"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "F",
 		baseStats: { hp: 59, atk: 59, def: 58, spa: 90, spd: 70, spe: 73 },
 		abilities: { // ABILITY SET 1
             0: "Flame Body",
@@ -2134,7 +2151,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 655,
 		name: "Delphox",
 		types: ["Fire", "Psychic"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "F",
 		baseStats: { hp: 75, atk: 69, def: 72, spa: 114, spd: 100, spe: 104 },
 		abilities: { // ABILITY SET 1
             0: "Telepathy",
@@ -2157,7 +2174,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 656,
 		name: "Froakie",
 		types: ["Water"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "M",
 		baseStats: { hp: 41, atk: 56, def: 40, spa: 62, spd: 44, spe: 71 },
 		abilities: { // ABILITY SET 1
             0: "Damp",
@@ -2174,7 +2191,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 657,
 		name: "Frogadier",
 		types: ["Water"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "M",
 		baseStats: { hp: 54, atk: 63, def: 52, spa: 83, spd: 56, spe: 97 },
 		abilities: { // ABILITY SET 1
             0: "Damp",
@@ -2193,7 +2210,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 658,
 		name: "Greninja",
 		types: ["Water", "Dark"],
-		genderRatio: { M: 0.875, F: 0.125 },
+		gender: "M",
 		baseStats: { hp: 72, atk: 90, def: 67, spa: 103, spd: 71, spe: 122 },
 		abilities: { // ABILITY SET 1
             0: "Damp",
@@ -2600,7 +2617,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseForme: "Red",
 		types: ["Fairy"],
 		gender: "F",
-		baseStats: { hp: 44, atk: 38, def: 39, spa: 61, spd: 79, spe: 42 },
+		baseStats: { hp: 48, atk: 9, def: 39, spa: 61, spd: 79, spe: 67 },
 		abilities: { // ABILITY SET 1
             0: "Symbiosis",
             1: "Flower Veil",
@@ -2620,7 +2637,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseForme: "Red",
 		types: ["Fairy"],
 		gender: "F",
-		baseStats: { hp: 54, atk: 45, def: 47, spa: 75, spd: 98, spe: 52 },
+		baseStats: { hp: 68, atk: 19, def: 47, spa: 75, spd: 98, spe: 82 },
 		abilities: { // ABILITY SET 1
             0: "Symbiosis",
             1: "Flower Veil",
@@ -2644,7 +2661,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		forme: "Eternal",
 		types: ["Fairy"],
 		gender: "F",
-		baseStats: { hp: 74, atk: 65, def: 67, spa: 125, spd: 128, spe: 92 },
+		baseStats: { hp: 88, atk: 39, def: 67, spa: 105, spd: 118, spe: 92 },
 		abilities: { // ABILITY SET 1
             0: "Symbiosis",
             1: "Flower Veil",
@@ -2661,7 +2678,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		baseForme: "Red",
 		types: ["Fairy"],
 		gender: "F",
-		baseStats: { hp: 78, atk: 65, def: 68, spa: 112, spd: 154, spe: 75 },
+		baseStats: { hp: 108, atk: 39, def: 75, spa: 124, spd: 154, spe: 52 },
 		abilities: { // ABILITY SET 1
             0: "Symbiosis",
             1: "Flower Veil",
@@ -2805,7 +2822,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 687,
 		name: "Malamar",
 		types: ["Dark", "Psychic"],
-		baseStats: { hp: 86, atk: 92, def: 88, spa: 68, spd: 75, spe: 73 },
+		baseStats: { hp: 86, atk: 92, def: 88, spa: 84, spd: 73, spe: 73 },
 		abilities: { // ABILITY SET 1
             0: "Suction Cups",
             1: "Contrary",
@@ -2928,6 +2945,7 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		num: 701,
 		name: "Hawlucha",
 		types: ["Fighting", "Flying"],
+		gender: "M",
 		baseStats: { hp: 78, atk: 92, def: 75, spa: 74, spd: 63, spe: 118 },
 		abilities: { // ABILITY SET 1
             0: "Limber",
@@ -3323,7 +3341,4 @@ export const Pokedex: import('../../../sim/dex-species').SpeciesDataTable = {
 		tags: ["Mythical", "Single Stage Pokemon", "Fully Evolved"],
 		eggGroups: ["Undiscovered"],
 	},
-
-
-
 };
