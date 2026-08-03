@@ -1,5 +1,4 @@
 (function ($) {
-
 	var BattleRoom = this.BattleRoom = ConsoleRoom.extend({
 		type: 'battle',
 		title: '',
@@ -13,6 +12,9 @@
 			this.terastallizeArmedIndex = null;
 			this.teraEmpowerArmedIndex = null;
 			this.canTeraEmpower = false;
+			this.megaEvoArmedIndex = null;
+			this.megaEvoArmedLetter = null;
+			this.canMegaEvoLetter = null;
 			this.battlePaused = false;
 			this.autoTimerActivated = false;
 			this.isSideRoom = Dex.prefs('rightpanelbattles');
@@ -52,12 +54,10 @@
 		events: {
 			'click .replayDownloadButton': 'clickReplayDownloadButton',
 			'click .terachargebutton': 'toggleTeraCharge',
+			'click .megachargebutton': 'toggleMegaEvo',
+			'click .guardbutton': 'chooseGuard',
 			'mouseenter .terachargebutton': 'teraChargeHoverOn',
 			'mouseleave .terachargebutton': 'teraChargeHoverOff',
-			'change input[name=megaevox]': 'uncheckMegaEvoY',
-			'change input[name=megaevoy]': 'uncheckMegaEvoX',
-			'change input[name=zmove]': 'updateZMove',
-			'change input[name=dynamax]': 'updateMaxMove'
 		},
 		battleEnded: false,
 		join: function () { app.send('/join ' + this.id); },
@@ -133,131 +133,106 @@
 			this.updateControls();
 		},
 		add: function (data) {
-	if (!data) return;
-
-	// init packet
-	if (data.substr(0, 6) === '|init|') return this.init(data);
-
-	// leave gatekeeping
-	if (data.substr(0, 11) === '|cantleave|') {
-		this.requireForfeit = true;
-		return;
-	}
-	if (data.substr(0, 12) === '|allowleave|') {
-		this.requireForfeit = false;
-		return;
-	}
-
-	// fast-path: server can send request as a standalone packet
-	if (data.substr(0, 9) === '|request|') {
-		var reqBlock = data.slice(9);
-		var requestData = null;
-		var choiceText = null;
-
-		var nlIndex = reqBlock.indexOf('\n');
-		if (/[0-9]/.test(reqBlock.charAt(0)) && reqBlock.charAt(1) === '|') {
-			// backwards compat
-			choiceText = '?';
-			reqBlock = reqBlock.slice(2, nlIndex);
-		} else if (nlIndex >= 0) {
-			// optional next line: |sentchoice|...
-			if (reqBlock.slice(nlIndex + 1, nlIndex + 13) === '|sentchoice|') {
-				choiceText = reqBlock.slice(nlIndex + 13);
+			if (!data) return;
+			// init packet
+			if (data.substr(0, 6) === '|init|') return this.init(data);
+			// leave gatekeeping
+			if (data.substr(0, 11) === '|cantleave|') {
+				this.requireForfeit = true;
+				return;
 			}
-			reqBlock = reqBlock.slice(0, nlIndex);
-		}
-
-		try { requestData = JSON.parse(reqBlock); } catch (e) {}
-		return this.receiveRequest(requestData, choiceText);
-	}
-
-	var log = data.split('\n');
-
-	for (var i = 0; i < log.length; i++) {
-		var logLine = log[i];
-
-		// streamed request inside mixed packets
-		if (logLine.substr(0, 9) === '|request|') {
-			var reqText = logLine.slice(9);
-			var choiceText2 = null;
-
-			// optional next line: |sentchoice|...
-			if (i + 1 < log.length && log[i + 1].substr(0, 12) === '|sentchoice|') {
-				choiceText2 = log[i + 1].slice(12);
-				i++; // consume it
+			if (data.substr(0, 12) === '|allowleave|') {
+				this.requireForfeit = false;
+				return;
 			}
-
-			var requestData2 = null;
-			try { requestData2 = JSON.parse(reqText); } catch (e2) {}
-
-			this.receiveRequest(requestData2, choiceText2);
-			continue; // CRITICAL: don't process this line further
-		}
-
-		if (logLine === '|') {
-			this.callbackWaiting = false;
-			this.controlsShown = false;
-			this.$controls.html('');
-			continue;
-		}
-
-		if (logLine.substr(0, 10) === '|callback|') {
-			var args = logLine.substr(10).split('|');
-			var pokemon = isNaN(Number(args[1])) ? this.battle.getPokemon(args[1]) : this.battle.nearSide.active[args[1]];
-			var requestData3 = this.request && this.request.active ? this.request.active[pokemon ? pokemon.slot : 0] : null;
-
-			this.choice = undefined;
-
-			switch (args[0]) {
-			case 'trapped': {
-				if (requestData3) requestData3.trapped = true;
-				var pokeName = pokemon.side.n === 0 ?
-					BattleLog.escapeHTML(pokemon.name) :
-					"The opposing " + (this.battle.ignoreOpponent || this.battle.ignoreNicks ? pokemon.speciesForme : BattleLog.escapeHTML(pokemon.name));
-				this.battle.stepQueue.push('|message|' + pokeName + ' is trapped and cannot switch!');
-				break;
-			}
-			case 'cant': {
-				if (requestData3 && requestData3.moves) {
-					// IMPORTANT: do NOT reuse outer loop variable `i`
-					for (var j = 0; j < requestData3.moves.length; j++) {
-						if (requestData3.moves[j].id === args[3]) requestData3.moves[j].disabled = true;
+			// fast-path: server can send request as a standalone packet
+			if (data.substr(0, 9) === '|request|') {
+				var reqBlock = data.slice(9);
+				var requestData = null;
+				var choiceText = null;
+				var nlIndex = reqBlock.indexOf('\n');
+				if (/[0-9]/.test(reqBlock.charAt(0)) && reqBlock.charAt(1) === '|') {
+					// backwards compat
+					choiceText = '?';
+					reqBlock = reqBlock.slice(2, nlIndex);
+				} else if (nlIndex >= 0) {
+					// optional next line: |sentchoice|...
+					if (reqBlock.slice(nlIndex + 1, nlIndex + 13) === '|sentchoice|') {
+						choiceText = reqBlock.slice(nlIndex + 13);
 					}
+					reqBlock = reqBlock.slice(0, nlIndex);
 				}
-				args.splice(1, 1, pokemon.getIdent());
-				this.battle.stepQueue.push('|' + args.join('|'));
-				break;
+				try { requestData = JSON.parse(reqBlock); } catch (e) {}
+				return this.receiveRequest(requestData, choiceText);
 			}
+			var log = data.split('\n');
+			for (var i = 0; i < log.length; i++) {
+				var logLine = log[i];
+				// streamed request inside mixed packets
+				if (logLine.substr(0, 9) === '|request|') {
+					var reqText = logLine.slice(9);
+					var choiceText2 = null;
+					// optional next line: |sentchoice|...
+					if (i + 1 < log.length && log[i + 1].substr(0, 12) === '|sentchoice|') {
+						choiceText2 = log[i + 1].slice(12);
+						i++; // consume it
+					}
+					var requestData2 = null;
+					try { requestData2 = JSON.parse(reqText); } catch (e2) {}
+					this.receiveRequest(requestData2, choiceText2);
+					continue; // CRITICAL: don't process this line further
+				}
+				if (logLine === '|') {
+					this.callbackWaiting = false;
+					this.controlsShown = false;
+					this.$controls.html('');
+					continue;
+				}
+				if (logLine.substr(0, 10) === '|callback|') {
+					var args = logLine.substr(10).split('|');
+					var pokemon = isNaN(Number(args[1])) ? this.battle.getPokemon(args[1]) : this.battle.nearSide.active[args[1]];
+					var requestData3 = this.request && this.request.active ? this.request.active[pokemon ? pokemon.slot : 0] : null;
+					this.choice = undefined;
+					switch (args[0]) {
+						case 'trapped': {
+							if (requestData3) requestData3.trapped = true;
+							var pokeName = pokemon.side.n === 0 ?
+								BattleLog.escapeHTML(pokemon.name) :
+								"The opposing " + (this.battle.ignoreOpponent || this.battle.ignoreNicks ? pokemon.speciesForme : BattleLog.escapeHTML(pokemon.name));
+							this.battle.stepQueue.push('|message|' + pokeName + ' is trapped and cannot switch!');
+							break;
+						}
+						case 'cant': { // IMPORTANT: do NOT reuse outer loop variable `i`
+							if (requestData3 && requestData3.moves) { for (var j = 0; j < requestData3.moves.length; j++) { if (requestData3.moves[j].id === args[3]) requestData3.moves[j].disabled = true; } }
+							args.splice(1, 1, pokemon.getIdent());
+							this.battle.stepQueue.push('|' + args.join('|'));
+							break;
+						}
+					}
+				continue;
+				}
+				if (logLine.substr(0, 7) === '|title|') continue;
+				if (logLine.substr(0, 5) === '|win|' || logLine === '|tie') {
+					this.battleEnded = true;
+					this.battle.stepQueue.push(logLine);
+					continue;
+				}
+				if (
+					logLine.substr(0, 6) === '|chat|' ||
+					logLine.substr(0, 3) === '|c|' ||
+					logLine.substr(0, 4) === '|c:|' ||
+					logLine.substr(0, 9) === '|chatmsg|' ||
+					logLine.substr(0, 10) === '|inactive|'
+				) {
+					this.battle.instantAdd(logLine);
+					continue;
+				}
+				this.battle.stepQueue.push(logLine);
 			}
-			continue;
-		}
-
-		if (logLine.substr(0, 7) === '|title|') continue;
-
-		if (logLine.substr(0, 5) === '|win|' || logLine === '|tie') {
-			this.battleEnded = true;
-			this.battle.stepQueue.push(logLine);
-			continue;
-		}
-
-		if (
-			logLine.substr(0, 6) === '|chat|' ||
-			logLine.substr(0, 3) === '|c|' ||
-			logLine.substr(0, 4) === '|c:|' ||
-			logLine.substr(0, 9) === '|chatmsg|' ||
-			logLine.substr(0, 10) === '|inactive|'
-		) {
-			this.battle.instantAdd(logLine);
-			continue;
-		}
-
-		this.battle.stepQueue.push(logLine);
-	}
-
-	this.battle.add();
-	if (Dex.prefs('noanim')) this.battle.seekTurn(Infinity);
-	this.updateControls();
-},
+			this.battle.add();
+			if (Dex.prefs('noanim')) this.battle.seekTurn(Infinity);
+			this.updateControls();
+		},
 		toggleMessages: function (user) {
 			var $messages = $('.chatmessage-' + user + '.revealed');
 			var $button = $messages.find('button');
@@ -281,9 +256,7 @@
 				this.updateControlsForPlayer();
 			}
 		},
-		/*********************************************************
-		 * Battle stuff
-		 *********************************************************/
+		 //region Battle stuff
 		updateControls: function () {
 			if (this.battle.scene.customControls) return;
 			var controlsShown = this.controlsShown;
@@ -317,6 +290,7 @@
 					this.$controls.html(
 					'<p>' +
 						this.getTeraChargeHTML() + 
+						this.getMegaChargeHTML() +
 						this.getTimerHTML() +
 						'<button class="button" name="skipTurn"><i class="fa fa-step-forward"></i><br />Skip turn</button> ' +
 						'<button class="button" name="goToEnd"><i class="fa fa-fast-forward"></i><br />Skip to end</button>' +
@@ -361,32 +335,25 @@
 					);
 				}
 			}
-			// This intentionally doesn't happen if the battle is still playing,
-			// since those early-return.
+			// This intentionally doesn't happen if the battle is still playing, since those early-return.
 			app.topbar.updateTabbar();
 			this.updateTeraCharge();
+			this.updateMegaCharge();
 		},
 		updateControlsForPlayer: function () {
 			this.callbackWaiting = true;
-
 			var act = '';
 			var switchables = [];
 			if (this.request) {
 				this.updateSide();
 				if (this.request.ally) this.addAlly(this.request.ally);
-
 				act = this.request.requestType;
 				if (this.request.side) switchables = this.battle.myPokemon;
 				if (!this.finalDecision) this.finalDecision = !!this.request.noCancel;
 			}
-
-			if (this.choice && this.choice.waiting) {
-				act = '';
-			}
-
+			if (this.choice && this.choice.waiting) { act = ''; }
 			var type = this.choice ? this.choice.type : '';
 			this.canTerastallize = null;
-
 			switch (act) {
 			case 'move':
 				if (!this.choice) {
@@ -398,7 +365,6 @@
 				}
 				this.updateMoveControls(type);
 				break;
-
 			case 'switch':
 				if (!this.choice) {
 					this.choice = {
@@ -408,7 +374,6 @@
 						freedomDegrees: 0,
 						canSwitch: 0
 					};
-
 					if (this.request.forceSwitch !== true) {
 						var faintedLength = _.filter(this.request.forceSwitch, function (fainted) { return fainted; }).length;
 						var freedomDegrees = faintedLength - _.filter(
@@ -421,7 +386,6 @@
 				}
 				this.updateSwitchControls(type);
 				break;
-
 			case 'team':
 				if (this.battle.mySide.pokemon && !this.battle.mySide.pokemon.length) {
 					this.controlsShown = false;
@@ -437,9 +401,7 @@
 					if (this.battle.gameType === 'multi') this.choice.count = 1;
 					if (this.battle.gameType === 'doubles') this.choice.count = 2;
 					if (this.battle.gameType === 'triples' || this.battle.gameType === 'rotation') this.choice.count = 3;
-					for (var i = 0; i < switchables.length && i < 6; i++) {
-						if (toID(switchables[i].baseAbility) === 'illusion') this.choice.count = this.battle.myPokemon.length;
-					}
+					for (var i = 0; i < switchables.length && i < 6; i++) { if (toID(switchables[i].baseAbility) === 'illusion') this.choice.count = this.battle.myPokemon.length; }
 					if (this.battle.teamPreviewCount) {
 						var requestCount = parseInt(this.battle.teamPreviewCount, 10);
 						if (requestCount > 0 && requestCount <= switchables.length) this.choice.count = requestCount;
@@ -448,7 +410,6 @@
 				}
 				this.updateTeamControls(type);
 				break;
-
 			default:
 				this.updateWaitControls();
 				break;
@@ -494,6 +455,7 @@
 			}
 			return '<button name="openTimer" class="button timerbutton' + timerTicking + '"><i class="fa fa-hourglass-start"></i> ' + time + '</button>';
 		},
+		//region Tera Charge
 		getMyTeraChargeState: function () {
 			// SOURCE OF TRUTH: private request JSON from server
 			if (this.request && this.request.side && this.request.side.teraCharge != null) {
@@ -504,17 +466,12 @@
 			}
 			return null;
 		},
-		// Convert raw server tera charge (cur/max, often out of 10) into a 0-100 UI scale.
 		getTeraChargeDisplay: function (rawCur, rawMax) {
-			// guard
 			if (!Number.isFinite(rawCur)) rawCur = 0;
 			if (!Number.isFinite(rawMax) || rawMax <= 0) rawMax = 10;
-
-			// display scale: 0..100
 			var cur = Math.round(rawCur / rawMax * 100);
 			if (cur < 0) cur = 0;
 			if (cur > 100) cur = 100;
-
 			return {cur: cur, max: 100, pct: cur};
 		},
 		getTeraChargeHTML: function () {
@@ -524,31 +481,132 @@
 			var rawMax = st.max;
 			// Display values (always out of 100)
 			var d = this.getTeraChargeDisplay(rawCur, rawMax);
-
 			return '' +
 				'<button class="button terachargebutton" type="button" name="teracharge" ' +
 				'title="Tera Charge: ' + d.cur + '/' + d.max + '" ' +
 				'style="position:relative;overflow:hidden;">' +
-
 					// FULL-BUTTON fill layer
 					'<span class="teracharge-fill" style="' +
 						'position:absolute;left:0;top:0;bottom:0;width:' + d.pct + '%;' +
 						'display:block;pointer-events:none;z-index:0;"></span>' +
-
 					// red spend-preview overlay (positioned by updateTeraCharge)
 					'<span class="teracharge-spend" style="' +
 						'position:absolute;top:0;bottom:0;right:0;width:0;' +
 						'background:rgba(255,0,0,0.65);display:none;pointer-events:none;z-index:1;"></span>' +
-
 					// Foreground content
 					'<span class="teracharge-left" style="position:relative;z-index:2;float:left;margin-right:-40px">' + d.cur + '</span>' +
 					'<span class="teracharge-text" style="position:relative;z-index:2;display:block;text-align:center">Tera</span>' +
 					'<span class="teracharge-typeicon" style="position:absolute;z-index:2;right:6px;top:50%;transform:translateY(-50%);display:none">' +
-						'<img class="teracharge-typeicon-img" alt="" style="height:25px;width:25px;margin-top:9px;" />' +
+					'<img class="teracharge-typeicon-img" alt="" style="height:25px;width:25px;margin-top:9px;" />' +
 					'</span>' +
 				'</button>';
 		},
-		// --- Tera charge animation helpers ---
+		//region Mega Charge
+		getMyMegaChargeState: function () { // attaches side.megaCharge/megaChargeMax onto every outgoing move request)
+			if (this.request && this.request.side && this.request.side.megaCharge != null) {
+				return {
+					cur: Number(this.request.side.megaCharge) || 0,
+					max: Number(this.request.side.megaChargeMax) || 100
+				};
+			}
+			return null;
+		},
+		getMegaChargeHTML: function () {
+			var st = this.getMyMegaChargeState();
+			if (!st) return ''; // no bar until we know the side's charge (mirrors getTeraChargeHTML)
+			var letter = this.canMegaEvoLetter;
+			var cur = Math.max(0, Math.min(100, Math.round(st.cur / (st.max || 100) * 100)));
+			return '' +
+				'<button class="button megachargebutton" type="button" name="megacharge" ' +
+				'title="Mega Charge: ' + st.cur + '/' + st.max + '" ' +
+				'style="position:relative;overflow:hidden;">' +
+					'<span class="megacharge-fill" style="' +
+						'position:absolute;left:0;top:0;bottom:0;width:' + cur + '%;' +
+						'background-color:#8b5fbf;display:block;pointer-events:none;z-index:0;' +
+						'transition:width 0.4s ease-out;"></span>' +
+					'<span class="megacharge-left" style="position:relative;z-index:2;float:left;margin-right:-40px">' + st.cur + '</span>' +
+					'<span class="megacharge-text" style="position:relative;z-index:2;display:block;text-align:center">Mega</span>' +
+					// Letter icon renders when the currently-selected Pokemon can actually Mega
+					(letter ? (
+					'<span class="megacharge-letter" style="' +
+						'position:absolute;z-index:2;right:6px;top:50%;transform:translateY(-50%);' +
+						'font-weight:bold;font-size:16px;' +
+						'opacity:' + (cur >= 100 ? '1' : '0.2') + ';' +
+						'transition:opacity 0.4s ease-out;">' + letter + '</span>'
+					) : '') +
+				'</button>';
+		},
+		updateMegaCharge: function () {
+			var st = this.getMyMegaChargeState();
+			var letter = this.canMegaEvoLetter;
+			var $btn = this.$controls.find('.megachargebutton');
+			if (!$btn.length) return;
+			if (!st || !letter) { this.megaEvoArmedIndex = null; return; }
+			var cur = Math.max(0, Math.min(100, Math.round(st.cur / (st.max || 100) * 100)));
+			var isFull = cur >= 100;
+			if (!isFull) this.megaEvoArmedIndex = null; // can't stay armed if charge dropped below full
+			$btn.toggleClass('megacharge-armed', this.megaEvoArmedIndex === this.getCurrentChoiceIndex());
+			$btn.attr('title', 'Mega Charge: ' + st.cur + '/' + st.max + (isFull ? ' (click to Mega Evolve)' : ''));
+		},
+		getCurrentChoiceIndex: function () {
+			return (this.choice && this.choice.choices) ? this.choice.choices.length : 0;
+		},
+		toggleMegaEvo: function (e) {
+			if (e) { e.preventDefault(); e.stopPropagation(); }
+			if (!this.request || !this.request.active || !this.choice || !this.choice.choices) return;
+			var st = this.getMyMegaChargeState();
+			var letter = this.canMegaEvoLetter;
+			if (!st || !letter) return;
+			if (!(st.cur >= st.max)) return; // bar must be full to arm
+			var choiceIndex = this.choice.choices.length;
+			if (this.megaEvoArmedIndex === choiceIndex) {
+				this.megaEvoArmedIndex = null;
+				this.megaEvoArmedLetter = null;
+			} else {
+				this.megaEvoArmedIndex = choiceIndex;
+				this.megaEvoArmedLetter = letter;
+			}
+			this.updateMegaCharge();
+		},
+		getGuardState: function (active) {
+			if (!active || active.guardAction == null) return null;
+			return {
+				id: active.guardAction.id,
+				name: active.guardAction.name,
+				type: active.guardAction.type,
+				cur: Number(active.guardAction.cur) || 0,
+				max: Number(active.guardAction.max) || 1
+			};
+		},
+		getGuardDisplay: function (rawCur, rawMax) {
+			if (!Number.isFinite(rawCur)) rawCur = 0;
+			if (!Number.isFinite(rawMax) || rawMax <= 0) rawMax = 2;
+			var pct = Math.round(rawCur / rawMax * 100);
+			if (pct < 0) pct = 0;
+			if (pct > 100) pct = 100;
+			return {cur: rawCur, max: rawMax, pct: pct};
+		},
+		getGuardHTML: function (active, pos) {
+			if (!active || !active.guardAction) return ''; // no Guard Action on this Pokemon at all
+			var st = this.getGuardState(active);
+			if (!st) return '';
+			var d = this.getGuardDisplay(st.cur, st.max);
+			var ready = st.cur >= st.max;
+			var turns = ready ? '' : Math.max(0, st.max - st.cur);
+			var guardType = st.type || 'Normal';
+			var tooltipArgs = 'guardaction|' + st.id + '|' + pos + '|' + st.cur + '|' + st.max;
+			var btn = '' +
+				'<button class="button guardbutton has-tooltip' + (ready ? ' ready' : '') + '" type="button" name="guard" ' +
+					(ready ? '' : 'disabled ') +
+					'data-tooltip="' + BattleLog.escapeHTML(tooltipArgs) + '" ' +
+					'style="' + this.getGuardActionColorStyle(guardType) + '" ' +
+					'aria-label="Guard Action: ' + BattleLog.escapeHTML(st.name) + '">' +
+					'<span class="guard-fill" style="width:' + d.pct + '%"></span>' +
+					'<span class="guard-count">' + (ready ? '' : turns) + '</span>' +
+					'<span class="guard-icon"><i class="fa fa-shield"></i></span>' +
+				'</button>';
+			return btn + '<span class="guard-divider"></span>';
+		},
 		stopTeraChargeAnim: function () {
 			if (this._teraChargeAnimRaf) {
 				cancelAnimationFrame(this._teraChargeAnimRaf);
@@ -569,7 +627,6 @@
 			// clamp
 			startCur = Math.max(0, Math.min(max, startCur));
 			targetCur = Math.max(0, Math.min(max, targetCur));
-			// If already at target (or extremely close), snap and stop.
 			if (Math.round(startCur) === targetCur && this._teraChargeDisplayMax === max) {
 				this._teraChargeDisplayCur = targetCur;
 				this._teraChargeDisplayMax = max;
@@ -601,52 +658,46 @@
 			this._teraChargeAnimTimer = setInterval(() => {
 				// If controls re-rendered and $btn got detached, stop.
 				if (!this.$controls || !$btn[0] || !document.documentElement.contains($btn[0])) {
-				clearInterval(this._teraChargeAnimTimer);
-				this._teraChargeAnimTimer = null;
-				this._teraChargeAnimating = false;
-				return;
+					clearInterval(this._teraChargeAnimTimer);
+					this._teraChargeAnimTimer = null;
+					this._teraChargeAnimating = false;
+					return;
 				}
 				var now = Date.now();
 				var t = (now - startTime) / duration;
 				if (t < 0) t = 0;
 				if (t > 1) t = 1;
-				// easing (smooth in/out-ish)
+				// easing (smooth bar fill. Lower the number for snappier, higher for slower)
 				var eased = 1 - Math.pow(1 - t, 4);
-				// interpolate in display units (0..max)
 				var cur = startCur + (targetCur - startCur) * eased;
 				cur = Math.max(0, Math.min(max, cur));
-				// paint
 				$left.text(Math.round(cur));
 				$fill.css({transition: '', width: Math.max(0, Math.min(100, (cur / max) * 100)) + '%'});
-				// keep cache in sync (float is intentional)
 				this._teraChargeDisplayCur = cur;
 				if (t >= 1) {
-				clearInterval(this._teraChargeAnimTimer);
-				this._teraChargeAnimTimer = null;
-				// snap final, ensure consistency
-				this._teraChargeDisplayCur = targetCur;
-				this._teraChargeDisplayMax = max;
-				$left.text(targetCur);
-				$fill.css({transition: '', width: Math.max(0, Math.min(100, (targetCur / max) * 100)) + '%'});
-				this._teraChargeAnimating = false;
-				// keep btnEl/targets as the “current animation state” for the guard
-				this._teraChargeAnimBtnEl = $btn[0];
-				this._teraChargeAnimTargetCur = targetCur;
-				this._teraChargeAnimTargetMax = max;
+					clearInterval(this._teraChargeAnimTimer);
+					this._teraChargeAnimTimer = null;
+					this._teraChargeDisplayCur = targetCur;
+					this._teraChargeDisplayMax = max;
+					$left.text(targetCur);
+					$fill.css({transition: '', width: Math.max(0, Math.min(100, (targetCur / max) * 100)) + '%'});
+					this._teraChargeAnimating = false;
+					// keep btnEl/targets as the “current animation state” for the guard
+					this._teraChargeAnimBtnEl = $btn[0];
+					this._teraChargeAnimTargetCur = targetCur;
+					this._teraChargeAnimTargetMax = max;
 				}
 			}, 16);
 		},
 		updateTeraCharge: function () {
 			if (!this.$controls) return;
-			// Raw (server scale, usually out of 10)
 			var st = this.getMyTeraChargeState();
-			if (!st) return; // don't guess
+			if (!st) return; 
 			var rawCur = st.cur;
 			var rawMax = st.max;
-			// Display (always out of 100)
 			var d = this.getTeraChargeDisplay(rawCur, rawMax);
-			var cur = d.cur;         // 0..100
-			var max = d.max;         // always 100
+			var cur = d.cur;
+			var max = d.max;	// 100
 			var $btn = this.$controls.find('.terachargebutton');
 			if (!$btn.length) return;
 			// what is currently shown (rounded, because cache may be float mid-animation)
@@ -654,45 +705,38 @@
 			// If any of *your* Pokémon is currently terastallized (field OR back), you cannot arm Tera again.
 			var mySide = this.battle && this.battle.mySide;
 			var alreadyTera = !!(mySide && mySide.pokemon && mySide.pokemon.some(function (p) { return !!p.terastallized; }));
-			// If already tera, you can't arm again, BUT the bar/number should still reflect drain.
 			if (alreadyTera) {
 				this.terastallizeArmedIndex = null;
 				$btn.attr('title', 'Tera is already active (only one Pokémon may be Terastallized at a time).');
 				$btn.addClass('teracharge-disabled');
-				// While already terastallized, we don't show the "armed" type icon/color
 				$btn.find('.teracharge-typeicon').hide();
-				// First paint: snap once to avoid weird tween
 				if (this._teraChargeDisplayCur == null || this._teraChargeDisplayMax == null) {
-				this._teraChargeDisplayCur = cur;
-				this._teraChargeDisplayMax = max;
-				var pctInit = Math.max(0, Math.min(100, cur));
-				$btn.find('.teracharge-fill').css({transition: '', width: pctInit + '%'});
-				$btn.find('.teracharge-left').text(cur);
-				return;
+					this._teraChargeDisplayCur = cur;
+					this._teraChargeDisplayMax = max;
+					var pctInit = Math.max(0, Math.min(100, cur));
+					$btn.find('.teracharge-fill').css({transition: '', width: pctInit + '%'});
+					$btn.find('.teracharge-left').text(cur);
+					return;
 				}
-				// Animate to new value (up OR down). Use shownCur to prevent float jitter restarts.
-			if (cur !== shownCur || max !== this._teraChargeDisplayMax) {
-			// one-shot snappy override (used for "|teracharge|...|spend")
-			var animMs = this._teraChargeNextAnimMs;
-			this._teraChargeNextAnimMs = null;
-
-			this.animateTeraChargeTo(
-				$btn,
-				this._teraChargeDisplayCur,
-				cur,
-				max,
-				animMs ? {duration: animMs} : null
-			);
-			} else { // controls may have re-rendered; ensure DOM matches cache
-			var pctSameT = Math.max(0, Math.min(100, shownCur));
-			$btn.find('.teracharge-fill').css({transition: '', width: pctSameT + '%'});
-			$btn.find('.teracharge-left').text(shownCur);
-			}
-			return;
+				if (cur !== shownCur || max !== this._teraChargeDisplayMax) {
+				var animMs = this._teraChargeNextAnimMs;
+				this._teraChargeNextAnimMs = null;
+				this.animateTeraChargeTo(
+					$btn,
+					this._teraChargeDisplayCur,
+					cur,
+					max,
+					animMs ? {duration: animMs} : null
+				);
+				} else { // controls may have re-rendered; ensure DOM matches cache
+				var pctSameT = Math.max(0, Math.min(100, shownCur));
+				$btn.find('.teracharge-fill').css({transition: '', width: pctSameT + '%'});
+				$btn.find('.teracharge-left').text(shownCur);
+				}
+				return;
 			} else { $btn.removeClass('teracharge-disabled'); }
 			// Normal (not already tera)
 			$btn.attr('title', 'Tera Charge: ' + cur + '/' + max);
-			// First paint
 			if (this._teraChargeDisplayCur == null || this._teraChargeDisplayMax == null) {
 				this._teraChargeDisplayCur = cur;
 				this._teraChargeDisplayMax = max;
@@ -706,7 +750,6 @@
 					if (this._teraChargeAnimBtnEl !== $btn[0]) {
 						var animMs = this._teraChargeNextAnimMs;
 						this._teraChargeNextAnimMs = null;
-
 						this.animateTeraChargeTo(
 							$btn,
 							this._teraChargeDisplayCur,
@@ -718,7 +761,6 @@
 				} else {
 					var animMs = this._teraChargeNextAnimMs;
 					this._teraChargeNextAnimMs = null;
-
 					this.animateTeraChargeTo(
 						$btn,
 						this._teraChargeDisplayCur,
@@ -732,16 +774,13 @@
 				$btn.find('.teracharge-fill').css({transition: '', width: pctSame + '%'});
 				$btn.find('.teracharge-left').text(shownCur);
 			}
-			// --- existing type color + icon logic (keep as you already have it) ---
 			var $fill = $btn.find('.teracharge-fill');
 			var $iconWrap = $btn.find('.teracharge-typeicon');
 			var $iconImg = $btn.find('.teracharge-typeicon-img');
 			var choiceIndex = (this.choice && this.choice.choices) ? this.choice.choices.length : 0;
 			var teraType = this.canTerastallize;
-
 			var isTeraArmed = (this.terastallizeArmedIndex === choiceIndex);
 			var isEmpowerArmed = (this.teraEmpowerArmedIndex === choiceIndex);
-
 			// Reset visuals every time
 			$fill.css({background: '', 'background-color': ''});
 			$iconWrap.hide();
@@ -752,12 +791,8 @@
 				$iconWrap.hide();
 				$btn.attr('title', 'Tera Empower armed');
 			}
-
-			// Show the type icon when armed (either full tera OR below-full spend preview)
-			if (isTeraArmed && teraType) {
-
-				// recolor ONLY if full (real Terastallize)
-				if (rawCur >= rawMax) {
+			if (isTeraArmed && teraType) {  // shows icon when armed, also change color if bar is full
+				if (rawCur >= rawMax) { 
 					if (teraType === 'Stellar') {
 						$fill.css({
 							background: 'linear-gradient(90deg,#ff0000,#ff7f00,#ffff00,#00ff00,#00ffff,#0000ff,#8b00ff)',
@@ -774,8 +809,6 @@
 						$fill.css({'background-color': c});
 					}
 				}
-
-				// icon always shown when armed
 				$iconWrap.show();
 				$iconImg.attr('src', 'https://berserkerloop.com/sprites/types/Tera' + teraType + '.png');
 			}
@@ -784,7 +817,7 @@
 			if (e) { e.preventDefault(); e.stopPropagation(); }
 			// Only allow during move selection
 			if (!this.request || !this.request.active || !this.choice || !this.choice.choices) return;
-			// NEW: if you already have a Terastallized mon anywhere (field OR back), you cannot arm Tera again
+			// if you already have a Terastallized mon anywhere (field OR back), you cannot arm Tera again
 			var mySide = this.battle && this.battle.mySide;
 			var alreadyTera = !!(mySide && mySide.pokemon && mySide.pokemon.some(function (p) { return !!p.terastallized; }));
 			if (alreadyTera) return;
@@ -792,44 +825,32 @@
 			if (!st) return;
 			var cur = st.cur;
 			var max = st.max;
-			// must be full charge + have a tera type
 			if (!(this.canTerastallize && cur >= max)) return;
 			var choiceIndex = this.choice.choices.length;
-			// Toggle for THIS slot; only one slot can be armed at a time
 			if (this.terastallizeArmedIndex === choiceIndex) { this.terastallizeArmedIndex = null; } 
 			else {
 				this.terastallizeArmedIndex = choiceIndex;
 				this.teraEmpowerArmedIndex = null;
 			}
-			// Keep the hidden checkbox in sync (purely cosmetic now)
 			this.$('input[name=terastallize]').prop('checked', this.terastallizeArmedIndex === choiceIndex);
 			this.updateTeraCharge();
 		},
 		toggleTeraEmpower: function (e) {
 			if (e) { e.preventDefault(); e.stopPropagation(); }
-
 			// Only allow during move selection
 			if (!this.request || !this.request.active || !this.choice || !this.choice.choices) return;
-
 			var st = this.getMyTeraChargeState();
 			if (!st) return;
-
 			var cur = st.cur;
 			var max = st.max;
-
-			// Empower only when not full and request says it's legal
 			if (!(this.canTeraEmpower && cur < max && cur >= 10)) return;
-
 			var choiceIndex = this.choice.choices.length;
-
 			// Toggle for THIS slot; only one slot can be armed at a time
-			if (this.teraEmpowerArmedIndex === choiceIndex) {
-				this.teraEmpowerArmedIndex = null;
-			} else {
+			if (this.teraEmpowerArmedIndex === choiceIndex) { this.teraEmpowerArmedIndex = null; } 
+			else {
 				this.teraEmpowerArmedIndex = choiceIndex;
 				this.terastallizeArmedIndex = null;
 			}
-
 			this.updateTeraCharge();
 		},
 		teraChargeHoverOn: function (e) {
@@ -837,7 +858,6 @@
 			this._teraChargeHovering = true;
 			this.updateTeraCharge();
 		},
-
 		teraChargeHoverOff: function (e) {
 			if (e) { e.preventDefault(); e.stopPropagation(); }
 			this._teraChargeHovering = false;
@@ -845,350 +865,230 @@
 		},
 		toggleTeraCharge: function (e) {
 			if (e) { e.preventDefault(); e.stopPropagation(); }
-
 			var st = this.getMyTeraChargeState();
 			if (!st) return;
-
 			var cur = st.cur;
 			var max = st.max;
-
-			if (this.canTerastallize && cur >= max) {
-				this.toggleTerastallize(e);
-			} else if (this.canTeraEmpower && cur < max && cur >= 10) {
-				this.toggleTeraEmpower(e);
-			}
-
+			if (this.canTerastallize && cur >= max) { this.toggleTerastallize(e); } 
+			else if (this.canTeraEmpower && cur < max && cur >= 10) { this.toggleTeraEmpower(e); }
 			this.updateControlsForPlayer();
 			this.updateTeraCharge();
 		},
-
 		uncheckMegaEvoX: function () { this.$('input[name=megaevox]').prop('checked', false); },
 		uncheckMegaEvoY: function () { this.$('input[name=megaevoy]').prop('checked', false); },
-		updateMaxMove: function () {
-			var dynaChecked = this.$('input[name=dynamax]')[0].checked;
-			if (dynaChecked) {
-				this.$('.movebuttons-nomax').hide();
-				this.$('.movebuttons-max').show();
-			} else {
-				this.$('.movebuttons-nomax').show();
-				this.$('.movebuttons-max').hide();
-			}
-		},
-		updateZMove: function () {
-			var zChecked = this.$('input[name=zmove]')[0].checked;
-			if (zChecked) {
-				this.$('.movebuttons-noz').hide();
-				this.$('.movebuttons-z').show();
-			} else {
-				this.$('.movebuttons-noz').show();
-				this.$('.movebuttons-z').hide();
-			}
-		},
+		uncheckMegaEvoZ: function () { this.$('input[name=megaevoz]').prop('checked', false); },
+		uncheckMegaEvoA: function () { this.$('input[name=megaevoa]').prop('checked', false); },
+		uncheckMegaEvoQ: function () { this.$('input[name=megaevoq]').prop('checked', false); },
 		updateTimer: function () { this.$('.timerbutton').replaceWith(this.getTimerHTML()); },
 		openTimer: function () { app.addPopup(TimerPopup, { room: this }); },
 		updateMoveControls: function (type) {
-	var switchables = this.request && this.request.side ? this.battle.myPokemon : [];
-
-	// Fresh move requests must never reuse a team-preview choice object.
-	if (!this.choice || this.choice.teamPreview || !Array.isArray(this.choice.choices)) {
-		this.choice = {
-			choices: [],
-			switchFlags: {},
-			switchOutFlags: {}
-		};
-		type = '';
-	}
-
-	if (type !== 'movetarget') {
-		while (
-			switchables[this.choice.choices.length] &&
-			(switchables[this.choice.choices.length].fainted || switchables[this.choice.choices.length].commanding) &&
-			this.choice.choices.length + 1 < this.battle.nearSide.active.length
-		) {
-			this.choice.choices.push('pass');
-		}
-	}
-
-	var moveTarget = this.choice ? this.choice.moveTarget : '';
-	var pos = this.choice.choices.length;
-	if (type === 'movetarget') pos--;
-
-	var curActive = this.request && this.request.active && this.request.active[pos];
-
-	// If pos somehow drifted out of range, reset to the current slot instead of leaving stale UI onscreen.
-	if (!curActive) {
-		this.choice.choices = [];
-		this.choice.type = '';
-		pos = 0;
-		curActive = this.request && this.request.active && this.request.active[pos];
-		if (!curActive) {
-			this.$controls.html(
-				'<div class="controls"><p>Waiting for a valid move request...</p></div>'
-			);
-			return;
-		}
-	}
-
-	var hpRatio = switchables[pos].hp / switchables[pos].maxhp;
-	var trapped = curActive.trapped;
-
-	var canMegaEvo = curActive.canMegaEvo || switchables[pos].canMegaEvo;
-	var canMegaEvoX = curActive.canMegaEvoX || switchables[pos].canMegaEvoX;
-	var canMegaEvoY = curActive.canMegaEvoY || switchables[pos].canMegaEvoY;
-	var canZMove = curActive.canZMove || switchables[pos].canZMove;
-	var canUltraBurst = curActive.canUltraBurst || switchables[pos].canUltraBurst;
-	var canDynamax = curActive.canDynamax || switchables[pos].canDynamax;
-	var maxMoves = curActive.maxMoves || switchables[pos].maxMoves;
-	var gigantamax = curActive.maxMoves && curActive.maxMoves.gigantamax;
-
-	var canTerastallize = curActive.canTerastallize || switchables[pos].canTerastallize;
-	this.canTerastallize = canTerastallize;
-	var canTeraEmpower = !!curActive.canTeraEmpower;
-	this.canTeraEmpower = canTeraEmpower;
-
-	if (canZMove && typeof canZMove[0] === 'string') {
-		canZMove = _.map(canZMove, function (m) {
-			return {move: m, target: Dex.moves.get(m).target};
-		});
-	}
-	if (gigantamax) gigantamax = Dex.moves.get(gigantamax);
-
-	this.finalDecisionMove = curActive.maybeDisabled || false;
-	this.finalDecisionSwitch = curActive.maybeTrapped || false;
-
-	for (var k = pos + 1; k < this.battle.nearSide.active.length; ++k) {
-		var p = this.battle.nearSide.active[k];
-		if (p && !p.fainted) {
-			this.finalDecisionMove = this.finalDecisionSwitch = false;
-			break;
-		}
-	}
-
-	var requestTitle = '';
-	if (type === 'move2' || type === 'movetarget') requestTitle += '<button name="clearChoice">Back</button> ';
-
-	// target selector
-	if (type === 'movetarget') {
-		requestTitle += 'At who? ';
-		var activePos = this.battle.mySide.n > 1 ? pos + this.battle.pokemonControlled : pos;
-		var targetMenus = ['', ''];
-		var nearActive = this.battle.nearSide.active;
-		var farActive = this.battle.farSide.active;
-		var farSlot = farActive.length - 1 - activePos;
-
-		if ((moveTarget === 'adjacentAlly' || moveTarget === 'adjacentFoe') && this.battle.gameType === 'freeforall') {
-			moveTarget = 'normal';
-		}
-
-		for (var i = farActive.length - 1; i >= 0; i--) {
-			var foe = farActive[i];
-			var tooltipArgsF = 'activepokemon|1|' + i;
-			var disabledF = false;
-
-			if (moveTarget === 'adjacentAlly' || moveTarget === 'adjacentAllyOrSelf') disabledF = true;
-			else if (moveTarget === 'normal' || moveTarget === 'adjacentFoe') {
-				if (Math.abs(farSlot - i) > 1) disabledF = true;
+			var switchables = this.request && this.request.side ? this.battle.myPokemon : [];
+			// Fresh move requests must never reuse a team-preview choice object.
+			if (!this.choice || this.choice.teamPreview || !Array.isArray(this.choice.choices)) {
+				this.choice = {
+					choices: [],
+					switchFlags: {},
+					switchOutFlags: {}
+				};
+				type = '';
 			}
-
-			if (disabledF) {
-				targetMenus[0] += '<button disabled></button> ';
-			} else if (!foe || foe.fainted) {
-				targetMenus[0] += '<button name="chooseMoveTarget" value="' + (i + 1) + '"><span class="picon" style="' + Dex.getPokemonIcon('missingno') + '"></span></button> ';
-			} else {
-				targetMenus[0] += '<button name="chooseMoveTarget" value="' + (i + 1) + '" class="has-tooltip" data-tooltip="' + BattleLog.escapeHTML(tooltipArgsF) + '"><span class="picon" style="' + Dex.getPokemonIcon(foe) + '"></span>' +
-					(this.battle.ignoreOpponent || this.battle.ignoreNicks ? foe.speciesForme : BattleLog.escapeHTML(foe.name)) +
-					'<span class="' + foe.getHPColorClass() + '"><span style="width:' + (Math.round(foe.hp * 92 / foe.maxhp) || 1) + 'px"></span></span>' +
-					(foe.status ? '<span class="status ' + foe.status + '"></span>' : '') +
-					'</button> ';
+			if (type !== 'movetarget') {
+				while (
+					switchables[this.choice.choices.length] &&
+					(switchables[this.choice.choices.length].fainted || switchables[this.choice.choices.length].commanding) &&
+					this.choice.choices.length + 1 < this.battle.nearSide.active.length
+				) { this.choice.choices.push('pass'); }
 			}
-		}
-
-		for (var j = 0; j < nearActive.length; j++) {
-			var ally = nearActive[j];
-			var tooltipArgsA = 'activepokemon|0|' + j;
-			var disabledA = false;
-
-			if (moveTarget === 'adjacentFoe') disabledA = true;
-			else if (moveTarget === 'normal' || moveTarget === 'adjacentAlly' || moveTarget === 'adjacentAllyOrSelf') {
-				if (Math.abs(activePos - j) > 1) disabledA = true;
-			}
-			if (moveTarget !== 'adjacentAllyOrSelf' && activePos === j) disabledA = true;
-
-			if (disabledA) {
-				targetMenus[1] += '<button disabled style="visibility:hidden"></button> ';
-			} else if (!ally || ally.fainted) {
-				targetMenus[1] += '<button name="chooseMoveTarget" value="' + (-(j + 1)) + '"><span class="picon" style="' + Dex.getPokemonIcon('missingno') + '"></span></button> ';
-			} else {
-				targetMenus[1] += '<button name="chooseMoveTarget" value="' + (-(j + 1)) + '" class="has-tooltip" data-tooltip="' + BattleLog.escapeHTML(tooltipArgsA) + '"><span class="picon" style="' + Dex.getPokemonIcon(ally) + '"></span>' +
-					BattleLog.escapeHTML(ally.name) +
-					'<span class="' + ally.getHPColorClass() + '"><span style="width:' + (Math.round(ally.hp * 92 / ally.maxhp) || 1) + 'px"></span></span>' +
-					(ally.status ? '<span class="status ' + ally.status + '"></span>' : '') +
-					'</button> ';
-			}
-		}
-
-		this.$controls.html(
-			'<div class="controls">' +
-				'<div class="whatdo">' + requestTitle + this.getTeraChargeHTML() + this.getTimerHTML() + '</div>' +
-				'<div class="switchmenu" style="display:block">' + targetMenus[0] + '<div style="clear:both"></div></div>' +
-				'<div class="switchmenu" style="display:block">' + targetMenus[1] + '</div>' +
-			'</div>'
-		);
-		return;
-	}
-
-	// move chooser
-	var hpBar = '<small class="' + (hpRatio < 0.2 ? 'critical' : hpRatio < 0.5 ? 'weak' : 'healthy') + '">HP ' + switchables[pos].hp + '/' + switchables[pos].maxhp + '</small>';
-	requestTitle += ' What will <strong>' + BattleLog.escapeHTML(switchables[pos].name) + '</strong> do? ' + hpBar;
-
-	var hasMoves = false;
-	var moveMenu = '';
-	var movebuttons = '';
-
-	var activePos2 = this.battle.mySide.n > 1 ? pos + this.battle.pokemonControlled : pos;
-	var typeValueTracker = new ModifiableValue(this.battle, this.battle.nearSide.active[activePos2], this.battle.myPokemon[pos]);
-	var currentlyDynamaxed = (!canDynamax && maxMoves);
-
-	for (var m = 0; m < curActive.moves.length; m++) {
-		var moveData = curActive.moves[m];
-		var move = this.battle.dex.moves.get(moveData.move);
-		var name = move.name;
-
-		var pp = moveData.pp + '/' + moveData.maxpp;
-		if (!moveData.maxpp) pp = '&ndash;';
-		if (move.id === 'Struggle' || move.id === 'Recharge') pp = '&ndash;';
-		if (move.id === 'Recharge') move.type = '&ndash;';
-		if (name.substr(0, 12) === 'Hidden Power') name = 'Hidden Power';
-
-		var moveType = this.tooltips.getMoveType(move, typeValueTracker)[0];
-		var tooltipArgs = 'move|' + moveData.move + '|' + pos;
-
-		if (moveData.disabled) {
-			movebuttons += '<button disabled class="movebutton has-tooltip" data-tooltip="' + BattleLog.escapeHTML(tooltipArgs) + '">';
-		} else {
-			movebuttons += '<button class="movebutton type-' + moveType + ' has-tooltip" name="chooseMove" value="' + (m + 1) + '" data-move="' + BattleLog.escapeHTML(moveData.move) + '" data-target="' + BattleLog.escapeHTML(moveData.target) + '" data-tooltip="' + BattleLog.escapeHTML(tooltipArgs) + '">';
-			hasMoves = true;
-		}
-
-		movebuttons += BattleLog.escapeHTML(name) + '<br />' +
-			'<small class="type">' + (moveType ? Dex.types.get(moveType).name : "Unknown") + '</small> <small class="pp">' + pp + '</small>&nbsp;</button> ';
-	}
-
-	if (!hasMoves) {
-		moveMenu += '<button class="movebutton" name="chooseMove" value="0" data-move="Struggle" data-target="randomNormal">Struggle<br /><small class="type">Normal</small> <small class="pp">&ndash;</small>&nbsp;</button> ';
-	} else {
-		if (canZMove || canDynamax || currentlyDynamaxed) {
-			var classType = canZMove ? 'z' : 'max';
-			if (currentlyDynamaxed) {
-				movebuttons = '';
-			} else {
-				movebuttons = '<div class="movebuttons-no' + classType + '">' + movebuttons + '</div><div class="movebuttons-' + classType + '" style="display:none">';
-			}
-
-			var specialMoves = canZMove ? canZMove : maxMoves.maxMoves;
-			for (var mm = 0; mm < curActive.moves.length; mm++) {
-				if (specialMoves[mm]) {
-					var baseMove = this.battle.dex.moves.get(curActive.moves[mm].move);
-					var specialMove = this.battle.dex.moves.get(specialMoves[mm].move);
-					var zOrMaxType = this.tooltips.getMoveType(
-						(specialMove.exists && !specialMove.isMax) ? specialMove : baseMove,
-						typeValueTracker,
-						specialMove.isMax ? (gigantamax || true) : undefined
-					)[0];
-
-					if (specialMove.isMax && specialMove.name !== 'Max Guard') {
-						specialMove = this.tooltips.getMaxMoveFromType(zOrMaxType, gigantamax);
-					}
-
-					var tooltipArgs2 = classType + 'move|' + baseMove.id + '|' + pos;
-					if (specialMove.id.startsWith('gmax')) tooltipArgs2 += '|' + specialMove.id;
-
-					var isDisabled = specialMoves[mm].disabled ? 'disabled="disabled"' : '';
-					movebuttons += '<button ' + isDisabled + ' class="movebutton type-' + zOrMaxType + ' has-tooltip" name="chooseMove" value="' + (mm + 1) + '" data-move="' + BattleLog.escapeHTML(specialMoves[mm].move) + '" data-target="' + BattleLog.escapeHTML(specialMoves[mm].target) + '" data-tooltip="' + BattleLog.escapeHTML(tooltipArgs2) + '">';
-
-					var pp2 = curActive.moves[mm].pp + '/' + curActive.moves[mm].maxpp;
-					if (canZMove) pp2 = '1/1';
-					else if (!curActive.moves[mm].maxpp) pp2 = '&ndash;';
-
-					movebuttons += specialMove.name + '<br /><small class="type">' + (zOrMaxType ? Dex.types.get(zOrMaxType).name : "Unknown") + '</small> <small class="pp">' + pp2 + '</small>&nbsp;</button> ';
-				} else {
-					movebuttons += '<button class="movebutton" disabled>&nbsp;</button>';
+			var moveTarget = this.choice ? this.choice.moveTarget : '';
+			var pos = this.choice.choices.length;
+			if (type === 'movetarget') pos--;
+			var curActive = this.request && this.request.active && this.request.active[pos];
+			// If pos somehow drifted out of range, reset to the current slot instead of leaving stale UI onscreen.
+			if (!curActive) {
+				this.choice.choices = [];
+				this.choice.type = '';
+				pos = 0;
+				curActive = this.request && this.request.active && this.request.active[pos];
+				if (!curActive) {
+					this.$controls.html('<div class="controls"><p>Waiting for a valid move request...</p></div>');
+					return;
 				}
 			}
-			if (!currentlyDynamaxed) movebuttons += '</div>';
-		}
-		moveMenu += movebuttons;
-	}
-
-	var checkboxes = [];
-	if (canMegaEvo) checkboxes.push('<label class="megaevo"><input type="checkbox" name="megaevo" />&nbsp;Mega&nbsp;Evolution</label>');
-	if (canMegaEvoX) checkboxes.push('<label class="megaevo"><input type="checkbox" name="megaevox" />&nbsp;Mega&nbsp;Evolution&nbsp;X</label>');
-	if (canMegaEvoY) checkboxes.push('<label class="megaevo"><input type="checkbox" name="megaevoy" />&nbsp;Mega&nbsp;Evolution&nbsp;Y</label>');
-	if (canZMove) checkboxes.push('<label class="megaevo"><input type="checkbox" name="zmove" />&nbsp;Z-Power</label>');
-	if (canUltraBurst) checkboxes.push('<label class="megaevo"><input type="checkbox" name="ultraburst" />&nbsp;Ultra Burst</label>');
-	if (canDynamax) checkboxes.push('<label class="megaevo"><input type="checkbox" name="dynamax" />&nbsp;Dynamax</label>');
-	if (canTerastallize) checkboxes.push('<input type="checkbox" name="terastallize" style="display:none" />');
-
-	// if not full, ensure not armed
-	var stTC = this.getMyTeraChargeState();
-	var tcCur = stTC ? stTC.cur : 0;
-	var tcMax = stTC ? stTC.max : 0;
-
-	var canTerastalNow = !!(canTerastallize && tcMax && tcCur >= tcMax);
-	var canEmpowerNow = !!(canTeraEmpower && tcCur < tcMax && tcCur >= 10);
-
-	if (!canTerastalNow) this.terastallizeArmedIndex = null;
-	if (!canEmpowerNow) this.teraEmpowerArmedIndex = null;
-	
-
-	if (checkboxes.length) moveMenu += '<div class="megaevo-box">' + checkboxes.join('') + '</div>';
-	if (this.finalDecisionMove) moveMenu += '<em class="movewarning">You <strong>might</strong> have some moves disabled, so you won\'t be able to cancel an attack!</em>';
-	if (curActive.maybeLocked) moveMenu += '<em class="movewarning">You <strong>might</strong> be locked into a move. <button class="button" name="chooseFight">Try Fight button</button> (prevents switching if you\'re locked)</em>';
-
-	moveMenu += '<div style="clear:left"></div>';
-
-	var moveControls = (
-		'<div class="movecontrols">' +
-			'<div class="moveselect"><button name="selectMove">Attack</button></div>' +
-			'<div class="movemenu">' + moveMenu + '</div>' +
-		'</div>'
-	);
-
-	var shiftControls = '';
-	if (this.battle.gameType === 'triples' && pos !== 1) {
-		shiftControls = (
-			'<div class="shiftcontrols">' +
-				'<div class="shiftselect"><button name="chooseShift">Shift</button></div>' +
-				'<div class="switchmenu"><button name="chooseShift">Shift to Center</button><div style="clear:left"></div></div>' +
-			'</div>'
-		);
-	}
-
-	var switchMenu = '';
-	if (trapped) {
-		switchMenu += '<em>You are trapped and cannot switch!</em><br />';
-		switchMenu += this.displayParty(switchables, trapped);
-	} else {
-		switchMenu += this.displayParty(switchables, trapped);
-		if (this.finalDecisionSwitch && this.battle.gen > 2) {
-			switchMenu += '<em class="movewarning">You <strong>might</strong> be trapped, so you won\'t be able to cancel a switch!</em>';
-		}
-	}
-
-	var switchControls = (
-		'<div class="switchcontrols">' +
-			'<div class="switchselect"><button name="selectSwitch">Switch</button></div>' +
-			'<div class="switchmenu">' + switchMenu + '</div>' +
-		'</div>'
-	);
-
-	this.$controls.html(
-		'<div class="controls">' +
-			'<div class="whatdo">' + requestTitle + this.getTeraChargeHTML() + this.getTimerHTML() + '</div>' +
-			moveControls + shiftControls + switchControls +
-		'</div>'
-	);
-},
+			var hpRatio = switchables[pos].hp / switchables[pos].maxhp;
+			var trapped = curActive.trapped;
+			var canMegaEvo = curActive.canMegaEvo || switchables[pos].canMegaEvo;
+			var canMegaEvoX = curActive.canMegaEvoX || switchables[pos].canMegaEvoX;
+			var canMegaEvoY = curActive.canMegaEvoY || switchables[pos].canMegaEvoY;
+			var canMegaEvoZ = curActive.canMegaEvoZ || switchables[pos].canMegaEvoZ;
+			var canMegaEvoA = curActive.canMegaEvoA || switchables[pos].canMegaEvoA;
+			var canMegaEvoQ = curActive.canMegaEvoQ || switchables[pos].canMegaEvoQ;
+			this.canMegaEvoLetter = canMegaEvoX ? 'X' : canMegaEvoY ? 'Y' : canMegaEvoZ ? 'Z' : canMegaEvoA ? 'A' : canMegaEvoQ ? 'Q' : null;
+			var canZMove = curActive.canZMove || switchables[pos].canZMove;
+			var canUltraBurst = curActive.canUltraBurst || switchables[pos].canUltraBurst;
+			var canTerastallize = curActive.canTerastallize || switchables[pos].canTerastallize;
+			this.canTerastallize = canTerastallize;
+			var canTeraEmpower = !!curActive.canTeraEmpower;
+			this.canTeraEmpower = canTeraEmpower;
+			var guardHTML = this.getGuardHTML(curActive, pos);
+			var guardActivePos = this.battle.mySide.n > 1 ? pos + this.battle.pokemonControlled : pos;
+			var guardLivePokemon = this.battle.nearSide.active[guardActivePos];
+			if (guardLivePokemon) {
+				if (curActive.guardAction) {
+					guardLivePokemon.guardActionMoveId = curActive.guardAction.id;
+					guardLivePokemon.guardActionCur = curActive.guardAction.cur;
+					guardLivePokemon.guardActionMax = curActive.guardAction.max;
+				} else {
+					guardLivePokemon.guardActionMoveId = '';
+					guardLivePokemon.guardActionCur = 0;
+					guardLivePokemon.guardActionMax = 0;
+				}
+			}
+			this.finalDecisionMove = curActive.maybeDisabled || false;
+			this.finalDecisionSwitch = curActive.maybeTrapped || false;
+			for (var k = pos + 1; k < this.battle.nearSide.active.length; ++k) {
+				var p = this.battle.nearSide.active[k];
+				if (p && !p.fainted) {
+					this.finalDecisionMove = this.finalDecisionSwitch = false;
+					break;
+				}
+			}
+			var requestTitle = '';
+			if (type === 'move2' || type === 'movetarget') requestTitle += '<button name="clearChoice">Back</button> ';
+			// target selector
+			if (type === 'movetarget') {
+				requestTitle += 'At who? ';
+				var activePos = this.battle.mySide.n > 1 ? pos + this.battle.pokemonControlled : pos;
+				var targetMenus = ['', ''];
+				var nearActive = this.battle.nearSide.active;
+				var farActive = this.battle.farSide.active;
+				var farSlot = farActive.length - 1 - activePos;
+				if ((moveTarget === 'adjacentAlly' || moveTarget === 'adjacentFoe') && this.battle.gameType === 'freeforall') { moveTarget = 'normal'; }
+				for (var i = farActive.length - 1; i >= 0; i--) {
+					var foe = farActive[i];
+					var tooltipArgsF = 'activepokemon|1|' + i;
+					var disabledF = false;
+					if (moveTarget === 'adjacentAlly' || moveTarget === 'adjacentAllyOrSelf') disabledF = true;
+					else if (moveTarget === 'normal' || moveTarget === 'adjacentFoe') { if (Math.abs(farSlot - i) > 1) disabledF = true; }
+					if (disabledF) { targetMenus[0] += '<button disabled></button> '; } 
+					else if (!foe || foe.fainted) { targetMenus[0] += '<button name="chooseMoveTarget" value="' + (i + 1) + '"><span class="picon" style="' + Dex.getPokemonIcon('missingno') + '"></span></button> '; } 
+					else {
+						targetMenus[0] += '<button name="chooseMoveTarget" value="' + (i + 1) + '" class="has-tooltip" data-tooltip="' + BattleLog.escapeHTML(tooltipArgsF) + '"><span class="picon" style="' + Dex.getPokemonIcon(foe) + '"></span>' +
+							(this.battle.ignoreOpponent || this.battle.ignoreNicks ? foe.speciesForme : BattleLog.escapeHTML(foe.name)) +
+							'<span class="' + foe.getHPColorClass() + '"><span style="width:' + (Math.round(foe.hp * 92 / foe.maxhp) || 1) + 'px"></span></span>' +
+							(foe.status ? '<span class="status ' + foe.status + '"></span>' : '') +
+							'</button> ';
+					}
+				}
+				for (var j = 0; j < nearActive.length; j++) {
+					var ally = nearActive[j];
+					var tooltipArgsA = 'activepokemon|0|' + j;
+					var disabledA = false;
+					if (moveTarget === 'adjacentFoe') disabledA = true;
+					else if (moveTarget === 'normal' || moveTarget === 'adjacentAlly' || moveTarget === 'adjacentAllyOrSelf') { if (Math.abs(activePos - j) > 1) disabledA = true; }
+					if (moveTarget !== 'adjacentAllyOrSelf' && activePos === j) disabledA = true;
+					if (disabledA) { targetMenus[1] += '<button disabled style="visibility:hidden"></button> '; } 
+					else if (!ally || ally.fainted) { targetMenus[1] += '<button name="chooseMoveTarget" value="' + (-(j + 1)) + '"><span class="picon" style="' + Dex.getPokemonIcon('missingno') + '"></span></button> '; } 
+					else {
+						targetMenus[1] += '<button name="chooseMoveTarget" value="' + (-(j + 1)) + '" class="has-tooltip" data-tooltip="' + BattleLog.escapeHTML(tooltipArgsA) + '"><span class="picon" style="' + Dex.getPokemonIcon(ally) + '"></span>' +
+							BattleLog.escapeHTML(ally.name) +
+							'<span class="' + ally.getHPColorClass() + '"><span style="width:' + (Math.round(ally.hp * 92 / ally.maxhp) || 1) + 'px"></span></span>' +
+							(ally.status ? '<span class="status ' + ally.status + '"></span>' : '') +
+							'</button> ';
+					}
+				}
+				this.$controls.html(
+					'<div class="controls">' +
+						'<div class="whatdo">' + requestTitle + guardHTML + this.getTeraChargeHTML() + this.getTimerHTML() + '</div>' +
+						'<div class="switchmenu" style="display:block">' + targetMenus[0] + '<div style="clear:both"></div></div>' +
+						'<div class="switchmenu" style="display:block">' + targetMenus[1] + '</div>' +
+					'</div>'
+				);
+				return;
+			}
+			// move chooser
+			var hpBar = '<small class="' + (hpRatio < 0.2 ? 'critical' : hpRatio < 0.5 ? 'weak' : 'healthy') + '">HP ' + switchables[pos].hp + '/' + switchables[pos].maxhp + '</small>';
+			requestTitle += ' What will <strong>' + BattleLog.escapeHTML(switchables[pos].name) + '</strong> do? ' + hpBar;
+			var hasMoves = false;
+			var moveMenu = '';
+			var movebuttons = '';
+			var activePos2 = this.battle.mySide.n > 1 ? pos + this.battle.pokemonControlled : pos;
+			var typeValueTracker = new ModifiableValue(this.battle, this.battle.nearSide.active[activePos2], this.battle.myPokemon[pos]);
+			for (var m = 0; m < curActive.moves.length; m++) {
+				var moveData = curActive.moves[m];
+				var move = this.battle.dex.moves.get(moveData.move);
+				var name = move.name;
+				var pp = moveData.pp + '/' + moveData.maxpp;
+				if (!moveData.maxpp) pp = '&ndash;';
+				if (move.id === 'Struggle' || move.id === 'Recharge') pp = '&ndash;';
+				if (move.id === 'Recharge') move.type = '&ndash;';
+				if (name.substr(0, 12) === 'Hidden Power') name = 'Hidden Power';
+				var moveType = this.tooltips.getMoveType(move, typeValueTracker)[0];
+				var tooltipArgs = 'move|' + moveData.move + '|' + pos;
+				if (moveData.disabled) { movebuttons += '<button disabled class="movebutton has-tooltip" data-tooltip="' + BattleLog.escapeHTML(tooltipArgs) + '">'; } 
+				else {
+					movebuttons += '<button class="movebutton type-' + moveType + ' has-tooltip" name="chooseMove" value="' + (m + 1) + '" data-move="' + BattleLog.escapeHTML(moveData.move) + '" data-target="' + BattleLog.escapeHTML(moveData.target) + '" data-tooltip="' + BattleLog.escapeHTML(tooltipArgs) + '">';
+					hasMoves = true;
+				}
+				movebuttons += BattleLog.escapeHTML(name) + '<br />' + '<small class="type">' + (moveType ? Dex.types.get(moveType).name : "Unknown") + '</small> <small class="pp">' + pp + '</small>&nbsp;</button> ';
+			}
+			if (!hasMoves) { moveMenu += '<button class="movebutton" name="chooseMove" value="0" data-move="Struggle" data-target="randomNormal">Struggle<br /><small class="type">Normal</small> <small class="pp">&ndash;</small>&nbsp;</button> '; } 
+			else { moveMenu += movebuttons; }
+			var checkboxes = [];
+			if (canUltraBurst) checkboxes.push('<label class="megaevo"><input type="checkbox" name="ultraburst" />&nbsp;Ultra Burst</label>');
+			if (canTerastallize) checkboxes.push('<input type="checkbox" name="terastallize" style="display:none" />');
+			// if not full, ensure not armed
+			var stTC = this.getMyTeraChargeState();
+			var tcCur = stTC ? stTC.cur : 0;
+			var tcMax = stTC ? stTC.max : 0;
+			var canTerastalNow = !!(canTerastallize && tcMax && tcCur >= tcMax);
+			var canEmpowerNow = !!(canTeraEmpower && tcCur < tcMax && tcCur >= 10);
+			if (!canTerastalNow) this.terastallizeArmedIndex = null;
+			if (!canEmpowerNow) this.teraEmpowerArmedIndex = null;
+			var stMC = this.getMyMegaChargeState();
+			var mcCur = stMC ? stMC.cur : 0;
+			var mcMax = stMC ? stMC.max : 0;
+			var canMegaEvoNow = !!(this.canMegaEvoLetter && mcMax && mcCur >= mcMax);
+			if (!canMegaEvoNow) this.megaEvoArmedIndex = null;
+			if (checkboxes.length) moveMenu += '<div class="megaevo-box">' + checkboxes.join('') + '</div>';
+			if (this.finalDecisionMove) moveMenu += '<em class="movewarning">You <strong>might</strong> have some moves disabled, so you won\'t be able to cancel an attack!</em>';
+			if (curActive.maybeLocked) moveMenu += '<em class="movewarning">You <strong>might</strong> be locked into a move. <button class="button" name="chooseFight">Try Fight button</button> (prevents switching if you\'re locked)</em>';
+			moveMenu += '<div style="clear:left"></div>';
+			var moveControls = (
+				'<div class="movecontrols">' +
+					'<div class="moveselect"><button name="selectMove">Attack</button></div>' +
+					'<div class="movemenu">' + moveMenu + '</div>' +
+				'</div>'
+			);
+			var shiftControls = '';
+			if (this.battle.gameType === 'triples' && pos !== 1) {
+				shiftControls = (
+					'<div class="shiftcontrols">' +
+						'<div class="shiftselect"><button name="chooseShift">Shift</button></div>' +
+						'<div class="switchmenu"><button name="chooseShift">Shift to Center</button><div style="clear:left"></div></div>' +
+					'</div>'
+				);
+			}
+			var switchMenu = '';
+			if (trapped) {
+				switchMenu += '<em>You are trapped and cannot switch!</em><br />';
+				switchMenu += this.displayParty(switchables, trapped);
+			} else {
+				switchMenu += this.displayParty(switchables, trapped);
+				if (this.finalDecisionSwitch && this.battle.gen > 2) { switchMenu += '<em class="movewarning">You <strong>might</strong> be trapped, so you won\'t be able to cancel a switch!</em>'; }
+			}
+			var switchControls = (
+				'<div class="switchcontrols">' +
+					'<div class="switchselect"><button name="selectSwitch">Switch</button></div>' +
+					'<div class="switchmenu">' + switchMenu + '</div>' +
+				'</div>'
+			);
+			this.$controls.html(
+				'<div class="controls">' +
+					'<div class="whatdo">' + requestTitle + guardHTML + this.getTeraChargeHTML() + this.getTimerHTML() + '</div>' +
+					moveControls + shiftControls + switchControls +
+				'</div>'
+			);
+		},
 		displayParty: function (switchables, trapped) {
 			var party = '';
 			for (var i = 0; i < switchables.length; i++) {
@@ -1320,39 +1220,28 @@
 		},
 		getPlayerChoicesHTML: function () {
 			var buf = '<p>' + this.getTimerHTML() + this.getTeraChargeHTML();
-
 			// Only show the waiting summary when we are actually waiting.
 			if (!this.choice || !this.choice.waiting) return buf + '</p>';
-
 			buf += '<small>';
-
 			if (this.choice.teamPreview) {
 				var myPokemon = this.battle.mySide.pokemon;
 				var leads = [];
 				var back = [];
 				var leadCount = this.battle.gameType === 'doubles' ? 2 : (this.battle.gameType === 'triples' ? 3 : 1);
-				for (var i = 0; i < leadCount; i++) {
-					leads.push(myPokemon[this.choice.teamPreview[i] - 1].speciesForme);
-				}
+				for (var i = 0; i < leadCount; i++) { leads.push(myPokemon[this.choice.teamPreview[i] - 1].speciesForme); }
 				buf += leads.join(', ') + ' will be sent out first.<br />';
-				for (var i = leadCount; i < this.choice.count; i++) {
-					back.push(myPokemon[this.choice.teamPreview[i] - 1].speciesForme);
-				}
+				for (var i = leadCount; i < this.choice.count; i++) { back.push(myPokemon[this.choice.teamPreview[i] - 1].speciesForme); }
 				if (back.length) buf += back.join(', ') + ' are in the back.<br />';
 			} else if (this.choice.choices && this.request && this.battle.myPokemon) {
 				var myPokemon = this.battle.myPokemon;
 				for (var i = 0; i < this.choice.choices.length; i++) {
 					if (!this.choice.choices[i]) continue;
-
 					var parts = this.choice.choices[i].split(' ');
 					switch (parts[0]) {
 					case 'move':
 						var move;
-						if (this.request.active[i].maxMoves && !this.request.active[i].canDynamax) {
-							move = this.request.active[i].maxMoves.maxMoves[parseInt(parts[1], 10) - 1].move;
-						} else {
-							move = this.request.active[i].moves[parseInt(parts[1], 10) - 1].move;
-						}
+						if (this.request.active[i].maxMoves && !this.request.active[i].canDynamax) { move = this.request.active[i].maxMoves.maxMoves[parseInt(parts[1], 10) - 1].move; } 
+						else { move = this.request.active[i].moves[parseInt(parts[1], 10) - 1].move; }
 						var target = '';
 						buf += myPokemon[i].speciesForme + ' will ';
 						if (parts.length > 2) {
@@ -1369,17 +1258,20 @@
 								buf += 'Mega Evolve Y, then ';
 								targetPos = parts[3];
 							}
-							if (targetPos === 'zmove') {
-								move = this.request.active[i].canZMove[parseInt(parts[1], 10) - 1].move;
+							if (targetPos === 'megaz') {
+								buf += 'Mega Evolve Z, then ';
+								targetPos = parts[3];
+							}
+							if (targetPos === 'megaa') {
+								buf += 'Mega Evolve A, then ';
+								targetPos = parts[3];
+							}
+							if (targetPos === 'megaq') {
+								buf += 'Mega Evolve Q, then ';
 								targetPos = parts[3];
 							}
 							if (targetPos === 'ultra') {
 								buf += 'Ultra Burst, then ';
-								targetPos = parts[3];
-							}
-							if (targetPos === 'dynamax') {
-								move = this.request.active[i].maxMoves.maxMoves[parseInt(parts[1], 10) - 1].move;
-								buf += 'Dynamax, then ';
 								targetPos = parts[3];
 							}
 							if (targetPos === 'terastallize') {
@@ -1403,28 +1295,22 @@
 						}
 						buf += 'use ' + Dex.moves.get(move).name + (target ? ' at ' + target : '') + '.<br />';
 						break;
-
 					case 'switch':
 						buf += myPokemon[parts[1] - 1].speciesForme + ' will switch in';
 						if (myPokemon[i]) buf += ', replacing ' + myPokemon[i].speciesForme;
 						buf += '.<br />';
 						break;
-
 					case 'shift':
 						buf += myPokemon[i].speciesForme + ' will shift position.<br />';
 						break;
-
 					case 'testfight':
 						buf += myPokemon[i].speciesForme + ' is locked into a move.<br />';
 						break;
 					}
 				}
 			}
-
 			buf += '</small></p>';
-			if (!this.finalDecision && !this.battle.hardcoreMode) {
-				buf += '<p><small><em>Waiting for opponent...</em></small> <button class="button" name="undoChoice">Cancel</button></p>';
-			}
+			if (!this.finalDecision && !this.battle.hardcoreMode) { buf += '<p><small><em>Waiting for opponent...</em></small> <button class="button" name="undoChoice">Cancel</button></p>'; }
 			return buf;
 		},
 		/**
@@ -1447,22 +1333,14 @@
 				this.setTimer('on');
 				this.autoTimerActivated = true;
 			}
-
 			request.requestType = 'move';
-			if (request.forceSwitch) {
-				request.requestType = 'switch';
-			} else if (request.teamPreview) {
-				request.requestType = 'team';
-			} else if (request.wait) {
-				request.requestType = 'wait';
-			}
-
+			if (request.forceSwitch) { request.requestType = 'switch'; } 
+			else if (request.teamPreview) { request.requestType = 'team'; } 
+			else if (request.wait) { request.requestType = 'wait'; }
 			this.choice = choiceText ? {waiting: true} : null;
 			this.finalDecision = this.finalDecisionMove = this.finalDecisionSwitch = false;
 			this.request = request;
-			if (request.side) {
-				this.updateSideLocation(request.side);
-			}
+			if (request.side) { this.updateSideLocation(request.side); }
 			this.notifyRequest();
 			this.controlsShown = false;
 			this.updateControls();
@@ -1495,7 +1373,6 @@
 			this.battle.myPokemon = sideData.pokemon;
 			this.battle.setViewpoint(sideData.id);
 			var mySide = this.battle.mySide;
-
 			// Preserve full team only for preview + top bar.
 			// Only initialize it once, before battle-start reshaping would matter.
 			if (!mySide.fullTeam || !mySide.fullTeam.length) {
@@ -1507,7 +1384,6 @@
 					if (previewPokemon) mySide.fullTeam.push(previewPokemon);
 				}
 			}
-
 			// Sidebar/live battle should always use the brought team only.
 			mySide.sidebarPokemon = [];
 			for (var j = 0; j < sideData.pokemon.length; j++) {
@@ -1516,7 +1392,6 @@
 				var broughtPokemon = this.battle.getPokemon(broughtData.ident);
 				if (broughtPokemon) mySide.sidebarPokemon.push(broughtPokemon);
 			}
-
 			this.battle.scene.updateSidebars();
 			// Keep the battlefield sidebar on the brought roster only.
 			if (this.battle.mySide && this.battle.mySide.pokemon) {
@@ -1525,14 +1400,9 @@
 					var reqMon = sideData.pokemon[i];
 					if (reqMon && reqMon.ident) broughtIdents[reqMon.ident] = true;
 				}
-				this.battle.mySide.sidebarPokemon = this.battle.mySide.pokemon.filter(function (pokemon) {
-					return pokemon && broughtIdents[pokemon.ident];
-				});
-				if (this.battle.scene && this.battle.scene.updateSidebar) {
-					this.battle.scene.updateSidebar(this.battle.mySide);
-				}
+				this.battle.mySide.sidebarPokemon = this.battle.mySide.pokemon.filter(function (pokemon) { return pokemon && broughtIdents[pokemon.ident]; });
+				if (this.battle.scene && this.battle.scene.updateSidebar) { this.battle.scene.updateSidebar(this.battle.mySide); }
 			}
-
 			// Sync terastallized flags from the request into the live Battle Pokemon objects.
 			// This fixes tooltips/UI still showing "(Terastallized)" after server ended it.
 			if (sideData && sideData.pokemon) {
@@ -1545,7 +1415,6 @@
 			}
 			for (var i = 0; i < sideData.pokemon.length; i++) {
 				var pokemonData = sideData.pokemon[i];
-				if (this.request.active && this.request.active[i]) pokemonData.canGmax = this.request.active[i].gigantamax || false;
 				this.battle.parseDetails(pokemonData.ident.substr(4), pokemonData.ident, pokemonData.details, pokemonData);
 				this.battle.parseHealth(pokemonData.condition, pokemonData);
 				pokemonData.hpDisplay = Pokemon.prototype.hpDisplay;
@@ -1631,81 +1500,68 @@
 			app.send('/cmd fullformat ' + this.id);
 		},
 		//region Choice Buttons
+		chooseGuard: function (e) {
+			if (e) { e.preventDefault(); e.stopPropagation(); }
+			if (!this.choice) return;
+			this.tooltips.hideTooltip();
+			this.sendDecision('guard');
+		},
 		chooseMove: function (pos, el) {
-	if (!this.choice) return;
-
-	this.tooltips.hideTooltip();
-
-	// pos === undefined if called by chooseMoveTarget()
-	if (pos === undefined) {
-		this.endChoice();
-		return;
-	}
-
-	var nearActive = this.battle.nearSide.active;
-
-	// Which active slot are we picking for right now?
-	var choiceIndex = this.choice.choices.length;
-
-	var isMega = !!(this.$('input[name=megaevo]')[0] || '').checked;
-	var isMegaX = !!(this.$('input[name=megaevox]')[0] || '').checked;
-	var isMegaY = !!(this.$('input[name=megaevoy]')[0] || '').checked;
-	var isZMove = !!(this.$('input[name=zmove]')[0] || '').checked;
-	var isUltraBurst = !!(this.$('input[name=ultraburst]')[0] || '').checked;
-	var isDynamax = !!(this.$('input[name=dynamax]')[0] || '').checked;
-
-	// Only apply tera mode to the ONE slot that was armed
-	var isTerastal = (this.terastallizeArmedIndex === choiceIndex);
-	var isTeraEmpower = (this.teraEmpowerArmedIndex === choiceIndex);
-
-	// Safely read target + move id from the clicked button (dispatchClickButton passes the element)
-	var target = 'normal';
-	var moveId = '';
-	if (el && el.getAttribute) {
-		target = el.getAttribute('data-target') || 'normal';
-		moveId = toID(el.getAttribute('data-move') || '');
-	}
-	var choosableTargets = { normal: 1, any: 1, adjacentAlly: 1, adjacentAllyOrSelf: 1, adjacentFoe: 1 };
-	if (this.battle.gameType === 'freeforall') delete choosableTargets['adjacentAllyOrSelf'];
-
-	// safety: never send both
-	if (isTerastal) this.teraEmpowerArmedIndex = null;
-	if (isTeraEmpower) this.terastallizeArmedIndex = null;
-
-	var builtChoice =
-	'move ' + pos +
-	(isMega ? ' mega' : '') +
-	(isMegaX ? ' megax' : isMegaY ? ' megay' : '') +
-	(isZMove ? ' zmove' : '') +
-	(isUltraBurst ? ' ultra' : '') +
-	(isDynamax ? ' dynamax' : '') +
-	(isTerastal ? ' terastallize' : '') +
-	(isTeraEmpower ? ' teraempower' : '');
-
-console.log('CLIENT built move choice:', builtChoice, {
-	choiceIndex: choiceIndex,
-	isTeraEmpower: isTeraEmpower,
-	isTerastal: isTerastal,
-	teraEmpowerArmedIndex: this.teraEmpowerArmedIndex,
-	terastallizeArmedIndex: this.terastallizeArmedIndex,
-});
-
-this.choice.choices.push(builtChoice);
-
-	// consume arming for this slot
-	this.terastallizeArmedIndex = null;
-	this.teraEmpowerArmedIndex = null;
-
-	// Targeting prompt (doubles/triples)
-	if (nearActive.length > 1 && (target in choosableTargets)) {
-		this.choice.type = 'movetarget';
-		this.choice.moveTarget = target;
-		this.updateControlsForPlayer();
-		return false;
-	}
-
-	this.endChoice();
-},
+			if (!this.choice) return;
+			this.tooltips.hideTooltip();
+			// pos === undefined if called by chooseMoveTarget()
+			if (pos === undefined) {
+				this.endChoice();
+				return;
+			}
+			var nearActive = this.battle.nearSide.active;
+			// Which active slot are we picking for right now?
+			var choiceIndex = this.choice.choices.length;
+			var isMegaArmed = (this.megaEvoArmedIndex === choiceIndex);
+			var megaLetter = isMegaArmed ? this.megaEvoArmedLetter : null;
+			var isUltraBurst = !!(this.$('input[name=ultraburst]')[0] || '').checked;
+			var isTerastal = (this.terastallizeArmedIndex === choiceIndex);
+			var isTeraEmpower = (this.teraEmpowerArmedIndex === choiceIndex);
+			var target = 'normal';
+			var moveId = '';
+			if (el && el.getAttribute) {
+				target = el.getAttribute('data-target') || 'normal';
+				moveId = toID(el.getAttribute('data-move') || '');
+			}
+			var choosableTargets = { normal: 1, any: 1, adjacentAlly: 1, adjacentAllyOrSelf: 1, adjacentFoe: 1 };
+			if (this.battle.gameType === 'freeforall') delete choosableTargets['adjacentAllyOrSelf'];
+			// safety: never send both
+			if (isTerastal) this.teraEmpowerArmedIndex = null;
+			if (isTeraEmpower) this.terastallizeArmedIndex = null;
+			var builtChoice =
+			'move ' + pos +
+			(megaLetter ? ' mega' + megaLetter.toLowerCase() : '') +
+			(isUltraBurst ? ' ultra' : '') +
+			(isDynamax ? ' dynamax' : '') +
+			(isTerastal ? ' terastallize' : '') +
+			(isTeraEmpower ? ' teraempower' : '');
+			console.log('CLIENT built move choice:', builtChoice, {
+				choiceIndex: choiceIndex,
+				isTeraEmpower: isTeraEmpower,
+				isTerastal: isTerastal,
+				teraEmpowerArmedIndex: this.teraEmpowerArmedIndex,
+				terastallizeArmedIndex: this.terastallizeArmedIndex,
+			});
+			this.choice.choices.push(builtChoice);
+			// consume arming for this slot
+			this.terastallizeArmedIndex = null;
+			this.teraEmpowerArmedIndex = null;
+			this.megaEvoArmedIndex = null;
+			this.megaEvoArmedLetter = null;
+			// Targeting prompt (doubles/triples)
+			if (nearActive.length > 1 && (target in choosableTargets)) {
+				this.choice.type = 'movetarget';
+				this.choice.moveTarget = target;
+				this.updateControlsForPlayer();
+				return false;
+			}
+			this.endChoice();
+		},
 		chooseMoveTarget: function (posString) {
 			this.choice.choices[this.choice.choices.length - 1] += ' ' + posString;
 			this.chooseMove();
@@ -1829,8 +1685,7 @@ this.choice.choices.push(builtChoice);
 				if (this.choice.teamPreview.length >= 10) { this.sendDecision('team ' + this.choice.teamPreview.join(',')); } 
 				else { this.sendDecision('team ' + this.choice.teamPreview.join('')); }
 			} else {
-				if (act === 'switch') {
-					// Assert that the remaining Pokémon won't switch, even though the player could have decided otherwise.
+				if (act === 'switch') { // Assert that the remaining Pokémon won't switch, even though the player could have decided otherwise.
 					for (var i = 0; i < this.battle.pokemonControlled; i++) { if (!this.choice.choices[i]) this.choice.choices[i] = 'pass'; }
 				}
 				if (this.choice.choices.length >= (this.choice.count || this.battle.pokemonControlled || this.request.active.length)) { this.sendDecision(this.choice.choices); }

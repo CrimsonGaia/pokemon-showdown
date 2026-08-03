@@ -409,3 +409,25 @@
 	background: linear-gradient(90deg, hsl(330, 65%, 45%), hsl(126, 71%, 73%), hsl(231, 100%, 86%));
 	border-color: linear-gradient(90deg, hsl(330, 66%, 58%), hsl(126, 79%, 65%), hsl(231, 98%, 65%));
 }
+
+.movemenu button.type-banal {
+	/* bg: 97 to 90, border: 70 */
+	background: hsl(66,42%,93%);
+	background: linear-gradient(to bottom,  hsl(66,42%,97%),  hsl(66,42%,84%));
+	border-color: hsl(66,42%,70%);
+}
+.movemenu button.type-banal small {
+	color: hsl(27, 42%, 41%);
+}
+.movemenu button.type-banal:hover {
+	/* bg: 95 to 83, border: 41 */
+	background: hsl(54, 42%, 60%);
+	background: linear-gradient(to bottom,  hsl(66,42%,94%),  hsl(66,42%,77%));
+	border-color: hsl(66,42%,41%);
+}
+.movemenu button.type-banal:active, .movemenu button.type-banal.pressed {
+	/* bg: 83 to 88, border: 41 */
+	background: hsl(54, 100%, 80%);
+	background: linear-gradient(to bottom,  hsl(66,42%,77%),  hsl(66,42%,83%));
+	border-color: hsl(41, 42%, 41%);
+}

@@ -11,9 +11,7 @@
  */
 import { Config, PS } from "./client-main";
 declare const ColorThief: any;
-/**********************************************************************
- * PS Models
- *********************************************************************/
+// region PS Models
 // PS's model classes are defined here
 const PSURL = `${document.location.protocol !== 'http:' ? 'https:' : ''}//${Config.routes.client}/`;
 export class PSSubscription<T = any> {
@@ -78,9 +76,7 @@ export class PSStreamModel<T = string> {
 // type JSONObject = {[k: string]: JSONValue};
 // type JSONArray = JSONValue[];
 // type JSONValue = number | string | boolean | null | JSONObject | JSONArray;
-/**********************************************************************
- * Background Model
- *********************************************************************/
+// region Background Model
 /**
  * PS background model. Separate from PSPrefs because unlike prefs, backgrounds can be set separately per server, instead of being shared among all servers.
  * Streams the current URL
@@ -279,9 +275,7 @@ export const PSBackground = new class extends PSStreamModel<string | null> {
 		return `${h * 360},${s * 100}%`;
 	}
 };
-/**********************************************************************
- * Core Views
- *********************************************************************/
+// region Core Views
 PSBackground.subscribe(bgUrl => {
 	if (!PSBackground.curId) {
 		document.body.style.background = '';

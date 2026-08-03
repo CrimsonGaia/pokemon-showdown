@@ -306,7 +306,9 @@ export const PSLoginServer = new class {
 		data.act = act;
 		let url = '/~~' + PS.server.id + '/action.php';
 		if (location.pathname.endsWith('.html')) {
-			url = 'https://' + Config.routes.client + url;
+			const loginHost = Config.testclientLocalLoginServer || Config.routes.client;
+			const loginProtocol = location.protocol === 'https:' ? 'https:' : 'http:';
+			url = loginProtocol + '//' + loginHost + url;
 			if (typeof POKEMON_SHOWDOWN_TESTCLIENT_KEY === 'string') { data.sid = POKEMON_SHOWDOWN_TESTCLIENT_KEY.replace(/%2C/g, ','); }
 		}
 		return PSStorage.request('POST', url, data) || Net(url).get({ method: 'POST', body: data }).then(res => res ?? null).catch(() => null);

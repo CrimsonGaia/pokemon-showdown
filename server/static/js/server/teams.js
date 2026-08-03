@@ -116,21 +116,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 var Teams=new(function(){function Teams(){}var _proto=Teams.prototype;_proto.
 pack=function pack(team){
 if(!team)return'';
@@ -215,15 +200,12 @@ buf+='|';
 }
 
 if(set.pokeball||set.hpType||set.gigantamax||
-set.dynamaxLevel!==undefined&&set.dynamaxLevel!==10||set.teraType||set.ability2||set.abilitySet||set.size){
+set.dynamaxLevel!==undefined&&set.dynamaxLevel!==10||set.teraType){
 buf+=","+(set.hpType||'');
 buf+=","+this.packName(set.pokeball||'');
 buf+=","+(set.gigantamax?'G':'');
 buf+=","+(set.dynamaxLevel!==undefined&&set.dynamaxLevel!==10?set.dynamaxLevel:'');
 buf+=","+(set.teraType||'');
-buf+=","+this.packName(set.ability2||'');
-buf+=","+(set.abilitySet||'');
-buf+=","+(set.size||'');
 }
 }
 
@@ -344,9 +326,9 @@ i=j+1;
 j=buf.indexOf(']',i);
 var misc=void 0;
 if(j<0){
-if(i<buf.length)misc=buf.substring(i).split(',',9);
+if(i<buf.length)misc=buf.substring(i).split(',',6);
 }else{
-if(i!==j)misc=buf.substring(i,j).split(',',9);
+if(i!==j)misc=buf.substring(i,j).split(',',6);
 }
 if(misc){
 set.happiness=misc[0]?Number(misc[0]):255;
@@ -355,9 +337,6 @@ set.pokeball=this.unpackName(misc[2]||'',Dex.items);
 set.gigantamax=!!misc[3];
 set.dynamaxLevel=misc[4]?Number(misc[4]):10;
 set.teraType=misc[5];
-set.ability2=this.unpackName(misc[6]||'',Dex.abilities);
-set.abilitySet=misc[7]?Number(misc[7]):undefined;
-set.size=misc[8]||undefined;
 }
 if(j<0)break;
 i=j+1;
@@ -393,7 +372,7 @@ output+=this.exportSet(set,options)+"\n";
 return output;
 };_proto.
 
-exportSet=function exportSet(set){var _ref=arguments.length>1&&arguments[1]!==undefined?arguments[1]:{},hideStats=_ref.hideStats,removeNicknames=_ref.removeNicknames;
+exportSet=function exportSet(set){var _ref=arguments.length>1&&arguments[1]!==undefined?arguments[1]:{},hideStats=_ref.hideStats,removeNicknames=_ref.removeNicknames,useStatPoints=_ref.useStatPoints;
 var out="";
 
 
@@ -412,12 +391,6 @@ out+="  \n";
 
 if(set.ability){
 out+="Ability: "+set.ability+"  \n";
-}
-if(set.ability2){
-out+="Ability 2: "+set.ability2+"  \n";
-}
-if(set.abilitySet){
-out+="Ability Set: "+set.abilitySet+"  \n";
 }
 
 
@@ -442,11 +415,8 @@ out+="Dynamax Level: "+set.dynamaxLevel+"  \n";
 if(set.gigantamax){
 out+="Gigantamax: Yes  \n";
 }
-if(set.teraType){
+if(set.teraType&&!useStatPoints){
 out+="Tera Type: "+set.teraType+"  \n";
-}
-if(set.size){
-out+="Size: "+set.size+"  \n";
 }
 
 
@@ -532,9 +502,6 @@ set.hpType=aggressive?toID(line):line;
 }else if(line.startsWith('Tera Type: ')){
 line=line.slice(11);
 set.teraType=aggressive?line.replace(/[^a-zA-Z0-9]/g,''):line;
-}else if(line.startsWith('Size: ')){
-line=line.slice(6);
-set.size=line;
 }else if(line==='Gigantamax: Yes'){
 set.gigantamax=true;
 }else if(line.startsWith('EVs: ')){
@@ -666,6 +633,8 @@ if(format.mod==='monkeyspaw')mod='gen9';
 var formatID=toID(format);
 if(mod==='gen9ssb'){
 TeamGenerator=require("../data/mods/gen9ssb/random-teams")["default"];
+}else if(mod==='afd'){
+TeamGenerator=require("../data/mods/afd/random-teams")["default"];
 }else if(formatID.includes('gen9babyrandombattle')){
 TeamGenerator=require("../data/random-battles/gen9baby/teams")["default"];
 }else if(formatID.includes('gen9randombattle')&&(_format$ruleTable=format.ruleTable)!=null&&_format$ruleTable.has('+pokemontag:cap')){

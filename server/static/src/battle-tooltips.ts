@@ -49,9 +49,7 @@ export class ModifiableValue {
 			this.comment.push(` (${itemName} suppressed by Embargo)`);
 			return false;
 		}
-		const ignoreKlutz = [
-			"Macho Brace", "Power Anklet", "Power Band", "Power Belt", "Power Bracer", "Power Lens", "Power Weight",
-		];
+		const ignoreKlutz = ["Macho Brace", "Power Anklet", "Power Band", "Power Belt", "Power Bracer", "Power Lens", "Power Weight",];
 		if (this.tryAbility('Klutz') && !ignoreKlutz.includes(itemName)) {
 			this.comment.push(` (${itemName} suppressed by Klutz)`);
 			return false;
@@ -136,7 +134,6 @@ export class BattleTooltips {
 	battle: Battle;
 	constructor(battle: Battle) { this.battle = battle; }
 	private static STATUS_ICON_PATH = Dex.resourcePrefix + "sprites/status-is/";
-
 	private static STATUS_ICON_FILE: Record<string, string> = {
 		brn: "Burn_IS.png",
 		psn: "Poison_IS.png",
@@ -152,12 +149,11 @@ export class BattleTooltips {
 		fear: "Fear_IS.png",
 		frostbite: "Frostbite_IS.png",
 	};
-
-private renderStatusIcon(status: string): string {
-	const file = BattleTooltips.STATUS_ICON_FILE[status];
-	if (!file) return '';
-	return `<img class="status-icon tooltip-status-icon" src="${BattleTooltips.STATUS_ICON_PATH}${file}" alt="${status}" />`;
-}
+	private renderStatusIcon(status: string): string {
+		const file = BattleTooltips.STATUS_ICON_FILE[status];
+		if (!file) return '';
+		return `<img class="status-icon tooltip-status-icon" src="${BattleTooltips.STATUS_ICON_PATH}${file}" alt="${status}" />`;
+	}
 	// tooltips
 	// Touch delay, pressing finger more than that time will cause the tooltip to open.
 	// Shorter time will cause the button to click
@@ -276,6 +272,17 @@ private renderStatusIcon(status: string): string {
 			if (!pokemon) return false;
 			let serverPokemon = this.battle.myPokemon![teamIndex];
 			buf = this.showMoveTooltip(move, type, pokemon, serverPokemon, gmaxMove);
+			break;
+		}
+		case 'guardaction': { // guardaction|MOVEID|ACTIVEPOKEMON|CUR|MAX
+			let move = this.battle.dex.moves.get(args[1]);
+			let teamIndex = parseInt(args[2], 10);
+			let pokemon = this.battle.nearSide.active[teamIndex + this.battle.pokemonControlled * Math.floor(this.battle.mySide.n / 2)];
+			if (!pokemon) return false;
+			let serverPokemon = this.battle.myPokemon![teamIndex];
+			let cur = parseInt(args[3], 10) || 0;
+			let max = parseInt(args[4], 10) || 0;
+			buf = this.showGuardActionTooltip(move, pokemon, serverPokemon, cur, max);
 			break;
 		}
 		case 'pokemon': { // pokemon|SIDE|POKEMON
@@ -420,64 +427,7 @@ private renderStatusIcon(status: string): string {
 		'redirect': "Redirects opposing attacks to user",
 		'healreplacement': "Restores replacement's HP 100%",
 	};
-	getStatusZMoveEffect(move: Dex.Move) {
-		if (move.zMove!.effect! in BattleTooltips.zMoveEffects) { return BattleTooltips.zMoveEffects[move.zMove!.effect!]; }
-		let boostText = '';
-		if (move.zMove!.boost) { boostText = Object.entries(move.zMove!.boost).map(([stat, boost]) => `${BattleTextParser.stat(stat)} +${boost}`).join(', '); }
-		return boostText;
-	}
-	static zMoveTable: { [type in Dex.TypeName]: string } = {
-		Poison: "Acid Downpour",
-		Fighting: "All-Out Pummeling",
-		Dark: "Black Hole Eclipse",
-		Grass: "Bloom Doom",
-		Normal: "Breakneck Blitz",
-		Rock: "Continental Crush",
-		Steel: "Corkscrew Crash",
-		Dragon: "Devastating Drake",
-		Electric: "Gigavolt Havoc",
-		Water: "Hydro Vortex",
-		Fire: "Inferno Overdrive",
-		Ghost: "Never-Ending Nightmare",
-		Bug: "Savage Spin-Out",
-		Psychic: "Shattered Psyche",
-		Ice: "Subzero Slammer",
-		Flying: "Supersonic Skystrike",
-		Ground: "Tectonic Rage",
-		Fairy: "Twinkle Tackle",
-		Stellar: "",
-		"???": "",
-	};
-	static maxMoveTable: { [type in Dex.TypeName]: string } = {
-		Poison: "Max Ooze",
-		Fighting: "Max Knuckle",
-		Dark: "Max Darkness",
-		Grass: "Max Overgrowth",
-		Normal: "Max Strike",
-		Rock: "Max Rockfall",
-		Steel: "Max Steelspike",
-		Dragon: "Max Wyrmwind",
-		Electric: "Max Lightning",
-		Water: "Max Geyser",
-		Fire: "Max Flare",
-		Ghost: "Max Phantasm",
-		Bug: "Max Flutterby",
-		Psychic: "Max Mindstorm",
-		Ice: "Max Hailstorm",
-		Flying: "Max Airstream",
-		Ground: "Max Quake",
-		Fairy: "Max Starfall",
-		Stellar: "",
-		"???": "",
-	};
-	getMaxMoveFromType(type: Dex.TypeName, gmaxMove?: string | Dex.Move) {
-		if (gmaxMove) {
-			if (typeof gmaxMove === 'string') gmaxMove = this.battle.dex.moves.get(gmaxMove);
-			if (type === gmaxMove.type) return gmaxMove;
-		}
-		return this.battle.dex.moves.get(BattleTooltips.maxMoveTable[type]);
-	}
-	showMoveTooltip(move: Dex.Move, isZOrMax: string, pokemon: Pokemon, serverPokemon: ServerPokemon, gmaxMove?: Dex.Move) {
+	showMoveTooltip(move: Dex.Move, isZOrMax: string, pokemon: Pokemon, serverPokemon: ServerPokemon, gmaxMove?: Dex.Move, cooldownText?: string) {
 		let text = '';
 		let zEffect = '';
 		let foeActive = pokemon.side.foe.active;
@@ -489,61 +439,6 @@ private renderStatusIcon(status: string): string {
 		let value = new ModifiableValue(this.battle, pokemon, serverPokemon);
 		let [moveType, category] = this.getMoveType(move, value, gmaxMove || isZOrMax === 'maxmove');
 		let categoryDiff = move.category !== category;
-		if (isZOrMax === 'zmove') {
-			if (item.zMoveFrom === move.name) { move = this.battle.dex.moves.get(item.zMove as string); } 
-			else if (move.category === 'Status') {
-				move = new Move(move.id, "", {
-					...move,
-					name: 'Z-' + move.name,
-				});
-				zEffect = this.getStatusZMoveEffect(move);
-			} else {
-				let moveName = BattleTooltips.zMoveTable[item.zMoveType as Dex.TypeName];
-				let zMove = this.battle.dex.moves.get(moveName);
-				let movePower = move.zMove!.basePower;
-				// the different Hidden Power types don't have a Z power set, fall back on base move
-				if (!movePower && move.id.startsWith('hiddenpower')) { movePower = this.battle.dex.moves.get('hiddenpower').zMove!.basePower; }
-				if (move.id === 'weatherball') {
-					switch (this.battle.weather) {
-					case 'sunnyday':
-					case 'desolateland':
-						zMove = this.battle.dex.moves.get(BattleTooltips.zMoveTable['Fire']);
-						break;
-					case 'raindance':
-					case 'primordialsea':
-						zMove = this.battle.dex.moves.get(BattleTooltips.zMoveTable['Water']);
-						break;
-					case 'sandstorm':
-						zMove = this.battle.dex.moves.get(BattleTooltips.zMoveTable['Rock']);
-						break;
-					case 'hail':
-					case 'snowscape':
-						zMove = this.battle.dex.moves.get(BattleTooltips.zMoveTable['Ice']);
-						break;
-					}
-				}
-				move = new Move(zMove.id, zMove.name, {
-					...zMove,
-					category: move.category,
-					basePower: movePower,
-				});
-				categoryDiff = false;
-			}
-		} else if (isZOrMax === 'maxmove') {
-			if (move.category === 'Status') {
-				move = this.battle.dex.moves.get('Max Guard');
-			} else {
-				let maxMove = this.getMaxMoveFromType(moveType, gmaxMove);
-				const basePower = ['gmaxdrumsolo', 'gmaxfireball', 'gmaxhydrosnipe'].includes(maxMove.id) ?
-					maxMove.basePower : move.maxMove.basePower;
-				move = new Move(maxMove.id, maxMove.name, {
-					...maxMove,
-					category: move.category,
-					basePower,
-				});
-				categoryDiff = false;
-			}
-		}
 		if (categoryDiff) {
 			move = new Move(move.id, move.name, {
 				...move,
@@ -598,6 +493,7 @@ private renderStatusIcon(status: string): string {
 			text += `Calls ${Dex.getTypeIcon(this.getMoveType(calledMove, value)[0])} ${calledMove.name}`;
 		}
 		text += `<p>Accuracy: ${accuracy}</p>`;
+		if (cooldownText) text += `<p>${cooldownText}</p>`;
 		if (zEffect) text += `<p>Z-Effect: ${zEffect}</p>`;
 		if (this.battle.hardcoreMode) { text += `<p class="tooltip-section">${move.shortDesc}</p>`; } 
 		else {
@@ -655,6 +551,13 @@ private renderStatusIcon(status: string): string {
 			}
 		}
 		return text;
+	}
+	showGuardActionTooltip(move: Dex.Move, pokemon: Pokemon, serverPokemon: ServerPokemon, cur: number, max: number) {
+		const remaining = Math.max(0, max - cur);
+		const cooldownText = cur >= max ?
+			`Guard Action Cooldown: Ready` :
+			`Guard Action Cooldown: ${remaining} more action${remaining === 1 ? '' : 's'} <small>(${cur}/${max})</small>`;
+		return this.showMoveTooltip(move, '', pokemon, serverPokemon, undefined, cooldownText);
 	}
 	/**
 	 * Needs either a Pokemon or a ServerPokemon, but note that neither are guaranteed: If you hover over a possible switch-in that's
@@ -714,6 +617,7 @@ private renderStatusIcon(status: string): string {
 			}
 			text += '</p>';
 		}
+		text += this.renderGuardActionBadge(clientPokemon);
 		const supportsAbilities = this.battle.gen > 2 && !this.battle.tier.includes("Let's Go");
 		let abilityText = '';
 		if (supportsAbilities) { abilityText = this.getPokemonAbilityText(clientPokemon, serverPokemon, isActive, !!illusionIndex && illusionIndex > 1); }
@@ -749,6 +653,7 @@ private renderStatusIcon(status: string): string {
 			text += itemText;
 			text += '</p>';
 		}
+		text += this.renderWeaponState(clientPokemon, serverPokemon);
 		text += this.renderStats(clientPokemon, serverPokemon, !isActive);
 		if (serverPokemon && !isActive) {
 			// move list
@@ -775,7 +680,7 @@ private renderStatusIcon(status: string): string {
 			if (clientPokemon.moveTrack.filter(([moveName]) => {
 				if (moveName.startsWith('*')) return false;
 				const move = this.battle.dex.moves.get(moveName);
-				return !move.isZ && !move.isMax && move.name !== 'Mimic';
+				return move.name !== 'Mimic';
 			}).length > 4) { text += `(More than 4 moves is usually a sign of Illusion Zoroark/Zorua.) `; }
 			if (this.battle.gen === 3) { text += `(Pressure is not visible in Gen 3, so in certain situations, more PP may have been lost than shown here.) `; }
 			if (this.pokemonHasClones(clientPokemon)) { text += `(Your opponent has two indistinguishable Pokémon, making it impossible for you to tell which one has which moves/ability/item.) `; }
@@ -1027,6 +932,28 @@ private renderStatusIcon(status: string): string {
 		}
 		buf += '</p>';
 		return buf;
+	} 
+	private renderWeaponState(clientPokemon: Pokemon | null, serverPokemon?: ServerPokemon | null) {
+		const pokemon = clientPokemon || serverPokemon;
+		const current = pokemon?.weaponDurability || 0;
+		const max = pokemon?.maxWeaponDurability || 0;
+		const recoveryLeft = pokemon?.weaponRecoveryLeft || 0;
+		if (!pokemon || max <= 0) return '';
+		let text = `<p><small>Weapon:</small> ${current}/${max}`;
+		if (current <= 0 && recoveryLeft > 0) { text += ` <small>(recovers in ${recoveryLeft} turn${recoveryLeft === 1 ? '' : 's'})</small>`; }
+		return text + '</p>';
+	}
+	private renderGuardActionBadge(clientPokemon: Pokemon | null): string {
+		const cur = clientPokemon?.guardActionCur || 0;
+		const max = clientPokemon?.guardActionMax || 0;
+		if (!max) return ''; // this Pokemon has no Guard Action, or we don't currently know its state
+		const ready = cur >= max;
+		const remaining = Math.max(0, max - cur);
+		return `<p><small>Guard Action:</small> ` +
+			`<span class="tooltip-guard-badge${ready ? ' ready' : ''}">` +
+				`<i class="fa fa-shield"></i>` +
+				(ready ? '' : `<span class="tooltip-guard-badge-count">${remaining}</span>`) +
+			`</span></p>`;
 	}
 	private renderTypeMatchups(clientPokemon: Pokemon | null, serverPokemon?: ServerPokemon | null) {
 		// Defensive typing (Tera-aware).
@@ -1093,7 +1020,7 @@ private renderStatusIcon(status: string): string {
 			maxpp = (move.pp === 1 || move.noPPBoosts ? move.pp : move.pp * 8 / 5);
 			if (this.battle.gen < 3) maxpp = Math.min(61, maxpp);
 		}
-		const bullet = moveName.startsWith('*') || move.isZ ? '<span style="color:#888">&#8226;</span>' : '&#8226;';
+		const bullet = moveName.startsWith('*')? '<span style="color:#888">&#8226;</span>' : '&#8226;';
 		if (ppUsed === Infinity) { return `${bullet} ${move.name} <small>(0/${maxpp})</small>`; }
 		if (ppUsed || moveName.startsWith('*')) { return `${bullet} ${move.name} <small>(${maxpp - ppUsed}/${maxpp})</small>`; }
 		return `${bullet} ${move.name} ${showKnown ? ' <small>(revealed)</small>' : ''}`;
@@ -1175,7 +1102,7 @@ private renderStatusIcon(status: string): string {
 		// Moves that require an item to change their type.
 		let item = this.battle.dex.items.get(value.itemName);
 		if (move.id === 'multiattack' && item.onMemory) { if (value.itemModify(0)) moveType = item.onMemory; }
-		if (move.id === 'judgment' && item.onPlate && !item.zMoveType) { if (value.itemModify(0)) moveType = item.onPlate; }
+		if (move.id === 'judgment' && item.onPlate) { if (value.itemModify(0)) moveType = item.onPlate; }
 		if (move.id === 'technoblast' && item.onDrive) { if (value.itemModify(0)) moveType = item.onDrive; }
 		if (move.id === 'naturalgift' && item.naturalGift) { if (value.itemModify(0)) moveType = item.naturalGift.type; }
 		// Weather and pseudo-weather type changes.
@@ -1246,7 +1173,7 @@ private renderStatusIcon(status: string): string {
 				const [types] = pokemon.getTypes(serverPokemon);
 				for (let i = 0; i < types.length; i++) { if (serverPokemon.moves[i] && move.id === toID(serverPokemon.moves[i])) { moveType = types[i]; } }
 			}
-			if (category !== 'Status' && !move.isZ && !move.id.startsWith('hiddenpower')) {
+			if (category !== 'Status') {
 				if (moveType === 'Normal') {
 					if (value.abilityModify(0, 'Aerilate')) moveType = 'Flying';
 					if (value.abilityModify(0, 'Galvanize')) moveType = 'Electric';
@@ -1256,10 +1183,7 @@ private renderStatusIcon(status: string): string {
 				if (value.abilityModify(0, 'Normalize')) moveType = 'Normal';
 			}
 			// There aren't any max moves with the sound flag, but if there were, Liquid Voice would make them water type
-			const isSound = !!(
-				forMaxMove ?
-					this.getMaxMoveFromType(moveType, forMaxMove !== true && forMaxMove || undefined) : move
-			).flags['sound'];
+			const isSound = !!(forMaxMove ? this.getMaxMoveFromType(moveType, forMaxMove !== true && forMaxMove || undefined) : move).flags['sound'];
 			if (isSound && value.abilityModify(0, 'Liquid Voice')) { moveType = 'Water'; }
 		}
 		if (move.id === 'photongeyser' || move.id === 'lightthatburnsthesky' ||
@@ -1517,17 +1441,14 @@ private renderStatusIcon(status: string): string {
 		}
 		const noTypeOverride = ['judgment', 'multiattack', 'naturalgift', 'revelationdance', 'struggle', 'technoblast', 'terrainpulse', 'weatherball',];
 		const allowTypeOverride = !noTypeOverride.includes(move.id) && (move.id !== 'terablast' || !pokemon.terastallized);
-		if (
-			move.category !== 'Status' && allowTypeOverride && !move.isZ && !move.isMax &&
-			!move.id.startsWith('hiddenpower')
-		) {
+		if (move.category !== 'Status' && allowTypeOverride ) {
 			if (move.type === 'Normal') {
-				value.abilityModify(this.battle.gen > 6 ? 1.2 : 1.3, "Aerilate");
-				value.abilityModify(this.battle.gen > 6 ? 1.2 : 1.3, "Galvanize");
-				value.abilityModify(this.battle.gen > 6 ? 1.2 : 1.3, "Pixilate");
-				value.abilityModify(this.battle.gen > 6 ? 1.2 : 1.3, "Refrigerate");
+				value.abilityModify(1.2, "Aerilate");
+				value.abilityModify(1.2, "Galvanize");
+				value.abilityModify(1.2, "Pixilate");
+				value.abilityModify(1.2, "Refrigerate");
 			}
-			if (this.battle.gen > 6) { value.abilityModify(1.2, "Normalize"); }
+			value.abilityModify(1.2, "Normalize");
 		}
 		if (move.recoil || move.hasCrashDamage) { value.abilityModify(1.2, 'Reckless'); }
 		if (move.category !== 'Status') {
@@ -1647,7 +1568,7 @@ private renderStatusIcon(status: string): string {
 		let speciesName = isTransform && value.pokemon.volatiles.formechange?.[1] && this.battle.gen <= 4 ?
 		this.battle.dex.species.get(value.pokemon.volatiles.formechange[1]).baseSpecies : species.baseSpecies;
 		// Plates
-		if (item.onPlate === moveType && !item.zMove) {
+		if (item.onPlate === moveType) {
 			value.itemModify(1.2);
 			return value;
 		}

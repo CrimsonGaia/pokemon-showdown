@@ -1,17 +1,13 @@
 (function ($) {
-
 	this.RoomsRoom = Room.extend({
 		minWidth: 320,
 		maxWidth: 1024,
 		type: 'rooms',
 		title: 'Rooms',
-		events: {
-			'change select[name=sections]': 'refresh'
-		},
+		events: { 'change select[name=sections]': 'refresh' },
 		isSideRoom: true,
 		initialize: function () {
 			this.focusedSection = '';
-
 			this.$el.addClass('ps-room-light').addClass('scrollable');
 			var buf = '<div class="pad"><button class="button" style="float:right;font-size:10pt;margin-top:3px" name="closeHide"><i class="fa fa-caret-right"></i> Hide</button>';
 			buf += '<div class="roomlisttop"></div><p><select name="sections" class="button"><option value="all">(All rooms)</option></select></p>';
@@ -25,11 +21,7 @@
 			app.send('/cmd rooms');
 			app.user.on('change:named', this.updateUser, this);
 			this.update();
-			this.chatroomInterval = setInterval(function () {
-				if (app.curSideRoom && app.curSideRoom.id === 'rooms') {
-					app.send('/cmd rooms');
-				}
-			}, 20 * 1000);
+			this.chatroomInterval = setInterval(function () { if (app.curSideRoom && app.curSideRoom.id === 'rooms') { app.send('/cmd rooms'); } }, 20 * 1000);
 		},
 		initSectionSelection: function () {
 			var buf = ['<option value="">(All rooms)</option>'];
@@ -44,18 +36,14 @@
 			}
 			this.$('select[name=sections]').html(buf.join(''));
 		},
-		updateUser: function () {
-			this.update();
-		},
+		updateUser: function () { this.update(); },
 		focus: function () {
 			if (new Date().getTime() - this.lastUpdate > 20 * 1000) {
 				app.send('/cmd rooms');
 				this.lastUpdate = new Date().getTime();
 			}
 			var prevPos = this.$el.scrollTop();
-			if (!this.$('select:focus').length) {
-				this.$('button[name=joinRoomPopup]').focus();
-			}
+			if (!this.$('select:focus').length) { this.$('button[name=joinRoomPopup]').focus(); }
 			this.$el.scrollTop(prevPos);
 		},
 		joinRoomPopup: function () {
@@ -74,9 +62,7 @@
 		toggleMoreRooms: function () {
 			this.showMoreRooms = !this.showMoreRooms;
 			this.updateRoomList();
-			this.$el.find('button[name=toggleMoreRooms]').text(
-				this.showMoreRooms ? 'Hide more rooms' : 'Show more rooms'
-			);
+			this.$el.find('button[name=toggleMoreRooms]').text(this.showMoreRooms ? 'Hide more rooms' : 'Show more rooms');
 		},
 		update: function (rooms) {
 			if (rooms) {
@@ -87,33 +73,24 @@
 			this.initSectionSelection();
 			this.updateRoomList();
 			if (!app.roomsFirstOpen && window.location.host !== 'demo.psim.us') {
-				if (Config.roomsFirstOpenScript) {
-					Config.roomsFirstOpenScript();
-				}
+				if (Config.roomsFirstOpenScript) { Config.roomsFirstOpenScript(); }
 				app.roomsFirstOpen = 2;
 			}
 		},
-
 		renderRoomBtn: function (roomData) {
 			var id = toID(roomData.title);
 			var buf = '<div><a href="' + app.root + id + '" class="blocklink"><small style="float:right">(' + Number(roomData.userCount) + ' users)</small><strong><i class="fa fa-comment-o"></i> ' + BattleLog.escapeHTML(roomData.title) + '<br /></strong><small>' + BattleLog.escapeHTML(roomData.desc || '') + '</small></a>';
 			if (roomData.subRooms && roomData.subRooms.length) {
 				buf += '<div class="subrooms"><i class="fa fa-level-up fa-rotate-90"></i> Subrooms:';
-				for (var i = 0; i < roomData.subRooms.length; i++) {
-					buf += ' <a class="blocklink" href="' + app.root + toID(roomData.subRooms[i]) + '"><i class="fa fa-comment-o"></i> <strong>' + BattleLog.escapeHTML(roomData.subRooms[i]) + '</strong></a>';
-				}
+				for (var i = 0; i < roomData.subRooms.length; i++) { buf += ' <a class="blocklink" href="' + app.root + toID(roomData.subRooms[i]) + '"><i class="fa fa-comment-o"></i> <strong>' + BattleLog.escapeHTML(roomData.subRooms[i]) + '</strong></a>'; }
 				buf += '</div>';
 			}
 			buf += '</div>';
 			return buf;
 		},
-
-		compareRooms: function (roomA, roomB) {
-			return roomB.userCount - roomA.userCount;
-		},
+		compareRooms: function (roomA, roomB) { return roomB.userCount - roomA.userCount; },
 		updateRoomList: function () {
 			var rooms = app.roomsData;
-
 			if (rooms.userCount) {
 				var userCount = Number(rooms.userCount);
 				var battleCount = Number(rooms.battleCount);
@@ -121,30 +98,21 @@
 				var rightSide = '<button class="button" name="roomlist" title="Watch an active battle"><span class="pixelated battlecount" title="Meloetta is PS\'s mascot! The Pirouette forme is Fighting-type, and represents our battles." ></span><strong>' + battleCount + '</strong> active ' + (battleCount === 1 ? 'battle' : 'battles') + '</button>';
 				this.$('.roomlisttop').html('<div class="roomcounters">' + leftSide + '</td><td>' + rightSide + '</div>');
 			}
-
 			if (rooms.pspl) {
-				for (var i = 0; i < rooms.pspl.length; i++) {
-					rooms.pspl[i].spotlight = "Spotlight rooms";
-				}
+				for (var i = 0; i < rooms.pspl.length; i++) { rooms.pspl[i].spotlight = "Spotlight rooms"; }
 				rooms.chat = rooms.pspl.concat(rooms.chat);
 				rooms.pspl = null;
 			}
 			if (rooms.official) {
-				for (var i = 0; i < rooms.official.length; i++) {
-					rooms.official[i].section = "Official";
-				}
+				for (var i = 0; i < rooms.official.length; i++) { rooms.official[i].section = "Official"; }
 				rooms.chat = rooms.official.concat(rooms.chat);
 				rooms.official = null;
 			}
-
 			var allRooms = rooms.chat;
 			if (this.focusedSection) {
 				var sectionFilter = this.focusedSection;
-				allRooms = allRooms.filter(function (roomData) {
-					return (roomData.section || 'Other') === sectionFilter;
-				});
+				allRooms = allRooms.filter(function (roomData) { return (roomData.section || 'Other') === sectionFilter; });
 			}
-
 			var spotlightLabel = '';
 			var spotlightRooms = [];
 			var officialRooms = [];
@@ -155,13 +123,10 @@
 				if (roomData.spotlight) {
 					spotlightRooms.push(roomData);
 					spotlightLabel = roomData.spotlight;
-				} else if (roomData.section === 'Official') {
-					officialRooms.push(roomData);
-				} else if (roomData.privacy === 'hidden') {
-					hiddenRooms.push(roomData);
-				} else {
-					otherRooms.push(roomData);
-				}
+				} 
+				else if (roomData.section === 'Official') { officialRooms.push(roomData); } 
+				else if (roomData.privacy === 'hidden') { hiddenRooms.push(roomData); } 
+				else { otherRooms.push(roomData); }
 			}
 
 			this.$('.roomlist').first().html(
@@ -181,9 +146,7 @@
 				)
 			);
 		},
-		roomlist: function () {
-			app.joinRoom('battles');
-		},
+		roomlist: function () { app.joinRoom('battles'); },
 		closeHide: function () {
 			app.sideRoom = app.curSideRoom = null;
 			clearInterval(this.chatroomInterval);
@@ -210,7 +173,6 @@
 			this.updateRoomList();
 		}
 	});
-
 	this.BattlesRoom = Room.extend({
 		minWidth: 320,
 		maxWidth: 1024,
@@ -224,26 +186,21 @@
 		initialize: function () {
 			this.$el.addClass('ps-room-light').addClass('scrollable');
 			var buf = '<div class="pad"><button class="button" style="float:right;font-size:10pt;margin-top:3px" name="close"><i class="fa fa-times"></i> Close</button><div class="roomlist"><p><button class="button" name="refresh"><i class="fa fa-refresh"></i> Refresh</button> <span style="' + Dex.getPokemonIcon('meloetta-pirouette') + ';display:inline-block;vertical-align:middle" class="picon" title="Meloetta is PS\'s mascot! The Pirouette forme is Fighting-type, and represents our battles."></span></p>';
-
 			buf += '<p><label class="label">Format:</label><button class="select formatselect" name="selectFormat">(All formats)</button></p>';
 			buf += '<label>Minimum Elo: <select name="elofilter" class="button"><option value="none">None</option><option value="1000">1000</option><option value="1100">1100</option><option value="1300">1300</option><option value="1500">1500</option><option value="1700">1700</option><option value="1900">1900</option></select></label>';
 			buf += '<p><form class="search"><input type="text" name="prefixsearch" class="textbox" value="' + BattleLog.escapeHTML(this.usernamePrefix) + '" placeholder="username prefix"/><button type="submit" class="button">Search</button></form></p>';
 			buf += '<div class="list"><p>Loading...</p></div>';
 			buf += '</div></div>';
-
 			this.$el.html(buf);
 			this.$list = this.$('.list');
 			this.$refreshButton = this.$('button[name=refresh]');
-
 			this.format = '';
 			app.on('response:roomlist', this.update, this);
 			app.send('/cmd roomlist');
 			this.update();
 		},
 		selectFormat: function (format, button) {
-			if (!window.BattleFormats) {
-				return;
-			}
+			if (!window.BattleFormats) { return; }
 			var self = this;
 			app.addPopup(FormatPopup, { format: format, sourceEl: button, selectType: 'watch', onselect: function (newFormat) {
 				self.changeFormat(newFormat);
@@ -258,16 +215,12 @@
 		focus: function (e) {
 			if (e && $(e.target).is('input')) return;
 			if (e && $(e.target).closest('select, a').length) return;
-			if (new Date().getTime() - this.lastUpdate > 60 * 1000) {
-				this.refresh();
-			}
+			if (new Date().getTime() - this.lastUpdate > 60 * 1000) { this.refresh(); }
 			var prevPos = this.$el.scrollTop();
 			this.$('button[name=refresh]').focus();
 			this.$el.scrollTop(prevPos);
 		},
-		rejoin: function () {
-			this.refresh();
-		},
+		rejoin: function () { this.refresh(); },
 		renderRoomBtn: function (id, roomData, matches) {
 			var format = (matches[1] || '');
 			var formatBuf = '';
@@ -279,9 +232,7 @@
 			if (!roomData.p1) {
 				matches = id.match(/[^0-9]([0-9]*)$/);
 				roomDesc = formatBuf + 'empty room ' + matches[1];
-			} else if (!roomData.p2) {
-				roomDesc = formatBuf + '<em class="p1">' + BattleLog.escapeHTML(roomData.p1) + '</em>';
-			}
+			} else if (!roomData.p2) { roomDesc = formatBuf + '<em class="p1">' + BattleLog.escapeHTML(roomData.p1) + '</em>'; }
 			return '<div><a href="' + app.root + id + '" class="blocklink">' + roomDesc + '</a></div>';
 		},
 		submitSearch: function (e) {
@@ -290,30 +241,22 @@
 		},
 		update: function (data) {
 			if (!data && !this.data) {
-				if (app.isDisconnected) {
-					this.$list.html('<p>You are offline.</p>');
-				} else {
-					this.$list.html('<p>Loading...</p>');
-				}
+				if (app.isDisconnected) { this.$list.html('<p>You are offline.</p>'); } 
+				else { this.$list.html('<p>Loading...</p>'); }
 				return;
 			}
 			this.$('button[name=refresh]')[0].disabled = false;
-
 			// Synchronize stored room data with incoming data
 			if (data) this.data = data;
 			var rooms = this.data.rooms;
-
 			var buf = [];
 			for (var id in rooms) {
 				var roomData = rooms[id];
 				var matches = ChatRoom.parseBattleID(id);
 				// bogus room ID could be used to inject JavaScript
-				if (!matches || this.format && matches[1] !== this.format) {
-					continue;
-				}
+				if (!matches || this.format && matches[1] !== this.format) { continue; }
 				buf.push(this.renderRoomBtn(id, roomData, matches));
 			}
-
 			if (!buf.length) return this.$list.html('<p>No ' + BattleLog.escapeFormat(this.format) + ' battles are going on right now.</p>');
 			return this.$list.html('<p>' + buf.length + (buf.length === 100 ? '+' : '') + ' ' + BattleLog.escapeFormat(this.format) + ' ' + (buf.length === 1 ? 'battle' : 'battles') + '</p>' + buf.join(""));
 		},
@@ -322,11 +265,9 @@
 			var elofilter = this.$('select[name=elofilter]').val();
 			var searchParams = [this.format, elofilter, toID(usernamePrefix)];
 			app.send('/cmd roomlist ' + searchParams.join(','));
-
 			this.lastUpdate = new Date().getTime();
 			// Prevent further refreshes until we get a response.
 			this.$refreshButton[0].disabled = true;
 		}
 	});
-
 }).call(this, jQuery);

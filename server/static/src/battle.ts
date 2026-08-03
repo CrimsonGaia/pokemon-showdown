@@ -26,7 +26,6 @@
  * @author Guangcong Luo <guangcongluo@gmail.com>
  * @license MIT
  */
-
 // import $ from 'jquery';
 import { BattleSceneStub } from './battle-scene-stub';
 import { BattleLog } from './battle-log';
@@ -35,16 +34,13 @@ import { Dex, toID, toUserid, type ID, type ModdedDex } from './battle-dex';
 import { BattleTextParser, type Args, type KWArgs, type SideID } from './battle-text-parser';
 import { Teams } from './battle-teams';
 declare const app: { user: AnyObject, rooms: AnyObject, ignore?: AnyObject } | undefined;
-
 /** [id, element?, ...misc] */
 export type EffectState = any[] & { 0: ID };
 export type WeatherState = [name: string, minTimeLeft: number, maxTimeLeft: number];
 export type HPColor = 'r' | 'y' | 'g';
-
 export class Pokemon implements PokemonDetails, PokemonHealth {
 	name = '';
 	speciesForme = '';
-
 	/**
 	 * A string representing information extractable from textual
 	 * messages: side, nickname.
@@ -75,17 +71,14 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 	 * change during the first switch-in.
 	 */
 	searchid = '';
-
 	side: Side;
 	slot = 0;
-
 	fainted = false;
 	hp = 0;
 	maxhp = 1000;
 	level = 100;
 	gender: Dex.GenderName = 'N';
 	shiny = false;
-
 	hpcolor: HPColor = 'g';
 	moves: string[] = [];
 	ability = '';
@@ -98,7 +91,6 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 	prevItemEffect = '';
 	terastallized = '';
 	teraType = '';
-
 	boosts: { [stat: string]: number } = {};
 	status: Dex.StatusName | 'tox' | '' | '???' = '';
 	statusStage = 0;
@@ -106,18 +98,20 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 	turnstatuses: { [effectid: string]: EffectState } = {};
 	movestatuses: { [effectid: string]: EffectState } = {};
 	lastMove = '';
-
+	weaponDurability = 0;
+	maxWeaponDurability = 0;
+	weaponRecoveryLeft = 0;
+	guardActionMoveId = '';
+	guardActionCur = 0;
+	guardActionMax = 0;
 	/** [[moveName, ppUsed]] */
 	moveTrack: [string, number][] = [];
-	statusData = { sleepTurns: 0, toxicTurns: 0 };
+	statusData = { sleepTurns: 0, toxicTurns: 0, fearTurns: 0, };
 	timesAttacked = 0;
-
 	sprite: PokemonSprite;
-
 	constructor(data: PokemonDetails, side: Side) {
 		this.side = side;
 		this.speciesForme = data.speciesForme;
-
 		this.details = data.details;
 		this.name = data.name;
 		this.level = data.level;
@@ -126,14 +120,9 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 		this.ident = data.ident;
 		this.terastallized = data.terastallized || '';
 		this.searchid = data.searchid;
-
 		this.sprite = side.battle.scene.addPokemonSprite(this);
 	}
-
-	isActive() {
-		return this.side.active.includes(this);
-	}
-
+	isActive() { return this.side.active.includes(this); }
 	/** @deprecated */
 	private getHPColor(): HPColor {
 		if (this.hpcolor) return this.hpcolor;
@@ -145,42 +134,32 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 	/** @deprecated */
 	private getHPColorClass() {
 		switch (this.getHPColor()) {
-		case 'y': return 'hpbar hpbar-yellow';
-		case 'r': return 'hpbar hpbar-red';
+			case 'y': return 'hpbar hpbar-yellow';
+			case 'r': return 'hpbar hpbar-red';
 		}
 		return 'hpbar';
 	}
 	static getPixelRange(pixels: number, color: HPColor | ''): [number, number] {
 		let epsilon = 0.5 / 714;
-
 		if (pixels === 0) return [0, 0];
 		if (pixels === 1) return [0 + epsilon, 2 / 48 - epsilon];
 		if (color) {
 			if (pixels === 9) {
-				if (color === 'y') { // ratio is > 0.2
-					return [0.2 + epsilon, 10 / 48 - epsilon];
-				} else if (color === 'r') { // ratio is <= 0.2
-					return [9 / 48, 0.2];
-				}
+				if (color === 'y') { return [0.2 + epsilon, 10 / 48 - epsilon]; } // ratio is > 0.2
+				else if (color === 'r') {  return [9 / 48, 0.2]; } // ratio is <= 0.2
 			}
 			if (pixels === 24) {
-				if (color === 'g') { // ratio is > 0.5
-					return [0.5 + epsilon, 25 / 48 - epsilon];
-				} else if (color === 'y') { // ratio is exactly 0.5
-					return [0.5, 0.5];
-				}
+				if (color === 'g') {  return [0.5 + epsilon, 25 / 48 - epsilon]; } // ratio is > 0.5
+				else if (color === 'y') {  return [0.5, 0.5]; } // ratio is exactly 0.5
 			}
 		}
 		if (pixels === 48) return [1, 1];
-
 		return [pixels / 48, (pixels + 1) / 48 - epsilon];
 	}
 	static getFormattedRange(range: [number, number], precision: number, separator: string) {
 		if (range[0] === range[1]) {
 			let percentage = Math.abs(range[0] * 100);
-			if (Math.floor(percentage) === percentage) {
-				return `${percentage}%`;
-			}
+			if (Math.floor(percentage) === percentage) { return `${percentage}%`; }
 			return percentage.toFixed(precision) + '%';
 		}
 		let lower;
@@ -207,10 +186,7 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 		// pixel damage
 		let oldrange = Pokemon.getPixelRange(damage[3], damage[4]);
 		let newrange = Pokemon.getPixelRange(damage[3] + damage[0], this.hpcolor);
-		if (damage[0] === 0) {
-			// no change in displayed pixel width
-			return [0, newrange[1] - newrange[0]];
-		}
+		if (damage[0] === 0) { return [0, newrange[1] - newrange[0]]; } // no change in displayed pixel width
 		if (oldrange[0] < newrange[0]) { // swap order
 			let r = oldrange;
 			oldrange = newrange;
@@ -232,36 +208,24 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 				if (heal) {
 					this.hp += this.maxhp * damage / 100;
 					if (this.hp > this.maxhp) this.hp = this.maxhp;
-				} else {
-					this.hp -= this.maxhp * damage / 100;
-				}
+				} else { this.hp -= this.maxhp * damage / 100; }
 				// parse the absolute health information
 				let ret = this.healthParse(hpstring);
-				if (ret && (ret[1] === 100)) {
-					// support for old replays with nearest-100th damage and health
-					return [damage, 100, damage];
-				}
+				if (ret && (ret[1] === 100)) { return [damage, 100, damage]; } // support for old replays with nearest-100th damage and health
 				// complicated expressions preserved for backward compatibility
 				let percent = Math.round(Math.ceil(damage * 48 / 100) / 48 * 100);
 				let pixels = Math.ceil(damage * 48 / 100);
 				return [pixels, 48, percent];
 			}
-			if (hpstring.substr(hpstring.length - 1) !== ')') {
-				return null;
-			}
+			if (hpstring.substr(hpstring.length - 1) !== ')') { return null; }
 			hpstring = hpstring.substr(parenIndex + 1, hpstring.length - parenIndex - 2);
 		}
-
 		let oldhp = this.fainted ? 0 : (this.hp || 1);
 		let oldmaxhp = this.maxhp;
 		let oldwidth = this.hpWidth(100);
 		let oldcolor = this.hpcolor;
-
 		this.side.battle.parseHealth(hpstring, this);
-		if (oldmaxhp === 0) { // max hp not known before parsing this message
-			oldmaxhp = oldhp = this.maxhp;
-		}
-
+		if (oldmaxhp === 0) {  oldmaxhp = oldhp = this.maxhp; } // max hp not known before parsing this message
 		let oldnum = oldhp ? (Math.floor(this.maxhp * oldhp / oldmaxhp) || 1) : 0;
 		let delta = this.hp - oldnum;
 		let deltawidth = this.hpWidth(100) - oldwidth;
@@ -271,9 +235,7 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 		if (!details) return false;
 		if (details === this.details) return true;
 		if (this.searchid) return false;
-		if (details.includes(', shiny')) {
-			if (this.checkDetails(details.replace(', shiny', ''))) return true;
-		}
+		if (details.includes(', shiny')) { if (this.checkDetails(details.replace(', shiny', ''))) return true; }
 		// the actual forme was hidden on Team Preview
 		details = details.replace(/(-[A-Za-z0-9-]+)?(, |$)/, '-*$2');
 		return (details === this.details);
@@ -292,9 +254,7 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 		this.volatiles[volatile] = [volatile, ...args] as EffectState;
 		this.side.battle.scene.addEffect(this, volatile);
 	}
-	hasVolatile(volatile: ID) {
-		return !!this.volatiles[volatile];
-	}
+	hasVolatile(volatile: ID) { return !!this.volatiles[volatile]; }
 	removeTurnstatus(volatile: ID) {
 		this.side.battle.scene.removeEffect(this, volatile);
 		if (!this.hasTurnstatus(volatile)) return;
@@ -306,13 +266,9 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 		if (this.hasTurnstatus(volatile)) return;
 		this.turnstatuses[volatile] = [volatile];
 	}
-	hasTurnstatus(volatile: ID) {
-		return !!this.turnstatuses[volatile];
-	}
+	hasTurnstatus(volatile: ID) { return !!this.turnstatuses[volatile]; }
 	clearTurnstatuses() {
-		for (let id in this.turnstatuses) {
-			this.removeTurnstatus(id as ID);
-		}
+		for (let id in this.turnstatuses) { this.removeTurnstatus(id as ID); }
 		this.turnstatuses = {};
 		this.side.battle.scene.updateStatbar(this);
 	}
@@ -327,13 +283,9 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 		this.movestatuses[volatile] = [volatile];
 		this.side.battle.scene.addEffect(this, volatile);
 	}
-	hasMovestatus(volatile: ID) {
-		return !!this.movestatuses[volatile];
-	}
+	hasMovestatus(volatile: ID) { return !!this.movestatuses[volatile]; }
 	clearMovestatuses() {
-		for (let id in this.movestatuses) {
-			this.removeMovestatus(id as ID);
-		}
+		for (let id in this.movestatuses) { this.removeMovestatus(id as ID); }
 		this.movestatuses = {};
 	}
 	clearVolatiles() {
@@ -347,8 +299,7 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 		moveName = Dex.moves.get(moveName).name;
 		if (moveName.startsWith('*')) return;
 		if (moveName === 'Struggle') return;
-		if (this.volatiles.transform) {
-			// make sure there is no infinite recursion if both Pokemon are transformed into each other
+		if (this.volatiles.transform) { // make sure there is no infinite recursion if both Pokemon are transformed into each other
 			if (!recursionSource) recursionSource = this.ident;
 			this.volatiles.transform[1].rememberMove(moveName, 0, recursionSource);
 			moveName = '*' + moveName;
@@ -363,16 +314,15 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 		this.moveTrack.push([moveName, pp]);
 	}
 	rememberAbility(ability: string, isNotBase?: boolean, slot: 1 | 2 = 1) {
-	ability = Dex.abilities.get(ability).name;
-
-	if (slot === 2) {
-		this.ability2 = ability;
-		if (!this.baseAbility2 && !isNotBase) this.baseAbility2 = ability;
-		return;
+		ability = Dex.abilities.get(ability).name;
+		if (slot === 2) {
+			this.ability2 = ability;
+			if (!this.baseAbility2 && !isNotBase) this.baseAbility2 = ability;
+			return;
+		}
+		this.ability = ability;
+		if (!this.baseAbility && !isNotBase) { this.baseAbility = ability; }
 	}
-	this.ability = ability;
-	if (!this.baseAbility && !isNotBase) { this.baseAbility = ability; }
-}
 	swapAbilities(other: Pokemon) {
 		[this.ability, other.ability] = [other.ability, this.ability];
 		[this.baseAbility, other.baseAbility] = [other.baseAbility, this.baseAbility];
@@ -380,46 +330,25 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 		[this.baseAbility2, other.baseAbility2] = [other.baseAbility2, this.baseAbility2];
 	}
 	getBoost(boostStat: Dex.BoostStatName) {
-		let boostStatTable = {
-			atk: 'Atk',
-			def: 'Def',
-			spa: 'SpA',
-			spd: 'SpD',
-			spe: 'Spe',
-			accuracy: 'Accuracy',
-			evasion: 'Evasion',
-			spc: 'Spc',
-		};
-		if (!this.boosts[boostStat]) {
-			return '1&times;&nbsp;' + boostStatTable[boostStat];
-		}
+		let boostStatTable = { atk: 'Atk', def: 'Def', spa: 'SpA', spd: 'SpD', spe: 'Spe', accuracy: 'Accuracy', evasion: 'Evasion', spc: 'Spc', };
+		if (!this.boosts[boostStat]) { return '1&times;&nbsp;' + boostStatTable[boostStat]; }
 		if (this.boosts[boostStat] > 6) this.boosts[boostStat] = 6;
 		if (this.boosts[boostStat] < -6) this.boosts[boostStat] = -6;
 		const isRBY = this.side.battle.gen <= 1 && !this.side.battle.tier.includes('Stadium');
 		if (!isRBY && (boostStat === 'accuracy' || boostStat === 'evasion')) {
 			if (this.boosts[boostStat] > 0) {
-				let goodBoostTable = [
-					'1&times;', '1.33&times;', '1.67&times;', '2&times;', '2.33&times;', '2.67&times;', '3&times;',
-				];
-				// let goodBoostTable = ['Normal', '+1', '+2', '+3', '+4', '+5', '+6'];
-				return '' + goodBoostTable[this.boosts[boostStat]] + '&nbsp;' + boostStatTable[boostStat];
+				let goodBoostTable = ['1&times;', '1.33&times;', '1.67&times;', '2&times;', '2.33&times;', '2.67&times;', '3&times;',];
+				return '' + goodBoostTable[this.boosts[boostStat]] + '&nbsp;' + boostStatTable[boostStat]; // let goodBoostTable = ['Normal', '+1', '+2', '+3', '+4', '+5', '+6'];
 			}
-			let badBoostTable = [
-				'1&times;', '0.75&times;', '0.6&times;', '0.5&times;', '0.43&times;', '0.38&times;', '0.33&times;',
-			];
+			let badBoostTable = ['1&times;', '0.75&times;', '0.6&times;', '0.5&times;', '0.43&times;', '0.38&times;', '0.33&times;',];
 			// let badBoostTable = ['Normal', '&minus;1', '&minus;2', '&minus;3', '&minus;4', '&minus;5', '&minus;6'];
 			return '' + badBoostTable[-this.boosts[boostStat]] + '&nbsp;' + boostStatTable[boostStat];
 		}
 		if (this.boosts[boostStat] > 0) {
-			let goodBoostTable = [
-				'1&times;', '1.5&times;', '2&times;', '2.5&times;', '3&times;', '3.5&times;', '4&times;',
-			];
-			// let goodBoostTable = ['Normal', '+1', '+2', '+3', '+4', '+5', '+6'];
-			return '' + goodBoostTable[this.boosts[boostStat]] + '&nbsp;' + boostStatTable[boostStat];
+			let goodBoostTable = ['1&times;', '1.5&times;', '2&times;', '2.5&times;', '3&times;', '3.5&times;', '4&times;',];
+			return '' + goodBoostTable[this.boosts[boostStat]] + '&nbsp;' + boostStatTable[boostStat]; // let goodBoostTable = ['Normal', '+1', '+2', '+3', '+4', '+5', '+6'];
 		}
-		let badBoostTable = [
-			'1&times;', '0.67&times;', '0.5&times;', '0.4&times;', '0.33&times;', '0.29&times;', '0.25&times;',
-		];
+		let badBoostTable = ['1&times;', '0.67&times;', '0.5&times;', '0.4&times;', '0.33&times;', '0.29&times;', '0.25&times;',];
 		// let badBoostTable = ['Normal', '&minus;1', '&minus;2', '&minus;3', '&minus;4', '&minus;5', '&minus;6'];
 		return '' + badBoostTable[-this.boosts[boostStat]] + '&nbsp;' + boostStatTable[boostStat];
 	}
@@ -457,16 +386,12 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 		this.volatiles = pokemon.volatiles;
 		// this.lastMove = pokemon.lastMove; // I think
 		if (!copySource) {
-			const volatilesToRemove = [
-				'airballoon', 'attract', 'autotomize', 'disable', 'encore', 'foresight', 'gmaxchistrike', 'imprison', 'laserfocus', 'mimic', 'miracleeye', 'nightmare', 'saltcure', 'smackdown', 'stockpile1', 'stockpile2', 'stockpile3', 'syrupbomb', 'torment', 'typeadd', 'typechange', 'yawn',
-			];
+			const volatilesToRemove = ['airballoon', 'attract', 'autotomize', 'disable', 'encore', 'foresight', 'imprison', 'laserfocus', 'mimic', 'miracleeye', 'nightmare', 'saltcure', 'smackdown', 'stockpile1', 'stockpile2', 'stockpile3', 'syrupbomb', 'torment', 'typeadd', 'typechange', 'yawn',];
 			for (const statName of Dex.statNamesExceptHP) {
 				volatilesToRemove.push('protosynthesis' + statName);
 				volatilesToRemove.push('quarkdrive' + statName);
 			}
-			for (const volatile of volatilesToRemove) {
-				delete this.volatiles[volatile];
-			}
+			for (const volatile of volatilesToRemove) { delete this.volatiles[volatile]; }
 		}
 		if (copySource === 'shedtail') {
 			for (let i in this.volatiles) {
@@ -477,7 +402,6 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 		}
 		delete this.volatiles['transform'];
 		delete this.volatiles['formechange'];
-
 		pokemon.boosts = {};
 		pokemon.volatiles = {};
 		pokemon.side.battle.scene.removeTransform(pokemon);
@@ -486,21 +410,14 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 	copyTypesFrom(pokemon: Pokemon, preterastallized = false) {
 		const [types, addedType] = pokemon.getTypes(undefined, preterastallized);
 		this.addVolatile('typechange' as ID, types.join('/'));
-		if (addedType) {
-			this.addVolatile('typeadd' as ID, addedType);
-		} else {
-			this.removeVolatile('typeadd' as ID);
-		}
+		if (addedType) { this.addVolatile('typeadd' as ID, addedType); } 
+		else { this.removeVolatile('typeadd' as ID); }
 	}
 	getTypes(serverPokemon?: ServerPokemon, preterastallized = false): [readonly Dex.TypeName[], Dex.TypeName | ''] {
 		let types: readonly Dex.TypeName[];
-		if (!preterastallized && this.terastallized && this.terastallized !== 'Stellar') {
-			types = [this.terastallized as Dex.TypeName];
-		} else if (this.volatiles.typechange) {
-			types = this.volatiles.typechange[1].split('/');
-		} else {
-			types = this.getSpecies(serverPokemon).types;
-		}
+		if (!preterastallized && this.terastallized && this.terastallized !== 'Stellar') { types = [this.terastallized as Dex.TypeName]; } 
+		else if (this.volatiles.typechange) { types = this.volatiles.typechange[1].split('/'); } 
+		else { types = this.getSpecies(serverPokemon).types; }
 		if (this.hasTurnstatus('roost' as ID) && types.includes('Flying')) {
 			types = types.filter(typeName => typeName !== 'Flying');
 			if (!types.length) types = ['Normal'];
@@ -510,66 +427,35 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 	}
 	isGrounded(serverPokemon?: ServerPokemon) {
 		const battle = this.side.battle;
-		if (battle.hasPseudoWeather('Gravity')) {
-			return true;
-		} else if (this.volatiles['ingrain'] && battle.gen >= 4) {
-			return true;
-		} else if (this.volatiles['smackdown']) {
-			return true;
-		}
-
+		if (battle.hasPseudoWeather('Gravity')) { return true; } 
+		else if (this.volatiles['ingrain'] && battle.gen >= 4) { return true; } 
+		else if (this.volatiles['smackdown']) { return true; }
 		let item = toID(serverPokemon ? serverPokemon.item : this.item);
 		let ability = toID(this.effectiveAbility(serverPokemon));
-		if (battle.hasPseudoWeather('Magic Room') || this.volatiles['embargo'] || ability === 'klutz') {
-			item = '' as ID;
-		}
-
-		if (item === 'ironball') {
-			return true;
-		}
-		if (ability === 'levitate') {
-			return false;
-		}
-		if (this.volatiles['magnetrise'] || this.volatiles['telekinesis']) {
-			return false;
-		}
-		if (item === 'airballoon') {
-			return false;
-		}
+		if (battle.hasPseudoWeather('Magic Room') || this.volatiles['embargo'] || ability === 'klutz') { item = '' as ID; }
+		if (item === 'ironball') { return true; }
+		if (ability === 'levitate') { return false; }
+		if (this.volatiles['magnetrise'] || this.volatiles['telekinesis']) { return false; }
+		if (item === 'airballoon') { return false; }
 		return !this.getTypeList(serverPokemon).includes('Flying');
 	}
 	effectiveAbility(serverPokemon?: ServerPokemon) {
 		const ability = this.side.battle.dex.abilities.get(serverPokemon?.ability || this.ability || serverPokemon?.baseAbility || '');
-		if (
-			this.fainted ||
-			(this.volatiles['transform'] && ability.flags['notransform']) ||
-			(!ability.flags['cantsuppress'] && (this.side.battle.ngasActive() || this.volatiles['gastroacid']))
-		) { return ''; }
+		if (this.fainted || (this.volatiles['transform'] && ability.flags['notransform']) || (!ability.flags['cantsuppress'] && (this.side.battle.ngasActive() || this.volatiles['gastroacid']))) { return ''; }
 		return ability.name;
 	}
 	effectiveAbility2(serverPokemon?: any) {
 		const ability = this.side.battle.dex.abilities.get(serverPokemon?.ability2 || this.ability2 || serverPokemon?.baseAbility2 || '');
-	if (
-		this.fainted ||
-		(this.volatiles['transform'] && ability.flags['notransform']) ||
-		(!ability.flags['cantsuppress'] && (this.side.battle.ngasActive() || this.volatiles['gastroacid']))
-	) { return ''; }
-	return ability.name;
-}
+		if (this.fainted || (this.volatiles['transform'] && ability.flags['notransform']) || (!ability.flags['cantsuppress'] && (this.side.battle.ngasActive() || this.volatiles['gastroacid']))) { return ''; }
+		return ability.name;
+	}
 	getTypeList(serverPokemon?: ServerPokemon, preterastallized = false) {
 		const [types, addedType] = this.getTypes(serverPokemon, preterastallized);
 		return addedType ? types.concat(addedType) : types;
 	}
-	getSpeciesForme(serverPokemon?: ServerPokemon): string {
-		return this.volatiles.formechange ? this.volatiles.formechange[1] :
-			(serverPokemon ? serverPokemon.speciesForme : this.speciesForme);
-	}
-	getSpecies(serverPokemon?: ServerPokemon) {
-		return this.side.battle.dex.species.get(this.getSpeciesForme(serverPokemon));
-	}
-	getBaseSpecies() {
-		return this.side.battle.dex.species.get(this.speciesForme);
-	}
+	getSpeciesForme(serverPokemon?: ServerPokemon): string { return this.volatiles.formechange ? this.volatiles.formechange[1] : (serverPokemon ? serverPokemon.speciesForme : this.speciesForme); }
+	getSpecies(serverPokemon?: ServerPokemon) { return this.side.battle.dex.species.get(this.getSpeciesForme(serverPokemon)); }
+	getBaseSpecies() { return this.side.battle.dex.species.get(this.speciesForme); }
 	reset() {
 		this.clearVolatile();
 		this.hp = this.maxhp;
@@ -581,15 +467,12 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 	// This function is used for two things:
 	//   1) The percentage to display beside the HP bar.
 	//   2) The width to draw an HP bar.
-	//
 	// This function is NOT used in the calculation of any other displayed
 	// percentages or ranges, which have their own, more complex, formulae.
 	hpWidth(maxWidth: number) {
 		if (this.fainted || !this.hp) return 0;
-
 		// special case for low health...
 		if (this.hp === 1 && this.maxhp > 45) return 1;
-
 		if (this.maxhp === 48) {
 			// Draw the health bar to the middle of the range.
 			// This affects the width of the visual health bar *only*; it
@@ -599,14 +482,10 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 			return Math.round(maxWidth * ratio) || 1;
 		}
 		let percentage = Math.ceil(100 * this.hp / this.maxhp);
-		if ((percentage === 100) && (this.hp < this.maxhp)) {
-			percentage = 99;
-		}
+		if ((percentage === 100) && (this.hp < this.maxhp)) { percentage = 99; }
 		return percentage * maxWidth / 100;
 	}
-	getHPText(precision = 1) {
-		return Pokemon.getHPText(this, this.side.battle.reportExactHP, precision);
-	}
+	getHPText(precision = 1) { return Pokemon.getHPText(this, this.side.battle.reportExactHP, precision); }
 	static getHPText(pokemon: PokemonHealth, exactHP: boolean, precision = 1) {
 		if (exactHP) return `${pokemon.hp}/${pokemon.maxhp}`;
 		if (pokemon.maxhp === 100) return `${pokemon.hp}%`;
@@ -620,7 +499,6 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 		this.side = null!;
 	}
 }
-
 export class Side {
 	battle: Battle;
 	name = '';
@@ -638,44 +516,28 @@ export class Side {
 	y = 0;
 	z = 0;
 	missedPokemon: Pokemon = null!;
-
 	wisher: Pokemon | null = null;
-
 	active = [null] as (Pokemon | null)[];
 	lastPokemon = null as Pokemon | null;
 	pokemon = [] as Pokemon[];
 	fullTeam = [] as Pokemon[];
 	sidebarPokemon = [] as Pokemon[];
-	sideConditions: {
-		[id: string]: [effectName: string, levels: number, minDuration: number, maxDuration: number],
-	} = {};
+	sideConditions: { [id: string]: [effectName: string, levels: number, minDuration: number, maxDuration: number], } = {};
 	faintCounter = 0;
-
 	constructor(battle: Battle, n: number) {
 		this.battle = battle;
 		this.n = n;
 		this.sideid = ['p1', 'p2', 'p3', 'p4'][n] as SideID;
 		this.isFar = !!(n % 2);
 	}
-
 	rollTrainerSprites() {
 		let sprites = ['lucas', 'dawn', 'ethan', 'lyra', 'hilbert', 'hilda'];
 		this.avatar = sprites[Math.floor(Math.random() * sprites.length)];
 	}
-
-	behindx(offset: number) {
-		return this.x + (!this.isFar ? -1 : 1) * offset;
-	}
-	behindy(offset: number) {
-		return this.y + (!this.isFar ? 1 : -1) * offset;
-	}
-	leftof(offset: number) {
-		return (!this.isFar ? -1 : 1) * offset;
-	}
-	behind(offset: number) {
-		return this.z + (!this.isFar ? -1 : 1) * offset;
-	}
-
+	behindx(offset: number) { return this.x + (!this.isFar ? -1 : 1) * offset; }
+	behindy(offset: number) { return this.y + (!this.isFar ? 1 : -1) * offset; }
+	leftof(offset: number) { return (!this.isFar ? -1 : 1) * offset; }
+	behind(offset: number) { return this.z + (!this.isFar ? -1 : 1) * offset; }
 	clearPokemon() {
 		for (const pokemon of this.pokemon) pokemon.destroy();
 		this.pokemon = [];
@@ -689,15 +551,12 @@ export class Side {
 		this.sideConditions = {};
 		this.faintCounter = 0;
 	}
-	setAvatar(avatar: string) {
-		this.avatar = avatar;
-	}
+	setAvatar(avatar: string) { this.avatar = avatar; }
 	setName(name: string, avatar?: string) {
 		if (name) this.name = name;
 		this.id = toID(this.name);
-		if (avatar) {
-			this.setAvatar(avatar);
-		} else {
+		if (avatar) { this.setAvatar(avatar); } 
+		else {
 			this.rollTrainerSprites();
 			if (this.foe && this.avatar === this.foe.avatar) this.rollTrainerSprites();
 		}
@@ -705,9 +564,7 @@ export class Side {
 	addSideCondition(effect: Dex.Effect, persist: boolean) {
 		let condition = effect.id;
 		if (this.sideConditions[condition]) {
-			if (condition === 'spikes' || condition === 'toxicspikes') {
-				this.sideConditions[condition][1]++;
-			}
+			if (condition === 'spikes' || condition === 'toxicspikes') { this.sideConditions[condition][1]++; }
 			this.battle.scene.addSideCondition(this.n, condition);
 			return;
 		}
@@ -769,7 +626,6 @@ export class Side {
 	}
 	addPokemon(name: string, ident: string, details: string, replaceSlot = -1) {
 		const oldPokemon = replaceSlot >= 0 ? this.pokemon[replaceSlot] : undefined;
-
 		const data = this.battle.parseDetails(name, ident, details);
 		const poke = new Pokemon(data, this);
 		if (oldPokemon) {
@@ -779,17 +635,12 @@ export class Side {
 			poke.ability2 = oldPokemon.ability2;
 			poke.teraType = oldPokemon.teraType;
 		}
-
 		if (!poke.ability && poke.baseAbility) poke.ability = poke.baseAbility;
 		if (!poke.ability2 && poke.baseAbility2) poke.ability2 = poke.baseAbility2;
 		poke.reset();
 		if (oldPokemon?.moveTrack.length) poke.moveTrack = oldPokemon.moveTrack;
-
-		if (replaceSlot >= 0) {
-			this.pokemon[replaceSlot] = poke;
-		} else {
-			this.pokemon.push(poke);
-		}
+		if (replaceSlot >= 0) { this.pokemon[replaceSlot] = poke; } 
+		else { this.pokemon.push(poke); }
 		if (this.pokemon.length > this.totalPokemon || this.battle.speciesClause) {
 			// check for Illusion
 			let existingTable: { [searchid: string]: number } = {};
@@ -800,19 +651,12 @@ export class Side {
 				if (poke1.searchid in existingTable) {
 					let poke2i = existingTable[poke1.searchid];
 					let poke2 = this.pokemon[poke2i];
-					if (poke === poke1) {
-						toRemove = poke2i;
-					} else if (poke === poke2) {
-						toRemove = poke1i;
-					} else if (this.active.includes(poke1)) {
-						toRemove = poke2i;
-					} else if (this.active.includes(poke2)) {
-						toRemove = poke1i;
-					} else if (poke1.fainted && !poke2.fainted) {
-						toRemove = poke2i;
-					} else {
-						toRemove = poke1i;
-					}
+					if (poke === poke1) { toRemove = poke2i; } 
+					else if (poke === poke2) { toRemove = poke1i; } 
+					else if (this.active.includes(poke1)) { toRemove = poke2i; } 
+					else if (this.active.includes(poke2)) { toRemove = poke1i; } 
+					else if (poke1.fainted && !poke2.fainted) { toRemove = poke2i; } 
+					else { toRemove = poke1i; }
 					break;
 				}
 				existingTable[poke1.searchid] = poke1i;
@@ -832,9 +676,7 @@ export class Side {
 					}
 					if (!illusionFound) {
 						// This is Hackmons; we'll just guess a random unfainted Pokemon.
-						// This will keep the fainted Pokemon count correct, and will
-						// eventually become correct as incorrect guesses are switched in
-						// and reguessed.
+						// This will keep the fainted Pokemon count correct, and will eventually become correct as incorrect guesses are switched in and reguessed.
 						for (const curPoke of this.pokemon) {
 							if (curPoke === poke) continue;
 							if (curPoke.fainted) continue;
@@ -853,10 +695,8 @@ export class Side {
 			}
 		}
 		this.battle.scene.updateSidebars();
-
 		return poke;
 	}
-
 	switchIn(pokemon: Pokemon, kwArgs: KWArgs, slot = pokemon.slot) {
 		this.active[slot] = pokemon;
 		pokemon.slot = slot;
@@ -864,12 +704,8 @@ export class Side {
 		pokemon.lastMove = '';
 		this.battle.lastMove = 'switch-in';
 		const effect = Dex.getEffect(kwArgs.from);
-		if (['batonpass', 'zbatonpass', 'shedtail'].includes(effect.id)) {
-			pokemon.copyVolatileFrom(this.lastPokemon!, effect.id === 'shedtail' ? 'shedtail' : false);
-		} else if (this.battle.tier.includes(`Relay Race`) && !effect.id) {
-			if (this.lastPokemon && !this.lastPokemon.fainted) pokemon.copyVolatileFrom(this.lastPokemon, false);
-		}
-
+		if (['batonpass', 'zbatonpass', 'shedtail'].includes(effect.id)) { pokemon.copyVolatileFrom(this.lastPokemon!, effect.id === 'shedtail' ? 'shedtail' : false); } 
+		else if (this.battle.tier.includes(`Relay Race`) && !effect.id) { if (this.lastPokemon && !this.lastPokemon.fainted) pokemon.copyVolatileFrom(this.lastPokemon, false); }
 		this.battle.scene.animSummon(pokemon, slot);
 	}
 	dragIn(pokemon: Pokemon, slot = pokemon.slot) {
@@ -885,7 +721,6 @@ export class Side {
 		this.battle.lastMove = 'switch-in';
 		this.active[slot] = pokemon;
 		pokemon.slot = slot;
-
 		this.battle.scene.animDragIn(pokemon, slot);
 	}
 	replace(pokemon: Pokemon, slot = pokemon.slot) {
@@ -907,18 +742,14 @@ export class Side {
 				oldpokemon.terastallized = '';
 				oldpokemon.teraType = '';
 			}
-			// we don't know anything about the illusioned pokemon except that it's not fainted
-			// technically we also know its status but only at the end of the turn, not here
+			// we don't know anything about the illusioned pokemon except that it's not fainted technically we also know its status but only at the end of the turn, not here
 			oldpokemon.fainted = false;
 			oldpokemon.hp = oldpokemon.maxhp;
 			oldpokemon.status = '???';
 		}
 		this.active[slot] = pokemon;
 		pokemon.slot = slot;
-
-		if (oldpokemon) {
-			this.battle.scene.animUnsummon(oldpokemon, true);
-		}
+		if (oldpokemon) { this.battle.scene.animUnsummon(oldpokemon, true); }
 		this.battle.scene.animSummon(pokemon, slot, true);
 	}
 	switchOut(pokemon: Pokemon, kwArgs: KWArgs, slot = pokemon.slot) {
@@ -930,50 +761,36 @@ export class Side {
 			pokemon.removeVolatile('transform' as ID);
 			pokemon.removeVolatile('formechange' as ID);
 		}
-		if (!['batonpass', 'zbatonpass', 'shedtail', 'teleport'].includes(effect.id) &&
-			!(this.battle.tier.includes(`Relay Race`) && !effect.id)) {
-			this.battle.log(['switchout', pokemon.ident], { from: effect.id });
-		}
+		if (!['batonpass', 'zbatonpass', 'shedtail', 'teleport'].includes(effect.id) && !(this.battle.tier.includes(`Relay Race`) && !effect.id)) { this.battle.log(['switchout', pokemon.ident], { from: effect.id }); }
 		pokemon.statusData.toxicTurns = 0;
 		if (this.battle.gen === 5) pokemon.statusData.sleepTurns = 0;
 		this.lastPokemon = pokemon;
 		this.active[slot] = null;
-
 		this.battle.scene.animUnsummon(pokemon);
 	}
 	swapTo(pokemon: Pokemon, slot: number) {
 		if (pokemon.slot === slot) return;
 		let target = this.active[slot];
-
 		let oslot = pokemon.slot;
-
 		pokemon.slot = slot;
 		if (target) target.slot = oslot;
-
 		this.active[slot] = pokemon;
 		this.active[oslot] = target;
-
 		this.battle.scene.animUnsummon(pokemon, true);
 		if (target) this.battle.scene.animUnsummon(target, true);
-
 		this.battle.scene.animSummon(pokemon, slot, true);
 		if (target) this.battle.scene.animSummon(target, oslot, true);
 	}
-	swapWith(pokemon: Pokemon, target: Pokemon, kwArgs: KWArgs) {
-		// method provided for backwards compatibility only
+	swapWith(pokemon: Pokemon, target: Pokemon, kwArgs: KWArgs) { // method provided for backwards compatibility only
 		if (pokemon === target) return;
-
 		let oslot = pokemon.slot;
 		let nslot = target.slot;
-
 		pokemon.slot = nslot;
 		target.slot = oslot;
 		this.active[nslot] = pokemon;
 		this.active[oslot] = target;
-
 		this.battle.scene.animUnsummon(pokemon, true);
 		this.battle.scene.animUnsummon(target, true);
-
 		this.battle.scene.animSummon(pokemon, nslot, true);
 		this.battle.scene.animSummon(target, oslot, true);
 	}
@@ -981,14 +798,12 @@ export class Side {
 		pokemon.clearVolatile();
 		this.lastPokemon = pokemon;
 		this.active[slot] = null;
-
 		pokemon.fainted = true;
 		pokemon.hp = 0;
 		pokemon.terastallized = '';
 		pokemon.details = pokemon.details.replace(/, tera:[a-z]+/i, '');
 		pokemon.searchid = pokemon.searchid.replace(/, tera:[a-z]+/i, '');
 		if (pokemon.side.faintCounter < 100) pokemon.side.faintCounter++;
-
 		this.battle.scene.animFaint(pokemon);
 	}
 	destroy() {
@@ -997,7 +812,6 @@ export class Side {
 		this.foe = null!;
 	}
 }
-
 export interface PokemonDetails {
 	details: string;
 	name: string;
@@ -1048,13 +862,13 @@ export interface ServerPokemon extends PokemonDetails, PokemonHealth {
 	teraType: string;
 	/** falsy if the pokemon is not terastallized, otherwise it is the Tera Type of the Pokemon */
 	terastallized: string;
+	weaponDurability?: number;
+	maxWeaponDurability?: number;
+	weaponRecoveryLeft?: number;
 }
-
 export class Battle {
 	scene: BattleSceneStub;
-
 	viewpointSwitched = false;
-
 	stepQueue: string[];
 	/** See battle.instantAdd */
 	preemptStepQueue: string[] = [];
@@ -1063,19 +877,13 @@ export class Battle {
 	currentStep = 0;
 	/** null = not seeking, 0 = seek start, Infinity = seek end, otherwise: seek turn number */
 	seeking: number | null = null;
-
 	activeMoveIsSpread: string | null = null;
-
-	subscription: ((state:
-		'playing' | 'paused' | 'turn' | 'atqueueend' | 'callback' | 'ended' | 'error'
-	) => void) | null;
-
+	subscription: ((state:'playing' | 'paused' | 'turn' | 'atqueueend' | 'callback' | 'ended' | 'error') => void) | null;
 	mute = false;
 	messageFadeTime = 300;
 	messageShownTime = 1;
 	/** for tracking when to accelerate animations in long battles full of double switches */
 	turnsSinceMoved = 0;
-
 	/**
 	 * * `-1` = non-battle RoomGames, or hasn't hit Team Preview or `|start`
 	 * * `0` = after Team Preview or `|start` but before `|turn|1`
@@ -1124,7 +932,6 @@ export class Battle {
 	myPokemon: ServerPokemon[] | null = null;
 	myAllyPokemon: ServerPokemon[] | null = null;
 	lastMove = '';
-
 	gen = 8;
 	dex: ModdedDex = Dex;
 	teamPreviewCount = 0;
@@ -1145,7 +952,6 @@ export class Battle {
 	 * number: seconds left this turn
 	 */
 	kickingInactive: number | boolean = false;
-
 	// options
 	id = '';
 	/** used to forward some information to the room in the old client */
@@ -1157,13 +963,11 @@ export class Battle {
 	debug: boolean;
 	joinButtons = false;
 	autoresize: boolean;
-
 	/**
 	 * The actual pause state. Will only be true if playback is actually
 	 * paused, not just waiting for the opponent to make a move.
 	 */
 	paused: boolean;
-
 	constructor(options: {
 		$frame?: JQuery,
 		$logFrame?: JQuery,
@@ -1177,15 +981,9 @@ export class Battle {
 		autoresize?: boolean,
 	} = {}) {
 		this.id = options.id || '';
-
-		if (options.$frame && options.$logFrame) {
-			this.scene = new BattleScene(this, options.$frame, options.$logFrame);
-		} else if (!options.$frame && !options.$logFrame) {
-			this.scene = new BattleSceneStub();
-		} else {
-			throw new Error(`You must specify $frame and $logFrame simultaneously`);
-		}
-
+		if (options.$frame && options.$logFrame) { this.scene = new BattleScene(this, options.$frame, options.$logFrame); } 
+		else if (!options.$frame && !options.$logFrame) { this.scene = new BattleSceneStub(); } 
+		else { throw new Error(`You must specify $frame and $logFrame simultaneously`); }
 		this.paused = !!options.paused;
 		this.started = !this.paused;
 		this.debug = !!options.debug;
@@ -1193,7 +991,6 @@ export class Battle {
 		this.stepQueue = options.log || [];
 		this.subscription = options.subscription || null;
 		this.autoresize = !!options.autoresize;
-
 		this.p1 = new Side(this, 0);
 		this.p2 = new Side(this, 1);
 		this.sides = [this.p1, this.p2];
@@ -1201,21 +998,16 @@ export class Battle {
 		this.p1.foe = this.p2;
 		this.nearSide = this.mySide = this.p1;
 		this.farSide = this.p2;
-
 		this.resetStep();
 		if (this.autoresize) {
 			window.addEventListener('resize', this.onResize);
 			this.onResize();
 		}
 	}
-
 	onResize = () => {
 		const width = $(window).width()!;
-		if (width < 950 || this.hardcoreMode) {
-			this.messageShownTime = 500;
-		} else {
-			this.messageShownTime = 1;
-		}
+		if (width < 950 || this.hardcoreMode) { this.messageShownTime = 500; } 
+		else { this.messageShownTime = 1; }
 		if (width && width < 640) {
 			const scale = (width / 640);
 			this.scene.$frame?.css('transform', `scale(${scale})`);
@@ -1228,11 +1020,7 @@ export class Battle {
 			this.scene.$frame?.css('margin-bottom', '0');
 		}
 	};
-
-	subscribe(listener: Battle['subscription']) {
-		this.subscription = listener;
-	}
-
+	subscribe(listener: Battle['subscription']) { this.subscription = listener; }
 	removePseudoWeather(weather: string) {
 		for (let i = 0; i < this.pseudoWeather.length; i++) {
 			if (this.pseudoWeather[i][0] === weather) {
@@ -1247,11 +1035,7 @@ export class Battle {
 		this.scene.updateWeather();
 	}
 	hasPseudoWeather(weather: string) {
-		for (const [pseudoWeatherName] of this.pseudoWeather) {
-			if (weather === pseudoWeatherName) {
-				return true;
-			}
-		}
+		for (const [pseudoWeatherName] of this.pseudoWeather) { if (weather === pseudoWeatherName) { return true; } }
 		return false;
 	}
 	getAllActive() {
@@ -1259,19 +1043,13 @@ export class Battle {
 		// Sides 3 and 4 are synced with sides 1 and 2, so they don't need to be checked
 		for (let i = 0; i < 2; i++) {
 			const side = this.sides[i];
-			for (const active of side.active) {
-				if (active && !active.fainted) {
-					pokemonList.push(active);
-				}
-			}
+			for (const active of side.active) { if (active && !active.fainted) { pokemonList.push(active); } }
 		}
 		return pokemonList;
 	}
 	// Used in Pokemon#effectiveAbility over abilityActive to prevent infinite recursion
 	ngasActive() {
-		for (const active of this.getAllActive()) {
-			if ((active.ability === 'Neutralizing Gas' || active.ability2 === 'Neutralizing Gas') && !active.volatiles['gastroacid']) { return true; }
-		}
+		for (const active of this.getAllActive()) { if ((active.ability === 'Neutralizing Gas' || active.ability2 === 'Neutralizing Gas') && !active.volatiles['gastroacid']) { return true; } }
 		return false;
 	}
 	abilityActive(abilities: string | string[]) {
@@ -1301,16 +1079,11 @@ export class Battle {
 		this.weatherMinTimeLeft = 0;
 		this.pseudoWeather = [];
 		this.lastMove = '';
-
-		for (const side of this.sides) {
-			if (side) side.reset();
-		}
+		for (const side of this.sides) { if (side) side.reset(); }
 		this.myPokemon = null;
 		this.myAllyPokemon = null;
-
 		// DOM state
 		this.scene.reset();
-
 		// activity queue state
 		this.activeMoveIsSpread = null;
 		this.currentStep = 0;
@@ -1318,11 +1091,8 @@ export class Battle {
 		this.nextStep();
 	}
 	destroy() {
-		if (this.autoresize) {
-			window.removeEventListener('resize', this.onResize);
-		}
+		if (this.autoresize) { window.removeEventListener('resize', this.onResize); }
 		this.scene.destroy();
-
 		for (let i = 0; i < this.sides.length; i++) {
 			if (this.sides[i]) this.sides[i].destroy();
 			this.sides[i] = null!;
@@ -1335,24 +1105,15 @@ export class Battle {
 		this.p3 = null!;
 		this.p4 = null!;
 	}
-
-	log(args: Args, kwArgs?: KWArgs, preempt?: boolean) {
-		this.scene.log.add(args, kwArgs, preempt);
-	}
-
-	resetToCurrentTurn() {
-		this.seekTurn(this.ended ? Infinity : this.turn, true);
-	}
-	switchViewpoint() {
-		this.setViewpoint(this.viewpointSwitched ? 'p1' : 'p2');
-	}
+	log(args: Args, kwArgs?: KWArgs, preempt?: boolean) { this.scene.log.add(args, kwArgs, preempt); }
+	resetToCurrentTurn() { this.seekTurn(this.ended ? Infinity : this.turn, true); }
+	switchViewpoint() { this.setViewpoint(this.viewpointSwitched ? 'p1' : 'p2'); }
 	setViewpoint(sideid: SideID) {
 		if (this.mySide.sideid === sideid) return;
 		if (sideid.length !== 2 || !sideid.startsWith('p')) return;
 		const side = this[sideid];
 		if (!side) return;
 		this.mySide = side;
-
 		if ((side.n % 2) === this.p1.n) {
 			this.viewpointSwitched = false;
 			this.nearSide = this.p1;
@@ -1368,13 +1129,9 @@ export class Battle {
 			this.sides[this.nearSide.n + 2].isFar = false;
 			this.sides[this.farSide.n + 2].isFar = true;
 		}
-
 		this.resetToCurrentTurn();
 	}
-
-	//
 	// activities
-	//
 	start() {
 		this.log(['start']);
 		this.resetTurnsSinceMoved();
@@ -1401,24 +1158,14 @@ export class Battle {
 		this.scene.updateWeather(true);
 	}
 	setTurn(turnNum: number) {
-		if (turnNum === this.turn + 1) {
-			this.endLastTurnPending = true;
-		}
+		if (turnNum === this.turn + 1) { this.endLastTurnPending = true; }
 		if (this.turn && !this.usesUpkeep) this.updateTurnCounters(); // for compatibility with old replays
 		this.turn = turnNum;
 		this.started = true;
-
 		if (this.seeking === null) this.turnsSinceMoved++;
-
 		this.scene.incrementTurn();
-
-		if (this.seeking !== null) {
-			if (turnNum >= this.seeking) {
-				this.stopSeeking();
-			}
-		} else {
-			this.subscription?.('turn');
-		}
+		if (this.seeking !== null) { if (turnNum >= this.seeking) { this.stopSeeking(); } } 
+		else { this.subscription?.('turn'); }
 	}
 	resetTurnsSinceMoved() {
 		this.turnsSinceMoved = 0;
@@ -1426,9 +1173,7 @@ export class Battle {
 	}
 	changeWeather(weatherName: string, poke?: Pokemon, isUpkeep?: boolean, ability?: Dex.Effect) {
 		let weather = toID(weatherName);
-		if (!weather || weather === 'none') {
-			weather = '' as ID;
-		}
+		if (!weather || weather === 'none') { weather = '' as ID; }
 		if (isUpkeep) {
 			if (this.weather && this.weatherTimeLeft) {
 				this.weatherTimeLeft--;
@@ -1458,7 +1203,6 @@ export class Battle {
 		const sideConditions = ['mist', 'lightscreen', 'reflect', 'spikes', 'safeguard', 'tailwind', 'toxicspikes', 'stealthrock', 'waterpledge', 'firepledge', 'grasspledge', 'stickyweb', 'auroraveil', 'gmaxsteelsurge', 'gmaxcannonade', 'gmaxvinelash', 'gmaxwildfire',];
 		if (this.gameType === 'freeforall') {
 			// Court Change rotates side conditions clockwise in a free-for-all
-
 			// the list of all sides in clockwise order
 			const sides = [this.sides[0], this.sides[3], this.sides[1], this.sides[2]];
 			const temp: { [k: number]: Side["sideConditions"] } = { 0: {}, 1: {}, 2: {}, 3: {} };
@@ -1484,9 +1228,7 @@ export class Battle {
 		let side2 = this.sides[1];
 		for (const id of sideConditions) {
 			if (side1.sideConditions[id] && side2.sideConditions[id]) {
-				[side1.sideConditions[id], side2.sideConditions[id]] = [
-					side2.sideConditions[id], side1.sideConditions[id],
-				];
+				[side1.sideConditions[id], side2.sideConditions[id]] = [side2.sideConditions[id], side1.sideConditions[id],];
 				this.scene.addSideCondition(side1.n, id as ID);
 				this.scene.addSideCondition(side2.n, id as ID);
 			} else if (side1.sideConditions[id] && !side2.sideConditions[id]) {
@@ -1524,105 +1266,56 @@ export class Battle {
 		let fromeffect = Dex.getEffect(kwArgs.from);
 		this.activateAbility(pokemon, fromeffect);
 		pokemon.clearMovestatuses();
-		if (move.id === 'focuspunch') {
-			pokemon.removeTurnstatus('focuspunch' as ID);
-		}
+		if (move.id === 'focuspunch') { pokemon.removeTurnstatus('focuspunch' as ID); }
 		this.scene.updateStatbar(pokemon);
-		if (fromeffect.id === 'sleeptalk') {
-			pokemon.rememberMove(move.name, 0);
-		}
+		if (fromeffect.id === 'sleeptalk') { pokemon.rememberMove(move.name, 0); }
 		let callerMoveForPressure = null;
 		// will not include effects that are conditions named after moves like Magic Coat and Snatch, which is good
-		if (fromeffect.id && kwArgs.from.startsWith("move:")) {
-			callerMoveForPressure = fromeffect as Dex.Move;
-		}
+		if (fromeffect.id && kwArgs.from.startsWith("move:")) { callerMoveForPressure = fromeffect as Dex.Move; }
 		if (!fromeffect.id || callerMoveForPressure || fromeffect.id === 'pursuit') {
 			let moveName = move.name;
-			if (!callerMoveForPressure) {
-				if (move.isZ) {
-					pokemon.item = move.isZ;
-					let item = Dex.items.get(move.isZ);
-					if (item.zMoveFrom) moveName = item.zMoveFrom;
-				} else if (move.name.startsWith('Z-')) {
-					moveName = moveName.slice(2);
-					move = Dex.moves.get(moveName);
-					if (window.BattleItems) {
-						for (let item in BattleItems) {
-							if (BattleItems[item].zMoveType === move.type) pokemon.item = item;
-						}
-					}
-				}
-			}
 			let pp = 1;
 			if (this.abilityActive('Pressure') && move.id !== 'stickyweb') {
 				const foeTargets = [];
 				const moveTarget = move.pressureTarget;
-
-				if (
-					!target && this.gameType === 'singles' &&
-					!['self', 'allies', 'allySide', 'adjacentAlly', 'adjacentAllyOrSelf', 'allyTeam'].includes(moveTarget)
-				) {
+				if (!target && this.gameType === 'singles' && !['self', 'allies', 'allySide', 'adjacentAlly', 'adjacentAllyOrSelf', 'allyTeam'].includes(moveTarget)) {
 					// Hardcode for moves without a target in singles
 					foeTargets.push(pokemon.side.foe.active[0]);
 				} else if (['all', 'allAdjacent', 'allAdjacentFoes', 'foeSide'].includes(moveTarget)) {
 					for (const active of this.getAllActive()) {
 						if (active === pokemon) continue;
 						// Pressure affects allies in gen 3 and 4
-						if (this.gen <= 4 || (active.side !== pokemon.side && active.side.ally !== pokemon.side)) {
-							foeTargets.push(active);
-						}
+						if (this.gen <= 4 || (active.side !== pokemon.side && active.side.ally !== pokemon.side)) { foeTargets.push(active); }
 					}
-				} else if (target && target.side !== pokemon.side) {
-					foeTargets.push(target);
-				}
-
-				for (const foe of foeTargets) {
-					if (foe && !foe.fainted && foe.effectiveAbility() === 'Pressure') {
-						pp += 1;
-					}
-				}
+				} else if (target && target.side !== pokemon.side) { foeTargets.push(target); }
+				for (const foe of foeTargets) { if (foe && !foe.fainted && foe.effectiveAbility() === 'Pressure') { pp += 1; } }
 			}
-			if (!callerMoveForPressure) {
-				pokemon.rememberMove(moveName, pp);
-			} else {
-				pokemon.rememberMove(callerMoveForPressure.name, pp - 1); // 1 pp was already deducted from using the move itself
-			}
+			if (!callerMoveForPressure) { pokemon.rememberMove(moveName, pp); } 
+			else { pokemon.rememberMove(callerMoveForPressure.name, pp - 1); } // 1 pp was already deducted from using the move itself
 		}
 		pokemon.lastMove = move.id;
 		this.lastMove = move.id;
-		if (move.id === 'wish' || move.id === 'healingwish') {
-			pokemon.side.wisher = pokemon;
-		}
+		if (move.id === 'wish' || move.id === 'healingwish') { pokemon.side.wisher = pokemon; }
 	}
 	animateMove(pokemon: Pokemon, move: Dex.Move, target: Pokemon | null, kwArgs: KWArgs) {
 		this.activeMoveIsSpread = kwArgs.spread;
 		if (this.seeking !== null || kwArgs.still) return;
-
 		if (!target) target = pokemon.side.foe.active[0];
 		if (!target) target = pokemon.side.foe.missedPokemon;
-		if (kwArgs.miss && target.side) {
-			target = target.side.missedPokemon;
-		}
-		if (kwArgs.notarget) {
-			return;
-		}
-
+		if (kwArgs.miss && target.side) { target = target.side.missedPokemon; }
+		if (kwArgs.notarget) { return; }
 		if (kwArgs.prepare || kwArgs.anim === 'prepare') {
 			this.scene.runPrepareAnim(move.id, pokemon, target);
 			return;
 		}
-
 		let usedMove = kwArgs.anim ? Dex.moves.get(kwArgs.anim) : move;
 		if (!kwArgs.spread) {
 			this.scene.runMoveAnim(usedMove.id, [pokemon, target]);
 			return;
 		}
-
 		let targets = [pokemon];
-		if (kwArgs.spread === '.') {
-			//  no target was hit by the attack
-			targets.push(target.side.missedPokemon);
-		} else {
+		if (kwArgs.spread === '.') { targets.push(target.side.missedPokemon); } //  no target was hit by the attack
+		else {
 			for (const hitTarget of kwArgs.spread.split(',')) {
 				const curTarget = this.getPokemon(hitTarget + ': ?');
 				if (!curTarget) {
@@ -1632,15 +1325,12 @@ export class Battle {
 				targets.push(curTarget);
 			}
 		}
-
 		this.scene.runMoveAnim(usedMove.id, targets);
 	}
 	cantUseMove(pokemon: Pokemon, effect: Dex.Effect, move: Dex.Move, kwArgs: KWArgs) {
 		pokemon.clearMovestatuses();
 		this.scene.updateStatbar(pokemon);
-		if (effect.id in BattleStatusAnims) {
-			this.scene.runStatusAnim(effect.id, [pokemon]);
-		}
+		if (effect.id in BattleStatusAnims) { this.scene.runStatusAnim(effect.id, [pokemon]); }
 		this.activateAbility(pokemon, effect);
 		if (move.id) pokemon.rememberMove(move.name, 0);
 		switch (effect.id) {
@@ -1653,6 +1343,10 @@ export class Battle {
 		case 'slp':
 			this.scene.resultAnim(pokemon, 'Asleep', 'slp');
 			pokemon.statusData.sleepTurns++;
+			break;
+		case 'fear':
+			this.scene.resultAnim(pokemon, 'Afraid', 'fear');
+			pokemon.statusData.fearTurns++;
 			break;
 		case 'truant':
 			this.scene.resultAnim(pokemon, 'Loafing around', 'neutral');
@@ -1679,54 +1373,26 @@ export class Battle {
 		}
 		this.scene.animReset(pokemon);
 	}
-
-	activateAbility(
-	pokemon: Pokemon | null,
-	effectOrName: Dex.Effect | string,
-	isNotBase?: boolean,
-	slot: 1 | 2 = 1
-) {
-	if (!pokemon || !effectOrName) return;
-	if (typeof effectOrName !== 'string') {
-		if (effectOrName.effectType !== 'Ability') return;
-		effectOrName = effectOrName.name;
+	activateAbility(pokemon: Pokemon | null, effectOrName: Dex.Effect | string, isNotBase?: boolean, slot: 1 | 2 = 1) {
+		if (!pokemon || !effectOrName) return;
+		if (typeof effectOrName !== 'string') {
+			if (effectOrName.effectType !== 'Ability') return;
+			effectOrName = effectOrName.name;
+		}
+		this.scene.abilityActivateAnim(pokemon, effectOrName);
+		pokemon.rememberAbility(effectOrName, isNotBase, slot);
 	}
-	this.scene.abilityActivateAnim(pokemon, effectOrName);
-	pokemon.rememberAbility(effectOrName, isNotBase, slot);
-}
-
 	runMinor(args: Args, kwArgs: KWArgs, nextArgs?: Args, nextKwargs?: KWArgs) {
 		if (nextArgs && nextKwargs) {
-			if (args[2] === 'Sturdy' && args[0] === '-activate') {
-				args[2] = 'ability: Sturdy';
-			}
-			if (['-crit', '-supereffective', '-resisted'].includes(args[0]) || args[2] === 'ability: Sturdy') {
-				kwArgs.then = '.';
-			}
-			if (args[0] === '-damage' && !kwArgs.from && args[1] !== nextArgs[1] && (
-				['-crit', '-supereffective', '-resisted'].includes(nextArgs[0]) ||
-				(nextArgs[0] === '-damage' && !nextKwargs.from)
-			)) {
-				kwArgs.then = '.';
-			}
-			if (args[0] === '-damage' && nextArgs[0] === '-damage' && kwArgs.from && kwArgs.from === nextKwargs.from) {
-				kwArgs.then = '.';
-			}
-			if (args[0] === '-heal' && nextArgs[0] === '-heal' && kwArgs.from && kwArgs.from === nextKwargs.from) {
-				kwArgs.then = '.';
-			}
-			if (args[0] === '-ability' && (args[2] === 'Intimidate' || args[4] === 'boost')) {
-				kwArgs.then = '.';
-			}
-			if (args[0] === '-unboost' && nextArgs[0] === '-unboost') {
-				kwArgs.then = '.';
-			}
-			if (args[0] === '-boost' && nextArgs[0] === '-boost') {
-				kwArgs.then = '.';
-			}
-			if (args[0] === '-damage' && kwArgs.from === 'Leech Seed' && nextArgs[0] === '-heal' && nextKwargs.silent) {
-				kwArgs.then = '.';
-			}
+			if (args[2] === 'Sturdy' && args[0] === '-activate') { args[2] = 'ability: Sturdy'; }
+			if (['-crit', '-supereffective', '-resisted'].includes(args[0]) || args[2] === 'ability: Sturdy') { kwArgs.then = '.'; }
+			if (args[0] === '-damage' && !kwArgs.from && args[1] !== nextArgs[1] && (['-crit', '-supereffective', '-resisted'].includes(nextArgs[0]) || (nextArgs[0] === '-damage' && !nextKwargs.from))) { kwArgs.then = '.'; }
+			if (args[0] === '-damage' && nextArgs[0] === '-damage' && kwArgs.from && kwArgs.from === nextKwargs.from) { kwArgs.then = '.'; }
+			if (args[0] === '-heal' && nextArgs[0] === '-heal' && kwArgs.from && kwArgs.from === nextKwargs.from) { kwArgs.then = '.'; }
+			if (args[0] === '-ability' && (args[2] === 'Intimidate' || args[4] === 'boost')) { kwArgs.then = '.'; }
+			if (args[0] === '-unboost' && nextArgs[0] === '-unboost') { kwArgs.then = '.'; }
+			if (args[0] === '-boost' && nextArgs[0] === '-boost') { kwArgs.then = '.'; }
+			if (args[0] === '-damage' && kwArgs.from === 'Leech Seed' && nextArgs[0] === '-heal' && nextKwargs.silent) { kwArgs.then = '.'; }
 			if (args[0] === 'detailschange' && nextArgs[0] === '-mega') {
 				if (this.scene.closeMessagebar()) {
 					this.currentStep--;
@@ -1737,7 +1403,6 @@ export class Battle {
 		}
 		if (kwArgs.then) this.waitForAnimations = false;
 		if (kwArgs.simult) this.waitForAnimations = 'simult';
-
 		const CONSUMED = ['eaten', 'popped', 'consumed', 'held up'];
 		switch (args[0]) {
 		case '-damage': {
@@ -1745,16 +1410,13 @@ export class Battle {
 			let damage = poke.healthParse(args[2], true);
 			if (damage === null) break;
 			let range = poke.getDamageRange(damage);
-
 			if (kwArgs.from) {
 				let effect = Dex.getEffect(kwArgs.from);
 				let ofpoke = this.getPokemon(kwArgs.of);
 				this.activateAbility(ofpoke, effect);
 				if (effect.effectType === 'Item') {
 					const itemPoke = ofpoke || poke;
-					if (itemPoke.prevItem !== effect.name && !CONSUMED.includes(itemPoke.prevItemEffect)) {
-						itemPoke.item = effect.name;
-					}
+					if (itemPoke.prevItem !== effect.name && !CONSUMED.includes(itemPoke.prevItemEffect)) { itemPoke.item = effect.name; }
 				}
 				switch (effect.id) {
 				case 'brn':
@@ -1781,15 +1443,11 @@ export class Battle {
 					break;
 				}
 			} else {
-				if (this.dex.moves.get(this.lastMove).category !== 'Status') {
-					poke.timesAttacked++;
-				}
+				if (this.dex.moves.get(this.lastMove).category !== 'Status') { poke.timesAttacked++; }
 				let damageinfo = '' + Pokemon.getFormattedRange(range, damage[1] === 100 ? 0 : 1, '\u2013');
 				if (damage[1] !== 100) {
 					let hover = `${(damage[0] < 0) ? '\u2212' : ''}${Math.abs(damage[0])}/${damage[1]}`;
-					if (damage[1] === 48) { // this is a hack
-						hover += ' pixels';
-					}
+					if (damage[1] === 48) {  hover += ' pixels'; } // this is a hack
 					// battle-log will convert this into <abbr>
 					damageinfo = '||' + hover + '||' + damageinfo + '||';
 				}
@@ -1804,21 +1462,14 @@ export class Battle {
 			let damage = poke.healthParse(args[2], true, true);
 			if (damage === null) break;
 			let range = poke.getDamageRange(damage);
-
 			if (kwArgs.from) {
 				let effect = Dex.getEffect(kwArgs.from);
 				let ofpoke = this.getPokemon(kwArgs.of);
 				this.activateAbility(ofpoke || poke, effect);
-				if (effect.effectType === 'Item' && !CONSUMED.includes(poke.prevItemEffect)) {
-					if (poke.prevItem !== effect.name) {
-						poke.item = effect.name;
-					}
-				}
+				if (effect.effectType === 'Item' && !CONSUMED.includes(poke.prevItemEffect)) { if (poke.prevItem !== effect.name) { poke.item = effect.name; } }
 				switch (effect.id) {
 				case 'lunardance':
-					for (let trackedMove of poke.moveTrack) {
-						trackedMove[1] = 0;
-					}
+					for (let trackedMove of poke.moveTrack) { trackedMove[1] = 0; }
 					// falls through
 				case 'healingwish':
 					this.lastMove = 'healing-wish';
@@ -1853,11 +1504,8 @@ export class Battle {
 					let range = cpoke.getDamageRange(damage);
 					let formattedRange = Pokemon.getFormattedRange(range, 0, ' to ');
 					let diff = damage[0];
-					if (diff > 0) {
-						this.scene.healAnim(cpoke, formattedRange);
-					} else {
-						this.scene.damageAnim(cpoke, formattedRange);
-					}
+					if (diff > 0) { this.scene.healAnim(cpoke, formattedRange); } 
+					else { this.scene.damageAnim(cpoke, formattedRange); }
 				}
 			}
 			this.log(args, kwArgs);
@@ -1874,17 +1522,12 @@ export class Battle {
 				this.log(args, kwArgs);
 				break;
 			}
-			if (!poke.boosts[stat]) {
-				poke.boosts[stat] = 0;
-			}
+			if (!poke.boosts[stat]) { poke.boosts[stat] = 0; }
 			poke.boosts[stat] += amount;
-
 			if (!kwArgs.silent && kwArgs.from) {
 				let effect = Dex.getEffect(kwArgs.from);
 				let ofpoke = this.getPokemon(kwArgs.of);
-				if (!(effect.id === 'weakarmor' && stat === 'spe')) {
-					this.activateAbility(ofpoke || poke, effect);
-				}
+				if (!(effect.id === 'weakarmor' && stat === 'spe')) { this.activateAbility(ofpoke || poke, effect); }
 			}
 			this.scene.resultAnim(poke, poke.getBoost(stat), 'good');
 			this.log(args, kwArgs);
@@ -1901,11 +1544,8 @@ export class Battle {
 				this.log(args, kwArgs);
 				break;
 			}
-			if (!poke.boosts[stat]) {
-				poke.boosts[stat] = 0;
-			}
+			if (!poke.boosts[stat]) { poke.boosts[stat] = 0; }
 			poke.boosts[stat] -= amount;
-
 			if (!kwArgs.silent && kwArgs.from) {
 				let effect = Dex.getEffect(kwArgs.from);
 				let ofpoke = this.getPokemon(kwArgs.of);
@@ -1937,7 +1577,6 @@ export class Battle {
 			}
 			this.scene.resultAnim(poke, 'Stats swapped', 'neutral');
 			this.scene.resultAnim(poke2, 'Stats swapped', 'neutral');
-
 			this.log(args, kwArgs);
 			break;
 		}
@@ -1945,11 +1584,8 @@ export class Battle {
 			let poke = this.getPokemon(args[1])!;
 			let ofpoke = this.getPokemon(args[2]);
 			let effect = Dex.getEffect(args[3]);
-			for (const stat in poke.boosts) {
-				if (poke.boosts[stat] > 0) delete poke.boosts[stat];
-			}
+			for (const stat in poke.boosts) { if (poke.boosts[stat] > 0) delete poke.boosts[stat]; }
 			this.scene.resultAnim(poke, 'Boosts lost', 'bad');
-
 			if (effect.id) {
 				switch (effect.id) {
 				case 'spectralthief':
@@ -1963,11 +1599,8 @@ export class Battle {
 		}
 		case '-clearnegativeboost': {
 			let poke = this.getPokemon(args[1])!;
-			for (const stat in poke.boosts) {
-				if (poke.boosts[stat] < 0) delete poke.boosts[stat];
-			}
+			for (const stat in poke.boosts) { if (poke.boosts[stat] < 0) delete poke.boosts[stat]; }
 			this.scene.resultAnim(poke, 'Restored', 'good');
-
 			this.log(args, kwArgs);
 			break;
 		}
@@ -1986,15 +1619,11 @@ export class Battle {
 			if (this.gen >= 6) {
 				const volatilesToCopy = ['focusenergy', 'gmaxchistrike', 'laserfocus'];
 				for (const volatile of volatilesToCopy) {
-					if (frompoke.volatiles[volatile]) {
-						poke.addVolatile(volatile as ID);
-					} else {
-						poke.removeVolatile(volatile as ID);
-					}
+					if (frompoke.volatiles[volatile]) { poke.addVolatile(volatile as ID); } 
+					else { poke.removeVolatile(volatile as ID); }
 				}
 			}
 			this.scene.resultAnim(poke, 'Stats copied', 'neutral');
-
 			this.log(args, kwArgs);
 			break;
 		}
@@ -2007,17 +1636,13 @@ export class Battle {
 				this.activateAbility(ofpoke || poke, effect);
 			}
 			this.scene.resultAnim(poke, 'Stats reset', 'neutral');
-
 			this.log(args, kwArgs);
 			break;
 		}
 		case '-invertboost': {
 			let poke = this.getPokemon(args[1])!;
-			for (const stat in poke.boosts) {
-				poke.boosts[stat] = -poke.boosts[stat];
-			}
+			for (const stat in poke.boosts) { poke.boosts[stat] = -poke.boosts[stat]; }
 			this.scene.resultAnim(poke, 'Stats inverted', 'neutral');
-
 			this.log(args, kwArgs);
 			break;
 		}
@@ -2028,7 +1653,6 @@ export class Battle {
 				this.scene.timeOffset = timeOffset;
 				this.scene.resultAnim(active, 'Stats reset', 'neutral');
 			}
-
 			this.log(args, kwArgs);
 			break;
 		}
@@ -2043,10 +1667,7 @@ export class Battle {
 			let poke = this.getPokemon(args[1]);
 			if (poke) {
 				this.scene.resultAnim(poke, 'Super-effective', 'bad');
-				if (Dex.afdMode === true) {
-					// April Fool's 2018
-					this.scene.runOtherAnim('hitmark' as ID, [poke]);
-				}
+				if (Dex.afdMode === true) { this.scene.runOtherAnim('hitmark' as ID, [poke]); } // April Fool's 2018
 			}
 			if (this.activeMoveIsSpread) kwArgs.spread = '.';
 			this.log(args, kwArgs);
@@ -2069,9 +1690,7 @@ export class Battle {
 		}
 		case '-miss': {
 			let target = this.getPokemon(args[2]);
-			if (target) {
-				this.scene.resultAnim(target, 'Missed', 'neutral');
-			}
+			if (target) { this.scene.resultAnim(target, 'Missed', 'neutral'); }
 			this.log(args, kwArgs);
 			break;
 		}
@@ -2080,11 +1699,8 @@ export class Battle {
 			let effect = Dex.getEffect(args[2]);
 			let fromeffect = Dex.getEffect(kwArgs.from);
 			let ofpoke = this.getPokemon(kwArgs.of);
-			if (fromeffect.id === 'clearamulet') {
-				ofpoke!.item = 'Clear Amulet';
-			} else {
-				this.activateAbility(ofpoke || poke, fromeffect);
-			}
+			if (fromeffect.id === 'clearamulet') { ofpoke!.item = 'Clear Amulet'; } 
+			else { this.activateAbility(ofpoke || poke, fromeffect); }
 			switch (effect.id) {
 			case 'brn':
 				this.scene.resultAnim(poke, 'Already burned', 'neutral');
@@ -2094,11 +1710,8 @@ export class Battle {
 				this.scene.resultAnim(poke, 'Already poisoned', 'neutral');
 				break;
 			case 'slp':
-				if (fromeffect.id === 'uproar') {
-					this.scene.resultAnim(poke, 'Failed', 'neutral');
-				} else {
-					this.scene.resultAnim(poke, 'Already asleep', 'neutral');
-				}
+				if (fromeffect.id === 'uproar') { this.scene.resultAnim(poke, 'Failed', 'neutral'); } 
+				else { this.scene.resultAnim(poke, 'Already asleep', 'neutral'); }
 				break;
 			case 'par':
 				this.scene.resultAnim(poke, 'Already paralyzed', 'neutral');
@@ -2110,9 +1723,7 @@ export class Battle {
 				this.scene.resultAnim(poke, 'Stat drop blocked', 'neutral');
 				break;
 			default:
-				if (poke) {
-					this.scene.resultAnim(poke, 'Failed', 'neutral');
-				}
+				if (poke) { this.scene.resultAnim(poke, 'Failed', 'neutral'); }
 				break;
 			}
 			this.scene.animReset(poke);
@@ -2141,7 +1752,6 @@ export class Battle {
 				poke.addTurnstatus('protect' as ID);
 				this.scene.resultAnim(poke, 'Protected', 'good');
 				break;
-
 			case 'safetygoggles':
 				poke.item = 'Safety Goggles';
 				break;
@@ -2187,10 +1797,7 @@ export class Battle {
 			poke.status = args[2] as Dex.StatusName;
 			if (poke.status === 'aura' && kwArgs.time) { (poke as any).auraTime = Number(kwArgs.time) || 0; }
 			this.activateAbility(ofpoke || poke, effect);
-			if (effect.effectType === 'Item') {
-				ofpoke.item = effect.name;
-			}
-
+			if (effect.effectType === 'Item') { ofpoke.item = effect.name; }
 			switch (args[2]) {
 			case 'brn':
 				this.scene.resultAnim(poke, 'Burned', 'brn');
@@ -2207,9 +1814,7 @@ export class Battle {
 				break;
 			case 'slp':
 				this.scene.resultAnim(poke, 'Asleep', 'slp');
-				if (effect.id === 'rest') {
-					poke.statusData.sleepTurns = 0; // for Gen 2 use through Sleep Talk
-				}
+				if (effect.id === 'rest') { poke.statusData.sleepTurns = 0; } // for Gen 2 use through Sleep Talk
 				break;
 			case 'par':
 				this.scene.resultAnim(poke, 'Paralyzed', 'par');
@@ -2282,9 +1887,22 @@ export class Battle {
 				target.status = '';
 				this.scene.updateStatbarIfExists(target);
 			}
-
 			this.scene.resultAnim(poke, 'Team Cured', 'good');
 			this.log(args, kwArgs);
+			break;
+		}
+		case '-weapon': {
+			const poke = this.getPokemon(args[1]);
+			if (!poke) break;
+			const durabilityText = args[2] || '';
+			if (!durabilityText) break;
+			const [durabilityPart, recoverPart] = durabilityText.split('|');
+			const [currentText, maxText] = durabilityPart.split('/');
+			poke.weaponDurability = parseInt(currentText || '0', 10) || 0;
+			poke.maxWeaponDurability = parseInt(maxText || '0', 10) || 0;
+			poke.weaponRecoveryLeft = 0;
+			if (recoverPart?.startsWith('[recover]')) { poke.weaponRecoveryLeft = parseInt(recoverPart.slice(9), 10) || 0; }
+			this.scene.updateStatbar(poke);
 			break;
 		}
 		case '-item': {
@@ -2295,22 +1913,18 @@ export class Battle {
 			if (!poke) {
 				if (effect.id === 'frisk') {
 					const possibleTargets = ofpoke!.side.foe.active.filter(p => p !== null);
-					if (possibleTargets.length === 1) {
-						poke = possibleTargets[0]!;
-					} else {
+					if (possibleTargets.length === 1) { poke = possibleTargets[0]!; } 
+					else {
 						this.activateAbility(ofpoke, "Frisk");
 						this.log(args, kwArgs);
 						break;
 					}
-				} else {
-					throw new Error('No Pokemon in -item message');
-				}
+				} else { throw new Error('No Pokemon in -item message'); }
 			}
 			poke.item = item.name;
 			poke.itemEffect = '';
 			poke.removeVolatile('airballoon' as ID);
 			if (item.id === 'airballoon') poke.addVolatile('airballoon' as ID);
-
 			if (effect.id) {
 				switch (effect.id) {
 				case 'pickup':
@@ -2394,11 +2008,8 @@ export class Battle {
 					poke.prevItemEffect = 'flung';
 					break;
 				case 'knockoff':
-					if (this.gen <= 4) {
-						poke.itemEffect = 'knocked off';
-					} else {
-						poke.prevItemEffect = 'knocked off';
-					}
+					if (this.gen <= 4) { poke.itemEffect = 'knocked off'; } 
+					else { poke.prevItemEffect = 'knocked off'; }
 					this.scene.runOtherAnim('itemoff' as ID, [poke]);
 					this.scene.resultAnim(poke, 'Item knocked off', 'neutral');
 					break;
@@ -2461,9 +2072,8 @@ export class Battle {
 				slot = (s2 === effId ? 2 : 1);
 			}
 			poke.rememberAbility(ability.name, effect.id && !kwArgs.fail, slot);
-			if (kwArgs.silent) {
-				// do nothing
-			} else if (oldAbility.id) {
+			if (kwArgs.silent) { } // do nothing
+			else if (oldAbility.id) {
 				this.activateAbility(poke, oldAbility.name, undefined, slot);
 				this.scene.wait(500);
 				this.activateAbility(poke, ability.name, true, slot);
@@ -2473,29 +2083,23 @@ export class Battle {
 				case 'desolateland':
 				case 'primordialsea':
 				case 'deltastream':
-					if (kwArgs.fail) {
-						this.activateAbility(poke, ability.name, undefined, slot);;
-					}
+					if (kwArgs.fail) { this.activateAbility(poke, ability.name, undefined, slot);; }
 					break;
 				default:
 					this.activateAbility(poke, ability.name, undefined, slot);;
 					break;
 				}
-			} else {
-				this.activateAbility(poke, ability.name, undefined, slot);;
-			}
+			} else { this.activateAbility(poke, ability.name, undefined, slot);; }
 			this.scene.updateWeather();
 			this.log(args, kwArgs);
 			break;
 		}
 		case '-endability': {
-			// deprecated; use |-start| for Gastro Acid
-			// and the third arg of |-ability| for Entrainment et al
+			// deprecated; use |-start| for Gastro Acid and the third arg of |-ability| for Entrainment et al
 			let poke = this.getPokemon(args[1])!;
 			let ability = Dex.abilities.get(args[2]);
 			poke.ability = '(suppressed)';
 			poke.ability2 = '(suppressed)';
-
 			if (ability.id) {
 				if (!poke.baseAbility) poke.baseAbility = ability.name;
 				if (!poke.baseAbility2) poke.baseAbility2 = ability.name;
@@ -2508,32 +2112,25 @@ export class Battle {
 			poke.removeVolatile('formechange' as ID);
 			poke.removeVolatile('typeadd' as ID);
 			poke.removeVolatile('typechange' as ID);
-
 			let newSpeciesForme = args[2];
 			let commaIndex = newSpeciesForme.indexOf(',');
 			if (commaIndex !== -1) {
 				let level = newSpeciesForme.substr(commaIndex + 1).trim();
-				if (level.startsWith('L')) {
-					poke.level = parseInt(level.substr(1), 10);
-				}
+				if (level.startsWith('L')) { poke.level = parseInt(level.substr(1), 10); }
 				newSpeciesForme = args[2].substr(0, commaIndex);
 			}
 			let species = this.dex.species.get(newSpeciesForme);
 			if (nextArgs) {
-				if (nextArgs[0] === '-mega') {
-					species = this.dex.species.get(this.dex.items.get(nextArgs[3]).megaStone);
-				} else if (nextArgs[0] === '-primal' && nextArgs.length > 2) {
+				if (nextArgs[0] === '-mega') { species = this.dex.species.get(this.dex.items.get(nextArgs[3]).megaStone); } 
+				else if (nextArgs[0] === '-primal' && nextArgs.length > 2) {
 					if (nextArgs[2] === 'Red Orb') species = this.dex.species.get('Groudon-Primal');
 					if (nextArgs[2] === 'Blue Orb') species = this.dex.species.get('Kyogre-Primal');
 				}
 			}
-
 			poke.speciesForme = newSpeciesForme;
 			poke.ability = poke.baseAbility = (species.abilities ? species.abilities['0'] : '');
-
 			poke.details = args[2];
 			poke.searchid = args[1].substr(0, 2) + args[1].substr(args[1].indexOf(':')) + '|' + args[2];
-
 			this.scene.animTransform(poke, true, true);
 			this.log(args, kwArgs);
 			break;
@@ -2543,11 +2140,7 @@ export class Battle {
 			let tpoke = this.getPokemon(args[2])!;
 			let effect = Dex.getEffect(kwArgs.from);
 			if (poke === tpoke) throw new Error("Transforming into self");
-
-			if (!kwArgs.silent) {
-				this.activateAbility(poke, effect);
-			}
-
+			if (!kwArgs.silent) { this.activateAbility(poke, effect); }
 			poke.boosts = { ...tpoke.boosts };
 			poke.copyTypesFrom(tpoke, true);
 			poke.ability = tpoke.ability;
@@ -2560,9 +2153,7 @@ export class Battle {
 			const level = tpoke.level;
 			poke.addVolatile('transform' as ID, pokemon, shiny, gender, level);
 			poke.addVolatile('formechange' as ID, speciesForme);
-			for (const trackedMove of tpoke.moveTrack) {
-				poke.rememberMove(trackedMove[0], 0);
-			}
+			for (const trackedMove of tpoke.moveTrack) { poke.rememberMove(trackedMove[0], 0); }
 			this.scene.animTransform(poke);
 			this.scene.resultAnim(poke, 'Transformed', 'good');
 			this.log(['-transform', args[1], args[2], tpoke.speciesForme], kwArgs);
@@ -2578,9 +2169,7 @@ export class Battle {
 				if (this.gen >= 6) poke.removeVolatile('autotomize' as ID);
 			}
 
-			if (!kwArgs.silent) {
-				this.activateAbility(poke, fromeffect);
-			}
+			if (!kwArgs.silent) { this.activateAbility(poke, fromeffect); }
 			poke.addVolatile('formechange' as ID, species.name); // the formechange volatile reminds us to revert the sprite change on switch-out
 			this.scene.animTransform(poke, true);
 			this.log(args, kwArgs);
@@ -2589,9 +2178,7 @@ export class Battle {
 		case '-mega': {
 			let poke = this.getPokemon(args[1])!;
 			let item = Dex.items.get(args[3]);
-			if (args[3]) {
-				poke.item = item.name;
-			}
+			if (args[3]) { poke.item = item.name; }
 			this.log(args, kwArgs);
 			break;
 		}
@@ -2637,27 +2224,23 @@ export class Battle {
 			this.scene.resetStatbar(poke);
 			this.log(args, kwArgs);
 			break;
-			}
+		}
 		case '-start': {
 			let poke = this.getPokemon(args[1])!;
 			let effect = Dex.getEffect(args[2]);
 			let ofpoke = this.getPokemon(kwArgs.of);
 			let fromeffect = Dex.getEffect(kwArgs.from);
-
 			this.activateAbility(poke, effect);
 			this.activateAbility(ofpoke || poke, fromeffect);
 			switch (effect.id) {
 			case 'typechange':
 				if (poke.terastallized) break;
-				if (ofpoke && fromeffect.id === 'reflecttype') {
-					poke.copyTypesFrom(ofpoke);
-				} else {
+				if (ofpoke && fromeffect.id === 'reflecttype') { poke.copyTypesFrom(ofpoke); } 
+				else {
 					const types = Dex.sanitizeName(args[3] || '???');
 					poke.removeVolatile('typeadd' as ID);
 					poke.addVolatile('typechange' as ID, types);
-					if (!kwArgs.silent) {
-						this.scene.typeAnim(poke, types);
-					}
+					if (!kwArgs.silent) { this.scene.typeAnim(poke, types); }
 				}
 				this.scene.updateStatbar(poke);
 				break;
@@ -2753,11 +2336,8 @@ export class Battle {
 				break;
 			case 'autotomize':
 				this.scene.resultAnim(poke, 'Lightened', 'good');
-				if (poke.volatiles.autotomize) {
-					poke.volatiles.autotomize[1]++;
-				} else {
-					poke.addVolatile('autotomize' as ID, 1);
-				}
+				if (poke.volatiles.autotomize) { poke.volatiles.autotomize[1]++; } 
+				else { poke.addVolatile('autotomize' as ID, 1); }
 				break;
 			case 'focusenergy':
 				this.scene.resultAnim(poke, '+Crit rate', 'good');
@@ -2778,13 +2358,9 @@ export class Battle {
 				if (poke.lastMove === 'fly' || poke.lastMove === 'bounce') this.scene.animReset(poke);
 				break;
 			case 'substitute':
-				if (kwArgs.damage) {
-					this.scene.resultAnim(poke, 'Damage', 'bad');
-				} else if (kwArgs.block) {
-					this.scene.resultAnim(poke, 'Blocked', 'neutral');
-				}
+				if (kwArgs.damage) { this.scene.resultAnim(poke, 'Damage', 'bad'); } 
+				else if (kwArgs.block) { this.scene.resultAnim(poke, 'Blocked', 'neutral'); }
 				break;
-
 			// Gen 1-2
 			case 'mist':
 				this.scene.resultAnim(poke, 'Mist', 'good');
@@ -2797,9 +2373,7 @@ export class Battle {
 				this.scene.resultAnim(poke, 'Reflect', 'good');
 				break;
 			}
-			if (!(effect.id === 'typechange' && poke.terastallized)) {
-				poke.addVolatile(effect.id);
-			}
+			if (!(effect.id === 'typechange' && poke.terastallized)) { poke.addVolatile(effect.id); }
 			this.scene.updateStatbar(poke);
 			this.log(args, kwArgs);
 			break;
@@ -2809,10 +2383,8 @@ export class Battle {
 			let effect = Dex.getEffect(args[2]);
 			let fromeffect = Dex.getEffect(kwArgs.from);
 			poke.removeVolatile(effect.id);
-
-			if (kwArgs.silent && !(effect.id === 'protosynthesis' || effect.id === 'quarkdrive')) {
-				// do nothing
-			} else {
+			if (kwArgs.silent && !(effect.id === 'protosynthesis' || effect.id === 'quarkdrive')) { } // do nothing
+			else {
 				switch (effect.id) {
 				case 'dynamax':
 					this.scene.animTransform(poke);
@@ -2824,17 +2396,13 @@ export class Battle {
 					this.scene.resultAnim(poke, 'Telekinesis&nbsp;ended', 'neutral');
 					break;
 				case 'skydrop':
-					if (kwArgs.interrupt) {
-						this.scene.anim(poke, { time: 100 });
-					}
+					if (kwArgs.interrupt) { this.scene.anim(poke, { time: 100 }); }
 					break;
 				case 'confusion':
 					this.scene.resultAnim(poke, 'Confusion&nbsp;ended', 'good');
 					break;
 				case 'leechseed':
-					if (fromeffect.id === 'rapidspin') {
-						this.scene.resultAnim(poke, 'De-seeded', 'good');
-					}
+					if (fromeffect.id === 'rapidspin') { this.scene.resultAnim(poke, 'De-seeded', 'good'); }
 					break;
 				case 'healblock':
 					this.scene.resultAnim(poke, 'Heal Block ended', 'good');
@@ -2894,12 +2462,8 @@ export class Battle {
 					break;
 				default:
 					if (effect.effectType === 'Move') {
-						if (effect.name === 'Doom Desire') {
-							this.scene.runOtherAnim('doomdesirehit' as ID, [poke]);
-						}
-						if (effect.name === 'Future Sight') {
-							this.scene.runOtherAnim('futuresighthit' as ID, [poke]);
-						}
+						if (effect.name === 'Doom Desire') { this.scene.runOtherAnim('doomdesirehit' as ID, [poke]); }
+						if (effect.name === 'Future Sight') { this.scene.runOtherAnim('futuresighthit' as ID, [poke]); }
 					}
 				}
 			}
@@ -2910,9 +2474,7 @@ export class Battle {
 		case '-singleturn': {
 			let poke = this.getPokemon(args[1])!;
 			let effect = Dex.getEffect(args[2]);
-			if (effect.id === 'roost' && !poke.getTypeList().includes('Flying')) {
-				break;
-			}
+			if (effect.id === 'roost' && !poke.getTypeList().includes('Flying')) { break; }
 			poke.addTurnstatus(effect.id);
 			switch (effect.id) {
 			case 'roost':
@@ -2994,11 +2556,8 @@ export class Battle {
 				poke.rememberMove(kwArgs.move, Infinity);
 				break;
 			case 'substitute':
-				if (kwArgs.damage) {
-					this.scene.resultAnim(poke, 'Damage', 'bad');
-				} else if (kwArgs.block) {
-					this.scene.resultAnim(poke, 'Blocked', 'neutral');
-				}
+				if (kwArgs.damage) { this.scene.resultAnim(poke, 'Damage', 'bad'); } 
+				else if (kwArgs.block) { this.scene.resultAnim(poke, 'Blocked', 'neutral'); }
 				break;
 			case 'attract':
 				this.scene.runStatusAnim('attracted' as ID, [poke]);
@@ -3006,7 +2565,6 @@ export class Battle {
 			case 'bide':
 				this.scene.runOtherAnim('bidecharge' as ID, [poke]);
 				break;
-
 			// move activations
 			case 'aromatherapy':
 				this.scene.resultAnim(poke, 'Team Cured', 'good');
@@ -3051,30 +2609,23 @@ export class Battle {
 				if (target) {
 					// Your rule: swapping effects swap BOTH ability slots
 					poke.swapAbilities(target);
-
 					if (poke.side !== target.side) {
 						this.activateAbility(poke, poke.ability, true);
 						this.activateAbility(target, target.ability, true);
 					}
 				}
 				break;
-
 			// ability activations
 			case 'electromorphosis':
 			case 'windpower':
 				poke.addMovestatus('charge' as ID);
 				break;
 			case 'forewarn':
-				if (target) {
-					target.rememberMove(kwArgs.move, 0);
-				} else {
+				if (target) { target.rememberMove(kwArgs.move, 0); } 
+				else {
 					let foeActive = [] as Pokemon[];
-					for (const maybeTarget of poke.side.foe.active) {
-						if (maybeTarget && !maybeTarget.fainted) foeActive.push(maybeTarget);
-					}
-					if (foeActive.length === 1) {
-						foeActive[0].rememberMove(kwArgs.move, 0);
-					}
+					for (const maybeTarget of poke.side.foe.active) { if (maybeTarget && !maybeTarget.fainted) foeActive.push(maybeTarget); }
+					if (foeActive.length === 1) { foeActive[0].rememberMove(kwArgs.move, 0); }
 				}
 				break;
 			case 'lingeringaroma':
@@ -3087,7 +2638,6 @@ export class Battle {
 				this.scene.wait(700);
 				this.activateAbility(target, effect.name, true);
 				break;
-
 			// item activations
 			case 'leppaberry':
 			case 'mysteryberry':
@@ -3103,9 +2653,7 @@ export class Battle {
 				poke.item = 'Ability Shield';
 				break;
 			default:
-				if (kwArgs.broken) { // for custom moves that break protection
-					this.scene.resultAnim(poke, 'Protection broken', 'bad');
-				}
+				if (kwArgs.broken) { this.scene.resultAnim(poke, 'Protection broken', 'bad'); } // for custom moves that break protection
 			}
 			this.log(args, kwArgs);
 			break;
@@ -3114,7 +2662,6 @@ export class Battle {
 			let side = this.getSide(args[1]);
 			let effect = Dex.getEffect(args[2]);
 			side.addSideCondition(effect, !!kwArgs.persistent);
-
 			switch (effect.id) {
 			case 'tailwind':
 			case 'auroraveil':
@@ -3154,9 +2701,7 @@ export class Battle {
 			let effect = Dex.getEffect(args[1]);
 			let poke = this.getPokemon(kwArgs.of) || undefined;
 			let ability = Dex.getEffect(kwArgs.from);
-			if (!effect.id || effect.id === 'none') {
-				kwArgs.from = this.weather;
-			}
+			if (!effect.id || effect.id === 'none') { kwArgs.from = this.weather; }
 			this.changeWeather(effect.name, poke, !!kwArgs.upkeep, ability);
 			this.log(args, kwArgs);
 			break;
@@ -3180,13 +2725,10 @@ export class Battle {
 			}
 			if (kwArgs.persistent) minTimeLeft += 2;
 			this.addPseudoWeather(effect.name, minTimeLeft, maxTimeLeft);
-
 			switch (effect.id) {
 			case 'gravity':
 				if (this.seeking !== null) break;
-				for (const active of this.getAllActive()) {
-					this.scene.runOtherAnim('gravity' as ID, [active]);
-				}
+				for (const active of this.getAllActive()) { this.scene.runOtherAnim('gravity' as ID, [active]); }
 				break;
 			}
 			this.log(args, kwArgs);
@@ -3255,7 +2797,6 @@ export class Battle {
 			}
 		}
 		if (foe) siden = (siden ? 0 : 1);
-
 		let data = Dex.species.get(name);
 		return data.spriteData[siden];
 	}
@@ -3289,17 +2830,12 @@ export class Battle {
 			output.gender = splitDetails[splitDetails.length - 1] as Dex.GenderName;
 			splitDetails.pop();
 		}
-		if (splitDetails[1]) {
-			output.level = parseInt(splitDetails[1].substr(1), 10) || 100;
-		}
-		if (splitDetails[0]) {
-			output.speciesForme = splitDetails[0];
-		}
+		if (splitDetails[1]) { output.level = parseInt(splitDetails[1].substr(1), 10) || 100; }
+		if (splitDetails[0]) { output.speciesForme = splitDetails[0]; }
 		return output;
 	}
 	parseHealth(hpstring: string, output: PokemonHealth = {} as any) {
 		let [hp, status] = hpstring.split(' ');
-
 		// hp parse
 		output.hpcolor = '';
 		if (hp === '0' || hp === '0.0') {
@@ -3307,29 +2843,23 @@ export class Battle {
 			output.hp = 0;
 		} else if (hp.indexOf('/') > 0) {
 			let [curhp, maxhp] = hp.split('/');
-			if (isNaN(parseFloat(curhp)) || isNaN(parseFloat(maxhp))) {
-				return null;
-			}
+			if (isNaN(parseFloat(curhp)) || isNaN(parseFloat(maxhp))) { return null; }
 			output.hp = parseFloat(curhp);
 			output.maxhp = parseFloat(maxhp);
 			if (output.hp > output.maxhp) output.hp = output.maxhp;
 			const colorchar = maxhp.slice(-1);
-			if (colorchar === 'r' || colorchar === 'y' || colorchar === 'g') {
-				output.hpcolor = colorchar;
-			}
+			if (colorchar === 'r' || colorchar === 'y' || colorchar === 'g') { output.hpcolor = colorchar; }
 		} else if (!isNaN(parseFloat(hp))) {
 			if (!output.maxhp) output.maxhp = 100;
 			output.hp = output.maxhp * parseFloat(hp) / 100;
 		}
-
 		// status parse
 		if (!status) {
 			output.status = '';
-		} else if (status === 'par' || status === 'brn' || status === 'slp' || status === 'frz' || status === 'tox') {
-			output.status = status;
-		} else if (status === 'psn' && output.status !== 'tox') {
-			output.status = status;
-		} else if (status === 'fnt') {
+		} 
+		else if (status === 'par' || status === 'brn' || status === 'slp' || status === 'frz' || status === 'tox') { output.status = status; } 
+		else if (status === 'psn' && output.status !== 'tox') { output.status = status; } 
+		else if (status === 'fnt') {
 			output.hp = 0;
 			output.fainted = true;
 		}
@@ -3337,7 +2867,6 @@ export class Battle {
 	}
 	parsePokemonId(pokemonid: string) {
 		let name = pokemonid;
-
 		let siden = -1;
 		let slot = -1; // if there is an explicit slot for this pokemon
 		if (/^p[1-9]($|: )/.test(name)) {
@@ -3356,10 +2885,8 @@ export class Battle {
 		if (pokemonid === '??') throw new Error(`pokemonid not passed`);
 		const { name, siden, slot, pokemonid: parsedPokemonid } = this.parsePokemonId(pokemonid);
 		pokemonid = parsedPokemonid;
-
 		const searchid = `${pokemonid}|${details}`;
 		const side = this.sides[siden];
-
 		// search inactive revealed pokemon
 		for (let i = 0; i < side.pokemon.length; i++) {
 			let pokemon = side.pokemon[i];
@@ -3368,20 +2895,16 @@ export class Battle {
 			if (side.active.includes(pokemon)) continue;
 			// just switched out, can't be switching in
 			if (pokemon === side.lastPokemon && !side.active[slot]) continue;
-
-			if (pokemon.searchid === searchid) {
-				// exact match
+			if (pokemon.searchid === searchid) { // exact match
 				if (slot >= 0) pokemon.slot = slot;
 				return pokemon;
 			}
-			if (!pokemon.searchid && pokemon.checkDetails(details)) {
-				// switch-in matches Team Preview entry
+			if (!pokemon.searchid && pokemon.checkDetails(details)) { // switch-in matches Team Preview entry
 				pokemon = side.addPokemon(name, pokemonid, details, i);
 				if (slot >= 0) pokemon.slot = slot;
 				return pokemon;
 			}
 		}
-
 		// pokemon not found, create a new pokemon object for it
 		const pokemon = side.addPokemon(name, pokemonid, details);
 		if (slot >= 0) pokemon.slot = slot;
@@ -3389,33 +2912,23 @@ export class Battle {
 	}
 	rememberTeamPreviewPokemon(sideid: string, details: string) {
 		const { siden } = this.parsePokemonId(sideid);
-
 		return this.sides[siden].addPokemon('', '', details);
 	}
 	findCorrespondingPokemon(serverPokemon: { ident: string, details: string }) {
 		const { siden } = this.parsePokemonId(serverPokemon.ident);
 		const searchid = `${serverPokemon.ident}|${serverPokemon.details}`;
-		for (const pokemon of this.sides[siden].pokemon) {
-			if (pokemon.searchid === searchid) {
-				return pokemon;
-			}
-		}
+		for (const pokemon of this.sides[siden].pokemon) { if (pokemon.searchid === searchid) { return pokemon; } }
 		return null;
 	}
 	getPokemon(pokemonid: string | undefined, faintedOnly = false) {
-		if (!pokemonid || pokemonid === '??' || pokemonid === 'null' || pokemonid === 'false') {
-			return null;
-		}
+		if (!pokemonid || pokemonid === '??' || pokemonid === 'null' || pokemonid === 'false') {  return null; }
 		const { siden, slot, pokemonid: parsedPokemonid } = this.parsePokemonId(pokemonid);
 		pokemonid = parsedPokemonid;
-
 		/** if true, don't match an active pokemon */
 		const isInactive = (slot < 0);
 		const side = this.sides[siden];
-
 		// search player's pokemon
 		if (!isInactive && side.active[slot]) return side.active[slot];
-
 		for (const pokemon of side.pokemon) {
 			if (isInactive && !this.compatMode && side.active.includes(pokemon)) continue;
 			if (faintedOnly && pokemon.hp) continue;
@@ -3424,7 +2937,6 @@ export class Battle {
 				return pokemon;
 			}
 		}
-
 		return null;
 	}
 	getSide(sidename: string): Side {
@@ -3441,10 +2953,8 @@ export class Battle {
 			id: sidename.replace(/ /g, ''),
 		} as any;
 	}
-
 	add(command?: string) {
 		if (command) this.stepQueue.push(command);
-
 		if (this.atQueueEnd && this.currentStep < this.stepQueue.length) {
 			this.atQueueEnd = false;
 			this.nextStep();
@@ -3465,381 +2975,351 @@ export class Battle {
 	}
 	runMajor(args: Args, kwArgs: KWArgs, preempt?: boolean) {
 		switch (args[0]) {
-		case 'start': {
-			this.nearSide.active[0] = null;
-			this.farSide.active[0] = null;
-			this.scene.resetSides();
-			this.start();
-			break;
-		}
-		case 'upkeep': {
-			this.usesUpkeep = true;
-			this.updateTurnCounters();
-			// Prevents getSwitchedPokemon from skipping over a Pokemon that switched out mid turn (e.g. U-turn)
-			for (const side of this.sides) {
-				side.lastPokemon = null;
+			case 'start': {
+				this.nearSide.active[0] = null;
+				this.farSide.active[0] = null;
+				this.scene.resetSides();
+				this.start();
+				break;
 			}
-			break;
-		}
-		case 'turn': {
-			this.setTurn(parseInt(args[1], 10));
-			this.log(args);
-			break;
-		}
-		case 'tier': {
-			this.tier = args[1];
-			if (this.tier.endsWith('Random Battle')) {
-				this.speciesClause = true;
-			}
-			if (this.tier.endsWith(' (Blitz)')) {
-				this.messageFadeTime = 40;
-				this.isBlitz = true;
-			}
-			if (this.tier.includes(`Let's Go`)) {
-				this.dex = Dex.mod('gen7letsgo' as ID);
-			}
-			if (this.tier.includes('Super Staff Bros')) {
-				this.dex = Dex.mod('gen9ssb' as ID);
-			}
-			if (
-  			this.tier.includes('Indigo Starstorm') ||
-  			this.tier.includes('ISL Regulation Set')
-			) {
-  			this.dex = Dex.mod('gen9indigostarstorm' as ID);
-			}
-			this.log(args);
-			break;
-		}
-		case 'gametype': {
-			this.gameType = args[1] as any;
-			this.compatMode = false;
-			switch (args[1]) {
-			case 'multi':
-			case 'freeforall':
-				this.pokemonControlled = 1;
-				if (!this.p3) this.p3 = new Side(this, 2);
-				if (!this.p4) this.p4 = new Side(this, 3);
-				this.p3.foe = this.p2;
-				this.p4.foe = this.p1;
-
-				if (args[1] === 'multi') {
-					this.p4.ally = this.p2;
-					this.p3.ally = this.p1;
-					this.p1.ally = this.p3;
-					this.p2.ally = this.p4;
+			case 'upkeep': {
+				this.usesUpkeep = true;
+				this.updateTurnCounters();
+				// Prevents getSwitchedPokemon from skipping over a Pokemon that switched out mid turn (e.g. U-turn)
+				for (const side of this.sides) {
+					side.lastPokemon = null;
 				}
-
-				this.p3.isFar = this.p1.isFar;
-				this.p4.isFar = this.p2.isFar;
-				this.sides = [this.p1, this.p2, this.p3, this.p4];
-				// intentionally sync p1/p3 and p2/p4's active arrays
-				this.p1.active = this.p3.active = [null, null];
-				this.p2.active = this.p4.active = [null, null];
-				break;
-			case 'doubles':
-				this.nearSide.active = [null, null];
-				this.farSide.active = [null, null];
-				break;
-			case 'triples':
-			case 'rotation':
-				this.nearSide.active = [null, null, null];
-				this.farSide.active = [null, null, null];
-				break;
-			default:
-				for (const side of this.sides) side.active = [null];
 				break;
 			}
-			if (!this.pokemonControlled) this.pokemonControlled = this.nearSide.active.length;
-			this.scene.updateGen();
-			this.scene.resetSides();
-			break;
-		}
-		case 'rule': {
-			let ruleName = args[1].split(': ')[0];
-			if (ruleName === 'Species Clause') this.speciesClause = true;
-			if (ruleName === 'Blitz') {
-				this.messageFadeTime = 40;
-				this.isBlitz = true;
+			case 'turn': {
+				this.setTurn(parseInt(args[1], 10));
+				this.log(args);
+				break;
 			}
-			if (ruleName === 'Exact HP Mod') this.reportExactHP = true;
-			this.rules[ruleName] = 1;
-			this.log(args);
-			break;
-		}
-		case 'rated': {
-			this.rated = args[1] || true;
-			this.scene.updateGen();
-			this.log(args);
-			break;
-		}
-		case 'inactive': {
-			if (!this.kickingInactive) this.kickingInactive = true;
-			if (args[1].startsWith("Time left: ")) {
-				let [time, totalTime, graceTime] = args[1].split(' | ');
-				this.kickingInactive = parseInt(time.slice(11), 10) || true;
-				this.totalTimeLeft = parseInt(totalTime, 10);
-				this.graceTimeLeft = parseInt(graceTime || '', 10) || 0;
-				if (this.totalTimeLeft === this.kickingInactive) this.totalTimeLeft = 0;
-				return;
-			} else if (args[1].startsWith("You have ")) {
-				// this is ugly but parseInt is documented to work this way
-				// so I'm going to be lazy and not chop off the rest of the
-				// sentence
-				this.kickingInactive = parseInt(args[1].slice(9), 10) || true;
-				return;
-			} else if (args[1].endsWith(' seconds left.')) {
-				let hasIndex = args[1].indexOf(' has ');
-				let userid = window.app?.user?.get('userid') || window.PS?.user.userid;
-				if (toID(args[1].slice(0, hasIndex)) === userid) {
-					this.kickingInactive = parseInt(args[1].slice(hasIndex + 5), 10) || true;
+			case 'tier': {
+				this.tier = args[1];
+				if (this.tier.endsWith('Random Battle')) { this.speciesClause = true; }
+				if (this.tier.endsWith(' (Blitz)')) {
+					this.messageFadeTime = 40;
+					this.isBlitz = true;
 				}
-			} else if (args[1].endsWith(' 15 seconds left this turn.')) {
-				if (this.isBlitz) return;
+				if (this.tier.includes(`Let's Go`)) { this.dex = Dex.mod('gen7letsgo' as ID); }
+				if (this.tier.includes('Super Staff Bros')) { this.dex = Dex.mod('gen9ssb' as ID); }
+				if (this.tier.includes('Indigo Starstorm') || this.tier.includes('ISL Regulation Set')) { this.dex = Dex.mod('gen9indigostarstorm' as ID); }
+				this.log(args);
+				break;
 			}
-			this.log(args, undefined, preempt);
-			break;
-		}
-		case 'inactiveoff': {
-			this.kickingInactive = false;
-			this.log(args, undefined, preempt);
-			break;
-		}
-		case 'join': case 'j': case 'J': {
-			if (this.roomid) {
-				let room = app!.rooms[this.roomid];
-				let user = BattleTextParser.parseNameParts(args[1]);
-				let userid = toUserid(user.name);
-				if (!room.users[userid]) room.userCount.users++;
-				room.users[userid] = user;
-				room.userList.add(userid);
-				room.userList.updateUserCount();
-				room.userList.updateNoUsersOnline();
-			}
-			this.log(args, undefined, preempt);
-			break;
-		}
-		case 'leave': case 'l': case 'L': {
-			if (this.roomid) {
-				let room = app!.rooms[this.roomid];
-				let user = args[1];
-				let userid = toUserid(user);
-				if (room.users[userid]) room.userCount.users--;
-				delete room.users[userid];
-				room.userList.remove(userid);
-				room.userList.updateUserCount();
-				room.userList.updateNoUsersOnline();
-			}
-			this.log(args, undefined, preempt);
-			break;
-		}
-		case 'name': case 'n': case 'N': {
-			if (this.roomid) {
-				let room = app!.rooms[this.roomid];
-				let user = BattleTextParser.parseNameParts(args[1]);
-				let oldid = args[2];
-				if (toUserid(oldid) === app!.user.get('userid')) {
-					app!.user.set({
-						away: user.away,
-						status: user.status,
-					});
-				}
-				let userid = toUserid(user.name);
-				room.users[userid] = user;
-				room.userList.remove(oldid);
-				room.userList.add(userid);
-			}
-			if (!this.ignoreSpects) {
-				this.log(args, undefined, preempt);
-			}
-			break;
-		}
-		case 'player': {
-			let side = this.getSide(args[1]);
-			side.setName(args[2]);
-			if (args[3]) side.setAvatar(args[3]);
-			if (args[4]) side.rating = args[4];
-			if (this.joinButtons) this.scene.hideJoinButtons();
-			this.log(args);
-			this.scene.updateSidebars();
-			break;
-		}
-		case 'badge': {
-			let side = this.getSide(args[1]);
-			// handle all the rendering further down
-			const badge = args.slice(2).join('|');
-			// (don't allow duping)
-			if (!side.badges.includes(badge)) side.badges.push(badge);
-			this.scene.updateSidebars();
-			break;
-		}
-		case 'teamsize': {
-			let side = this.getSide(args[1]);
-			side.totalPokemon = parseInt(args[2], 10);
-			this.scene.updateSidebars();
-			break;
-		}
-		case 'win': case 'tie': {
-			this.winner(args[0] === 'tie' ? undefined : args[1]);
-			break;
-		}
-		case 'prematureend': {
-			this.prematureEnd();
-			break;
-		}
-		case 'clearpoke': {
-			this.p1.clearPokemon();
-			this.p2.clearPokemon();
-			break;
-		}
-		case 'poke': {
-			let pokemon = this.rememberTeamPreviewPokemon(args[1], args[2]);
-			if (args[3] === 'mail') {
-				pokemon.item = '(mail)';
-			} else if (args[3] === 'item') {
-				pokemon.item = '(exists)';
-			}
-			break;
-		}
-		case 'updatepoke': {
-			const { siden } = this.parsePokemonId(args[1]);
-			const side = this.sides[siden];
-			for (let i = 0; i < side.pokemon.length; i++) {
-				const pokemon = side.pokemon[i];
-				if (pokemon.details !== args[2] && pokemon.checkDetails(args[2])) {
-					side.addPokemon('', '', args[2], i);
+			case 'gametype': {
+				this.gameType = args[1] as any;
+				this.compatMode = false;
+				switch (args[1]) {
+				case 'multi':
+				case 'freeforall':
+					this.pokemonControlled = 1;
+					if (!this.p3) this.p3 = new Side(this, 2);
+					if (!this.p4) this.p4 = new Side(this, 3);
+					this.p3.foe = this.p2;
+					this.p4.foe = this.p1;
+					if (args[1] === 'multi') {
+						this.p4.ally = this.p2;
+						this.p3.ally = this.p1;
+						this.p1.ally = this.p3;
+						this.p2.ally = this.p4;
+					}
+					this.p3.isFar = this.p1.isFar;
+					this.p4.isFar = this.p2.isFar;
+					this.sides = [this.p1, this.p2, this.p3, this.p4];
+					// intentionally sync p1/p3 and p2/p4's active arrays
+					this.p1.active = this.p3.active = [null, null];
+					this.p2.active = this.p4.active = [null, null];
+					break;
+				case 'doubles':
+					this.nearSide.active = [null, null];
+					this.farSide.active = [null, null];
+					break;
+				case 'triples':
+				case 'rotation':
+					this.nearSide.active = [null, null, null];
+					this.farSide.active = [null, null, null];
+					break;
+				default:
+					for (const side of this.sides) side.active = [null];
 					break;
 				}
+				if (!this.pokemonControlled) this.pokemonControlled = this.nearSide.active.length;
+				this.scene.updateGen();
+				this.scene.resetSides();
+				break;
 			}
-			break;
-		}
-		case 'teampreview': {
-			this.teamPreviewCount = parseInt(args[1], 10);
-			this.scene.teamPreview();
-			break;
-		}
-		case 'showteam': {
-			const team = Teams.unpack(args[2]);
-			if (!team.length) return;
-			const side = this.getSide(args[1]);
-			side.clearPokemon();
-			for (const set of team) {
-				const details = set.species + (!set.level || set.level === 100 ? '' : `, L${set.level}`) +
-					(!set.gender || set.gender === 'N' ? '' : `, ${set.gender}`) + (set.shiny ? ', shiny' : '');
-				const pokemon = side.addPokemon('', '', details);
-				if (set.item) pokemon.item = set.item;
-				if (set.ability) pokemon.rememberAbility(set.ability);
-				for (const move of set.moves) {
-					pokemon.rememberMove(move, 0);
+			case 'rule': {
+				let ruleName = args[1].split(': ')[0];
+				if (ruleName === 'Species Clause') this.speciesClause = true;
+				if (ruleName === 'Blitz') {
+					this.messageFadeTime = 40;
+					this.isBlitz = true;
 				}
-				if (set.teraType) pokemon.teraType = set.teraType;
+				if (ruleName === 'Exact HP Mod') this.reportExactHP = true;
+				this.rules[ruleName] = 1;
+				this.log(args);
+				break;
 			}
-			this.log(args, kwArgs);
-			break;
-		}
-		case 'switch': case 'drag': case 'replace': {
-			this.endLastTurn();
-			let poke = this.getSwitchedPokemon(args[1], args[2]);
-			let slot = poke.slot;
-			poke.healthParse(args[3]);
-			poke.removeVolatile('itemremoved' as ID);
-			poke.terastallized = (/tera:([a-z]+)$/i.exec(args[2]))?.[1] || '';
-			if (args[0] === 'switch') {
-				if (poke.side.active[slot]) {
-					poke.side.switchOut(poke.side.active[slot], kwArgs);
+			case 'rated': {
+				this.rated = args[1] || true;
+				this.scene.updateGen();
+				this.log(args);
+				break;
+			}
+			case 'inactive': {
+				if (!this.kickingInactive) this.kickingInactive = true;
+				if (args[1].startsWith("Time left: ")) {
+					let [time, totalTime, graceTime] = args[1].split(' | ');
+					this.kickingInactive = parseInt(time.slice(11), 10) || true;
+					this.totalTimeLeft = parseInt(totalTime, 10);
+					this.graceTimeLeft = parseInt(graceTime || '', 10) || 0;
+					if (this.totalTimeLeft === this.kickingInactive) this.totalTimeLeft = 0;
+					return;
+				} else if (args[1].startsWith("You have ")) {
+					// this is ugly but parseInt is documented to work this way
+					// so I'm going to be lazy and not chop off the rest of the
+					// sentence
+					this.kickingInactive = parseInt(args[1].slice(9), 10) || true;
+					return;
+				} else if (args[1].endsWith(' seconds left.')) {
+					let hasIndex = args[1].indexOf(' has ');
+					let userid = window.app?.user?.get('userid') || window.PS?.user.userid;
+					if (toID(args[1].slice(0, hasIndex)) === userid) { this.kickingInactive = parseInt(args[1].slice(hasIndex + 5), 10) || true; }
+				} else if (args[1].endsWith(' 15 seconds left this turn.')) { if (this.isBlitz) return; }
+				this.log(args, undefined, preempt);
+				break;
+			}
+			case 'inactiveoff': {
+				this.kickingInactive = false;
+				this.log(args, undefined, preempt);
+				break;
+			}
+			case 'join': case 'j': case 'J': {
+				if (this.roomid) {
+					let room = app!.rooms[this.roomid];
+					let user = BattleTextParser.parseNameParts(args[1]);
+					let userid = toUserid(user.name);
+					if (!room.users[userid]) room.userCount.users++;
+					room.users[userid] = user;
+					room.userList.add(userid);
+					room.userList.updateUserCount();
+					room.userList.updateNoUsersOnline();
 				}
-				poke.side.switchIn(poke, kwArgs);
-			} else if (args[0] === 'replace') {
-				poke.side.replace(poke);
-			} else {
-				poke.side.dragIn(poke);
+				this.log(args, undefined, preempt);
+				break;
 			}
-			this.scene.updateWeather();
-			this.log(args, kwArgs);
-			break;
-		}
-		case 'faint': {
-			let poke = this.getPokemon(args[1])!;
-			poke.side.faint(poke);
-			this.log(args, kwArgs);
-			break;
-		}
-		case 'swap': {
-			if (isNaN(Number(args[2]))) {
-				const poke = this.getPokemon(args[1])!;
-				poke.side.swapWith(poke, this.getPokemon(args[2])!, kwArgs);
-			} else {
-				const poke = this.getPokemon(args[1])!;
-				const targetIndex = parseInt(args[2], 10);
-				if (kwArgs.from) {
-					const target = poke.side.active[targetIndex];
-					if (target) args[2] = target.ident;
+			case 'leave': case 'l': case 'L': {
+				if (this.roomid) {
+					let room = app!.rooms[this.roomid];
+					let user = args[1];
+					let userid = toUserid(user);
+					if (room.users[userid]) room.userCount.users--;
+					delete room.users[userid];
+					room.userList.remove(userid);
+					room.userList.updateUserCount();
+					room.userList.updateNoUsersOnline();
 				}
-				poke.side.swapTo(poke, targetIndex);
+				this.log(args, undefined, preempt);
+				break;
 			}
-			this.log(args, kwArgs);
-			break;
-		}
-		case 'move': {
-			this.endLastTurn();
-			this.resetTurnsSinceMoved();
-			let poke = this.getPokemon(args[1])!;
-			let move = Dex.moves.get(args[2]);
-			if (this.checkActive(poke)) return;
-			let poke2 = this.getPokemon(args[3]);
-			this.scene.beforeMove(poke);
-			this.useMove(poke, move, poke2, kwArgs);
-			this.animateMove(poke, move, poke2, kwArgs);
-			this.scene.afterMove(poke);
-			this.log(args, kwArgs);
-			break;
-		}
-		case 'cant': {
-			this.endLastTurn();
-			this.resetTurnsSinceMoved();
-			let poke = this.getPokemon(args[1])!;
-			let effect = Dex.getEffect(args[2]);
-			let move = Dex.moves.get(args[3]);
-			this.cantUseMove(poke, effect, move, kwArgs);
-			this.log(args, kwArgs);
-			break;
-		}
-		case 'gen': {
-			this.gen = parseInt(args[1], 10);
-			this.dex = Dex.forGen(this.gen);
-			this.scene.updateGen();
-			this.log(args);
-			break;
-		}
-		case 'callback': {
-			this.subscription?.('callback');
-			break;
-		}
-		case 'fieldhtml': {
-			this.scene.setFrameHTML(BattleLog.sanitizeHTML(args[1]));
-			break;
-		}
-		case 'controlshtml': {
-			this.scene.setControlsHTML(BattleLog.sanitizeHTML(args[1]));
-			break;
-		}
-		case 'custom': {
-			// Style is always |custom|-subprotocol|pokemon|additional info
-			if (args[1] === '-endterastallize') {
-				let poke = this.getPokemon(args[2])!;
-				poke.removeVolatile('terastallize' as ID);
-				poke.terastallized = '';
-				poke.details = poke.details.replace(/, tera:[a-z]+/i, '');
-				poke.searchid = poke.searchid.replace(/, tera:[a-z]+/i, '');
-				this.scene.animTransform(poke);
-				this.scene.resetStatbar(poke);
+			case 'name': case 'n': case 'N': {
+				if (this.roomid) {
+					let room = app!.rooms[this.roomid];
+					let user = BattleTextParser.parseNameParts(args[1]);
+					let oldid = args[2];
+					if (toUserid(oldid) === app!.user.get('userid')) {
+						app!.user.set({
+							away: user.away,
+							status: user.status,
+						});
+					}
+					let userid = toUserid(user.name);
+					room.users[userid] = user;
+					room.userList.remove(oldid);
+					room.userList.add(userid);
+				}
+				if (!this.ignoreSpects) { this.log(args, undefined, preempt); }
+				break;
+			}
+			case 'player': {
+				let side = this.getSide(args[1]);
+				side.setName(args[2]);
+				if (args[3]) side.setAvatar(args[3]);
+				if (args[4]) side.rating = args[4];
+				if (this.joinButtons) this.scene.hideJoinButtons();
+				this.log(args);
+				this.scene.updateSidebars();
+				break;
+			}
+			case 'badge': {
+				let side = this.getSide(args[1]);
+				// handle all the rendering further down
+				const badge = args.slice(2).join('|');
+				// (don't allow duping)
+				if (!side.badges.includes(badge)) side.badges.push(badge);
+				this.scene.updateSidebars();
+				break;
+			}
+			case 'teamsize': {
+				let side = this.getSide(args[1]);
+				side.totalPokemon = parseInt(args[2], 10);
+				this.scene.updateSidebars();
+				break;
+			}
+			case 'win': case 'tie': {
+				this.winner(args[0] === 'tie' ? undefined : args[1]);
+				break;
+			}
+			case 'prematureend': {
+				this.prematureEnd();
+				break;
+			}
+			case 'clearpoke': {
+				this.p1.clearPokemon();
+				this.p2.clearPokemon();
+				break;
+			}
+			case 'poke': {
+				let pokemon = this.rememberTeamPreviewPokemon(args[1], args[2]);
+				if (args[3] === 'mail') { pokemon.item = '(mail)'; } 
+				else if (args[3] === 'item') { pokemon.item = '(exists)'; }
+				break;
+			}
+			case 'updatepoke': {
+				const { siden } = this.parsePokemonId(args[1]);
+				const side = this.sides[siden];
+				for (let i = 0; i < side.pokemon.length; i++) {
+					const pokemon = side.pokemon[i];
+					if (pokemon.details !== args[2] && pokemon.checkDetails(args[2])) {
+						side.addPokemon('', '', args[2], i);
+						break;
+					}
+				}
+				break;
+			}
+			case 'teampreview': {
+				this.teamPreviewCount = parseInt(args[1], 10);
+				this.scene.teamPreview();
+				break;
+			}
+			case 'showteam': {
+				const team = Teams.unpack(args[2]);
+				if (!team.length) return;
+				const side = this.getSide(args[1]);
+				side.clearPokemon();
+				for (const set of team) {
+					const details = set.species + (!set.level || set.level === 100 ? '' : `, L${set.level}`) + (!set.gender || set.gender === 'N' ? '' : `, ${set.gender}`) + (set.shiny ? ', shiny' : '');
+					const pokemon = side.addPokemon('', '', details);
+					if (set.item) pokemon.item = set.item;
+					if (set.ability) pokemon.rememberAbility(set.ability);
+					for (const move of set.moves) { pokemon.rememberMove(move, 0); }
+					if (set.teraType) pokemon.teraType = set.teraType;
+				}
 				this.log(args, kwArgs);
+				break;
 			}
-			break;
-		}
-		default: {
-			this.log(args, kwArgs, preempt);
-			break;
-		}
+			case 'switch': case 'drag': case 'replace': {
+				this.endLastTurn();
+				let poke = this.getSwitchedPokemon(args[1], args[2]);
+				let slot = poke.slot;
+				poke.healthParse(args[3]);
+				poke.removeVolatile('itemremoved' as ID);
+				poke.terastallized = (/tera:([a-z]+)$/i.exec(args[2]))?.[1] || '';
+				if (args[0] === 'switch') {
+					if (poke.side.active[slot]) { poke.side.switchOut(poke.side.active[slot], kwArgs); }
+					poke.side.switchIn(poke, kwArgs);
+				} 
+				else if (args[0] === 'replace') { poke.side.replace(poke); } 
+				else { poke.side.dragIn(poke); }
+				this.scene.updateWeather();
+				this.log(args, kwArgs);
+				break;
+			}
+			case 'faint': {
+				let poke = this.getPokemon(args[1])!;
+				poke.side.faint(poke);
+				this.log(args, kwArgs);
+				break;
+			}
+			case 'swap': {
+				if (isNaN(Number(args[2]))) {
+					const poke = this.getPokemon(args[1])!;
+					poke.side.swapWith(poke, this.getPokemon(args[2])!, kwArgs);
+				} else {
+					const poke = this.getPokemon(args[1])!;
+					const targetIndex = parseInt(args[2], 10);
+					if (kwArgs.from) {
+						const target = poke.side.active[targetIndex];
+						if (target) args[2] = target.ident;
+					}
+					poke.side.swapTo(poke, targetIndex);
+				}
+				this.log(args, kwArgs);
+				break;
+			}
+			case 'move': {
+				this.endLastTurn();
+				this.resetTurnsSinceMoved();
+				let poke = this.getPokemon(args[1])!;
+				let move = Dex.moves.get(args[2]);
+				if (this.checkActive(poke)) return;
+				let poke2 = this.getPokemon(args[3]);
+				this.scene.beforeMove(poke);
+				this.useMove(poke, move, poke2, kwArgs);
+				this.animateMove(poke, move, poke2, kwArgs);
+				this.scene.afterMove(poke);
+				this.log(args, kwArgs);
+				break;
+			}
+			case 'cant': {
+				this.endLastTurn();
+				this.resetTurnsSinceMoved();
+				let poke = this.getPokemon(args[1])!;
+				let effect = Dex.getEffect(args[2]);
+				let move = Dex.moves.get(args[3]);
+				this.cantUseMove(poke, effect, move, kwArgs);
+				this.log(args, kwArgs);
+				break;
+			}
+			case 'gen': {
+				this.gen = parseInt(args[1], 10);
+				this.dex = Dex.forGen(this.gen);
+				this.scene.updateGen();
+				this.log(args);
+				break;
+			}
+			case 'callback': {
+				this.subscription?.('callback');
+				break;
+			}
+			case 'fieldhtml': {
+				this.scene.setFrameHTML(BattleLog.sanitizeHTML(args[1]));
+				break;
+			}
+			case 'controlshtml': {
+				this.scene.setControlsHTML(BattleLog.sanitizeHTML(args[1]));
+				break;
+			}
+			case 'custom': { // Style is always |custom|-subprotocol|pokemon|additional info
+				if (args[1] === '-endterastallize') {
+					let poke = this.getPokemon(args[2])!;
+					poke.removeVolatile('terastallize' as ID);
+					poke.terastallized = '';
+					poke.details = poke.details.replace(/, tera:[a-z]+/i, '');
+					poke.searchid = poke.searchid.replace(/, tera:[a-z]+/i, '');
+					this.scene.animTransform(poke);
+					this.scene.resetStatbar(poke);
+					this.log(args, kwArgs);
+				}
+				break;
+			}
+			default: {
+				this.log(args, kwArgs, preempt);
+				break;
+			}
 		}
 	}
 	run(str: string, preempt?: boolean) {
@@ -3850,7 +3330,6 @@ export class Battle {
 		}
 		if (!str) return;
 		const { args, kwArgs } = BattleTextParser.parseBattleLine(str);
-
 		if (this.scene.maybeCloseMessagebar(args, kwArgs)) {
 			this.currentStep--;
 			this.activeMoveIsSpread = null;
@@ -3860,9 +3339,7 @@ export class Battle {
 		let nextArgs: Args = [''];
 		let nextKwargs: KWArgs = {};
 		const nextLine = this.stepQueue[this.currentStep + 1] || '';
-		if (nextLine.startsWith('|-')) {
-			({ args: nextArgs, kwArgs: nextKwargs } = BattleTextParser.parseBattleLine(nextLine));
-		}
+		if (nextLine.startsWith('|-')) { ({ args: nextArgs, kwArgs: nextKwargs } = BattleTextParser.parseBattleLine(nextLine)); }
 		if (this.debug) {
 			if (args[0].startsWith('-') || args[0] === 'detailschange') { this.runMinor(args, kwArgs, nextArgs, nextKwargs); } 
 			else { this.runMajor(args, kwArgs, preempt); }
@@ -3890,10 +3367,7 @@ export class Battle {
 		}
 	}
 	checkActive(poke: Pokemon) {
-		if (!poke.side.active[poke.slot]) {
-			// SOMEONE jumped in in the middle of a replay. <_<
-			poke.side.replace(poke);
-		}
+		if (!poke.side.active[poke.slot]) { poke.side.replace(poke); } // SOMEONE jumped in in the middle of a replay. <_<
 		return false;
 	}
 	pause() {

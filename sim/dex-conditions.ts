@@ -49,6 +49,16 @@ export interface EventMethods {
 	onFaint?: CommonHandlers['VoidEffect'];
 	onFlinch?: ((this: Battle, pokemon: Pokemon) => boolean | void) | boolean;
 	onFractionalPriority?: CommonHandlers['ModifierSourceMove'] | -0.1;
+	/**
+	 * Lets an ability/item swap which move ID is used as the holder's active Guard Action.
+	 * Return a move ID string to override, or nothing to leave it as-is.
+	 */
+	onModifyGuardAction?: (this: Battle, guardActionId: ID, pokemon: Pokemon) => ID | string | void;
+	/**
+	 * Lets an ability/item conditionally grant or revoke Guard Action access.
+	 * Return `false` to block Guard Action use even if the Pokemon otherwise has one.
+	 */
+	onCanGuardAction?: (this: Battle, pokemon: Pokemon) => boolean | void;
 	onHit?: MoveEventMethods['onHit'];
 	onImmunity?: (this: Battle, type: string, pokemon: Pokemon) => void;
 	onLockMove?: string | ((this: Battle, pokemon: Pokemon) => void | string);

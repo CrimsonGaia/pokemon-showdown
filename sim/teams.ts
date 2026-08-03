@@ -42,6 +42,7 @@ export interface PokemonSet {
 	 * e.g. "Shell Smash"
 	 * These should always be converted to ids before use.
 	 */
+	guardAction?: string;
 	moves: string[];
 	// This can be an id, e.g. "adamant" or a full name, e.g. "Adamant". This should always be converted to an id before use.
 	nature: string;
@@ -89,14 +90,6 @@ export interface PokemonSet {
 	 * TODO: actually support this in the validator, switching animations, and the teambuilder.
 	 */
 	pokeball?: string;
-	// Hidden Power type. Optional in older gens, but used in Gen 7+ because `ivs` contain post-Battle-Cap values.
-	hpType?: string;
-	/**
-	 * Dynamax Level. Affects the amount of HP gained when Dynamaxed.
-	 * This value must be between 0 and 10, inclusive.
-	 */
-	dynamaxLevel?: number;
-	gigantamax?: boolean;
 	// Tera Type
 	teraType?: string;
 	/**
@@ -151,12 +144,8 @@ export const Teams = new class Teams {
 			if (set.happiness !== undefined && set.happiness !== 255) { buf += `|${set.happiness}`; } 
 			else { buf += '|'; }
 			// misc: keep legacy structure but DO NOT store ability2/size here (they're core fields in ISL schema)
-			if (set.pokeball || set.hpType || set.gigantamax ||
-			(set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10) || set.teraType || set.abilitySet) {
-				buf += `,${set.hpType || ''}`;
+			if (set.pokeball || set.teraType || set.abilitySet) {
 				buf += `,${this.packName(set.pokeball || '')}`;
-				buf += `,${set.gigantamax ? 'G' : ''}`;
-				buf += `,${set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10 ? set.dynamaxLevel : ''}`;
 				buf += `,${set.teraType || ''}`;
 				buf += `,${set.abilitySet || ''}`;
 			}
@@ -293,10 +282,7 @@ export const Teams = new class Teams {
 			else { if (i !== j) misc = buf.substring(i, j).split(',', 9); }
 			if (misc) {
 				set.happiness = (misc[0] ? Number(misc[0]) : 255);
-				set.hpType = misc[1] || '';
 				set.pokeball = this.unpackName(misc[2] || '', Dex.items);
-				set.gigantamax = !!misc[3];
-				set.dynamaxLevel = (misc[4] ? Number(misc[4]) : 10);
 				set.teraType = misc[5];
 				if (misc[6] !== undefined && misc[6] !== '') set.abilitySet = Number(misc[6]) as 1 | 2;
 			}
@@ -343,9 +329,6 @@ export const Teams = new class Teams {
 		if (set.shiny) { out += `Shiny: Yes  \n`; }
 		if (typeof set.happiness === 'number' && set.happiness !== 255 && !isNaN(set.happiness)) { out += `Happiness: ${set.happiness}  \n`; }
 		if (set.pokeball) { out += `Pokeball: ${set.pokeball}  \n`; }
-		if (set.hpType) { out += `Hidden Power: ${set.hpType}  \n`; }
-		if (typeof set.dynamaxLevel === 'number' && set.dynamaxLevel !== 10 && !isNaN(set.dynamaxLevel)) { out += `Dynamax Level: ${set.dynamaxLevel}  \n`; }
-		if (set.gigantamax) {  out += `Gigantamax: Yes  \n`; }
 		if (set.teraType) { out += `Tera Type: ${set.teraType}  \n`; }
 		if (set.size) { out += `Size: ${set.size}  \n`; }
 		// stats
@@ -419,16 +402,13 @@ export const Teams = new class Teams {
 		} else if (line.startsWith('Pokeball: ')) {
 			line = line.slice(10);
 			set.pokeball = aggressive ? toID(line) : line;
-		} else if (line.startsWith('Hidden Power: ')) {
-			line = line.slice(14);
-			set.hpType = aggressive ? toID(line) : line;
 		} else if (line.startsWith('Tera Type: ')) {
 			line = line.slice(11);
 			set.teraType = aggressive ? line.replace(/[^a-zA-Z0-9]/g, '') : line;
 		} else if (line.startsWith('Size: ')) {
 			line = line.slice(6);
 			set.size = line;
-		} else if (line === 'Gigantamax: Yes') { set.gigantamax = true; } 
+		} 
 		else if (line.startsWith('EVs: ')) {
 			line = line.slice(5);
 			const evLines = line.split('/');

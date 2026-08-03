@@ -8,10 +8,8 @@ interface TagData {
 	moveNumCol?: (move: Move) => number;
 	genericNumCol?: (thing: Species | Move | Item | Ability) => number;
 }
-
 export const Tags: { [id: IDEntry]: TagData } = {
-	// Categories
-	// ----------
+	// region Categories
 	physical: {
 		name: "Physical",
 		desc: "Move deals damage with the Attack and Defense stats.",
@@ -27,9 +25,7 @@ export const Tags: { [id: IDEntry]: TagData } = {
 		desc: "Move does not deal damage.",
 		moveFilter: move => move.category === 'Status',
 	},
-
-	// Pokemon tags
-	// ------------
+	// region Pokemon tags
 	mega: {
 		name: "Mega",
 		speciesFilter: species => !!species.isMega,
@@ -62,9 +58,7 @@ export const Tags: { [id: IDEntry]: TagData } = {
 		name: "Restricted Paradox",
 		speciesFilter: species => species.tags.includes("Restricted Paradox"),
 	},
-
-	// Move tags
-	// ---------
+	// region Move tags
 	zmove: {
 		name: "Z-Move",
 		moveFilter: move => !!move.isZ,
@@ -138,8 +132,6 @@ export const Tags: { [id: IDEntry]: TagData } = {
 		desc: "Activates Wind Power and Wind Rider abilities.",
 		moveFilter: move => 'wind' in move.flags,
 	},
-
-
 	airborne: {
 		name: "Airborne",
 		desc: "Move is executed while airborne.",
@@ -235,7 +227,6 @@ export const Tags: { [id: IDEntry]: TagData } = {
 		desc: "Move is a wing-based attack.",
 		moveFilter: move => 'wing' in move.flags,
 	},
-
 	bypassprotect: {
 		name: "Bypass Protect",
 		desc: "Bypasses Protect, Detect, King's Shield, and Spiky Shield.",
@@ -265,9 +256,7 @@ export const Tags: { [id: IDEntry]: TagData } = {
 		name: "G-Max Move",
 		moveFilter: move => typeof move.isMax === 'string',
 	},
-
-	// Tiers
-	// -----
+	// region Tiers
 	uber: {
 		name: "Uber",
 		speciesFilter: species => species.tier === 'Uber' || species.tier === '(Uber)' || species.tier === 'AG',
@@ -340,7 +329,6 @@ export const Tags: { [id: IDEntry]: TagData } = {
 		name: "AG",
 		speciesFilter: species => species.tier === 'AG',
 	},
-
 	// Doubles tiers
 	// -------------
 	duber: {
@@ -363,9 +351,7 @@ export const Tags: { [id: IDEntry]: TagData } = {
 		name: "DNU",
 		speciesFilter: species => species.doublesTier === '(DUU)',
 	},
-
-	// Nat Dex tiers
-	// -------------
+	// region Nat Dex tiers
 	ndag: {
 		name: "ND AG",
 		speciesFilter: species => species.natDexTier === 'AG',
@@ -402,8 +388,7 @@ export const Tags: { [id: IDEntry]: TagData } = {
 		name: "ND LC",
 		speciesFilter: species => species.natDexTier === 'LC',
 	},
-
-	// Legality tags
+	// region Legality tags
 	past: {
 		name: "Past",
 		genericFilter: thing => thing.isNonstandard === 'Past',
@@ -432,9 +417,7 @@ export const Tags: { [id: IDEntry]: TagData } = {
 		name: "Nonexistent",
 		genericFilter: thing => !!thing.isNonstandard && thing.isNonstandard !== 'Unobtainable',
 	},
-
-	// filter columns
-	// --------------
+	// region filter columns
 	introducedgen: {
 		name: "Introduced Gen",
 		genericNumCol: thing => thing.gen,

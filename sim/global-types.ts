@@ -13,7 +13,6 @@ type Pokemon = import('./pokemon').Pokemon;
 type PRNGSeed = import('./prng').PRNGSeed;
 type Side = import('./side').Side;
 type TeamValidator = import('./team-validator').TeamValidator;
-type PokemonSources = import('./team-validator').PokemonSources;
 /** An ID must be lowercase alphanumeric. */
 type ID = '' | Lowercase<string> & { __isID: true };
 /** Like ID, but doesn't require you to type `as ID` to define it. For data files and object keys. */
@@ -29,14 +28,12 @@ type SparseStatsTable = Partial<StatsTable>;
 type BoostID = StatIDExceptHP | 'accuracy' | 'evasion';
 type BoostsTable = { [boost in BoostID]: number };
 type SparseBoostsTable = Partial<BoostsTable>;
-type Nonstandard = 'Past' | 'Future' | 'Unobtainable' | 'CAP' | 'LGPE' | 'Custom' | 'Gigantamax';
+type Nonstandard = 'Past' | 'Future' | 'Unobtainable';
 type PokemonSet = import('./teams').PokemonSet;
 declare namespace TierTypes {
-	export type Singles = "AG" | "Uber" | "(Uber)" | "OU" | "(OU)" | "UUBL" | "UU" | "RUBL" | "RU" | "NUBL" | "NU" |
-		"(NU)" | "PUBL" | "PU" | "(PU)" | "ZUBL" | "ZU" | "NFE" | "LC" |
-		"Reg α" | "Reg β" | "Reg γ" | "Reg Δ" | "Reg ε" | "Reg ζ" | "Reg Θ" | "Reg ι" | "Reg λ" | "Reg ν" | "Reg φ" | "Reg ψ";
-	export type Doubles = "DUber" | "(DUber)" | "DOU" | "(DOU)" | "DBL" | "DUU" | "(DUU)" | "NFE" | "LC";
-	export type Other = "Unreleased" | "Illegal" | "CAP" | "CAP NFE" | "CAP LC";
+	export type Singles = "AG" | "Reg α" | "Reg β" | "Reg γ" | "Reg Δ" | "Reg ε" | "Reg ζ" | "Reg Θ" | "Reg ι" | "Reg λ" | "Reg ν" | "Reg φ" | "Reg ψ";
+	export type Doubles = "AG" | "Reg α" | "Reg β" | "Reg γ" | "Reg Δ" | "Reg ε" | "Reg ζ" | "Reg Θ" | "Reg ι" | "Reg λ" | "Reg ν" | "Reg φ" | "Reg ψ";
+	export type Other = "Unreleased" | "Illegal";
 }
 interface EventInfo {
 	generation: number;
@@ -45,19 +42,10 @@ interface EventInfo {
 	shiny?: boolean | 1;
 	gender?: GenderName;
 	nature?: string;
-	ivs?: SparseStatsTable;
-	perfectIVs?: number;
-	/** true: has hidden ability, false | undefined: never has hidden ability */
-	isHidden?: boolean;
 	abilities?: IDEntry[];
-	maxEggMoves?: number;
 	moves?: IDEntry[];
 	pokeball?: IDEntry;
 	from?: string;
-	/** Japan-only events can't be transferred to international games in Gen 1 */
-	japan?: boolean;
-	/** For Emerald event eggs to allow Pomeg glitched moves */
-	emeraldEventEgg?: boolean;
 	source?: string;
 }
 type Effect = Ability | Item | ActiveMove | Species | Condition | Format;
@@ -119,6 +107,9 @@ interface ModdedBattleActions {
 	canMegaEvo?: (this: BattleActions, pokemon: Pokemon) => string | undefined | null;
 	canMegaEvoX?: (this: BattleActions, pokemon: Pokemon) => string | undefined | null;
 	canMegaEvoY?: (this: BattleActions, pokemon: Pokemon) => string | undefined | null;
+	canMegaEvoZ?: (this: BattleActions, pokemon: Pokemon) => string | undefined | null;
+	canMegaEvoA?: (this: BattleActions, pokemon: Pokemon) => string | undefined | null;
+	canMegaEvoQ?: (this: BattleActions, pokemon: Pokemon) => string | undefined | null;
 	canTerastallize?: (this: BattleActions, pokemon: Pokemon) => string | null;
 	canUltraBurst?: (this: BattleActions, pokemon: Pokemon) => string | null;
 	canZMove?: (this: BattleActions, pokemon: Pokemon) => ZMoveOptions | void;
@@ -141,6 +132,12 @@ interface ModdedBattleActions {
 	runMegaEvo?: (this: BattleActions, pokemon: Pokemon) => boolean;
 	runMegaEvoX?: (this: BattleActions, pokemon: Pokemon) => boolean;
 	runMegaEvoY?: (this: BattleActions, pokemon: Pokemon) => boolean;
+	runMegaEvoZ?: (this: BattleActions, pokemon: Pokemon) => boolean;
+	runMegaEvoA?: (this: BattleActions, pokemon: Pokemon) => boolean;
+	runMegaEvoQ?: (this: BattleActions, pokemon: Pokemon) => boolean;
+	megaLetterTarget?: (this: BattleActions, pokemon: Pokemon, letter: 'X' | 'Y' | 'Z' | 'A' | 'Q') => string | null;
+	runMegaLetter?: (this: BattleActions, pokemon: Pokemon, letter: 'X' | 'Y' | 'Z' | 'A' | 'Q') => boolean;
+	revertMegaLetter?: (this: BattleActions, pokemon: Pokemon) => void;
 	runMove?: ( this: BattleActions, moveOrMoveName: Move | string, pokemon: Pokemon, targetLoc: number, options?: { sourceEffect?: Effect | null, zMove?: string, externalMove?: boolean, maxMove?: string, originalTarget?: Pokemon, } ) => void;
 	runMoveEffects?: ( this: BattleActions, damage: SpreadMoveDamage, targets: SpreadMoveTargets, source: Pokemon, move: ActiveMove, moveData: ActiveMove, isSecondary?: boolean, isSelf?: boolean ) => SpreadMoveDamage;
 	runSwitch?: (this: BattleActions, pokemon: Pokemon) => boolean;
@@ -167,7 +164,6 @@ interface ModdedBattleSide {
 	inherit?: true;
 	addSideCondition?: (this: Side, status: string | Condition, source: Pokemon | 'debug' | null, sourceEffect: Effect | null) => boolean;
 	allies?: (this: Side, all?: boolean) => Pokemon[];
-	canDynamaxNow?: (this: Side) => boolean;
 	chooseSwitch?: (this: Side, slotText?: string) => any;
 	getChoice?: (this: Side) => string;
 	getRequestData?: (this: Side, forAlly?: boolean) => { name: string, id: ID, pokemon: AnyObject[] };
@@ -357,7 +353,6 @@ declare namespace RandomTeamsTypes {
 		has: { [k: string]: number };
 		weaknesses: { [k: string]: number };
 		resistances: { [k: string]: number };
-		gigantamax?: boolean;
 	}
 	export interface RandomSet {
 		name: string;
@@ -372,8 +367,6 @@ declare namespace RandomTeamsTypes {
 		shiny: boolean;
 		nature?: string;
 		happiness?: number;
-		dynamaxLevel?: number;
-		gigantamax?: boolean;
 		teraType?: string;
 		role?: Role;
 	}
@@ -390,8 +383,6 @@ declare namespace RandomTeamsTypes {
 		ivs: SparseStatsTable;
 		nature: string;
 		moves: string[];
-		dynamaxLevel?: number;
-		gigantamax?: boolean;
 		wantsTera?: boolean;
 		teraType?: string;
 	}
@@ -408,8 +399,6 @@ declare namespace RandomTeamsTypes {
 		shiny: boolean;
 		nature?: string;
 		happiness?: number;
-		dynamaxLevel?: number;
-		gigantamax?: boolean;
 		teraType?: string;
 		teraCaptain?: boolean;
 	}

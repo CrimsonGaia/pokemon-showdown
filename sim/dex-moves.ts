@@ -42,7 +42,7 @@ export interface MoveFlags {
 	sound?: 1; // Has no effect on Pokemon with the Ability Soundproof.
 	wind?: 1; // Activates the Wind Power and Wind Rider Abilities.
 	// Indigo Starstorm Flags
-	airborne?: 1; //
+	airborne?: 1; //cannot be used under Gravity
 	aura?: 1; //
 	beam?: 1; //
 	breath?: 1; //
@@ -52,7 +52,7 @@ export interface MoveFlags {
 	launch?: 1; //
 	light?: 1; //
 	lunar?: 1; //
-	magic?: 1; //
+	magic?: 1; // ignores tera. turns target's immunities into resists. Lowered STAB modifier
 	pierce?: 1; //
 	shadow?: 1; //
 	solar?: 1; //
@@ -75,6 +75,7 @@ export interface MoveFlags {
 	failmimic?: 1; // Cannot be copied by Mimic.
 	futuremove?: 1; // Targets a slot, and in 2 turns damages that slot.
 	gravity?: 1; // Prevented from being executed or selected during Gravity's effect.
+	infusible?: 1; // Can occupy certain species' infusibleSlots even if not naturally learnable by that species.
 	metronome?: 1; // Can be selected by Metronome.
 	mirror?: 1; // Can be copied by Mirror Move.
 	mustpressure?: 1; // Additional PP is deducted due to Pressure when it ordinarily would not.
@@ -88,7 +89,7 @@ export interface MoveFlags {
 	recharge?: 1; // If this move is successful, the user must recharge on the following turn and cannot make a move.
 	reflectable?: 1; // Bounced back to the original user by Magic Coat or the Ability Magic Bounce.
 	snatch?: 1; // Can be stolen from the original user and instead used by another Pokemon using Snatch.
-	}
+}
 export interface HitEffect {
 	onHit?: MoveEventMethods['onHit'];
 	// set pokemon conditions
@@ -107,7 +108,6 @@ export interface SecondaryEffect extends HitEffect {
 	chance?: number;
 	/** Used to flag a secondary effect as added by Poison Touch */
 	ability?: Ability;
-	// Gen 2 specific mechanics: Bypasses Substitute only on Twineedle, and allows it to flinch sleeping/frozen targets
 	kingsrock?: boolean;
 	self?: HitEffect;
 }
@@ -152,16 +152,6 @@ export interface MoveData extends EffectData, MoveEventMethods, HitEffect {
 	damage?: number | 'level' | false | null;
 	contestType?: string;
 	noPPBoosts?: boolean;
-	// Z-move data
-	isZ?: boolean | IDEntry;
-	zMove?: {
-		basePower?: number,
-		effect?: IDEntry,
-		boost?: SparseBoostsTable,
-	};
-	// Max move data
-	isMax?: boolean | string;
-	maxMove?: { basePower: number, };
 	ohko?: boolean | 'Ice';
 	thawsTarget?: boolean;
 	heal?: number[] | null;
@@ -175,7 +165,6 @@ export interface MoveData extends EffectData, MoveEventMethods, HitEffect {
 	pp: number;
 	category: 'Physical' | 'Special' | 'Status';
 	type: string;
-	// Secondary type for dual-typed moves. If present, this move is considered to have both types for effectiveness and STAB.
 	type2?: string;
 	priority: number;
 	target: MoveTarget;
@@ -187,7 +176,6 @@ export interface MoveData extends EffectData, MoveEventMethods, HitEffect {
 	selfSwitch?: 'copyvolatile' | 'shedtail' | boolean;
 	selfBoost?: { boosts?: SparseBoostsTable };
 	selfdestruct?: 'always' | 'ifHit' | boolean;
-	breaksProtect?: boolean;
 	// Restored standard move data properties
 	/**
 	 * Note that this is only "true" recoil. Other self-damage, like Struggle, crash (High Jump Kick), Mind Blown, Life Orb,
@@ -195,6 +183,8 @@ export interface MoveData extends EffectData, MoveEventMethods, HitEffect {
 	 */
 	recoil?: [number, number];
 	drain?: [number, number];
+	pierce?: [number, number];
+	breaksProtect?: boolean;
 	mindBlownRecoil?: boolean;
 	stealsBoosts?: boolean;
 	struggleRecoil?: boolean;
@@ -244,6 +234,9 @@ export interface MoveData extends EffectData, MoveEventMethods, HitEffect {
 	isConfusionSelfHit?: boolean;
 	stallingMove?: boolean;
 	baseMove?: ID;
+	guardActionCD?: number; // If this move can be used as a Guard Action, how many of the user's actions before it's usable again
+	isInfusible?: boolean; // If true, this move can occupy a species' infusibleSlots even if not naturally learnable.
+
 }
 export type ModdedMoveData = MoveData | Partial<Omit<MoveData, 'name' | 'type2'>> & {
 	inherit: true,
@@ -252,9 +245,6 @@ export type ModdedMoveData = MoveData | Partial<Omit<MoveData, 'name' | 'type2'>
 	bodyofwaterBoosted?: boolean,
 	longWhipBoost?: boolean,
 	gen?: number,
-	pierce1?: boolean;
-	pierce2?: boolean;
-	pierce3?: boolean;
 };
 export interface MoveDataTable { [moveid: IDEntry]: MoveData }
 export interface ModdedMoveDataTable { [moveid: IDEntry]: ModdedMoveData }
@@ -265,19 +255,13 @@ interface MoveHitData {
 		crit: boolean,
 		/** The type effectiveness of this move against the target */
 		typeMod: number,
-		// Is this move a Z-Move that broke the target's protection? (does 0.25x regular damage)
-		zBrokeProtect: boolean,
+		pierced?: [number, number],
 	};
 }
 type MutableMove = BasicEffect & MoveData;
-export interface ActiveMove extends MutableMove { /** If true, this move ignores immunity breaking effects (e.g., Magic Coat trumps them). */
-		ignoreImmunityBreaking?: boolean;
+export interface ActiveMove extends MutableMove {
+	ignoreImmunityBreaking?: boolean; 
 	intendedTotalDamage?: number;
-	pierce1?: boolean;
-	pierce2?: boolean;
-	pierce3?: boolean;
-	isZ?: boolean | IDEntry;
-	isMax?: boolean | string;
 	baseMove?: ID;
 	readonly name: string;
 	readonly effectType: 'Move';
@@ -379,18 +363,6 @@ export class DataMove extends BasicEffect implements Readonly<BasicEffect & Move
 	readonly noPPBoosts: boolean;
 	/** How many times does this move hit? */
 	declare readonly multihit?: number | number[];
-	/** Is this move a Z-Move? */
-	readonly isZ: boolean | IDEntry;
-	/* Z-Move fields */
-	declare readonly zMove?: {
-		basePower?: number,
-		effect?: IDEntry,
-		boost?: SparseBoostsTable,
-	};
-	/** Is this move a Max move? string = Gigantamax species name */
-	readonly isMax: boolean | string;
-	/** Max/G-Max move fields */
-	declare readonly maxMove?: { basePower: number, };
 	readonly flags: MoveFlags;
 	readonly weaponmove: boolean;
 	readonly weaponmoveCallback?: (pokemon: Pokemon) => boolean;
@@ -418,6 +390,8 @@ export class DataMove extends BasicEffect implements Readonly<BasicEffect & Move
 	/** Forces the move to get STAB even if the type doesn't match. */
 	readonly forceSTAB: boolean;
 	readonly volatileStatus?: ID;
+	declare readonly guardActionCD?: number;
+	declare readonly isInfusible?: boolean;
 	constructor(data: AnyObject) {
 		super(data);
 		this.fullname = `move: ${this.name}`;
@@ -427,7 +401,7 @@ export class DataMove extends BasicEffect implements Readonly<BasicEffect & Move
 		this.target = data.target;
 		this.basePower = Number(data.basePower);
 		this.accuracy = data.accuracy!;
-		this.critRatio = Number(data.critRatio) || 1;
+		this.critRatio = Number(data.critRatio ?? -1);
 		this.baseMoveType = Utils.getString(data.baseMoveType) || this.type;
 		this.secondary = data.secondary || null;
 		this.secondaries = data.secondaries || (this.secondary && [this.secondary]) || null;
@@ -445,8 +419,6 @@ export class DataMove extends BasicEffect implements Readonly<BasicEffect & Move
 		this.ignoreImmunity = (data.ignoreImmunity !== undefined ? data.ignoreImmunity : this.category === 'Status');
 		this.pp = Number(data.pp);
 		this.noPPBoosts = !!(data.noPPBoosts ?? data.isZ);
-		this.isZ = data.isZ || false;
-		this.isMax = data.isMax || false;
 		this.flags = data.flags || {};
 		this.weaponmove = !!data.weaponmove;
 		this.weaponmoveCallback = data.weaponmoveCallback || undefined;
@@ -459,47 +431,8 @@ export class DataMove extends BasicEffect implements Readonly<BasicEffect & Move
 		this.spreadHit = data.spreadHit || false;
 		this.forceSTAB = !!data.forceSTAB;
 		this.volatileStatus = typeof data.volatileStatus === 'string' ? (data.volatileStatus as ID) : undefined;
-		if (this.category !== 'Status' && !data.maxMove && this.id !== 'struggle') {
-			this.maxMove = { basePower: 1 };
-			if (this.isMax || this.isZ) {} // already initialized to 1
-			else if (!this.basePower) { this.maxMove.basePower = 100; } 
-			else if (['Fighting', 'Poison'].includes(this.type)) {
-				if (this.basePower >= 150) { this.maxMove.basePower = 100; } 
-				else if (this.basePower >= 110) { this.maxMove.basePower = 95; } 
-				else if (this.basePower >= 75) { this.maxMove.basePower = 90; } 
-				else if (this.basePower >= 65) { this.maxMove.basePower = 85; } 
-				else if (this.basePower >= 55) { this.maxMove.basePower = 80; } 
-				else if (this.basePower >= 45) { this.maxMove.basePower = 75; } 
-				else { this.maxMove.basePower = 70; }
-			} else {
-				if (this.basePower >= 150) { this.maxMove.basePower = 150; } 
-				else if (this.basePower >= 110) { this.maxMove.basePower = 140; } 
-				else if (this.basePower >= 75) { this.maxMove.basePower = 130; } 
-				else if (this.basePower >= 65) { this.maxMove.basePower = 120; } 
-				else if (this.basePower >= 55) { this.maxMove.basePower = 110; } 
-				else if (this.basePower >= 45) { this.maxMove.basePower = 100; } 
-				else { this.maxMove.basePower = 90; }
-			}
-		}
-		if (this.category !== 'Status' && !data.zMove && !this.isZ && !this.isMax && this.id !== 'struggle') {
-			let basePower = this.basePower;
-			this.zMove = {};
-			if (Array.isArray(data.multihit)) basePower *= 3;
-			if (!basePower) { this.zMove.basePower = 100; } 
-			else if (basePower >= 140) { this.zMove.basePower = 200; } 
-			else if (basePower >= 130) { this.zMove.basePower = 195; } 
-			else if (basePower >= 120) { this.zMove.basePower = 190; } 
-			else if (basePower >= 110) { this.zMove.basePower = 185; } 
-			else if (basePower >= 100) { this.zMove.basePower = 180; } 
-			else if (basePower >= 90) { this.zMove.basePower = 175; } 
-			else if (basePower >= 80) { this.zMove.basePower = 160; } 
-			else if (basePower >= 70) { this.zMove.basePower = 140; } 
-			else if (basePower >= 60) { this.zMove.basePower = 120; } 
-			else { this.zMove.basePower = 100; }
-		}
-		if (!this.gen) {
-			// special handling for gen8 gmax moves (all of them have num 1000 but they are part of gen8)
-			if (this.num >= 827 && !this.isMax) {  this.gen = 9; } 
+		if (!this.gen) { // special handling for gen8 gmax moves (all of them have num 1000 but they are part of gen8)
+			if (this.num >= 827) {  this.gen = 9; } 
 			else if (this.num >= 743) { this.gen = 8; } 
 			else if (this.num >= 622) { this.gen = 7; } 
 			else if (this.num >= 560) { this.gen = 6; } 

@@ -17,7 +17,11 @@ interface AbilityFlags {
 	notrace?: 1; // Trace cannot copy this Ability
 	notransform?: 1; // Disables the Ability if the user is Transformed
 }
-export interface AbilityData extends Partial<Ability>, AbilityEventMethods, PokemonEventMethods { name: string; }
+export interface AbilityData extends Partial<Ability>, AbilityEventMethods, PokemonEventMethods { 
+	name: string;
+	forcedGuardAction?: string; // If set, this ability locks the holder's Guard Action to this move ID, overriding the set's choice.
+	blocksGuardAction?: boolean; // If true, this ability removes Guard Action access entirely while held.
+ }
 export type ModdedAbilityData = AbilityData | Partial<AbilityData> & { inherit: true };
 export interface AbilityDataTable { [abilityid: IDEntry]: AbilityData }
 export interface ModdedAbilityDataTable { [abilityid: IDEntry]: ModdedAbilityData }
@@ -28,6 +32,8 @@ export class Ability extends BasicEffect implements Readonly<BasicEffect> {
 	readonly suppressWeather: boolean;
 	readonly flags: AbilityFlags;
 	declare readonly condition?: ConditionData;
+	declare readonly forcedGuardAction?: string;
+	declare readonly blocksGuardAction?: boolean;
 	constructor(data: AnyObject) {
 		super(data);
 		this.fullname = `ability: ${this.name}`;
@@ -72,8 +78,6 @@ export class DexAbilities {
 				...abilityTextData,
 			});
 			if (ability.gen > this.dex.gen) { (ability as any).isNonstandard = 'Future'; }
-			if (this.dex.currentMod === 'gen7letsgo' && ability.id !== 'noability') { (ability as any).isNonstandard = 'Past'; }
-			if ((this.dex.currentMod === 'gen7letsgo' || this.dex.gen <= 2) && ability.id === 'noability') { (ability as any).isNonstandard = null; }
 		} else { ability = new Ability({id, name: id, exists: false,}); }
 		if (ability.exists) this.abilityCache.set(id, this.dex.deepFreeze(ability));
 		return ability;

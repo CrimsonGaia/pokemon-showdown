@@ -11,9 +11,7 @@
 .utilitychart li > div {
 	display: block;
 	height: 36px;
-	padding: 0 0 0 4px;
 	border: 1px solid transparent;
-	margin: 0 5px 1px 5px;
 	text-decoration: none;
 }
 .utilichart li > a.cur {
@@ -59,11 +57,12 @@
 .searchboxwrapper .filter:hover i {
 	color: #BB2222;
 }
-.resultheader,
-.utilichart li.resultheader,
-.utilichart .result:not(.item-grid-card) {
-	height: 33px;
-	contain: strict;
+.utilichart li.result.moverow {
+	min-height: 32px;
+	height: auto;
+	max-height: none;
+	display: flex;
+	align-items: stretch;
 }
 .utilichart li.result.itemrow {
 	height: 70px;
@@ -214,6 +213,18 @@
 	padding-left: 4px;
 	margin-left: 9px;
 }
+.utilichart .abilitynamecol {
+	height: 36px;
+	width: 120px;
+	color: #000000;
+	font-size: 11pt;
+	font-weight: bold;
+	display: flex;
+	align-items: center;
+	padding-top: 0;
+	padding-left: 4px;
+	margin-left: 9px;
+}
 .utilichart .itemnamecol {
 	height: 60px;
 	width: 80px;
@@ -356,7 +367,7 @@
 }
 .utilichart .movenamecol {
 	height: 30px;
-	width: 140px;
+	width: 132px;
 	color: #000000;
 	font-size: 10pt;
 	display: flex;
@@ -388,12 +399,13 @@
 .utilichart .typecol {
 	width: 36px;
 	position: relative;
-	height: 36px;
+	top: 4px;
 }
 .utilichart .catcol {
-	width: 38px;
+	width: 32px;
 	position: relative;
 	padding-left: 4px;
+	top: 4px;
 }
 .utilichart .catcol img {
 	position: relative;
@@ -610,7 +622,7 @@
 .utilichart .movedesccol {
 	white-space: normal;
 	padding-top: 8px;
-	font-size: 8pt;
+	font-size: 7pt;
 	width: 488px;
 	overflow: hidden;
 	color: #777777;
@@ -619,7 +631,7 @@
 	padding-top: 0;
 }
 .utilichart .movedesccol {
-	width: 284px;
+	width: 310px;
 	height: auto;
 }
 .utilichart .itemdesccol,
@@ -643,6 +655,7 @@
 	line-height: 1.4;
 	padding: 4px 8px 4px 0;
 	align-items: flex-start;
+	font-size: 9pt;
 }
 .utilichart .fragiledesccol {
 	width: 170px;
@@ -708,25 +721,22 @@
 	width: 24px;
 	text-align: right;
 }
-.utilichart .sortcol.movenamecol {
-	width: 140px;
-	margin-left: 9px;
-}
 .utilichart .sortcol.typecol {
 	width: 36px;
-	margin-left: 4px;
+	top: 0px;
 }
 .utilichart .sortcol.catcol {
-	width: 40px;
+	width: 32px;
+	top: 0px;
 }
 .utilichart .sortcol.flagssortcol {
 	width: 130px;
 }
 .utilichart .sortcol.labelcol {
-	width: 38px;
+	width: 36px;
 }
 .utilichart .sortcol.widelabelcol {
-	width: 50px;
+	width: 54px;
 }
 .utilichart .sortcol.pplabelcol {
 	width: 25px;

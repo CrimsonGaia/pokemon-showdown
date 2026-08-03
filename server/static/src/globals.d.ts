@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 // dex data
-///////////
 type AnyObject = { [k: string]: any };
 declare const BattleText: { [id: string]: { [templateName: string]: string } };
 declare const BattleFormats: { [id: string]: import('./panel-teamdropdown').FormatData };
@@ -16,5 +15,4 @@ declare const BattlePokemonSpritesBW: { [id: string]: AnyObject };
 declare const NonBattleGames: { [id: string]: string };
 declare const ISL_ALLOWED_CACHE: WeakMap<object, Set<string>>;
 // Window
-/////////
 interface Window { [k: string]: any; }

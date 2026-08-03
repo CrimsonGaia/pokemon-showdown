@@ -19,14 +19,15 @@ export interface ItemData extends Partial<Item>, PokemonEventMethods {
 	name: string;
 	/** If true, this item is considered fragile and may break/disappear under certain conditions. */
 	itemClass?: string[];
+	/** If true, this item will break, and may trigger an effect when disturbed. */
 	isFragile?: boolean;
-	/** If true, this item is considered mildly fragile and will trigger its effect when disturbed, but will not break. */
+	/** If true, this item will trigger its effect when disturbed, but will not break. */
 	isMildlyFragile?: boolean;
-	// Function called when this item breaks due to fragility (not from being eaten or knocked off).
 	onFragileBreak?: (this: Battle, pokemon: Pokemon, source?: Pokemon, effect?: Effect) => void;
-	// Function called when this item is mildly disturbed (mildly fragile effect).
 	onMildlyFragileBreak?: (this: Battle, pokemon: Pokemon, source?: Pokemon, effect?: Effect) => void;
 	onWeaponBreak?: (this: Battle, pokemon: Pokemon) => void;
+	forcedGuardAction?: string;
+	blocksGuardAction?: boolean;
 }
 export type ModdedItemData = ItemData | Partial<Omit<ItemData, 'name'>> & {
 	inherit: true,
@@ -44,11 +45,11 @@ export class Item extends BasicEffect implements Readonly<BasicEffect> {
 	readonly isMildlyFragile: boolean;
 	// Function called when this item breaks due to fragility (not from being eaten or knocked off).
 	readonly onFragileBreak?: (this: Battle, pokemon: Pokemon, source?: Pokemon, effect?: Effect) => void;
-	// Function called when this item is mildly disturbed (mildly fragile effect).
+	// Function called when volatile item is disturbed by poltergeist
 	readonly onMildlyFragileBreak?: (this: Battle, pokemon: Pokemon, source?: Pokemon, effect?: Effect) => void;
-
+	// only applies to specific pokemon that hold weapons canonically. Weapon moves are disabled until the weapon is recovered
 	readonly onWeaponBreak?: (this: Battle, pokemon: Pokemon) => void;
-
+	// for item dex sorting
 	readonly itemClass?: string[];
 	// A Move-like object depicting what happens when Fling is used on this item.
 	readonly fling?: FlingData;
@@ -59,35 +60,7 @@ export class Item extends BasicEffect implements Readonly<BasicEffect> {
 	// If this is a Memory: The type it turns Multi-Attack into. undefined, if not a Memory.
 	readonly onMemory?: string;
 	// If this is a mega stone: The name (e.g. Charizard-Mega-X) of the forme this allows transformation into. undefined, if not a mega stone.
-	readonly megaStone?: string;
-	// If this is a mega stone: The name (e.g. Charizard) of the forme this allows transformation from. undefined, if not a mega stone.
-	readonly megaEvolves?: string;
-	/**
-	 * If this is a Z crystal: true if the Z Crystal is generic
-	 * (e.g. Firium Z). If species-specific, the name
-	 * (e.g. Inferno Overdrive) of the Z Move this crystal allows
-	 * the use of. undefined, if not a Z crystal.
-	 */
-	readonly zMove?: true | string;
-	/**
-	 * If this is a generic Z crystal: The type (e.g. Fire) of the
-	 * Z Move this crystal allows the use of (e.g. Fire)
-	 * undefined, if not a generic Z crystal
-	 */
-	readonly zMoveType?: string;
-	/**
-	 * If this is a species-specific Z crystal: The name
-	 * (e.g. Play Rough) of the move this crystal requires its
-	 * holder to know to use its Z move.
-	 * undefined, if not a species-specific Z crystal
-	 */
-	readonly zMoveFrom?: string;
-	/**
-	 * If this is a species-specific Z crystal: An array of the
-	 * species of Pokemon that can use this crystal's Z move.
-	 * Note that these are the full names, e.g. 'Mimikyu-Busted'
-	 * undefined, if not a species-specific Z crystal
-	 */
+	readonly megaStone?: { [megaEvolves: string]: string };
 	readonly itemUser?: string[];
 	/** Is this item a Berry? */
 	readonly isBerry: boolean;
@@ -111,6 +84,8 @@ export class Item extends BasicEffect implements Readonly<BasicEffect> {
 	declare readonly onUse?: ((this: Battle, pokemon: Pokemon) => void) | false;
 	declare readonly onStart?: (this: Battle, target: Pokemon) => void;
 	declare readonly onEnd?: (this: Battle, target: Pokemon) => void;
+	declare readonly forcedGuardAction?: string;
+	declare readonly blocksGuardAction?: boolean;
 	constructor(data: AnyObject) {
 		super(data);
 		this.fullname = `item: ${this.name}`;
@@ -119,10 +94,6 @@ export class Item extends BasicEffect implements Readonly<BasicEffect> {
 		this.onDrive = data.onDrive || undefined;
 		this.onMemory = data.onMemory || undefined;
 		this.megaStone = data.megaStone || undefined;
-		this.megaEvolves = data.megaEvolves || undefined;
-		this.zMove = data.zMove || undefined;
-		this.zMoveType = data.zMoveType || undefined;
-		this.zMoveFrom = data.zMoveFrom || undefined;
 		this.itemUser = data.itemUser || undefined;
 		this.isBerry = !!data.isBerry;
 		this.ignoreKlutz = !!data.ignoreKlutz;
@@ -142,7 +113,7 @@ export class Item extends BasicEffect implements Readonly<BasicEffect> {
 			else if (this.num >= 689) { this.gen = 7; } 
 			else if (this.num >= 577) { this.gen = 6; } 
 			else if (this.num >= 537) { this.gen = 5; } 
-			else if (this.num >= 377) { this.gen = 4;   } 
+			else if (this.num >= 377) { this.gen = 4; } 
 			else { this.gen = 3; }
 			// Due to difference in gen 2 item numbering, gen 2 items must be specified manually
 		}
@@ -193,15 +164,14 @@ export class DexItems {
 				const parent = this.dex.mod(this.dex.parentMod);
 				if (itemData === parent.data.Items[id]) {
 					const parentItem = parent.items.getByID(id);
-					if (
-						item.isNonstandard === parentItem.isNonstandard &&
-						item.desc === parentItem.desc &&
-						item.shortDesc === parentItem.shortDesc
-					) { item = parentItem; }
+					if (item.isNonstandard === parentItem.isNonstandard && item.desc === parentItem.desc && item.shortDesc === parentItem.shortDesc) { item = parentItem; }
 				}
 			}
 		} else { item = new Item({ name: id, exists: false }); }
-		if (item.exists) this.itemCache.set(id, this.dex.deepFreeze(item));
+		if (item.exists) {
+			if (item.isNonstandard === 'Future' || item.isNonstandard === 'Past') { return EMPTY_ITEM; }
+			this.itemCache.set(id, this.dex.deepFreeze(item));
+		}
 		return item;
 	}
 	all(): readonly Item[] {

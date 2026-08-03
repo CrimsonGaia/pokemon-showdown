@@ -208,18 +208,12 @@ export class RuleTable extends Map<string, string> {
 				3
 			);
 		}
-		if (this.valueRules.get('evlimit') === 'Auto') {
-			this.evLimit = dex.gen > 2 ? 510 : null;
-			if (format.mod === 'gen7letsgo') { this.evLimit = this.has('lgpenormalrules') ? 0 : null; }
-			// Gen 6 hackmons also has a limit, which is currently implemented at the appropriate format.
-		}
 		// sanity checks; these _could_ be inside `onValidateRule` but this way involves less string conversion. engine hard limits
 		if (this.maxTeamSize > 24) { throw new Error(`Max team size ${this.maxTeamSize}${this.blame('maxteamsize')} is unsupported (we only support up to 24).`); }
 		if (this.maxLevel > 99999) { throw new Error(`Max level ${this.maxLevel}${this.blame('maxlevel')} is unsupported (we only support up to 99999)`); }
 		if (this.maxMoveCount > 24) {
-			// A limit is imposed here to prevent too much engine strain or
-			// too much layout deformation - to be exact, this is the limit
-			// allowed in Custom Game.
+			// A limit is imposed here to prevent too much engine strain or too much layout deformation
+			// To be exact, this is the limit allowed in Custom Game.
 			throw new Error(`Max move count ${this.maxMoveCount}${this.blame('maxmovecount')} is unsupported (we only support up to 24)`);
 		}
 		if (!this.defaultLevel) {
@@ -310,7 +304,7 @@ export class Format extends BasicEffect implements Readonly<BasicEffect> {
 	declare readonly teraPreviewDefault?: boolean;
 	declare readonly threads?: string[];
 	declare readonly tournamentShow?: boolean;
-	declare readonly checkCanLearn?: (this: TeamValidator, move: Move, species: Species, setSources: PokemonSources, set: PokemonSet) => string | null;
+	declare readonly checkCanLearn?: (this: TeamValidator, move: Move, species: Species, set: PokemonSet) => string | null;
 	declare readonly getEvoFamily?: (this: Format, speciesid: string) => ID;
 	declare readonly getSharedPower?: (this: Format, pokemon: Pokemon) => Set<string>;
 	declare readonly getSharedItems?: (this: Format, pokemon: Pokemon) => Set<string>;
@@ -669,11 +663,6 @@ export class DexFormats {
 		if (!hasPokemonBans && warnForNoPokemonBans) { throw new Error(`"+All Pokemon" rule has no effect (no species are banned by default, and it does not override obtainability rules)`); }
 		ruleTable.getTagRules();
 		ruleTable.resolveNumbers(format, this.dex);
-		const canMegaEvo = this.dex.gen <= 7 || ruleTable.has('+pokemontag:past');
-		if (ruleTable.has('obtainableformes') && canMegaEvo &&
-			ruleTable.isBannedSpecies(this.dex.species.get('rayquazamega')) &&
-			!ruleTable.isBannedSpecies(this.dex.species.get('rayquaza'))
-		) { ruleTable.set('megarayquazaclause', ''); } // Banning Rayquaza-Mega implicitly adds Mega Rayquaza Clause note that already having it explicitly in the ruleset is ok
 		for (const rule of ruleTable.keys()) {
 			if ("+*-!".includes(rule.charAt(0))) continue;
 			const subFormat = this.dex.formats.get(rule);

@@ -241,37 +241,6 @@ export class ModdedDex {
 		moveCopy.hit = 0;
 		return moveCopy;
 	}
-	getHiddenPower(ivs: StatsTable) {
-		const hpTypes = ['Fighting', 'Flying', 'Poison', 'Ground', 'Rock', 'Bug', 'Ghost', 'Steel','Fire', 'Water', 'Grass', 'Electric', 'Psychic', 'Ice', 'Dragon', 'Dark',];
-		const tr = this.trunc;
-		const stats = { hp: 31, atk: 31, def: 31, spe: 31, spa: 31, spd: 31 };
-		if (this.gen <= 2) {
-			// Gen 2 specific Hidden Power check. IVs are still treated 0-31 so we get them 0-15
-			const atkDV = tr(ivs.atk / 2);
-			const defDV = tr(ivs.def / 2);
-			const speDV = tr(ivs.spe / 2);
-			const spcDV = tr(ivs.spa / 2);
-			return {
-				type: hpTypes[4 * (atkDV % 4) + (defDV % 4)],
-				power: tr((5 * ((spcDV >> 3) + (2 * (speDV >> 3)) + (4 * (defDV >> 3)) + (8 * (atkDV >> 3))) + (spcDV % 4)) / 2 + 31),
-			};
-		} else {
-			// Hidden Power check for Gen 3 onwards
-			let hpTypeX = 0;
-			let hpPowerX = 0;
-			let i = 1;
-			for (const s in stats) {
-				hpTypeX += i * (ivs[s as StatID] % 2);
-				hpPowerX += i * (tr(ivs[s as StatID] / 2) % 2);
-				i *= 2;
-			}
-			return {
-				type: hpTypes[tr(hpTypeX * 15 / 63)],
-				// After Gen 6, Hidden Power is always 60 base power
-				power: (this.gen && this.gen < 6) ? tr(hpPowerX * 40 / 63) + 30 : 60,
-			};
-		}
-	}
 	// Truncate a number into an unsigned 32-bit integer, for compatibility with the cartridge games' math systems.
 	trunc(this: void, num: number, bits = 0) {
 		if (bits) return (num >>> 0) % (2 ** bits);
@@ -407,8 +376,11 @@ export class ModdedDex {
 			else if (forme === 'paldea') addFuzzy(`paldean${alias}` as ID, target);
 			else if (forme === 'megax') addFuzzy(`mega${alias}x` as ID, target);
 			else if (forme === 'megay') addFuzzy(`mega${alias}y` as ID, target);
+			else if (forme === 'megaz') addFuzzy(`mega${alias}z` as ID, target);
+			else if (forme === 'megaa') addFuzzy(`mega${alias}a` as ID, target);
+			else if (forme === 'megaq') addFuzzy(`mega${alias}q` as ID, target);
 			else addFuzzy(`${forme}${alias}` as ID, target);
-			if (forme === 'megax' || forme === 'megay') {
+			if (forme === 'megax' || forme === 'megay'|| forme === 'megaz'|| forme === 'megaa'|| forme === 'megaq') {
 				addFuzzy(`mega${alias}` as ID, target);
 				addFuzzy(`${alias}mega` as ID, target);
 				addFuzzy(`m${alias}` as ID, target);
@@ -419,6 +391,10 @@ export class ModdedDex {
 			const data = this.data[table];
 			for (const [id, entry] of Object.entries(data) as [ID, DexTableData[typeof table][string]][]) {
 				let name = compoundNames.get(id) || entry.name;
+				if (!name) {
+					console.log("BROKEN SPECIES:", id, entry);
+					continue;
+				}
 				let forme = '' as ID;
 				let formeLetter = '' as ID;
 				if (name.includes('(')) { addFuzzy(toID(name.split('(')[0]), id); }

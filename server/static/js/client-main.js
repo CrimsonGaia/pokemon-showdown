@@ -50,9 +50,6 @@
 
 
 
-
-
-
 var PSPrefsDefaults={};var
 
 
@@ -233,8 +230,6 @@ var room=PS.rooms[_roomid2];
 if(room.type==='battle'){room.connect();}
 }
 };return PSPrefs;}(PSStreamModel);
-
-
 
 
 
@@ -481,8 +476,6 @@ return true;
 
 
 
-
-
 PSUser=function(_PSStreamModel3){function PSUser(){var _this4;for(var _len=arguments.length,args=new Array(_len),_key=0;_key<_len;_key++){args[_key]=arguments[_key];}_this4=_PSStreamModel3.call.apply(_PSStreamModel3,[this].concat(args))||this;_this4.
 name="";_this4.
 group='';_this4.
@@ -643,8 +636,6 @@ this.nameRegExp=new RegExp('(?:\\b|(?!\\w))'+escaped+'(?:\\b|\\B(?!\\w))','i');
 
 
 
-
-
 PSServer=function(){function PSServer(){this.
 id=Config.defaultserver.id;this.
 host=Config.defaultserver.host;this.
@@ -719,8 +710,6 @@ order:303
 };this.
 defaultGroup={order:108};}var _proto4=PSServer.prototype;_proto4.
 getGroup=function getGroup(symbol){return this.groups[(symbol||' ').charAt(0)]||this.defaultGroup;};return PSServer;}();
-
-
 
 
 
@@ -1433,8 +1422,6 @@ _this10=_PSRoom2.call(this,options)||this;_this10.classType='placeholder';
 _this10.isPlaceholder=true;return _this10;
 }_inheritsLoose(PlaceholderRoom,_PSRoom2);var _proto6=PlaceholderRoom.prototype;_proto6.
 receiveLine=function receiveLine(args){(this.backlog||(this.backlog=[])).push(args);};return PlaceholderRoom;}(PSRoom);
-
-
 
 
 

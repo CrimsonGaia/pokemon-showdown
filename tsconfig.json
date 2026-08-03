@@ -8,6 +8,7 @@
         "target": "es2020",
         "skipLibCheck": true,
         "module": "CommonJS",
+        "ignoreDeprecations": "6.0",
         "moduleResolution": "node",
         "strict": true,
         "allowJs": true,
@@ -23,7 +24,8 @@
     "exclude": [
         "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/node_modules/typescript/lib/lib.dom.d.ts",
         "./dist/**/*",
-        "./server/chat-plugins/private/*/*.d.ts"
+        "./server/chat-plugins/private/*/*.d.ts",
+        "./server/static/**/*",
     ],
     "include": [
         "./config/*.ts",

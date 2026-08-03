@@ -32,6 +32,10 @@
 					} else {
 						alert('Unrecognised query string syntax: ' + location.search);
 					}
+					var loginMatch = /(?:\?|&)(?:login)=([^&]+)/.exec(location.search);
+					if (loginMatch) {
+						Config.testclientLocalLoginServer = loginMatch[1];
+					}
 				}
 			})();
 		</script>

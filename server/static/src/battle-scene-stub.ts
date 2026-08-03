@@ -3,7 +3,6 @@ import type { ScenePos, PokemonSprite } from './battle-animations';
 import type { BattleLog } from './battle-log';
 import type { ID } from './battle-dex';
 import type { Args, KWArgs } from './battle-text-parser';
-
 export class BattleSceneStub {
 	animating = false;
 	acceleration = NaN;
@@ -15,7 +14,6 @@ export class BattleSceneStub {
 	messagebarOpen = false;
 	log: BattleLog = { add: (args: Args, kwargs?: KWArgs) => {} } as any;
 	$frame?: JQuery;
-
 	abilityActivateAnim(pokemon: Pokemon, result: string): void { }
 	addPokemonSprite(pokemon: Pokemon): PokemonSprite { return null!; }
 	addSideCondition(siden: number, id: ID, instant?: boolean): void { }
@@ -38,9 +36,7 @@ export class BattleSceneStub {
 	reset(): void { }
 	resetBgm(): void { }
 	updateBgm(): void { }
-	resultAnim(
-		pokemon: Pokemon, result: string, type: "bad" | "good" | "neutral" | "par" | "psn" | "frz" | "slp" | "brn"
-	): void { }
+	resultAnim(pokemon: Pokemon, result: string, type: "bad" | "good" | "neutral" | "par" | "psn" | "frz" | "slp" | "brn" | "fear"): void { }
 	typeAnim(pokemon: Pokemon, types: string): void { }
 	resume(): void { }
 	runMoveAnim(moveid: ID, participants: Pokemon[]): void { }
@@ -77,10 +73,6 @@ export class BattleSceneStub {
 	beforeMove(pokemon: Pokemon) { }
 	afterMove(pokemon: Pokemon) { }
 }
-
 declare const require: any;
 declare const global: any;
-if (typeof require === 'function') {
-	// in Node
-	global.BattleSceneStub = BattleSceneStub;
-}
+if (typeof require === 'function') { global.BattleSceneStub = BattleSceneStub; } // in Node

@@ -3,7 +3,6 @@
 
 
 
-
 BattleSceneStub=function(){function BattleSceneStub(){this.
 animating=false;this.
 acceleration=NaN;this.
@@ -15,7 +14,6 @@ interruptionCount=NaN;this.
 messagebarOpen=false;this.
 log={add:function(args,kwargs){}};this.
 $frame=void 0;}var _proto=BattleSceneStub.prototype;_proto.
-
 abilityActivateAnim=function abilityActivateAnim(pokemon,result){};_proto.
 addPokemonSprite=function addPokemonSprite(pokemon){return null;};_proto.
 addSideCondition=function addSideCondition(siden,id,instant){};_proto.
@@ -38,9 +36,7 @@ removeSideCondition=function removeSideCondition(siden,id){};_proto.
 reset=function reset(){};_proto.
 resetBgm=function resetBgm(){};_proto.
 updateBgm=function updateBgm(){};_proto.
-resultAnim=function resultAnim(
-pokemon,result,type)
-{};_proto.
+resultAnim=function resultAnim(pokemon,result,type){};_proto.
 typeAnim=function typeAnim(pokemon,types){};_proto.
 resume=function resume(){};_proto.
 runMoveAnim=function runMoveAnim(moveid,participants){};_proto.
@@ -79,9 +75,5 @@ afterMove=function afterMove(pokemon){};return BattleSceneStub;}();
 
 
 
-
-if(typeof require==='function'){
-
-global.BattleSceneStub=BattleSceneStub;
-}
+if(typeof require==='function'){global.BattleSceneStub=BattleSceneStub;}
 //# sourceMappingURL=battle-scene-stub.js.map

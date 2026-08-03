@@ -3,66 +3,23 @@ const CHOOSABLE_TARGETS = new Set(['normal', 'any', 'adjacentAlly', 'adjacentAll
 export class BattleActions {
 	battle: Battle;
 	dex: ModdedDex;
-	readonly MAX_MOVES: { readonly [k: string]: string } = {
-		Flying: 'Max Airstream',
-		Dark: 'Max Darkness',
-		Fire: 'Max Flare',
-		Bug: 'Max Flutterby',
-		Water: 'Max Geyser',
-		Status: 'Max Guard',
-		Ice: 'Max Hailstorm',
-		Fighting: 'Max Knuckle',
-		Electric: 'Max Lightning',
-		Psychic: 'Max Mindstorm',
-		Poison: 'Max Ooze',
-		Grass: 'Max Overgrowth',
-		Ghost: 'Max Phantasm',
-		Ground: 'Max Quake',
-		Rock: 'Max Rockfall',
-		Fairy: 'Max Starfall',
-		Steel: 'Max Steelspike',
-		Normal: 'Max Strike',
-		Dragon: 'Max Wyrmwind',
-	};
-	readonly Z_MOVES: { readonly [k: string]: string } = {
-		Poison: "Acid Downpour",
-		Fighting: "All-Out Pummeling",
-		Dark: "Black Hole Eclipse",
-		Grass: "Bloom Doom",
-		Normal: "Breakneck Blitz",
-		Rock: "Continental Crush",
-		Steel: "Corkscrew Crash",
-		Dragon: "Devastating Drake",
-		Electric: "Gigavolt Havoc",
-		Water: "Hydro Vortex",
-		Fire: "Inferno Overdrive",
-		Ghost: "Never-Ending Nightmare",
-		Bug: "Savage Spin-Out",
-		Psychic: "Shattered Psyche",
-		Ice: "Subzero Slammer",
-		Flying: "Supersonic Skystrike",
-		Ground: "Tectonic Rage",
-		Fairy: "Twinkle Tackle",
-	};
 	constructor(battle: Battle) {
 		this.battle = battle;
 		this.dex = battle.dex;
 		if (this.dex.data.Scripts.actions) Object.assign(this, this.dex.data.Scripts.actions);
 		if (battle.format.actions) Object.assign(this, battle.format.actions);
 	}
-		canUseWeaponMove(pokemon: Pokemon, move: ActiveMove) {
+	canUseWeaponMove(pokemon: Pokemon, move: ActiveMove) {
 		if (!move.weaponmove) return true;
 		if (pokemon.maxWeaponDurability > 0 && pokemon.weaponDurability > 0) return true;
 		if (move.weaponmoveCallback?.call(this.battle, pokemon)) return true;
 		return false;
 	}
-
 	getWeaponMoveDamage(move: ActiveMove, reason: 'hit' | 'protect') {
 		if (!move.weaponmove) return 0;
 		if (reason === 'protect' && move.weaponDamageOnProtect === false) return 0;
 		return move.weaponDamage || 0;
 	}
-
 	applyWeaponMoveDamage(pokemon: Pokemon, move: ActiveMove, reason: 'hit' | 'protect') {
 		const amount = this.getWeaponMoveDamage(move, reason);
 		if (amount <= 0) return 0;
@@ -115,10 +72,6 @@ export class BattleActions {
 			oldActive.statsLoweredThisTurn = false;
 			oldActive.position = pokemon.position;
 			if (oldActive.fainted) oldActive.status = '';
-			if (this.battle.gen <= 4) {
-				pokemon.lastItem = oldActive.lastItem;
-				oldActive.lastItem = '';
-			}
 			pokemon.position = pos;
 			side.pokemon[pokemon.position] = pokemon;
 			side.pokemon[oldActive.position] = oldActive;
@@ -172,27 +125,20 @@ export class BattleActions {
 	 * runMove is the "outside" move caller. It handles deducting PP, flinching, full paralysis, etc. All the stuff up to and including the "POKEMON used MOVE" message.
 	 * For details of the difference between runMove and useMove, see useMove's info. externalMove skips LockMove and PP deduction, mostly for use by Dancer.
 	 */
-	runMove(
-		
-		moveOrMoveName: Move | string, pokemon: Pokemon, targetLoc: number,
-		options?: {
-			sourceEffect?: Effect | null, zMove?: string, externalMove?: boolean,
-			maxMove?: string, originalTarget?: Pokemon,
-			// NEW: request to spend 1 Tera Charge to empower Tera Blast/Starstorm
-			teraempower?: boolean,
+	runMove(moveOrMoveName: Move | string, pokemon: Pokemon, targetLoc: number, options?: {
+			sourceEffect?: Effect | null, externalMove?: boolean, originalTarget?: Pokemon,
+			teraempower?: boolean, // request to spend 1 Tera Charge to empower a Tera move
 		}
 	) {
 		pokemon.activeMoveActions++;
-		const zMove = options?.zMove;
-		const maxMove = options?.maxMove;
 		const externalMove = options?.externalMove;
 		const originalTarget = options?.originalTarget;
 		let sourceEffect = options?.sourceEffect;
-		let target = this.battle.getTarget(pokemon, maxMove || zMove || moveOrMoveName, targetLoc, originalTarget);
+		let target = this.battle.getTarget(pokemon, moveOrMoveName, targetLoc, originalTarget);
 		let baseMove = this.dex.getActiveMove(moveOrMoveName);
 		const priority = baseMove.priority;
 		const pranksterBoosted = baseMove.pranksterBoosted;
-		if (baseMove.id !== 'struggle' && !zMove && !maxMove && !externalMove) {
+		if (baseMove.id !== 'struggle' && !externalMove) {
 			const changedMove = this.battle.runEvent('OverrideAction', pokemon, target, baseMove);
 			if (changedMove && changedMove !== true) {
 				baseMove = this.dex.getActiveMove(changedMove);
@@ -202,8 +148,6 @@ export class BattleActions {
 			}
 		}
 		let move = baseMove;
-		if (zMove) { move = this.getActiveZMove(baseMove, pokemon); } 
-		else if (maxMove) { move = this.getActiveMaxMove(baseMove, pokemon); }
 		if (!this.canUseWeaponMove(pokemon, move)) {
 			this.battle.add('-fail', pokemon, 'move: ' + move.name);
 			this.battle.attrLastMove('[still]');
@@ -212,10 +156,7 @@ export class BattleActions {
 		}
 		move.isExternal = externalMove;
 		this.battle.setActiveMove(move, pokemon, target);
-		const activeMove = this.battle.activeMove;
-		if (activeMove && pokemon.volatiles['teraempowered']) {
-			(activeMove as any).teraEmpowered = true;
-		}
+		if (this.battle.activeMove && pokemon.volatiles['teraempowered']) { (this.battle.activeMove as any).teraEmpowered = true; }
 		/* if (pokemon.moveThisTurn) {
 			// THIS IS PURELY A SANITY CHECK
 			// DO NOT TAKE ADVANTAGE OF THIS TO PREVENT A POKEMON FROM MOVING;
@@ -262,30 +203,15 @@ export class BattleActions {
 			// Dancer Petal Dance hack
 			// TODO: implement properly
 			const noLock = externalMove && !pokemon.volatiles['lockedmove'];
-			if (zMove) {
-				if (pokemon.illusion) {
-					// Check which ability slot has Illusion
-					const illusionSlot = pokemon.ability1 === 'illusion' ? 1 : 2;
-					const abilityStateKey = illusionSlot === 1 ? 'abilityState1' : 'abilityState2';
-					this.battle.singleEvent('End', this.dex.abilities.get('Illusion'), pokemon[abilityStateKey], pokemon);
-				}
-				this.battle.add('-zpower', pokemon);
-				pokemon.side.zMoveUsed = true;
-			}
 			const oldActiveMove = move;
-			const moveDidSomething = this.useMove(baseMove, pokemon, {
-				target,
-				sourceEffect,
-				zMove,
-				maxMove,
-			} as any);
+			const moveDidSomething = this.useMove(baseMove, pokemon, { target, sourceEffect, } as any);
 			this.battle.lastSuccessfulMoveThisTurn = moveDidSomething ? this.battle.activeMove && this.battle.activeMove.id : null;
 			if (this.battle.activeMove) move = this.battle.activeMove;
 			this.battle.singleEvent('AfterMove', move, null, pokemon, target, move);
 			this.battle.runEvent('AfterMove', pokemon, target, move);
-			// Guard cooldown only decrements when Pokemon successfully use a move
-			// This ensures cooldown doesn't decrease when Pokemon are switched out or immobilized by flinch, para etc
-			if (moveDidSomething && pokemon.guardCooldown && pokemon.guardCooldown > 0) { pokemon.guardCooldown--; }
+			// Guard Action cooldown only decrements when the Pokemon successfully uses a move.
+			// This ensures it doesn't decrease when Pokemon are switched out or immobilized by flinch, para, etc.
+			if (moveDidSomething && pokemon.guardActionCooldown && pokemon.guardActionCooldown > 0) { pokemon.guardActionCooldown--; }
 			if (move.flags['cantusetwice'] && pokemon.removeVolatile(move.id)) { this.battle.add('-hint', `Some effects can force a Pokemon to use ${move.name} again in a row.`); }
 			// TODO: Refactor to use BattleQueue#prioritizeAction in onAnyAfterMove handlers
 			// Dancer's activation order is completely different from any other event, so it's handled separately
@@ -308,18 +234,56 @@ export class BattleActions {
 				for (const dancer of dancers) {
 					if (this.battle.faintMessages()) break;
 					if (dancer.fainted) continue;
-					this.battle.add('-activate', dancer, 'ability: Dancer');
-					const dancersTarget = !targetOf1stDance.isAlly(dancer) && pokemon.isAlly(dancer) ?
-						targetOf1stDance :
-						pokemon;
-					const dancersTargetLoc = dancer.getLocOf(dancersTarget);
-					this.runMove(move.id, dancer, dancersTargetLoc, { sourceEffect: this.dex.abilities.get('dancer'), externalMove: true });
+					const dancerAbilitySlot =
+							dancer.ability1 === 'dancer' ? 1 :
+							dancer.ability2 === 'dancer' ? 2 :
+							1;
+						const dancerAbility = dancer.getAbility(dancerAbilitySlot as 1 | 2);
+						this.battle.add('-activate', dancer, 'ability: ' + dancerAbility.name);
+						const dancersTarget = !targetOf1stDance.isAlly(dancer) && pokemon.isAlly(dancer) ?
+							targetOf1stDance :
+							pokemon;
+						const dancersTargetLoc = dancer.getLocOf(dancersTarget);
+					this.runMove(move.id, dancer, dancersTargetLoc, { sourceEffect: dancerAbility, externalMove: true });
+				}
+			}
+			// Musician works identically to Dancer, but for sound moves
+			if (move.flags['sound'] && moveDidSomething && !move.isExternal) {
+				const musicians = [];
+				for (const currentPoke of this.battle.getAllActive()) {
+					if (pokemon === currentPoke) continue;
+					if (currentPoke.hasAbility('musician') && !currentPoke.isSemiInvulnerable()) { musicians.push(currentPoke); }
+				}
+				musicians.sort(
+					(a, b) =>
+						-(b.storedStats['spe'] - a.storedStats['spe']) ||
+						((this.battle as any).getAbilityEffectOrder(b, ['musician']) -
+						(this.battle as any).getAbilityEffectOrder(a, ['musician']))
+				);
+				const targetOf1stSound = this.battle.activeTarget!;
+				for (const musician of musicians) {
+					if (this.battle.faintMessages()) break;
+					if (musician.fainted) continue;
+					for (const musician of musicians) {
+						if (this.battle.faintMessages()) break;
+						if (musician.fainted) continue;
+						const musicianAbilitySlot =
+							musician.ability1 === 'musician' ? 1 :
+							musician.ability2 === 'musician' ? 2 :
+							1;
+						const musicianAbility = musician.getAbility(musicianAbilitySlot as 1 | 2);
+						this.battle.add('-activate', musician, 'ability: ' + musicianAbility.name);
+						const musiciansTarget = !targetOf1stSound.isAlly(musician) && pokemon.isAlly(musician) ?
+							targetOf1stSound :
+							pokemon;
+						const musiciansTargetLoc = musician.getLocOf(musiciansTarget);
+						this.runMove(move.id, musician, musiciansTargetLoc, { sourceEffect: musicianAbility, externalMove: true });
+					}
 				}
 			}
 			if (noLock && pokemon.volatiles['lockedmove']) delete pokemon.volatiles['lockedmove'];
 			this.battle.faintMessages();
 			this.battle.checkWin();
-			if (this.battle.gen <= 4) { this.battle.activeMove = oldActiveMove; }
 		} finally {}
 	}
 	/**
@@ -330,7 +294,6 @@ export class BattleActions {
 	useMove(
 		move: Move | string, pokemon: Pokemon, options?: {
 			target?: Pokemon | null, sourceEffect?: Effect | null,
-			zMove?: string, maxMove?: string,
 			teraempower?: boolean,
 		}
 	) {
@@ -340,31 +303,13 @@ export class BattleActions {
 		if (oldMoveResult === pokemon.moveThisTurnResult) pokemon.moveThisTurnResult = moveResult;
 		return moveResult;
 	}
-	useMoveInner(
-		moveOrMoveName: Move | string, pokemon: Pokemon, options?: {
-			target?: Pokemon | null, sourceEffect?: Effect | null,
-			zMove?: string, maxMove?: string,
-			teraempower?: boolean,
-		},
-	) {
+	useMoveInner(moveOrMoveName: Move | string, pokemon: Pokemon, options?: { target?: Pokemon | null, sourceEffect?: Effect | null, teraempower?: boolean, },) {
 		let target = options?.target;
 		let sourceEffect = options?.sourceEffect;
-		const zMove = options?.zMove;
-		const maxMove = options?.maxMove;
 		if (!sourceEffect && this.battle.effect.id) sourceEffect = this.battle.effect;
 		if (sourceEffect && ['instruct', 'custapberry'].includes(sourceEffect.id)) sourceEffect = null;
 		let move = this.dex.getActiveMove(moveOrMoveName);
 		pokemon.lastMoveUsed = move;
-		if (move.id === 'weatherball' && zMove) { // Z-Weather Ball only changes types if it's used directly, not if it's called by Z-Sleep Talk or something.
-			this.battle.singleEvent('ModifyType', move, null, pokemon, target, move, move);
-			if (move.type !== 'Normal') sourceEffect = move;
-		}
-		if (zMove || (move.category !== 'Status' && sourceEffect && (sourceEffect as ActiveMove).isZ)) { move = this.getActiveZMove(move, pokemon); }
-		if (maxMove && move.category !== 'Status') { // Max move outcome is dependent on the move type after type modifications from ability and the move itself
-			this.battle.singleEvent('ModifyType', move, null, pokemon, target, move, move);
-			this.battle.runEvent('ModifyType', pokemon, target, move, move);
-		}
-		if (maxMove || (move.category !== 'Status' && sourceEffect && (sourceEffect as ActiveMove).isMax)) { move = this.getActiveMaxMove(move, pokemon); }
 		if (this.battle.activeMove) {
 			move.priority = this.battle.activeMove.priority;
 			if (!move.hasBounced) move.pranksterBoosted = this.battle.activeMove.pranksterBoosted;
@@ -380,11 +325,8 @@ export class BattleActions {
 			move.ignoreAbility = (sourceEffect as ActiveMove).ignoreAbility;
 		}
 		let moveResult = false;
-		
 		this.battle.setActiveMove(move, pokemon, target);
-		const activeMove = this.battle.activeMove;
-		if (activeMove && pokemon.volatiles['teraempowered']) { (activeMove as any).teraEmpowered = true; }
-		
+		if (this.battle.activeMove && pokemon.volatiles['teraempowered']) { (this.battle.activeMove as any).teraEmpowered = true; }
 		this.battle.singleEvent('ModifyType', move, null, pokemon, target, move, move);
 		this.battle.singleEvent('ModifyMove', move, null, pokemon, target, move, move);
 		if (baseTarget !== move.target) { target = this.battle.getRandomTarget(pokemon, move); } // Target changed in ModifyMove, so we must adjust it here. Adjust before the next event so the correct target is passed to the event
@@ -394,14 +336,8 @@ export class BattleActions {
 		if (!move || pokemon.fainted) { return false; }
 		let attrs = '';
 		let movename = move.name;
-		if (move.id === 'hiddenpower') movename = 'Hidden Power';
 		if (sourceEffect) attrs += `|[from] ${sourceEffect.fullname}`;
-		if (zMove && move.isZ === true) {
-			attrs = `|[anim]${movename}${attrs}`;
-			movename = `Z-${movename}`;
-		}
 		this.battle.addMove('move', pokemon, movename, `${target}${attrs}`);
-		if (zMove) this.runZPower(move, pokemon);
 		if (!target) {
 			this.battle.attrLastMove('[notarget]');
 			this.battle.add(this.battle.gen >= 5 ? '-fail' : '-notarget', pokemon);
@@ -437,7 +373,6 @@ export class BattleActions {
 				this.battle.add(this.battle.gen >= 5 ? '-fail' : '-notarget', pokemon);
 				return false;
 			}
-			if (this.battle.gen === 4 && move.selfdestruct === 'always') { this.battle.faint(pokemon, pokemon, move); }
 			moveResult = this.trySpreadMoveHit(targets, pokemon, move);
 		}
 		if (move.selfBoost && moveResult) this.moveHit(pokemon, pokemon, move, move.selfBoost, false, true);
@@ -476,8 +411,6 @@ export class BattleActions {
 			// 7. loop that processes each hit of the move (has its own steps per iteration)
 			this.hitStepMoveHitLoop,
 		];
-		if (this.battle.gen <= 6) { [moveSteps[1], moveSteps[2]] = [moveSteps[2], moveSteps[1]]; } // Swap step 1 with step 2
-		if (this.battle.gen === 4) { [moveSteps[2], moveSteps[4]] = [moveSteps[4], moveSteps[2]]; } // Swap step 4 with new step 2 (old step 1)
 		if (notActive) this.battle.setActiveMove(move, pokemon, targets[0]);
 		const hitResult = this.battle.singleEvent('Try', move, null, pokemon, targets[0], move) &&
 			this.battle.singleEvent('PrepareHit', move, {}, targets[0], pokemon, move) &&
@@ -548,8 +481,7 @@ export class BattleActions {
 			} else if (!this.battle.singleEvent('TryImmunity', move, {}, target, pokemon, move)) {
 				this.battle.add('-immune', target);
 				hitResults[i] = false;
-			} else if (this.battle.gen >= 7 && move.pranksterBoosted && pokemon.hasAbility('prankster') &&
-				!targets[i].isAlly(pokemon) && !this.dex.getImmunity('prankster', target)) {
+			} else if (this.battle.gen >= 7 && move.pranksterBoosted && pokemon.hasAbility('prankster') && !targets[i].isAlly(pokemon) && !this.dex.getImmunity('prankster', target)) {
 				this.battle.debug('natural prankster immunity');
 				if (target.illusion || !(move.status && !this.dex.getImmunity(move.status, target))) { this.battle.hint("Since gen 7, Dark is immune to Prankster moves."); }
 				this.battle.add('-immune', target);
@@ -562,13 +494,12 @@ export class BattleActions {
 		const hitResults = [];
 		for (const [i, target] of targets.entries()) {
 			this.battle.activeTarget = target;
-			// calculate true accuracy
 			let accuracy = move.accuracy;
 			if (move.ohko) { // bypasses accuracy modifiers
 				if (!target.isSemiInvulnerable()) {
 					accuracy = 30;
 					if (move.ohko === 'Ice' && this.battle.gen >= 7 && !pokemon.hasType('Ice')) { accuracy = 20; }
-					if (!target.volatiles['dynamax'] && pokemon.level >= target.level && (move.ohko === true || !target.hasType(move.ohko))) { accuracy += (pokemon.level - target.level); } 
+					if (pokemon.level >= target.level && (move.ohko === true || !target.hasType(move.ohko))) { accuracy += (pokemon.level - target.level); } 
 					else {
 						this.battle.add('-immune', target, '[ohko]');
 						hitResults[i] = false;
@@ -617,6 +548,7 @@ export class BattleActions {
 					if (move.id === 'feint') { this.battle.add('-activate', target, 'move: Feint'); } 
 					else { this.battle.add('-activate', target, `move: ${move.name}`, '[broken]'); }
 					if (this.battle.gen >= 6) delete target.volatiles['stall'];
+					if (move.pierce) { target.getMoveHitData(move).pierced = move.pierce; } // breaksProtect is still fully removed, but this hit isn't full damage for free
 				}
 			}
 		}
@@ -627,7 +559,6 @@ export class BattleActions {
 		if (move.stealsBoosts) {
 			const boosts: SparseBoostsTable = {};
 			let stolen = false;
-
 			for (const statName of Object.keys(target.boosts) as BoostID[]) {
 				const stage = target.boosts[statName];
 				if (stage > 0) {
@@ -635,16 +566,11 @@ export class BattleActions {
 					stolen = true;
 				}
 			}
-
 			if (stolen) {
 				this.battle.attrLastMove('[still]');
 				this.battle.add('-clearpositiveboost', target, pokemon, 'move: ' + move.name);
 				this.battle.boost(boosts, pokemon, pokemon);
-
-				for (const statName of Object.keys(boosts) as BoostID[]) {
-					boosts[statName] = 0;
-				}
-
+				for (const statName of Object.keys(boosts) as BoostID[]) { boosts[statName] = 0; }
 				target.setBoost(boosts);
 				if (move.id === "spectralthief") { this.battle.addMove('-anim', pokemon, "Spectral Thief", target); }
 			}
@@ -663,9 +589,7 @@ export class BattleActions {
 		const target = Array.isArray(targetOrTargets) ? targetOrTargets[0] : targetOrTargets;
 		const targets = Array.isArray(targetOrTargets) ? targetOrTargets : [target];
 		this.battle.setActiveMove(move, pokemon, targets[0]);
-		let hitResult = this.battle.singleEvent('Try', move, null, pokemon, target, move) &&
-			this.battle.singleEvent('PrepareHit', move, {}, target, pokemon, move) &&
-			this.battle.runEvent('PrepareHit', pokemon, target, move);
+		let hitResult = this.battle.singleEvent('Try', move, null, pokemon, target, move) && this.battle.singleEvent('PrepareHit', move, {}, target, pokemon, move) && this.battle.runEvent('PrepareHit', pokemon, target, move);
 		if (!hitResult) {
 			if (hitResult === false) {
 				this.battle.add('-fail', pokemon);
@@ -700,11 +624,9 @@ export class BattleActions {
 		pokemon.lastDamage = 0;
 		let targetHits = move.multihit || 1;
 		if (Array.isArray(targetHits)) { // yes, it's hardcoded... meh
-			if (targetHits[0] === 2 && targetHits[1] === 5) {
-				if (this.battle.gen >= 5) { // 35-35-15-15 out of 100 for 2-3-4-5 hits
-					targetHits = this.battle.sample([2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 5, 5, 5]);
-					if (targetHits < 4 && pokemon.hasItem('loadeddice')) { targetHits = 5 - this.battle.random(2); }
-				} else { targetHits = this.battle.sample([2, 2, 2, 3, 3, 3, 4, 5]); }
+			if (targetHits[0] === 2 && targetHits[1] === 5) { // 35-35-15-15 out of 100 for 2-3-4-5 hits
+				targetHits = this.battle.sample([2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 5, 5, 5]);
+				if (targetHits < 4 && pokemon.hasItem('loadeddice')) { targetHits = 5 - this.battle.random(2); }	
 			} else { targetHits = this.battle.random(targetHits[0], targetHits[1] + 1); }
 		}
 		if (targetHits === 10 && pokemon.hasItem('loadeddice')) targetHits -= this.battle.random(7);
@@ -723,12 +645,12 @@ export class BattleActions {
 				targetsCopy = [targets[hit - 1]];
 				damage = [damage[hit - 1]];
 			} else { targetsCopy = targets.slice(0); }
-			const target = targetsCopy[0];
-			if (target && typeof move.smartTarget === 'boolean') {
+			const target = targetsCopy[0]; // some relevant-to-single-target-moves-only things are hardcoded
+			if (target && typeof move.smartTarget === 'boolean') { 
 				if (hit > 1) { this.battle.addMove('-anim', pokemon, move.name, target); } 
 				else { this.battle.retargetLastMove(target); }
 			}
-			if (target && move.multiaccuracy && hit > 1) {
+			if (target && move.multiaccuracy && hit > 1) { // like this (Triple Kick)
 				let accuracy = move.accuracy;
 				const boostTable = [1, 4 / 3, 5 / 3, 2, 7 / 3, 8 / 3, 3];
 				if (accuracy !== true) {
@@ -754,13 +676,14 @@ export class BattleActions {
 			const moveData = move;
 			if (!moveData.flags) moveData.flags = {};
 			let moveDamageThisHit;
+			// Modifies targetsCopy (which is why it's a copy)
 			[moveDamageThisHit, targetsCopy] = this.spreadMoveHit(targetsCopy, pokemon, move, moveData);
+			// When Dragon Darts targets two different pokemon, targetsCopy is a length 1 array each hit so spreadMoveHit returns a length 1 damage array
 			if (move.smartTarget) { moveDamage.push(...moveDamageThisHit); } 
 			else { moveDamage = moveDamageThisHit; }
 			if (!moveDamage.some(val => val !== false)) break;
 			nullDamage = false;
-
-			if (move.weaponmove) {
+			if (move.weaponmove) { // weapons lose durability each hit
 				for (const md of moveDamageThisHit) {
 					if (md !== false) {
 						this.applyWeaponMoveDamage(pokemon, move, 'hit');
@@ -768,14 +691,14 @@ export class BattleActions {
 					}
 				}
 			}
-
 			for (const [i, md] of moveDamage.entries()) {
 				if (move.smartTarget && i !== hit - 1) continue;
 				damage[i] = md === true || !md ? 0 : md;
-				if (move.recoil) {
+				if (move.recoil) { //recoil moves store how much would've been dealt had the target not reached 0HP first for recoil purposes
 					if (!move.intendedTotalDamage) move.intendedTotalDamage = 0;
 					if (typeof md === 'number') { move.intendedTotalDamage += md; }
 				}
+				// Total damage dealt is accumulated for the purposes of recoil 
 				move.totalDamage += damage[i];
 			}
 			if (move.mindBlownRecoil) {
@@ -790,7 +713,7 @@ export class BattleActions {
 				break;
 			}
 		}
-		if (hit === 1) return damage.fill(false);
+		if (hit === 1) return damage.fill(false); // hit is 1 higher than the actual hit count
 		if (nullDamage) damage.fill(false);
 		this.battle.faintMessages(false, false, !pokemon.hp);
 		if (move.multihit && typeof move.smartTarget !== 'boolean') { this.battle.add('-hitcount', targets[0], hit - 1); }
@@ -821,7 +744,8 @@ export class BattleActions {
 		this.battle.eachEvent('Update');
 		this.afterMoveSecondaryEvent(targetsCopy.filter(val => !!val), pokemon, move);
 		if (!(move.hasSheerForce && pokemon.hasAbility('sheerforce'))) {
-			for (const [i, d] of damage.entries()) {
+			for (const [i, d] of damage.entries()) { // There are no multihit spread moves, so it's safe to use move.totalDamage for multihit moves
+				// The previous check was for `move.multihit`, but that fails for Dragon Darts
 				const curDamage = targets.length === 1 ? move.totalDamage : d;
 				if (typeof curDamage === 'number' && targets[i].hp) {
 					const targetHPBeforeDamage = (targets[i].hurtThisTurn || 0) + curDamage;
@@ -831,42 +755,27 @@ export class BattleActions {
 		}
 		return damage;
 	}
-		spreadMoveHit(
-		targets: SpreadMoveTargets, pokemon: Pokemon, moveOrMoveName: ActiveMove,
-		hitEffect?: Dex.HitEffect, isSecondary?: boolean, isSelf?: boolean
-	): [SpreadMoveDamage, SpreadMoveTargets] {
+	spreadMoveHit(targets: SpreadMoveTargets, pokemon: Pokemon, moveOrMoveName: ActiveMove, hitEffect?: Dex.HitEffect, isSecondary?: boolean, isSelf?: boolean): [SpreadMoveDamage, SpreadMoveTargets] {
 		const target = targets[0];
 		let damage: (number | boolean | undefined)[] = [];
-		for (let i = 0; i < targets.length; i++) {
-			damage[i] = true;
-		}
+		for (let i = 0; i < targets.length; i++) { damage[i] = true; }
 		const move = this.dex.getActiveMove(moveOrMoveName);
 		let hitResult: boolean | number | null = true;
 		let moveData = hitEffect as ActiveMove;
 		if (!moveData) moveData = move;
 		if (!moveData.flags) moveData.flags = {};
-
 		if (move.target === 'all' && !isSelf) { hitResult = this.battle.singleEvent('TryHitField', moveData, {}, target || null, pokemon, move); } 
 		else if ((move.target === 'foeSide' || move.target === 'allySide' || move.target === 'allyTeam') && !isSelf) { hitResult = this.battle.singleEvent('TryHitSide', moveData, {}, target || null, pokemon, move); } 
 		else if (target) { hitResult = this.battle.singleEvent('TryHit', moveData, {}, target, pokemon, move); }
-
 		if (!hitResult) {
 			if (hitResult === false) {
-				if (move.weaponmove && move.weaponDamageOnProtect !== false) {
-					this.applyWeaponMoveDamage(pokemon, move, 'protect');
-				}
+				if (move.weaponmove && move.weaponDamageOnProtect !== false) { this.applyWeaponMoveDamage(pokemon, move, 'protect'); }
 				this.battle.add('-fail', pokemon);
 				this.battle.attrLastMove('[still]');
 			}
 			return [[false], targets];
 		}
-
-		if (!isSecondary && !isSelf) {
-			if (move.target !== 'all' && move.target !== 'allyTeam' && move.target !== 'allySide' && move.target !== 'foeSide') {
-				damage = this.tryPrimaryHitEvent(damage, targets, pokemon, move, moveData, isSecondary);
-			}
-		}
-
+		if (!isSecondary && !isSelf) { if (move.target !== 'all' && move.target !== 'allyTeam' && move.target !== 'allySide' && move.target !== 'foeSide') { damage = this.tryPrimaryHitEvent(damage, targets, pokemon, move, moveData, isSecondary); } }
 		for (let i = 0; i < targets.length; i++) {
 			if (damage[i] === this.battle.HIT_SUBSTITUTE) {
 				damage[i] = true;
@@ -875,32 +784,18 @@ export class BattleActions {
 			if (targets[i] && isSecondary && !moveData.self) { damage[i] = true; }
 			if (!damage[i]) targets[i] = false;
 		}
-
 		damage = this.getSpreadDamage(damage, targets, pokemon, move, moveData, isSecondary, isSelf);
-		for (let i = 0; i < targets.length; i++) {
-			if (damage[i] === false) targets[i] = false;
-		}
-
+		for (let i = 0; i < targets.length; i++) { if (damage[i] === false) targets[i] = false; }
 		damage = this.battle.spreadDamage(damage, targets, pokemon, move);
-		for (let i = 0; i < targets.length; i++) {
-			if (damage[i] === false) targets[i] = false;
-		}
-
+		for (let i = 0; i < targets.length; i++) { if (damage[i] === false) targets[i] = false; }
 		damage = this.runMoveEffects(damage, targets, pokemon, move, moveData, isSecondary, isSelf);
-		for (let i = 0; i < targets.length; i++) {
-			if (!damage[i] && damage[i] !== 0) targets[i] = false;
-		}
-
+		for (let i = 0; i < targets.length; i++) { if (!damage[i] && damage[i] !== 0) targets[i] = false; }
 		const activeTarget = this.battle.activeTarget;
 		if (moveData.self && !move.selfDropped) this.selfDrops(targets, pokemon, move, moveData, isSecondary);
 		if (moveData.secondaries) this.secondaries(targets, pokemon, move, moveData, isSelf);
 		this.battle.activeTarget = activeTarget;
-
 		if (moveData.forceSwitch) damage = this.forceSwitch(damage, targets, pokemon, move);
-		for (let i = 0; i < targets.length; i++) {
-			if (!damage[i] && damage[i] !== 0) targets[i] = false;
-		}
-
+		for (let i = 0; i < targets.length; i++) { if (!damage[i] && damage[i] !== 0) targets[i] = false; }
 		const damagedTargets: Pokemon[] = [];
 		const damagedDamage = [];
 		for (const [i, t] of targets.entries()) {
@@ -909,7 +804,6 @@ export class BattleActions {
 				damagedDamage.push(damage[i]);
 			}
 		}
-
 		const pokemonOriginalHP = pokemon.hp;
 		if (damagedDamage.length && !isSecondary && !isSelf) {
 			this.battle.runEvent('DamagingHit', damagedTargets, pokemon, move, damagedDamage);
@@ -921,29 +815,19 @@ export class BattleActions {
 					}
 				}
 			}
-			if (moveData.onAfterHit) {
-				for (const t of damagedTargets) {
-					this.battle.singleEvent('AfterHit', moveData, {}, t, pokemon, move);
-				}
-			}
+			if (moveData.onAfterHit) { for (const t of damagedTargets) { this.battle.singleEvent('AfterHit', moveData, {}, t, pokemon, move); } }
 			if (pokemon.hp && pokemon.hp <= pokemon.maxhp / 2 && pokemonOriginalHP > pokemon.maxhp / 2) { this.battle.runEvent('EmergencyExit', pokemon); }
 		}
 		return [damage, targets];
 	}
-	tryPrimaryHitEvent(
-		damage: SpreadMoveDamage, targets: SpreadMoveTargets, pokemon: Pokemon,
-		move: ActiveMove, moveData: ActiveMove, isSecondary?: boolean
-	): SpreadMoveDamage {
+	tryPrimaryHitEvent( damage: SpreadMoveDamage, targets: SpreadMoveTargets, pokemon: Pokemon, move: ActiveMove, moveData: ActiveMove, isSecondary?: boolean): SpreadMoveDamage {
 		for (const [i, target] of targets.entries()) {
 			if (!target) continue;
 			damage[i] = this.battle.runEvent('TryPrimaryHit', target, pokemon, moveData);
 		}
 		return damage;
 	}
-	getSpreadDamage(
-		damage: SpreadMoveDamage, targets: SpreadMoveTargets, source: Pokemon,
-		move: ActiveMove, moveData: ActiveMove, isSecondary?: boolean, isSelf?: boolean
-	): SpreadMoveDamage {
+	getSpreadDamage( damage: SpreadMoveDamage, targets: SpreadMoveTargets, source: Pokemon, move: ActiveMove, moveData: ActiveMove, isSecondary?: boolean, isSelf?: boolean): SpreadMoveDamage {
 		for (const [i, target] of targets.entries()) {
 			if (!target) continue;
 			this.battle.activeTarget = target;
@@ -972,10 +856,7 @@ export class BattleActions {
 		}
 		return damage;
 	}
-	runMoveEffects(
-		damage: SpreadMoveDamage, targets: SpreadMoveTargets, source: Pokemon,
-		move: ActiveMove, moveData: ActiveMove, isSecondary?: boolean, isSelf?: boolean
-	) {
+	runMoveEffects(damage: SpreadMoveDamage, targets: SpreadMoveTargets, source: Pokemon, move: ActiveMove, moveData: ActiveMove, isSecondary?: boolean, isSelf?: boolean) {
 		let didAnything: number | boolean | null | undefined = damage.reduce(this.combineResults);
 		for (const [i, target] of targets.entries()) {
 			if (target === false) continue;
@@ -1041,9 +922,8 @@ export class BattleActions {
 					hitResult = this.battle.field.setTerrain(moveData.terrain, source, move);
 					didSomething = this.combineResults(didSomething, hitResult);
 				}
-				if (moveData.pseudoWeather) {
-					// Room effects: wonderroom, trickroom, magicroom - these should be mutually exclusive
-					const roomTypes = ['wonderroom', 'trickroom', 'magicroom'];
+				if (moveData.pseudoWeather) { // Room effects: wonderroom, trickroom, magicroom, inverseroom should be mutually exclusive
+					const roomTypes = ['wonderroom', 'trickroom', 'magicroom', 'inverseroom'];
 					if (roomTypes.includes(moveData.pseudoWeather)) { hitResult = this.battle.field.setRoom(moveData.pseudoWeather, source, move); } 
 					else { hitResult = this.battle.field.addPseudoWeather(moveData.pseudoWeather, source, move); }
 					didSomething = this.combineResults(didSomething, hitResult);
@@ -1136,10 +1016,7 @@ export class BattleActions {
 		}
 		return damage;
 	}
-	moveHit(
-		targets: Pokemon | null | (Pokemon | null)[], pokemon: Pokemon, moveOrMoveName: ActiveMove,
-		moveData?: Dex.HitEffect, isSecondary?: boolean, isSelf?: boolean
-	): number | undefined | false {
+	moveHit(targets: Pokemon | null | (Pokemon | null)[], pokemon: Pokemon, moveOrMoveName: ActiveMove, moveData?: Dex.HitEffect, isSecondary?: boolean, isSelf?: boolean): number | undefined | false {
 		if (!Array.isArray(targets)) targets = [targets];
 		const retVal = this.spreadMoveHit(targets, pokemon, moveOrMoveName, moveData, isSecondary, isSelf)[0][0];
 		return retVal === true ? undefined : retVal;
@@ -1150,132 +1027,6 @@ export class BattleActions {
 		// Halve recoil if the user has the Reckless ability
 		if (pokemon.hasAbility && pokemon.hasAbility('reckless')) { recoil = Math.floor(recoil / 2); }
 		return this.battle.clampIntRange(recoil, 1);
-	}
-	getZMove(move: Move, pokemon: Pokemon, skipChecks?: boolean): string | undefined {
-		const item = pokemon.getItem();
-		if (!skipChecks) {
-			if (pokemon.side.zMoveUsed) return;
-			if (!item.zMove) return;
-			if (item.itemUser && !item.itemUser.includes(pokemon.species.name)) return;
-			const moveData = pokemon.getMoveData(move);
-			// Draining the PP of the base move prevents the corresponding Z-move from being used.
-			if (!moveData?.pp) return;
-		}
-		if (item.zMoveFrom) { if (move.name === item.zMoveFrom) return item.zMove as string; } 
-		else if (item.zMove === true) {
-			if (move.type === item.zMoveType) {
-				if (move.category === "Status") { return move.name } 
-				else if (move.zMove?.basePower) { return this.Z_MOVES[move.type]; }
-			}
-		}
-	}
-	getActiveZMove(move: Move, pokemon: Pokemon): ActiveMove {
-		if (pokemon) {
-			const item = pokemon.getItem();
-			if (move.name === item.zMoveFrom) {
-				const zMove = this.dex.getActiveMove(item.zMove as string);
-				zMove.isZOrMaxPowered = true;
-				return zMove;
-			}
-		}
-		if (move.category === 'Status') {
-			const zMove = this.dex.getActiveMove(move);
-			zMove.isZ = true;
-			zMove.isZOrMaxPowered = true;
-			return zMove;
-		}
-		const zMove = this.dex.getActiveMove(this.Z_MOVES[move.type]);
-		zMove.basePower = move.zMove!.basePower!;
-		zMove.category = move.category;
-		// copy the priority for Quick Guard
-		zMove.priority = move.priority;
-		zMove.isZOrMaxPowered = true;
-		return zMove;
-	}
-	canZMove(pokemon: Pokemon) {
-		if (pokemon.side.zMoveUsed || (pokemon.transformed && (pokemon.species.isMega || pokemon.species.isPrimal || pokemon.species.forme === "Ultra")) )
-			return;
-		const item = pokemon.getItem();
-		if (!item.zMove) return;
-		if (item.itemUser && !item.itemUser.includes(pokemon.species.name)) return;
-		let atLeastOne = false;
-		let mustStruggle = true;
-		const zMoves: ZMoveOptions = [];
-		for (const moveSlot of pokemon.moveSlots) {
-			if (moveSlot.pp <= 0) {
-				zMoves.push(null);
-				continue;
-			}
-			if (!moveSlot.disabled) { mustStruggle = false; }
-			const move = this.dex.moves.get(moveSlot.move);
-			let zMoveName = this.getZMove(move, pokemon, true) || '';
-			if (zMoveName) {
-				const zMove = this.dex.moves.get(zMoveName);
-				if (!zMove.isZ && zMove.category === 'Status') zMoveName = "Z-" + zMoveName;
-				zMoves.push({ move: zMoveName, target: zMove.target });
-			} else { zMoves.push(null); }
-			if (zMoveName) atLeastOne = true;
-		}
-		if (atLeastOne && !mustStruggle) return zMoves;
-	}
-	getMaxMove(move: Move, pokemon: Pokemon) {
-		if (typeof move === 'string') move = this.dex.moves.get(move);
-		if (move.name === 'Struggle') return move;
-		if (pokemon.gigantamax && pokemon.canGigantamax && move.category !== 'Status') {
-			const gMaxMove = this.dex.moves.get(pokemon.canGigantamax);
-			if (gMaxMove.exists && gMaxMove.type === move.type) return gMaxMove;
-		}
-		const maxMove = this.dex.moves.get(this.MAX_MOVES[move.category === 'Status' ? move.category : move.type]);
-		if (maxMove.exists) return maxMove;
-	}
-	getActiveMaxMove(move: Move, pokemon: Pokemon) {
-		if (typeof move === 'string') move = this.dex.getActiveMove(move);
-		if (move.name === 'Struggle') return this.dex.getActiveMove(move);
-		let maxMove = this.dex.getActiveMove(this.MAX_MOVES[move.category === 'Status' ? move.category : move.type]);
-		if (move.category !== 'Status') {
-			if (pokemon.gigantamax && pokemon.canGigantamax) {
-				const gMaxMove = this.dex.getActiveMove(pokemon.canGigantamax);
-				if (gMaxMove.exists && gMaxMove.type === move.type) maxMove = gMaxMove;
-			}
-			if (!move.maxMove?.basePower) throw new Error(`${move.name} doesn't have a maxMove basePower`);
-			if (!['gmaxdrumsolo', 'gmaxfireball', 'gmaxhydrosnipe'].includes(maxMove.id)) { maxMove.basePower = move.maxMove.basePower; }
-			maxMove.category = move.category;
-		}
-		maxMove.baseMove = move.id;
-		// copy the priority for Psychic Terrain, Quick Guard
-		maxMove.priority = move.priority;
-		maxMove.isZOrMaxPowered = true;
-		return maxMove;
-	}
-	runZPower(move: ActiveMove, pokemon: Pokemon) {
-		const zPower = this.dex.conditions.get('zpower');
-		if (move.category !== 'Status') { this.battle.attrLastMove('[zeffect]'); } 
-		else if (move.zMove?.boost) { this.battle.boost(move.zMove.boost, pokemon, pokemon, zPower); } 
-		else if (move.zMove?.effect) {
-			switch (move.zMove.effect) {
-			case 'heal': this.battle.heal(pokemon.maxhp, pokemon, pokemon, zPower);
-				break;
-			case 'healreplacement': pokemon.side.addSlotCondition(pokemon, 'healreplacement', pokemon, move);
-				break;
-				case 'clearnegativeboost':
-					const boosts: SparseBoostsTable = {};
-					for (const boostid of Object.keys(pokemon.boosts) as BoostID[]) {
-						if (pokemon.boosts[boostid] < 0) {
-							boosts[boostid] = 0;
-						}
-					}
-					pokemon.setBoost(boosts);
-					this.battle.add('-clearnegativeboost', pokemon, '[zeffect]');
-					break;
-			case 'redirect': pokemon.addVolatile('followme', pokemon, zPower);
-				break;
-			case 'crit2': pokemon.addVolatile('focusenergy', pokemon, zPower);
-				break;
-			case 'curse':
-				if (pokemon.hasType('Ghost')) { this.battle.heal(pokemon.maxhp, pokemon, pokemon, zPower); } 
-				else { this.battle.boost({ atk: 1 }, pokemon, pokemon, zPower); }
-			}
-		}
 	}
 	targetTypeChoices(targetType: string) { return CHOOSABLE_TARGETS.has(targetType); }
 	combineResults<T extends number | boolean | null | '' | undefined,
@@ -1293,21 +1044,65 @@ export class BattleActions {
 	 * Normal PS return value rules apply:
 	 * undefined = success, null = silent failure, false = loud failure
 	 */
-	getDamage(
-		source: Pokemon, target: Pokemon, move: string | number | ActiveMove,
-		suppressMessages = false
-	): number | undefined | null | false {
+	getDamage(source: Pokemon, target: Pokemon, move: string | number | ActiveMove, suppressMessages = false): number | undefined | null | false {
 		if (typeof move === 'string') move = this.dex.getActiveMove(move);
 		if (typeof move === 'number') {
 			const basePower = move;
-			move = new Dex.Move({
-				basePower,
-				type: '???',
-				category: 'Physical',
-				willCrit: false,
-			}) as ActiveMove;
+			move = new Dex.Move({ basePower, type: '???', category: 'Physical', willCrit: false, }) as ActiveMove;
 			move.hit = 0;
 		}
+		const baseDamageCalc = this.constructor.prototype.getDamage;
+		const calculateFusionDamage = () => {
+			const originalOverride = (move as any).overrideDefensiveStat;
+			try {
+				(move as any).overrideDefensiveStat = 'def';
+				const damageWithDef = baseDamageCalc.call(this, source, target, move, suppressMessages);
+				(move as any).overrideDefensiveStat = 'spd';
+				const damageWithSpD = baseDamageCalc.call(this, source, target, move, suppressMessages);
+				if (typeof damageWithDef === 'number' && typeof damageWithSpD === 'number') { return Math.floor((damageWithDef + damageWithSpD) / 2); }
+				return damageWithDef === false || damageWithSpD === false ?
+					false :
+					damageWithDef || damageWithSpD;
+			} finally {
+				if (originalOverride) { (move as any).overrideDefensiveStat = originalOverride; } 
+				else { delete (move as any).overrideDefensiveStat; }
+			}
+		};
+		const isFusionMode = (move.id === 'fusionbolt' || move.id === 'fusionflare') && (move as any).fusionMode;
+		// Ability Shield: ignore enemy abilities during defensive damage calculation
+		if (source && target && source !== target && target.hasItem?.('abilityshield')) {
+			const s = source as any;
+			const saved = {
+				ability: s.ability,
+				baseAbility: s.baseAbility,
+				ability1: s.ability1,
+				ability2: s.ability2,
+				abilityState: s.abilityState,
+				abilityState1: s.abilityState1,
+				abilityState2: s.abilityState2,
+			};
+			s.ability = 'noability';
+			s.baseAbility = 'noability';
+			s.ability1 = 'noability';
+			s.ability2 = '';
+			s.abilityState = this.battle.initEffectState({id: 'noability', target: source});
+			s.abilityState1 = s.abilityState;
+			delete s.abilityState2;
+			try {
+				if (isFusionMode) return calculateFusionDamage();
+				// @ts-ignore
+				return baseDamageCalc.call(this, source, target, move, suppressMessages);
+			} finally {
+				s.ability = saved.ability;
+				s.baseAbility = saved.baseAbility;
+				s.ability1 = saved.ability1;
+				s.ability2 = saved.ability2;
+				s.abilityState = saved.abilityState;
+				s.abilityState1 = saved.abilityState1;
+				s.abilityState2 = saved.abilityState2;
+			}
+		}
+		if (isFusionMode) return calculateFusionDamage();
 		if (!target.runImmunity(move, !suppressMessages)) { return false; }
 		if (move.ohko) return this.battle.gen === 3 ? target.hp : target.maxhp;
 		if (move.damageCallback) return move.damageCallback.call(this.battle, source, target);
@@ -1325,8 +1120,7 @@ export class BattleActions {
 		critMult = [96, 64, 48, 24, 16, 12, 8, 6, 4, 3, 2, 1.5, 1.333, 1.2, 1];
 		const moveHit = target.getMoveHitData(move);
 		moveHit.crit = move.willCrit || false;
-		if (move.willCrit === undefined) {
-			// If critRatio <= 0, never crit
+		if (move.willCrit === undefined) {	// If critRatio <= 0, never crit
 			if (critRatio > 0) { moveHit.crit = this.battle.randomChance(1, critMult[critRatio]); } 
 			else { moveHit.crit = false; }
 		}
@@ -1335,8 +1129,6 @@ export class BattleActions {
 		basePower = this.battle.runEvent('BasePower', source, target, move, basePower, true);
 		if (!basePower) return 0;
 		basePower = this.battle.clampIntRange(basePower, 1);
-		// Hacked Max Moves have 0 base power, even if you Dynamax
-		if ((!source.volatiles['dynamax'] && move.isMax) || (move.isMax && this.dex.moves.get(move.baseMove).isMax)) { basePower = 0; }
 		const dexMove = this.dex.moves.get(move.id);
 		if (source.terastallized && (source.terastallized === 'Stellar' ?
 			!source.stellarBoostedTypes.includes(move.type) : source.hasType(move.type)) && basePower < 60 && dexMove.priority <= 0 && !dexMove.multihit &&
@@ -1374,7 +1166,6 @@ export class BattleActions {
 		// Apply Stat Modifiers
 		attack = this.battle.runEvent('Modify' + statTable[attackStat], source, target, move, attack);
 		defense = this.battle.runEvent('Modify' + statTable[defenseStat], target, source, move, defense);
-		if (this.battle.gen <= 4 && ['explosion', 'selfdestruct'].includes(move.id) && defenseStat === 'def') { defense = this.battle.clampIntRange(Math.floor(defense / 2), 1); }
 		const tr = this.battle.trunc;
 		// int(int(int(2 * L / 5 + 2) * A * P / D) / 50);
 		const baseDamage = tr(tr(tr(tr(2 * level / 5 + 2) * basePower * attack) / defense) / 50);
@@ -1391,9 +1182,8 @@ export class BattleActions {
 			const spreadModifier = this.battle.gameType === 'freeforall' ? 0.5 : 0.75;
 			this.battle.debug(`Spread modifier: ${spreadModifier}`);
 			baseDamage = this.battle.modify(baseDamage, spreadModifier);
-		} else if (move.multihitType === 'parentalbond' && move.hit > 1) {
-			// Parental Bond modifier
-			const bondModifier = this.battle.gen > 6 ? 0.25 : 0.5;
+		} else if (move.multihitType === 'parentalbond' && move.hit > 1) { // Parental Bond modifier
+			const bondModifier = 0.25;
 			this.battle.debug(`Parental Bond modifier: ${bondModifier}`);
 			baseDamage = this.battle.modify(baseDamage, bondModifier);
 		} else if (move.multihitType === 'sixminded') {
@@ -1406,84 +1196,137 @@ export class BattleActions {
 		baseDamage = this.battle.runEvent('WeatherModifyDamage', pokemon, target, move, baseDamage);
 		// crit - not a modifier
 		const isCrit = target.getMoveHitData(move).crit;
-		if (isCrit) { baseDamage = tr(baseDamage * (move.critModifier || (this.battle.gen >= 6 ? 1.5 : 2))); }
+		if (isCrit) { baseDamage = tr(baseDamage * (move.critModifier = 1.5)); }
 		// random factor - also not a modifier
 		baseDamage = this.battle.randomizer(baseDamage);
-		// STAB
-		// The "???" type never gets STAB
-		// Not even if you Roost in Gen 4 and somehow manage to use
-		// Struggle in the same turn.
-		// (On second thought, it might be easier to get a MissingNo.)
-		if (type !== '???') {
-			let stab: number | [number, number] = 1;
-			const moveTypes = [move.type];
-			if (move.type2 && move.type2 !== move.type) moveTypes.push(move.type2);
-			const matches = move.forceSTAB ? moveTypes : moveTypes.filter(t => pokemon.hasType(t) || pokemon.getTypes(false, true).includes(t));
-			const isSTAB = matches.length > 0;
-			const matchesBoth = moveTypes.length === 2 && matches.length === 2 && moveTypes[0] !== moveTypes[1] && matches[0] !== matches[1];
-			if (isSTAB) {
-				if (matchesBoth) { stab = 1.7; } 
-				else { stab = 1.5; }
+		//region STAB
+		let stab: number | [number, number] = 1;
+		const moveTypes = [move.type];
+		if (move.type2 && move.type2 !== move.type) moveTypes.push(move.type2);
+		const matches = move.forceSTAB ? moveTypes : moveTypes.filter(t => pokemon.hasType(t) || pokemon.getTypes(false, true).includes(t));
+		const isSTAB = matches.length > 0;
+		const matchesBoth = moveTypes.length === 2 && matches.length === 2 && moveTypes[0] !== moveTypes[1] && matches[0] !== matches[1];
+		if (isSTAB) {
+			if (matchesBoth) { stab = 1.7; } 
+			else { stab = 1.5; }
+		}
+		
+		if (pokemon.terastallized === 'Stellar') {
+			const originalTypes = pokemon.volatiles['stellaroriginal']?.types || [];
+			const isOriginal = moveTypes.some(t => originalTypes.includes(t));
+			const isStellar = moveTypes.includes('Stellar');
+			const isTerapagos = pokemon.species.name === 'Terapagos-Stellar';
+			const stellarOneTime14Forms = ['Glimmora-Mega-Stellar', 'Baxcalibur-Mega-Q-Stellar', 'Baxcalibur-Mega-Y-Stellar',];
+			const isOneTime14 = stellarOneTime14Forms.includes(pokemon.species.name);
+			if (isOriginal) {
+				if (isTerapagos) { stab = 1.4; } 
+				else if (!pokemon.stellarBoostedTypes.includes(type)) {
+					stab = 1.7;
+					pokemon.stellarBoostedTypes.push(type);
+				} else { stab = isOneTime14 ? 1.4 : 1.2;  }
+			} else if (isStellar) { stab = 1.5; } 
+			else if (isTerapagos) { stab = 1.4; } 
+			else if (!pokemon.stellarBoostedTypes.includes(type)) {
+				stab = isOneTime14 ? 1.4 : 1.2; 
+				pokemon.stellarBoostedTypes.push(type);
 			}
-			// The Stellar tera type makes this incredibly confusing
-			// If the move's type does not match one of the user's base types,
-			// the Stellar tera type applies a one-time 1.2x damage boost for that type.
-			// If the move's type does match one of the user's base types,
-			// then the Stellar tera type applies a one-time 2x STAB boost for that type,
-			// and then goes back to using the regular 1.5x STAB boost for those types.
-			if (pokemon.terastallized === 'Stellar') {
-				if (!pokemon.stellarBoostedTypes.includes(type) || move.stellarBoosted) {
-					stab = isSTAB ? 2 : [4915, 4096];
-					move.stellarBoosted = true;
-					if (pokemon.species.name !== 'Terapagos-Stellar') { pokemon.stellarBoostedTypes.push(type); }
+		}
+		stab = this.battle.runEvent('ModifySTAB', pokemon, target, move, stab);
+		baseDamage = this.battle.modify(baseDamage, stab);
+		//region Affinity/Aversion
+		// Type affinity/aversion based on move flags stack additively: each affinity adds +0.1, each aversion adds -0.1
+		// Uses original types, not affected by Terastallization
+		let flagModifier = 0;
+		for (const type of pokemon.getTypes(false, true)) {
+			const typeData = this.dex.types.get(type);
+			if (!typeData) continue;
+			if (typeData.affinity && move.flags) {
+				for (const flag in move.flags) {
+					if (typeData.affinity[flag] === 5) {
+						this.battle.debug(`${type} has affinity with ${flag} flag`);
+						flagModifier += 0.1;
+					}
 				}
-			} else {
-				if (pokemon.terastallized && moveTypes.includes(pokemon.terastallized) && pokemon.getTypes(false, true).includes(pokemon.terastallized)) {
-					if (matchesBoth) { stab = 2.2; } 
-					else { stab = 2; }
-				}
-				stab = this.battle.runEvent('ModifySTAB', pokemon, target, move, stab);
 			}
-			baseDamage = this.battle.modify(baseDamage, stab);
+			if (typeData.aversion && move.flags) {
+				for (const flag in move.flags) {
+					if (typeData.aversion[flag] === 6) {
+						this.battle.debug(`${type} has aversion to ${flag} flag`);
+						flagModifier -= 0.1;
+					}
+				}
+			}
+		}
+		// Apply the total flag modifier
+		if (flagModifier !== 0) {
+			const totalMultiplier = 1 + flagModifier;
+			this.battle.debug(`Total flag modifier: ${totalMultiplier}x`);
+			baseDamage = this.battle.modify(baseDamage, totalMultiplier);
 		}
 		// types
 		let typeMod = target.runEffectiveness(move);
 		// Clamp to -6 to 6 range (supports decimal values for flag effectiveness)
 		typeMod = Math.max(-6, Math.min(typeMod, 6));
 		target.getMoveHitData(move).typeMod = typeMod;
-		if (typeMod > 0) {
-			if (!suppressMessages) this.battle.add('-supereffective', target);
-			// Apply type effectiveness: each full point is 2x, each 0.5 is 1.5x
+		// Type effectiveness messages
+		if (!suppressMessages && typeMod !== 0) {
+			switch (typeMod) {
+			case -6: case -5.5: case -5: case -4.5: case -4:
+				this.battle.add('-message', "It's mostly ineffective...");
+				break;
+			case -3:
+				this.battle.add('-message', "It's barely effective...");
+				break;
+			case -2:
+				this.battle.add('-message', "It's hardly effective...");
+				break;
+			case -1:
+				this.battle.add('-resisted', target); // "It's not very effective..."
+				break;
+			case -0.5:
+				this.battle.add('-message', "It's mostly effective...");
+				break;
+			case 0.5:
+				this.battle.add('-message', "It's very effective!");
+				break;
+			case 1:
+				this.battle.add('-supereffective', target); // "It's super effective!"
+				break;
+			case 1.5:
+				this.battle.add('-message', "It's severely effective!");
+				break;
+			case 2:
+				this.battle.add('-message', "It's extremely effective!");
+				break;
+			default: // 2.5+
+				this.battle.add('-message', "It's supremely effective!");
+				break;
+			}
+		}
+		if (typeMod > 0) { // Apply type effectiveness: each full point is 2x, each 0.5 is 1.5x
 			const fullSteps = Math.floor(typeMod);
 			const halfStep = typeMod % 1 >= 0.5;
-			for (let i = 0; i < fullSteps; i++) { baseDamage *= 2; }
+			for (let i = 0; i < fullSteps; i++) baseDamage *= 2;
 			if (halfStep) baseDamage = tr(baseDamage * 1.5);
 		}
-		if (typeMod < 0) {
-			if (!suppressMessages) this.battle.add('-resisted', target);
-			// Apply type resistance: each full point is ÷2, each 0.5 is ÷1.5
+		if (typeMod < 0) { // Apply type resistance: each full point is ÷2, each 0.5 is ÷1.5
 			const absTypeMod = Math.abs(typeMod);
 			const fullSteps = Math.floor(absTypeMod);
 			const halfStep = absTypeMod % 1 >= 0.5;
-			for (let i = 0; i < fullSteps; i++) { baseDamage = tr(baseDamage / 2); }
+			for (let i = 0; i < fullSteps; i++) baseDamage = tr(baseDamage / 2);
 			if (halfStep) baseDamage = tr(baseDamage / 1.5);
 		}
-		if (move.type === 'Bug' && pokemon.hp <= pokemon.maxhp / 5) {baseDamage = this.battle.modify(baseDamage, 1.3); }
-		if (move.type === 'Fire' && pokemon.hp <= pokemon.maxhp / 5) { baseDamage = this.battle.modify(baseDamage, 1.3); }
-		if (move.type === 'Grass' && pokemon.hp <= pokemon.maxhp / 5) { baseDamage = this.battle.modify(baseDamage, 1.3); }
-		if (move.type === 'Water' && pokemon.hp <= pokemon.maxhp / 5) { baseDamage = this.battle.modify(baseDamage, 1.3); }
 		if (isCrit && !suppressMessages) this.battle.add('-crit', target);
 		if (pokemon.status === 'brn' && move.category === 'Physical' && !pokemon.hasAbility('guts')) { if (this.battle.gen < 6 || move.id !== 'facade') { baseDamage = this.battle.modify(baseDamage, 0.5); } }
-		// Generation 5, but nothing later, sets damage to 1 before the final damage modifiers
-		if (this.battle.gen === 5 && !baseDamage) baseDamage = 1;
 		// Final modifier. Modifiers that modify damage after min damage check, such as Life Orb.
 		baseDamage = this.battle.runEvent('ModifyDamage', pokemon, target, move, baseDamage);
-		if (move.isZOrMaxPowered && target.getMoveHitData(move).zBrokeProtect) {
-			baseDamage = this.battle.modify(baseDamage, 0.25);
-			this.battle.add('-zbroken', target);
-		}
-		// Generation 6-7 moves the check for minimum 1 damage after the final modifier...
-		if (this.battle.gen !== 5 && !baseDamage) return 1;
+		const pierced = target.getMoveHitData(move).pierced;
+			if (pierced) {
+				baseDamage = this.battle.modify(baseDamage, pierced[0] / pierced[1]);
+				this.battle.add('-pierce', target, `${pierced[0]}/${pierced[1]}`, `${pierced[0]}/${pierced[1]} of the damage went through.`);
+			}
+		// Generation 6-7 moves the check for minimum 1 damage after the final modifier
+		if (!baseDamage) return 1;
 		// ...but 16-bit truncation happens even later, and can truncate to 0
 		return tr(baseDamage, 16);
 	}
@@ -1509,11 +1352,7 @@ export class BattleActions {
 		const altForme = species.otherFormes && this.dex.species.get(species.otherFormes[0]);
 		const item = pokemon.getItem();
 		// Mega Rayquaza
-		if ((this.battle.gen <= 7 || this.battle.ruleTable.has('+pokemontag:past') || this.battle.ruleTable.has('+pokemontag:future')) && altForme?.isMega && altForme?.requiredMove && pokemon.baseMoves.includes(toID(altForme.requiredMove)) && !item.zMove) { return altForme.name; }
-		// Temporary hardcode until generation shift
-		if ((species.baseSpecies === "Floette" || species.baseSpecies === "Zygarde") && item.megaEvolves === species.name) { return item.megaStone; }
-		// a hacked-in Megazard X can mega evolve into Megazard Y, but not into Megazard X
-		if (item.megaEvolves === species.baseSpecies && item.megaStone !== species.name) { return item.megaStone; }
+		if ((this.battle.gen <= 7 || this.battle.ruleTable.has('+pokemontag:past') || this.battle.ruleTable.has('+pokemontag:future')) && altForme?.isMega && altForme?.requiredMove && pokemon.baseMoves.includes(toID(altForme.requiredMove))) { return altForme.name; }
 		return null;
 	}
 	canUltraBurst(pokemon: Pokemon) {
@@ -1533,28 +1372,32 @@ export class BattleActions {
 		this.battle.runEvent('AfterMega', pokemon);
 		return true;
 	}
-	// Let's Go
 	canMegaEvoX?: (this: BattleActions, pokemon: Pokemon) => string | null;
 	canMegaEvoY?: (this: BattleActions, pokemon: Pokemon) => string | null;
+	canMegaEvoZ?: (this: BattleActions, pokemon: Pokemon) => string | null;
+	canMegaEvoA?: (this: BattleActions, pokemon: Pokemon) => string | null;
+	canMegaEvoQ?: (this: BattleActions, pokemon: Pokemon) => string | null;
 	runMegaEvoX?: (this: BattleActions, pokemon: Pokemon) => boolean;
 	runMegaEvoY?: (this: BattleActions, pokemon: Pokemon) => boolean;
+	runMegaEvoZ?: (this: BattleActions, pokemon: Pokemon) => boolean;
+	runMegaEvoA?: (this: BattleActions, pokemon: Pokemon) => boolean;
+	runMegaEvoQ?: (this: BattleActions, pokemon: Pokemon) => boolean;
+	megaLetterTarget?: (this: BattleActions, pokemon: Pokemon, letter: 'X' | 'Y' | 'Z' | 'A' | 'Q') => string | null;
+	runMegaLetter?: (this: BattleActions, pokemon: Pokemon, letter: 'X' | 'Y' | 'Z' | 'A' | 'Q') => boolean;
+	revertMegaLetter?: (this: BattleActions, pokemon: Pokemon) => void;
 	canTerastallize(pokemon: Pokemon) {
-		if (pokemon.getItem().zMove || pokemon.canMegaEvo || this.dex.gen !== 9) { return null; }
+		if (pokemon.canMegaEvo || this.dex.gen !== 9) { return null; }
 		return pokemon.teraType;
 	}
 	terastallize(pokemon: Pokemon) {
-		if (pokemon.species.baseSpecies === 'Ogerpon' && !['Fire', 'Grass', 'Rock', 'Water'].includes(pokemon.teraType) &&
-			(!pokemon.illusion || pokemon.illusion.species.baseSpecies === 'Ogerpon')) {
-			this.battle.hint("If Ogerpon Terastallizes into a type other than Fire, Grass, Rock, or Water, the game softlocks.");
-			return;
-		}
 		if (pokemon.illusion && ['Ogerpon', 'Terapagos'].includes(pokemon.illusion.species.baseSpecies)) {
-			// Check which ability slot has Illusion
-			const illusionSlot = pokemon.ability1 === 'illusion' ? 1 : 2;
-			const abilityStateKey = illusionSlot === 1 ? 'abilityState1' : 'abilityState2';
-			this.battle.singleEvent('End', this.dex.abilities.get('Illusion'), pokemon[abilityStateKey], pokemon);
+			const illusionState =
+				(pokemon as any).ability1 === 'illusion' ? (pokemon as any).abilityState1 :
+				(pokemon as any).ability2 === 'illusion' ? (pokemon as any).abilityState2 :
+				null;
+			if (illusionState) { this.battle.singleEvent('End', this.dex.abilities.get('Illusion'), illusionState, pokemon); }
 		}
-		// --- ISL Tera Charge: snapshot state so we can un-tera later ---
+		// Tera Charge: snapshot state so we can un-tera later
 		const p: any = pokemon;
 		if (!p.preTeraState) {
 			p.preTeraState = {
@@ -1578,9 +1421,8 @@ export class BattleActions {
 		pokemon.knownType = true;
 		pokemon.apparentType = type;
 		if (pokemon.species.baseSpecies === 'Ogerpon') {
-			let ogerponSpecies = toID(pokemon.species.battleOnly || pokemon.species.id);
-			ogerponSpecies += ogerponSpecies === 'ogerpon' ? 'tealtera' : 'tera';
-			pokemon.formeChange(ogerponSpecies, null, true);
+			const tera = pokemon.species.id === 'ogerpon' ? 'tealtera' : 'tera';
+			pokemon.formeChange(pokemon.species.id + tera, null, true);
 		}
 		if (pokemon.species.name === 'Terapagos-Terastal') { pokemon.formeChange('Terapagos-Stellar', null, true); }
 		if (pokemon.species.baseSpecies === 'Morpeko' && !pokemon.transformed && pokemon.baseSpecies.id !== pokemon.species.id )  {
@@ -1606,39 +1448,34 @@ export class BattleActions {
 		(pokemon as any).teraOriginalSpecies = undefined;
 	}
 	/**
-	 * Guard: Standalone battle action that provides +2 priority protection
-	 * - Only blocks attacking moves (those with protect flag)
-	 * - 2-turn cooldown
-	 * - Cooldown persists through switches
-	 * @param pokemon - The Pokemon attempting to use Guard
-	 * @returns true if can use Guard (cooldown is 0 or undefined), null otherwise
+	 * Guard Action: a standalone battle action, separate from the moveset, that runs
+	 * whichever move is currently equipped in the Pokemon's Guard Action slot
+	 * (see Pokemon#getGuardActionMove). Cooldown length comes from the move's own
+	 * `guardActionCD`, not a hardcoded constant.
+	 * @param pokemon - The Pokemon attempting to use its Guard Action
+	 * @returns the Move that would be used, or null if unavailable right now
 	 */
-	canGuard(pokemon: Pokemon) {
-		// Guard can only be used if the cooldown is 0 or undefined
-		if (pokemon.guardCooldown && pokemon.guardCooldown > 0) return null;
-		return true;
+	canGuardAction(pokemon: Pokemon): Move | null {
+		const guardMove = pokemon.getGuardActionMove();
+		if (!guardMove) return null;
+		if (pokemon.guardActionCooldown && pokemon.guardActionCooldown > 0) return null;
+		if (this.battle.runEvent('CanGuardAction', pokemon) === false) return null;
+		return guardMove;
 	}
 	/**
-	 * Execute the Guard action for a Pokemon
-	 * This is a standalone battle action (not a regular move)
-	 * Uses the guardblock pseudo-move which:
-	 * - Has +2 priority (vs Protect's +4)
-	 * - Only blocks moves with protect flag (attacking moves)
-	 * - Allows status moves to bypass (unique to Guard)
-	 * @param pokemon - The Pokemon using Guard
+	 * Execute the Guard Action for a Pokemon, using whichever move is currently
+	 * resolved for its Guard Action slot.
+	 * @param pokemon - The Pokemon using its Guard Action
 	 */
-	guard(pokemon: Pokemon) {
-		// Use the guardblock pseudo-move to perform the Guard action
-		const guardMove = this.dex.getActiveMove('guardblock');
+	useGuardAction(pokemon: Pokemon) {
+		const guardMove = pokemon.getGuardActionMove();
 		if (!guardMove) {
-			this.battle.debug('Guard move not found');
+			this.battle.debug('Guard Action move not found');
 			return;
 		}
-		// Use the move on the pokemon itself
 		this.useMove(guardMove, pokemon, { sourceEffect: null });
-		// Set the cooldown to 2 turns (will decrement at end of each turn)
-		// This cooldown persists even if the Pokemon switches out
-		pokemon.guardCooldown = 2;
-		this.battle.add('-message', `${pokemon.name} used Guard!`);
+		// Cooldown comes from the move itself; default to 2 if unset for safety.
+		pokemon.guardActionCooldown = guardMove.guardActionCD ?? 2;
+		this.battle.add('-message', `${pokemon.name} used ${guardMove.name}!`);
 	}
 }

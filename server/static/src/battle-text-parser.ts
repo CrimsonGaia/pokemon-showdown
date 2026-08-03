@@ -136,7 +136,7 @@ export class BattleTextParser {
 			else if (id === 'skillswap' || id === 'mummy' || id === 'lingeringaroma' || id === 'wanderingspirit') {
 				kwArgs.ability = arg3;
 				kwArgs.ability2 = arg4;
-			} else if (['eeriespell', 'gmaxdepletion', 'spite', 'grudge', 'forewarn', 'sketch', 'leppaberry', 'mysteryberry',].includes(id)) {
+			} else if (['eeriespell', 'spite', 'grudge', 'forewarn', 'sketch', 'leppaberry', 'mysteryberry',].includes(id)) {
 				kwArgs.move = arg3;
 				kwArgs.number = arg4;
 			}
@@ -337,12 +337,10 @@ export class BattleTextParser {
 		case 'done' : case 'turn':
 			return 'break';
 		case 'move' : case 'cant': case 'switch': case 'drag': case 'upkeep': case 'start':
-		case '-mega': case '-candynamax': case '-terastallize':
+		case '-mega': case '-terastallize':
 			return 'major';
 		case 'switchout': case 'faint':
 			return 'preMajor';
-		case '-zpower':
-			return 'postMajor';
 		case '-damage': {
 			const id = BattleTextParser.effectId(kwArgs.from);
 			if (id === 'confusion') return 'major';
@@ -495,14 +493,6 @@ export class BattleTextParser {
 				this.template(move ? 'cant' : 'cantNoMove');
 			const line1 = this.maybeAbility(effect, kwArgs.of || pokemon);
 			return line1 + template.replace('[POKEMON]', this.pokemon(pokemon)).replace('[MOVE]', move);
-		}
-		case '-candynamax': {
-			let [, side] = args;
-			const own = this.own(side);
-			let template = '';
-			if (this.turn === 1) { if (own) template = this.template('canDynamax', own); } 
-			else { template = this.template('canDynamax', own); }
-			return template.replace('[TRAINER]', this.trainer(side));
 		}
 		case 'message': {
 			let [, message] = args;
@@ -981,19 +971,9 @@ export class BattleTextParser {
 			const pokemonName = this.pokemon(pokemon);
 			return template.replace('[POKEMON]', pokemonName).replace('[TYPE]', type);
 		}
-		case '-zpower': {
-			const [, pokemon] = args;
-			const template = this.template('zPower');
-			return template.replace('[POKEMON]', this.pokemon(pokemon));
-		}
 		case '-burst': {
 			const [, pokemon] = args;
 			const template = this.template('activate', "Ultranecrozium Z");
-			return template.replace('[POKEMON]', this.pokemon(pokemon));
-		}
-		case '-zbroken': {
-			const [, pokemon] = args;
-			const template = this.template('zBroken');
 			return template.replace('[POKEMON]', this.pokemon(pokemon));
 		}
 		case '-hitcount': {

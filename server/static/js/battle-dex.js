@@ -262,6 +262,7 @@ afdMode=void 0;this.
 
 
 
+
 moves={
 get:function(nameOrMove){
 if(nameOrMove&&typeof nameOrMove!=='string'){return nameOrMove;}
@@ -300,6 +301,7 @@ return move;
 }
 };this.
 
+
 flags={
 get:function(nameOrFlag){
 if(nameOrFlag&&typeof nameOrFlag!=='string'){return nameOrFlag;}
@@ -316,7 +318,9 @@ if(!data)data={exists:false};
 var flag=new Flag(id,name,data);
 window.BattleFlags[id]=BattleFlags;
 return flag;
-}};this.
+}
+};this.
+
 items={
 get:function(nameOrItem){
 if(nameOrItem&&typeof nameOrItem!=='string'){return nameOrItem;}
@@ -335,6 +339,7 @@ window.BattleItems[id]=item;
 return item;
 }
 };this.
+
 abilities={
 get:function(nameOrAbility){
 if(nameOrAbility&&typeof nameOrAbility!=='string'){return nameOrAbility;}
@@ -353,6 +358,7 @@ window.BattleAbilities[id]=ability;
 return ability;
 }
 };this.
+
 species={
 get:function(nameOrSpecies){
 if(nameOrSpecies&&typeof nameOrSpecies!=='string'){return nameOrSpecies;}
@@ -378,7 +384,6 @@ var species;
 if(data&&typeof data.exists==='boolean'){species=data;}else
 {var _evos;
 if(!data)data={exists:false};
-if(!data.tier&&id.endsWith('totem')){data.tier=_this.species.get(id.slice(0,-5)).tier;}
 if(!data.tier&&data.baseSpecies&&toID(data.baseSpecies)!==id){data.tier=_this.species.get(data.baseSpecies).tier;}
 data.nfe=data.id==='dipplin'||!!((_evos=data.evos)!=null&&_evos.some(function(evo){
 var evoSpecies=_this.species.get(evo);
@@ -408,6 +413,7 @@ break;
 return species;
 }
 };this.
+
 types={
 allCache:null,
 namesCache:null,
@@ -419,9 +425,7 @@ type=((_window$BattleTypeCha=window.BattleTypeChart)==null?void 0:_window$Battle
 if(type.damageTaken)type.exists=true;
 if(!type.id)type.id=id;
 if(!type.name)type.name=name;
-if(!type.effectType){
-type.effectType='Type';
-}
+if(!type.effectType){type.effectType='Type';}
 }
 return type;
 },
@@ -459,17 +463,8 @@ var el=document.createElement('script');
 el.src=path+'data/pokedex-mini-bw.js'+qs;
 document.getElementsByTagName('body')[0].appendChild(el);
 };_proto2.
-getSpriteData=function getSpriteData(pokemon,isFront)
-
-
-
-
-
-
-
-{var options=arguments.length>2&&arguments[2]!==undefined?arguments[2]:{gen:6};
+getSpriteData=function getSpriteData(pokemon,isFront){var options=arguments.length>2&&arguments[2]!==undefined?arguments[2]:{gen:6};
 var mechanicsGen=options.gen||6;
-var isDynamax=!!options.dynamax;
 if(pokemon instanceof Pokemon){
 if(pokemon.volatiles.transform){
 options.shiny=pokemon.volatiles.transform[2];
@@ -478,27 +473,10 @@ options.gender=pokemon.volatiles.transform[3];
 options.shiny=pokemon.shiny;
 options.gender=pokemon.gender;
 }
-var isGigantamax=false;
-if(pokemon.volatiles.dynamax){
-if(pokemon.volatiles.dynamax[1]){isGigantamax=true;}else
-if(options.dynamax!==false){isDynamax=true;}
-}
-pokemon=pokemon.getSpeciesForme()+(isGigantamax?'-Gmax':'');
+pokemon=pokemon.getSpeciesForme();
 }
 var species=Dex.species.get(pokemon);
-
-if(species.name.endsWith('-Gmax'))isDynamax=false;
-var spriteData={
-gen:mechanicsGen,
-w:96,
-h:96,
-y:0,
-url:Dex.resourcePrefix+'sprites/',
-pixelated:true,
-isFrontSprite:false,
-cryurl:'',
-shiny:options.shiny
-};
+var spriteData={gen:mechanicsGen,w:96,h:96,y:0,url:Dex.resourcePrefix+'sprites/',pixelated:true,isFrontSprite:false,cryurl:'',shiny:options.shiny};
 var name=species.spriteid;
 var dir;
 var facing;
@@ -525,7 +503,6 @@ spriteData.gen=Math.max(graphicsGen,Math.min(species.gen,5));
 var baseDir=['','gen1','gen2','gen3','gen4','gen5','','','',''][spriteData.gen];
 var miscData=null;
 var speciesid=species.id;
-if(species.isTotem)speciesid=toID(name);
 if(window.BattlePokemonSprites)miscData=BattlePokemonSprites[speciesid];
 if(!miscData&&window.BattlePokemonSpritesBW)miscData=BattlePokemonSpritesBW[speciesid];
 if(!miscData)miscData={};
@@ -536,7 +513,6 @@ var formeid=species.formeid;
 if(species.isMega||formeid&&(
 formeid==='-crowned'||
 formeid==='-eternal'||
-formeid==='-eternamax'||
 formeid==='-four'||
 formeid==='-hangry'||
 formeid==='-hero'||
@@ -573,15 +549,6 @@ dir='afd'+dir;
 spriteData.url+=dir+'/'+name+'.png';
 
 
-if(isDynamax&&!options.noScale){
-spriteData.w*=0.25;
-spriteData.h*=0.25;
-spriteData.y+=-22;
-}else if(species.isTotem&&!options.noScale){
-spriteData.w*=0.5;
-spriteData.h*=0.5;
-spriteData.y+=-11;
-}
 return spriteData;
 }
 
@@ -629,15 +596,6 @@ spriteData.h*=2/1.5;
 spriteData.y+=-11;
 }
 if(spriteData.gen<=2)spriteData.y+=2;
-}
-if(isDynamax&&!options.noScale){
-spriteData.w*=2;
-spriteData.h*=2;
-spriteData.y+=-22;
-}else if(species.isTotem&&!options.noScale){
-spriteData.w*=1.5;
-spriteData.h*=1.5;
-spriteData.y+=-11;
 }
 return spriteData;
 };_proto2.
@@ -754,6 +712,7 @@ var shiny=data.shiny?'-shiny':'';
 var resize=data.h?"background-size:"+data.h+"px":'';
 return"background-image:url("+Dex.resourcePrefix+data.spriteDir+shiny+"/"+data.spriteid+".png);background-position:"+(data.x+xOffset)+"px "+(data.y+yOffset)+"px;background-repeat:no-repeat;"+resize;
 };_proto2.
+
 getItemIcon=function getItemIcon(item){var _item;
 var num=0;
 if(typeof item==='string'&&window.BattleItems)item=window.BattleItems[toID(item)];
@@ -762,19 +721,22 @@ var top=Math.floor(num/16)*24;
 var left=num%16*24;
 return"background:transparent url("+Dex.resourcePrefix+"sprites/itemicons-sheet.png?v1) no-repeat scroll -"+left+"px -"+top+"px";
 };_proto2.
-getTypeIcon=function getTypeIcon(type,b){
-type=this.types.get(type).name;
-if(!type)type='???';
-var sanitizedType=type.replace(/\?/g,'%3f');
-return"<img src=\""+Dex.resourcePrefix+"sprites/types/"+sanitizedType+".png\" alt=\""+type+"\" height=\"14\" width=\"32\" class=\"pixelated"+(b?' b':'')+"\" />";
+getTypeIcon=function getTypeIcon(type,b,type2){
+var t1=type?this.types.get(type).name:'???';
+var t2=type2&&this.types.get(type2)?
+this.types.get(type2).name:
+null;
+var icon=function(t){
+var sanitized=t.replace(/\?/g,'%3f');
+return"<img src=\""+Dex.resourcePrefix+"sprites/types/"+sanitized+".png\" alt=\""+t+"\" height=\"14\" width=\"32\" class=\"pixelated"+(b?' b':'')+"\" />";
+};
+return icon(t1)+(t2?icon(t2):'');
 };_proto2.
 getFlagIcon=function getFlagIcon(flag){
 if(!flag)return"\u2014";
 var flagID=toID(flag);
 var sanitizedFlag='';
 switch(flagID){
-case'zmove':sanitizedFlag='Z-Move';break;
-case'maxmove':sanitizedFlag='Max Move';break;
 case'contact':sanitizedFlag='Contact';break;
 case'binding':case'bind':sanitizedFlag='Bind';break;
 case'bite':sanitizedFlag='Bite';break;
@@ -815,13 +777,11 @@ case'nonreflectable':sanitizedFlag='Non-Reflectable';break;
 case'nonmirror':sanitizedFlag='Non-Mirror';break;
 case'nonsnatchable':sanitizedFlag='Non-Snatchable';break;
 case'bypasssubstitute':sanitizedFlag='Bypass Substitute';break;
-case'gmaxmove':sanitizedFlag='G-Max Move';break;
 default:
 sanitizedFlag='undefined';
 break;
 }
 var flagText=sanitizedFlag.charAt(0).toUpperCase()+sanitizedFlag.slice(1);
-
 return"<img src=\"sprites/flagicons/"+sanitizedFlag+".png\" alt=\""+flagText+"\" height=\"32\" width=\"132\" class=\"pixelated\" onerror=\"this.style.display='none'; this.nextSibling.style.display='inline';\" /><span style=\"display: none;\">"+flagText+"</span>";
 };_proto2.
 getCategoryIcon=function getCategoryIcon(category){
@@ -880,17 +840,12 @@ name=BattleAliases[id];
 id=toID(name);
 }
 if(_this2.cache.Moves.hasOwnProperty(id))return _this2.cache.Moves[id];
-
 var base=Dex.moves.get(name);
 var data=Object.assign({},base);
-
-
 for(var i=Dex.gen-1;i>=_this2.gen;i--){var _window$BattleTeambui;
 var table=(_window$BattleTeambui=window.BattleTeambuilderTable)==null?void 0:_window$BattleTeambui["gen"+i];
 if(table!=null&&table.overrideMoveData&&id in table.overrideMoveData)Object.assign(data,table.overrideMoveData[id]);
 }
-
-
 var modTable=(_window$BattleTeambui2=window.BattleTeambuilderTable)==null?void 0:_window$BattleTeambui2[_this2.modid];
 var modHas=!!(modTable!=null&&modTable.overrideMoveData&&id in modTable.overrideMoveData);
 if(modHas)Object.assign(data,modTable.overrideMoveData[id]);
@@ -899,9 +854,7 @@ data.exists=true;
 data.id||(data.id=id);
 data.name||(data.name=name);
 }
-
 if(_this2.gen<=3&&data.category!=='Status')data.category=Dex.getGen3Category(data.type);
-
 var move=new Move(id,data.name||name,data);
 _this2.cache.Moves[id]=move;
 return move;
@@ -916,25 +869,20 @@ name=BattleAliases[id];
 id=toID(name);
 }
 if(_this2.cache.Flags.hasOwnProperty(id))return _this2.cache.Flags[id];
-
 var base=Dex.flags.get(name);
 var data=Object.assign({},base);
-
 for(var i=Dex.gen-1;i>=_this2.gen;i--){var _window$BattleTeambui3;
 var table=(_window$BattleTeambui3=window.BattleTeambuilderTable)==null?void 0:_window$BattleTeambui3["gen"+i];
 if(table!=null&&table.overrideFlagData&&id in table.overrideFlagData)Object.assign(data,table.overrideFlagData[id]);
 }
-
 var modTable=(_window$BattleTeambui4=window.BattleTeambuilderTable)==null?void 0:_window$BattleTeambui4[_this2.modid];
 var modHas=!!(modTable!=null&&modTable.overrideFlagData&&id in modTable.overrideFlagData);
 if(modHas)Object.assign(data,modTable.overrideFlagData[id]);
-
 if(modHas&&base&&base.exists===false){
 data.exists=true;
 data.id||(data.id=id);
 data.name||(data.name=name);
 }
-
 var flag=new Flag(id,data.name||name,data);
 _this2.cache.Flags[id]=flag;
 return flag;
@@ -976,22 +924,12 @@ if(_this2.modid==='gen9indigostarstorm'){var _data$num;
 var allowedSet=ISL_ALLOWED_ITEM_CACHE.get(_this2);
 if(!allowedSet){
 allowedSet=new Set();
-
-if(modItems){
-for(var itemid in modItems){
-allowedSet.add(toID(itemid));
-}
-}
-
+if(modItems){for(var itemid in modItems){allowedSet.add(toID(itemid));}}
 ISL_ALLOWED_ITEM_CACHE.set(_this2,allowedSet);
 }
-
 var num=(_data$num=data.num)!=null?_data$num:base==null?void 0:base.num;
 var isCustom=typeof num==='number'&&(num>=10000||num<0);
-
-if(!isCustom&&!allowedSet.has(id)){
-data.isNonstandard='Past';
-}
+if(!isCustom&&!allowedSet.has(id)){data.isNonstandard='Past';}
 }
 var item=new Item(id,data.name||name,data);
 _this2.cache.Items[id]=item;
@@ -1007,25 +945,20 @@ name=BattleAliases[id];
 id=toID(name);
 }
 if(_this2.cache.Abilities.hasOwnProperty(id))return _this2.cache.Abilities[id];
-
 var base=Dex.abilities.get(name);
 var data=Object.assign({},base);
-
 for(var i=Dex.gen-1;i>=_this2.gen;i--){var _window$BattleTeambui7;
 var table=(_window$BattleTeambui7=window.BattleTeambuilderTable)==null?void 0:_window$BattleTeambui7["gen"+i];
 if(table!=null&&table.overrideAbilityData&&id in table.overrideAbilityData)Object.assign(data,table.overrideAbilityData[id]);
 }
-
 var modTable=(_window$BattleTeambui8=window.BattleTeambuilderTable)==null?void 0:_window$BattleTeambui8[_this2.modid];
 var modHas=!!(modTable!=null&&modTable.overrideAbilityData&&id in modTable.overrideAbilityData);
 if(modHas)Object.assign(data,modTable.overrideAbilityData[id]);
-
 if(modHas&&base&&base.exists===false){
 data.exists=true;
 data.id||(data.id=id);
 data.name||(data.name=name);
 }
-
 var ability=new Ability(id,data.name||name,data);
 _this2.cache.Abilities[id]=ability;
 return ability;
@@ -1040,21 +973,17 @@ name=BattleAliases[id];
 id=toID(name);
 }
 if(_this2.cache.Species.hasOwnProperty(id))return _this2.cache.Species[id];
-
 var base=Dex.species.get(name);
 var data=Object.assign({},base);
-
 
 for(var i=Dex.gen-1;i>=_this2.gen;i--){var _window$BattleTeambui9;
 var table=(_window$BattleTeambui9=window.BattleTeambuilderTable)==null?void 0:_window$BattleTeambui9["gen"+i];
 if(table!=null&&table.overrideSpeciesData&&id in table.overrideSpeciesData)Object.assign(data,table.overrideSpeciesData[id]);
 }
 
-
 var modTable=(_window$BattleTeambui10=window.BattleTeambuilderTable)==null?void 0:_window$BattleTeambui10[_this2.modid];
 var modHas=!!(modTable!=null&&modTable.overrideSpeciesData&&id in modTable.overrideSpeciesData);
 if(modHas)Object.assign(data,modTable.overrideSpeciesData[id]);
-
 
 if(modHas&&base&&base.exists===false){
 data.exists=true;
@@ -1069,52 +998,38 @@ var allowedSet=ISL_ALLOWED_CACHE.get(_this2);
 if(!allowedSet){
 var allowedIds=[];
 
-
 var rows=(modTable==null?void 0:modTable.tiers)||(modTable==null?void 0:modTable.tierSet);
 if(rows){for(var _i10=0;_i10<
 rows.length;_i10++){var row=rows[_i10];
 
-if(typeof row==='string'){
-allowedIds.push(toID(row));
-}else if(Array.isArray(row)&&row[0]==='pokemon'&&row[1]){
-allowedIds.push(toID(row[1]));
+if(typeof row==='string'){allowedIds.push(toID(row));}else
+if(Array.isArray(row)&&row[0]==='pokemon'&&row[1]){allowedIds.push(toID(row[1]));}
 }
 }
-}
-
 allowedSet=new Set(allowedIds);
 ISL_ALLOWED_CACHE.set(_this2,allowedSet);
 }
 
-
 var num=(_data$num2=data.num)!=null?_data$num2:base==null?void 0:base.num;
 var isCustom=typeof num==='number'&&(num>=10000||num<0);
 
-
 var baseId=toID(data.baseSpecies||data.name||name);
 var ok=isCustom||allowedSet.has(id)||allowedSet.has(baseId);
-
 if(!ok)data.isNonstandard='Past';
 }
 if(_this2.gen<3||_this2.modid==='gen7letsgo')data.abilities={0:"No Ability"};
-
 if(modTable!=null&&modTable.overrideTier&&id in modTable.overrideTier)data.tier=modTable.overrideTier[id];
-if(!data.tier&&id.endsWith('totem'))data.tier=_this2.species.get(id.slice(0,-5)).tier;
 if(!data.tier&&data.baseSpecies&&toID(data.baseSpecies)!==id)data.tier=_this2.species.get(data.baseSpecies).tier;
 if(data.gen&&data.gen>_this2.gen)data.tier='Illegal';
-
 data.nfe=data.id==='dipplin'||!!((_data$evos=data.evos)!=null&&_data$evos.some(function(evo){
 var evoSpecies=_this2.species.get(evo);
-return!evoSpecies.isNonstandard||evoSpecies.isNonstandard===data.isNonstandard||
-evoSpecies.isNonstandard==="Unobtainable";
+return!evoSpecies.isNonstandard||evoSpecies.isNonstandard===data.isNonstandard||evoSpecies.isNonstandard==="Unobtainable";
 }));
-
 var species=new Species(id,data.name||name,data);
 _this2.cache.Species[id]=species;
 return species;
 }
 };this.
-
 types={
 namesCache:null,
 names:function(){var _window$BattleTeambui11;
@@ -1122,7 +1037,6 @@ if(_this2.types.namesCache)return _this2.types.namesCache;
 var names=Dex.types.names();
 if(!names.length)return[];
 var curNames=[].concat(names);
-
 var modTable=(_window$BattleTeambui11=window.BattleTeambuilderTable)==null?void 0:_window$BattleTeambui11[_this2.modid];
 if(modTable!=null&&modTable.overrideTypeChart){for(var _i12=0,_Object$keys2=
 Object.keys(modTable.overrideTypeChart);_i12<_Object$keys2.length;_i12++){var typeId=_Object$keys2[_i12];
@@ -1130,10 +1044,6 @@ var typeName=typeId.charAt(0).toUpperCase()+typeId.slice(1);
 if(!curNames.includes(typeName))curNames.push(typeName);
 }
 }
-
-if(_this2.gen<6)curNames.splice(curNames.indexOf('Fairy'),1);
-if(_this2.gen<2)curNames.splice(curNames.indexOf('Dark'),1);
-if(_this2.gen<2)curNames.splice(curNames.indexOf('Steel'),1);
 _this2.types.namesCache=curNames;
 return curNames;
 },
@@ -1142,18 +1052,13 @@ var id=toID(name);
 name=id.substr(0,1).toUpperCase()+id.substr(1);
 var modTablePre=(_window$BattleTeambui12=window.BattleTeambuilderTable)==null?void 0:_window$BattleTeambui12[_this2.modid];
 var modHasTypePatch=!!(modTablePre!=null&&modTablePre.overrideTypeChart&&id in modTablePre.overrideTypeChart);
-
 if(_this2.cache.Types.hasOwnProperty(id)&&!modHasTypePatch)return _this2.cache.Types[id];
 var data=Object.assign({},Dex.types.get(name));
-
 var modTable=(_window$BattleTeambui13=window.BattleTeambuilderTable)==null?void 0:_window$BattleTeambui13[_this2.modid];
 if(modTable){
-if(modTable.removeType&&id in modTable.removeType){
-data.exists=false;
-}
+if(modTable.removeType&&id in modTable.removeType){data.exists=false;}
 if(modTable.overrideTypeChart&&id in modTable.overrideTypeChart){
 data=Object.assign({},data,modTable.overrideTypeChart[id]);
-
 if(data.damageTaken)data.exists=true;
 }
 }
@@ -1165,18 +1070,17 @@ break;
 }
 if(id in table.overrideTypeChart)data=Object.assign({},data,table.overrideTypeChart[id]);
 }
-
-var modTypeChart=((_BattleModData3=window.BattleModData)==null||(_BattleModData3=_BattleModData3[_this2.modid])==null?void 0:_BattleModData3.TypeChart)||((_BattleModData4=globalThis.BattleModData)==null||(_BattleModData4=_BattleModData4[_this2.modid])==null?void 0:_BattleModData4.TypeChart)||((_exports2=globalThis.exports)==null||(_exports2=_exports2.BattleModData)==null||(_exports2=_exports2[_this2.modid])==null?void 0:_exports2.TypeChart);
+var modTypeChart=((_BattleModData3=window.BattleModData)==null||(_BattleModData3=_BattleModData3[_this2.modid])==null?void 0:_BattleModData3.TypeChart)||((_BattleModData4=
+globalThis.BattleModData)==null||(_BattleModData4=_BattleModData4[_this2.modid])==null?void 0:_BattleModData4.TypeChart)||((_exports2=
+globalThis.exports)==null||(_exports2=_exports2.BattleModData)==null||(_exports2=_exports2[_this2.modid])==null?void 0:_exports2.TypeChart);
 if(modTypeChart&&modTypeChart[id]){
 data=Object.assign({},data,modTypeChart[id]);
-
 if(data.damageTaken)data.exists=true;
 }
 _this2.cache.Types[id]=data;
 return data;
 }
 };this.modid=modid;var gen=parseInt(modid.charAt(3),10);if(!modid.startsWith('gen')||!gen)throw new Error("Unsupported modid");this.gen=gen;}var _proto3=ModdedDex.prototype;_proto3.
-
 getPokeballs=function getPokeballs(){var _window2;
 if(this.pokeballs)return this.pokeballs;
 this.pokeballs=[];
@@ -1188,7 +1092,6 @@ this.pokeballs.push(data.name);
 }
 return this.pokeballs;
 };return ModdedDex;}();
-
 
 if(typeof require==='function'){
 global.Dex=Dex;

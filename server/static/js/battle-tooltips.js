@@ -49,9 +49,7 @@ if((_this$pokemon=this.pokemon)!=null&&_this$pokemon.volatiles['embargo']){
 this.comment.push(" ("+itemName+" suppressed by Embargo)");
 return false;
 }
-var ignoreKlutz=[
-"Macho Brace","Power Anklet","Power Band","Power Belt","Power Bracer","Power Lens","Power Weight"];
-
+var ignoreKlutz=["Macho Brace","Power Anklet","Power Band","Power Belt","Power Bracer","Power Lens","Power Weight"];
 if(this.tryAbility('Klutz')&&!ignoreKlutz.includes(itemName)){
 this.comment.push(" ("+itemName+" suppressed by Klutz)");
 return false;
@@ -221,8 +219,6 @@ function BattleTooltips(battle){var _this=this;this.battle=void 0;this.
 
 
 
-
-
 clickTooltipEvent=function(e){
 if(BattleTooltips.isLocked){
 e.preventDefault();
@@ -278,15 +274,26 @@ var serverPokemon=this.battle.myPokemon[teamIndex];
 buf=this.showMoveTooltip(move,type,pokemon,serverPokemon,gmaxMove);
 break;
 }
+case'guardaction':{
+var _move=this.battle.dex.moves.get(args[1]);
+var _teamIndex=parseInt(args[2],10);
+var _pokemon=this.battle.nearSide.active[_teamIndex+this.battle.pokemonControlled*Math.floor(this.battle.mySide.n/2)];
+if(!_pokemon)return false;
+var _serverPokemon=this.battle.myPokemon[_teamIndex];
+var cur=parseInt(args[3],10)||0;
+var max=parseInt(args[4],10)||0;
+buf=this.showGuardActionTooltip(_move,_pokemon,_serverPokemon,cur,max);
+break;
+}
 case'pokemon':{
 
 
 var sideIndex=parseInt(args[1],10);
 var side=this.battle.sides[sideIndex];
-var _pokemon=side.pokemon[parseInt(args[2],10)];
+var _pokemon2=side.pokemon[parseInt(args[2],10)];
 if(args[3]==='illusion'){
 buf='';
-var species=_pokemon.getBaseSpecies().baseSpecies;
+var species=_pokemon2.getBaseSpecies().baseSpecies;
 var index=1;for(var _i6=0,_side$pokemon2=
 side.pokemon;_i6<_side$pokemon2.length;_i6++){var otherPokemon=_side$pokemon2[_i6];
 if(otherPokemon.getBaseSpecies().baseSpecies===species){
@@ -294,7 +301,7 @@ buf+=this.showPokemonTooltip(otherPokemon,null,false,index);
 index++;
 }
 }
-}else{buf=this.showPokemonTooltip(_pokemon);}
+}else{buf=this.showPokemonTooltip(_pokemon2);}
 break;
 }
 case'activepokemon':{
@@ -308,12 +315,12 @@ if(activeIndex>=1&&this.battle.sides.length>2){
 pokemonIndex-=1;
 _side=this.battle.sides[_side.n+2];
 }
-var _pokemon2=_side.active[activeIndex];
-var _serverPokemon=null;
-if(_side===this.battle.mySide&&this.battle.myPokemon){_serverPokemon=this.battle.myPokemon[pokemonIndex];}
-if(_side===this.battle.mySide.ally&&this.battle.myAllyPokemon){_serverPokemon=this.battle.myAllyPokemon[pokemonIndex];}
-if(!_pokemon2)return false;
-buf=this.showPokemonTooltip(_pokemon2,_serverPokemon,true);
+var _pokemon3=_side.active[activeIndex];
+var _serverPokemon2=null;
+if(_side===this.battle.mySide&&this.battle.myPokemon){_serverPokemon2=this.battle.myPokemon[pokemonIndex];}
+if(_side===this.battle.mySide.ally&&this.battle.myAllyPokemon){_serverPokemon2=this.battle.myAllyPokemon[pokemonIndex];}
+if(!_pokemon3)return false;
+buf=this.showPokemonTooltip(_pokemon3,_serverPokemon2,true);
 break;
 }
 case'switchpokemon':{
@@ -321,13 +328,13 @@ case'switchpokemon':{
 
 
 var _activeIndex=parseInt(args[1],10);
-var _pokemon3=null;
+var _pokemon4=null;
 
 
 
 
-var _serverPokemon2=this.battle.myPokemon[_activeIndex];
-buf=this.showPokemonTooltip(_pokemon3,_serverPokemon2);
+var _serverPokemon3=this.battle.myPokemon[_activeIndex];
+buf=this.showPokemonTooltip(_pokemon4,_serverPokemon3);
 break;
 }
 case'allypokemon':{
@@ -335,12 +342,12 @@ case'allypokemon':{
 
 
 var _activeIndex2=parseInt(args[1],10);
-var _pokemon4=null;
+var _pokemon5=null;
 
 
 
-var _serverPokemon3=this.battle.myAllyPokemon?this.battle.myAllyPokemon[_activeIndex2]:null;
-buf=this.showPokemonTooltip(_pokemon4,_serverPokemon3);
+var _serverPokemon4=this.battle.myAllyPokemon?this.battle.myAllyPokemon[_activeIndex2]:null;
+buf=this.showPokemonTooltip(_pokemon5,_serverPokemon4);
 break;
 }
 case'field':{
@@ -420,64 +427,7 @@ hideTooltip=function hideTooltip(){BattleTooltips.hideTooltip();};_proto2.
 
 
 
-getStatusZMoveEffect=function getStatusZMoveEffect(move){
-if(move.zMove.effect in BattleTooltips.zMoveEffects){return BattleTooltips.zMoveEffects[move.zMove.effect];}
-var boostText='';
-if(move.zMove.boost){boostText=Object.entries(move.zMove.boost).map(function(_ref){var stat=_ref[0],boost=_ref[1];return BattleTextParser.stat(stat)+" +"+boost;}).join(', ');}
-return boostText;
-};_proto2.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-getMaxMoveFromType=function getMaxMoveFromType(type,gmaxMove){
-if(gmaxMove){
-if(typeof gmaxMove==='string')gmaxMove=this.battle.dex.moves.get(gmaxMove);
-if(type===gmaxMove.type)return gmaxMove;
-}
-return this.battle.dex.moves.get(BattleTooltips.maxMoveTable[type]);
-};_proto2.
-showMoveTooltip=function showMoveTooltip(move,isZOrMax,pokemon,serverPokemon,gmaxMove){
+showMoveTooltip=function showMoveTooltip(move,isZOrMax,pokemon,serverPokemon,gmaxMove,cooldownText){
 var text='';
 var zEffect='';
 var foeActive=pokemon.side.foe.active;
@@ -489,61 +439,6 @@ var item=this.battle.dex.items.get(serverPokemon.item);
 var value=new ModifiableValue(this.battle,pokemon,serverPokemon);
 var _this$getMoveType=this.getMoveType(move,value,gmaxMove||isZOrMax==='maxmove'),moveType=_this$getMoveType[0],category=_this$getMoveType[1];
 var categoryDiff=move.category!==category;
-if(isZOrMax==='zmove'){
-if(item.zMoveFrom===move.name){move=this.battle.dex.moves.get(item.zMove);}else
-if(move.category==='Status'){
-move=new Move(move.id,"",Object.assign({},
-move,{
-name:'Z-'+move.name})
-);
-zEffect=this.getStatusZMoveEffect(move);
-}else{
-var moveName=BattleTooltips.zMoveTable[item.zMoveType];
-var zMove=this.battle.dex.moves.get(moveName);
-var movePower=move.zMove.basePower;
-
-if(!movePower&&move.id.startsWith('hiddenpower')){movePower=this.battle.dex.moves.get('hiddenpower').zMove.basePower;}
-if(move.id==='weatherball'){
-switch(this.battle.weather){
-case'sunnyday':
-case'desolateland':
-zMove=this.battle.dex.moves.get(BattleTooltips.zMoveTable['Fire']);
-break;
-case'raindance':
-case'primordialsea':
-zMove=this.battle.dex.moves.get(BattleTooltips.zMoveTable['Water']);
-break;
-case'sandstorm':
-zMove=this.battle.dex.moves.get(BattleTooltips.zMoveTable['Rock']);
-break;
-case'hail':
-case'snowscape':
-zMove=this.battle.dex.moves.get(BattleTooltips.zMoveTable['Ice']);
-break;
-}
-}
-move=new Move(zMove.id,zMove.name,Object.assign({},
-zMove,{
-category:move.category,
-basePower:movePower})
-);
-categoryDiff=false;
-}
-}else if(isZOrMax==='maxmove'){
-if(move.category==='Status'){
-move=this.battle.dex.moves.get('Max Guard');
-}else{
-var maxMove=this.getMaxMoveFromType(moveType,gmaxMove);
-var basePower=['gmaxdrumsolo','gmaxfireball','gmaxhydrosnipe'].includes(maxMove.id)?
-maxMove.basePower:move.maxMove.basePower;
-move=new Move(maxMove.id,maxMove.name,Object.assign({},
-maxMove,{
-category:move.category,
-basePower:basePower})
-);
-categoryDiff=false;
-}
-}
 if(categoryDiff){
 move=new Move(move.id,move.name,Object.assign({},
 move,{
@@ -560,16 +455,16 @@ if(category!=='Status'&&foeActive.length>1){
 
 
 var prevBasePower=null;
-var _basePower='';
+var basePower='';
 var difference=false;
 var basePowers=[];for(var _i8=0,_foeActive2=
 foeActive;_i8<_foeActive2.length;_i8++){var active=_foeActive2[_i8];
 if(!active)continue;
 value=this.getMoveBasePower(move,moveType,value,active);
-_basePower=""+value;
-if(prevBasePower===null)prevBasePower=_basePower;
-if(prevBasePower!==_basePower)difference=true;
-basePowers.push("Base power vs "+active.name+": "+_basePower);
+basePower=""+value;
+if(prevBasePower===null)prevBasePower=basePower;
+if(prevBasePower!==basePower)difference=true;
+basePowers.push("Base power vs "+active.name+": "+basePower);
 }
 if(difference){
 text+='<p>'+basePowers.join('<br />')+'</p>';
@@ -598,6 +493,7 @@ var calledMove=this.battle.dex.moves.get(calls);
 text+="Calls "+Dex.getTypeIcon(this.getMoveType(calledMove,value)[0])+" "+calledMove.name;
 }
 text+="<p>Accuracy: "+accuracy+"</p>";
+if(cooldownText)text+="<p>"+cooldownText+"</p>";
 if(zEffect)text+="<p>Z-Effect: "+zEffect+"</p>";
 if(this.battle.hardcoreMode){text+="<p class=\"tooltip-section\">"+move.shortDesc+"</p>";}else
 {
@@ -655,6 +551,13 @@ if(_failMessage)text+="<p>"+_failMessage+"</p>";
 }
 }
 return text;
+};_proto2.
+showGuardActionTooltip=function showGuardActionTooltip(move,pokemon,serverPokemon,cur,max){
+var remaining=Math.max(0,max-cur);
+var cooldownText=cur>=max?"Guard Action Cooldown: Ready":"Guard Action Cooldown: "+
+
+remaining+" more action"+(remaining===1?'':'s')+" <small>("+cur+"/"+max+")</small>";
+return this.showMoveTooltip(move,'',pokemon,serverPokemon,undefined,cooldownText);
 };_proto2.
 
 
@@ -714,6 +617,7 @@ if(pokemon.ability==='Poison Heal'||pokemon.ability==='Magic Guard'){text+=" <sm
 }
 text+='</p>';
 }
+text+=this.renderGuardActionBadge(clientPokemon);
 var supportsAbilities=this.battle.gen>2&&!this.battle.tier.includes("Let's Go");
 var abilityText='';
 if(supportsAbilities){abilityText=this.getPokemonAbilityText(clientPokemon,serverPokemon,isActive,!!illusionIndex&&illusionIndex>1);}
@@ -749,6 +653,7 @@ if(abilityText&&itemText){text+=' / ';}
 text+=itemText;
 text+='</p>';
 }
+text+=this.renderWeaponState(clientPokemon,serverPokemon);
 text+=this.renderStats(clientPokemon,serverPokemon,!isActive);
 if(serverPokemon&&!isActive){
 
@@ -772,10 +677,10 @@ text+='</p>';
 
 text+="<p class=\"tooltip-section\">";for(var _i14=0,_clientPokemon$moveTr2=
 clientPokemon.moveTrack;_i14<_clientPokemon$moveTr2.length;_i14++){var _row=_clientPokemon$moveTr2[_i14];text+=this.getPPUseText(_row)+"<br />";}
-if(clientPokemon.moveTrack.filter(function(_ref2){var moveName=_ref2[0];
+if(clientPokemon.moveTrack.filter(function(_ref){var moveName=_ref[0];
 if(moveName.startsWith('*'))return false;
 var move=_this3.battle.dex.moves.get(moveName);
-return!move.isZ&&!move.isMax&&move.name!=='Mimic';
+return move.name!=='Mimic';
 }).length>4){text+="(More than 4 moves is usually a sign of Illusion Zoroark/Zorua.) ";}
 if(this.battle.gen===3){text+="(Pressure is not visible in Gen 3, so in certain situations, more PP may have been lost than shown here.) ";}
 if(this.pokemonHasClones(clientPokemon)){text+="(Your opponent has two indistinguishable Pok\xE9mon, making it impossible for you to tell which one has which moves/ability/item.) ";}
@@ -997,13 +902,13 @@ if(!short)buf+=this.renderTypeMatchups(clientPokemon,serverPokemon);
 buf+='<p>';
 if(!short){
 var hasModifiedStat=false;for(var _i32=0,_Dex$statNamesExceptH8=
-Dex.statNamesExceptHP;_i32<_Dex$statNamesExceptH8.length;_i32++){var _BattleText,_BattleText2,_ref3,_entry$statShortName;var statName=_Dex$statNamesExceptH8[_i32];
+Dex.statNamesExceptHP;_i32<_Dex$statNamesExceptH8.length;_i32++){var _BattleText,_BattleText2,_ref2,_entry$statShortName;var statName=_Dex$statNamesExceptH8[_i32];
 if(this.battle.gen===1&&statName==='spd')continue;
 var statLabel=this.battle.gen===1&&statName==='spa'?'spc':statName;
 buf+=statName==='atk'?'<small>':'<small> / ';
 var fallbackShort={hp:'HP',atk:'Atk',def:'Def',spa:'SpA',spd:'SpD',spe:'Spe',spc:'Spc'};
 var entry=((_BattleText=globalThis.BattleText)==null?void 0:_BattleText[statLabel])||((_BattleText2=globalThis.BattleText)==null||(_BattleText2=_BattleText2.stats)==null?void 0:_BattleText2[statLabel]);
-var shortName=(_ref3=(_entry$statShortName=entry==null?void 0:entry.statShortName)!=null?_entry$statShortName:fallbackShort[statLabel])!=null?_ref3:statLabel.toUpperCase();
+var shortName=(_ref2=(_entry$statShortName=entry==null?void 0:entry.statShortName)!=null?_entry$statShortName:fallbackShort[statLabel])!=null?_ref2:statLabel.toUpperCase();
 buf+=shortName+"&nbsp;</small>";
 buf+=""+stats[statName];
 if(modifiedStats[statName]!==stats[statName])hasModifiedStat=true;
@@ -1013,13 +918,13 @@ if(!hasModifiedStat)return buf;
 buf+='<p><small>(After stat modifiers:)</small></p>';
 buf+='<p>';
 }for(var _i34=0,_Dex$statNamesExceptH10=
-Dex.statNamesExceptHP;_i34<_Dex$statNamesExceptH10.length;_i34++){var _BattleText3,_BattleText4,_ref4,_entry$statShortName2;var _statName3=_Dex$statNamesExceptH10[_i34];
+Dex.statNamesExceptHP;_i34<_Dex$statNamesExceptH10.length;_i34++){var _BattleText3,_BattleText4,_ref3,_entry$statShortName2;var _statName3=_Dex$statNamesExceptH10[_i34];
 if(this.battle.gen===1&&_statName3==='spd')continue;
 var _statLabel=this.battle.gen===1&&_statName3==='spa'?'spc':_statName3;
 buf+=_statName3==='atk'?'<small>':'<small> / ';
 var _fallbackShort={hp:'HP',atk:'Atk',def:'Def',spa:'SpA',spd:'SpD',spe:'Spe',spc:'Spc'};
 var _entry=((_BattleText3=globalThis.BattleText)==null?void 0:_BattleText3[_statLabel])||((_BattleText4=globalThis.BattleText)==null||(_BattleText4=_BattleText4.stats)==null?void 0:_BattleText4[_statLabel]);
-var _shortName=(_ref4=(_entry$statShortName2=_entry==null?void 0:_entry.statShortName)!=null?_entry$statShortName2:_fallbackShort[_statLabel])!=null?_ref4:_statLabel.toUpperCase();
+var _shortName=(_ref3=(_entry$statShortName2=_entry==null?void 0:_entry.statShortName)!=null?_entry$statShortName2:_fallbackShort[_statLabel])!=null?_ref3:_statLabel.toUpperCase();
 buf+=_shortName+"&nbsp;</small>";
 if(modifiedStats[_statName3]===stats[_statName3]){buf+=""+modifiedStats[_statName3];}else
 if(modifiedStats[_statName3]<stats[_statName3]){buf+="<strong class=\"stat-lowered\">"+modifiedStats[_statName3]+"</strong>";}else
@@ -1027,6 +932,28 @@ if(modifiedStats[_statName3]<stats[_statName3]){buf+="<strong class=\"stat-lower
 }
 buf+='</p>';
 return buf;
+};_proto2.
+renderWeaponState=function renderWeaponState(clientPokemon,serverPokemon){
+var pokemon=clientPokemon||serverPokemon;
+var current=(pokemon==null?void 0:pokemon.weaponDurability)||0;
+var max=(pokemon==null?void 0:pokemon.maxWeaponDurability)||0;
+var recoveryLeft=(pokemon==null?void 0:pokemon.weaponRecoveryLeft)||0;
+if(!pokemon||max<=0)return'';
+var text="<p><small>Weapon:</small> "+current+"/"+max;
+if(current<=0&&recoveryLeft>0){text+=" <small>(recovers in "+recoveryLeft+" turn"+(recoveryLeft===1?'':'s')+")</small>";}
+return text+'</p>';
+};_proto2.
+renderGuardActionBadge=function renderGuardActionBadge(clientPokemon){
+var cur=(clientPokemon==null?void 0:clientPokemon.guardActionCur)||0;
+var max=(clientPokemon==null?void 0:clientPokemon.guardActionMax)||0;
+if(!max)return'';
+var ready=cur>=max;
+var remaining=Math.max(0,max-cur);
+return"<p><small>Guard Action:</small> "+("<span class=\"tooltip-guard-badge"+(
+ready?' ready':'')+"\">")+"<i class=\"fa fa-shield\"></i>"+(
+
+ready?'':"<span class=\"tooltip-guard-badge-count\">"+remaining+"</span>")+"</span></p>";
+
 };_proto2.
 renderTypeMatchups=function renderTypeMatchups(clientPokemon,serverPokemon){
 
@@ -1093,13 +1020,13 @@ move=this.battle.dex.moves.get(moveName);
 maxpp=move.pp===1||move.noPPBoosts?move.pp:move.pp*8/5;
 if(this.battle.gen<3)maxpp=Math.min(61,maxpp);
 }
-var bullet=moveName.startsWith('*')||move.isZ?'<span style="color:#888">&#8226;</span>':'&#8226;';
+var bullet=moveName.startsWith('*')?'<span style="color:#888">&#8226;</span>':'&#8226;';
 if(ppUsed===Infinity){return bullet+" "+move.name+" <small>(0/"+maxpp+")</small>";}
 if(ppUsed||moveName.startsWith('*')){return bullet+" "+move.name+" <small>("+(maxpp-ppUsed)+"/"+maxpp+")</small>";}
 return bullet+" "+move.name+" "+(showKnown?' <small>(revealed)</small>':'');
 };_proto2.
 ppUsed=function ppUsed(move,pokemon){for(var _i40=0,_pokemon$moveTrack2=
-pokemon.moveTrack;_i40<_pokemon$moveTrack2.length;_i40++){var _ref5=_pokemon$moveTrack2[_i40];var moveName=_ref5[0];var _ppUsed=_ref5[1];
+pokemon.moveTrack;_i40<_pokemon$moveTrack2.length;_i40++){var _ref4=_pokemon$moveTrack2[_i40];var moveName=_ref4[0];var _ppUsed=_ref4[1];
 if(moveName.startsWith('*'))moveName=moveName.substr(1);
 if(move.name===moveName)return _ppUsed;
 }
@@ -1175,7 +1102,7 @@ if(move.id==='revelationdance'){moveType=pokemonTypes[0];}
 
 var item=this.battle.dex.items.get(value.itemName);
 if(move.id==='multiattack'&&item.onMemory){if(value.itemModify(0))moveType=item.onMemory;}
-if(move.id==='judgment'&&item.onPlate&&!item.zMoveType){if(value.itemModify(0))moveType=item.onPlate;}
+if(move.id==='judgment'&&item.onPlate){if(value.itemModify(0))moveType=item.onPlate;}
 if(move.id==='technoblast'&&item.onDrive){if(value.itemModify(0))moveType=item.onDrive;}
 if(move.id==='naturalgift'&&item.naturalGift){if(value.itemModify(0))moveType=item.naturalGift.type;}
 
@@ -1246,7 +1173,7 @@ if(this.battle.rules['Revelationmons Mod']){
 var _pokemon$getTypes=pokemon.getTypes(serverPokemon),types=_pokemon$getTypes[0];
 for(var i=0;i<types.length;i++){if(serverPokemon.moves[i]&&move.id===toID(serverPokemon.moves[i])){moveType=types[i];}}
 }
-if(category!=='Status'&&!move.isZ&&!move.id.startsWith('hiddenpower')){
+if(category!=='Status'){
 if(moveType==='Normal'){
 if(value.abilityModify(0,'Aerilate'))moveType='Flying';
 if(value.abilityModify(0,'Galvanize'))moveType='Electric';
@@ -1256,10 +1183,7 @@ if(value.abilityModify(0,'Refrigerate'))moveType='Ice';
 if(value.abilityModify(0,'Normalize'))moveType='Normal';
 }
 
-var isSound=!!(
-forMaxMove?
-this.getMaxMoveFromType(moveType,forMaxMove!==true&&forMaxMove||undefined):move).
-flags['sound'];
+var isSound=!!(forMaxMove?this.getMaxMoveFromType(moveType,forMaxMove!==true&&forMaxMove||undefined):move).flags['sound'];
 if(isSound&&value.abilityModify(0,'Liquid Voice')){moveType='Water';}
 }
 if(move.id==='photongeyser'||move.id==='lightthatburnsthesky'||
@@ -1410,12 +1334,12 @@ value.set(20+20*_boostCount);
 }
 if(move.id==='trumpcard'){
 var ppLeft=5-this.ppUsed(move,pokemon);
-var _basePower2=40;
-if(ppLeft===1)_basePower2=200;else
-if(ppLeft===2)_basePower2=80;else
-if(ppLeft===3)_basePower2=60;else
-if(ppLeft===4)_basePower2=50;
-value.set(_basePower2);
+var _basePower=40;
+if(ppLeft===1)_basePower=200;else
+if(ppLeft===2)_basePower=80;else
+if(ppLeft===3)_basePower=60;else
+if(ppLeft===4)_basePower=50;
+value.set(_basePower);
 }
 if(move.id==='magnitude'){value.setRange(10,150);}
 if(['venoshock','barbbarrage'].includes(move.id)&&target){if(['psn','tox'].includes(target.status)){value.modify(2,move.name+' + Poison');}}
@@ -1471,23 +1395,23 @@ var isGKLK=['lowkick','grassknot'].includes(move.id);
 if(target){
 var targetWeight=target.getWeightKg();
 var pokemonWeight=pokemon.getWeightKg(serverPokemon);
-var _basePower3;
+var _basePower2;
 if(isGKLK){
-_basePower3=20;
-if(targetWeight>=200)_basePower3=120;else
-if(targetWeight>=100)_basePower3=100;else
-if(targetWeight>=50)_basePower3=80;else
-if(targetWeight>=25)_basePower3=60;else
-if(targetWeight>=10)_basePower3=40;
+_basePower2=20;
+if(targetWeight>=200)_basePower2=120;else
+if(targetWeight>=100)_basePower2=100;else
+if(targetWeight>=50)_basePower2=80;else
+if(targetWeight>=25)_basePower2=60;else
+if(targetWeight>=10)_basePower2=40;
 }else{
-_basePower3=40;
-if(pokemonWeight>=targetWeight*5)_basePower3=120;else
-if(pokemonWeight>=targetWeight*4)_basePower3=100;else
-if(pokemonWeight>=targetWeight*3)_basePower3=80;else
-if(pokemonWeight>=targetWeight*2)_basePower3=60;
+_basePower2=40;
+if(pokemonWeight>=targetWeight*5)_basePower2=120;else
+if(pokemonWeight>=targetWeight*4)_basePower2=100;else
+if(pokemonWeight>=targetWeight*3)_basePower2=80;else
+if(pokemonWeight>=targetWeight*2)_basePower2=60;
 }
 if(target.volatiles['dynamax']){value.set(0,'blocked by target\'s Dynamax');}else
-{value.set(_basePower3);}
+{value.set(_basePower2);}
 }else{value.setRange(isGKLK?20:40,120);}
 }
 
@@ -1517,17 +1441,14 @@ if(["MM","FF"].includes(pokemon.gender+target.gender)){value.abilityModify(1.25,
 }
 var noTypeOverride=['judgment','multiattack','naturalgift','revelationdance','struggle','technoblast','terrainpulse','weatherball'];
 var allowTypeOverride=!noTypeOverride.includes(move.id)&&(move.id!=='terablast'||!pokemon.terastallized);
-if(
-move.category!=='Status'&&allowTypeOverride&&!move.isZ&&!move.isMax&&
-!move.id.startsWith('hiddenpower'))
-{
+if(move.category!=='Status'&&allowTypeOverride){
 if(move.type==='Normal'){
-value.abilityModify(this.battle.gen>6?1.2:1.3,"Aerilate");
-value.abilityModify(this.battle.gen>6?1.2:1.3,"Galvanize");
-value.abilityModify(this.battle.gen>6?1.2:1.3,"Pixilate");
-value.abilityModify(this.battle.gen>6?1.2:1.3,"Refrigerate");
+value.abilityModify(1.2,"Aerilate");
+value.abilityModify(1.2,"Galvanize");
+value.abilityModify(1.2,"Pixilate");
+value.abilityModify(1.2,"Refrigerate");
 }
-if(this.battle.gen>6){value.abilityModify(1.2,"Normalize");}
+value.abilityModify(1.2,"Normalize");
 }
 if(move.recoil||move.hasCrashDamage){value.abilityModify(1.2,'Reckless');}
 if(move.category!=='Status'){
@@ -1647,7 +1568,7 @@ var isTransform=value.pokemon.volatiles.transform;
 var speciesName=isTransform&&(_value$pokemon$volati=value.pokemon.volatiles.formechange)!=null&&_value$pokemon$volati[1]&&this.battle.gen<=4?
 this.battle.dex.species.get(value.pokemon.volatiles.formechange[1]).baseSpecies:species.baseSpecies;
 
-if(item.onPlate===moveType&&!item.zMove){
+if(item.onPlate===moveType){
 value.itemModify(1.2);
 return value;
 }
@@ -1900,7 +1821,7 @@ if(baseAbilityName&&baseAbilityName!==abilityName)text+=' (base: '+baseAbilityNa
 }
 if(!text&&abilityData.possibilities.length&&!hidePossible&&!(tier.includes('Almost Any Ability')||tier.includes('Hackmons')||tier.includes('Inheritance')||tier.includes('Metronome'))){text='<small>Possible abilities:</small> '+abilityData.possibilities.join(', ');}
 return text;
-};return BattleTooltips;}();BattleTooltips.STATUS_ICON_PATH=Dex.resourcePrefix+"sprites/status-is/";BattleTooltips.STATUS_ICON_FILE={brn:"Burn_IS.png",psn:"Poison_IS.png",tox:"Toxic_IS.png",slp:"Sleep_IS.png",par:"Paralysis_IS.png",frz:"Frozen_IS.png",aura:"Aura_IS.png",bubbleblight:"Bubbleblight_IS.png",dragonblight:"Dragonblight_IS.png",drowsy:"Drowsy_IS.png",fear:"Fear_IS.png",frostbite:"Frostbite_IS.png"};BattleTooltips.LONG_TAP_DELAY=500;BattleTooltips.LONG_CLICK_DELAY=700;BattleTooltips.longTapTimeout=0;BattleTooltips.elem=null;BattleTooltips.parentElem=null;BattleTooltips.isLocked=false;BattleTooltips.isPressed=false;BattleTooltips.zMoveEffects={'clearnegativeboost':"Restores negative stat stages to 0",'crit2':"Crit ratio +2",'heal':"Restores HP 100%",'curse':"Restores HP 100% if user is Ghost type, otherwise Attack +1",'redirect':"Redirects opposing attacks to user",'healreplacement':"Restores replacement's HP 100%"};BattleTooltips.zMoveTable={Poison:"Acid Downpour",Fighting:"All-Out Pummeling",Dark:"Black Hole Eclipse",Grass:"Bloom Doom",Normal:"Breakneck Blitz",Rock:"Continental Crush",Steel:"Corkscrew Crash",Dragon:"Devastating Drake",Electric:"Gigavolt Havoc",Water:"Hydro Vortex",Fire:"Inferno Overdrive",Ghost:"Never-Ending Nightmare",Bug:"Savage Spin-Out",Psychic:"Shattered Psyche",Ice:"Subzero Slammer",Flying:"Supersonic Skystrike",Ground:"Tectonic Rage",Fairy:"Twinkle Tackle",Stellar:"","???":""};BattleTooltips.maxMoveTable={Poison:"Max Ooze",Fighting:"Max Knuckle",Dark:"Max Darkness",Grass:"Max Overgrowth",Normal:"Max Strike",Rock:"Max Rockfall",Steel:"Max Steelspike",Dragon:"Max Wyrmwind",Electric:"Max Lightning",Water:"Max Geyser",Fire:"Max Flare",Ghost:"Max Phantasm",Bug:"Max Flutterby",Psychic:"Max Mindstorm",Ice:"Max Hailstorm",Flying:"Max Airstream",Ground:"Max Quake",Fairy:"Max Starfall",Stellar:"","???":""};BattleTooltips.incenseTypes={'Odd Incense':'Psychic','Rock Incense':'Rock','Rose Incense':'Grass','Sea Incense':'Water','Wave Incense':'Water'};BattleTooltips.itemTypes={'Black Belt':'Fighting','Black Glasses':'Dark','Charcoal':'Fire','Dragon Fang':'Dragon','Fairy Feather':'Fairy','Hard Stone':'Rock','Magnet':'Electric','Metal Coat':'Steel','Miracle Seed':'Grass','Mystic Water':'Water','Never-Melt Ice':'Ice','Poison Barb':'Poison','Sharp Beak':'Flying','Silk Scarf':'Normal','Silver Powder':'Bug','Soft Sand':'Ground','Spell Tag':'Ghost','Twisted Spoon':'Psychic'};BattleTooltips.orbUsers={'Latias':['Soul Dew'],'Latios':['Soul Dew'],'Dialga':['Adamant Crystal','Adamant Orb'],'Palkia':['Lustrous Globe','Lustrous Orb'],'Giratina':['Griseous Core','Griseous Orb'],'Venomicon':['Vile Vial']};BattleTooltips.orbTypes={'Soul Dew':['Psychic','Dragon'],'Adamant Crystal':['Steel','Dragon'],'Adamant Orb':['Steel','Dragon'],'Lustrous Globe':['Water','Dragon'],'Lustrous Orb':['Water','Dragon'],'Griseous Core':['Ghost','Dragon'],'Griseous Orb':['Ghost','Dragon'],'Vile Vial':['Poison','Flying']};BattleTooltips.noGemMoves=['Fire Pledge','Fling','Grass Pledge','Struggle','Water Pledge'];var
+};return BattleTooltips;}();BattleTooltips.STATUS_ICON_PATH=Dex.resourcePrefix+"sprites/status-is/";BattleTooltips.STATUS_ICON_FILE={brn:"Burn_IS.png",psn:"Poison_IS.png",tox:"Toxic_IS.png",slp:"Sleep_IS.png",par:"Paralysis_IS.png",frz:"Frozen_IS.png",aura:"Aura_IS.png",bubbleblight:"Bubbleblight_IS.png",dragonblight:"Dragonblight_IS.png",drowsy:"Drowsy_IS.png",fear:"Fear_IS.png",frostbite:"Frostbite_IS.png"};BattleTooltips.LONG_TAP_DELAY=500;BattleTooltips.LONG_CLICK_DELAY=700;BattleTooltips.longTapTimeout=0;BattleTooltips.elem=null;BattleTooltips.parentElem=null;BattleTooltips.isLocked=false;BattleTooltips.isPressed=false;BattleTooltips.zMoveEffects={'clearnegativeboost':"Restores negative stat stages to 0",'crit2':"Crit ratio +2",'heal':"Restores HP 100%",'curse':"Restores HP 100% if user is Ghost type, otherwise Attack +1",'redirect':"Redirects opposing attacks to user",'healreplacement':"Restores replacement's HP 100%"};BattleTooltips.incenseTypes={'Odd Incense':'Psychic','Rock Incense':'Rock','Rose Incense':'Grass','Sea Incense':'Water','Wave Incense':'Water'};BattleTooltips.itemTypes={'Black Belt':'Fighting','Black Glasses':'Dark','Charcoal':'Fire','Dragon Fang':'Dragon','Fairy Feather':'Fairy','Hard Stone':'Rock','Magnet':'Electric','Metal Coat':'Steel','Miracle Seed':'Grass','Mystic Water':'Water','Never-Melt Ice':'Ice','Poison Barb':'Poison','Sharp Beak':'Flying','Silk Scarf':'Normal','Silver Powder':'Bug','Soft Sand':'Ground','Spell Tag':'Ghost','Twisted Spoon':'Psychic'};BattleTooltips.orbUsers={'Latias':['Soul Dew'],'Latios':['Soul Dew'],'Dialga':['Adamant Crystal','Adamant Orb'],'Palkia':['Lustrous Globe','Lustrous Orb'],'Giratina':['Griseous Core','Griseous Orb'],'Venomicon':['Vile Vial']};BattleTooltips.orbTypes={'Soul Dew':['Psychic','Dragon'],'Adamant Crystal':['Steel','Dragon'],'Adamant Orb':['Steel','Dragon'],'Lustrous Globe':['Water','Dragon'],'Lustrous Orb':['Water','Dragon'],'Griseous Core':['Ghost','Dragon'],'Griseous Orb':['Ghost','Dragon'],'Vile Vial':['Poison','Flying']};BattleTooltips.noGemMoves=['Fire Pledge','Fling','Grass Pledge','Struggle','Water Pledge'];var
 
 BattleStatGuesser=function(){
 

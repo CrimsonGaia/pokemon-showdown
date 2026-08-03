@@ -88,7 +88,6 @@ this.log=new BattleLog($logFrame[0],this);
 
 {var _logAny$add,_logAny$addDiv;
 var logAny=this.log;
-
 var origAdd=(_logAny$add=logAny.add)==null?void 0:_logAny$add.bind(this.log);
 if(origAdd){
 logAny.add=function(){
@@ -97,7 +96,6 @@ Promise.resolve().then(function(){return _this.updateTeamBar();});
 return ret;
 };
 }
-
 var origAddDiv=(_logAny$addDiv=logAny.addDiv)==null?void 0:_logAny$addDiv.bind(this.log);
 if(origAddDiv){
 logAny.addDiv=function(){
@@ -193,10 +191,7 @@ this.$battle.append('<div class="seeking"><strong>seeking...</strong></div>');
 this.$frame.find('div.playbutton').remove();
 this.stopAnimation();
 this.animating=false;
-this.$messagebar.empty().css({
-opacity:0,
-height:0
-});
+this.$messagebar.empty().css({opacity:0,height:0});
 };_proto.
 stopAnimation=function stopAnimation(){
 this.interruptionCount++;
@@ -237,10 +232,7 @@ this.timeOffset+=time;
 };_proto.
 
 addSprite=function addSprite(sprite){if(sprite.$el)this.$sprites[+sprite.isFrontSprite].append(sprite.$el);};_proto.
-showEffect=function showEffect(
-effect,start,end,
-transition,after,additionalCss)
-{
+showEffect=function showEffect(effect,start,end,transition,after,additionalCss){
 if(typeof effect==='string')effect=BattleEffects[effect];
 var $effect=$("<img src=\""+effect.url+"\" style=\"display:block;position:absolute\" />");
 this.$fx.append($effect);
@@ -248,10 +240,7 @@ if(additionalCss)$effect.css(additionalCss);
 $effect=this.$fx.children().last();
 return this.animateEffect($effect,effect,start,end,transition,after);
 };_proto.
-animateEffect=function animateEffect(
-$effect,effect,start,end,
-transition,after,additionalCss)
-{
+animateEffect=function animateEffect($effect,effect,start,end,transition,after,additionalCss){
 if(typeof effect==='string')effect=BattleEffects[effect];
 if(!start.time)start.time=0;
 if(!end.time)end.time=start.time+500;
@@ -283,26 +272,14 @@ return $effect;
 };_proto.
 backgroundEffect=function backgroundEffect(bg,duration){var opacity=arguments.length>2&&arguments[2]!==undefined?arguments[2]:1;var delay=arguments.length>3&&arguments[3]!==undefined?arguments[3]:0;
 var $effect=$('<div class="background"></div>');
-$effect.css({
-background:bg,
-display:'block',
-opacity:0
-});
+$effect.css({background:bg,display:'block',opacity:0});
 this.$bgEffect.append($effect);
 $effect.delay(delay).animate({opacity:opacity},
 250).delay(duration-250);
 $effect.animate({opacity:0},250);
 };_proto.
 
-pos=function pos(loc,obj){
-loc=Object.assign({
-x:0,
-y:0,
-z:0,
-scale:1,
-opacity:1},
-loc);
-
+pos=function pos(loc,obj){loc=Object.assign({x:0,y:0,z:0,scale:1,opacity:1},loc);
 if(!loc.xscale&&loc.xscale!==0)loc.xscale=loc.scale;
 if(!loc.yscale&&loc.yscale!==0)loc.yscale=loc.scale;
 var left=210;
@@ -320,13 +297,7 @@ var height=Math.floor(obj.h*scale*loc.yscale);
 var hoffset=Math.floor((obj.h-(obj.y||0)*2)*scale*loc.yscale);
 left-=Math.floor(width/2);
 top-=Math.floor(hoffset/2);
-var pos={
-left:left,
-top:top,
-width:width,
-height:height,
-opacity:loc.opacity
-};
+var pos={left:left,top:top,width:width,height:height,opacity:loc.opacity};
 if(loc.display)pos.display=loc.display;
 return pos;
 };_proto.
@@ -388,11 +359,7 @@ if(!this.messagebarOpen){
 this.log.addSpacer();
 if(this.animating){
 this.$messagebar.empty();
-this.$messagebar.css({
-display:'block',
-opacity:0,
-height:'auto'
-});
+this.$messagebar.css({display:'block',opacity:0,height:'auto'});
 this.$messagebar.animate({opacity:1},
 this.battle.messageFadeTime/this.acceleration);
 }
@@ -402,18 +369,11 @@ if(_message&&this.animating){
 this.$hiddenMessage.append('<p></p>');
 var $message=this.$hiddenMessage.children().last();
 $message.html(_message);
-$message.css({
-display:'block',
-opacity:0
-});
+$message.css({display:'block',opacity:0});
 $message.animate({height:'hide'},
 1,function(){
 $message.appendTo(_this3.$messagebar);
-$message.animate({
-height:'show',
-'padding-bottom':4,
-opacity:1
-},_this3.battle.messageFadeTime/_this3.acceleration);
+$message.animate({height:'show','padding-bottom':4,opacity:1},_this3.battle.messageFadeTime/_this3.acceleration);
 });
 this.waitFor($message);
 }
@@ -518,76 +478,46 @@ return BattleLog.escapeHTML(name);
 };_proto.
 getTeamBarHTML=function getTeamBarHTML(side,isP1){var _this$battle$tier,_this$battle$tier2;
 var html='';
-
-var isISLFormat=
-((_this$battle$tier=this.battle.tier)==null?void 0:_this$battle$tier.toLowerCase().includes('indigostarstorm'))||((_this$battle$tier2=
-this.battle.tier)==null?void 0:_this$battle$tier2.toLowerCase().includes('isl'));
-
+var isISLFormat=((_this$battle$tier=this.battle.tier)==null?void 0:_this$battle$tier.toLowerCase().includes('indigostarstorm'))||((_this$battle$tier2=this.battle.tier)==null?void 0:_this$battle$tier2.toLowerCase().includes('isl'));
 var teamSource=isISLFormat?side.fullTeam:side.pokemon;
 var teamSize=teamSource.length;
-
 for(var i=0;i<teamSize;i++){
 var pokemon=teamSource[i];
 if(!pokemon)continue;
-
 var status=pokemon.fainted?' fainted':pokemon.status?' status':'';
 var iconStyle=Dex.getPokemonIcon(pokemon);
-
 var itemIconHTML='';
-if(pokemon.item&&pokemon.item!=='(exists)'){
-itemIconHTML="<span class=\"itemicon\" style=\""+Dex.getItemIcon(pokemon.item)+"\"></span>";
-}else{
-itemIconHTML="<span class=\"itemicon itemicon-unknown\">?</span>";
-}
-
+if(pokemon.item&&pokemon.item!=='(exists)'){itemIconHTML="<span class=\"itemicon\" style=\""+Dex.getItemIcon(pokemon.item)+"\"></span>";}else
+{itemIconHTML="<span class=\"itemicon itemicon-unknown\">?</span>";}
 html+="<span class=\"picon battleteambar-sprite"+status+"\" style=\""+iconStyle+"\">"+itemIconHTML+"</span>";
 }
-
 return html;
 };_proto.
 getSidebarHTML=function getSidebarHTML(side,posStr){var _this$battle$tier3,_this$battle$tier4;
 var noShow=this.battle.hardcoreMode&&this.battle.gen<7;
-
-var isISLFormat=
-((_this$battle$tier3=this.battle.tier)==null?void 0:_this$battle$tier3.toLowerCase().includes('indigostarstorm'))||((_this$battle$tier4=
-this.battle.tier)==null?void 0:_this$battle$tier4.toLowerCase().includes('isl'));
-
+var isISLFormat=((_this$battle$tier3=this.battle.tier)==null?void 0:_this$battle$tier3.toLowerCase().includes('indigostarstorm'))||((_this$battle$tier4=this.battle.tier)==null?void 0:_this$battle$tier4.toLowerCase().includes('isl'));
 if(isISLFormat){
 var _sidebarCount=6;
 var _sidebarIcons=[];
-
 var _pokemonToShow=[];
 if(this.battle.started){
-if(!side.isFar){
-
-_pokemonToShow=side.sidebarPokemon||[];
-}else{
-
-_pokemonToShow=(side.pokemon||[]).filter(function(p){return!!(p!=null&&p.searchid);});
+if(!side.isFar){_pokemonToShow=side.sidebarPokemon||[];}else
+{_pokemonToShow=(side.pokemon||[]).filter(function(p){return!!(p!=null&&p.searchid);});}
 }
-}
-
-for(var i=0;i<_sidebarCount;i++){
-_sidebarIcons.push(_pokemonToShow[i]||null);
-}
-
+for(var i=0;i<_sidebarCount;i++){_sidebarIcons.push(_pokemonToShow[i]||null);}
 var _pokemonhtml='<div class="teamicons">';
 for(var _i5=0;_i5<_sidebarIcons.length;_i5++){
 var poke=_sidebarIcons[_i5];
-if(!poke){
-_pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('pokeball')+"\" title=\"Not revealed\" aria-label=\"Not revealed\"></span>";
-}else{
+if(!poke){_pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('pokeball')+"\" title=\"Not revealed\" aria-label=\"Not revealed\"></span>";}else
+{
 var fainted=poke.fainted?' fainted':'';
 var status=!poke.fainted&&poke.status?' status':'';
 var details=this.getDetailsText(poke);
 _pokemonhtml+="<span class=\"picon has-tooltip"+fainted+status+"\" data-tooltip=\"pokemon|"+side.n+"|"+_i5+"\" style=\""+Dex.getPokemonIcon(poke,!side.isFar)+"\" aria-label=\""+details+"\"></span>";
 }
-if(_i5%3===2&&_i5!==_sidebarIcons.length-1){
-_pokemonhtml+="</div><div class=\"teamicons\">";
-}
+if(_i5%3===2&&_i5!==_sidebarIcons.length-1){_pokemonhtml+="</div><div class=\"teamicons\">";}
 }
 _pokemonhtml+="</div>";
-
 var _ratinghtml=side.rating?" title=\"Rating: "+BattleLog.escapeHTML(side.rating)+"\"":"";
 var _faded=side.name?"":" style=\"opacity: 0.4\"";
 var _badgehtml='';
@@ -603,38 +533,24 @@ _badgehtml+="<img src=\""+Dex.resourcePrefix+"/sprites/misc/"+formatType+"_"+typ
 }
 _badgehtml+='</span>';
 }
-
 return(
 "<div class=\"trainer trainer-"+posStr+"\""+_faded+"><strong>"+BattleLog.escapeHTML(side.name)+"</strong>"+("<div class=\"trainersprite\""+
 _ratinghtml+" style=\"background-image:url("+Dex.resolveAvatar(side.avatar)+")\">")+("</div>"+
 _badgehtml+_pokemonhtml+"</div>"));
 
 }
-
 var sidebarCount=side.totalPokemon;
 var pokemonToShow=side.pokemon;
-
-var speciesOverage=this.battle.speciesClause?
-Infinity:
-Math.max(pokemonToShow.length-sidebarCount,0);
-
-var sidebarIcons=
-
-
-[];
+var speciesOverage=this.battle.speciesClause?Infinity:Math.max(pokemonToShow.length-sidebarCount,0);
+var sidebarIcons=[];
 var speciesTable=[];
 var zoroarkRevealed=false;
 var hasIllusion=false;
-
 if(speciesOverage){
 for(var _i8=0;_i8<pokemonToShow.length;_i8++){
 var species=pokemonToShow[_i8].getBaseSpecies().baseSpecies;
 if(speciesOverage&&speciesTable.includes(species)){for(var _i10=0;_i10<
-sidebarIcons.length;_i10++){var _side$pokemon$sidebar;var sidebarIcon=sidebarIcons[_i10];
-if(sidebarIcon[1]!==null&&((_side$pokemon$sidebar=side.pokemon[sidebarIcon[1]])==null?void 0:_side$pokemon$sidebar.getBaseSpecies().baseSpecies)===species){
-sidebarIcon[0]='pokemon-illusion';
-}
-}
+sidebarIcons.length;_i10++){var _side$pokemon$sidebar;var sidebarIcon=sidebarIcons[_i10];if(sidebarIcon[1]!==null&&((_side$pokemon$sidebar=side.pokemon[sidebarIcon[1]])==null?void 0:_side$pokemon$sidebar.getBaseSpecies().baseSpecies)===species){sidebarIcon[0]='pokemon-illusion';}}
 hasIllusion=true;
 speciesOverage--;
 }else{
@@ -650,48 +566,29 @@ var _actualIndex=side.pokemon.indexOf(pokemonToShow[_i11]);
 sidebarIcons.push(['pokemon',_actualIndex]);
 }
 }
-
-if(!zoroarkRevealed&&hasIllusion&&sidebarIcons.length<sidebarCount){
-sidebarIcons.push(['pseudo-zoroark',null]);
-}
-
-while(sidebarIcons.length<sidebarCount){
-sidebarIcons.push(['unrevealed',null]);
-}
-while(sidebarIcons.length<6){
-sidebarIcons.push(['empty',null]);
-}
-
+if(!zoroarkRevealed&&hasIllusion&&sidebarIcons.length<sidebarCount){sidebarIcons.push(['pseudo-zoroark',null]);}
+while(sidebarIcons.length<sidebarCount){sidebarIcons.push(['unrevealed',null]);}
+while(sidebarIcons.length<6){sidebarIcons.push(['empty',null]);}
 var pokemonhtml='';
 for(var _i12=0;_i12<sidebarIcons.length;_i12++){
 var _sidebarIcons$_i=sidebarIcons[_i12],iconType=_sidebarIcons$_i[0],pokeIndex=_sidebarIcons$_i[1];
 var _poke=pokeIndex!==null?side.pokemon[pokeIndex]:null;
-var tooltipCode=" class=\"picon has-tooltip\" data-tooltip=\"pokemon|"+
-side.n+"|"+pokeIndex+(iconType==='pokemon-illusion'?'|illusion':'')+"\"";
-
-if(iconType==='empty'){
-pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('pokeball-none')+"\"></span>";
-}else if(iconType==='unrevealed'){
-pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('pokeball')+"\" title=\"Not revealed\" aria-label=\"Not revealed\"></span>";
-}else if(noShow){
-if(_poke!=null&&_poke.fainted){
-pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon('pokeball-fainted')+"\" aria-label=\"Fainted\"></span>";
-}else if(_poke!=null&&_poke.status){
-pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon('pokeball-statused')+"\" aria-label=\"Statused\"></span>";
-}else{
-pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon('pokeball')+"\" aria-label=\"Non-statused\"></span>";
-}
-}else if(iconType==='pseudo-zoroark'){
-pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('zoroark')+"\" title=\"Unrevealed Illusion user\" aria-label=\"Unrevealed Illusion user\"></span>";
-}else if(!_poke){
-pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('pokeball')+"\" title=\"Not revealed\" aria-label=\"Not revealed\"></span>";
-}else{
+var tooltipCode=" class=\"picon has-tooltip\" data-tooltip=\"pokemon|"+side.n+"|"+pokeIndex+(iconType==='pokemon-illusion'?'|illusion':'')+"\"";
+if(iconType==='empty'){pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('pokeball-none')+"\"></span>";}else
+if(iconType==='unrevealed'){pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('pokeball')+"\" title=\"Not revealed\" aria-label=\"Not revealed\"></span>";}else
+if(noShow){
+if(_poke!=null&&_poke.fainted){pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon('pokeball-fainted')+"\" aria-label=\"Fainted\"></span>";}else
+if(_poke!=null&&_poke.status){pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon('pokeball-statused')+"\" aria-label=\"Statused\"></span>";}else
+{pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon('pokeball')+"\" aria-label=\"Non-statused\"></span>";}
+}else
+if(iconType==='pseudo-zoroark'){pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('zoroark')+"\" title=\"Unrevealed Illusion user\" aria-label=\"Unrevealed Illusion user\"></span>";}else
+if(!_poke){pokemonhtml+="<span class=\"picon\" style=\""+Dex.getPokemonIcon('pokeball')+"\" title=\"Not revealed\" aria-label=\"Not revealed\"></span>";}else
+{
 var _details2=this.getDetailsText(_poke);
 pokemonhtml+="<span"+tooltipCode+" style=\""+Dex.getPokemonIcon(_poke,!side.isFar)+"\" aria-label=\""+_details2+"\"></span>";
 }
 if(_i12%3===2&&_i12!==sidebarIcons.length-1){pokemonhtml+="</div><div class=\"teamicons\">";}
 }
-
 pokemonhtml='<div class="teamicons">'+pokemonhtml+'</div>';
 var ratinghtml=side.rating?" title=\"Rating: "+BattleLog.escapeHTML(side.rating)+"\"":"";
 var faded=side.name?"":" style=\"opacity: 0.4\"";
@@ -747,12 +644,7 @@ var p2HTML=this.getTeamBarHTML(p2Side,false);
 this.$battleteambar.html("<div class=\"battleteambar-p1\">"+p1HTML+"</div>"+("<div class=\"battleteambar-p2\">"+p2HTML+"</div>"));
 };_proto.
 updateStatbars=function updateStatbars(){for(var _i16=0,_this$battle$sides4=
-this.battle.sides;_i16<_this$battle$sides4.length;_i16++){var side=_this$battle$sides4[_i16];for(var _i18=0,_side$active2=
-side.active;_i18<_side$active2.length;_i18++){var active=_side$active2[_i18];
-if(active)active.sprite.updateStatbar(active);
-}
-}
-
+this.battle.sides;_i16<_this$battle$sides4.length;_i16++){var side=_this$battle$sides4[_i16];for(var _i18=0,_side$active2=side.active;_i18<_side$active2.length;_i18++){var active=_side$active2[_i18];if(active)active.sprite.updateStatbar(active);}}
 
 this.updateTeamBar();
 };_proto.
@@ -761,14 +653,7 @@ if(!skipEmpty){for(var _i20=0,_this$$sprites2=this.$sprites;_i20<_this$$sprites2
 this.battle.sides;_i22<_this$battle$sides6.length;_i22++){var _side$missedPokemon;var side=_this$battle$sides6[_i22];
 side.z=side.isFar?200:0;
 (_side$missedPokemon=side.missedPokemon)==null||(_side$missedPokemon=_side$missedPokemon.sprite)==null||_side$missedPokemon.destroy();
-side.missedPokemon={
-sprite:new PokemonSprite(null,{
-x:side.leftof(this.battle.gameType==='freeforall'?-50:-100),
-y:side.y,
-z:side.z,
-opacity:0
-},this,side.isFar)
-};
+side.missedPokemon={sprite:new PokemonSprite(null,{x:side.leftof(this.battle.gameType==='freeforall'?-50:-100),y:side.y,z:side.z,opacity:0},this,side.isFar)};
 side.missedPokemon.sprite.isMissedPokemon=true;
 }
 if(this.battle.sides.length>2&&this.sideConditions.length===2){this.sideConditions.push({},{});}
@@ -777,7 +662,6 @@ this.rebuildTooltips();
 rebuildTooltips=function rebuildTooltips(){
 var tooltipBuf='';
 var tooltips=this.battle.gameType==='freeforall'?{
-
 p2b:{top:70,left:250,width:80,height:100,tooltip:'activepokemon|1|1'},
 p2a:{top:90,left:390,width:100,height:100,tooltip:'activepokemon|1|0'},
 p1a:{top:200,left:130,width:120,height:160,tooltip:'activepokemon|0|0'},
@@ -802,10 +686,7 @@ teamPreview=function teamPreview(){
 var newBGNum=0;
 for(var siden=0;siden<2||this.battle.gameType==='multi'&&siden<4;siden++){var _this$battle$tier5,_this$battle$tier6;
 var side=this.battle.sides[siden];
-var isISLFormat=
-((_this$battle$tier5=this.battle.tier)==null?void 0:_this$battle$tier5.toLowerCase().includes('indigostarstorm'))||((_this$battle$tier6=
-this.battle.tier)==null?void 0:_this$battle$tier6.toLowerCase().includes('isl'));
-
+var isISLFormat=((_this$battle$tier5=this.battle.tier)==null?void 0:_this$battle$tier5.toLowerCase().includes('indigostarstorm'))||((_this$battle$tier6=this.battle.tier)==null?void 0:_this$battle$tier6.toLowerCase().includes('isl'));
 if(isISLFormat){side.fullTeam=side.pokemon.slice();}
 var spriteIndex=+this.battle.viewpointSwitched^siden%2;
 var textBuf='';
@@ -819,11 +700,7 @@ var pokemon=side.pokemon[i];
 if(pokemon.speciesForme==='Xerneas-*'){pokemon.speciesForme='Xerneas-Neutral';}
 if(pokemon.speciesForme==='Ludicolo')ludicoloCount++;
 if(pokemon.speciesForme==='Lombre')lombreCount++;
-var spriteData=Dex.getSpriteData(pokemon,!!spriteIndex,{
-gen:this.gen,
-noScale:true,
-mod:this.mod
-});
+var spriteData=Dex.getSpriteData(pokemon,!!spriteIndex,{gen:this.gen,noScale:true,mod:this.mod});
 var y=0;
 var x=0;
 if(spriteIndex){
@@ -842,16 +719,12 @@ buf2+="<div style=\"position:absolute;top:"+(y+45)+"px;left:"+(x-40)+"px;width:8
 var gender=pokemon.gender;
 if(gender==='M'||gender==='F'){buf2+="<img src=\""+Dex.fxPrefix+"gender-"+gender.toLowerCase()+".png\" alt=\""+gender+"\" width=\"7\" height=\"10\" class=\"pixelated\" style=\"margin-bottom:-1px\" /> ";}
 if(pokemon.level!==100){buf2+="<span style=\"text-shadow:#000 1px 1px 0,#000 1px -1px 0,#000 -1px 1px 0,#000 -1px -1px 0\"><small>L</small>"+pokemon.level+"</span>";}
-if(pokemon.item==='(mail)'){buf2+=" <img src=\""+Dex.resourcePrefix+"fx/mail.png\" width=\"8\" height=\"10\" alt=\"F\" style=\"margin-bottom:-1px\" />";
-}else if(pokemon.item){buf2+=" <img src=\""+Dex.resourcePrefix+"fx/item.png\" width=\"8\" height=\"10\" alt=\"F\" style=\"margin-bottom:-1px\" />";}
+if(pokemon.item==='(mail)'){buf2+=" <img src=\""+Dex.resourcePrefix+"fx/mail.png\" width=\"8\" height=\"10\" alt=\"F\" style=\"margin-bottom:-1px\" />";}else
+if(pokemon.item){buf2+=" <img src=\""+Dex.resourcePrefix+"fx/item.png\" width=\"8\" height=\"10\" alt=\"F\" style=\"margin-bottom:-1px\" />";}
 buf2+='</div>';
 }
 side.totalPokemon=side.pokemon.length;
-if(textBuf){
-this.log.addDiv('chat battle-history',"<strong>"+
-BattleLog.escapeHTML(side.name)+"'s team:</strong> <em style=\"color:#445566;display:block;\">"+BattleLog.escapeHTML(textBuf)+"</em>"
-);
-}
+if(textBuf){this.log.addDiv('chat battle-history',"<strong>"+BattleLog.escapeHTML(side.name)+"'s team:</strong> <em style=\"color:#445566;display:block;\">"+BattleLog.escapeHTML(textBuf)+"</em>");}
 this.$sprites[spriteIndex].html(buf+buf2);
 if(!newBGNum){
 if(ludicoloCount>=2){newBGNum=-3;}else
@@ -872,7 +745,6 @@ hideJoinButtons=function hideJoinButtons(){
 if(!this.battle.joinButtons)return;
 this.$battle.find('.playbutton1, .playbutton2').remove();
 };_proto.
-
 pseudoWeatherLeft=function pseudoWeatherLeft(pWeather){
 var buf="<br />"+Dex.moves.get(pWeather[0]).name;
 if(!pWeather[1]&&pWeather[2]){
@@ -897,7 +769,6 @@ if(!cond[3]){return buf+" <small>("+cond[2]+" turn"+(cond[2]===1?'':'s')+")</sma
 return buf+" <small>("+cond[2]+" or "+cond[3]+" turns)</small>";
 };_proto.
 weatherLeft=function weatherLeft(){
-if(this.battle.gen<7&&this.battle.hardcoreMode)return'';
 var weatherhtml="";
 if(this.battle.weather){
 var weatherNameTable={
@@ -908,8 +779,9 @@ primordialsea:'Heavy Rain',
 sandstorm:'Sandstorm',
 hail:'Hail',
 snowscape:'Snow',
-deltastream:'Strong Winds',
-turbulentwinds:'Turbulent Winds'
+deltastream:'Intense Winds',
+turbulentwinds:'Turbulent Winds',
+eclipse:'Eclipse'
 };
 weatherhtml=""+(weatherNameTable[this.battle.weather]||this.battle.weather);
 if(this.battle.weatherMinTimeLeft!==0){weatherhtml+=" <small>("+this.battle.weatherMinTimeLeft+" or "+this.battle.weatherTimeLeft+" turns)</small>";}else
@@ -917,7 +789,10 @@ if(this.battle.weatherTimeLeft!==0){weatherhtml+=" <small>("+this.battle.weather
 var nullifyWeather=this.battle.abilityActive(['Air Lock','Cloud Nine']);
 weatherhtml=""+(nullifyWeather?'<s>':'')+weatherhtml+(nullifyWeather?'</s>':'');
 }for(var _i24=0,_this$battle$pseudoWe2=
-this.battle.pseudoWeather;_i24<_this$battle$pseudoWe2.length;_i24++){var pseudoWeather=_this$battle$pseudoWe2[_i24];weatherhtml+=this.pseudoWeatherLeft(pseudoWeather);}
+this.battle.pseudoWeather;_i24<_this$battle$pseudoWe2.length;_i24++){var pseudoWeather=_this$battle$pseudoWe2[_i24];
+if(toID(pseudoWeather[0]).endsWith('terrain'))continue;
+weatherhtml+=this.pseudoWeatherLeft(pseudoWeather);
+}
 return weatherhtml;
 };_proto.
 sideConditionsLeft=function sideConditionsLeft(side,all){
@@ -926,7 +801,7 @@ for(var id in side.sideConditions){buf+=this.sideConditionLeft(side.sideConditio
 return buf;
 };_proto.
 upkeepWeather=function upkeepWeather(){
-var isIntense=['desolateland','primordialsea','deltastream','turbulentwinds'].includes(this.curWeather);
+var isIntense=['desolateland','primordialsea','deltastream','eclipse'].includes(this.curWeather);
 this.$weather.animate({opacity:1.0},300).
 animate({opacity:isIntense?0.9:0.5},300);
 };_proto.
@@ -936,12 +811,16 @@ var isIntense=false;
 var weather=this.battle.weather;
 if(this.battle.abilityActive(['Air Lock','Cloud Nine'])){weather='';}
 var terrain='';
-var terrainTurns=0;for(var _i26=0,_this$battle$pseudoWe4=
+var terrainTurns=0;
+var terrainMaxTurns=0;for(var _i26=0,_this$battle$pseudoWe4=
 this.battle.pseudoWeather;_i26<_this$battle$pseudoWe4.length;_i26++){var pseudoWeatherData=_this$battle$pseudoWe4[_i26];
-terrain=toID(pseudoWeatherData[0]);
-if(pseudoWeatherData[1])terrainTurns=pseudoWeatherData[1];
+var pwID=toID(pseudoWeatherData[0]);
+if(!pwID.endsWith('terrain'))continue;
+terrain=pwID;
+terrainTurns=pseudoWeatherData[1];
+terrainMaxTurns=pseudoWeatherData[2];
 }
-if(weather==='desolateland'||weather==='primordialsea'||weather==='deltastream'||weather==='turbulentwinds'){isIntense=true;}
+if(weather==='desolateland'||weather==='primordialsea'||weather==='deltastream'||weather==='eclipse'){isIntense=true;}
 var weatherhtml=this.weatherLeft();for(var _i28=0,_this$battle$sides8=
 this.battle.sides;_i28<_this$battle$sides8.length;_i28++){var side=_this$battle$sides8[_i28];weatherhtml+=this.sideConditionsLeft(side);}
 if(weatherhtml)weatherhtml="<br />"+weatherhtml;
@@ -956,6 +835,7 @@ toxicterrain:'Toxic Terrain'
 var terrainhtml='';
 if(terrain){
 terrainhtml=""+(terrainNameTable[terrain]||terrain);
+if(terrainMaxTurns){terrainhtml+=" <small>("+terrainTurns+" or "+terrainMaxTurns+" turns)</small>";}else
 if(terrainTurns){terrainhtml+=" <small>("+terrainTurns+" turn"+(terrainTurns===1?'':'s')+")</small>";}
 }
 if(terrainhtml)terrainhtml="<br />"+terrainhtml;
@@ -979,11 +859,7 @@ _this4.$weather.animate({opacity:isIntense||!weather?0.9:0.5},300);
 });
 this.curWeather=weather;
 }else{this.$weather.html('<em>'+weatherhtml+'</em>');}
-if(terrain!==this.curTerrain){
-this.$terrain.animate({
-top:360,
-opacity:0
-},this.curTerrain?400:1,function(){
+if(terrain!==this.curTerrain){this.$terrain.animate({top:360,opacity:0},this.curTerrain?400:1,function(){
 _this4.$terrain.attr('class',terrain?'weather '+terrain+'weather':'weather');
 _this4.$terrain.html('<em>'+terrainhtml+'</em>');
 _this4.$terrain.animate({top:0,opacity:1},400);
@@ -1004,21 +880,10 @@ var turn=this.battle.turn;
 if(turn<=0)return;
 var $prevTurn=this.$turn.children();
 var $newTurn=$("<div class=\"turn has-tooltip\" data-tooltip=\"field\" data-ownheight=\"1\">Turn "+turn+"</div>");
-$newTurn.css({
-opacity:0,
-left:160
-});
+$newTurn.css({opacity:0,left:160});
 this.$turn.append($newTurn);
-$newTurn.animate({
-opacity:1,
-left:110
-},500).animate({
-opacity:0.4
-},1500);
-$prevTurn.animate({
-opacity:0,
-left:60
-},500,function(){$prevTurn.remove();});
+$newTurn.animate({opacity:1,left:110},500).animate({opacity:0.4},1500);
+$prevTurn.animate({opacity:0,left:60},500,function(){$prevTurn.remove();});
 this.updateAcceleration();
 this.wait(500/this.acceleration);
 };_proto.
@@ -1029,17 +894,8 @@ this.acceleration=this.battle.messageFadeTime<150?2:1;
 if(this.battle.messageFadeTime<50)this.acceleration=3;
 }
 };_proto.
-
 addPokemonSprite=function addPokemonSprite(pokemon){
-var sprite=new PokemonSprite(Dex.getSpriteData(pokemon,pokemon.side.isFar,{
-gen:this.gen,
-mod:this.mod
-}),{
-x:pokemon.side.x,
-y:pokemon.side.y,
-z:pokemon.side.z,
-opacity:0
-},this,pokemon.side.isFar);
+var sprite=new PokemonSprite(Dex.getSpriteData(pokemon,pokemon.side.isFar,{gen:this.gen,mod:this.mod}),{x:pokemon.side.x,y:pokemon.side.y,z:pokemon.side.z,opacity:0},this,pokemon.side.isFar);
 if(sprite.$el)this.$sprites[+pokemon.side.isFar].append(sprite.$el);
 return sprite;
 };_proto.
@@ -1061,61 +917,31 @@ case'auroraveil':
 var auroraveil=new Sprite(BattleEffects.auroraveil,{display:'block',x:x,y:y,z:side.behind(-14),xscale:1,yscale:0,opacity:0.1},this);
 this.$spritesFront[spriteIndex].append(auroraveil.$el);
 this.sideConditions[siden][id]=[auroraveil];
-auroraveil.anim({
-opacity:0.7,
-time:instant?0:400
-}).anim({
-opacity:0.3,
-time:instant?0:300
-});
+auroraveil.anim({opacity:0.7,time:instant?0:400}).anim({opacity:0.3,time:instant?0:300});
 break;
 case'reflect':
 var reflect=new Sprite(BattleEffects.reflect,{display:'block',x:x,y:y,z:side.behind(-17),xscale:1,yscale:0,opacity:0.1},this);
 this.$spritesFront[spriteIndex].append(reflect.$el);
 this.sideConditions[siden][id]=[reflect];
-reflect.anim({
-opacity:0.7,
-time:instant?0:400
-}).anim({
-opacity:0.3,
-time:instant?0:300
-});
+reflect.anim({opacity:0.7,time:instant?0:400}).anim({opacity:0.3,time:instant?0:300});
 break;
 case'safeguard':
 var safeguard=new Sprite(BattleEffects.safeguard,{display:'block',x:x,y:y,z:side.behind(-20),xscale:1,yscale:0,opacity:0.1},this);
 this.$spritesFront[spriteIndex].append(safeguard.$el);
 this.sideConditions[siden][id]=[safeguard];
-safeguard.anim({
-opacity:0.7,
-time:instant?0:400
-}).anim({
-opacity:0.3,
-time:instant?0:300
-});
+safeguard.anim({opacity:0.7,time:instant?0:400}).anim({opacity:0.3,time:instant?0:300});
 break;
 case'lightscreen':
 var lightscreen=new Sprite(BattleEffects.lightscreen,{display:'block',x:x,y:y,z:side.behind(-23),xscale:1,yscale:0,opacity:0.1},this);
 this.$spritesFront[spriteIndex].append(lightscreen.$el);
 this.sideConditions[siden][id]=[lightscreen];
-lightscreen.anim({
-opacity:0.7,
-time:instant?0:400
-}).anim({
-opacity:0.3,
-time:instant?0:300
-});
+lightscreen.anim({opacity:0.7,time:instant?0:400}).anim({opacity:0.3,time:instant?0:300});
 break;
 case'mist':
 var mist=new Sprite(BattleEffects.mist,{display:'block',x:x,y:y,z:side.behind(-27),xscale:1,yscale:0,opacity:0.1},this);
 this.$spritesFront[spriteIndex].append(mist.$el);
 this.sideConditions[siden][id]=[mist];
-mist.anim({
-opacity:0.7,
-time:instant?0:400
-}).anim({
-opacity:0.3,
-time:instant?0:300
-});
+mist.anim({opacity:0.7,time:instant?0:400}).anim({opacity:0.3,time:instant?0:300});
 break;
 case'stealthrock':
 var rock1=new Sprite(BattleEffects.rock1,{display:'block',x:x+side.leftof(-40),y:y-10,z:side.z,opacity:0.5,scale:0.2},this);
@@ -1128,7 +954,7 @@ this.$spritesFront[spriteIndex].append(rock3.$el);
 this.$spritesFront[spriteIndex].append(rock4.$el);
 this.sideConditions[siden][id]=[rock1,rock2,rock3,rock4];
 break;
-case'gmaxsteelsurge':
+case'caltrops':
 var surge1=new Sprite(BattleEffects.greenmetal1,{display:'block',x:x+side.leftof(-30),y:y-20,z:side.z,opacity:0.5,scale:0.8},this);
 var surge2=new Sprite(BattleEffects.greenmetal2,{display:'block',x:x+side.leftof(35),y:y-15,z:side.z,opacity:0.5,scale:0.8},this);
 var surge3=new Sprite(BattleEffects.greenmetal1,{display:'block',x:x+side.leftof(50),y:y-10,z:side.z,opacity:0.5,scale:0.8},this);
@@ -1192,32 +1018,23 @@ this.sideConditions[siden][id];_i30<_this$sideConditions$2.length;_i30++){var sp
 delete this.sideConditions[siden][id];
 }
 };_proto.
-resetSideConditions=function resetSideConditions(){for(var siden=0;siden<this.sideConditions.length;siden++){
+resetSideConditions=function resetSideConditions(){
+for(var siden=0;siden<this.sideConditions.length;siden++){
 for(var id in this.sideConditions[siden]){this.removeSideCondition(siden,id);}
 for(var _id in this.battle.sides[siden].sideConditions){this.addSideCondition(siden,_id,true);}
 }
 };_proto.
 
 typeAnim=function typeAnim(pokemon,types){
-var result=BattleLog.escapeHTML(types).split('/').map(function(type){return"<img src=\""+
-Dex.resourcePrefix+"sprites/types/"+encodeURIComponent(type)+".png\" alt=\""+type+"\" class=\"pixelated\" />";}
-).join(' ');
+var result=BattleLog.escapeHTML(types).split('/').map(function(type){return"<img src=\""+Dex.resourcePrefix+"sprites/types/"+encodeURIComponent(type)+".png\" alt=\""+type+"\" class=\"pixelated\" />";}).join(' ');
 this.resultAnim(pokemon,result,'neutral');
 };_proto.
 resultAnim=function resultAnim(pokemon,result,type){
 if(!this.animating)return;
 var $effect=$('<div class="result '+type+'result"><strong>'+result+'</strong></div>');
 this.$fx.append($effect);
-$effect.delay(this.timeOffset).css({
-display:'block',
-opacity:0,
-top:pokemon.sprite.top-5,
-left:pokemon.sprite.left-75
-}).animate({opacity:1},1);
-$effect.animate({
-opacity:0,
-top:pokemon.sprite.top-65
-},1000,'swing');
+$effect.delay(this.timeOffset).css({display:'block',opacity:0,top:pokemon.sprite.top-5,left:pokemon.sprite.left-75}).animate({opacity:1},1);
+$effect.animate({opacity:0,top:pokemon.sprite.top-65},1000,'swing');
 this.wait(this.acceleration<2?350:250);
 pokemon.sprite.updateStatbar(pokemon);
 if(this.acceleration<3)this.waitFor($effect);
@@ -1226,12 +1043,7 @@ abilityActivateAnim=function abilityActivateAnim(pokemon,result){
 if(!this.animating)return;
 this.$fx.append("<div class=\"result abilityresult\"><strong>"+result+"</strong></div>");
 var $effect=this.$fx.children().last();
-$effect.delay(this.timeOffset).css({
-display:'block',
-opacity:0,
-top:pokemon.sprite.top+15,
-left:pokemon.sprite.left-75
-}).animate({opacity:1},1);
+$effect.delay(this.timeOffset).css({display:'block',opacity:0,top:pokemon.sprite.top+15,left:pokemon.sprite.left-75}).animate({opacity:1},1);
 $effect.delay(800).animate({opacity:0},400,'swing');
 this.wait(100);
 pokemon.sprite.updateStatbar(pokemon);
@@ -1249,10 +1061,7 @@ if(hpcolor==='y'){callback=function(){$hp.addClass('hp-yellow');};}
 if(hpcolor==='r'){callback=function(){$hp.addClass('hp-yellow hp-red');};}
 if(damage==='100%'&&pokemon.hp>0)damage='99%';
 this.resultAnim(pokemon,this.battle.hardcoreMode?'Damage':"&minus;"+damage,'bad');
-$hp.animate({
-width:w,
-'border-right-width':w?1:0
-},350,callback);
+$hp.animate({width:w,'border-right-width':w?1:0},350,callback);
 };_proto.
 healAnim=function healAnim(pokemon,damage){
 if(!this.animating)return;
@@ -1265,10 +1074,7 @@ var callback;
 if(hpcolor==='g'){callback=function(){$hp.removeClass('hp-yellow hp-red');};}
 if(hpcolor==='y'){callback=function(){$hp.removeClass('hp-red');};}
 this.resultAnim(pokemon,this.battle.hardcoreMode?'Heal':"+"+damage,'good');
-$hp.animate({
-width:w,
-'border-right-width':w?1:0
-},350,callback);
+$hp.animate({width:w,'border-right-width':w?1:0},350,callback);
 };_proto.
 
 removeEffect=function removeEffect(pokemon,id,instant){return pokemon.sprite.removeEffect(id,instant);};_proto.
@@ -1438,13 +1244,8 @@ if(spriteData){
 sp=spriteData;
 var rawHTML=sp.rawHTML||"<img src=\""+sp.url+"\" style=\"display:none;position:absolute\""+(sp.pixelated?' class="pixelated"':'')+" />";
 this.$el=$(rawHTML);
-}else{
-sp={
-w:0,
-h:0,
-url:''
-};
-}
+}else
+{sp={w:0,h:0,url:''};}
 this.sp=sp;
 this.x=pos.x;
 this.y=pos.y;
@@ -1465,15 +1266,7 @@ this.$el.delay(time);
 return this;
 };_proto2.
 anim=function anim(end,transition){
-end=Object.assign({
-x:this.x,
-y:this.y,
-z:this.z,
-scale:1,
-opacity:1,
-time:500},
-end);
-
+end=Object.assign({x:this.x,y:this.y,z:this.z,scale:1,opacity:1,time:500},end);
 if(end.time===0){
 this.$el.css(this.scene.pos(end,this.sp));
 return this;
@@ -1484,7 +1277,6 @@ return this;
 
 
 PokemonSprite=function(_Sprite2){
-
 
 
 
@@ -1639,20 +1431,11 @@ if(this.$sub)this.$sub.delay(time);
 return this;
 };_proto3.
 anim=function anim(end,transition){
-end=Object.assign({
-x:this.x,
-y:this.y,
-z:this.z,
-scale:1,
-opacity:1,
-time:500},
-end);
-
+end=Object.assign({x:this.x,y:this.y,z:this.z,scale:1,opacity:1,time:500},end);
 var _ref=this.isSubActive?[this.$sub,this.subsp]:[this.$el,this.sp],$el=_ref[0],sp=_ref[1];
 $el.animate(this.scene.posT(end,sp,transition,this),end.time);
 return this;
 };_proto3.
-
 behindx=function behindx(offset){return this.x+(this.isFrontSprite?1:-1)*offset;};_proto3.
 behindy=function behindy(offset){return this.y+(this.isFrontSprite?-1:1)*offset;};_proto3.
 leftof=function leftof(offset){return this.x+(this.isFrontSprite?1:-1)*offset;};_proto3.
@@ -1666,20 +1449,12 @@ this.sp=sp;
 this.oldsp=null;
 var $el=this.isSubActive?this.$sub:this.$el;
 $el.attr('src',sp.url);
-$el.css(this.scene.pos({
-x:this.x,
-y:this.y,
-z:this.isSubActive?this.behind(30):this.z,
-opacity:this.$sub?0.3:1
-},sp));
+$el.css(this.scene.pos({x:this.x,y:this.y,z:this.isSubActive?this.behind(30):this.z,opacity:this.$sub?0.3:1},sp));
 };_proto3.
 animSub=function animSub(instant,noAnim){
 if(!this.scene.animating)return;
 if(this.$sub)return;
-var subsp=Dex.getSpriteData('substitute',this.isFrontSprite,{
-gen:this.scene.gen,
-mod:this.scene.mod
-});
+var subsp=Dex.getSpriteData('substitute',this.isFrontSprite,{gen:this.scene.gen,mod:this.scene.mod});
 this.subsp=subsp;
 this.$sub=$('<img src="'+subsp.url+'" style="display:block;opacity:0;position:absolute"'+(subsp.pixelated?' class="pixelated"':'')+' />');
 this.scene.$spritesFront[+this.isFrontSprite].append(this.$sub);
@@ -1688,23 +1463,9 @@ if(instant){
 if(!noAnim)this.animReset();
 return;
 }
-this.$el.animate(this.scene.pos({
-x:this.x,
-y:this.y,
-z:this.behind(30),
-opacity:0.3
-},this.sp),500);
-this.$sub.css(this.scene.pos({
-x:this.x,
-y:this.y+50,
-z:this.z,
-opacity:0
-},subsp));
-this.$sub.animate(this.scene.pos({
-x:this.x,
-y:this.y,
-z:this.z
-},subsp),500);
+this.$el.animate(this.scene.pos({x:this.x,y:this.y,z:this.behind(30),opacity:0.3},this.sp),500);
+this.$sub.css(this.scene.pos({x:this.x,y:this.y+50,z:this.z,opacity:0},subsp));
+this.$sub.animate(this.scene.pos({x:this.x,y:this.y,z:this.z},subsp),500);
 this.scene.waitFor(this.$sub);
 };_proto3.
 animSubFade=function animSubFade(instant){
@@ -1720,12 +1481,7 @@ if(this.scene.timeOffset){
 this.$el.delay(this.scene.timeOffset);
 this.$sub.delay(this.scene.timeOffset);
 }
-this.$sub.animate(this.scene.pos({
-x:this.x,
-y:this.y-50,
-z:this.z,
-opacity:0
-},this.subsp),500);
+this.$sub.animate(this.scene.pos({x:this.x,y:this.y-50,z:this.z,opacity:0},this.subsp),500);
 this.$sub=null;
 this.anim({time:500});
 if(this.scene.animating)this.scene.waitFor(this.$el);
@@ -1735,12 +1491,7 @@ if(!this.scene.animating)return false;
 if(!this.isSubActive)return false;
 this.isSubActive=false;
 this.anim({time:300});
-this.$sub.animate(this.scene.pos({
-x:this.leftof(-50),
-y:this.y,
-z:this.z,
-opacity:0.5
-},this.subsp),300);for(var _i32=0,_this$scene$battle$si2=
+this.$sub.animate(this.scene.pos({x:this.leftof(-50),y:this.y,z:this.z,opacity:0.5},this.subsp),300);for(var _i32=0,_this$scene$battle$si2=
 this.scene.battle.sides;_i32<_this$scene$battle$si2.length;_i32++){var side=_this$scene$battle$si2[_i32];for(var _i34=0,_side$active4=side.active;_i34<_side$active4.length;_i34++){var active=_side$active4[_i34];if(active&&active.sprite!==this){active.sprite.delay(300);}}}
 this.scene.wait(300);
 this.scene.waitFor(this.$el);
@@ -1753,12 +1504,7 @@ this.isSubActive=true;
 this.$sub.delay(300);
 this.$el.add(this.$sub).promise().done(function(){
 if(!_this7.$sub||!_this7.$el)return;
-_this7.$el.animate(_this7.scene.pos({
-x:_this7.x,
-y:_this7.y,
-z:_this7.behind(30),
-opacity:0.3
-},_this7.sp),300);
+_this7.$el.animate(_this7.scene.pos({x:_this7.x,y:_this7.y,z:_this7.behind(30),opacity:0.3},_this7.sp),300);
 _this7.anim({time:300});
 });
 return false;
@@ -1769,19 +1515,15 @@ this.isSubActive=false;
 if(!this.scene.animating){this.$sub.remove();}else
 {
 var $sub=this.$sub;
-$sub.animate({opacity:0},
-function(){$sub.remove();});
+$sub.animate({opacity:0},function(){$sub.remove();});
 }
 this.$sub=null;
 };_proto3.
 reset=function reset(pokemon){
 this.clearEffects();
-if(pokemon.volatiles.formechange||pokemon.volatiles.dynamax||pokemon.volatiles.terastallize){
+if(pokemon.volatiles.formechange||pokemon.volatiles.terastallize){
 if(!this.oldsp)this.oldsp=this.sp;
-this.sp=Dex.getSpriteData(pokemon,this.isFrontSprite,{
-gen:this.scene.gen,
-mod:this.scene.mod
-});
+this.sp=Dex.getSpriteData(pokemon,this.isFrontSprite,{gen:this.scene.gen,mod:this.scene.mod});
 }else if(this.oldsp){
 this.sp=this.oldsp;
 this.oldsp=null;
@@ -1808,12 +1550,7 @@ return;
 if(this.$el)this.scene.$sprites[+this.isFrontSprite].append(this.$el);
 this.recalculatePos(pokemon.slot);
 this.resetStatbar(pokemon);
-this.$el.css(this.scene.pos({
-display:'block',
-x:this.x,
-y:this.y,
-z:this.z
-},this.sp));
+this.$el.css(this.scene.pos({display:'block',x:this.x,y:this.y,z:this.z},this.sp));
 for(var id in pokemon.volatiles)this.addEffect(id,true);
 for(var _id2 in pokemon.turnstatuses)this.addEffect(_id2,true);
 for(var _id3 in pokemon.movestatuses)this.addEffect(_id3,true);
@@ -1824,24 +1561,11 @@ if(this.$sub){
 this.isSubActive=true;
 this.$el.stop(true,false);
 this.$sub.stop(true,false);
-this.$el.css(this.scene.pos({
-x:this.x,
-y:this.y,
-z:this.behind(30),
-opacity:0.3
-},this.sp));
-this.$sub.css(this.scene.pos({
-x:this.x,
-y:this.y,
-z:this.z
-},this.subsp));
+this.$el.css(this.scene.pos({x:this.x,y:this.y,z:this.behind(30),opacity:0.3},this.sp));
+this.$sub.css(this.scene.pos({x:this.x,y:this.y,z:this.z},this.subsp));
 }else{
 this.$el.stop(true,false);
-this.$el.css(this.scene.pos({
-x:this.x,
-y:this.y,
-z:this.z
-},this.sp));
+this.$el.css(this.scene.pos({x:this.x,y:this.y,z:this.z},this.sp));
 }
 };_proto3.
 recalculatePos=function recalculatePos(slot){
@@ -1849,88 +1573,56 @@ var moreActive=this.scene.activeCount-1;
 var statbarOffset=0;
 var isFFA=this.scene.battle.gameType==='freeforall';
 if(isFFA){
-
 moreActive++;
 if(slot)slot++;
 }
-
 if(this.scene.gen<=4&&moreActive){
 this.x=(slot-0.52)*(this.isFrontSprite?1:-1)*-55;
 this.y=(this.isFrontSprite?1:-1)+1;
-
 if(this.isFrontSprite)statbarOffset=30*slot;
 if(!this.isFrontSprite)statbarOffset=-28*slot;
-
 }else{
 switch(moreActive){
 case 0:
 this.x=0;
 break;
 case 1:
-if(this.sp.pixelated){
-this.x=(slot*-100+18)*(this.isFrontSprite?1:-1);
-}else{
-this.x=(slot*-75+18)*(this.isFrontSprite?1:-1);
-}
+if(this.sp.pixelated){this.x=(slot*-100+18)*(this.isFrontSprite?1:-1);}else
+{this.x=(slot*-75+18)*(this.isFrontSprite?1:-1);}
 break;
 case 2:
 this.x=(slot*-70+20)*(this.isFrontSprite?1:-1);
 break;
 }
-
 this.y=this.isFrontSprite?slot*7:slot*-10;
 
 
 
-
 if(moreActive===1){
-var isRightSide=
-this.isFrontSprite&&slot===0||
-!this.isFrontSprite&&slot===1;
-
+var isRightSide=this.isFrontSprite&&slot===0||!this.isFrontSprite&&slot===1;
 if(isRightSide){
 this.y-=10;
 this.x+=12;
 }
 }
-
 if(this.isFrontSprite)statbarOffset=17*slot;
 if(this.isFrontSprite&&!moreActive&&this.sp.pixelated)statbarOffset=15;
 if(!this.isFrontSprite)statbarOffset=-7*slot;
 if(this.isFrontSprite&&moreActive===2)statbarOffset=14*slot-10;
 }
-
-if(this.scene.gen<=2){
-statbarOffset+=this.isFrontSprite?20:1;
-}else if(this.scene.gen<=3){
-statbarOffset+=this.isFrontSprite?30:5;
-}else if(this.scene.gen!==5){
-statbarOffset+=this.isFrontSprite?30:20;
-}
-
-var pos=this.scene.pos({
-x:this.x,
-y:this.y,
-z:this.z
-},{
-w:0,
-h:96
-});
-
+if(this.scene.gen<=2){statbarOffset+=this.isFrontSprite?20:1;}else
+if(this.scene.gen<=3){statbarOffset+=this.isFrontSprite?30:5;}else
+if(this.scene.gen!==5){statbarOffset+=this.isFrontSprite?30:20;}
+var pos=this.scene.pos({x:this.x,y:this.y,z:this.z},{w:0,h:96});
 pos.top+=40;
 this.left=pos.left;
 this.top=pos.top;
 this.statbarLeft=pos.left-80;
 this.statbarTop=pos.top-73-statbarOffset;
 if(this.statbarTop<-4)this.statbarTop=-4;
-
 if(moreActive){
-
-if(!!slot===this.isFrontSprite){
-this.$el.prependTo(this.$el.parent());
-}else{
-this.$el.appendTo(this.$el.parent());
-}
+if(!!slot===this.isFrontSprite){this.$el.prependTo(this.$el.parent());}else
+{this.$el.appendTo(this.$el.parent());}
 }
 };_proto3.
 animSummon=function animSummon(pokemon,slot,instant){
@@ -1946,75 +1638,21 @@ if(pokemon.hasVolatile('substitute'))this.animSub(true);
 return;
 }
 if(this.cryurl){BattleSound.playEffect(this.cryurl);}
-this.$el.css(this.scene.pos({
-display:'block',
-x:this.x,
-y:this.y-10,
-z:this.z,
-scale:0,
-opacity:0
-},this.sp));
-this.scene.showEffect('pokeball',{
-opacity:0,
-x:this.x,
-y:this.y+30,
-z:this.behind(50),
-scale:0.7
-},{
-opacity:1,
-x:this.x,
-y:this.y-10,
-z:this.z,
-time:300/this.scene.acceleration
-},'ballistic2','fade');
-if(this.scene.gen<=4){
-this.delay(this.scene.timeOffset+300/this.scene.acceleration).anim({
-x:this.x,
-y:this.y,
-z:this.z,
-time:400/this.scene.acceleration
-});
-}else{
-this.delay(this.scene.timeOffset+300/this.scene.acceleration).anim({
-x:this.x,
-y:this.y+30,
-z:this.z,
-time:400/this.scene.acceleration
-}).anim({
-x:this.x,
-y:this.y,
-z:this.z,
-time:300/this.scene.acceleration
-},'accel');
-}
+this.$el.css(this.scene.pos({display:'block',x:this.x,y:this.y-10,z:this.z,scale:0,opacity:0},this.sp));
+this.scene.showEffect('pokeball',{opacity:0,x:this.x,y:this.y+30,z:this.behind(50),scale:0.7},{opacity:1,x:this.x,y:this.y-10,z:this.z,time:300/this.scene.acceleration},'ballistic2','fade');
+if(this.scene.gen<=4){this.delay(this.scene.timeOffset+300/this.scene.acceleration).anim({x:this.x,y:this.y,z:this.z,time:400/this.scene.acceleration});}else
+{this.delay(this.scene.timeOffset+300/this.scene.acceleration).anim({x:this.x,y:this.y+30,z:this.z,time:400/this.scene.acceleration}).anim({x:this.x,y:this.y,z:this.z,time:300/this.scene.acceleration},'accel');}
 if(this.sp.shiny&&this.scene.acceleration<2)BattleOtherAnims.shiny.anim(this.scene,[this]);
 this.scene.waitFor(this.$el);
 if(pokemon.hasVolatile('substitute')){
 this.animSub(true,true);
-this.$sub.css(this.scene.pos({
-x:this.x,
-y:this.y,
-z:this.z
-},this.subsp));
-this.$el.animate(this.scene.pos({
-x:this.x,
-y:this.y,
-z:this.behind(30),
-opacity:0.3
-},this.sp),300);
+this.$sub.css(this.scene.pos({x:this.x,y:this.y,z:this.z},this.subsp));
+this.$el.animate(this.scene.pos({x:this.x,y:this.y,z:this.behind(30),opacity:0.3},this.sp),300);
 }
 this.resetStatbar(pokemon,true);
 this.scene.updateSidebars();
-this.$statbar.css({
-display:'block',
-left:this.statbarLeft,
-top:this.statbarTop+20,
-opacity:0
-});
-this.$statbar.delay(300/this.scene.acceleration).animate({
-top:this.statbarTop,
-opacity:1
-},400/this.scene.acceleration);
+this.$statbar.css({display:'block',left:this.statbarLeft,top:this.statbarTop+20,opacity:0});
+this.$statbar.delay(300/this.scene.acceleration).animate({top:this.statbarTop,opacity:1},400/this.scene.acceleration);
 this.dogarsCheck(pokemon);
 };_proto3.
 animDragIn=function animDragIn(pokemon,slot){
@@ -2022,13 +1660,7 @@ if(!this.scene.animating)return;
 this.scene.$sprites[+this.isFrontSprite].append(this.$el);
 this.recalculatePos(slot);
 
-this.$el.css(this.scene.pos({
-display:'block',
-x:this.leftof(-100),
-y:this.y,
-z:this.z,
-opacity:0
-},this.sp));
+this.$el.css(this.scene.pos({display:'block',x:this.leftof(-100),y:this.y,z:this.z,opacity:0},this.sp));
 this.delay(300).anim({
 x:this.x,
 y:this.y,
@@ -2040,16 +1672,8 @@ this.scene.waitFor(this.$el);
 this.scene.timeOffset=700;
 this.resetStatbar(pokemon,true);
 this.scene.updateSidebars();
-this.$statbar.css({
-display:'block',
-left:this.statbarLeft+(this.isFrontSprite?-100:100),
-top:this.statbarTop,
-opacity:0
-});
-this.$statbar.delay(300).animate({
-left:this.statbarLeft,
-opacity:1
-},400);
+this.$statbar.css({display:'block',left:this.statbarLeft+(this.isFrontSprite?-100:100),top:this.statbarTop,opacity:0});
+this.$statbar.delay(300).animate({left:this.statbarLeft,opacity:1},400);
 this.dogarsCheck(pokemon);
 };_proto3.
 animDragOut=function animDragOut(pokemon){
@@ -2057,30 +1681,15 @@ if(!this.scene.animating)return this.animUnsummon(pokemon,true);
 if(this.$sub){
 this.isSubActive=false;
 var $sub=this.$sub;
-$sub.animate(this.scene.pos({
-x:this.leftof(100),
-y:this.y,
-z:this.z,
-opacity:0,
-time:400
-},this.subsp),function(){$sub.remove();});
+$sub.animate(this.scene.pos({x:this.leftof(100),y:this.y,z:this.z,opacity:0,time:400},this.subsp),function(){$sub.remove();});
 this.$sub=null;
 }
-this.anim({
-x:this.leftof(100),
-y:this.y,
-z:this.z,
-opacity:0,
-time:400
-},'accel');
+this.anim({x:this.leftof(100),y:this.y,z:this.z,opacity:0,time:400},'accel');
 this.updateStatbar(pokemon,true);
 var $statbar=this.$statbar;
 if($statbar){
 this.$statbar=null;
-$statbar.animate({
-left:this.statbarLeft-(this.isFrontSprite?-100:100),
-opacity:0
-},300/this.scene.acceleration,function(){$statbar.remove();});
+$statbar.animate({left:this.statbarLeft-(this.isFrontSprite?-100:100),opacity:0},300/this.scene.acceleration,function(){$statbar.remove();});
 }
 };_proto3.
 animUnsummon=function animUnsummon(pokemon,instant){
@@ -2093,39 +1702,9 @@ this.$statbar=null;
 }
 return;
 }
-if(this.scene.gen<=4){
-this.anim({
-x:this.x,
-y:this.y-25,
-z:this.z,
-scale:0,
-opacity:0,
-time:400/this.scene.acceleration
-});
-}else{
-this.anim({
-x:this.x,
-y:this.y-40,
-z:this.z,
-scale:0,
-opacity:0,
-time:400/this.scene.acceleration
-});
-}
-this.scene.showEffect('pokeball',{
-opacity:1,
-x:this.x,
-y:this.y-40,
-z:this.z,
-scale:0.7,
-time:300/this.scene.acceleration
-},{
-opacity:0,
-x:this.x,
-y:this.y,
-z:this.behind(50),
-time:700/this.scene.acceleration
-},'ballistic2');
+if(this.scene.gen<=4){this.anim({x:this.x,y:this.y-25,z:this.z,scale:0,opacity:0,time:400/this.scene.acceleration});}else
+{this.anim({x:this.x,y:this.y-40,z:this.z,scale:0,opacity:0,time:400/this.scene.acceleration});}
+this.scene.showEffect('pokeball',{opacity:1,x:this.x,y:this.y-40,z:this.z,scale:0.7,time:300/this.scene.acceleration},{opacity:0,x:this.x,y:this.y,z:this.behind(50),time:700/this.scene.acceleration},'ballistic2');
 if(this.scene.acceleration<3)this.scene.wait(600/this.scene.acceleration);
 this.updateStatbar(pokemon,true);
 var $statbar=this.$statbar;
@@ -2148,10 +1727,7 @@ return;
 this.updateStatbar(pokemon,false,true);
 this.scene.updateSidebars();
 if(this.cryurl){BattleSound.playEffect(this.cryurl);}
-this.anim({
-y:this.y-80,
-opacity:0
-},'accel');
+this.anim({y:this.y-80,opacity:0},'accel');
 this.scene.waitFor(this.$el);
 this.$el.promise().done(function(){_this8.$el.remove();});
 var $statbar=this.$statbar;
@@ -2168,21 +1744,10 @@ $statbar.animate({opacity:0},
 
 animTransform=function animTransform(pokemon,useSpeciesAnim,isPermanent){var _this9=this;
 if(!this.scene.animating&&!isPermanent)return;
-var sp=Dex.getSpriteData(pokemon,this.isFrontSprite,{
-gen:this.scene.gen,
-mod:this.scene.mod
-});
+var sp=Dex.getSpriteData(pokemon,this.isFrontSprite,{gen:this.scene.gen,mod:this.scene.mod});
 var oldsp=this.sp;
-if(isPermanent){
-if(pokemon.volatiles.dynamax){
-
-this.oldsp=Dex.getSpriteData(pokemon,this.isFrontSprite,{
-gen:this.scene.gen,
-mod:this.scene.mod,
-dynamax:false
-});
-}else{this.oldsp=null;}
-}else if(!this.oldsp){this.oldsp=oldsp;}
+if(isPermanent){this.oldsp=null;}else
+if(!this.oldsp){this.oldsp=oldsp;}
 this.sp=sp;
 this.cryurl=sp.cryurl;
 if(!this.scene.animating)return;
@@ -2203,7 +1768,7 @@ doCry=true;
 }else if(speciesid==='zygardecomplete'){BattleOtherAnims.powerconstruct.anim(scene,[this]);}else
 if(speciesid==='wishiwashischool'||speciesid==='greninjaash'){BattleOtherAnims.schoolingin.anim(scene,[this]);}else
 if(speciesid==='wishiwashi'){BattleOtherAnims.schoolingout.anim(scene,[this]);}else
-if(speciesid==='mimikyubusted'||speciesid==='mimikyubustedtotem'||speciesid==='aegislash'||speciesid==='aegislashblade'){}else
+if(speciesid==='mimikyubusted'||speciesid==='aegislash'||speciesid==='aegislashblade'){}else
 if(speciesid==='palafinhero'){skipAnim=true;}else
 {
 BattleOtherAnims.megaevo.anim(scene,[this]);
@@ -2212,36 +1777,17 @@ doCry=true;
 }
 
 var $newEl=$('<img src="'+sp.url+'" style="display:block;opacity:0;position:absolute"'+(sp.pixelated?' class="pixelated"':'')+' />');
-$newEl.css(this.scene.pos({
-x:this.x,
-y:this.y,
-z:this.z,
-yscale:0,
-xscale:0,
-opacity:0
-},sp));
+$newEl.css(this.scene.pos({x:this.x,y:this.y,z:this.z,yscale:0,xscale:0,opacity:0},sp));
 if(skipAnim){
 this.$el.replaceWith($newEl);
 this.$el=$newEl;
 this.animReset();
 }else{
-this.$el.animate(this.scene.pos({
-x:this.x,
-y:this.y,
-z:this.z,
-yscale:0,
-xscale:0,
-opacity:0.3
-},oldsp),300,function(){
+this.$el.animate(this.scene.pos({x:this.x,y:this.y,z:this.z,yscale:0,xscale:0,opacity:0.3},oldsp),300,function(){
 if(_this9.cryurl&&doCry){BattleSound.playEffect(_this9.cryurl);}
 _this9.$el.replaceWith($newEl);
 _this9.$el=$newEl;
-_this9.$el.animate(scene.pos({
-x:_this9.x,
-y:_this9.y,
-z:_this9.z,
-opacity:1
-},sp),300);
+_this9.$el.animate(scene.pos({x:_this9.x,y:_this9.y,z:_this9.z,opacity:1},sp),300);
 });
 this.scene.wait(500);
 }
@@ -2249,18 +1795,7 @@ this.scene.updateSidebars();
 if(isPermanent){this.resetStatbar(pokemon);}else
 {this.updateStatbar(pokemon);}
 };_proto3.
-pokeEffect=function pokeEffect(id){
-if(id==='protect'||id==='magiccoat'){
-this.effects[id][0].anim({
-scale:1.2,
-opacity:1,
-time:100
-}).anim({
-opacity:0.4,
-time:300
-});
-}
-};_proto3.
+pokeEffect=function pokeEffect(id){if(id==='protect'||id==='magiccoat'){this.effects[id][0].anim({scale:1.2,opacity:1,time:100}).anim({opacity:0.4,time:300});}};_proto3.
 addEffect=function addEffect(id,instant){
 if(id in this.effects){
 this.pokeEffect(id);
@@ -2269,30 +1804,9 @@ return;
 var spriten=+this.isFrontSprite;
 if(id==='substitute'||id==='shedtail'){this.animSub(instant);}else
 if(id==='leechseed'){
-var pos1={
-display:'block',
-x:this.x-30,
-y:this.y-40,
-z:this.z,
-scale:0.2,
-opacity:0.6
-};
-var pos2={
-display:'block',
-x:this.x+40,
-y:this.y-35,
-z:this.z,
-scale:0.2,
-opacity:0.6
-};
-var pos3={
-display:'block',
-x:this.x+20,
-y:this.y-25,
-z:this.z,
-scale:0.2,
-opacity:0.6
-};
+var pos1={display:'block',x:this.x-30,y:this.y-40,z:this.z,scale:0.2,opacity:0.6};
+var pos2={display:'block',x:this.x+40,y:this.y-35,z:this.z,scale:0.2,opacity:0.6};
+var pos3={display:'block',x:this.x+20,y:this.y-25,z:this.z,scale:0.2,opacity:0.6};
 var leechseed1=new Sprite(BattleEffects.energyball,pos1,this.scene);
 var leechseed2=new Sprite(BattleEffects.energyball,pos2,this.scene);
 var leechseed3=new Sprite(BattleEffects.energyball,pos3,this.scene);
@@ -2301,24 +1815,10 @@ this.scene.$spritesFront[spriten].append(leechseed2.$el);
 this.scene.$spritesFront[spriten].append(leechseed3.$el);
 this.effects['leechseed']=[leechseed1,leechseed2,leechseed3];
 }else if(id==='protect'||id==='magiccoat'){
-var protect=new Sprite(BattleEffects.protect,{
-display:'block',
-x:this.x,
-y:this.y,
-z:this.behind(-15),
-xscale:1,
-yscale:0,
-opacity:0.1
-},this.scene);
+var protect=new Sprite(BattleEffects.protect,{display:'block',x:this.x,y:this.y,z:this.behind(-15),xscale:1,yscale:0,opacity:0.1},this.scene);
 this.scene.$spritesFront[spriten].append(protect.$el);
 this.effects[id]=[protect];
-protect.anim({
-opacity:0.9,
-time:instant?0:400
-}).anim({
-opacity:0.4,
-time:instant?0:300
-});
+protect.anim({opacity:0.9,time:instant?0:400}).anim({opacity:0.4,time:instant?0:300});
 }
 };_proto3.
 removeEffect=function removeEffect(id,instant){
@@ -2340,15 +1840,10 @@ if(pokemon.speciesForme==='Koffing'&&/dogars/i.exec(pokemon.name)){this.scene.se
 if(this.scene.bgmNum===-1){this.scene.rollBgm();}
 };_proto3.
 
-
 getClassForPosition=function getClassForPosition(slot){
 
 
-var position=[
-' leftstatbar',
-this.scene.activeCount===3?' centerstatbar':' rightstatbar',
-' rightstatbar'];
-
+var position=[' leftstatbar',this.scene.activeCount===3?' centerstatbar':' rightstatbar',' rightstatbar'];
 return position[slot];
 };_proto3.
 getStatbarHTML=function getStatbarHTML(pokemon){
@@ -2374,14 +1869,7 @@ this.$statbar.remove();
 this.$statbar=null;
 }
 this.updateStatbar(pokemon,true);
-if(!startHidden&&this.$statbar){
-this.$statbar.css({
-display:'block',
-left:this.statbarLeft,
-top:this.statbarTop,
-opacity:1
-});
-}
+if(!startHidden&&this.$statbar){this.$statbar.css({display:'block',left:this.statbarLeft,top:this.statbarTop,opacity:1});}
 };_proto3.
 updateStatbarIfExists=function updateStatbarIfExists(pokemon,updatePrevhp,updateHp){if(this.$statbar){this.updateStatbar(pokemon,updatePrevhp,updateHp);}};_proto3.
 updateStatbar=function updateStatbar(pokemon,updatePrevhp,updateHp){
@@ -2400,10 +1888,7 @@ if(updatePrevhp||updateHp){
 hpcolor=BattleScene.getHPColor(pokemon);
 var w=pokemon.hpWidth(150);
 var $hp=this.$statbar.find('.hp');
-$hp.css({
-width:w,
-'border-right-width':w?1:0
-});
+$hp.css({width:w,'border-right-width':w?1:0});
 if(hpcolor==='g')$hp.removeClass('hp-yellow hp-red');else
 if(hpcolor==='y')$hp.removeClass('hp-red').addClass('hp-yellow');else
 $hp.addClass('hp-yellow hp-red');
@@ -2418,7 +1903,6 @@ $prevhp.addClass('prevhp-yellow prevhp-red');
 }
 var status='';
 var STATUS_ICON_PATH=Dex.resourcePrefix+"sprites/status-is/";
-
 var statusIcons={
 brn:"Burn_IS.png",
 psn:"Poison_IS.png",
@@ -2426,7 +1910,6 @@ tox:"Toxic_IS.png",
 slp:"Sleep_IS.png",
 par:"Paralysis_IS.png",
 frz:"Frozen_IS.png",
-
 aura:"Aura_IS.png",
 bubbleblight:"Bubbleblight_IS.png",
 dragonblight:"Dragonblight_IS.png",
@@ -2459,7 +1942,6 @@ for(var _i40 in pokemon.movestatuses){status+=PokemonSprite.getEffectTag(_i40);}
 var statusbar=this.$statbar.find('.status');
 statusbar.html(status);
 };PokemonSprite.
-
 getEffectTag=function getEffectTag(id){
 var effect=PokemonSprite.statusTable[id];
 if(typeof effect==='string')return effect;
@@ -2491,7 +1973,7 @@ $hptext.html(pokemon.hpWidth(100)+"%");
 $hptext.show();
 $hptextborder.show();
 }
-};return PokemonSprite;}(Sprite);PokemonSprite.statusTable={formechange:null,typechange:null,typeadd:null,dynamax:['Dynamaxed','good'],trapped:null,throatchop:['Throat Chop','bad'],confusion:['Confused','bad'],healblock:['Heal Block','bad'],yawn:['Drowsy','bad'],flashfire:['Flash Fire','good'],imprison:['Imprisoning foe','good'],autotomize:['Lightened','neutral'],miracleeye:['Miracle Eye','bad'],foresight:['Foresight','bad'],telekinesis:['Telekinesis','neutral'],transform:['Transformed','neutral'],powertrick:['Power Trick','neutral'],curse:['Curse','bad'],nightmare:['Nightmare','bad'],attract:['Infatuation','bad'],torment:['Torment','bad'],taunt:['Taunt','bad'],disable:['Disable','bad'],embargo:['Embargo','bad'],ingrain:['Ingrain','good'],aquaring:['Aqua Ring','good'],stockpile1:['Stockpile','good'],stockpile2:['Stockpile&times;2','good'],stockpile3:['Stockpile&times;3','good'],perish0:['Perish now','bad'],perish1:['Perish next turn','bad'],perish2:['Perish in 2','bad'],perish3:['Perish in 3','bad'],airballoon:['Balloon','good'],leechseed:['Leech Seed','bad'],encore:['Encore','bad'],mustrecharge:['Must recharge','bad'],bide:['Bide','good'],magnetrise:['Magnet Rise','good'],smackdown:['Smack Down','bad'],focusenergy:['Critical Hit Boost','good'],dragoncheer:['Critical Hit Boost','good'],slowstart:['Slow Start','bad'],protosynthesisatk:['Protosynthesis: Atk','good'],protosynthesisdef:['Protosynthesis: Def','good'],protosynthesisspa:['Protosynthesis: SpA','good'],protosynthesisspd:['Protosynthesis: SpD','good'],protosynthesisspe:['Protosynthesis: Spe','good'],quarkdriveatk:['Quark Drive: Atk','good'],quarkdrivedef:['Quark Drive: Def','good'],quarkdrivespa:['Quark Drive: SpA','good'],quarkdrivespd:['Quark Drive: SpD','good'],quarkdrivespe:['Quark Drive: Spe','good'],fallen1:['Fallen: 1','good'],fallen2:['Fallen: 2','good'],fallen3:['Fallen: 3','good'],fallen4:['Fallen: 4','good'],fallen5:['Fallen: 5','good'],noretreat:['No Retreat','bad'],octolock:['Octolock','bad'],tarshot:['Tar Shot','bad'],saltcure:['Salt Cure','bad'],syrupbomb:['Syrupy','bad'],doomdesire:null,futuresight:null,mimic:['Mimic','good'],watersport:['Water Sport','good'],mudsport:['Mud Sport','good'],substitute:null,uproar:['Uproar','neutral'],rage:['Rage','neutral'],roost:['Landed','neutral'],protect:['Protect','good'],quickguard:['Quick Guard','good'],wideguard:['Wide Guard','good'],craftyshield:['Crafty Shield','good'],matblock:['Mat Block','good'],maxguard:['Max Guard','good'],helpinghand:['Helping Hand','good'],magiccoat:['Magic Coat','good'],destinybond:['Destiny Bond','good'],snatch:['Snatch','good'],grudge:['Grudge','good'],charge:['Charge','good'],endure:['Endure','good'],focuspunch:['Focusing','neutral'],shelltrap:['Trap set','neutral'],powder:['Powder','bad'],electrify:['Electrify','bad'],glaiverush:['Glaive Rush','bad'],ragepowder:['Rage Powder','good'],followme:['Follow Me','good'],instruct:['Instruct','neutral'],beakblast:['Beak Blast','neutral'],laserfocus:['Laser Focus','good'],spotlight:['Spotlight','neutral'],itemremoved:null,bind:['Bind','bad'],clamp:['Clamp','bad'],firespin:['Fire Spin','bad'],infestation:['Infestation','bad'],magmastorm:['Magma Storm','bad'],sandtomb:['Sand Tomb','bad'],snaptrap:['Snap Trap','bad'],thundercage:['Thunder Cage','bad'],whirlpool:['Whirlpool','bad'],wrap:['Wrap','bad'],mist:['Mist','good'],lightscreen:['Light Screen','good'],reflect:['Reflect','good']};
+};return PokemonSprite;}(Sprite);PokemonSprite.statusTable={formechange:null,typechange:null,typeadd:null,trapped:null,throatchop:['Throat Chop','bad'],confusion:['Confused','bad'],healblock:['Heal Block','bad'],yawn:['Drowsy','bad'],flashfire:['Flash Fire','good'],imprison:['Imprisoning foe','good'],autotomize:['Lightened','neutral'],miracleeye:['Miracle Eye','bad'],foresight:['Foresight','bad'],telekinesis:['Telekinesis','neutral'],transform:['Transformed','neutral'],powertrick:['Power Trick','neutral'],curse:['Curse','bad'],nightmare:['Nightmare','bad'],attract:['Infatuation','bad'],torment:['Torment','bad'],taunt:['Taunt','bad'],disable:['Disable','bad'],embargo:['Embargo','bad'],ingrain:['Ingrain','good'],aquaring:['Aqua Ring','good'],stockpile1:['Stockpile','good'],stockpile2:['Stockpile&times;2','good'],stockpile3:['Stockpile&times;3','good'],perish0:['Perish now','bad'],perish1:['Perish next turn','bad'],perish2:['Perish in 2','bad'],perish3:['Perish in 3','bad'],airballoon:['Balloon','good'],leechseed:['Leech Seed','bad'],encore:['Encore','bad'],mustrecharge:['Must recharge','bad'],bide:['Bide','good'],magnetrise:['Magnet Rise','good'],smackdown:['Smack Down','bad'],focusenergy:['Critical Hit Boost','good'],dragoncheer:['Critical Hit Boost','good'],slowstart:['Slow Start','bad'],protosynthesisatk:['Protosynthesis: Atk','good'],protosynthesisdef:['Protosynthesis: Def','good'],protosynthesisspa:['Protosynthesis: SpA','good'],protosynthesisspd:['Protosynthesis: SpD','good'],protosynthesisspe:['Protosynthesis: Spe','good'],quarkdriveatk:['Quark Drive: Atk','good'],quarkdrivedef:['Quark Drive: Def','good'],quarkdrivespa:['Quark Drive: SpA','good'],quarkdrivespd:['Quark Drive: SpD','good'],quarkdrivespe:['Quark Drive: Spe','good'],fallen1:['Fallen: 1','good'],fallen2:['Fallen: 2','good'],fallen3:['Fallen: 3','good'],fallen4:['Fallen: 4','good'],fallen5:['Fallen: 5','good'],noretreat:['No Retreat','bad'],octolock:['Octolock','bad'],tarshot:['Tar Shot','bad'],saltcure:['Salt Cure','bad'],syrupbomb:['Syrupy','bad'],doomdesire:null,futuresight:null,mimic:['Mimic','good'],watersport:['Water Sport','good'],mudsport:['Mud Sport','good'],substitute:null,uproar:['Uproar','neutral'],rage:['Rage','neutral'],roost:['Landed','neutral'],protect:['Protect','good'],quickguard:['Quick Guard','good'],wideguard:['Wide Guard','good'],craftyshield:['Crafty Shield','good'],matblock:['Mat Block','good'],maxguard:['Max Guard','good'],helpinghand:['Helping Hand','good'],magiccoat:['Magic Coat','good'],destinybond:['Destiny Bond','good'],snatch:['Snatch','good'],grudge:['Grudge','good'],charge:['Charge','good'],endure:['Endure','good'],focuspunch:['Focusing','neutral'],shelltrap:['Trap set','neutral'],powder:['Powder','bad'],electrify:['Electrify','bad'],glaiverush:['Glaive Rush','bad'],ragepowder:['Rage Powder','good'],followme:['Follow Me','good'],instruct:['Instruct','neutral'],beakblast:['Beak Blast','neutral'],laserfocus:['Laser Focus','good'],spotlight:['Spotlight','neutral'],itemremoved:null,bind:['Bind','bad'],clamp:['Clamp','bad'],firespin:['Fire Spin','bad'],infestation:['Infestation','bad'],magmastorm:['Magma Storm','bad'],sandtomb:['Sand Tomb','bad'],snaptrap:['Snap Trap','bad'],thundercage:['Thunder Cage','bad'],whirlpool:['Whirlpool','bad'],wrap:['Wrap','bad'],mist:['Mist','good'],lightscreen:['Light Screen','good'],reflect:['Reflect','good']};
 
 
 
@@ -2519,198 +2001,70 @@ quadDown:function(x,t,b,c,d){return x*x;}
 
 
 var BattleEffects={
-wisp:{url:'wisp.png',
-w:100,h:100
-},
-poisonwisp:{url:'poisonwisp.png',
-w:100,h:100
-},
-waterwisp:{url:'waterwisp.png',
-w:100,h:100
-},
-mudwisp:{url:'mudwisp.png',
-w:100,h:100
-},
-blackwisp:{url:'blackwisp.png',
-w:100,h:100
-},
-fireball:{url:'fireball.png',
-w:64,h:64
-},
-bluefireball:{url:'bluefireball.png',
-w:64,h:64
-},
-icicle:{url:'icicle.png',
-w:80,h:60
-},
-pinkicicle:{url:'icicle-pink.png',
-w:80,h:60
-},
-lightning:{url:'lightning.png',
-w:41,h:229
-},
-rocks:{url:'rocks.png',
-w:100,h:100
-},
-rock1:{url:'rock1.png',
-w:64,h:80
-},
-rock2:{url:'rock2.png',
-w:66,h:72
-},
-rock3:{url:'rock3.png',
-w:66,h:72
-},
-leaf1:{url:'leaf1.png',
-w:32,h:26
-},
-leaf2:{url:'leaf2.png',
-w:40,h:26
-},
-bone:{url:'bone.png',
-w:29,h:29
-},
-caltrop:{url:'caltrop.png',
-w:80,h:80
-},
-greenmetal1:{url:'greenmetal1.png',
-w:45,h:45
-},
-greenmetal2:{url:'greenmetal2.png',
-w:45,h:45
-},
-poisoncaltrop:{url:'poisoncaltrop.png',
-w:80,h:80
-},
-shadowball:{url:'shadowball.png',
-w:100,h:100
-},
-energyball:{url:'energyball.png',
-w:100,h:100
-},
-electroball:{url:'electroball.png',
-w:100,h:100
-},
-mistball:{url:'mistball.png',
-w:100,h:100
-},
-iceball:{url:'iceball.png',
-w:100,h:100
-},
-flareball:{url:'flareball.png',
-w:100,h:100
-},
-moon:{url:'moon.png',
-w:100,h:100
-},
-pokeball:{url:'pokeball.png',
-w:24,h:24
-},
-fist:{url:'fist.png',
-w:55,h:49
-},
-fist1:{url:'fist1.png',
-w:49,h:55
-},
-foot:{url:'foot.png',
-w:50,h:75
-},
-topbite:{url:'topbite.png',
-w:108,h:64
-},
-bottombite:{url:'bottombite.png',
-w:108,h:64
-},
-web:{url:'web.png',
-w:120,h:122
-},
-leftclaw:{url:'leftclaw.png',
-w:44,h:60
-},
-rightclaw:{url:'rightclaw.png',
-w:44,h:60
-},
-leftslash:{url:'leftslash.png',
-w:57,h:56
-},
-rightslash:{url:'rightslash.png',
-w:57,h:56
-},
-leftchop:{url:'leftchop.png',
-w:100,h:130
-},
-rightchop:{url:'rightchop.png',
-w:100,h:130
-},
-angry:{url:'angry.png',
-w:30,h:30
-},
-heart:{url:'heart.png',
-w:30,h:30
-},
-pointer:{url:'pointer.png',
-w:100,h:100
-},
-sword:{url:'sword.png',
-w:48,h:100
-},
-impact:{url:'impact.png',
-w:127,h:119
-},
-stare:{url:'stare.png',
-w:100,h:35
-},
-shine:{url:'shine.png',
-w:127,h:119
-},
-feather:{url:'feather.png',
-w:100,h:38
-},
-shell:{url:'shell.png',
-w:100,h:91.5
-},
-petal:{url:'petal.png',
-w:60,h:60
-},
-gear:{url:'gear.png',
-w:100,h:100
-},
-alpha:{url:'alpha.png',
-w:80,h:80
-},
-omega:{url:'omega.png',
-w:80,h:80
-},
-rainbow:{url:'rainbow.png',
-w:128,h:128
-},
-zsymbol:{url:'z-symbol.png',
-w:150,h:100
-},
-ultra:{url:'ultra.png',
-w:113,h:165
-},
-hitmark:{url:'hitmarker.png',
-w:100,h:100
-},
-protect:{rawHTML:'<div class="turnstatus-protect" style="display:none;position:absolute" />',
-w:100,h:70
-},
-auroraveil:{rawHTML:'<div class="sidecondition-auroraveil" style="display:none;position:absolute" />',
-w:100,h:50
-},
-reflect:{rawHTML:'<div class="sidecondition-reflect" style="display:none;position:absolute" />',
-w:100,h:50
-},
-safeguard:{rawHTML:'<div class="sidecondition-safeguard" style="display:none;position:absolute" />',
-w:100,h:50
-},
-lightscreen:{rawHTML:'<div class="sidecondition-lightscreen" style="display:none;position:absolute" />',
-w:100,h:50
-},
-mist:{rawHTML:'<div class="sidecondition-mist" style="display:none;position:absolute" />',
-w:100,h:50
-}
+wisp:{url:'wisp.png',w:100,h:100},
+poisonwisp:{url:'poisonwisp.png',w:100,h:100},
+waterwisp:{url:'waterwisp.png',w:100,h:100},
+mudwisp:{url:'mudwisp.png',w:100,h:100},
+blackwisp:{url:'blackwisp.png',w:100,h:100},
+fireball:{url:'fireball.png',w:64,h:64},
+bluefireball:{url:'bluefireball.png',w:64,h:64},
+icicle:{url:'icicle.png',w:80,h:60},
+pinkicicle:{url:'icicle-pink.png',w:80,h:60},
+lightning:{url:'lightning.png',w:41,h:229},
+rocks:{url:'rocks.png',w:100,h:100},
+rock1:{url:'rock1.png',w:64,h:80},
+rock2:{url:'rock2.png',w:66,h:72},
+rock3:{url:'rock3.png',w:66,h:72},
+leaf1:{url:'leaf1.png',w:32,h:26},
+leaf2:{url:'leaf2.png',w:40,h:26},
+bone:{url:'bone.png',w:29,h:29},
+caltrop:{url:'caltrop.png',w:80,h:80},
+greenmetal1:{url:'greenmetal1.png',w:45,h:45},
+greenmetal2:{url:'greenmetal2.png',w:45,h:45},
+poisoncaltrop:{url:'poisoncaltrop.png',w:80,h:80},
+shadowball:{url:'shadowball.png',w:100,h:100},
+energyball:{url:'energyball.png',w:100,h:100},
+electroball:{url:'electroball.png',w:100,h:100},
+mistball:{url:'mistball.png',w:100,h:100},
+iceball:{url:'iceball.png',w:100,h:100},
+flareball:{url:'flareball.png',w:100,h:100},
+moon:{url:'moon.png',w:100,h:100},
+pokeball:{url:'pokeball.png',w:24,h:24},
+fist:{url:'fist.png',w:55,h:49},
+fist1:{url:'fist1.png',w:49,h:55},
+foot:{url:'foot.png',w:50,h:75},
+topbite:{url:'topbite.png',w:108,h:64},
+bottombite:{url:'bottombite.png',w:108,h:64},
+web:{url:'web.png',w:120,h:122},
+leftclaw:{url:'leftclaw.png',w:44,h:60},
+rightclaw:{url:'rightclaw.png',w:44,h:60},
+leftslash:{url:'leftslash.png',w:57,h:56},
+rightslash:{url:'rightslash.png',w:57,h:56},
+leftchop:{url:'leftchop.png',w:100,h:130},
+rightchop:{url:'rightchop.png',w:100,h:130},
+angry:{url:'angry.png',w:30,h:30},
+heart:{url:'heart.png',w:30,h:30},
+pointer:{url:'pointer.png',w:100,h:100},
+sword:{url:'sword.png',w:48,h:100},
+impact:{url:'impact.png',w:127,h:119},
+stare:{url:'stare.png',w:100,h:35},
+shine:{url:'shine.png',w:127,h:119},
+feather:{url:'feather.png',w:100,h:38},
+shell:{url:'shell.png',w:100,h:91.5},
+petal:{url:'petal.png',w:60,h:60},
+gear:{url:'gear.png',w:100,h:100},
+alpha:{url:'alpha.png',w:80,h:80},
+omega:{url:'omega.png',w:80,h:80},
+rainbow:{url:'rainbow.png',w:128,h:128},
+zsymbol:{url:'z-symbol.png',w:150,h:100},
+ultra:{url:'ultra.png',w:113,h:165},
+hitmark:{url:'hitmarker.png',w:100,h:100},
+protect:{rawHTML:'<div class="turnstatus-protect" style="display:none;position:absolute" />',w:100,h:70},
+auroraveil:{rawHTML:'<div class="sidecondition-auroraveil" style="display:none;position:absolute" />',w:100,h:50},
+reflect:{rawHTML:'<div class="sidecondition-reflect" style="display:none;position:absolute" />',w:100,h:50},
+safeguard:{rawHTML:'<div class="sidecondition-safeguard" style="display:none;position:absolute" />',w:100,h:50},
+lightscreen:{rawHTML:'<div class="sidecondition-lightscreen" style="display:none;position:absolute" />',w:100,h:50},
+mist:{rawHTML:'<div class="sidecondition-mist" style="display:none;position:absolute" />',w:100,h:50}
 };
 (function(){
 if(!window.Dex||!Dex.resourcePrefix)return;
@@ -2826,10 +2180,7 @@ attacker.anim({time:500},'ballistic2Back');
 defender.delay(450);
 defender.anim({z:defender.behind(20),time:100},'swing');
 defender.anim({time:300},'swing');
-scene.showEffect('rightslash',
-{x:defender.x,y:defender.y,z:defender.z,scale:1,opacity:1,time:500},
-{scale:3,opacity:0,time:800},
-'linear','fade');
+scene.showEffect('rightslash',{x:defender.x,y:defender.y,z:defender.z,scale:1,opacity:1,time:500},{scale:3,opacity:0,time:800},'linear','fade');
 }
 },
 clawattack:{
@@ -2838,8 +2189,7 @@ attacker.anim({x:defender.leftof(-30),y:defender.y+80,z:defender.behind(-30),tim
 attacker.anim({x:defender.leftof(30),y:defender.y+5,z:defender.z,time:100});
 attacker.anim({x:defender.leftof(30),y:defender.y+80,z:defender.behind(-30),time:200},'ballisticUp');
 attacker.anim({x:defender.leftof(-30),y:defender.y+5,z:defender.z,time:100});
-attacker.anim({time:500
-},'ballistic2Back');
+attacker.anim({time:500},'ballistic2Back');
 defender.delay(450);
 defender.anim({z:defender.behind(20),time:100},'swing');
 defender.anim({time:200},'swing');
@@ -3526,49 +2876,8 @@ scene.showEffect('rainbow',
 'linear','fade');
 }
 },
-zpower:{
-anim:function(scene,_ref44){var attacker=_ref44[0];
-scene.backgroundEffect('linear-gradient(#000000 20%, #0000DD)',1800,0.4);
-scene.showEffect('electroball',
-{x:attacker.x-60,y:attacker.y+40,z:attacker.z,scale:0.7,opacity:0.7,time:0},
-{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:300},
-'linear','fade');
-scene.showEffect('electroball',
-{x:attacker.x+60,y:attacker.y-5,z:attacker.z,scale:0.7,opacity:0.7,time:100},
-{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:300},
-'linear','fade');
-scene.showEffect('electroball',
-{x:attacker.x-30,y:attacker.y+60,z:attacker.z,scale:0.7,opacity:0.7,time:100},
-{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:400},
-'linear','fade');
-scene.showEffect('electroball',
-{x:attacker.x+20,y:attacker.y-50,z:attacker.z,scale:0.7,opacity:0.7,time:100},
-{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:400},
-'linear','fade');
-scene.showEffect('electroball',
-{x:attacker.x-70,y:attacker.y-50,z:attacker.z,scale:0.7,opacity:0.7,time:200},
-{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:500},
-'linear','fade');
-scene.showEffect('zsymbol',
-{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.7,opacity:1,time:500},
-{scale:1,opacity:0.5,time:800},
-'decel','explode');
-scene.showEffect(attacker.sp,
-{x:attacker.x,y:attacker.y,z:attacker.z,opacity:0.3,time:800},
-{y:attacker.y+20,scale:2,opacity:0,time:1200},
-'accel');
-scene.showEffect(attacker.sp,
-{x:attacker.x,y:attacker.y,z:attacker.z,opacity:0.3,time:1000},
-{y:attacker.y+20,scale:2,opacity:0,time:1400},
-'accel');
-scene.showEffect(attacker.sp,
-{x:attacker.x,y:attacker.y,z:attacker.z,opacity:0.3,time:1200},
-{y:attacker.y+20,scale:2,opacity:0,time:1600},
-'accel');
-}
-},
 powerconstruct:{
-anim:function(scene,_ref45){var attacker=_ref45[0];
+anim:function(scene,_ref44){var attacker=_ref44[0];
 var xf=[1,-1,1,-1];
 var yf=[1,-1,-1,1];
 var xf2=[1,0,-1,0];
@@ -3611,7 +2920,7 @@ scene.showEffect('wisp',
 }
 },
 ultraburst:{
-anim:function(scene,_ref46){var attacker=_ref46[0];
+anim:function(scene,_ref45){var attacker=_ref45[0];
 scene.backgroundEffect('#000000',600,0.5);
 scene.backgroundEffect('#ffffff',500,1,550);
 scene.showEffect('wisp',
@@ -3676,13 +2985,48 @@ scene.showEffect('iceball',
 
 var BattleStatusAnims={
 aura:{
-anim:function(scene,_ref47){var attacker=_ref47[0];
-
-BattleOtherAnims.zpower.anim(scene,[attacker]);
+anim:function(scene,_ref46){var attacker=_ref46[0];
+scene.backgroundEffect('linear-gradient(#000000 20%, #0000DD)',1800,0.4);
+scene.showEffect('electroball',
+{x:attacker.x-60,y:attacker.y+40,z:attacker.z,scale:0.7,opacity:0.7,time:0},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:300},
+'linear','fade');
+scene.showEffect('electroball',
+{x:attacker.x+60,y:attacker.y-5,z:attacker.z,scale:0.7,opacity:0.7,time:100},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:300},
+'linear','fade');
+scene.showEffect('electroball',
+{x:attacker.x-30,y:attacker.y+60,z:attacker.z,scale:0.7,opacity:0.7,time:100},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:400},
+'linear','fade');
+scene.showEffect('electroball',
+{x:attacker.x+20,y:attacker.y-50,z:attacker.z,scale:0.7,opacity:0.7,time:100},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:400},
+'linear','fade');
+scene.showEffect('electroball',
+{x:attacker.x-70,y:attacker.y-50,z:attacker.z,scale:0.7,opacity:0.7,time:200},
+{x:attacker.x,y:attacker.y,scale:0.2,opacity:0.2,time:500},
+'linear','fade');
+scene.showEffect('zsymbol',
+{x:attacker.x,y:attacker.y,z:attacker.z,scale:0.7,opacity:1,time:500},
+{scale:1,opacity:0.5,time:800},
+'decel','explode');
+scene.showEffect(attacker.sp,
+{x:attacker.x,y:attacker.y,z:attacker.z,opacity:0.3,time:800},
+{y:attacker.y+20,scale:2,opacity:0,time:1200},
+'accel');
+scene.showEffect(attacker.sp,
+{x:attacker.x,y:attacker.y,z:attacker.z,opacity:0.3,time:1000},
+{y:attacker.y+20,scale:2,opacity:0,time:1400},
+'accel');
+scene.showEffect(attacker.sp,
+{x:attacker.x,y:attacker.y,z:attacker.z,opacity:0.3,time:1200},
+{y:attacker.y+20,scale:2,opacity:0,time:1600},
+'accel');
 }
 },
 brn:{
-anim:function(scene,_ref48){var attacker=_ref48[0];
+anim:function(scene,_ref47){var attacker=_ref47[0];
 scene.showEffect('fireball',
 {x:attacker.x-20,y:attacker.y-15,z:attacker.z,scale:0.2,opacity:0.3},
 {x:attacker.x+40,y:attacker.y+15,z:attacker.z,scale:1,opacity:1,time:300},
@@ -3690,7 +3034,7 @@ scene.showEffect('fireball',
 }
 },
 psn:{
-anim:function(scene,_ref49){var attacker=_ref49[0];
+anim:function(scene,_ref48){var attacker=_ref48[0];
 scene.showEffect('poisonwisp',
 {x:attacker.x+30,y:attacker.y-40,z:attacker.z,scale:0.2,opacity:1,time:0},
 {y:attacker.y,scale:1,opacity:0.5,time:300},
@@ -3706,7 +3050,7 @@ scene.showEffect('poisonwisp',
 }
 },
 slp:{
-anim:function(scene,_ref50){var attacker=_ref50[0];
+anim:function(scene,_ref49){var attacker=_ref49[0];
 scene.showEffect('wisp',
 {x:attacker.x,y:attacker.y+20,z:attacker.z,scale:0.5,opacity:0.1},
 {x:attacker.x,y:attacker.y+20,z:attacker.behind(-50),scale:1.5,opacity:1,time:400},
@@ -3718,7 +3062,7 @@ scene.showEffect('wisp',
 }
 },
 par:{
-anim:function(scene,_ref51){var attacker=_ref51[0];
+anim:function(scene,_ref50){var attacker=_ref50[0];
 scene.showEffect('electroball',
 {x:attacker.x,y:attacker.y,z:attacker.z,scale:1.5,opacity:0.2},
 {scale:2,opacity:0.1,time:300},
@@ -3733,7 +3077,7 @@ attacker.anim({time:100},'accel');
 }
 },
 frz:{
-anim:function(scene,_ref52){var attacker=_ref52[0];
+anim:function(scene,_ref51){var attacker=_ref51[0];
 scene.showEffect('icicle',
 {x:attacker.x-30,y:attacker.y,z:attacker.z,scale:0.5,opacity:0.5,time:200},
 {scale:0.9,opacity:0,time:600},
@@ -3753,7 +3097,7 @@ scene.showEffect('wisp',
 }
 },
 flinch:{
-anim:function(scene,_ref53){var attacker=_ref53[0];
+anim:function(scene,_ref52){var attacker=_ref52[0];
 scene.showEffect('shadowball',
 {x:attacker.x,y:attacker.y,z:attacker.z,scale:1,opacity:0.2},
 {scale:3,opacity:0.1,time:300},
@@ -3761,7 +3105,7 @@ scene.showEffect('shadowball',
 }
 },
 attracted:{
-anim:function(scene,_ref54){var attacker=_ref54[0];
+anim:function(scene,_ref53){var attacker=_ref53[0];
 scene.showEffect('heart',
 {x:attacker.x+20,y:attacker.y+20,z:attacker.z,scale:0.5,opacity:0.5,time:0},
 {scale:1,opacity:1,time:300},
@@ -3777,7 +3121,7 @@ scene.showEffect('heart',
 }
 },
 cursed:{
-anim:function(scene,_ref55){var attacker=_ref55[0];
+anim:function(scene,_ref54){var attacker=_ref54[0];
 scene.backgroundEffect('#000000',700,0.2);
 attacker.delay(300);
 attacker.anim({x:attacker.x-5,time:50});
@@ -3792,7 +3136,7 @@ scene.showEffect(attacker.sp,
 }
 },
 confused:{
-anim:function(scene,_ref56){var attacker=_ref56[0];
+anim:function(scene,_ref55){var attacker=_ref55[0];
 scene.showEffect('electroball',
 {x:attacker.x+50,y:attacker.y+30,z:attacker.z,scale:0.1,opacity:1,time:400},
 {x:attacker.x-50,scale:0.15,opacity:0.4,time:600},
@@ -3812,7 +3156,7 @@ scene.showEffect('electroball',
 }
 },
 confusedselfhit:{
-anim:function(scene,_ref57){var attacker=_ref57[0];
+anim:function(scene,_ref56){var attacker=_ref56[0];
 scene.showEffect('wisp',
 {x:attacker.x,y:attacker.y,z:attacker.z,scale:0,opacity:0.5},
 {scale:2,opacity:0,time:200},

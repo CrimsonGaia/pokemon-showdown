@@ -1,5 +1,4 @@
 (function ($) {
-
 	var HTMLRoom = this.HTMLRoom = this.Room.extend({
 		events: {
 			'click .username': 'clickUsername',
@@ -11,31 +10,16 @@
 			this.$el.addClass('ps-room-light').addClass('scrollable');
 			this.$el.html('<div class="pad"><p>Page unavailable</p></div>');
 		},
-		send: function (data) {
-			// HTML rooms don't actually exist server side, so send globally
-			app.send(data);
-		},
-		submitSend: function (e) {
-			return app.submitSend(e);
-		},
-		receive: function (data) {
-			this.add(data);
-		},
+		send: function (data) { app.send(data); }, // HTML rooms don't actually exist server side, so send globally
+		submitSend: function (e) { return app.submitSend(e); },
+		receive: function (data) { this.add(data); },
 		add: function (log) {
 			if (typeof log === 'string') log = log.split('\n');
-			for (var i = 0; i < log.length; i++) {
-				this.addRow(log[i]);
-			}
+			for (var i = 0; i < log.length; i++) { this.addRow(log[i]); }
 		},
-		join: function () {
-			app.send('/join ' + this.id);
-		},
-		leave: function () {
-			app.send('/noreply /leave ' + this.id);
-		},
-		login: function () {
-			app.addPopup(LoginPopup);
-		},
+		join: function () { app.send('/join ' + this.id); },
+		leave: function () { app.send('/noreply /leave ' + this.id); },
+		login: function () { app.addPopup(LoginPopup); },
 		addRow: function (line) {
 			if (!line || typeof line !== 'string') return;
 			if (line.charAt(0) !== '|') line = '||' + line;
@@ -44,30 +28,25 @@
 			case 'init':
 				// ignore (handled elsewhere)
 				break;
-
 			case 'title':
 				this.title = row[1];
 				app.roomTitleChanged(this);
 				app.topbar.updateTabbar();
 				break;
-
 			case 'pagehtml':
 				this.$el.html(BattleLog.sanitizeHTML(row.slice(1).join('|')));
 				this.subtleNotifyOnce();
 				break;
-
 			case 'selectorhtml':
 				if (!row[2]) return;
 				this.$(row[1]).html(BattleLog.sanitizeHTML(row.slice(2).join('|')));
 				this.subtleNotifyOnce();
 				break;
-
 			case 'scroll':
 				if (!row[1]) return;
 				var target = this.$(row[1]).get(0);
 				if (target) {
-					// normally i'd use jquery but jquery's scroll is more finicky
-					// and less consistent.
+					// normally i'd use jquery but jquery's scroll is more finicky and less consistent.
 					// This brings it into view centered every time
 					target.scrollIntoView();
 				}
@@ -76,17 +55,14 @@
 				app.playNotificationSound();
 				this.notifyOnce(row[1], row[2], 'highlight');
 				break;
-
 			case 'tempnotify':
 				var notifyOnce = row[4] !== '!';
 				if (!this.notifications) app.playNotificationSound();
 				this.notify(row[2], row[3], row[1], notifyOnce);
 				break;
-
 			case 'tempnotifyoff':
 				this.closeNotification(row[1]);
 				break;
-
 			}
 		},
 		clickUsername: function (e) {
@@ -95,11 +71,8 @@
 			app.addPopup(UserPopup, { name: name, sourceEl: e.currentTarget });
 		}
 	});
-
 	this.LadderRoom = HTMLRoom.extend({
-		events: {
-			'submit .search': 'submitSearch'
-		},
+		events: { 'submit .search': 'submitSearch' },
 		type: 'ladder',
 		title: 'Ladder',
 		initialize: function () {
@@ -139,20 +112,18 @@
 						curSection = format.section;
 						buf += '</ul><h3>' + BattleLog.escapeHTML(curSection) + '</h3><ul style="list-style:none;margin:0;padding:0">';
 					}
-					buf += '<li style="margin:5px"><button name="selectFormat" value="' + i + '" class="button" style="width:320px;height:30px;text-align:left;font:12pt Verdana">' + BattleLog.escapeFormat(format.id) + '</button></li>';
+					buf += '<li style="margin:5px"><button name="selectFormat" value="' + i + '" class="button" style="width: 320px;height: 45px;text-align:left;font:12pt Verdana">' + BattleLog.escapeFormat(format.id) + '</button></li>';
 				}
 				buf += '</ul></div>';
 				this.$el.html(buf);
-			} else if (this.curFormat === 'help') {
-				this.showHelp();
-			} else {
+			} else if (this.curFormat === 'help') { this.showHelp(); } 
+			else {
 				var format = this.curFormat;
 				var self = this;
 				var prefix = this.curSearchVal && toID(this.curSearchVal);
 				this.$el.html('<div class="ladder pad"><p><button name="selectFormat"><i class="fa fa-chevron-left"></i> Format List</button></p><p><em>Loading...</em></p></div>');
-				if (app.localLadder) {
-					app.send('/cmd laddertop ' + format + (prefix ? ' ,' + prefix : ''));
-				} else {
+				if (app.localLadder) { app.send('/cmd laddertop ' + format + (prefix ? ' ,' + prefix : '')); } 
+				else {
 					$.get('/ladder.php', {
 						format: format,
 						server: Config.server.id.split(':')[0],
@@ -195,8 +166,5 @@
 			this.$('button[name=refresh]').addClass('disabled').prop('disabled', true);
 			this.update();
 		}
-	}, {
-		COIL_B: {}
-	});
-
+	}, { COIL_B: {} });
 }).call(this, jQuery);

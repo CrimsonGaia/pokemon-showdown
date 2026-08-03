@@ -26,63 +26,43 @@ export interface MoveAction {
 	moveid: ID; /** a move to use (move action only) */
 	move: Move; /** a move to use (move action only) */
 	mega: boolean | 'done'; /** true if megaing or ultra bursting */
-	zmove?: string; /** if zmoving, the name of the zmove */
-	maxMove?: string; /** if dynamaxed, the name of the max move */
 	sourceEffect?: Effect | null; /** effect that called the move (eg Instruct) if any */
 	teraempower?: boolean;
 }
 export interface SwitchAction {
-	/** action type */
+	// action type 
 	choice: 'switch' | 'instaswitch' | 'revivalblessing';
 	order: 3 | 6 | 103;
-	/** priority of the action (higher first) */
-	priority: number;
-	/** speed of pokemon switching (higher first if priority tie) */
-	speed: number;
-	/** the pokemon doing the switch */
-	pokemon: Pokemon;
-	/** pokemon to switch to */
-	target: Pokemon;
-	/** effect that called the switch (eg U */
-	sourceEffect: Effect | null;
+	priority: number; // priority of the action (higher first)
+	speed: number; // speed of pokemon switching (higher first if priority tie)
+	pokemon: Pokemon; // the pokemon doing the switch 
+	target: Pokemon; // pokemon to switch to 
+	sourceEffect: Effect | null; // effect that called the switch (eg U 
 }
 export interface TeamAction {
-	/** action type */
-	choice: 'team';
-	/** priority of the action (higher first) */
-	priority: number;
-	/** unused for this action type */
-	speed: 1;
-	/** the pokemon switching */
-	pokemon: Pokemon;
-	/** new index */
-	index: number;
+	choice: 'team'; // action type 
+	priority: number; // priority of the action (higher first) 
+	speed: 1; // unused for this action type 
+	pokemon: Pokemon; // the pokemon switching 
+	index: number; // new index
 }
 /** A generic action not done by a pokemon */
 export interface FieldAction {
 	/** action type */
 	choice: 'start' | 'residual' | 'pass' | 'beforeTurn';
-	/** priority of the action (higher first) */
-	priority: number;
-	/** unused for this action type */
-	speed: 1;
-	/** unused for this action type */
-	pokemon: null;
+	priority: number; // priority of the action (higher first) 
+	speed: 1; // unused for this action type 
+	pokemon: null; // unused for this action type 
 }
 /** A generic action done by a single pokemon */
 export interface PokemonAction {
-	choice: 'megaEvo' | 'megaEvoX' | 'megaEvoY' | 'megaEvoZ' | 'shift' | 'runSwitch' | 'event' | 'runDynamax' | 'terastallize' | 'teraEmpower' | 'guard';
-	/** priority of the action (higher first) */
-	priority: number;
-	/** speed of pokemon doing action (higher first if priority tie) */
-	speed: number;
-	/** the pokemon doing action */
-	pokemon: Pokemon;
-	/** `runSwitch` only: the pokemon forcing this pokemon to switch in */
-	dragger?: Pokemon;
-	/** `event` only: the event to run */
-	event?: string;
-	/** `teraEmpower` only: the move being empowered */
+	choice: 'megaEvo' | 'megaEvoX' | 'megaEvoY' | 'megaEvoZ' | 'megaEvoA' | 'megaEvoQ' | 'shift' | 'runSwitch' | 'event' | 'terastallize' | 'teraEmpower' | 'guard';
+	priority: number; // priority of the action (higher first)
+	speed: number; // speed of pokemon doing action (higher first if priority tie) 
+	pokemon: Pokemon; // the pokemon doing action 
+	dragger?: Pokemon; // `runSwitch` only: the pokemon forcing this pokemon to switch in 
+	event?: string; // `event` only: the event to run 
+	// `teraEmpower` only: the move being empowered 
 	move?: Move;
 	moveid?: ID;
 }
@@ -133,17 +113,19 @@ export class BattleQueue {
 				beforeTurn: 4,
 				beforeTurnMove: 5,
 				revivalblessing: 6,
+				runUnnerve: 100,
 				runSwitch: 101,
 				switch: 103,
 				megaEvo: 103,
 				megaEvoX: 103,
 				megaEvoY: 103,
 				megaEvoZ: 103,
-				runDynamax: 105,
+				megaEvoA: 103,
+				megaEvoQ: 103,
 				terastallize: 106,
 				teraEmpower: 107,
 				priorityChargeMove: 108,
-				guard: 109,
+				guard: 120,
 				shift: 200,
 				// default is 200 (for moves)
 				residual: 300,
@@ -156,58 +138,16 @@ export class BattleQueue {
 		}
 		if (!midTurn) {
 			if (action.choice === 'move') {
-				if (!action.maxMove && !action.zmove && action.move.beforeTurnCallback) { actions.unshift(...this.resolveAction({ choice: 'beforeTurnMove', pokemon: action.pokemon, move: action.move, targetLoc: action.targetLoc, })); }
-				if (action.mega && !action.pokemon.isSkyDropped()) {
-					actions.unshift(...this.resolveAction({
-						choice: 'megaEvo',
-						pokemon: action.pokemon,
-					}));
-				}
-				if (action.megax && !action.pokemon.isSkyDropped()) {
-					actions.unshift(...this.resolveAction({
-						choice: 'megaEvoX',
-						pokemon: action.pokemon,
-					}));
-				}
-				if (action.megay && !action.pokemon.isSkyDropped()) {
-					actions.unshift(...this.resolveAction({
-						choice: 'megaEvoY',
-						pokemon: action.pokemon,
-					}));
-				}
-				if (action.megaz && !action.pokemon.isSkyDropped()) {
-					actions.unshift(...this.resolveAction({
-						choice: 'megaEvoZ',
-						pokemon: action.pokemon,
-					}));
-				}
-				if (action.terastallize && !action.pokemon.terastallized) {
-					actions.unshift(...this.resolveAction({
-						choice: 'terastallize',
-						pokemon: action.pokemon,
-					}));
-				}
-				if (action.teraempower) {
-					actions.unshift(...this.resolveAction({
-						choice: 'teraEmpower',
-						pokemon: action.pokemon,
-						move: action.move,
-						moveid: action.moveid,
-					}));
-				}
-				if (action.maxMove && !action.pokemon.volatiles['dynamax']) {
-					actions.unshift(...this.resolveAction({
-						choice: 'runDynamax',
-						pokemon: action.pokemon,
-					}));
-				}
-				if (!action.maxMove && !action.zmove && action.move.priorityChargeCallback) {
-					actions.unshift(...this.resolveAction({
-						choice: 'priorityChargeMove',
-						pokemon: action.pokemon,
-						move: action.move,
-					}));
-				}
+				if (action.move.beforeTurnCallback) { actions.unshift(...this.resolveAction({ choice: 'beforeTurnMove', pokemon: action.pokemon, move: action.move, targetLoc: action.targetLoc, })); }
+				if (action.mega && !action.pokemon.isSkyDropped()) { actions.unshift(...this.resolveAction({ choice: 'megaEvo', pokemon: action.pokemon, })); }
+				if (action.megax && !action.pokemon.isSkyDropped()) { actions.unshift(...this.resolveAction({ choice: 'megaEvoX', pokemon: action.pokemon, })); }
+				if (action.megay && !action.pokemon.isSkyDropped()) { actions.unshift(...this.resolveAction({ choice: 'megaEvoY', pokemon: action.pokemon, })); }
+				if (action.megaz && !action.pokemon.isSkyDropped()) { actions.unshift(...this.resolveAction({ choice: 'megaEvoZ', pokemon: action.pokemon, })); }
+				if (action.megaa && !action.pokemon.isSkyDropped()) { actions.unshift(...this.resolveAction({ choice: 'megaEvoA', pokemon: action.pokemon, })); }
+				if (action.megaq && !action.pokemon.isSkyDropped()) { actions.unshift(...this.resolveAction({ choice: 'megaEvoQ', pokemon: action.pokemon, })); }
+				if (action.terastallize && !action.pokemon.terastallized) { actions.unshift(...this.resolveAction({ choice: 'terastallize', pokemon: action.pokemon, })); }
+				if (action.teraempower) { actions.unshift(...this.resolveAction({ choice: 'teraEmpower', pokemon: action.pokemon, move: action.move, moveid: action.moveid, })); }
+				if (action.move.priorityChargeCallback) { actions.unshift(...this.resolveAction({ choice: 'priorityChargeMove', pokemon: action.pokemon, move: action.move, })); }
 				(actions[actions.length - 1] as any).teraempower = !!action.teraempower;
 				action.fractionalPriority = this.battle.runEvent('FractionalPriority', action.pokemon, null, action.move, 0);
 			} else if (['switch', 'instaswitch'].includes(action.choice)) {
@@ -311,9 +251,8 @@ export class BattleQueue {
 				break;
 			}
 		}
-		if (firstIndex === null) {
-			this.list.push(...actions);
-		} else {
+		if (firstIndex === null) { this.list.push(...actions); } 
+		else {
 			if (lastIndex === null) lastIndex = this.list.length;
 			const index = firstIndex === lastIndex ? firstIndex : this.battle.random(firstIndex, lastIndex + 1);
 			this.list.splice(index, 0, ...actions);
@@ -324,8 +263,7 @@ export class BattleQueue {
 		if (action) { return `${action.order || ''}:${action.priority || ''}:${action.speed || ''}:${action.subOrder || ''} - ${action.choice}${action.pokemon ? ' ' + action.pokemon : ''}${action.move ? ' ' + action.move : ''}`; }
 		return this.list.map(queueAction => this.debug(queueAction)).join('\n') + '\n';
 	}
-	sort() {
-		// this.log.push('SORT ' + this.debugQueue());
+	sort() { // this.log.push('SORT ' + this.debugQueue());
 		this.battle.speedSort(this.list);
 		return this;
 	}

@@ -1,12 +1,10 @@
 (function ($) {
-
 	this.Topbar = Backbone.View.extend({
 		events: {
 			'click a': 'click',
 			'click .username': 'clickUsername',
 			'click button': 'dispatchClickButton',
 			'dblclick button[name=openSounds]': 'toggleMute',
-
 			'dragstart .roomtab': 'dragStartRoom',
 			'dragend .roomtab': 'dragEndRoom',
 			'dragenter .roomtab': 'dragEnterRoom',
@@ -21,11 +19,9 @@
 			this.$userbar = this.$('.userbar');
 			this.dragging = false;
 			this.updateTabbar();
-
 			app.user.on('change', this.updateUserbar, this);
 			this.updateUserbar();
 		},
-
 		// userbar
 		updateUserbar: function () {
 			var buf = '';
@@ -33,25 +29,15 @@
 			var away = app.user.get('away');
 			var status = app.user.get('status');
 			var color = away ? 'color:#888;' : BattleLog.hashColor(app.user.get('userid'));
-			if (!app.user.loaded) {
-				buf = '<button disabled class="button">Loading...</button>';
-			} else if (app.user.get('named')) {
-				buf = '<span class="username" data-name="' + BattleLog.escapeHTML(name) + '"' + (away ? ' data-away="true"' : '') + (status ? 'data-status="' + BattleLog.escapeHTML(status) + '"' : '') + ' style="' + color + '"><i class="fa fa-user" style="color:' + (away ? '#888;' : '#779EC5') + '"></i> <span class="usernametext">' + BattleLog.escapeHTML(name) + '</span></span>';
-			} else {
-				buf = '<button name="login" class="button">Choose name</button>';
-			}
+			if (!app.user.loaded) { buf = '<button disabled class="button">Loading...</button>'; } 
+			else if (app.user.get('named')) { buf = '<span class="username" data-name="' + BattleLog.escapeHTML(name) + '"' + (away ? ' data-away="true"' : '') + (status ? 'data-status="' + BattleLog.escapeHTML(status) + '"' : '') + ' style="' + color + '"><i class="fa fa-user" style="color:' + (away ? '#888;' : '#779EC5') + '"></i> <span class="usernametext">' + BattleLog.escapeHTML(name) + '</span></span>'; } 
+			else { buf = '<button name="login" class="button">Choose name</button>'; }
 			buf += ' <button class="icon button" name="openSounds" title="Sound" aria-label="Sound"><i class="' + (Dex.prefs('mute') ? 'fa fa-volume-off' : 'fa fa-volume-up') + '"></i></button> <button class="icon button" name="openOptions" title="Options" aria-label="Options"><i class="fa fa-cog"></i></button>';
 			this.$userbar.html(buf);
 		},
-		login: function () {
-			app.addPopup(LoginPopup);
-		},
-		openSounds: function () {
-			app.addPopup(SoundsPopup);
-		},
-		openOptions: function () {
-			app.addPopup(OptionsPopup);
-		},
+		login: function () { app.addPopup(LoginPopup); },
+		openSounds: function () { app.addPopup(SoundsPopup); },
+		openOptions: function () { app.addPopup(OptionsPopup); },
 		clickUsername: function (e) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -64,7 +50,6 @@
 			BattleSound.setMute(muted);
 			app.topbar.$('button[name=openSounds]').html('<i class="' + (muted ? 'fa fa-volume-off' : 'fa fa-volume-up') + '"></i>');
 		},
-
 		// tabbar
 		renderRoomTab: function (room, id) {
 			if (!room && id !== 'rooms') return '';
@@ -97,21 +82,14 @@
 				var offset = id.startsWith('game-') ? 5 : 7;
 				var idChunks = id.substr(offset).split('-');
 				var formatid;
-				if (idChunks.length <= 1) {
-					if (idChunks[0] === 'uploadedreplay') formatid = 'Uploaded Replay';
-				} else {
-					formatid = idChunks[0];
-				}
+				if (idChunks.length <= 1) { if (idChunks[0] === 'uploadedreplay') formatid = 'Uploaded Replay'; } 
+				else { formatid = idChunks[0]; }
 				if (!name) {
 					var p1 = (room.battle && room.battle.p1 && room.battle.p1.name) || '';
 					var p2 = (room.battle && room.battle.p2 && room.battle.p2.name) || '';
-					if (p1 && p2) {
-						name = '' + BattleLog.escapeHTML(p1) + ' v. ' + BattleLog.escapeHTML(p2);
-					} else if (p1 || p2) {
-						name = '' + BattleLog.escapeHTML(p1) + BattleLog.escapeHTML(p2);
-					} else {
-						name = '(empty room)';
-					}
+					if (p1 && p2) { name = '' + BattleLog.escapeHTML(p1) + ' v. ' + BattleLog.escapeHTML(p2); } 
+					else if (p1 || p2) { name = '' + BattleLog.escapeHTML(p1) + BattleLog.escapeHTML(p2); } 
+					else { name = '(empty room)'; }
 				}
 				return buf + ' draggable="true"><i class="text">' + BattleLog.escapeFormat(formatid) + '</i><span>' + name + '</span></a><button class="closebutton" name="closeRoom" value="' + id + '" aria-label="Close"><i class="fa fa-times-circle"></i></a></li>';
 			case 'chat':
@@ -120,9 +98,7 @@
 			default:
 				if (room.title && room.title.charAt(0) === '[') {
 					var closeBracketIndex = room.title.indexOf(']');
-					if (closeBracketIndex > 0) {
-						return buf + ' draggable="true"><i class="text">' + BattleLog.escapeHTML(room.title.slice(1, closeBracketIndex)) + '</i><span>' + BattleLog.escapeHTML(room.title.slice(closeBracketIndex + 1)) + '</span></a><button class="closebutton" name="closeRoom" value="' + id + '" aria-label="Close"><i class="fa fa-times-circle"></i></a></li>';
-					}
+					if (closeBracketIndex > 0) { return buf + ' draggable="true"><i class="text">' + BattleLog.escapeHTML(room.title.slice(1, closeBracketIndex)) + '</i><span>' + BattleLog.escapeHTML(room.title.slice(closeBracketIndex + 1)) + '</span></a><button class="closebutton" name="closeRoom" value="' + id + '" aria-label="Close"><i class="fa fa-times-circle"></i></a></li>'; }
 				}
 				return buf + ' draggable="true"><i class="fa fa-file-text-o"></i> <span>' + (BattleLog.escapeHTML(room.title) || id) + '</span></a><button class="closebutton" name="closeRoom" value="' + id + '" aria-label="Close"><i class="fa fa-times-circle"></i></a></li>';
 			}
@@ -131,7 +107,6 @@
 			if ($(window).width() < 420) return this.updateTabbarMini();
 			this.$('.logo').show();
 			this.$('.maintabbar').removeClass('minitabbar');
-
 			var buf = '<ul>' + (
 				this.renderRoomTab(app.rooms['']) +
 				this.renderRoomTab(app.rooms['teambuilder']) +
@@ -139,7 +114,6 @@
 				this.renderRoomTab(app.rooms['resources'])
 			) + '</ul>';
 			var sideBuf = '';
-
 			var notificationCount = app.rooms[''].notifications ? 1 : 0;
 			if (app.roomList.length) {
 				buf += '<ul>';
@@ -150,15 +124,13 @@
 				}
 				buf += '</ul>';
 			}
-
 			for (var i = 0; i < app.sideRoomList.length; i++) {
 				var room = app.sideRoomList[i];
 				if (room.notifications) notificationCount++;
 				sideBuf += this.renderRoomTab(room);
 			}
-			if (window.nodewebkit) {
-				if (nwWindow.setBadgeLabel) nwWindow.setBadgeLabel(notificationCount ? '' + notificationCount : '');
-			} else {
+			if (window.nodewebkit) { if (nwWindow.setBadgeLabel) nwWindow.setBadgeLabel(notificationCount ? '' + notificationCount : ''); } 
+			else {
 				var $favicon = $('#dynamic-favicon');
 				if (!!$favicon.data('on') !== !!notificationCount) {
 					if (notificationCount) {
@@ -176,9 +148,7 @@
 				if (app.curSideRoom) {
 					margin = app.curSideRoom.leftWidth - 144;
 					buf += '<ul class="siderooms" style="float:none;margin-left:' + margin + 'px">' + sideBuf + '</ul>';
-				} else {
-					buf += '<ul>' + sideBuf + '</ul>';
-				}
+				} else { buf += '<ul>' + sideBuf + '</ul>'; }
 			}
 			this.$tabbar.html(buf);
 			var $lastUl = this.$tabbar.children().last();
@@ -193,25 +163,17 @@
 				offset = $lastLi.offset();
 				overflow = offset.left + width + 166 - $(window).width();
 			}
-			if (offset.top >= 37 || overflow > 0) {
-				this.$tabbar.append('<div class="overflow" aria-hidden="true"><button name="tablist" class="button" aria-label="More"><i class="fa fa-caret-down"></i></button></div>');
-			}
-
+			if (offset.top >= 37 || overflow > 0) { this.$tabbar.append('<div class="overflow" aria-hidden="true"><button name="tablist" class="button" aria-label="More"><i class="fa fa-caret-down"></i></button></div>'); }
 			if (app.rooms['']) app.rooms[''].updateRightMenu();
 		},
 		updateTabbarMini: function () {
 			this.$('.logo').hide();
 			this.$('.maintabbar').addClass('minitabbar');
 			var notificationClass = '';
-			for (var i in app.rooms) {
-				if (app.rooms[i] !== app.curRoom && app.rooms[i].notificationClass === ' notifying') notificationClass = ' notifying';
-			}
+			for (var i in app.rooms) { if (app.rooms[i] !== app.curRoom && app.rooms[i].notificationClass === ' notifying') notificationClass = ' notifying'; }
 			var buf = '<ul><li><a class="button minilogo' + notificationClass + '" href="' + app.root + '"><img src="' + Dex.resourcePrefix + 'favicon-256.png" width="32" height="32" alt="Pok&eacute;mon Showdown! (beta)" /><i class="fa fa-caret-down" style="display:inline-block"></i></a></li></ul>';
-
 			buf += '<ul>' + this.renderRoomTab(app.curRoom) + '</ul>';
-
 			this.$tabbar.html(buf);
-
 			if (app.rooms['']) app.rooms[''].updateRightMenu();
 		},
 		dispatchClickButton: function (e) {
@@ -235,63 +197,35 @@
 				return;
 			}
 			var id = $target.attr('href');
-			if (id.substr(0, app.root.length) === app.root) {
-				id = id.substr(app.root.length);
-			}
-			if ($target.hasClass('closebutton')) {
-				app.leaveRoom(id, e);
-			} else {
-				app.joinRoom(id);
-			}
+			if (id.substr(0, app.root.length) === app.root) { id = id.substr(app.root.length); }
+			if ($target.hasClass('closebutton')) { app.leaveRoom(id, e); } 
+			else { app.joinRoom(id); }
 		},
-		closeRoom: function (roomid, button, e) {
-			app.leaveRoom(roomid, e);
-		},
-		tablist: function () {
-			app.addPopup(TabListPopup);
-		},
-
+		closeRoom: function (roomid, button, e) { app.leaveRoom(roomid, e); },
+		tablist: function () { app.addPopup(TabListPopup); },
 		// drag and drop
-
-		roomidOf: function (room) {
-			return room.id;
-		},
-
+		roomidOf: function (room) { return room.id; },
 		dragStartRoom: function (e) {
 			var target = e.currentTarget;
 			var dataTransfer = e.originalEvent.dataTransfer;
-
 			var elWidth = $(e.currentTarget).outerWidth();
-
 			dataTransfer.effectAllowed = 'all';
-			// by default, Chrome displays links as a URL when dragging
-			// this uses a hack to force it to drag the tab
+			// by default, Chrome displays links as a URL when dragging this uses a hack to force it to drag the tab
 			app.draggingOffsetX = Math.floor(elWidth / 2);
 			app.draggingOffsetY = 18;
 			dataTransfer.setDragImage(target, app.draggingOffsetX, app.draggingOffsetY);
-
 			var roomRef = $(target).attr('href');
 			app.draggingRoomList = app.roomList.map(this.roomidOf).concat('|').concat(app.sideRoomList.map(this.roomidOf));
 			app.draggingLoc = app.draggingRoomList.indexOf(roomRef.slice(1));
-			if (app.draggingLoc < 0) {
-				// can't drag
-				return;
-			}
-
+			if (app.draggingLoc < 0) { return; }
 			app.dragging = roomRef;
 			app.draggingRoom = null;
 			app.$dragging = null;
-
 			var iPipe = app.draggingRoomList.indexOf('|');
 			app.draggingSideRoom = (app.draggingLoc > iPipe);
-
-			setTimeout(function () {
-				$(target).css('opacity', 0.5);
-			}, 0);
-
+			setTimeout(function () { $(target).css('opacity', 0.5); }, 0);
 			// console.log('dragstart: ' + app.dragging);
 		},
-
 		dragEnterRoom: function (e) {
 			if (!app.dragging || typeof app.dragging !== 'string') return;
 			var roomid = $(e.currentTarget).attr('href').slice(1);
@@ -299,7 +233,6 @@
 			var i = app.draggingRoomList.indexOf(roomid);
 			var iPipe = app.draggingRoomList.indexOf('|');
 			if (iPipe < 0) return; // bug?
-
 			if (!app.$dragging) {
 				// the dragging element needs to stay in the DOM, or the dragEnd
 				// event won't fire (at least when I tested in Chrome)
@@ -315,15 +248,12 @@
 					if (e.originalEvent.pageX + app.draggingOffsetX <= 5) return;
 				}
 			}
-
 			if (roomid === 'rooms') i = app.draggingRoomList.length;
 			if (i < 0) i = 0;
-
 			var draggingRight = (i > app.draggingLoc);
 			if (iPipe > app.draggingLoc && i > iPipe) draggingRight = false;
 			app.draggingOffsetX = e.originalEvent.pageX * (draggingRight ? 1 : -1);
 			app.draggingLastRoom = roomid;
-
 			// remove tab from old position
 			var room;
 			if (app.draggingLoc < iPipe) {
@@ -345,39 +275,26 @@
 				// insert into right list
 				app.sideRoomList.splice(i - iPipe - 1, 0, room);
 			}
-
 			app.draggingRoomList = app.roomList.map(this.roomidOf).concat('|').concat(app.sideRoomList.map(this.roomidOf));
 			app.draggingLoc = app.draggingRoomList.indexOf(app.dragging.slice(1));
-
 			this.updateTabbar();
 			this.$('a.roomtab[href="' + app.dragging + '"]').css('opacity', 0.5);
-
 			// console.log('dragenter: /' + roomid);
 		},
-
 		dragEndRoom: function (e) {
 			if (!app.dragging) return;
 			// console.log('dragend: ' + app.dragging);
-
 			var room = app.rooms[app.dragging.slice(1)];
 			var iPipe = app.draggingRoomList.indexOf('|');
-
-			if (app.draggingLoc < iPipe && app.draggingSideRoom) {
-				app.focusRoomLeft(room.id);
-			} else if (app.draggingLoc > iPipe && !app.draggingSideRoom) {
-				app.focusRoomRight(room.id);
-			} else {
-				this.updateTabbar();
-			}
-
+			if (app.draggingLoc < iPipe && app.draggingSideRoom) { app.focusRoomLeft(room.id); } 
+			else if (app.draggingLoc > iPipe && !app.draggingSideRoom) { app.focusRoomRight(room.id); } 
+			else { this.updateTabbar(); }
 			if (room.type === 'chat') app.updateAutojoin();
-
 			app.dragging = null;
 			if (app.$dragging) app.$dragging.remove();
 			app.draggingRoomList = null;
 		}
 	});
-
 	var SoundsPopup = this.SoundsPopup = Popup.extend({
 		initialize: function (data) {
 			var buf = '';
@@ -412,7 +329,6 @@
 			var muted = !!e.currentTarget.checked;
 			Storage.prefs('mute', muted);
 			BattleSound.setMute(muted);
-
 			if (!muted) {
 				this.$('.effect-volume').html('<label class="optlabel">Effect volume:</label><input type="range" min="0" max="100" step="1" name="effectvolume" value="' + this.getEffectVolume() + '" />');
 				this.$('.music-volume').html('<label class="optlabel">Music volume:</label><input type="range" min="0" max="100" step="1" name="musicvolume" value="' + this.getMusicVolume() + '" />');
@@ -422,7 +338,6 @@
 				this.$('.music-volume').html('<label class="optlabel">Music volume:</label><em>(muted)</em>');
 				this.$('.notif-volume').html('<label class="optlabel">Notification volume:</label><em>(muted)</em>');
 			}
-
 			app.topbar.$('button[name=openSounds]').html('<i class="' + (muted ? 'fa fa-volume-off' : 'fa fa-volume-up') + '"></i>');
 		},
 		setEffectVolume: function (volume) {
@@ -449,7 +364,6 @@
 			return typeof volume === 'number' ? volume : 50;
 		}
 	});
-
 	var OptionsPopup = this.OptionsPopup = Popup.extend({
 		initialize: function (data) {
 			app.user.on('change', this.update, this);
@@ -483,46 +397,33 @@
 			var name = app.user.get('name');
 			var avatar = app.user.get('avatar');
 			var settings = app.user.get('settings');
-
 			var buf = '';
 			buf += '<p>' + (avatar ? '<img class="trainersprite" src="' + Dex.resolveAvatar(avatar) + '" width="40" height="40" style="vertical-align:middle;cursor:pointer" />' : '') + '<strong>' + BattleLog.escapeHTML(name) + '</strong></p>';
 			buf += '<p><button class="button" name="avatars">Avatar...</button></p>';
-			if (!this.editingStatus) {
-				buf += '<p><button class="button" name="editstatus">Status...</button></p>';
-			} else {
+			if (!this.editingStatus) { buf += '<p><button class="button" name="editstatus">Status...</button></p>'; } 
+			else {
 				buf += '<p><input name="statustext" />';
 				buf += '<button class="button" name="editstatus"><i class="fa fa-pencil"></i></button></p>';
 			}
 			if (app.user.get('named')) {
 				var registered = app.user.get('registered');
-				if (registered && (registered.userid === app.user.get('userid'))) {
-					buf += '<p><button class="button" name="changepassword">Password...</button></p>';
-				} else {
-					buf += '<p><button class="button" name="register">Register</button></p>';
-				}
+				if (registered && (registered.userid === app.user.get('userid'))) { buf += '<p><button class="button" name="changepassword">Password...</button></p>'; } 
+				else { buf += '<p><button class="button" name="register">Register</button></p>'; }
 			}
-
 			buf += '<hr />';
 			buf += '<p><strong>Graphics</strong></p>';
 			var theme = Dex.prefs('theme');
 			var colorSchemeQuerySupported = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').media !== 'not all';
 			buf += '<p><label class="optlabel">Theme: <select name="theme" class="button"><option value="light"' + (!theme || theme === 'light' ? ' selected="selected"' : '') + '>Light</option><option value="dark"' + (theme === 'dark' ? ' selected="selected"' : '') + '>Dark</option>';
-			if (colorSchemeQuerySupported) {
-				buf += '<option value="system"' + (theme === 'system' ? ' selected="selected"' : '') + '>Match system theme</option>';
-			}
+			if (colorSchemeQuerySupported) { buf += '<option value="system"' + (theme === 'system' ? ' selected="selected"' : '') + '>Match system theme</option>'; }
 			buf += '</select></label></p>';
 			var onePanel = !!Dex.prefs('onepanel');
-			if ($(window).width() >= 660) {
-				buf += '<p><label class="optlabel">Layout: <select name="onepanel" class="button"><option value=""' + (!onePanel ? ' selected="selected"' : '') + '>&#x25EB; Left and right panels</option><option value="1"' + (onePanel ? ' selected="selected"' : '') + '>&#x25FB; Single panel</option></select></label></p>';
-			}
+			if ($(window).width() >= 660) { buf += '<p><label class="optlabel">Layout: <select name="onepanel" class="button"><option value=""' + (!onePanel ? ' selected="selected"' : '') + '>&#x25EB; Left and right panels</option><option value="1"' + (onePanel ? ' selected="selected"' : '') + '>&#x25FB; Single panel</option></select></label></p>'; }
 			buf += '<p><label class="optlabel">Background: <button class="button" name="background">Change background</button></label></p>';
 			buf += '<p><label class="checkbox"><input type="checkbox" name="noanim"' + (Dex.prefs('noanim') ? ' checked' : '') + ' /> Disable animations</label></p>';
-			if (navigator.userAgent.includes(' Chrome/64.')) {
-				buf += '<p><label class="checkbox"><input type="checkbox" name="nogif"' + (Dex.prefs('nogif') ? ' checked' : '') + ' /> Disable GIFs for Chrome 64 bug</label></p>';
-			}
+			if (navigator.userAgent.includes(' Chrome/64.')) { buf += '<p><label class="checkbox"><input type="checkbox" name="nogif"' + (Dex.prefs('nogif') ? ' checked' : '') + ' /> Disable GIFs for Chrome 64 bug</label></p>'; }
 			buf += '<p><label class="checkbox"><input type="checkbox" name="bwgfx"' + (Dex.prefs('bwgfx') ? ' checked' : '') + ' /> Use 2D sprites instead of 3D models</label></p>';
 			buf += '<p><label class="checkbox"><input type="checkbox" name="nopastgens"' + (Dex.prefs('nopastgens') ? ' checked' : '') + ' /> Use modern sprites for past generations</label></p>';
-
 			buf += '<hr />';
 			buf += '<p><strong>Chat</strong></p>';
 			if (Object.keys(settings).length) {
@@ -531,10 +432,7 @@
 			}
 			buf += '<p><label class="checkbox"><input type="checkbox" name="inchatpm"' + (Dex.prefs('inchatpm') ? ' checked' : '') + ' /> Show PMs in chat rooms</label></p>';
 			buf += '<p><label class="checkbox"><input type="checkbox" name="selfhighlight"' + (!Dex.prefs('noselfhighlight') ? ' checked' : '') + '> Highlight when your name is said in chat</label></p>';
-
-			if (window.Notification) {
-				buf += '<p><label class="checkbox"><input type="checkbox" name="temporarynotifications"' + (Dex.prefs('temporarynotifications') ? ' checked' : '') + ' /> Notifications disappear automatically</label></p>';
-			}
+			if (window.Notification) { buf += '<p><label class="checkbox"><input type="checkbox" name="temporarynotifications"' + (Dex.prefs('temporarynotifications') ? ' checked' : '') + ' /> Notifications disappear automatically</label></p>'; }
 			buf += '<p><label class="checkbox"><input type="checkbox" name="leavePopupRoom"' + (Dex.prefs('leavePopupRoom') ? ' checked' : '') + ' /> Confirm before leaving a room</label></p>';
 			buf += '<p><label class="checkbox"><input type="checkbox" name="refreshprompt"' + (Dex.prefs('refreshprompt') ? ' checked' : '') + '> Confirm before refreshing</label></p>';
 			var curLang = toID(Dex.prefs('serversettings').language) || 'english';
@@ -553,44 +451,33 @@
 				"中文": 'traditionalchinese'
 			};
 			buf += '<p><label class="optlabel">Language: <select name="language" class="button">';
-			for (var name in possibleLanguages) {
-				buf += '<option value="' + possibleLanguages[name] + '"' + (possibleLanguages[name] === curLang ? ' selected="selected"' : '') + '>' + name + '</option>';
-			}
+			for (var name in possibleLanguages) { buf += '<option value="' + possibleLanguages[name] + '"' + (possibleLanguages[name] === curLang ? ' selected="selected"' : '') + '>' + name + '</option>'; }
 			buf += '</select></label></p>';
-
 			var tours = Dex.prefs('tournaments') || 'notify';
 			buf += '<p><label class="optlabel">Tournaments: <select name="tournaments" class="button"><option value="notify"' + (tours === 'notify' ? ' selected="selected"' : '') + '>Notifications</option><option value="nonotify"' + (tours === 'nonotify' ? ' selected="selected"' : '') + '>No Notifications</option><option value="hide"' + (tours === 'hide' ? ' selected="selected"' : '') + '>Hide</option></select></label></p>';
 			var timestamps = this.timestamps = (Dex.prefs('timestamps') || {});
 			buf += '<p><label class="optlabel">Timestamps in chat rooms: <select name="timestamps-lobby" class="button"><option value="off">Off</option><option value="minutes"' + (timestamps.lobby === 'minutes' ? ' selected="selected"' : '') + '>[HH:MM]</option><option value="seconds"' + (timestamps.lobby === 'seconds' ? ' selected="selected"' : '') + '>[HH:MM:SS]</option></select></label></p>';
 			buf += '<p><label class="optlabel">Timestamps in PMs: <select name="timestamps-pms" class="button"><option value="off">Off</option><option value="minutes"' + (timestamps.pms === 'minutes' ? ' selected="selected"' : '') + '>[HH:MM]</option><option value="seconds"' + (timestamps.pms === 'seconds' ? ' selected="selected"' : '') + '>[HH:MM:SS]</option></select></label></p>';
 			buf += '<p><label class="optlabel">Chat preferences: <button name="formatting" class="button">Text formatting</button></label></p>';
-
 			if (window.nodewebkit) {
 				buf += '<hr />';
 				buf += '<p><strong>Desktop app</strong></p>';
 				buf += '<p><label class="optlabel"><input type="checkbox" name="logchat"' + (Dex.prefs('logchat') ? ' checked' : '') + '> Log chat</label></p>';
 				buf += '<p id="openLogFolderButton"' + (Storage.dir ? '' : ' style="display:none"') + '><button name="openLogFolder">Open log folder</button></p>';
 			}
-
 			buf += '<hr />';
-			if (app.user.get('named')) {
-				buf += '<p class="buttonbar" style="text-align:right"><button name="login" class="button"><i class="fa fa-pencil"></i> Change name</button> <button name="logout" class="button"><i class="fa fa-power-off"></i> Log out</button></p>';
-			} else {
-				buf += '<p class="buttonbar" style="text-align:right"><button name="login" class="button">Choose name</button></p>';
-			}
+			if (app.user.get('named')) { buf += '<p class="buttonbar" style="text-align:right"><button name="login" class="button"><i class="fa fa-pencil"></i> Change name</button> <button name="logout" class="button"><i class="fa fa-power-off"></i> Log out</button></p>'; } 
+			else { buf += '<p class="buttonbar" style="text-align:right"><button name="login" class="button">Choose name</button></p>'; }
 			this.$el.html(buf).css('min-width', 160);
 		},
-		openLogFolder: function () {
-			Storage.revealFolder();
-		},
+		openLogFolder: function () { Storage.revealFolder(); },
 		setLogChat: function (e) {
 			var logchat = !!e.currentTarget.checked;
 			if (logchat) {
 				Storage.startLoggingChat();
 				$('#openLogFolderButton').show();
-			} else {
-				Storage.stopLoggingChat();
-			}
+			} 
+			else { Storage.stopLoggingChat(); }
 			Storage.prefs('logchat', logchat);
 		},
 		setNoanim: function (e) {
@@ -607,11 +494,8 @@
 			var theme = e.currentTarget.value;
 			Storage.prefs('theme', theme);
 			if (theme === 'system') {
-				if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-					theme = 'dark';
-				} else {
-					theme = 'light';
-				}
+				if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) { theme = 'dark'; } 
+				else { theme = 'light'; }
 			}
 			$('html').toggleClass('dark', theme === 'dark');
 		},
@@ -628,15 +512,9 @@
 			var tournaments = e.currentTarget.value;
 			Storage.prefs('tournaments', tournaments);
 		},
-		setLanguage: function (e) {
-			app.user.updateSetting('language', e.currentTarget.value);
-		},
-		setBlockpms: function (e) {
-			app.user.updateSetting('blockPMs', !!e.currentTarget.checked);
-		},
-		setBlockchallenges: function (e) {
-			app.user.updateSetting('blockChallenges', !!e.currentTarget.checked);
-		},
+		setLanguage: function (e) { app.user.updateSetting('language', e.currentTarget.value); },
+		setBlockpms: function (e) { app.user.updateSetting('blockPMs', !!e.currentTarget.checked); },
+		setBlockchallenges: function (e) { app.user.updateSetting('blockChallenges', !!e.currentTarget.checked); },
 		setSelfHighlight: function (e) {
 			var noselfhighlight = !e.currentTarget.checked;
 			Storage.prefs('noselfhighlight', noselfhighlight);
@@ -657,9 +535,7 @@
 			var leavePopupRoom = !!e.currentTarget.checked;
 			Storage.prefs('leavePopupRoom', leavePopupRoom);
 		},
-		background: function (e) {
-			app.addPopup(CustomBackgroundPopup);
-		},
+		background: function (e) { app.addPopup(CustomBackgroundPopup); },
 		setOnePanel: function (e) {
 			app.singlePanelMode = !!e.currentTarget.value;
 			Storage.prefs('onepanel', !!e.currentTarget.value);
@@ -673,9 +549,7 @@
 			this.timestamps.pms = e.currentTarget.value;
 			Storage.prefs('timestamps', this.timestamps);
 		},
-		avatars: function () {
-			app.addPopup(AvatarsPopup);
-		},
+		avatars: function () { app.addPopup(AvatarsPopup); },
 		editstatus: function (ev) {
 			// from an input, key isn't enter
 			// there's no event if it's a click fsr
@@ -686,41 +560,26 @@
 			} else {
 				var $input = $('input[name=statustext]');
 				var statusText = $input.val();
-				if (!toID(statusText).length) {
-					return;
-				}
-
+				if (!toID(statusText).length) { return; }
 				app.send('/status ' + statusText);
 				var $editButton = $('button[name=editstatus]');
 				$editButton.text('Status updated!');
 				$editButton.attr('disabled', true);
 				$input.remove();
-
 				this.editingStatus = false;
 			}
 		},
-		formatting: function () {
-			app.addPopup(FormattingPopup);
-		},
-		login: function () {
-			app.addPopup(LoginPopup);
-		},
-		register: function () {
-			app.addPopup(RegisterPopup);
-		},
-		changepassword: function () {
-			app.addPopup(ChangePasswordPopup);
-		},
+		formatting: function () { app.addPopup(FormattingPopup); },
+		login: function () { app.addPopup(LoginPopup); },
+		register: function () { app.addPopup(RegisterPopup); },
+		changepassword: function () { app.addPopup(ChangePasswordPopup); },
 		logout: function () {
 			app.user.logout();
 			this.close();
 		}
 	});
-
 	var FormattingPopup = this.FormattingPopup = Popup.extend({
-		events: {
-			'change input': 'setOption'
-		},
+		events: { 'change input': 'setOption' },
 		initialize: function () {
 			var cur = this.chatformatting = Dex.prefs('chatformatting') || {};
 			var buf = '<p>Usable formatting:</p>';
@@ -745,14 +604,12 @@
 			Storage.prefs('chatformatting', this.chatformatting);
 		}
 	});
-
 	var AvatarsPopup = this.AvatarsPopup = Popup.extend({
 		type: 'semimodal',
 		initialize: function () {
 			var cur = +app.user.get('avatar');
 			var buf = '';
 			buf += '<p>Choose an avatar or <button name="close" class="button">Cancel</button></p>';
-
 			buf += '<div class="avatarlist">';
 			for (var i = 1; i <= 293; i++) {
 				if (i === 162 || i === 168) continue;
@@ -760,7 +617,6 @@
 				buf += '<button name="setAvatar" value="' + i + '" style="background-position:' + offset + '" class="option pixelated' + (i === cur ? ' cur' : '') + '" title="/avatar ' + i + '"></button>';
 			}
 			buf += '</div><div style="clear:left"></div>';
-
 			buf += '<p><button name="close" class="button">Cancel</button></p>';
 			this.$el.html(buf).css('max-width', 780);
 		},
@@ -775,7 +631,6 @@
 			this.close();
 		}
 	});
-
 	var TabListPopup = this.TabListPopup = Popup.extend({
 		type: 'semimodal',
 		renderRooms: function (rooms) {
@@ -786,19 +641,14 @@
 		initialize: function () {
 			var curId = (app.curRoom ? app.curRoom.id : '');
 			var curSideId = (app.curSideRoom ? app.curSideRoom.id : '');
-
 			var buf = '<ul>' + this.renderRooms([app.rooms[''], app.rooms['teambuilder'], app.rooms['ladder']]) + '</ul>';
 			if (app.roomList.length) buf += this.renderRooms(app.roomList);
 			var sideBuf = this.renderRooms(app.sideRoomList);
 			sideBuf += '<li><a class="button' + (curId === 'rooms' || curSideId === 'rooms' ? ' cur' : '') + '" href="' + app.root + 'rooms"><i class="fa fa-plus"></i> <span>&nbsp;</span></a></li>';
-			if (sideBuf) {
-				buf += '<ul>' + sideBuf + '</ul>';
-			}
+			if (sideBuf) { buf += '<ul>' + sideBuf + '</ul>'; }
 			this.$el.addClass('tablist').html(buf);
 		},
-		events: {
-			'click a': 'click'
-		},
+		events: { 'click a': 'click' },
 		closeRoom: function (roomid, button, e) {
 			app.leaveRoom(roomid);
 			this.initialize();
@@ -808,9 +658,7 @@
 			e.preventDefault();
 			var $target = $(e.currentTarget);
 			var id = $target.attr('href');
-			if (id.substr(0, app.root.length) === app.root) {
-				id = id.substr(app.root.length);
-			}
+			if (id.substr(0, app.root.length) === app.root) { id = id.substr(app.root.length); }
 			if ($target.hasClass('closebutton')) {
 				app.leaveRoom(id);
 				this.initialize();
@@ -820,41 +668,31 @@
 			}
 		}
 	});
-
 	var CustomBackgroundPopup = this.CustomBackgroundPopup = Popup.extend({
-		events: {
-			'change input[name=bgfile]': 'setBgFile'
-		},
+		events: { 'change input[name=bgfile]': 'setBgFile' },
 		initialize: function () {
 			var buf = '';
 			var cur = Storage.bg.id;
 			buf += '<p><strong>Default</strong></p>';
 			buf += '<div class="bglist">';
-
 			buf += '<button name="setBg" value="" class="option' + (!cur ? ' cur' : '') + '"><strong style="background:#888888;color:white;padding:16px 18px;display:block;font-size:12pt">' + (location.host === Config.routes.client ? 'Random' : 'Default') + '</strong></button>';
-
 			buf += '</div><div style="clear:left"></div>';
 			buf += '<p><strong>Official</strong></p>';
 			buf += '<div class="bglist">';
-
 			buf += '<button name="setBg" value="charizards" class="option' + (cur === 'charizards' ? ' cur' : '') + '"><span class="bg" style="background-position:0 -' + (90 * 0) + 'px"></span>Charizards</button>';
 			buf += '<button name="setBg" value="horizon" class="option' + (cur === 'horizon' ? ' cur' : '') + '"><span class="bg" style="background-position:0 -' + (90 * 1) + 'px"></span>Horizon</button>';
 			buf += '<button name="setBg" value="waterfall" class="option' + (cur === 'waterfall' ? ' cur' : '') + '"><span class="bg" style="background-position:0 -' + (90 * 2) + 'px"></span>Waterfall</button>';
 			buf += '<button name="setBg" value="ocean" class="option' + (cur === 'ocean' ? ' cur' : '') + '"><span class="bg" style="background-position:0 -' + (90 * 3) + 'px"></span>Ocean</button>';
 			buf += '<button name="setBg" value="shaymin" class="option' + (cur === 'shaymin' ? ' cur' : '') + '"><span class="bg" style="background-position:0 -' + (90 * 4) + 'px"></span>Shaymin</button>';
 			buf += '<button name="setBg" value="solidblue" class="option' + (cur === 'solidblue' ? ' cur' : '') + '"><span class="bg" style="background: #344b6c"></span>Solid blue</button>';
-
 			buf += '</div><div style="clear:left"></div>';
 			buf += '<p><strong>Custom</strong></p>';
 			buf += '<p>Drag and drop an image to PS (the background settings don\'t need to be open), or upload:</p>';
 			buf += '<p><input type="file" accept="image/*" name="bgfile"></p>';
 			buf += '<p class="bgstatus"></p>';
-
 			buf += '<p><button name="close" class="button"><strong>Done</strong></button></p>';
-
 			// April Fool's 2016 - background change disabling
 			// buf = '<p>Sorry, the background chooser is experiencing technical difficulties. Please try again tomorrow!</p><p><button name="close"><strong>Done</strong></button></p>';
-
 			this.$el.css('max-width', 448).html(buf);
 			this.$el.html(buf);
 		},
@@ -874,29 +712,22 @@
 		var reader = new FileReader();
 		reader.onload = function (e) {
 			if (String(e.target.result).length > 4200000) {
-				if (popup) {
-					$('.bgstatus').html('<strong style="background:red;color:white;padding:1px 4px;border-radius:4px;display:block">Image is too large and can\'t be saved. It should be under 3.5MB or so.</strong>');
-				} else {
-					app.addPopupMessage("Image is too large and can't be saved. It should be under 3.5MB or so.");
-				}
+				if (popup) { $('.bgstatus').html('<strong style="background:red;color:white;padding:1px 4px;border-radius:4px;display:block">Image is too large and can\'t be saved. It should be under 3.5MB or so.</strong>'); } 
+				else { app.addPopupMessage("Image is too large and can't be saved. It should be under 3.5MB or so."); }
 			} else if (popup) {
 				$('.bgstatus').html('Saved');
 				popup.$('.cur').removeClass('cur');
 				Storage.bg.set(e.target.result, 'custom');
-			} else {
-				app.addPopup(ConfirmBackgroundPopup, { bgUrl: e.target.result });
-			}
+			} else { app.addPopup(ConfirmBackgroundPopup, { bgUrl: e.target.result }); }
 		};
 		reader.readAsDataURL(file);
 	};
-
 	var ConfirmBackgroundPopup = this.ConfirmBackgroundPopup = Popup.extend({
 		initialize: function (data) {
 			var buf = '<br>';
 			buf += '<p><img src="' + data.bgUrl + '" style="display:block;margin:auto;max-width:90%;max-height:500px"></p>';
 			buf += '<p class="buttonbar"><button name="setBg" value="' + data.bgUrl + '" class="button"><strong>Change background</strong></button> ';
 			buf += '<button name="close" class="button">Cancel</button></p>';
-
 			this.$el.css('max-width', 485).html(buf);
 			this.$el.html(buf);
 		},
@@ -905,12 +736,10 @@
 			Storage.bg.set(bgUrl, 'custom');
 		}
 	});
-
 	var LoginPopup = this.LoginPopup = Popup.extend({
 		type: 'semimodal',
 		initialize: function (data) {
 			var buf = '<form>';
-
 			if (data.error) {
 				buf += '<p class="error">' + BattleLog.escapeHTML(data.error) + '</p>';
 				if (data.error.indexOf('inappropriate') >= 0) {
@@ -919,7 +748,6 @@
 						act: 'logout',
 						userid: app.user.get('userid')
 					});
-
 					buf += '<p>Keep in mind these rules:</p>';
 					buf += '<ol>';
 					buf += '<li>Usernames may not impersonate a recognized user (a user with %, @, #, or & next to their name).</li>';
@@ -927,16 +755,13 @@
 					buf += '<li>Usernames may not directly reference sexual activity, or be excessively disgusting.</li>';
 					buf += '</ol>';
 				}
-			} else if (data.reason) {
-				buf += '<p>' + BattleLog.parseMessage(data.reason) + '</p>';
-			} else if (!data.force) {
+			} else if (data.reason) { buf += '<p>' + BattleLog.parseMessage(data.reason) + '</p>'; } 
+			else if (!data.force) {
 				var noRenameGames = '';
 				if (app.rooms[''].games) {
 					for (var roomid in app.rooms[''].games) {
 						var title = app.rooms[''].games[roomid];
-						if (title.slice(-1) === '*') {
-							noRenameGames += '<li>' + BattleLog.escapeHTML(title.slice(0, -1)) + '</li>';
-						}
+						if (title.slice(-1) === '*') { noRenameGames += '<li>' + BattleLog.escapeHTML(title.slice(0, -1)) + '</li>'; }
 					}
 				}
 				if (noRenameGames) {
@@ -949,21 +774,15 @@
 					return;
 				}
 			}
-
 			var name = (data.name || '');
 			if (!name && app.user.get('named')) name = app.user.get('name');
 			buf += '<p><label class="label">Username: <small class="preview" style="' + BattleLog.hashColor(toUserid(name)) + '">(color)</small><input class="textbox autofocus" type="text" name="username" value="' + BattleLog.escapeHTML(name) + '" autocomplete="username"></label></p>';
-			if (name) {
-				buf += '<p><small>(Others will be able to see your name change. To change name privately, use "Log out")</small></p>';
-			}
+			if (name) { buf += '<p><small>(Others will be able to see your name change. To change name privately, use "Log out")</small></p>'; }
 			buf += '<p class="buttonbar"><button type="submit" class="button"><strong>Choose name</strong></button> <button type="button" name="close" class="button">Cancel</button></p>';
-
 			buf += '</form>';
 			this.$el.html(buf);
 		},
-		events: {
-			'input .textbox': 'updateColor'
-		},
+		events: { 'input .textbox': 'updateColor' },
 		updateColor: function (e) {
 			var name = e.currentTarget.value;
 			var preview = this.$('.preview');
@@ -985,16 +804,12 @@
 			app.user.rename(data.username);
 		}
 	});
-
 	var ChangePasswordPopup = this.ChangePasswordPopup = Popup.extend({
 		type: 'semimodal',
 		initialize: function (data) {
 			var buf = '<form>';
-			if (data.error) {
-				buf += '<p class="error">' + data.error + '</p>';
-			} else {
-				buf += '<p>Change your password:</p>';
-			}
+			if (data.error) { buf += '<p class="error">' + data.error + '</p>'; } 
+			else { buf += '<p>Change your password:</p>'; }
 			buf += '<p><label class="label">Username: <strong><input type="text" name="username" value="' + BattleLog.escapeHTML(app.user.get('name')) + '" style="color:inherit;background:transparent;border:0;font:inherit;font-size:inherit;display:block" readonly autocomplete="username" /></strong></label></p>';
 			buf += '<p><label class="label">Old password: <input class="textbox autofocus" type="password" name="oldpassword" autocomplete="current-password" /></label></p>';
 			buf += '<p><label class="label">New password: <input class="textbox" type="password" name="password" autocomplete="new-password" /></label></p>';
@@ -1010,28 +825,18 @@
 				cpassword: data.cpassword
 			}, Storage.safeJSON(function (data) {
 				if (!data) data = {};
-				if (data.actionsuccess) {
-					app.addPopupMessage("Your password was successfully changed.");
-				} else {
-					app.addPopup(ChangePasswordPopup, {
-						error: data.actionerror
-					});
-				}
+				if (data.actionsuccess) { app.addPopupMessage("Your password was successfully changed."); } 
+				else { app.addPopup(ChangePasswordPopup, { error: data.actionerror }); }
 			}), 'text');
 		}
 	});
-
 	var RegisterPopup = this.RegisterPopup = Popup.extend({
 		type: 'semimodal',
 		initialize: function (data) {
 			var buf = '<form>';
-			if (data.error) {
-				buf += '<p class="error">' + data.error + '</p>';
-			} else if (data.reason) {
-				buf += '<p>' + data.reason + '</p>';
-			} else {
-				buf += '<p>Register your account:</p>';
-			}
+			if (data.error) { buf += '<p class="error">' + data.error + '</p>'; } 
+			else if (data.reason) { buf += '<p>' + data.reason + '</p>'; } 
+			else { buf += '<p>Register your account:</p>'; }
 			buf += '<p><label class="label">Username: <strong><input type="text" name="name" value="' + BattleLog.escapeHTML(data.name || app.user.get('name')) + '" style="color:inherit;background:transparent;border:0;font:inherit;font-size:inherit;display:block" readonly autocomplete="username" /></strong></label></p>';
 			buf += '<p><label class="label">Password: <input class="textbox autofocus" type="password" name="password" autocomplete="new-password" /></label></p>';
 			buf += '<p><label class="label">Password (confirm): <input class="textbox" type="password" name="cpassword" autocomplete="new-password" /></label></p>';
@@ -1068,7 +873,6 @@
 			}), 'text');
 		}
 	});
-
 	this.LoginPasswordPopup = Popup.extend({
 		type: 'semimodal',
 		showPassword: function () {
@@ -1086,7 +890,6 @@
 		},
 		initialize: function (data) {
 			var buf = '<form>';
-
 			if (data.error) {
 				buf += '<p class="error">' + BattleLog.escapeHTML(data.error) + '</p>';
 				if (data.error.indexOf(' forced you to change ') >= 0) {
@@ -1097,12 +900,8 @@
 					buf += '<li>Usernames may not impersonate a recognized user (a user with %, @, #, or & next to their name).</li>';
 					buf += '</ol>';
 				}
-			} else if (data.reason) {
-				buf += '<p>' + BattleLog.escapeHTML(data.reason) + '</p>';
-			} else {
-				buf += '<p class="error">The name you chose is registered.</p>';
-			}
-
+			} else if (data.reason) { buf += '<p>' + BattleLog.escapeHTML(data.reason) + '</p>'; } 
+			else { buf += '<p class="error">The name you chose is registered.</p>'; }
 			buf += '<p>If this is your account:</p>';
 			buf += '<p><label class="label">Username: <strong><input type="text" name="username" value="' + BattleLog.escapeHTML(data.username) + '" style="color:inherit;background:transparent;border:0;font:inherit;font-size:inherit;display:block" readonly autocomplete="username" /></strong></label></p>';
 			if (data.special === '@gmail') {
@@ -1113,21 +912,17 @@
 				buf += '<p><label class="label">Password: <input class="textbox autofocus" type="password" name="password" autocomplete="current-password" style="width:173px"><button type="button" name="showPassword" aria-label="Show password" style="float:right;margin:-21px 0 10px;padding: 2px 6px" class="button"><i class="fa fa-eye"></i></button></label></p>';
 				buf += '<p class="buttonbar"><button type="submit" class="button"><strong>Log in</strong></button> <button type="button" name="close" class="button">Cancel</button></p>';
 			}
-
 			buf += '<p class="or">or</p>';
 			buf += '<p>If this is someone else\'s account:</p>';
 			buf += '<p class="buttonbar"><button type="button" name="login" class="button">Choose another name</button></p>';
-
 			buf += '</form>';
 			this.$el.html(buf);
-
 			if (data.special === '@gmail') {
 				var self = this;
 				window.gapiCallback = function (response) {
 					app.user.passwordRename(data.username, response.credential, data.special);
 					self.close();
 				};
-
 				var script = document.createElement('script');
 				script.async = true;
 				script.src = 'https://accounts.google.com/gsi/client';
@@ -1143,5 +938,4 @@
 			app.user.passwordRename(data.username, data.password);
 		}
 	});
-
 }).call(this, jQuery);

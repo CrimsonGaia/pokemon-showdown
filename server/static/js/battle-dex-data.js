@@ -19,10 +19,7 @@
 
 
 var BattleNatures={
-Adamant:{
-plus:'atk',
-minus:'spa'
-},
+Adamant:{plus:'atk',minus:'spa'},
 Bashful:{},
 Bold:{plus:'def',minus:'atk'},
 Brave:{plus:'atk',minus:'spe'},
@@ -366,19 +363,6 @@ silvallyrock:1032+281,
 silvallysteel:1032+282,
 silvallywater:1032+283,
 
-greninjabond:658,
-gumshoostotem:735,
-raticatealolatotem:1032+120,
-marowakalolatotem:1032+136,
-araquanidtotem:752,
-lurantistotem:754,
-salazzletotem:758,
-vikavolttotem:738,
-togedemarutotem:777,
-mimikyutotem:778,
-mimikyubustedtotem:778,
-ribombeetotem:743,
-kommoototem:784,
 sinisteaantique:854,
 polteageistantique:855,
 poltchageistartisan:1012,
@@ -387,7 +371,6 @@ ogerpontealtera:1017,
 ogerponwellspringtera:1032+241,
 ogerponhearthflametera:1032+242,
 ogerponcornerstonetera:1032+243,
-toxtricitylowkeygmax:1320+69,
 
 venusaurmega:1320+0,
 charizardmegax:1320+1,
@@ -438,122 +421,7 @@ lucariomega:1320+45,
 abomasnowmega:1320+46,
 gallademega:1320+47,
 audinomega:1320+48,
-dianciemega:1320+49,
-charizardgmax:1320+50,
-butterfreegmax:1320+51,
-pikachugmax:1320+52,
-meowthgmax:1320+53,
-machampgmax:1320+54,
-gengargmax:1320+55,
-kinglergmax:1320+56,
-laprasgmax:1320+57,
-eeveegmax:1320+58,
-snorlaxgmax:1320+59,
-garbodorgmax:1320+60,
-melmetalgmax:1320+61,
-corviknightgmax:1320+62,
-orbeetlegmax:1320+63,
-drednawgmax:1320+64,
-coalossalgmax:1320+65,
-flapplegmax:1320+66,
-appletungmax:1320+67,
-sandacondagmax:1320+68,
-toxtricitygmax:1320+69,
-centiskorchgmax:1320+70,
-hatterenegmax:1320+71,
-grimmsnarlgmax:1320+72,
-alcremiegmax:1320+73,
-copperajahgmax:1320+74,
-duraludongmax:1320+75,
-eternatuseternamax:1320+76,
-venusaurgmax:1320+77,
-blastoisegmax:1320+78,
-rillaboomgmax:1320+79,
-cinderacegmax:1320+80,
-inteleongmax:1320+81,
-urshifugmax:1320+82,
-urshifurapidstrikegmax:1320+83,
-
-syclant:1512+0,
-revenankh:1512+1,
-pyroak:1512+2,
-fidgit:1512+3,
-stratagem:1512+4,
-arghonaut:1512+5,
-kitsunoh:1512+6,
-cyclohm:1512+7,
-colossoil:1512+8,
-krilowatt:1512+9,
-voodoom:1512+10,
-tomohawk:1512+11,
-necturna:1512+12,
-mollux:1512+13,
-aurumoth:1512+14,
-malaconda:1512+15,
-cawmodore:1512+16,
-volkraken:1512+17,
-plasmanta:1512+18,
-naviathan:1512+19,
-crucibelle:1512+20,
-crucibellemega:1512+21,
-kerfluffle:1512+22,
-pajantom:1512+23,
-jumbao:1512+24,
-caribolt:1512+25,
-smokomodo:1512+26,
-snaelstrom:1512+27,
-equilibra:1512+28,
-astrolotl:1512+29,
-miasmaw:1512+30,
-chromera:1512+31,
-venomicon:1512+32,
-venomiconepilogue:1512+33,
-saharaja:1512+34,
-hemogoblin:1512+35,
-syclar:1512+36,
-embirch:1512+37,
-flarelm:1512+38,
-breezi:1512+39,
-scratchet:1512+40,
-necturine:1512+41,
-cupra:1512+42,
-argalis:1512+43,
-brattler:1512+44,
-cawdet:1512+45,
-volkritter:1512+46,
-snugglow:1512+47,
-floatoy:1512+48,
-caimanoe:1512+49,
-pluffle:1512+50,
-rebble:1512+51,
-tactite:1512+52,
-privatyke:1512+53,
-nohface:1512+54,
-monohm:1512+55,
-duohm:1512+56,
-protowatt:1512+57,
-voodoll:1512+58,
-mumbao:1512+59,
-fawnifer:1512+60,
-electrelk:1512+61,
-smogecko:1512+62,
-smoguana:1512+63,
-swirlpool:1512+64,
-coribalis:1512+65,
-justyke:1512+66,
-solotl:1512+67,
-miasmite:1512+68,
-dorsoil:1512+69,
-saharascal:1512+70,
-ababo:1512+71,
-scattervein:1512+72,
-cresceidon:1512+73,
-chuggalong:1512+74,
-shox:1512+75,
-chuggon:1512+76,
-draggalong:1512+77,
-ramnarok:1512+78,
-ramnarokradiant:1512+79
+dianciemega:1320+49
 };
 var BattlePokemonIconIndexesLeft={
 pikachubelle:1404+0,
@@ -1033,11 +901,7 @@ Item=
 
 
 
-
-
-
-
-function Item(id,name,data){this.effectType='Item';this.id=void 0;this.name=void 0;this.gen=void 0;this.exists=void 0;this.num=void 0;this.spritenum=void 0;this.desc=void 0;this.shortDesc=void 0;this.megaStone=void 0;this.megaEvolves=void 0;this.zMove=void 0;this.zMoveType=void 0;this.zMoveFrom=void 0;this.zMoveUser=void 0;this.onPlate=void 0;this.onMemory=void 0;this.onDrive=void 0;this.fling=void 0;this.naturalGift=void 0;this.isPokeball=void 0;this.itemUser=void 0;this.itemClass=void 0;this.isFragile=void 0;this.isMildlyFragile=void 0;
+function Item(id,name,data){this.effectType='Item';this.id=void 0;this.name=void 0;this.gen=void 0;this.exists=void 0;this.num=void 0;this.spritenum=void 0;this.desc=void 0;this.shortDesc=void 0;this.megaStone=void 0;this.megaEvolves=void 0;this.onPlate=void 0;this.onMemory=void 0;this.onDrive=void 0;this.fling=void 0;this.naturalGift=void 0;this.isPokeball=void 0;this.itemUser=void 0;this.itemClass=void 0;this.isFragile=void 0;this.isMildlyFragile=void 0;
 if(!data||typeof data!=='object')data={};
 if(data.name)name=data.name;
 this.name=Dex.sanitizeName(name);
@@ -1050,10 +914,6 @@ this.desc=data.desc||data.shortDesc||'';
 this.shortDesc=data.shortDesc||this.desc;
 this.megaStone=data.megaStone||'';
 this.megaEvolves=data.megaEvolves||'';
-this.zMove=data.zMove||null;
-this.zMoveType=data.zMoveType||'';
-this.zMoveFrom=data.zMoveFrom||'';
-this.zMoveUser=data.zMoveUser||null;
 this.onPlate=data.onPlate||'';
 this.onMemory=data.onMemory||'';
 this.onDrive=data.onDrive||'';
@@ -1062,8 +922,6 @@ this.naturalGift=data.naturalGift||null;
 this.isPokeball=!!data.isPokeball;
 this.itemUser=data.itemUser;
 this.itemClass=data.itemClass;
-this.isFragile=!!data.isFragile;
-this.isMildlyFragile=!!data.isMildlyFragile;
 this.isFragile=data.isFragile;
 this.isMildlyFragile=data.isMildlyFragile;
 if(!this.gen){
@@ -1173,14 +1031,7 @@ Move=
 
 
 
-
-
-
-
-
-
-
-function Move(id,name,data){var _this$maxMove;this.effectType='Move';this.id=void 0;this.name=void 0;this.gen=void 0;this.exists=void 0;this.basePower=void 0;this.accuracy=void 0;this.pp=void 0;this.type=void 0;this.category=void 0;this.priority=void 0;this.target=void 0;this.pressureTarget=void 0;this.flags=void 0;this.critRatio=void 0;this.damage=void 0;this.desc=void 0;this.shortDesc=void 0;this.isNonstandard=void 0;this.isZ=void 0;this.zMove=void 0;this.isMax=void 0;this.maxMove=void 0;this.ohko=void 0;this.recoil=void 0;this.heal=void 0;this.multihit=void 0;this.hasCrashDamage=void 0;this.basePowerCallback=void 0;this.noPPBoosts=void 0;this.status=void 0;this.secondaries=void 0;this.num=void 0;
+function Move(id,name,data){this.effectType='Move';this.id=void 0;this.name=void 0;this.gen=void 0;this.exists=void 0;this.basePower=void 0;this.accuracy=void 0;this.pp=void 0;this.type=void 0;this.category=void 0;this.priority=void 0;this.target=void 0;this.pressureTarget=void 0;this.flags=void 0;this.critRatio=void 0;this.damage=void 0;this.desc=void 0;this.shortDesc=void 0;this.isNonstandard=void 0;this.ohko=void 0;this.recoil=void 0;this.heal=void 0;this.multihit=void 0;this.hasCrashDamage=void 0;this.basePowerCallback=void 0;this.noPPBoosts=void 0;this.status=void 0;this.secondaries=void 0;this.num=void 0;this.isInfusible=void 0;
 if(!data||typeof data!=='object')data={};
 if(data.name)name=data.name;
 this.name=Dex.sanitizeName(name);
@@ -1202,8 +1053,6 @@ this.damage=data.damage;
 this.desc=data.desc;
 this.shortDesc=data.shortDesc;
 this.isNonstandard=data.isNonstandard||null;
-this.isZ=data.isZ||'';
-this.zMove=data.zMove||{};
 this.ohko=data.ohko||null;
 this.recoil=data.recoil||null;
 this.heal=data.heal||null;
@@ -1213,47 +1062,8 @@ this.basePowerCallback=!!data.basePowerCallback;
 this.noPPBoosts=data.noPPBoosts||false;
 this.status=data.status||'';
 this.secondaries=data.secondaries||(data.secondary?[data.secondary]:null);
-this.isMax=data.isMax||false;
-this.maxMove=data.maxMove||{basePower:0};
-if(this.category!=='Status'&&!((_this$maxMove=this.maxMove)!=null&&_this$maxMove.basePower)){
-if(this.isZ||this.isMax){this.maxMove={basePower:1};}else
-if(!this.basePower){this.maxMove={basePower:100};}else
-if(['Fighting','Poison'].includes(this.type)){
-if(this.basePower>=150){this.maxMove={basePower:100};}else
-if(this.basePower>=110){this.maxMove={basePower:95};}else
-if(this.basePower>=75){this.maxMove={basePower:90};}else
-if(this.basePower>=65){this.maxMove={basePower:85};}else
-if(this.basePower>=55){this.maxMove={basePower:80};}else
-if(this.basePower>=45){this.maxMove={basePower:75};}else
-{this.maxMove={basePower:70};}
-}else{
-if(this.basePower>=150){this.maxMove={basePower:150};}else
-if(this.basePower>=110){this.maxMove={basePower:140};}else
-if(this.basePower>=75){this.maxMove={basePower:130};}else
-if(this.basePower>=65){this.maxMove={basePower:120};}else
-if(this.basePower>=55){this.maxMove={basePower:110};}else
-if(this.basePower>=45){this.maxMove={basePower:100};}else
-{this.maxMove={basePower:90};}
-}
-}
-if(this.category!=='Status'&&!this.isZ&&!this.isMax){
-var basePower=this.basePower;
-this.zMove={};
-if(Array.isArray(this.multihit))basePower*=3;
-if(!basePower){this.zMove.basePower=100;}else
-if(basePower>=140){this.zMove.basePower=200;}else
-if(basePower>=130){this.zMove.basePower=195;}else
-if(basePower>=120){this.zMove.basePower=190;}else
-if(basePower>=110){this.zMove.basePower=185;}else
-if(basePower>=100){this.zMove.basePower=180;}else
-if(basePower>=90){this.zMove.basePower=175;}else
-if(basePower>=80){this.zMove.basePower=160;}else
-if(basePower>=70){this.zMove.basePower=140;}else
-if(basePower>=60){this.zMove.basePower=120;}else
-{this.zMove.basePower=100;}
-if(data.zMove)this.zMove.basePower=data.zMove.basePower;
-}
 this.num=data.num||0;
+this.isInfusible=!!data.isInfusible;
 if(!this.gen){
 if(this.num>=743){this.gen=8;}else
 if(this.num>=622){this.gen=7;}else
@@ -1315,7 +1125,9 @@ Ability=
 
 
 
-function Ability(id,name,data){this.effectType='Ability';this.id=void 0;this.name=void 0;this.gen=void 0;this.exists=void 0;this.num=void 0;this.shortDesc=void 0;this.desc=void 0;this.rating=void 0;this.flags=void 0;this.isNonstandard=void 0;
+
+
+function Ability(id,name,data){this.effectType='Ability';this.id=void 0;this.name=void 0;this.gen=void 0;this.exists=void 0;this.num=void 0;this.shortDesc=void 0;this.desc=void 0;this.rating=void 0;this.flags=void 0;this.forcedGuardAction=void 0;this.blocksGuardAction=void 0;this.isNonstandard=void 0;
 if(!data||typeof data!=='object')data={};
 if(data.name)name=data.name;
 this.name=Dex.sanitizeName(name);
@@ -1327,6 +1139,8 @@ this.shortDesc=data.shortDesc||data.desc||'';
 this.desc=data.desc||data.shortDesc||'';
 this.rating=data.rating||1;
 this.flags=data.flags||{};
+this.forcedGuardAction=data.forcedGuardAction||'';
+this.blocksGuardAction=!!data.blocksGuardAction;
 this.isNonstandard=!!data.isNonstandard;
 if(!this.gen){
 if(this.num>=234){this.gen=8;}else
@@ -1387,9 +1201,7 @@ Species=
 
 
 
-
-
-function Species(id,name,data){this.effectType='Species';this.id=void 0;this.name=void 0;this.gen=void 0;this.exists=void 0;this.baseSpecies=void 0;this.forme=void 0;this.formeid=void 0;this.spriteid=void 0;this.baseForme=void 0;this.num=void 0;this.types=void 0;this.abilities=void 0;this.baseStats=void 0;this.bst=void 0;this.weightkg=void 0;this.heightm=void 0;this.gender=void 0;this.color=void 0;this.genderRatio=void 0;this.eggGroups=void 0;this.tags=void 0;this.infusibleSlots=void 0;this.otherFormes=void 0;this.cosmeticFormes=void 0;this.evos=void 0;this.prevo=void 0;this.evoType=void 0;this.evoLevel=void 0;this.evoMove=void 0;this.evoItem=void 0;this.evoCondition=void 0;this.nfe=void 0;this.requiredItems=void 0;this.tier=void 0;this.isTotem=void 0;this.isMega=void 0;this.isPrimal=void 0;this.canGigantamax=void 0;this.cannotDynamax=void 0;this.requiredTeraType=void 0;this.battleOnly=void 0;this.isNonstandard=void 0;this.unreleasedHidden=void 0;this.changesFrom=void 0;
+function Species(id,name,data){this.effectType='Species';this.id=void 0;this.name=void 0;this.gen=void 0;this.exists=void 0;this.baseSpecies=void 0;this.forme=void 0;this.formeid=void 0;this.spriteid=void 0;this.baseForme=void 0;this.num=void 0;this.types=void 0;this.abilities=void 0;this.guardAction=void 0;this.baseStats=void 0;this.bst=void 0;this.weightkg=void 0;this.heightm=void 0;this.gender=void 0;this.color=void 0;this.genderRatio=void 0;this.eggGroups=void 0;this.tags=void 0;this.infusibleSlots=void 0;this.otherFormes=void 0;this.cosmeticFormes=void 0;this.evos=void 0;this.prevo=void 0;this.evoType=void 0;this.evoLevel=void 0;this.evoMove=void 0;this.evoItem=void 0;this.evoCondition=void 0;this.nfe=void 0;this.requiredItems=void 0;this.tier=void 0;this.isMega=void 0;this.isPrimal=void 0;this.requiredTeraType=void 0;this.battleOnly=void 0;this.isNonstandard=void 0;this.unreleasedHidden=void 0;this.changesFrom=void 0;
 if(!data||typeof data!=='object')data={};
 if(data.name)name=data.name;
 this.name=Dex.sanitizeName(name);
@@ -1401,7 +1213,6 @@ this.forme=data.forme||'';
 var baseId=toID(this.baseSpecies);
 this.formeid=baseId===this.id?'':'-'+toID(this.forme);
 this.spriteid=baseId+this.formeid;
-if(this.spriteid.endsWith('totem'))this.spriteid=this.spriteid.slice(0,-5);
 if(this.spriteid==='greninja-bond')this.spriteid='greninja';
 if(this.spriteid==='rockruff-dusk')this.spriteid='rockruff';
 if(this.spriteid.endsWith('-'))this.spriteid=this.spriteid.slice(0,-1);
@@ -1409,6 +1220,7 @@ this.baseForme=data.baseForme||'';
 this.num=data.num||0;
 this.types=data.types||['???'];
 this.abilities=data.abilities||{0:"No Ability"};
+this.guardAction=data.guardAction||[];
 this.baseStats=data.baseStats||{hp:0,atk:0,def:0,spa:0,spd:0,spe:0};
 this.bst=this.baseStats.hp+this.baseStats.atk+this.baseStats.def+this.baseStats.spa+this.baseStats.spd+this.baseStats.spe;
 this.weightkg=data.weightkg||0;
@@ -1431,11 +1243,8 @@ this.evoCondition=data.evoCondition||'';
 this.nfe=data.nfe||false;
 this.requiredItems=data.requiredItems||(data.requiredItem?[data.requiredItem]:[]);
 this.tier=data.tier||'';
-this.isTotem=false;
 this.isMega=!!(this.forme&&['-mega','-megax','-megay'].includes(this.formeid));
 this.isPrimal=!!(this.forme&&this.formeid==='-primal');
-this.canGigantamax=!!data.canGigantamax;
-this.cannotDynamax=!!data.cannotDynamax;
 this.requiredTeraType=data.requiredTeraType||'';
 this.battleOnly=data.battleOnly||(this.isMega?this.baseSpecies:undefined);
 this.isNonstandard=data.isNonstandard||null;
@@ -1449,10 +1258,6 @@ if(this.num>=722||this.formeid==='-alola'||this.formeid==='-starter'){this.gen=7
 if(this.isMega||this.isPrimal){
 this.gen=6;
 this.battleOnly=this.baseSpecies;
-}else
-if(this.formeid==='-totem'||this.formeid==='-alolatotem'){
-this.gen=7;
-this.isTotem=true;
 }else
 if(this.num>=650){this.gen=6;}else
 if(this.num>=494){this.gen=5;}else

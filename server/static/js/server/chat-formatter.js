@@ -2,7 +2,7 @@
  * Chat parser
  * Pokemon Showdown - http://pokemonshowdown.com/
  *
- * Parses formate.
+ * Parses format.
  *
  * @license MIT
  */
@@ -60,7 +60,7 @@
 
 
 
-var linkRegex=/(?:(?:https?:\/\/[a-z0-9-]+(?:\.[a-z0-9-]+)*|www\.[a-z0-9-]+(?:\.[a-z0-9-]+)+|\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:(?:com?|org|net|edu|info|us|jp)\b|[a-z]{2,3}(?=:[0-9]|\/)))(?::[0-9]+)?(?:\/(?:(?:[^\s()&<>[\]]|&amp;|&quot;|\((?:[^\s()<>&[\]]|&amp;)*\)|\[(?:[^\s()<>&[\]]|&amp;)*])*(?:[^\s()[\]{}".,!?;:&<>*`^~\\]|\((?:[^\s()<>&[\]]|&amp;)*\)))?)?|[a-z0-9.]+@[a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,})(?![^ ]*&gt;)/ig;var
+var linkRegex=/(?:(?:https?:\/\/[a-z0-9-]+(?:\.[a-z0-9-]+)*|www\.[a-z0-9-]+(?:\.[a-z0-9-]+)+|\b[a-z0-9-]+(?:\.[a-z0-9-]+)*\.(?:(?:com?|org|net|edu|info|us|jp)\b|[a-z]{2,3}(?=:[0-9]|\/)))(?::[0-9]+)?(?:\/(?:(?:[^\s()&<>[\]`]|&amp;|&quot;|\((?:[^\s()<>&[\]]|&amp;)*\)|\[(?:[^\s()<>&[\]]|&amp;)*])*(?:[^\s()[\]{}".,!?;:&<>*`^~\\]|\((?:[^\s()<>&[\]]|&amp;)*\)))?)?|[a-z0-9.]+@[a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,})(?![^ ]*&gt;)/ig;var
 
 
 
@@ -422,7 +422,12 @@ case'a':case'u':
 var _i3=start+2;
 
 
-while(this.at(_i3)!=='<'||this.at(_i3+1)!=='/'||this.at(_i3+3)!=='>')_i3++;
+while(this.at(_i3)!=='<'||this.at(_i3+1)!=='/'||this.at(_i3+3)!=='>'){
+if(_i3>=this.str.length){
+throw new Error("Unclosed URL span when parsing: "+this.str);
+}
+_i3++;
+}
 _i3+=4;
 this.pushSlice(_i3);
 }

@@ -17,9 +17,7 @@ import { Teams } from './battle-teams';
 import type preact from '../js/lib/preact';
 declare const BattleTextAFD: any;
 declare const BattleTextNotAFD: any;
-/**********************************************************************
- * Config
- *********************************************************************/
+// region Config
 export interface ServerInfo {
 	id: ID;
 	protocol: string;
@@ -45,11 +43,10 @@ export interface PSConfig {
 	customcolors: Record<string, string>;
 	whitelist?: string[];
 	testclient?: boolean;
+	testclientLocalLoginServer?: string;
 }
 export declare const Config: PSConfig;
-/**********************************************************************
- * Prefs
- *********************************************************************/
+// region Prefs
 // String that contains only lowercase alphanumeric characters.
 export type RoomID = Lowercase<string> & { __isRoomID: true };
 export type TimestampOptions = 'minutes' | 'seconds' | undefined;
@@ -234,9 +231,7 @@ class PSPrefs extends PSStreamModel<string | null> {
 		}
 	}
 }
-/**********************************************************************
- * Teams
- *********************************************************************/
+// region Teams
 export interface Team {
 	name: string;
 	format: ID;
@@ -479,9 +474,7 @@ class PSTeams extends PSStreamModel<'team' | 'format'> {
 		return true;
 	}
 }
-/**********************************************************************
- * User
- *********************************************************************/
+// region User
 export type PSLoginState = { error?: string, success?: true, name?: string, needsPassword?: true, needsGoogle?: true };
 class PSUser extends PSStreamModel<PSLoginState | null> {
 	name = "";
@@ -637,9 +630,7 @@ class PSUser extends PSStreamModel<PSLoginState | null> {
 		}
 	}
 }
-/**********************************************************************
- * Server
- *********************************************************************/
+// region Server
 interface PSGroup {
 	name?: string;
 	type?: 'leadership' | 'staff' | 'punishment';
@@ -720,9 +711,7 @@ class PSServer {
 	defaultGroup: PSGroup = { order: 108, };
 	getGroup(symbol: string | undefined) { return this.groups[(symbol || ' ').charAt(0)] || this.defaultGroup; }
 }
-/**********************************************************************
- * Rooms
- *********************************************************************/
+// region Rooms
 type PSRoomLocation = 'left' | 'right' | 'popup' | 'mini-window' | 'modal-popup' | 'semimodal-popup';
 export interface RoomOptions {
 	id: RoomID;
@@ -1434,9 +1423,7 @@ class PlaceholderRoom extends PSRoom {
 	}
 	override receiveLine(args: Args) { (this.backlog ||= []).push(args); }
 }
-/**********************************************************************
- * PS
- *********************************************************************/
+// region PS
 type PSRoomPanelSubclass<T extends PSRoom = PSRoom> = (new () => PSRoomPanel<T>) & {
 	readonly id: string,
 	readonly routes: string[],

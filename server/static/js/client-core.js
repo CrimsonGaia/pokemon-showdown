@@ -13,8 +13,6 @@
 
 
 
-
-
 var PSURL=(document.location.protocol!=='http:'?'https:':'')+"//"+Config.routes.client+"/";var
 PSSubscription=function(){
 
@@ -74,8 +72,6 @@ update=function update(value){
 if(!this.subscriptions.length&&value!==null&&value!==undefined){(this.backlog||(this.backlog=[])).push(value);}for(var _i6=0,_this$subscriptions4=
 this.subscriptions;_i6<_this$subscriptions4.length;_i6++){var subscription=_this$subscriptions4[_i6];subscription.listener(value);}
 };return PSStreamModel;}();
-
-
 
 
 
@@ -279,8 +275,6 @@ h/=6;
 return h*360+","+s*100+"%";
 };return _class;}(PSStreamModel))(
 );
-
-
 
 PSBackground.subscribe(function(bgUrl){
 if(!PSBackground.curId){

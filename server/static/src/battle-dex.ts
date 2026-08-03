@@ -262,6 +262,7 @@ export const Dex = new class implements ModdedDex {
 		let id = toID(name);
 		return new PureEffect(id, name);
 	}
+	//region move definition
 	moves = {
 		get: (nameOrMove: string | Move | null | undefined): Move => {
 			if (nameOrMove && typeof nameOrMove !== 'string') { return nameOrMove; } // TODO: don't accept Moves here
@@ -300,6 +301,7 @@ export const Dex = new class implements ModdedDex {
 		},
 	};
 	getGen3Category(type: string) { return ['Fire', 'Water', 'Grass', 'Electric', 'Ice', 'Psychic', 'Dark', 'Dragon',].includes(type) ? 'Special' : 'Physical'; }
+	//region flag definition
 	flags = {
 		get: (nameOrFlag: string | Flag | null | undefined): Flag => {
 			if (nameOrFlag && typeof nameOrFlag !== 'string') { return nameOrFlag; }
@@ -316,7 +318,9 @@ export const Dex = new class implements ModdedDex {
 			let flag = new Flag(id, name, data);
 			window.BattleFlags[id] = BattleFlags;
 			return flag ;
-		},};
+		},
+	};
+		//region item definition
 	items = {
 		get: (nameOrItem: string | Item | null | undefined): Item => {
 			if (nameOrItem && typeof nameOrItem !== 'string') { return nameOrItem; } // TODO: don't accept Items here
@@ -335,6 +339,7 @@ export const Dex = new class implements ModdedDex {
 			return item;
 		},
 	};
+	//region ability definition
 	abilities = {
 		get: (nameOrAbility: string | Ability | null | undefined): Ability => {
 			if (nameOrAbility && typeof nameOrAbility !== 'string') { return nameOrAbility; } // TODO: don't accept Abilities here
@@ -353,6 +358,7 @@ export const Dex = new class implements ModdedDex {
 			return ability;
 		},
 	};
+	//region species definition
 	species = {
 		get: (nameOrSpecies: string | Species | null | undefined): Species => {
 			if (nameOrSpecies && typeof nameOrSpecies !== 'string') { return nameOrSpecies; } // TODO: don't accept Species' here
@@ -378,7 +384,6 @@ export const Dex = new class implements ModdedDex {
 			if (data && typeof data.exists === 'boolean') { species = data; } 
 			else {
 				if (!data) data = { exists: false };
-				if (!data.tier && id.endsWith('totem')) { data.tier = this.species.get(id.slice(0, -5)).tier; }
 				if (!data.tier && data.baseSpecies && toID(data.baseSpecies) !== id) { data.tier = this.species.get(data.baseSpecies).tier; }
 				data.nfe = data.id === 'dipplin' || !!(data as Species).evos?.some(evo => {
 					const evoSpecies = this.species.get(evo);
@@ -408,6 +413,7 @@ export const Dex = new class implements ModdedDex {
 			return species;
 		},
 	};
+	//region type definition
 	types = {
 		allCache: null as Type[] | null,
 		namesCache: null as Dex.TypeName[] | null,
@@ -419,9 +425,7 @@ export const Dex = new class implements ModdedDex {
 				if (type.damageTaken) type.exists = true;
 				if (!type.id) type.id = id;
 				if (!type.name) type.name = name;
-				if (!type.effectType) {
-					type.effectType = 'Type';
-				}
+				if (!type.effectType) { type.effectType = 'Type'; }
 			}
 			return type;
 		},
@@ -459,17 +463,8 @@ export const Dex = new class implements ModdedDex {
 		el.src = path + 'data/pokedex-mini-bw.js' + qs;
 		document.getElementsByTagName('body')[0].appendChild(el);
 	}
-	getSpriteData(pokemon: Pokemon | Species | string, isFront: boolean, options: {
-		gen?: number,
-		shiny?: boolean,
-		gender?: Dex.GenderName,
-		afd?: boolean,
-		noScale?: boolean,
-		mod?: string,
-		dynamax?: boolean,
-	} = { gen: 6 }) {
+	getSpriteData(pokemon: Pokemon | Species | string, isFront: boolean, options: { gen?: number, shiny?: boolean, gender?: Dex.GenderName, afd?: boolean, noScale?: boolean, mod?: string, } = { gen: 6 }) {
 		const mechanicsGen = options.gen || 6;
-		let isDynamax = !!options.dynamax;
 		if (pokemon instanceof Pokemon) {
 			if (pokemon.volatiles.transform) {
 				options.shiny = pokemon.volatiles.transform[2];
@@ -478,27 +473,10 @@ export const Dex = new class implements ModdedDex {
 				options.shiny = pokemon.shiny;
 				options.gender = pokemon.gender;
 			}
-			let isGigantamax = false;
-			if (pokemon.volatiles.dynamax) {
-				if (pokemon.volatiles.dynamax[1]) { isGigantamax = true; } 
-				else if (options.dynamax !== false) { isDynamax = true; }
-			}
-			pokemon = pokemon.getSpeciesForme() + (isGigantamax ? '-Gmax' : '');
+			pokemon = pokemon.getSpeciesForme();
 		}
 		const species = Dex.species.get(pokemon);
-		// Gmax sprites are already extremely large, so we don't need to double.
-		if (species.name.endsWith('-Gmax')) isDynamax = false;
-		let spriteData = {
-			gen: mechanicsGen,
-			w: 96,
-			h: 96,
-			y: 0,
-			url: Dex.resourcePrefix + 'sprites/',
-			pixelated: true,
-			isFrontSprite: false,
-			cryurl: '',
-			shiny: options.shiny,
-		};
+		let spriteData = { gen: mechanicsGen, w: 96, h: 96, y: 0, url: Dex.resourcePrefix + 'sprites/', pixelated: true, isFrontSprite: false, cryurl: '', shiny: options.shiny, };
 		let name = species.spriteid;
 		let dir;
 		let facing;
@@ -525,7 +503,6 @@ export const Dex = new class implements ModdedDex {
 		const baseDir = ['', 'gen1', 'gen2', 'gen3', 'gen4', 'gen5', '', '', '', ''][spriteData.gen];
 		let miscData = null;
 		let speciesid = species.id;
-		if (species.isTotem) speciesid = toID(name);
 		if (window.BattlePokemonSprites) miscData = BattlePokemonSprites[speciesid];
 		if (!miscData && window.BattlePokemonSpritesBW) miscData = BattlePokemonSpritesBW[speciesid];
 		if (!miscData) miscData = {};
@@ -536,7 +513,6 @@ export const Dex = new class implements ModdedDex {
 			if (species.isMega || formeid && (
 				formeid === '-crowned' ||
 				formeid === '-eternal' ||
-				formeid === '-eternamax' ||
 				formeid === '-four' ||
 				formeid === '-hangry' ||
 				formeid === '-hero' ||
@@ -573,15 +549,6 @@ export const Dex = new class implements ModdedDex {
 			spriteData.url += dir + '/' + name + '.png';
 			// Duplicate code but needed to make AFD tinymax work
 			// April Fool's 2020
-			if (isDynamax && !options.noScale) {
-				spriteData.w *= 0.25;
-				spriteData.h *= 0.25;
-				spriteData.y += -22;
-			} else if (species.isTotem && !options.noScale) {
-				spriteData.w *= 0.5;
-				spriteData.h *= 0.5;
-				spriteData.y += -11;
-			}
 			return spriteData;
 		}
 		// Mod Cries
@@ -629,15 +596,6 @@ export const Dex = new class implements ModdedDex {
 				spriteData.y += -11;
 			}
 			if (spriteData.gen <= 2) spriteData.y += 2;
-		}
-		if (isDynamax && !options.noScale) {
-			spriteData.w *= 2;
-			spriteData.h *= 2;
-			spriteData.y += -22;
-		} else if (species.isTotem && !options.noScale) {
-			spriteData.w *= 1.5;
-			spriteData.h *= 1.5;
-			spriteData.y += -11;
 		}
 		return spriteData;
 	}
@@ -754,6 +712,7 @@ export const Dex = new class implements ModdedDex {
 		const resize = (data.h ? `background-size:${data.h}px` : '');
 		return `background-image:url(${Dex.resourcePrefix}${data.spriteDir}${shiny}/${data.spriteid}.png);background-position:${data.x + xOffset}px ${data.y + yOffset}px;background-repeat:no-repeat;${resize}`;
 	}
+	//region Get Icons
 	getItemIcon(item: any) {
 		let num = 0;
 		if (typeof item === 'string' && window.BattleItems) item = window.BattleItems[toID(item)];
@@ -762,19 +721,22 @@ export const Dex = new class implements ModdedDex {
 		let left = (num % 16) * 24;
 		return `background:transparent url(${Dex.resourcePrefix}sprites/itemicons-sheet.png?v1) no-repeat scroll -${left}px -${top}px`;
 	}
-	getTypeIcon(type: string | null, b?: boolean) { // b is just for utilichart.js
-		type = this.types.get(type).name;
-		if (!type) type = '???';
-		let sanitizedType = type.replace(/\?/g, '%3f');
-		return `<img src="${Dex.resourcePrefix}sprites/types/${sanitizedType}.png" alt="${type}" height="14" width="32" class="pixelated${b ? ' b' : ''}" />`;
+	getTypeIcon(type: string | null, b?: boolean, type2?: string | null) {
+		let t1 = type ? this.types.get(type).name : '???';
+		let t2 = type2 && this.types.get(type2)
+		? this.types.get(type2).name
+		: null;
+		const icon = (t: string) => {
+			let sanitized = t.replace(/\?/g, '%3f');
+			return `<img src="${Dex.resourcePrefix}sprites/types/${sanitized}.png" alt="${t}" height="14" width="32" class="pixelated${b ? ' b' : ''}" />`;
+		};
+		return icon(t1) + (t2 ? icon(t2) : '');
 	}
 	getFlagIcon(flag: string | null,) {
 		if (!flag) return '\u2014'; // em dash
 		const flagID = toID(flag);
 		let sanitizedFlag = '';
 		switch (flagID) {
-		case 'zmove': sanitizedFlag = 'Z-Move'; break;
-		case 'maxmove': sanitizedFlag = 'Max Move'; break;
 		case 'contact': sanitizedFlag = 'Contact'; break;
 		case 'binding': case 'bind': sanitizedFlag = 'Bind'; break;
 		case 'bite': sanitizedFlag = 'Bite'; break;
@@ -815,13 +777,11 @@ export const Dex = new class implements ModdedDex {
 		case 'nonmirror': sanitizedFlag = 'Non-Mirror'; break;
 		case 'nonsnatchable': sanitizedFlag = 'Non-Snatchable'; break;
 		case 'bypasssubstitute': sanitizedFlag = 'Bypass Substitute'; break;
-		case 'gmaxmove': sanitizedFlag = 'G-Max Move'; break;
 		default:
 			sanitizedFlag = 'undefined';
 			break;
 		}
 		const flagText = sanitizedFlag.charAt(0).toUpperCase() + sanitizedFlag.slice(1);
-		// Always return icon HTML - preference checking is done by the caller (moves list only)
 		return `<img src="sprites/flagicons/${sanitizedFlag}.png" alt="${flagText}" height="32" width="132" class="pixelated" onerror="this.style.display='none'; this.nextSibling.style.display='inline';" /><span style="display: none;">${flagText}</span>`;
 	}
 	getCategoryIcon(category: string | null) {
@@ -871,7 +831,7 @@ export class ModdedDex {
 		if (!modid.startsWith('gen') || !gen) throw new Error("Unsupported modid");
 		this.gen = gen;
 	}
-
+	//region ISL move definition
 	moves = {
 		get: (name: string): Move => {
 			let id = toID(name);
@@ -880,17 +840,12 @@ export class ModdedDex {
 				id = toID(name);
 			}
 			if (this.cache.Moves.hasOwnProperty(id)) return this.cache.Moves[id];
-
 			const base: any = Dex.moves.get(name);
 			let data: any = { ...base };
-
-			// inherited gen overrides
 			for (let i = Dex.gen - 1; i >= this.gen; i--) {
 				const table = window.BattleTeambuilderTable?.[`gen${i}`];
 				if (table?.overrideMoveData && id in table.overrideMoveData) Object.assign(data, table.overrideMoveData[id]);
 			}
-
-			// mod overrides (also used as full defs for NEW moves)
 			const modTable = window.BattleTeambuilderTable?.[this.modid];
 			const modHas = !!(modTable?.overrideMoveData && id in modTable.overrideMoveData);
 			if (modHas) Object.assign(data, modTable.overrideMoveData[id]);
@@ -899,15 +854,13 @@ export class ModdedDex {
 				data.id ||= id;
 				data.name ||= name;
 			}
-
 			if (this.gen <= 3 && data.category !== 'Status') data.category = Dex.getGen3Category(data.type);
-
 			const move = new Move(id, data.name || name, data);
 			this.cache.Moves[id] = move;
 			return move;
 		},
 	};
-
+	//region ISL flag definition
 	flags = {
 		get: (name: string): Flag => {
 			let id = toID(name);
@@ -916,31 +869,26 @@ export class ModdedDex {
 				id = toID(name);
 			}
 			if (this.cache.Flags.hasOwnProperty(id)) return this.cache.Flags[id];
-
 			const base: any = Dex.flags.get(name);
 			let data: any = { ...base };
-
 			for (let i = Dex.gen - 1; i >= this.gen; i--) {
 				const table = window.BattleTeambuilderTable?.[`gen${i}`];
 				if (table?.overrideFlagData && id in table.overrideFlagData) Object.assign(data, table.overrideFlagData[id]);
 			}
-
 			const modTable = window.BattleTeambuilderTable?.[this.modid];
 			const modHas = !!(modTable?.overrideFlagData && id in modTable.overrideFlagData);
 			if (modHas) Object.assign(data, modTable.overrideFlagData[id]);
-
 			if (modHas && base && base.exists === false) {
 				data.exists = true;
 				data.id ||= id;
 				data.name ||= name;
 			}
-
 			const flag = new Flag(id, data.name || name, data);
 			this.cache.Flags[id] = flag;
 			return flag;
 		},
 	};
-
+	//region ISL item definition
 	items = {
 		get: (name: string): Item => {
 			let id = toID(name);
@@ -976,29 +924,19 @@ export class ModdedDex {
 				let allowedSet = ISL_ALLOWED_ITEM_CACHE.get(this);
 				if (!allowedSet) {
 					allowedSet = new Set<ID>();
-
-					if (modItems) {
-						for (const itemid in modItems) {
-							allowedSet.add(toID(itemid) as ID);
-						}
-					}
-
+					if (modItems) { for (const itemid in modItems) { allowedSet.add(toID(itemid) as ID); } }
 					ISL_ALLOWED_ITEM_CACHE.set(this, allowedSet);
 				}
-
 				const num = (data.num ?? base?.num) as number | undefined;
 				const isCustom = typeof num === 'number' && (num >= 10000 || num < 0);
-
-				if (!isCustom && !allowedSet.has(id)) {
-					data.isNonstandard = 'Past';
-				}
+				if (!isCustom && !allowedSet.has(id)) { data.isNonstandard = 'Past'; }
 			}
 			const item = new Item(id, data.name || name, data);
 			this.cache.Items[id] = item;
 			return item;
 		},
 	};
-
+	//region ISL ability definition
 	abilities = {
 		get: (name: string): Ability => {
 			let id = toID(name);
@@ -1007,31 +945,26 @@ export class ModdedDex {
 				id = toID(name);
 			}
 			if (this.cache.Abilities.hasOwnProperty(id)) return this.cache.Abilities[id];
-
 			const base: any = Dex.abilities.get(name);
 			let data: any = { ...base };
-
 			for (let i = Dex.gen - 1; i >= this.gen; i--) {
 				const table = window.BattleTeambuilderTable?.[`gen${i}`];
 				if (table?.overrideAbilityData && id in table.overrideAbilityData) Object.assign(data, table.overrideAbilityData[id]);
 			}
-
 			const modTable = window.BattleTeambuilderTable?.[this.modid];
 			const modHas = !!(modTable?.overrideAbilityData && id in modTable.overrideAbilityData);
 			if (modHas) Object.assign(data, modTable.overrideAbilityData[id]);
-
 			if (modHas && base && base.exists === false) {
 				data.exists = true;
 				data.id ||= id;
 				data.name ||= name;
 			}
-
 			const ability = new Ability(id, data.name || name, data);
 			this.cache.Abilities[id] = ability;
 			return ability;
 		},
 	};
-
+	//region ISL species definition
 	species = {
 		get: (name: string): Species => {
 			let id = toID(name);
@@ -1040,21 +973,17 @@ export class ModdedDex {
 				id = toID(name);
 			}
 			if (this.cache.Species.hasOwnProperty(id)) return this.cache.Species[id];
-
 			const base: any = Dex.species.get(name);
 			let data: any = { ...base };
-
 			// inherited gen overrides
 			for (let i = Dex.gen - 1; i >= this.gen; i--) {
 				const table = window.BattleTeambuilderTable?.[`gen${i}`];
 				if (table?.overrideSpeciesData && id in table.overrideSpeciesData) Object.assign(data, table.overrideSpeciesData[id]);
 			}
-
 			// mod overrides (also used as full defs for NEW species later)
 			const modTable = window.BattleTeambuilderTable?.[this.modid];
 			const modHas = !!(modTable?.overrideSpeciesData && id in modTable.overrideSpeciesData);
 			if (modHas) Object.assign(data, modTable.overrideSpeciesData[id]);
-
 			// if base doesn't exist but mod defines it, make it real
 			if (modHas && base && base.exists === false) {
 				data.exists = true;
@@ -1062,59 +991,45 @@ export class ModdedDex {
 				data.name ||= name;
 			}
 			// Indigo Starstorm roster behavior:
-// Anything not explicitly in the gen9indigostarstorm teambuilder table is treated as Past,
-// so the client hides it the same way it hides non-roster mons in official gens.
-if (this.modid === 'gen9indigostarstorm') {
-	let allowedSet = ISL_ALLOWED_CACHE.get(this);
-	if (!allowedSet) {
-		const allowedIds: ID[] = [];
-
-		// Prefer tiers if present; otherwise use tierSet.
-		const rows: any[] | undefined = (modTable as any)?.tiers || (modTable as any)?.tierSet;
-		if (rows) {
-			for (const row of rows) {
-				// tiers can be "Pikachu" strings or ['pokemon','pikachu'] rows depending on build step
-				if (typeof row === 'string') {
-					allowedIds.push(toID(row) as ID);
-				} else if (Array.isArray(row) && row[0] === 'pokemon' && row[1]) {
-					allowedIds.push(toID(row[1]) as ID);
+			// Anything not explicitly in the gen9indigostarstorm teambuilder table is treated as Past,
+			// so the client hides it the same way it hides non-roster mons in official gens.
+			if (this.modid === 'gen9indigostarstorm') {
+				let allowedSet = ISL_ALLOWED_CACHE.get(this);
+				if (!allowedSet) {
+					const allowedIds: ID[] = [];
+					// Prefer tiers if present; otherwise use tierSet.
+					const rows: any[] | undefined = (modTable as any)?.tiers || (modTable as any)?.tierSet;
+					if (rows) {
+						for (const row of rows) {
+							// tiers can be "Pikachu" strings or ['pokemon','pikachu'] rows depending on build step
+							if (typeof row === 'string') { allowedIds.push(toID(row) as ID); } 
+							else if (Array.isArray(row) && row[0] === 'pokemon' && row[1]) { allowedIds.push(toID(row[1]) as ID); }
+						}
+					}
+					allowedSet = new Set(allowedIds);
+					ISL_ALLOWED_CACHE.set(this, allowedSet);
 				}
+				// Always keep custom mons
+				const num = (data.num ?? base?.num) as number | undefined;
+				const isCustom = typeof num === 'number' && (num >= 10000 || num < 0);
+				// Allow forms if either the form OR its baseSpecies is allowed
+				const baseId = toID(data.baseSpecies || data.name || name) as ID;
+				const ok = isCustom || allowedSet.has(id) || allowedSet.has(baseId);
+				if (!ok) data.isNonstandard = 'Past';
 			}
-		}
-
-		allowedSet = new Set(allowedIds);
-		ISL_ALLOWED_CACHE.set(this, allowedSet);
-	}
-
-	// Always keep custom mons
-	const num = (data.num ?? base?.num) as number | undefined;
-	const isCustom = typeof num === 'number' && (num >= 10000 || num < 0);
-
-	// Allow forms if either the form OR its baseSpecies is allowed
-	const baseId = toID(data.baseSpecies || data.name || name) as ID;
-	const ok = isCustom || allowedSet.has(id) || allowedSet.has(baseId);
-
-	if (!ok) data.isNonstandard = 'Past';
-}
 			if (this.gen < 3 || this.modid === 'gen7letsgo') data.abilities = { 0: "No Ability" };
-
 			if (modTable?.overrideTier && id in modTable.overrideTier) data.tier = modTable.overrideTier[id];
-			if (!data.tier && id.endsWith('totem')) data.tier = this.species.get(id.slice(0, -5)).tier;
 			if (!data.tier && data.baseSpecies && toID(data.baseSpecies) !== id) data.tier = this.species.get(data.baseSpecies).tier;
 			if (data.gen && data.gen > this.gen) data.tier = 'Illegal';
-
 			data.nfe = data.id === 'dipplin' || !!data.evos?.some((evo: string) => {
 				const evoSpecies = this.species.get(evo);
-				return !evoSpecies.isNonstandard || evoSpecies.isNonstandard === data.isNonstandard ||
-					evoSpecies.isNonstandard === "Unobtainable";
+				return !evoSpecies.isNonstandard || evoSpecies.isNonstandard === data.isNonstandard || evoSpecies.isNonstandard === "Unobtainable";
 			});
-
 			const species = new Species(id, data.name || name, data);
 			this.cache.Species[id] = species;
 			return species;
 		},
 	};
-
 	types = {
 		namesCache: null as readonly Dex.TypeName[] | null,
 		names: (): readonly Dex.TypeName[] => {
@@ -1122,18 +1037,13 @@ if (this.modid === 'gen9indigostarstorm') {
 			const names = Dex.types.names();
 			if (!names.length) return [];
 			const curNames = [...names];
-			// Include mod-defined types from the mod's overrideTypeChart
-const modTable = window.BattleTeambuilderTable?.[this.modid];
-if (modTable?.overrideTypeChart) {
-	for (const typeId of Object.keys(modTable.overrideTypeChart)) {
-		const typeName = typeId.charAt(0).toUpperCase() + typeId.slice(1);
-		if (!curNames.includes(typeName as Dex.TypeName)) curNames.push(typeName as Dex.TypeName);
-	}
-}
-			// if (this.gen < 9) curNames.splice(curNames.indexOf('Stellar'), 1);
-			if (this.gen < 6) curNames.splice(curNames.indexOf('Fairy'), 1);
-			if (this.gen < 2) curNames.splice(curNames.indexOf('Dark'), 1);
-			if (this.gen < 2) curNames.splice(curNames.indexOf('Steel'), 1);
+			const modTable = window.BattleTeambuilderTable?.[this.modid];
+			if (modTable?.overrideTypeChart) {
+				for (const typeId of Object.keys(modTable.overrideTypeChart)) {
+					const typeName = typeId.charAt(0).toUpperCase() + typeId.slice(1);
+					if (!curNames.includes(typeName as Dex.TypeName)) curNames.push(typeName as Dex.TypeName);
+				}
+			}
 			this.types.namesCache = curNames;
 			return curNames;
 		},
@@ -1141,22 +1051,17 @@ if (modTable?.overrideTypeChart) {
 			const id = toID(name);
 			name = id.substr(0, 1).toUpperCase() + id.substr(1);
 			const modTablePre = window.BattleTeambuilderTable?.[this.modid];
-const modHasTypePatch = !!(modTablePre?.overrideTypeChart && id in modTablePre.overrideTypeChart);
-// If mod patches this type, don't return a previously cached vanilla type
-if (this.cache.Types.hasOwnProperty(id) && !modHasTypePatch) return this.cache.Types[id];
+			const modHasTypePatch = !!(modTablePre?.overrideTypeChart && id in modTablePre.overrideTypeChart);
+			if (this.cache.Types.hasOwnProperty(id) && !modHasTypePatch) return this.cache.Types[id];
 			let data = { ...Dex.types.get(name) };
-			// Apply mod-specific overrides (gen9indigostarstorm etc)
-const modTable = window.BattleTeambuilderTable?.[this.modid];
-if (modTable) {
-	if (modTable.removeType && id in modTable.removeType) {
-		data.exists = false;
-	}
-	if (modTable.overrideTypeChart && id in modTable.overrideTypeChart) {
-		data = { ...data, ...modTable.overrideTypeChart[id] };
-		// If mod supplies damageTaken, ensure the type is treated as existing
-		if ((data as any).damageTaken) (data as any).exists = true;
-	}
-}
+			const modTable = window.BattleTeambuilderTable?.[this.modid];
+			if (modTable) {
+				if (modTable.removeType && id in modTable.removeType) { data.exists = false; }
+				if (modTable.overrideTypeChart && id in modTable.overrideTypeChart) {
+					data = { ...data, ...modTable.overrideTypeChart[id] };
+					if ((data as any).damageTaken) (data as any).exists = true;
+				}
+			}
 			for (let i = 7; i >= this.gen; i--) {
 				const table = window.BattleTeambuilderTable[`gen${i}`];
 				if (id in table.removeType) {
@@ -1165,18 +1070,17 @@ if (modTable) {
 				}
 				if (id in table.overrideTypeChart) data = { ...data, ...table.overrideTypeChart[id] };
 			}
-			// Apply modded TypeChart overlay if present (e.g. data/mods/gen9indigostarstorm/typechart.js)
-			const modTypeChart = (window as any).BattleModData?.[this.modid]?.TypeChart || (globalThis as any).BattleModData?.[this.modid]?.TypeChart || (globalThis as any).exports?.BattleModData?.[this.modid]?.TypeChart;
+			const modTypeChart = (window as any).BattleModData?.[this.modid]?.TypeChart 
+				|| (globalThis as any).BattleModData?.[this.modid]?.TypeChart 
+				|| (globalThis as any).exports?.BattleModData?.[this.modid]?.TypeChart;
 			if (modTypeChart && modTypeChart[id]) {
 				data = { ...data, ...modTypeChart[id] };
-				// Ensure the type is treated as existing if it has damageTaken data
 				if ((data as any).damageTaken) (data as any).exists = true;
 			}
 			this.cache.Types[id] = data;
 			return data;
 		},
 	};
-
 	getPokeballs() {
 		if (this.pokeballs) return this.pokeballs;
 		this.pokeballs = [];
@@ -1189,7 +1093,6 @@ if (modTable) {
 		return this.pokeballs;
 	}
 }
-
 if (typeof require === 'function') { // in Node
 	global.Dex = Dex;
 	global.toID = toID;

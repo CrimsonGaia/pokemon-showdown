@@ -306,7 +306,9 @@ rawQuery=function rawQuery(act,data){
 data.act=act;
 var url='/~~'+PS.server.id+'/action.php';
 if(location.pathname.endsWith('.html')){
-url='https://'+Config.routes.client+url;
+var loginHost=Config.testclientLocalLoginServer||Config.routes.client;
+var loginProtocol=location.protocol==='https:'?'https:':'http:';
+url=loginProtocol+'//'+loginHost+url;
 if(typeof POKEMON_SHOWDOWN_TESTCLIENT_KEY==='string'){data.sid=POKEMON_SHOWDOWN_TESTCLIENT_KEY.replace(/%2C/g,',');}
 }
 return PSStorage.request('POST',url,data)||Net(url).get({method:'POST',body:data}).then(function(res){return res!=null?res:null;})["catch"](function(){return null;});

@@ -21,7 +21,7 @@ interface SpeciesAbility {
 	H?: string;
 	S?: string;
 }
-type SpeciesTag = "Powerhouse" | "Legendary" | "Restricted Legendary" | "Mythical" | "Restricted Mythical" | "Paradox" | "Restricted Paradox" | "Mega" | "Ultra Beast" | "Single Stage Pokemon" | "1st Stage" | "2nd Stage" | "3rd Stage" | "Fully Evolved";
+export type SpeciesTag = "Powerhouse" | "Legendary" | "Restricted Legendary" | "Mythical" | "Restricted Mythical" | "Paradox" | "Restricted Paradox" | "Mega" | "Ultra Beast" | "Single Stage Pokemon" | "1st Stage" | "2nd Stage" | "3rd Stage" | "Fully Evolved";
 export interface SpeciesData extends Partial<Species> {
 	name: string;
 	/** National Dex number */
@@ -31,10 +31,11 @@ export interface SpeciesData extends Partial<Species> {
 	baseStats: StatsTable;
 	eggGroups: string[];
 	weightkg: number;
-	sizeWeightModifier?: number;
-	weapondurability?: number;
-	weaponrecovery?: number;
-	infusibleSlots?: 1 | 2;
+	sizeWeightModifier?: number; // Scale factor for each size tier, default is 1.1x
+	weapondurability?: number; // for canonical weapon holders, weapon moves will fail if this is 0
+	weaponrecovery?: number; // amount of turns before the weapon returns
+	infusibleSlots?: 1 | 2; // mostly for food based species. allows 1 of a preset list of moves each time certain species evolve
+	guardAction?: string[]; // Up to 3 move IDs usable as this species' Guard Action. Chosen from in the teambuilder
 }
 export interface CosmeticFormeData {
 	isCosmeticForme: boolean;
@@ -48,7 +49,6 @@ export type ModdedSpeciesData = SpeciesData | CosmeticFormeData |
 	Partial<Omit<CosmeticFormeData, 'isCosmeticForme'>> & { inherit: true };
 export interface SpeciesFormatsData {
 	doublesTier?: TierTypes.Doubles | TierTypes.Other;
-	gmaxUnreleased?: boolean;
 	isNonstandard?: Nonstandard | null;
 	natDexTier?: TierTypes.Singles | TierTypes.Other;
 	tier?: TierTypes.Singles | TierTypes.Other;
@@ -66,7 +66,6 @@ export interface LearnsetData {
 export type ModdedLearnsetData = LearnsetData & { inherit?: true };
 export interface PokemonGoData {
 	encounters?: string[];
-	LGPERestrictiveMoves?: { [moveid: string]: number | null };
 }
 export interface SpeciesDataTable { [speciesid: IDEntry]: SpeciesData | CosmeticFormeData }
 export interface ModdedSpeciesDataTable { [speciesid: IDEntry]: ModdedSpeciesData }
@@ -142,20 +141,12 @@ export class Species extends BasicEffect implements Readonly<BasicEffect & Speci
 	readonly otherFormes?: string[];
 	/**
 	 * List of forme speciesNames in the order they appear in the game data -
-	 * the union of baseSpecies, otherFormes and cosmeticFormes. Appears only on
-	 * the base species forme.
+	 * the union of baseSpecies, otherFormes and cosmeticFormes. Appears only on the base species forme.
 	 * A species's alternate formeindex may change from generation to generation -
-	 * the forme with index N in Gen A is not guaranteed to be the same forme as the
-	 * forme with index in Gen B.
-	 * Gigantamaxes are not considered formes by the game (see data/FORMES.md - PS
-	 * labels them as such for convenience) - Gigantamax "formes" are instead included at
-	 * the end of the formeOrder list so as not to interfere with the correct index numbers.
+	 * the forme with index N in Gen A is not guaranteed to be the same forme as the forme with index in Gen B.
 	 */
 	readonly formeOrder?: string[];
-	/**
-	 * Sprite ID. Basically the same as ID, but with a dash between
-	 * species and forme.
-	 */
+	// Sprite ID. Basically the same as ID, but with a dash between species and forme.
 	readonly spriteid: string;
 	/** Abilities. */
 	readonly abilities: SpeciesAbility;
@@ -202,36 +193,29 @@ export class Species extends BasicEffect implements Readonly<BasicEffect & Speci
 	readonly weighthg: number;
 	/** Size weight modifier - percentage change per size tier (default 0.1 = 10%) */
 	readonly sizeWeightModifier: number;
-
 	readonly weapondurability: number;
 	readonly weaponrecovery: number;
 	/** Height (in m). */
 	readonly heightm: number;
 
 	readonly infusibleSlots?: 1 | 2;
+	/**
+	 * Up to 3 move IDs this species may use as its Guard Action.
+	 * Empty/undefined means this species has no Guard Action access.
+	 */
+	readonly guardAction: string[];
 	/** Color. */
 	readonly color: string;
 	// Tags, boolean data. Currently just legendary/mythical status.
 	readonly tags: SpeciesTag[];
 	/** Does this Pokemon have an unreleased hidden ability? */
 	readonly unreleasedHidden: boolean | 'Past';
-	/**
-	 * Is it only possible to get the hidden ability on a male pokemon?
-	 * This is mainly relevant to Gen 5.
-	 */
-	readonly maleOnlyHidden: boolean;
 	/** Possible mother for a male-only Pokemon. */
 	readonly mother?: string;
 	/** True if a pokemon is mega. */
 	readonly isMega?: boolean;
 	/** True if a pokemon is primal. */
 	declare readonly isPrimal?: boolean;
-	/** Name of its Gigantamax move, if a pokemon is capable of gigantamaxing. */
-	readonly canGigantamax?: string;
-	/** If this Pokemon can gigantamax, is its gigantamax released? */
-	readonly gmaxUnreleased?: boolean;
-	/** True if a Pokemon species is incapable of dynamaxing */
-	readonly cannotDynamax?: boolean;
 	/** The Tera Type this Pokemon is forced to use */
 	readonly requiredTeraType?: string;
 	/** What it transforms from, if a pokemon is a forme that is only accessible in battle. */
@@ -295,7 +279,8 @@ export class Species extends BasicEffect implements Readonly<BasicEffect & Speci
 		this.eggGroups = data.eggGroups || [];
 		this.canHatch = data.canHatch || false;
 		this.gender = data.gender || '';
-		this.genderRatio = data.genderRatio || (this.gender === 'M' ? { M: 1, F: 0 } :
+		this.genderRatio = data.genderRatio || (
+			this.gender === 'M' ? { M: 1, F: 0 } :
 			this.gender === 'F' ? { M: 0, F: 1 } :
 			this.gender === 'N' ? { M: 0, F: 0 } :
 			{ M: 0.5, F: 0.5 });
@@ -310,24 +295,22 @@ export class Species extends BasicEffect implements Readonly<BasicEffect & Speci
 		this.weaponrecovery = data.weaponrecovery || 0;
 		this.heightm = data.heightm || 0;
 		this.infusibleSlots = data.infusibleSlots || undefined;
+		this.abilities = data.abilities || { 0: "" };
+		this.guardAction = data.guardAction || [];
 		this.color = data.color || '';
 		this.isCosmeticForme = data.isCosmeticForme || undefined;
 		this.tags = data.tags || [];
 		this.unreleasedHidden = data.unreleasedHidden || false;
-		this.maleOnlyHidden = !!data.maleOnlyHidden;
 		this.maxHP = data.maxHP || undefined;
 		this.isMega = !!(this.forme && ['Mega', 'Mega-X', 'Mega-Y'].includes(this.forme)) || undefined;
 		this.isPrimal = this.forme === 'Primal' || undefined;
-		this.canGigantamax = data.canGigantamax || undefined;
-		this.gmaxUnreleased = !!data.gmaxUnreleased;
-		this.cannotDynamax = !!data.cannotDynamax;
 		this.battleOnly = data.battleOnly || (this.isMega || this.isPrimal ? this.baseSpecies : undefined);
 		this.changesFrom = data.changesFrom || (this.battleOnly !== this.baseSpecies ? this.battleOnly : this.baseSpecies);
 		if (Array.isArray(this.changesFrom)) this.changesFrom = this.changesFrom[0];
 		this.pokemonGoData = data.pokemonGoData || undefined;
 		if (!this.gen && this.num >= 1) {
 			if (this.num >= 906 || this.forme.includes('Paldea')) { this.gen = 9; } 
-			else if (this.num >= 810 || ['Gmax', 'Galar', 'Galar-Zen', 'Hisui'].includes(this.forme)) { this.gen = 8; } 
+			else if (this.num >= 810 || ['Galar', 'Galar-Zen', 'Hisui'].includes(this.forme)) { this.gen = 8; } 
 			else if (this.num >= 722 || this.forme.startsWith('Alola') || this.forme === 'Starter') { this.gen = 7; } 
 			else if (this.num >= 650 || this.isMega || this.isPrimal) { this.gen = 6; } 
 			else if (this.num >= 494) { this.gen = 5; } 
@@ -398,74 +381,6 @@ export class Learnset {
 		if (update) this.eventData = Utils.deepFreeze(eventData);
 	}
 }
-export const INFUSIBLE_MOVES = new Set<ID>([
-	'acid' as ID,
-	'acidspray' as ID,
-	'appleacid' as ID,
-	'aquajet' as ID,
-	'aquaring' as ID,
-	'aromatherapy' as ID,
-	'aromaticmist' as ID,
-	'aurasphere' as ID,
-	'aurorabeam' as ID,
-	'belch' as ID,
-	'bitterextract' as ID,
-	'boneclub' as ID,
-	'bonerush' as ID,
-	'bonemerang' as ID,
-	'brine' as ID,
-	'bubble' as ID,
-	'bubblebeam' as ID,
-	'bubbletrap' as ID,
-	'burningjealousy' as ID,
-	'chargebeam' as ID,
-	'chistrike' as ID,
-	'confide' as ID,
-	'dragonbreath' as ID,
-	'dragoncheer' as ID,
-	'dragonrage' as ID,
-	'eggbomb' as ID,
-	'extrasensory' as ID,
-	'faketears' as ID,
-	'firepledge' as ID,
-	'floralhealing' as ID,
-	'grasspledge' as ID,
-	'gravapple' as ID,
-	'gunkshot' as ID,
-	'hex' as ID,
-	'lifedew' as ID,
-	'magicpowder' as ID,
-	'matchagotcha' as ID,
-	'mist' as ID,
-	'mistball' as ID,
-	'mistyexplosion' as ID,
-	'mudshot' as ID,
-	'poisongas' as ID,
-	'poisonpowder' as ID,
-	'pollenpuff' as ID,
-	'powdersnow' as ID,
-	'ragepowder' as ID,
-	'saltyextract' as ID,
-	'silverpowder' as ID,
-	'simplebeam' as ID,
-	'sleeppowder' as ID,
-	'sludge' as ID,
-	'sludgebomb' as ID,
-	'sludgewave' as ID,
-	'smog' as ID,
-	'soak' as ID,
-	'sourextract' as ID,
-	'sparklingaria' as ID,
-	'spicyextract' as ID,
-	'stunspore' as ID,
-	'sweetextract' as ID,
-	'syrupbomb' as ID,
-	'toxic' as ID,
-	'umamiextract' as ID,
-	'venomdrench' as ID,
-	'waterpledge' as ID,
-	'worryseed' as ID,
-]);
 export class DexSpecies {
 	readonly dex: ModdedDex;
 	readonly speciesCache = new Map<ID, Species>();
@@ -535,10 +450,16 @@ export class DexSpecies {
 		if (!this.dex.data.Pokedex.hasOwnProperty(id)) {
 			let aliasTo = '';
 			const formeNames: { [k: IDEntry]: IDEntry[] } = {
+				kanto: ['knt', 'kanto', 'kantonian'],
+				johto: ['j', 'johto', 'johtonian'],
+				hoenn: ['ho', 'hoenn', 'hoennian'],
+				hisui: ['h', 'hisui', 'hisuian'],
+				unova: ['u', 'unova', 'unovan'],
+				kalos: ['kls', 'kalos', 'kalosian'],
 				alola: ['a', 'alola', 'alolan'],
 				galar: ['g', 'galar', 'galarian'],
-				hisui: ['h', 'hisui', 'hisuian'],
 				paldea: ['p', 'paldea', 'paldean'],
+				pallasanto: ['pls', 'pallasanto', 'pallasian'],
 				mega: ['m', 'mega'],
 				primal: ['p', 'primal'],
 			};
@@ -578,10 +499,6 @@ export class DexSpecies {
 					species.tier = this.dex.data.FormatsData[toID(species.baseSpecies)].tier || 'Illegal';
 					species.doublesTier = this.dex.data.FormatsData[toID(species.baseSpecies)].doublesTier || species.tier as any;
 					species.natDexTier = this.dex.data.FormatsData[toID(species.baseSpecies)].natDexTier || species.tier;
-				} else if (species.id.endsWith('totem')) {
-					species.tier = this.dex.data.FormatsData[species.id.slice(0, -5)].tier || 'Illegal';
-					species.doublesTier = this.dex.data.FormatsData[species.id.slice(0, -5)].doublesTier || species.tier as any;
-					species.natDexTier = this.dex.data.FormatsData[species.id.slice(0, -5)].natDexTier || species.tier;
 				} else if (species.battleOnly) {
 					species.tier = this.dex.data.FormatsData[toID(species.battleOnly)]?.tier || 'Illegal';
 					species.doublesTier = this.dex.data.FormatsData[toID(species.battleOnly)]?.doublesTier || species.tier as any;
@@ -603,37 +520,13 @@ export class DexSpecies {
 				species.natDexTier = 'Illegal';
 				species.isNonstandard = 'Future';
 			}
-			if (this.dex.currentMod === 'gen7letsgo' && !species.isNonstandard) {
-				const isLetsGo = (
-					species.gen <= 7 && (species.num <= 151 || ['Meltan', 'Melmetal'].includes(species.name)) &&
-					(!species.forme || species.isMega || (['Alola', 'Starter'].includes(species.forme) &&
-						species.name !== 'Pikachu-Alola'))
-				);
-				if (!isLetsGo) species.isNonstandard = 'Past';
-			}
-			if (this.dex.currentMod === 'gen8bdsp' &&
-				(!species.isNonstandard || ["Gigantamax", "CAP"].includes(species.isNonstandard))) {
-				if (species.gen > 4 || (species.num < 1 && species.isNonstandard !== 'CAP') ||
-					species.id === 'pichuspikyeared') {
-					species.isNonstandard = 'Future';
-					species.tier = species.doublesTier = species.natDexTier = 'Illegal';
-				}
-			}
 			species.nfe = species.evos.some(evo => {
 				const evoSpecies = this.get(evo);
 				return !evoSpecies.isNonstandard ||
 					evoSpecies.isNonstandard === species?.isNonstandard ||
-					// Pokemon with Hisui evolutions
 					evoSpecies.isNonstandard === "Unobtainable";
 			});
-			species.canHatch = species.canHatch ||
-				(!['Ditto', 'Undiscovered'].includes(species.eggGroups[0]) && !species.prevo && species.name !== 'Manaphy');
-			if (this.dex.gen === 1) species.bst -= species.baseStats.spd;
-			if (this.dex.gen < 5) {
-				species.abilities = this.dex.deepClone(species.abilities);
-				delete species.abilities['H'];
-			}
-			if (this.dex.gen === 3 && this.dex.abilities.get(species.abilities['1']).gen === 4) delete species.abilities['1'];
+			species.canHatch = species.canHatch || (!['Ditto', 'Undiscovered'].includes(species.eggGroups[0]) && !species.prevo && species.name !== 'Manaphy');
 			if (this.dex.parentMod) {
 				// if this species is exactly identical to parentMod's species, reuse parentMod's copy
 				const parentMod = this.dex.mod(this.dex.parentMod);
@@ -641,17 +534,10 @@ export class DexSpecies {
 					const parentSpecies = parentMod.species.getByID(id);
 					// checking tier cheaply filters out some non-matches.
 					// The construction logic is very complex so we ultimately need to do a deep equality check
-					if (species.tier === parentSpecies.tier && isDeepStrictEqual(species, parentSpecies)) {
-						species = parentSpecies;
-					}
+					if (species.tier === parentSpecies.tier && isDeepStrictEqual(species, parentSpecies)) { species = parentSpecies; }
 				}
 			}
-		} else {
-			species = new Species({
-				id, name: id,
-				exists: false, tier: 'Illegal', doublesTier: 'Illegal', natDexTier: 'Illegal', isNonstandard: 'Custom',
-			});
-		}
+		} else { species = new Species({ id, name: id, exists: false, tier: 'Illegal', doublesTier: 'Illegal', natDexTier: 'Illegal', isNonstandard: 'Custom', }); }
 		if (species.exists) this.speciesCache.set(id, this.dex.deepFreeze(species));
 		return species;
 	}
@@ -666,29 +552,14 @@ export class DexSpecies {
 	getMovePool(id: ID, isNatDex = false): Set<ID> {
 		let eggMovesOnly = false;
 		let maxGen = this.dex.gen;
-		const gen3HMMoves = ['cut', 'fly', 'surf', 'strength', 'flash', 'rocksmash', 'waterfall', 'dive'];
-		const gen4HMMoves = ['cut', 'fly', 'surf', 'strength', 'rocksmash', 'waterfall', 'rockclimb'];
 		const movePool = new Set<ID>();
 		for (const { species, learnset } of this.getFullLearnset(id)) {
 			if (!eggMovesOnly) eggMovesOnly = this.eggMovesOnly(species, this.get(id));
 			for (const moveid in learnset) {
-				if (species.isNonstandard !== 'CAP') {
-					if (gen4HMMoves.includes(moveid) && this.dex.gen >= 5) { if (!learnset[moveid].some(source => parseInt(source.charAt(0)) >= 5 && parseInt(source.charAt(0)) <= this.dex.gen)) continue; } 
-					else if (
-						gen3HMMoves.includes(moveid) && this.dex.gen >= 4 &&
-						!learnset[moveid].some(source => parseInt(source.charAt(0)) >= 4 && parseInt(source.charAt(0)) <= this.dex.gen)
-					) { continue; }
-				}
 				if (eggMovesOnly) { if (learnset[moveid].some(source => source.startsWith('9E'))) { movePool.add(moveid as ID); } } 
 				else if (maxGen >= 9) { if (isNatDex || learnset[moveid].some(source => source.startsWith('9'))) { movePool.add(moveid as ID); } } 
 				else { if (learnset[moveid].some(source => parseInt(source.charAt(0)) <= maxGen)) { movePool.add(moveid as ID); } }
 				if (moveid === 'sketch' && movePool.has('sketch' as ID)) {
-					if (species.isNonstandard === 'CAP') {
-						// Given what this function is generally used for, adding all sketchable moves to Necturna and Necturine's
-						// movepools would be undesirable as it would be impossible to tell sketched moves apart from normal ones
-						// so any code calling this one will need to get and handle those moves separately themselves
-						continue;
-					}
 					// Smeargle time
 					// A few moves like Dark Void were made unSketchable in a generation later than when they were introduced
 					// However, this has only happened in a gen where transfer moves are unavailable
@@ -699,8 +570,7 @@ export class DexSpecies {
 				}
 			}
 			if (species.evoRegion) {
-				// species can only evolve in this gen, so prevo can't have any moves
-				// from after that gen
+				// species can only evolve in this gen, so prevo can't have any moves from after that gen
 				if (this.dex.gen >= 9) eggMovesOnly = true;
 				if (this.dex.gen === 8 && species.evoRegion === 'Alola') maxGen = 7;
 			}
@@ -724,14 +594,12 @@ export class DexSpecies {
 			if ((species.changesFrom || species.baseSpecies) !== species.name) {
 				// forme without its own learnset
 				species = this.get(species.changesFrom || species.baseSpecies);
-				// warning: formes with their own learnset, like Wormadam, should NOT
-				// inherit from their base forme unless they're freely switchable
+				// warning: formes with their own learnset, like Wormadam, should NOT inherit from their base forme unless they're freely switchable
 				continue;
 			}
 			if (species.isNonstandard) {
 				// It's normal for a nonstandard species not to have learnset data
-				// Formats should replace the `Obtainable Moves` rule if they want to
-				// allow pokemon without learnsets.
+				// Formats should replace the `Obtainable Moves` rule if they want to allow pokemon without learnsets.
 				return out;
 			}
 			if (species.prevo && this.getLearnsetData(toID(species.prevo)).learnset) {
@@ -744,14 +612,8 @@ export class DexSpecies {
 		return out;
 	}
 	learnsetParent(species: Species, checkingMoves = false) {
-		// Own Tempo Rockruff and Battle Bond Greninja are special event formes
-		// that are visually indistinguishable from their base forme but have
-		// different learnsets. To prevent a leak, we make them show up as their
-		// base forme, but hardcode their learnsets into Rockruff-Dusk and Greninja-Ash
 		if (['Gastrodon', 'Pumpkaboo', 'Sinistea', 'Tatsugiri'].includes(species.baseSpecies) && species.forme) { return this.get(species.baseSpecies); } 
 		else if (species.prevo) {
-			// there used to be a check for Hidden Ability here, but apparently it's unnecessary
-			// Shed Skin Pupitar can definitely evolve into Unnerve Tyranitar
 			species = this.get(species.prevo);
 			if (species.gen > Math.max(2, this.dex.gen)) return null;
 			return species;
