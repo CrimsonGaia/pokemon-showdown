@@ -1,12 +1,13 @@
-tunnel: d605c844-f284-449c-9454-79224a71e190
-credentials-file: "J:/Github/pokemon-showdown/Cloudflare-Server/d605c844-f284-449c-9454-79224a71e190.json"
-
+tunnel: 6c44f89b-ae34-4a38-9add-f767a089d0e6
+credentials-file: "J:/Github/pokemon-showdown/Cloudflare-Server/6c44f89b-ae34-4a38-9add-f767a089d0e6.json"
 ingress:
-  - hostname: indigostarstorm.com
-    path: /~~server/*
+  - hostname: server.indigostarstorm.com
     service: http://127.0.0.1:8080
 
   - hostname: indigostarstorm.com
+    service: http://127.0.0.1:8000
+
+  - hostname: www.indigostarstorm.com
     service: http://127.0.0.1:8000
 
   - service: http_status:404

@@ -144,6 +144,7 @@ export class BattleTooltips {
 		// ISL/custom statuses
 		aura: "Aura_IS.png",
 		bubbleblight: "Bubbleblight_IS.png",
+		curse: "Curse_IS.png",
 		dragonblight: "Dragonblight_IS.png",
 		drowsy: "Drowsy_IS.png",
 		fear: "Fear_IS.png",
@@ -262,9 +263,7 @@ export class BattleTooltips {
 		let ownHeight = !!elem.dataset.ownheight;
 		let buf: string;
 		switch (type) {
-		case 'move':
-		case 'zmove':
-		case 'maxmove': { // move|MOVE|ACTIVEPOKEMON|[GMAXMOVE]
+		case 'move': { // move|MOVE|ACTIVEPOKEMON|[GMAXMOVE]
 			let move = this.battle.dex.moves.get(args[1]);
 			let teamIndex = parseInt(args[2], 10);
 			let pokemon = this.battle.nearSide.active[teamIndex + this.battle.pokemonControlled * Math.floor(this.battle.mySide.n / 2)];
@@ -282,7 +281,7 @@ export class BattleTooltips {
 			let serverPokemon = this.battle.myPokemon![teamIndex];
 			let cur = parseInt(args[3], 10) || 0;
 			let max = parseInt(args[4], 10) || 0;
-			buf = this.showGuardActionTooltip(move, pokemon, serverPokemon, cur, max);
+			buf = this.showGuardActionCDTooltip(move, pokemon, serverPokemon, cur, max);
 			break;
 		}
 		case 'pokemon': { // pokemon|SIDE|POKEMON
@@ -552,7 +551,7 @@ export class BattleTooltips {
 		}
 		return text;
 	}
-	showGuardActionTooltip(move: Dex.Move, pokemon: Pokemon, serverPokemon: ServerPokemon, cur: number, max: number) {
+	showGuardActionCDTooltip(move: Dex.Move, pokemon: Pokemon, serverPokemon: ServerPokemon, cur: number, max: number) {
 		const remaining = Math.max(0, max - cur);
 		const cooldownText = cur >= max ?
 			`Guard Action Cooldown: Ready` :
@@ -618,6 +617,7 @@ export class BattleTooltips {
 			text += '</p>';
 		}
 		text += this.renderGuardActionBadge(clientPokemon);
+		text += this.renderLightChargeBadge(clientPokemon);
 		const supportsAbilities = this.battle.gen > 2 && !this.battle.tier.includes("Let's Go");
 		let abilityText = '';
 		if (supportsAbilities) { abilityText = this.getPokemonAbilityText(clientPokemon, serverPokemon, isActive, !!illusionIndex && illusionIndex > 1); }
@@ -890,15 +890,14 @@ export class BattleTooltips {
   			if (!clientPokemon) throw new Error('Must pass either clientPokemon or serverPokemon');
   			let [min, max] = this.getSpeedRange(clientPokemon);
   			let buf = '';
-  			if (!short) buf += this.renderTypeMatchups(clientPokemon, null);
+  			buf += this.renderTypeMatchups(clientPokemon, null, short);
   			buf += `<p><small>Spe</small> ${min} to ${max} <small>(before items/abilities/modifiers)</small></p>`;
   			return buf;
 		}
 		const stats = serverPokemon.stats;
 		const modifiedStats = this.calculateModifiedStats(clientPokemon, serverPokemon);
 		let buf = '';
-		// Only show matchup breakdown in the full (non-short) tooltip, above base stats.
-		if (!short) buf += this.renderTypeMatchups(clientPokemon, serverPokemon);
+		buf += this.renderTypeMatchups(clientPokemon, serverPokemon, short);
 		buf += '<p>';
 		if (!short) {
 			let hasModifiedStat = false;
@@ -955,7 +954,18 @@ export class BattleTooltips {
 				(ready ? '' : `<span class="tooltip-guard-badge-count">${remaining}</span>`) +
 			`</span></p>`;
 	}
-	private renderTypeMatchups(clientPokemon: Pokemon | null, serverPokemon?: ServerPokemon | null) {
+	// Necrozma/Necrozma-Dawn-Wings/Necrozma-Dusk-Mane shows a countdown of light hits until it Ultra Bursts. 
+	// Starts at 3, counts down.
+	private renderLightChargeBadge(clientPokemon: Pokemon | null): string {
+		if (!clientPokemon) return '';
+		const speciesId = toID(clientPokemon.speciesForme);
+		if (!['necrozma', 'necrozmadawnwings', 'necrozmaduskmane'].includes(speciesId)) return '';
+		const max = clientPokemon.maxLightCharge || 3;
+		const remaining = Math.max(0, max - (clientPokemon.lightCharge || 0));
+		return `<p><small>Light Charge:</small> ` + `<span class="tooltip-light-badge${remaining === 0 ? ' ready' : ''}">` +
+				`<i class="fa fa-sun-o"></i>` + `<span class="tooltip-light-badge-count">${remaining}</span>` + `</span></p>`;
+	}
+	private renderTypeMatchups(clientPokemon: Pokemon | null, serverPokemon?: ServerPokemon | null, compact?: boolean) {
 		// Defensive typing (Tera-aware).
 		const pokemon = clientPokemon || serverPokemon;
 		if (!pokemon) return '';
@@ -1001,6 +1011,18 @@ export class BattleTooltips {
 		if (resistsHalf.length) resistParts.push(`<small>½×</small> ${renderIcons(resistsHalf)}`);
 		const resistLine = resistParts.length ? resistParts.join('&nbsp; ') : '<small>(none)</small>';
 		const immuneLine = immunities.length ? renderIcons(immunities) : '<small>(none)</small>';
+		if (compact) {
+			// Same data as the full breakdown, condensed to one line and with
+			// empty categories dropped entirely instead of showing "(none)".
+			const parts: string[] = [];
+			if (weaknesses4x.length) parts.push(`<small>4×</small> ${renderIcons(weaknesses4x)}`);
+			if (weaknesses2x.length) parts.push(`<small>2×</small> ${renderIcons(weaknesses2x)}`);
+			if (resistsQuarter.length) parts.push(`<small>¼×</small> ${renderIcons(resistsQuarter)}`);
+			if (resistsHalf.length) parts.push(`<small>½×</small> ${renderIcons(resistsHalf)}`);
+			if (immunities.length) parts.push(`<small>0×</small> ${renderIcons(immunities)}`);
+			if (!parts.length) return '';
+			return `<p>${parts.join('&nbsp; ')}</p>`;
+		}
 		return (
 			`<p><small>Weaknesses:</small> ${weakLine}</p>` +
 			`<p><small>Resistances:</small> ${resistLine}</p>` +
@@ -1015,14 +1037,10 @@ export class BattleTooltips {
 			// Transformed move
 			move = this.battle.dex.moves.get(moveName.substr(1));
 			maxpp = 5;
-		} else {
-			move = this.battle.dex.moves.get(moveName);
-			maxpp = (move.pp === 1 || move.noPPBoosts ? move.pp : move.pp * 8 / 5);
-			if (this.battle.gen < 3) maxpp = Math.min(61, maxpp);
-		}
+		} else { move = this.battle.dex.moves.get(moveName); }
 		const bullet = moveName.startsWith('*')? '<span style="color:#888">&#8226;</span>' : '&#8226;';
-		if (ppUsed === Infinity) { return `${bullet} ${move.name} <small>(0/${maxpp})</small>`; }
-		if (ppUsed || moveName.startsWith('*')) { return `${bullet} ${move.name} <small>(${maxpp - ppUsed}/${maxpp})</small>`; }
+		if (ppUsed === Infinity) { return `${bullet} ${move.name} <small>(0/${move.pp})</small>`; }
+		if (ppUsed || moveName.startsWith('*')) { return `${bullet} ${move.name} <small>(${move.pp - ppUsed}/${move.pp})</small>`; }
 		return `${bullet} ${move.name} ${showKnown ? ' <small>(revealed)</small>' : ''}`;
 	}
 	ppUsed(move: Dex.Move, pokemon: Pokemon) {
@@ -1125,6 +1143,11 @@ export class BattleTooltips {
 			case 'snowscape':
 				moveType = 'Ice';
 				break;
+			case 'turbulentwinds':
+			case 'deltastream':
+				moveType = 'Flying';
+			case 'eclipse':
+				moveType = 'Dark';
 			}
 		}
 		if (move.id === 'terrainpulse' && pokemon.isGrounded(serverPokemon)) {
@@ -1132,11 +1155,12 @@ export class BattleTooltips {
 			else if (this.battle.hasPseudoWeather('Grassy Terrain')) { moveType = 'Grass'; } 
 			else if (this.battle.hasPseudoWeather('Misty Terrain')) { moveType = 'Fairy'; } 
 			else if (this.battle.hasPseudoWeather('Psychic Terrain')) { moveType = 'Psychic'; }
+			else if (this.battle.hasPseudoWeather('Toxic Terrain')) { moveType = 'Poison'; }
 		}
 		if (move.id === 'terablast' && pokemon.terastallized) { moveType = pokemon.terastallized as Dex.TypeName; }
 		if (move.id === 'terastarstorm' && pokemon.getSpeciesForme() === 'Terapagos-Stellar') { moveType = 'Stellar'; }
 		// Aura Wheel as Morpeko-Hangry changes the type to Dark
-		if (move.id === 'aurawheel' && pokemon.getSpeciesForme() === 'Morpeko-Hangry') { moveType = 'Dark'; }
+		if (move.id === 'aurawheel' && pokemon.getSpeciesForme() === 'Morpeko-Hangry') { moveType = 'Dark'; category = 'Physical'; }
 		// Raging Bull's type depends on the Tauros forme
 		if (move.id === 'ragingbull') {
 			switch (pokemon.getSpeciesForme()) {
@@ -1182,9 +1206,13 @@ export class BattleTooltips {
 				}
 				if (value.abilityModify(0, 'Normalize')) moveType = 'Normal';
 			}
-			// There aren't any max moves with the sound flag, but if there were, Liquid Voice would make them water type
-			const isSound = !!(forMaxMove ? this.getMaxMoveFromType(moveType, forMaxMove !== true && forMaxMove || undefined) : move).flags['sound'];
-			if (isSound && value.abilityModify(0, 'Liquid Voice')) { moveType = 'Water'; }
+			if (move.flags['sound']) {
+				if (value.abilityModify(0, 'Blazing Bell')) { moveType = 'Fire'; }
+				if (value.abilityModify(0, 'Enchanting Voice')) { moveType = 'Fairy'; }
+				if (value.abilityModify(0, 'Hoarfrost Rimes')) { moveType = 'Ice'; }
+				if (value.abilityModify(0, 'Liquid Voice')) { moveType = 'Water'; }
+				if (value.abilityModify(0, 'Soothing Voice')) { moveType = 'Poison'; }
+			} 
 		}
 		if (move.id === 'photongeyser' || move.id === 'lightthatburnsthesky' ||
 			(move.id === 'terablast' && pokemon.terastallized) ||
@@ -1806,19 +1834,13 @@ export class BattleTooltips {
 				return out;
 			}
 		}
-
-		if (!isActive) {
-			// for switch tooltips, only show the original ability
-			const ability = abilityData.baseAbility || abilityData.ability;
-			if (ability) text = '<small>Ability:</small> ' + this.battle.dex.abilities.get(ability).name;
-		} else {
-			if (abilityData.ability) {
-				const abilityName = this.battle.dex.abilities.get(abilityData.ability).name;
-				text = '<small>Ability:</small> ' + abilityName;
-				const baseAbilityName = this.battle.dex.abilities.get(abilityData.baseAbility).name;
-				if (baseAbilityName && baseAbilityName !== abilityName) text += ' (base: ' + baseAbilityName + ')';
-			}
-		}
+		if (abilityData.ability) {
+			const abilityName = this.battle.dex.abilities.get(abilityData.ability).name;
+			text = '<small>Ability:</small> ' + abilityName;
+			const baseAbilityName = this.battle.dex.abilities.get(abilityData.baseAbility).name;
+			if (baseAbilityName && baseAbilityName !== abilityName) text += ' (base: ' + baseAbilityName + ')';
+		} 
+		else if (abilityData.baseAbility) { text = '<small>Ability:</small> ' + this.battle.dex.abilities.get(abilityData.baseAbility).name; }
 		if (!text && abilityData.possibilities.length && !hidePossible && !(tier.includes('Almost Any Ability') || tier.includes('Hackmons') || tier.includes('Inheritance') || tier.includes('Metronome'))) { text = '<small>Possible abilities:</small> ' + abilityData.possibilities.join(', '); }
 		return text;
 	}

@@ -9,7 +9,6 @@ import type { PokemonMoveRequestData, PokemonSwitchRequestData } from './side';
 type BoostID = import('./dex').Dex.BoostID;
 type BoostsTable = import('./dex').Dex.BoostsTable;
 type SparseBoostsTable = import('./dex').Dex.SparseBoostsTable;
-
 /** A Pokemon's move slot. */
 interface MoveSlot {
 	id: ID;
@@ -21,6 +20,12 @@ interface MoveSlot {
 	disabledSource?: string;
 	used: boolean;
 	virtual?: boolean;
+}
+export interface AbilitySlot {
+	slot: 1 | 2;
+	id: ID;
+	effect: Ability;
+	state: EffectState;
 }
 interface Attacker {
 	source: Pokemon;
@@ -36,7 +41,6 @@ export interface EffectState {
 	duration?: number;
 	[k: string]: any;
 }
-
 // Berries which restore PP/HP and thus inflict external staleness when given to an opponent as there are very few non-malicious competitive reasons to do so
 export const RESTORATIVE_BERRIES = new Set(['leppaberry', 'aguavberry', 'enigmaberry', 'figyberry', 'iapapaberry', 'magoberry', 'sitrusberry', 'wikiberry', 'oranberry',] as ID[]);
 export class Pokemon {
@@ -160,6 +164,11 @@ export class Pokemon {
 	lastDamage: number;
 	attackedBy: Attacker[];
 	timesAttacked: number;
+	/**
+	 * Necrozma only light-charge counter. Increments every time this Pokemon is hit by a light move
+	 * At 3, transforms into Ultra Necrozma
+	 */
+	lightCharge: number;
 	isActive: boolean;
 	activeTurns: number;
 	/**
@@ -193,6 +202,8 @@ export class Pokemon {
 	heightmm: number;
 	shapeMemoryHeightScale?: number;
 	shapeMemoryWeightScale?: number;
+	mossArmorBroken?: boolean;
+	mudArmorBroken?: boolean;
 	speed: number;
 	canMegaEvo: string | false | null | undefined;
 	canMegaEvoX: string | false | null | undefined;
@@ -200,7 +211,6 @@ export class Pokemon {
 	canMegaEvoZ: string | false | null | undefined;
 	canMegaEvoA: string | false | null | undefined;
 	canMegaEvoQ: string | false | null | undefined;
-	canUltraBurst: string | null | undefined;
 	// A Pokemon's Tera type if it can Terastallize, false if it is temporarily unable to tera and should have its ability restored upon switching out, or null if its inability to tera is permanent.
 	canTerastallize: string | false | null;
 	teraType: string;
@@ -339,6 +349,7 @@ export class Pokemon {
 		this.lastDamage = 0;
 		this.attackedBy = [];
 		this.timesAttacked = 0;
+		this.lightCharge = 0;
 		this.isActive = false;
 		this.activeTurns = 0;
 		this.activeMoveActions = 0;
@@ -365,10 +376,9 @@ export class Pokemon {
 		this.canMegaEvo = this.battle.actions.canMegaEvo(this);
 		this.canMegaEvoX = this.battle.actions.canMegaEvoX?.(this);
 		this.canMegaEvoY = this.battle.actions.canMegaEvoY?.(this);
-		this.canMegaEvoZ = this.battle.actions.canMegaEvoY?.(this);
-		this.canMegaEvoA = this.battle.actions.canMegaEvoY?.(this);
-		this.canMegaEvoQ = this.battle.actions.canMegaEvoY?.(this);
-		this.canUltraBurst = this.battle.actions.canUltraBurst(this);
+		this.canMegaEvoZ = this.battle.actions.canMegaEvoZ?.(this);
+		this.canMegaEvoA = this.battle.actions.canMegaEvoA?.(this);
+		this.canMegaEvoQ = this.battle.actions.canMegaEvoQ?.(this);
 		this.canTerastallize = this.battle.actions.canTerastallize(this);
 		const guardActionPool = (this.species.guardAction || []).map(toID);
 		let chosenGuardAction = toID((this.set as any).guardAction);
@@ -669,7 +679,7 @@ export class Pokemon {
 	}
 	ignoringAbility() {
 		if (!this.isActive) return true;
-		const abilitySlots = (this as any).getAbilitySlots?.() || [];
+		const abilitySlots = this.getAbilitySlots();
 		// Certain Abilities won't activate while Transformed, even if they ordinarily
 		// couldn't be suppressed (e.g. Disguise).
 		if (this.transformed && abilitySlots.some((slot: any) => slot.effect.flags['notransform'])) { return true; }
@@ -833,10 +843,9 @@ export class Pokemon {
 		if (!lockedMove) {
 			if (this.canMegaEvoX) data.canMegaEvoX = true;
 			if (this.canMegaEvoY) data.canMegaEvoY = true;
-			if (this.canMegaEvoZ) data.canMegaEvoY = true;
-			if (this.canMegaEvoA) data.canMegaEvoY = true;
-			if (this.canMegaEvoQ) data.canMegaEvoY = true;
-			if (this.canUltraBurst) data.canUltraBurst = true;
+			if (this.canMegaEvoZ) data.canMegaEvoZ = true;
+			if (this.canMegaEvoA) data.canMegaEvoA = true;
+			if (this.canMegaEvoQ) data.canMegaEvoQ = true;
 			if (this.canTerastallize) data.canTerastallize = this.canTerastallize;
 		}
 		return data;
@@ -1324,7 +1333,7 @@ export class Pokemon {
 		// This makes Aura persist through switch-outs without being cleared by generic cures.
 		if (this.status === 'aura') {
 			const eff = this.battle.effect;
-			if (!eff || eff.id !== 'aura') return false;
+			if (!eff || (eff.id !== 'aura' && !(eff as Move).flags?.aura)) { return false; }
 		}
 		this.battle.add('-curestatus', this, this.status, silent ? '[silent]' : '[msg]');
 		if (this.status === 'slp' && this.removeVolatile('nightmare')) { this.battle.add('-end', this, 'Nightmare', '[silent]'); }
@@ -1545,6 +1554,20 @@ export class Pokemon {
 		if (this.ability2) abilities.push(this.battle.dex.abilities.getByID(this.ability2));
 		return abilities;
 	}
+	getAbilitySlots(): AbilitySlot[] {
+		const slots: AbilitySlot[] = [];
+		if (this.ability1) {
+			slots.push({ slot: 1, id: this.ability1, effect: this.battle.dex.abilities.getByID(this.ability1), state: this.abilityState1 });
+		}
+		if (this.ability2) {
+			slots.push({ slot: 2, id: this.ability2, effect: this.battle.dex.abilities.getByID(this.ability2), state: this.abilityState2 });
+		}
+		return slots;
+	}
+	getActiveAbilitySlots(): AbilitySlot[] {
+		if (this.fainted || this.ignoringAbility()) return [];
+		return this.getAbilitySlots().filter(slot => slot.effect.id);
+	}
 	hasAbility(ability: string | string[]) {
 		if (Array.isArray(ability)) {
 			const abilityIDs = ability.map(toID);
@@ -1712,6 +1735,7 @@ export class Pokemon {
 			else if (this.hasAbility('icestilts') && !this.battle.suppressingAbility(this)) { result = null; } 
 			else if (this.hasAbility('aerodynamic') && !this.battle.suppressingAbility(this)) { result = null; } 
 			else if (this.hasAbility('cargoflier') && !this.battle.suppressingAbility(this)) { result = null; } 
+			else if (this.hasType('bug') && (this.effectiveWeather('turbulentwinds') || this.effectiveWeather('deltastream'))) { result = false; } 
 			else if ('magnetrise' in this.volatiles) { result = false; } 
 			else if ('telekinesis' in this.volatiles) { result = false; } 
 			else if (item === 'airballoon') { result = false; }
@@ -1905,6 +1929,21 @@ export class Pokemon {
 		}
 		// For isMildlyFragile, only trigger the effect, do not remove the item
 		return false;
+	}
+	/**
+	 * Tracks Necrozma's light-charge counter and, once it reaches 3, transforms. No player choice is involved.
+	 */
+	tryLightCharge(source: Pokemon, move: ActiveMove) {
+		if (!move.flags['light']) return;
+		if (this.fainted) return;
+		if (!['Necrozma', 'Necrozma-Dawn-Wings', 'Necrozma-Dusk-Mane'].includes(this.species.name)) return;
+		this.lightCharge++;
+		this.battle.add('-lightcharge', this, `${this.lightCharge}/3`);
+		if (this.lightCharge < 3) return;
+		const ultraForme = this.battle.actions.canUltraBurst(this);
+		if (!ultraForme) return; // not holding Ultranecrozium Z, or wrong forme
+		this.lightCharge = 0;
+		this.battle.actions.runUltraBurst(this);
 	}
 	destroy() {
 		// deallocate ourself

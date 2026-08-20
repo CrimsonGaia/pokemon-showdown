@@ -12,7 +12,7 @@
 		<link rel="stylesheet" href="style/font-awesome.css" />
 		<meta name="robots" content="noindex" />
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-		<script src="https://play.pokemonshowdown.com/config/config.js"></script>
+		<script src="config/config.js"></script>
 		<script>
 			function loadRemoteData(src) {
 				var scriptEl = document.createElement('script');
@@ -20,6 +20,14 @@
 				document.head.appendChild(scriptEl);
 			}
 			Config.testclient = true;
+			Config.routes = Config.routes || {};
+			Config.routes.client = location.host;
+			Config.routes.root = location.host;
+			Config.routes.teams = location.host;
+			Config.defaultserver = Config.defaultserver || {};
+			Config.defaultserver.host = location.hostname;
+			Config.defaultserver.port = location.port ? Number(location.port) : 8001;
+			Config.defaultserver.httpport = Config.defaultserver.port;
 			(function() {
 				if (location.search !== '') {
 					var m = /\?~~(([^:\/]*)(:[0-9]*)?)/.exec(location.search);
@@ -27,7 +35,11 @@
 						Config.server = {
 							id: m[1],
 							host: m[2],
-							port: (m[3] && parseInt(m[3].substr(1))) || 8000
+							port: (m[3] && parseInt(m[3].substr(1))) || 8000,
+							httpport: (m[3] && parseInt(m[3].substr(1))) || 8000,
+							protocol: (location.protocol === 'https:' ? 'https' : 'http'),
+							prefix: '/showdown',
+							registered: true,
 						};
 					} else {
 						alert('Unrecognised query string syntax: ' + location.search);

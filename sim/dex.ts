@@ -143,7 +143,6 @@ export class ModdedDex {
 		if (this.data[dataType][id] !== dexes[this.parentMod].data[dataType][id]) return this.data[dataType][id];
 		return (this.data[dataType][id] = Utils.deepClone(this.data[dataType][id]));
 	}
-
 	effectToString() { return this.name; }
 	/**
 	 * Sanitizes a username or Pokemon nickname

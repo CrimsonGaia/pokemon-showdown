@@ -210,7 +210,6 @@ export class TeamValidator {
 		if (ability.id && !ability.exists) { { return [`"${set.ability}" is an invalid ability.`]; } }
 		if (ability2.id && !ability2.exists) { { return [`"${set.ability2}" is an invalid ability.`]; } }
 		if (nature.id && !nature.exists) { { problems.push(`"${set.nature}" is an invalid nature.`); } }
-		if (set.happiness !== undefined && isNaN(set.happiness)) { problems.push(`${name} has an invalid happiness value.`); }
 		if (!ruleTable.has('terastalclause') || ruleTable.has('bonustypemod')) {
 			const type = dex.types.get(set.teraType || species.requiredTeraType || species.types[0]);
 			if (!type.exists || type.isNonstandard) { problems.push(`${name}'s Terastal type (${set.teraType}) is invalid.`); } 
@@ -270,6 +269,7 @@ export class TeamValidator {
 			problem = this.checkMove(set, move, setHas);
 			if (problem) { problems.push(problem); }
 		}
+		problems.push(...this.validateMoves(species, set.moves, set, name, moveLegalityWhitelist));
 		let isUnderleveled;
 		let requiredLevel;
 		if (ruleTable.has('obtainablemisc')) {
@@ -450,8 +450,15 @@ export class TeamValidator {
 			if (moveLegalityWhitelist[moveid]) continue;
 			const problem = checkCanLearn.call(this, move, species, null, set);
 			if (!problem) continue;
-			if (infusibleSlots > usedInfusibleSlots && move.flags.infusible) {
-				usedInfusibleSlots++;
+			if (move.flags.infusible) {
+				if (infusibleSlots > usedInfusibleSlots) {
+					usedInfusibleSlots++;
+					continue;
+				}
+				const capacity = infusibleSlots ?
+					`only has ${infusibleSlots} infusible move slot${infusibleSlots === 1 ? '' : 's'}, which ${infusibleSlots === 1 ? 'is' : 'are'} already used` :
+					`doesn't have any infusible move slots`;
+				problems.push(`${name} has too many infused moves - ${species.name} ${capacity}, so ${move.name} isn't legal.`);
 				continue;
 			}
 			problems.push(`${name}${problem}`);

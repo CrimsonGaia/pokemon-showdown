@@ -49,7 +49,6 @@ export declare namespace Dex {
 	export type PokemonSet = Teams.PokemonSet;
 }
 const ISL_ALLOWED_CACHE: WeakMap<object, Set<ID>> = new WeakMap();
-const ISL_ALLOWED_ITEM_CACHE = new WeakMap<any, Set<ID>>();
 export type { ID };
 declare const require: any;
 declare const global: any;
@@ -264,6 +263,7 @@ export const Dex = new class implements ModdedDex {
 	}
 	//region move definition
 	moves = {
+		allCache: null as Move[] | null,
 		get: (nameOrMove: string | Move | null | undefined): Move => {
 			if (nameOrMove && typeof nameOrMove !== 'string') { return nameOrMove; } // TODO: don't accept Moves here
 			let name = nameOrMove || '';
@@ -298,6 +298,14 @@ export const Dex = new class implements ModdedDex {
 			let move = new Move(id, name, data);
 			window.BattleMovedex[id] = move;
 			return move;
+		},
+		all: (): readonly Move[] => {
+			const moves: Move[] = [];
+			const searchIndex: [string, string][] = window.BattleSearchIndex || [];
+			for (const entry of searchIndex) {
+				if (entry[1] === 'move') moves.push(this.moves.get(entry[0]));
+			}
+			return moves;
 		},
 	};
 	getGen3Category(type: string) { return ['Fire', 'Water', 'Grass', 'Electric', 'Ice', 'Psychic', 'Dark', 'Dragon',].includes(type) ? 'Special' : 'Physical'; }
@@ -713,13 +721,19 @@ export const Dex = new class implements ModdedDex {
 		return `background-image:url(${Dex.resourcePrefix}${data.spriteDir}${shiny}/${data.spriteid}.png);background-position:${data.x + xOffset}px ${data.y + yOffset}px;background-repeat:no-repeat;${resize}`;
 	}
 	//region Get Icons
-	getItemIcon(item: any) {
-		let num = 0;
-		if (typeof item === 'string' && window.BattleItems) item = window.BattleItems[toID(item)];
-		if (item?.spritenum) num = item.spritenum;
-		let top = Math.floor(num / 16) * 24;
-		let left = (num % 16) * 24;
-		return `background:transparent url(${Dex.resourcePrefix}sprites/itemicons-sheet.png?v1) no-repeat scroll -${left}px -${top}px`;
+	getItemIcon(item: any, scale = 1 / 2) { // call with Dex.getItemIcon(item, X / Y) for fractional scaling, if no 2nd argument is provided, defaults to 1/2 size
+		let itemData = item;
+		if (typeof item === 'string') { itemData = Dex.items.get(item); }
+		const filename = encodeURIComponent(itemData?.name || item);
+		const size = 96 * scale;
+		return `background:transparent url(${Dex.resourcePrefix}sprites/itemicons/${filename}.png) no-repeat center center;background-size:${size}px ${size}px;`;
+	}
+	getItemIconpixel(item: any, scale = 1 / 2) { // call with Dex.getItemIcon(item, X / Y) for fractional scaling, if no 2nd argument is provided, defaults to 1/2 size
+		let itemData = item;
+		if (typeof item === 'string') { itemData = Dex.items.get(item); }
+		const filename = encodeURIComponent(itemData?.name || item);
+		const size = 96 * scale;
+		return `background:transparent url(${Dex.resourcePrefix}sprites/itemiconspixel/${filename}.png) no-repeat center center;background-size:${size}px ${size}px;`;
 	}
 	getTypeIcon(type: string | null, b?: boolean, type2?: string | null) {
 		let t1 = type ? this.types.get(type).name : '???';
@@ -732,6 +746,7 @@ export const Dex = new class implements ModdedDex {
 		};
 		return icon(t1) + (t2 ? icon(t2) : '');
 	}
+
 	getFlagIcon(flag: string | null,) {
 		if (!flag) return '\u2014'; // em dash
 		const flagID = toID(flag);
@@ -782,7 +797,67 @@ export const Dex = new class implements ModdedDex {
 			break;
 		}
 		const flagText = sanitizedFlag.charAt(0).toUpperCase() + sanitizedFlag.slice(1);
-		return `<img src="sprites/flagicons/${sanitizedFlag}.png" alt="${flagText}" height="32" width="132" class="pixelated" onerror="this.style.display='none'; this.nextSibling.style.display='inline';" /><span style="display: none;">${flagText}</span>`;
+		return `<img src="${Dex.resourcePrefix}sprites/flagicons/${sanitizedFlag}.png" alt="${flagText}" height="32" width="132" class="pixelated" onerror="this.style.display='none'; this.nextSibling.style.display='inline';" /><span style="display: none;">${flagText}</span>`;
+	}
+	statusNames = ['par', 'psn', 'tox', 'brn', 'frz', 'slp', 'aura', 'bubbleblight', 'curse', 'dragonblight', 'fear', 'frostbite', 'drowsy', 'confusion', 'flinch'];
+	isStatusName(name: string | null) {
+		if (!name) return false;
+		return this.statusNames.indexOf(toID(name)) !== -1;
+	}
+	getStatusIcon(status: string | null) {
+		if (!status) return '\u2014'; // em dash
+		const statusID = toID(status);
+		let sanitizedStatus = '';
+		switch (statusID) {
+		case 'par': sanitizedStatus = 'Paralysis'; break;
+		case 'psn': sanitizedStatus = 'Poison'; break;
+		case 'tox': sanitizedStatus = 'Toxic'; break;
+		case 'brn': sanitizedStatus = 'Burn'; break;
+		case 'frz': sanitizedStatus = 'Frozen'; break;
+		case 'slp': sanitizedStatus = 'Sleep'; break;
+		case 'aura': sanitizedStatus = 'Aura'; break;
+		case 'bubbleblight': sanitizedStatus = 'Bubbleblight'; break;
+		case 'curse': sanitizedStatus = 'Curse'; break;
+		case 'dragonblight': sanitizedStatus = 'Dragonblight'; break;
+		case 'fear': sanitizedStatus = 'Fear'; break;
+		case 'frostbite': sanitizedStatus = 'Frostbite'; break;
+		case 'drowsy': sanitizedStatus = 'Drowsy'; break;
+		case 'confusion': sanitizedStatus = 'Confused'; break;
+		case 'flinch': sanitizedStatus = 'Flinch'; break;
+		default:
+			sanitizedStatus = 'undefined';
+			break;
+		}
+		const statusText = sanitizedStatus.charAt(0).toUpperCase() + sanitizedStatus.slice(1);
+		return `<img src="${Dex.resourcePrefix}sprites/status-is/${sanitizedStatus}_IS.png" alt="${statusText}" height="32" width="132" class="pixelated" onerror="this.style.display='none'; this.nextSibling.style.display='inline';" /><span style="display: none;">${statusText}</span>`;
+	}
+	fieldEffectNames = ['sun', 'sunnyday', 'harshsunshine', 'desolateland', 'rain', 'raindance', 'heavyrain', 'primordialsea', 'sand', 'sandstorm', 'hail', 'snow', 'snowscape', 'fog', 'strongwinds', 'deltastream', 'electricterrain', 'grassyterrain', 'mistyterrain', 'psychicterrain'];
+	isFieldEffectName(name: string | null) {
+		if (!name) return false;
+		return this.fieldEffectNames.indexOf(toID(name)) !== -1;
+	}
+	getFieldEffectIcon(effect: string | null) {
+		if (!effect) return '\u2014'; // em dash
+		const effectID = toID(effect);
+		let sanitizedEffect = '';
+		switch (effectID) {
+		case 'sunnyday': sanitizedEffect = 'Sun'; break;
+		case 'raindance': sanitizedEffect = 'Rain'; break;
+		case 'sandstorm': sanitizedEffect = 'Sandstorm'; break;
+		case 'hail': sanitizedEffect = 'Hail'; break;
+		case 'snowscape': sanitizedEffect = 'Snow'; break;
+		case 'turbulentwinds': sanitizedEffect = 'Turbulent Winds'; break;
+		case 'electricterrain': sanitizedEffect = 'Electric Terrain'; break;
+		case 'grassyterrain': sanitizedEffect = 'Grassy Terrain'; break;
+		case 'mistyterrain': sanitizedEffect = 'Misty Terrain'; break;
+		case 'psychicterrain': sanitizedEffect = 'Psychic Terrain'; break;
+		case 'toxicterrain': sanitizedEffect = 'Toxic Terrain'; break;
+		default:
+			sanitizedEffect = 'undefined';
+			break;
+		}
+		const filename = encodeURIComponent(sanitizedEffect);
+		return `<img src="${Dex.resourcePrefix}sprites/fieldeffects/${filename}.png" alt="${sanitizedEffect}" height="14" width="58" class="pixelated" onerror="this.style.display='none'; this.nextSibling.style.display='inline';" /><span style="display: none;">${sanitizedEffect}</span>`;
 	}
 	getCategoryIcon(category: string | null) {
 		const categoryID = toID(category);
@@ -859,6 +934,14 @@ export class ModdedDex {
 			this.cache.Moves[id] = move;
 			return move;
 		},
+		all: (): readonly Move[] => {
+			const moves: Move[] = [];
+			const searchIndex: [string, string][] = window.BattleSearchIndex || [];
+			for (const entry of searchIndex) {
+				if (entry[1] === 'move') moves.push(this.moves.get(entry[0]));
+			}
+			return moves;
+		},
 	};
 	//region ISL flag definition
 	flags = {
@@ -906,30 +989,10 @@ export class ModdedDex {
 			const modTable = window.BattleTeambuilderTable?.[this.modid];
 			const modHas = !!(modTable?.overrideItemData && id in modTable.overrideItemData);
 			if (modHas) Object.assign(data, modTable.overrideItemData[id]);
-			const modItems =
-				(window as any).BattleModData?.[this.modid]?.Items ||
-				(globalThis as any).BattleModData?.[this.modid]?.Items ||
-				(globalThis as any).exports?.BattleModData?.[this.modid]?.Items;
-			const modHasItemPatch = !!(modItems && id in modItems);
-			if (modHasItemPatch) Object.assign(data, modItems[id]);
-			if ((modHas || modHasItemPatch) && base && base.exists === false) {
+			if (modHas && base && base.exists === false) {
 				data.exists = true;
 				data.id ||= id;
 				data.name ||= name;
-			}
-			// Indigo Starstorm item roster behavior:
-			// Only items explicitly present in BattleModData.gen9indigostarstorm.Items are legal.
-			// Everything else is treated as Past.
-			if (this.modid === 'gen9indigostarstorm') {
-				let allowedSet = ISL_ALLOWED_ITEM_CACHE.get(this);
-				if (!allowedSet) {
-					allowedSet = new Set<ID>();
-					if (modItems) { for (const itemid in modItems) { allowedSet.add(toID(itemid) as ID); } }
-					ISL_ALLOWED_ITEM_CACHE.set(this, allowedSet);
-				}
-				const num = (data.num ?? base?.num) as number | undefined;
-				const isCustom = typeof num === 'number' && (num >= 10000 || num < 0);
-				if (!isCustom && !allowedSet.has(id)) { data.isNonstandard = 'Past'; }
 			}
 			const item = new Item(id, data.name || name, data);
 			this.cache.Items[id] = item;
@@ -1069,13 +1132,6 @@ export class ModdedDex {
 					break;
 				}
 				if (id in table.overrideTypeChart) data = { ...data, ...table.overrideTypeChart[id] };
-			}
-			const modTypeChart = (window as any).BattleModData?.[this.modid]?.TypeChart 
-				|| (globalThis as any).BattleModData?.[this.modid]?.TypeChart 
-				|| (globalThis as any).exports?.BattleModData?.[this.modid]?.TypeChart;
-			if (modTypeChart && modTypeChart[id]) {
-				data = { ...data, ...modTypeChart[id] };
-				if ((data as any).damageTaken) (data as any).exists = true;
 			}
 			this.cache.Types[id] = data;
 			return data;

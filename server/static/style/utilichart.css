@@ -119,7 +119,7 @@
 	margin-left: 0;
 }
 .utilichart .iconcol {
-	padding-top: 3px;
+	padding-top: 1px;
 	width: 40px;
 	height: 33px;
 }
@@ -703,10 +703,10 @@
 	cursor: default;
 }
 .utilichart .numsortcol {
-	width: 80px;
+	width: 30px;
 }
 .utilichart .pnamesortcol {
-	width: 127px;
+	width: 167px;
 }
 .utilichart .typesortcol {
 	width: 68px;

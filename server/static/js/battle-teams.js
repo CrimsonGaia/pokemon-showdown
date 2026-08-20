@@ -45,10 +45,24 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 var Teams=new(function(){function _class(){}var _proto=_class.prototype;_proto.
 pack=function pack(team){
 if(!team)return'';
-function getIv(ivs,s){return ivs[s]===31||ivs[s]===undefined?'':ivs[s].toString();}
+function getJv(jvs,s){
+return!jvs||!jvs[s]?'':jvs[s].toString();
+}
 var buf='';for(var _i2=0;_i2<
 team.length;_i2++){var set=team[_i2];
 if(buf)buf+=']';
@@ -58,33 +72,32 @@ buf+=set.name||set.species;
 var speciesid=this.packName(set.species||set.name);
 buf+="|"+(this.packName(set.name||set.species)===speciesid?'':speciesid);
 
+buf+="|"+String(set.size||'').toUpperCase();
+
 buf+="|"+this.packName(set.item);
 
-buf+="|"+this.packName(set.ability);
+var abilitySet=set.abilitySet===2?2:1;
+buf+="|"+abilitySet+"/"+this.packName(set.ability)+"/"+this.packName(set.ability2);
 
 buf+='|'+set.moves.map(this.packName).join(',');
 
 buf+="|"+(set.nature||'');
 
-var evs='|';
-if(set.evs){evs="|"+(set.evs['hp']||'')+","+(set.evs['atk']||'')+","+(set.evs['def']||'')+","+((set.evs['spa']||'')+","+(set.evs['spd']||'')+","+(set.evs['spe']||''));}
-buf+=evs==='|,,,,,'?'|':evs;
-
 buf+="|"+(set.gender||'');
 
-var ivs='|';
-if(set.ivs){ivs="|"+getIv(set.ivs,'hp')+","+getIv(set.ivs,'atk')+","+getIv(set.ivs,'def')+","+(getIv(set.ivs,'spa')+","+getIv(set.ivs,'spd')+","+getIv(set.ivs,'spe'));}
-buf+=ivs==='|,,,,,'?'|':ivs;
+var jvs='|';
+if(set.jvs){jvs="|"+getJv(set.jvs,'hp')+","+getJv(set.jvs,'atk')+","+getJv(set.jvs,'def')+","+(getJv(set.jvs,'spa')+","+getJv(set.jvs,'spd')+","+getJv(set.jvs,'spe'));}
+buf+=jvs==='|,,,,,'?'|':jvs;
 
 buf+="|"+(set.shiny?'S':'');
 
 buf+="|"+(set.level&&set.level!==100?set.level:'');
 
-buf+="|"+(set.happiness!==undefined&&set.happiness!==255?set.happiness:'');
-if(set.pokeball||set.teraType||set.size){
+if(set.pokeball||set.teraType||set.abilitySet||set.guardAction){
 buf+=","+this.packName(set.pokeball||'');
 buf+=","+(set.teraType||'');
-buf+=","+(set.size||'');
+buf+=","+(set.abilitySet||'');
+buf+=","+this.packName(set.guardAction||'');
 }
 }
 return buf;
@@ -107,6 +120,7 @@ var team=[];
 var i=0;
 var j=0;
 var lastI=0;
+var clampJv=function(n){return n<0?0:n>64?64:n;};
 while(true){
 var set={};
 team.push(set);
@@ -122,12 +136,23 @@ if(species.baseSpecies!==name)set.name=name;
 i=j+1;
 
 j=buf.indexOf('|',i);
+set.size=buf.substring(i,j)||undefined;
+i=j+1;
+
+j=buf.indexOf('|',i);
 set.item=Dex.items.get(buf.substring(i,j)).name;
 i=j+1;
 
 j=buf.indexOf('|',i);
-var ability=Dex.abilities.get(buf.substring(i,j)).name;
-set.ability=species.abilities&&['','0','1','H','S'].includes(ability)?species.abilities[ability||'0']:ability;
+{
+var abilityField=buf.substring(i,j).split('/');
+var as=Number(abilityField[0])===2?2:1;
+set.abilitySet=as;
+var a1=Dex.abilities.get(abilityField[1]||'').name;
+var a2=Dex.abilities.get(abilityField[2]||'').name;
+set.ability=species.abilities&&['','0','1','H','S'].includes(a1)?species.abilities[a1||'0']:a1;
+if(a2){set.ability2=species.abilities&&['','0','1','H','S'].includes(a2)?species.abilities[a2||'0']:a2;}
+}
 i=j+1;
 
 j=buf.indexOf('|',i);
@@ -140,36 +165,19 @@ if(set.nature==='undefined')delete set.nature;
 i=j+1;
 
 j=buf.indexOf('|',i);
-if(j!==i){
-var evstring=buf.substring(i,j);
-if(evstring.length>5){
-var evs=evstring.split(',');
-set.evs={
-hp:Number(evs[0])||0,
-atk:Number(evs[1])||0,
-def:Number(evs[2])||0,
-spa:Number(evs[3])||0,
-spd:Number(evs[4])||0,
-spe:Number(evs[5])||0
-};
-}else if(evstring==='0'){set.evs={hp:0,atk:0,def:0,spa:0,spd:0,spe:0};}
-}
-i=j+1;
-
-j=buf.indexOf('|',i);
 if(i!==j)set.gender=buf.substring(i,j);
 i=j+1;
 
 j=buf.indexOf('|',i);
 if(j!==i){
-var ivs=buf.substring(i,j).split(',');
-set.ivs={
-hp:ivs[0]===''?31:Number(ivs[0]),
-atk:ivs[1]===''?31:Number(ivs[1]),
-def:ivs[2]===''?31:Number(ivs[2]),
-spa:ivs[3]===''?31:Number(ivs[3]),
-spd:ivs[4]===''?31:Number(ivs[4]),
-spe:ivs[5]===''?31:Number(ivs[5])
+var jvs=buf.substring(i,j).split(',',6);
+set.jvs={
+hp:jvs[0]===''?0:clampJv(Number(jvs[0])||0),
+atk:jvs[1]===''?0:clampJv(Number(jvs[1])||0),
+def:jvs[2]===''?0:clampJv(Number(jvs[2])||0),
+spa:jvs[3]===''?0:clampJv(Number(jvs[3])||0),
+spd:jvs[4]===''?0:clampJv(Number(jvs[4])||0),
+spe:jvs[5]===''?0:clampJv(Number(jvs[5])||0)
 };
 }
 i=j+1;
@@ -184,13 +192,13 @@ i=j+1;
 
 j=buf.indexOf(']',i);
 var misc=void 0;
-if(j<0){if(i<buf.length)misc=buf.substring(i).split(',',7);}else
-{if(i!==j)misc=buf.substring(i,j).split(',',7);}
+if(j<0){if(i<buf.length)misc=buf.substring(i).split(',',4);}else
+{if(i!==j)misc=buf.substring(i,j).split(',',4);}
 if(misc){
-set.happiness=misc[0]?Number(misc[0]):undefined;
-set.pokeball=misc[2]||undefined;
-set.teraType=misc[5]||undefined;
-set.size=misc[6]||undefined;
+set.pokeball=Dex.items.get(misc[0]||'').name||undefined;
+set.teraType=misc[1]||undefined;
+if(misc[2])set.abilitySet=Number(misc[2])===2?2:1;
+set.guardAction=misc[3]?Dex.moves.get(misc[3]).name:undefined;
 }
 i=j+1;
 if(j<0||i<=lastI)break;
@@ -262,14 +270,14 @@ text+="\n";
 if(set.nature&&!newFormat){text+=set.nature+" Nature\n";}else
 if(['Hardy','Docile','Serious','Bashful','Quirky'].includes(set.nature)){text+=set.nature+" Nature\n";}
 first=true;
-if(set.ivs){for(var _i8=0,_Dex$statNames4=
+if(set.jvs){for(var _i8=0,_Dex$statNames4=
 Dex.statNames;_i8<_Dex$statNames4.length;_i8++){var _stat=_Dex$statNames4[_i8];
-if(set.ivs[_stat]===undefined||isNaN(set.ivs[_stat])||set.ivs[_stat]===31)continue;
+if(!set.jvs[_stat])continue;
 if(first){
-text+="IVs: ";
+text+="JVs: ";
 first=false;
 }else{text+=" / ";}
-text+=set.ivs[_stat]+" "+BattleStatNames[_stat];
+text+=set.jvs[_stat]+" "+BattleStatNames[_stat];
 }
 }
 if(!first){text+="\n";}
@@ -364,18 +372,24 @@ set.evs[statid]=parseInt(evLine.slice(0,spaceIndex),10)||0;
 }
 var nature=this.getNatureFromPlusMinus(plus,minus);
 if(nature)set.nature=nature;
-}else if(line.startsWith('IVs: ')){
-var ivLines=line.slice(5).split(' / ');
-set.ivs={hp:31,atk:31,def:31,spa:31,spd:31,spe:31};for(var _i17=0;_i17<
-ivLines.length;_i17++){var ivLine=ivLines[_i17];
-ivLine=ivLine.trim();
-var _spaceIndex=ivLine.indexOf(' ');
+}else if(line.startsWith('JVs: ')||line.startsWith('IVs: ')){
+
+
+var isLegacyIV=line.startsWith('IVs: ');
+var jvLines=line.slice(5).split(' / ');
+set.jvs={hp:0,atk:0,def:0,spa:0,spd:0,spe:0};for(var _i17=0;_i17<
+jvLines.length;_i17++){var jvLine=jvLines[_i17];
+jvLine=jvLine.trim();
+var _spaceIndex=jvLine.indexOf(' ');
 if(_spaceIndex===-1)continue;
-var _statid=BattleStatIDs[ivLine.slice(_spaceIndex+1)];
+var _statid=BattleStatIDs[jvLine.slice(_spaceIndex+1)];
 if(!_statid)continue;
-var statval=parseInt(ivLine.slice(0,_spaceIndex),10);
-if(isNaN(statval))statval=31;
-set.ivs[_statid]=statval;
+var statval=parseInt(jvLine.slice(0,_spaceIndex),10);
+if(isNaN(statval))statval=0;
+
+
+
+set.jvs[_statid]=isLegacyIV?0:statval<0?0:statval>64?64:statval;
 }
 }else if(/^[A-Za-z]+ (N|n)ature/.exec(line)){
 var natureIndex=line.indexOf(' Nature');

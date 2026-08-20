@@ -227,8 +227,8 @@ export class BattleActions {
 				// Ties go to whichever Pokemon has had the ability for the least amount of time
 				dancers.sort((a, b) =>
 					-(b.storedStats['spe'] - a.storedStats['spe']) ||
-					(this.battle as any).getAbilityEffectOrder(b, ['dancer', 'virtualidol']) -
-					(this.battle as any).getAbilityEffectOrder(a, ['dancer', 'virtualidol'])
+					this.battle.getAbilityEffectOrder(b, ['dancer', 'virtualidol']) -
+					this.battle.getAbilityEffectOrder(a, ['dancer', 'virtualidol'])
 				);
 				const targetOf1stDance = this.battle.activeTarget!;
 				for (const dancer of dancers) {
@@ -257,8 +257,7 @@ export class BattleActions {
 				musicians.sort(
 					(a, b) =>
 						-(b.storedStats['spe'] - a.storedStats['spe']) ||
-						((this.battle as any).getAbilityEffectOrder(b, ['musician']) -
-						(this.battle as any).getAbilityEffectOrder(a, ['musician']))
+						(this.battle.getAbilityEffectOrder(b, ['musician']) - this.battle.getAbilityEffectOrder(a, ['musician']))
 				);
 				const targetOf1stSound = this.battle.activeTarget!;
 				for (const musician of musicians) {
@@ -462,13 +461,19 @@ export class BattleActions {
 			this.battle.add('-fail', pokemon);
 			this.battle.attrLastMove('[still]');
 		}
-		for (let i = 0; i < targets.length; i++) { if (hitResults[i] !== this.battle.NOT_FAIL) hitResults[i] = hitResults[i] || false; }
+		for (let i = 0; i < targets.length; i++) {
+			if (hitResults[i] !== this.battle.NOT_FAIL) hitResults[i] = hitResults[i] || false;
+			if (hitResults[i] === false) targets[i].tryLightCharge(pokemon, move);
+		}
 		return hitResults;
 	}
 	hitStepTypeImmunity(targets: Pokemon[], pokemon: Pokemon, move: ActiveMove) {
 		if (move.ignoreImmunity === undefined) { move.ignoreImmunity = (move.category === 'Status'); }
 		const hitResults = [];
-		for (let i = 0; i < targets.length; i++) { hitResults[i] = targets[i].runImmunity(move, !move.smartTarget); }
+		for (let i = 0; i < targets.length; i++) {
+			hitResults[i] = targets[i].runImmunity(move, !move.smartTarget);
+			if (!hitResults[i]) targets[i].tryLightCharge(pokemon, move);
+		}
 		return hitResults;
 	}
 	hitStepTryImmunity(targets: Pokemon[], pokemon: Pokemon, move: ActiveMove) {
@@ -478,7 +483,7 @@ export class BattleActions {
 				this.battle.debug('natural powder immunity');
 				this.battle.add('-immune', target);
 				hitResults[i] = false;
-			} else if (!this.battle.singleEvent('TryImmunity', move, {}, target, pokemon, move)) {
+			} else if (!move.ignoreImmunity && !this.battle.singleEvent('TryImmunity', move, {}, target, pokemon, move)) {
 				this.battle.add('-immune', target);
 				hitResults[i] = false;
 			} else if (this.battle.gen >= 7 && move.pranksterBoosted && pokemon.hasAbility('prankster') && !targets[i].isAlly(pokemon) && !this.dex.getImmunity('prankster', target)) {
@@ -717,7 +722,7 @@ export class BattleActions {
 		if (nullDamage) damage.fill(false);
 		this.battle.faintMessages(false, false, !pokemon.hp);
 		if (move.multihit && typeof move.smartTarget !== 'boolean') { this.battle.add('-hitcount', targets[0], hit - 1); }
-		if ((move.recoil || move.id === 'chloroblast') && move.totalDamage) {
+		if ((move.recoil) && move.totalDamage) {
 			const hpBeforeRecoil = pokemon.hp;
 			let recoilBase = move.totalDamage;
 			if (move.recoil && move.intendedTotalDamage) { recoilBase = move.intendedTotalDamage; }
@@ -814,6 +819,7 @@ export class BattleActions {
 						this.battle.add('-start', t, 'charged', '[from] Electric type');
 					}
 				}
+				t.tryLightCharge(pokemon, move);
 			}
 			if (moveData.onAfterHit) { for (const t of damagedTargets) { this.battle.singleEvent('AfterHit', moveData, {}, t, pokemon, move); } }
 			if (pokemon.hp && pokemon.hp <= pokemon.maxhp / 2 && pokemonOriginalHP > pokemon.maxhp / 2) { this.battle.runEvent('EmergencyExit', pokemon); }
@@ -1022,7 +1028,6 @@ export class BattleActions {
 		return retVal === true ? undefined : retVal;
 	}
 	calcRecoilDamage(damageDealt: number, move: Move, pokemon: Pokemon): number {
-		if (move.id === 'chloroblast') return Math.round(pokemon.maxhp / 2);
 		let recoil = Math.round(damageDealt * move.recoil![0] / move.recoil![1]);
 		// Halve recoil if the user has the Reckless ability
 		if (pokemon.hasAbility && pokemon.hasAbility('reckless')) { recoil = Math.floor(recoil / 2); }
@@ -1210,7 +1215,6 @@ export class BattleActions {
 			if (matchesBoth) { stab = 1.7; } 
 			else { stab = 1.5; }
 		}
-		
 		if (pokemon.terastallized === 'Stellar') {
 			const originalTypes = pokemon.volatiles['stellaroriginal']?.types || [];
 			const isOriginal = moveTypes.some(t => originalTypes.includes(t));
@@ -1271,21 +1275,25 @@ export class BattleActions {
 		// Type effectiveness messages
 		if (!suppressMessages && typeMod !== 0) {
 			switch (typeMod) {
-			case -6: case -5.5: case -5: case -4.5: case -4:
-				this.battle.add('-message', "It's mostly ineffective...");
+			// Resistance
+			case -6:
+			case -5.5:
+			case -5:
+				this.battle.add('-message', "It's ineffective...");
 				break;
-			case -3:
+			case -4:
 				this.battle.add('-message', "It's barely effective...");
 				break;
-			case -2:
+			case -3:
 				this.battle.add('-message', "It's hardly effective...");
 				break;
-			case -1:
+			case -2:
 				this.battle.add('-resisted', target); // "It's not very effective..."
 				break;
-			case -0.5:
+			case -1.5:
 				this.battle.add('-message', "It's mostly effective...");
 				break;
+			// Weakness
 			case 0.5:
 				this.battle.add('-message', "It's very effective!");
 				break;
@@ -1298,8 +1306,8 @@ export class BattleActions {
 			case 2:
 				this.battle.add('-message', "It's extremely effective!");
 				break;
-			default: // 2.5+
-				this.battle.add('-message', "It's supremely effective!");
+			default:
+				if (typeMod >= 2.5) { this.battle.add('-message', "It's supremely effective!"); }
 				break;
 			}
 		}
@@ -1355,36 +1363,90 @@ export class BattleActions {
 		if ((this.battle.gen <= 7 || this.battle.ruleTable.has('+pokemontag:past') || this.battle.ruleTable.has('+pokemontag:future')) && altForme?.isMega && altForme?.requiredMove && pokemon.baseMoves.includes(toID(altForme.requiredMove))) { return altForme.name; }
 		return null;
 	}
+	// canUltraBurst is no longer surfaced to the player as a choice — it's used
+	// internally by the necrozma light-charge condition (data/conditions.ts) to check eligibility 
 	canUltraBurst(pokemon: Pokemon) {
-		if (['Necrozma-Dawn-Wings', 'Necrozma-Dusk-Mane'].includes(pokemon.baseSpecies.name) && pokemon.getItem().id === 'ultranecroziumz') { return "Necrozma-Ultra"; }
+		if (['Necrozma', 'Necrozma-Dawn-Wings', 'Necrozma-Dusk-Mane'].includes(pokemon.baseSpecies.name)) { return "Necrozma-Ultra"; }
 		return null;
 	}
 	runMegaEvo(pokemon: Pokemon) {
-		const speciesid = pokemon.canMegaEvo || pokemon.canUltraBurst;
+		const speciesid = pokemon.canMegaEvo;
 		if (!speciesid) return false;
 		pokemon.formeChange(speciesid, pokemon.getItem(), true);
 		// Limit one mega evolution
-		const wasMega = pokemon.canMegaEvo;
-		for (const ally of pokemon.side.pokemon) {
-			if (wasMega) { ally.canMegaEvo = false; } 
-			else { ally.canUltraBurst = null; }
-		}
+		for (const ally of pokemon.side.pokemon) { ally.canMegaEvo = false; }
 		this.battle.runEvent('AfterMega', pokemon);
 		return true;
 	}
-	canMegaEvoX?: (this: BattleActions, pokemon: Pokemon) => string | null;
-	canMegaEvoY?: (this: BattleActions, pokemon: Pokemon) => string | null;
-	canMegaEvoZ?: (this: BattleActions, pokemon: Pokemon) => string | null;
-	canMegaEvoA?: (this: BattleActions, pokemon: Pokemon) => string | null;
-	canMegaEvoQ?: (this: BattleActions, pokemon: Pokemon) => string | null;
-	runMegaEvoX?: (this: BattleActions, pokemon: Pokemon) => boolean;
-	runMegaEvoY?: (this: BattleActions, pokemon: Pokemon) => boolean;
-	runMegaEvoZ?: (this: BattleActions, pokemon: Pokemon) => boolean;
-	runMegaEvoA?: (this: BattleActions, pokemon: Pokemon) => boolean;
-	runMegaEvoQ?: (this: BattleActions, pokemon: Pokemon) => boolean;
-	megaLetterTarget?: (this: BattleActions, pokemon: Pokemon, letter: 'X' | 'Y' | 'Z' | 'A' | 'Q') => string | null;
-	runMegaLetter?: (this: BattleActions, pokemon: Pokemon, letter: 'X' | 'Y' | 'Z' | 'A' | 'Q') => boolean;
-	revertMegaLetter?: (this: BattleActions, pokemon: Pokemon) => void;
+	// Triggered automatically by Pokemon#tryLightCharge, when necrozma is hit by 3 light moves over a battle
+	runUltraBurst(pokemon: Pokemon) {
+		const speciesid = this.canUltraBurst(pokemon);
+		if (!speciesid) return false;
+		pokemon.formeChange(speciesid, pokemon.getItem(), true);
+		this.battle.runEvent('AfterMega', pokemon);
+		return true;
+	}
+		/**
+	 * Shared eligibility check for all five lettered Megas. A Pokemon is
+	 * eligible for letter L if: its held item's `megaStone` dict has an entry
+	 * for its base species, that entry's forme name ends in `-Mega` (letter
+	 * defaults to X) or `-Mega-<L>`, no Pokemon on the side already has an
+	 * active lettered Mega (fainted ones don't count), and the side's Mega
+	 * Charge is full. Charge itself never gets touched here — filling and
+	 * draining is entirely handled by the per-turn residual logic in battle.ts,
+	 * keyed off megaEvoOriginalSpecies/megaEvoLetter.
+	 */
+	megaLetterTarget(pokemon: Pokemon, letter: 'X' | 'Y' | 'Z' | 'A' | 'Q'): string | null {
+		const species = pokemon.baseSpecies;
+		const item = pokemon.getItem();
+		const targetName = item.megaStone?.[species.baseSpecies];
+		if (!targetName) return null;
+		const target = this.dex.species.get(targetName);
+		if (!target.exists) return null;
+		const match = target.name.match(/-Mega(?:-([A-Z]))?$/);
+		if (!match) return null;
+		const targetLetter = match[1] || 'X';
+		if (targetLetter !== letter) return null;
+		if (pokemon.side.pokemon.some(p => !p.fainted && (p as any).megaEvoOriginalSpecies)) return null;
+		const sideAny = pokemon.side as any;
+		const charge = Number(sideAny.megaCharge ?? 0);
+		const max = Number(sideAny.megaChargeMax ?? 100);
+		if (charge < max) return null;
+		return target.name;
+	}
+	canMegaEvoX(pokemon: Pokemon) { return this.megaLetterTarget(pokemon, 'X'); }
+	canMegaEvoY(pokemon: Pokemon) { return this.megaLetterTarget(pokemon, 'Y'); }
+	canMegaEvoZ(pokemon: Pokemon) { return this.megaLetterTarget(pokemon, 'Z'); }
+	canMegaEvoA(pokemon: Pokemon) { return this.megaLetterTarget(pokemon, 'A'); }
+	canMegaEvoQ(pokemon: Pokemon) { return this.megaLetterTarget(pokemon, 'Q'); }
+	runMegaLetter(pokemon: Pokemon, letter: 'X' | 'Y' | 'Z' | 'A' | 'Q') {
+		const speciesid = this.megaLetterTarget(pokemon, letter);
+		if (!speciesid) return false;
+		const p = pokemon as any;
+		// Capture the pre-Mega species BEFORE formeChange overwrites baseSpecies.
+		p.megaEvoOriginalSpecies = pokemon.baseSpecies.name;
+		p.megaEvoLetter = letter;
+		pokemon.formeChange(speciesid, pokemon.getItem(), true);
+		this.battle.runEvent('AfterMega', pokemon);
+		return true;
+	}
+	runMegaEvoX(pokemon: Pokemon) { return this.runMegaLetter(pokemon, 'X'); }
+	runMegaEvoY(pokemon: Pokemon) { return this.runMegaLetter(pokemon, 'Y'); }
+	runMegaEvoZ(pokemon: Pokemon) { return this.runMegaLetter(pokemon, 'Z'); }
+	runMegaEvoA(pokemon: Pokemon) { return this.runMegaLetter(pokemon, 'A'); }
+	runMegaEvoQ(pokemon: Pokemon) { return this.runMegaLetter(pokemon, 'Q'); }
+	// Called by the turn-tick drain logic in battle.ts when a lettered Mega's
+	// charge hits 0. Reverts to the pre-Mega species and frees up the side's
+	// "one Mega active at a time" slot.
+	revertMegaLetter(pokemon: Pokemon) {
+		const p = pokemon as any;
+		const originalSpecies = p.megaEvoOriginalSpecies;
+		if (!originalSpecies) return;
+		const revertEffect = { effectType: 'Status', id: 'megachargedepleted', name: 'Mega Charge' } as Effect;
+		pokemon.formeChange(originalSpecies, revertEffect, true, '0', 'Mega Charge depleted');
+		p.megaEvoOriginalSpecies = null;
+		p.megaEvoLetter = null;
+	}
 	canTerastallize(pokemon: Pokemon) {
 		if (pokemon.canMegaEvo || this.dex.gen !== 9) { return null; }
 		return pokemon.teraType;

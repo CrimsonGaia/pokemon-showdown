@@ -52,7 +52,7 @@ export interface PokemonSet {
 	 * These must be between 0 and 255, inclusive.
 	 * Also used to store AVs for Let's Go
 	 */
-	evs: StatsTable;
+	evs?: StatsTable;
 	/**
 	 * Individual Values, used in stat calculation.
 	 * These must be between 0 and 31, inclusive.
@@ -67,6 +67,12 @@ export interface PokemonSet {
 	 */
 	ivs: StatsTable;
 	/**
+	 * Juggle Values — replaces the classic EV/IV split entirely. IVs are
+	 * always 31 for stat calculation purposes (see Battle#statModify); this is
+	 * the only stat-investment number that matters. 0–64 per stat, 130 total.
+	 */
+	jvs?: StatsTable;
+	/**
 	 * This is usually between 1 and 100, inclusive,
 	 * but the simulator supports levels up to 9999 for testing purposes.
 	 */
@@ -77,13 +83,6 @@ export interface PokemonSet {
 	 * event-only abilities or moves.
 	 */
 	shiny?: boolean;
-	/**
-	 * This is technically "Friendship", but the community calls this
-	 * "Happiness".
-	 * It's used to calculate the power of the moves Return and Frustration.
-	 * This value must be between 0 and 255, inclusive.
-	 */
-	happiness?: number;
 	/**
 	 * The pokeball this Pokemon is in. Like shininess, this property has no direct competitive effects, but has implications for
 	 * event legality. For example, any Rayquaza that knows V-Create must be sent out from a Cherish Ball.
@@ -100,7 +99,7 @@ export interface PokemonSet {
 export const Teams = new class Teams {
 	pack(team: PokemonSet[] | null): string {
 		if (!team) return '';
-		function getIv(ivs: StatsTable, s: keyof StatsTable): string { return ivs[s] === 31 || ivs[s] === undefined ? '' : ivs[s].toString(); }
+		function getJv(jvs: StatsTable, s: keyof StatsTable): string { return !jvs[s] ? '' : jvs[s].toString(); }
 		let buf = '';
 		for (const set of team) {
 			if (buf) buf += ']';
@@ -120,34 +119,26 @@ export const Teams = new class Teams {
 			buf += '|' + set.moves.map(this.packName).join(',');
 			// nature
 			buf += `|${set.nature || ''}`;
-			// evs
-			let evs = '|';
-			if (set.evs) { evs = `|${set.evs['hp'] || ''},${set.evs['atk'] || ''},${set.evs['def'] || ''},` + `${set.evs['spa'] || ''},${set.evs['spd'] || ''},${set.evs['spe'] || ''}`; }
-			if (evs === '|,,,,,') {
-				buf += '|';
-			}  else { buf += evs; }
 			// gender
 			if (set.gender) { buf += `|${set.gender}`; } 
 			else { buf += '|'; }
-			// ivs
-			let ivs = '|';
-			if (set.ivs) { ivs = `|${getIv(set.ivs, 'hp')},${getIv(set.ivs, 'atk')},${getIv(set.ivs, 'def')},` + `${getIv(set.ivs, 'spa')},${getIv(set.ivs, 'spd')},${getIv(set.ivs, 'spe')}`; }
-			if (ivs === '|,,,,,') { buf += '|'; } 
-			else { buf += ivs; }
+			// jvs (this wire slot used to be classic IVs 
+			let jvs = '|';
+			if (set.jvs) { jvs = `|${getJv(set.jvs, 'hp')},${getJv(set.jvs, 'atk')},${getJv(set.jvs, 'def')},` + `${getJv(set.jvs, 'spa')},${getJv(set.jvs, 'spd')},${getJv(set.jvs, 'spe')}`; }
+			if (jvs === '|,,,,,') { buf += '|'; } 
+			else { buf += jvs; }
 			// shiny
 			if (set.shiny) { buf += '|S'; } 
 			else { buf += '|'; }
 			// level
 			if (set.level && set.level !== 100) { buf += `|${set.level}`; } 
 			else { buf += '|'; }
-			// happiness
-			if (set.happiness !== undefined && set.happiness !== 255) { buf += `|${set.happiness}`; } 
-			else { buf += '|'; }
-			// misc: keep legacy structure but DO NOT store ability2/size here (they're core fields in ISL schema)
-			if (set.pokeball || set.teraType || set.abilitySet) {
+			// misc
+			if (set.pokeball || set.teraType || set.abilitySet || set.guardAction) {
 				buf += `,${this.packName(set.pokeball || '')}`;
 				buf += `,${set.teraType || ''}`;
 				buf += `,${set.abilitySet || ''}`;
+				buf += `,${this.packName(set.guardAction || '')}`;
 			}
 		}
 		return buf;
@@ -230,38 +221,24 @@ export const Teams = new class Teams {
 			if (j < 0) return null;
 			set.nature = this.unpackName(buf.substring(i, j), Dex.natures);
 			i = j + 1;
-			// evs
-			j = buf.indexOf('|', i);
-			if (j < 0) return null;
-			if (j !== i) {
-				const evs = buf.substring(i, j).split(',', 6);
-				set.evs = {
-					hp: Number(evs[0]) || 0,
-					atk: Number(evs[1]) || 0,
-					def: Number(evs[2]) || 0,
-					spa: Number(evs[3]) || 0,
-					spd: Number(evs[4]) || 0,
-					spe: Number(evs[5]) || 0,
-				};
-			}
-			i = j + 1;
-			// gender
+			// gender 
 			j = buf.indexOf('|', i);
 			if (j < 0) return null;
 			if (i !== j) set.gender = buf.substring(i, j);
 			i = j + 1;
-			// ivs
+			// jvs (see pack() — this wire slot carries JVs, 0 default, 0-64 range)
 			j = buf.indexOf('|', i);
 			if (j < 0) return null;
 			if (j !== i) {
-				const ivs = buf.substring(i, j).split(',', 6);
-				set.ivs = {
-					hp: ivs[0] === '' ? 31 : Number(ivs[0]) || 0,
-					atk: ivs[1] === '' ? 31 : Number(ivs[1]) || 0,
-					def: ivs[2] === '' ? 31 : Number(ivs[2]) || 0,
-					spa: ivs[3] === '' ? 31 : Number(ivs[3]) || 0,
-					spd: ivs[4] === '' ? 31 : Number(ivs[4]) || 0,
-					spe: ivs[5] === '' ? 31 : Number(ivs[5]) || 0,
+				const clampJv = (n: number) => (n < 0 ? 0 : n > 64 ? 64 : n);
+				const jvs = buf.substring(i, j).split(',', 6);
+				set.jvs = {
+					hp: jvs[0] === '' ? 0 : clampJv(Number(jvs[0]) || 0),
+					atk: jvs[1] === '' ? 0 : clampJv(Number(jvs[1]) || 0),
+					def: jvs[2] === '' ? 0 : clampJv(Number(jvs[2]) || 0),
+					spa: jvs[3] === '' ? 0 : clampJv(Number(jvs[3]) || 0),
+					spd: jvs[4] === '' ? 0 : clampJv(Number(jvs[4]) || 0),
+					spe: jvs[5] === '' ? 0 : clampJv(Number(jvs[5]) || 0),
 				};
 			}
 			i = j + 1;
@@ -275,16 +252,16 @@ export const Teams = new class Teams {
 			if (j < 0) return null;
 			if (i !== j) set.level = parseInt(buf.substring(i, j));
 			i = j + 1;
-			// happiness
+			// misc: pokeball, teraType, abilitySet, guardAction
 			j = buf.indexOf(']', i);
 			let misc;
 			if (j < 0) { if (i < buf.length) misc = buf.substring(i).split(',', 9); } 
 			else { if (i !== j) misc = buf.substring(i, j).split(',', 9); }
 			if (misc) {
-				set.happiness = (misc[0] ? Number(misc[0]) : 255);
-				set.pokeball = this.unpackName(misc[2] || '', Dex.items);
-				set.teraType = misc[5];
-				if (misc[6] !== undefined && misc[6] !== '') set.abilitySet = Number(misc[6]) as 1 | 2;
+				set.pokeball = this.unpackName(misc[1] || '', Dex.items);
+				set.teraType = misc[2];
+				if (misc[3] !== undefined && misc[3] !== '') set.abilitySet = Number(misc[3]) as 1 | 2;
+				if (misc[4] !== undefined && misc[4] !== '') set.guardAction = this.unpackName(misc[4], Dex.moves);
 			}
 			if (j < 0) break;
 			i = j + 1;
@@ -327,16 +304,16 @@ export const Teams = new class Teams {
 		// details
 		if (set.level && set.level !== 100) { out += `Level: ${set.level}  \n`; }
 		if (set.shiny) { out += `Shiny: Yes  \n`; }
-		if (typeof set.happiness === 'number' && set.happiness !== 255 && !isNaN(set.happiness)) { out += `Happiness: ${set.happiness}  \n`; }
 		if (set.pokeball) { out += `Pokeball: ${set.pokeball}  \n`; }
 		if (set.teraType) { out += `Tera Type: ${set.teraType}  \n`; }
 		if (set.size) { out += `Size: ${set.size}  \n`; }
 		// stats
 		if (!hideStats) {
 			if (set.evs) {
+				const evs = set.evs;
 				const stats = Dex.stats.ids().map(
-					stat => set.evs[stat] ?
-						`${set.evs[stat]} ${Dex.stats.shortNames[stat]}` : ``
+					stat => evs[stat] ?
+						`${evs[stat]} ${Dex.stats.shortNames[stat]}` : ``
 				).filter(Boolean);
 				if (stats.length) { out += `EVs: ${stats.join(" / ")}  \n`; }
 			}
@@ -396,9 +373,6 @@ export const Teams = new class Teams {
 		else if (line.startsWith('Level: ')) {
 			line = line.slice(7);
 			set.level = +line;
-		} else if (line.startsWith('Happiness: ')) {
-			line = line.slice(11);
-			set.happiness = +line;
 		} else if (line.startsWith('Pokeball: ')) {
 			line = line.slice(10);
 			set.pokeball = aggressive ? toID(line) : line;
@@ -449,7 +423,6 @@ export const Teams = new class Teams {
 					for (const statid in hpIVs) { set.ivs[statid as StatID] = hpIVs[statid as StatID]!; }
 				}
 			}
-			if (line === 'Frustration' && set.happiness === undefined) { set.happiness = 0; }
 			set.moves.push(line);
 		}
 	}

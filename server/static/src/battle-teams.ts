@@ -2,7 +2,7 @@ import { Dex, toID, type ModdedDex } from "./battle-dex";
 import { BattleNatures, BattleStatNames, BattleStatIDs, type StatNameExceptHP, type ID } from "./battle-dex-data";
 export declare namespace Teams {
 	// Teams.PokemonSet can be sparse, in which case that entry should be inferred from the rest of the set, according to sensible defaults.
-	export interface FullPokemonSet {
+		export interface FullPokemonSet {
 		/** Defaults to species name (not including forme), like in games */
 		name: string;
 		species: string;
@@ -10,6 +10,10 @@ export declare namespace Teams {
 		item?: string;
 		/** Defaults to no ability (error in Gen 3+) */
 		ability?: string;
+		/** Second ability slot, used when abilitySet === 2 */
+		ability2?: string;
+		/** 1 = abilities 0/1, 2 = abilities H/S */
+		abilitySet?: 1 | 2;
 		moves: string[];
 		/** Defaults to no nature (error in Gen 3+) */
 		nature?: Dex.NatureName;
@@ -19,6 +23,12 @@ export declare namespace Teams {
 		evs: Partial<Dex.StatsTable>;
 		/** Defaults to whatever makes sense - flat 31's unless you have Gyro Ball etc */
 		ivs: Dex.StatsTable;
+		/**
+		 * Judgment Values — replaces the classic EV/IV split entirely. IVs are
+		 * always 31; this is the only stat-investment number that matters.
+		 * 0-64 per stat, 130 total.
+		 */
+		jvs?: Partial<Dex.StatsTable>;
 		/** Defaults as you'd expect (100 normally, 50 in VGC-likes, 5 in LC) */
 		level: number;
 		/** Defaults to no (error if shiny event) */
@@ -31,6 +41,8 @@ export declare namespace Teams {
 		teraType?: string;
 		/** Pokemon size (cosmetic) */
 		size?: string;
+		/** Forced Guard Action move, if any */
+		guardAction?: string;
 	}
 	export interface PokemonSet extends Partial<FullPokemonSet> { /** Defaults to species name (not including forme), like in games */
 		species: string;
@@ -46,9 +58,11 @@ export declare namespace Teams {
 	}
 }
 export const Teams = new class {
-	pack(team: Teams.PokemonSet[] | null): string {
+		pack(team: Teams.PokemonSet[] | null): string {
 		if (!team) return '';
-		function getIv(ivs: Dex.StatsTable, s: keyof Dex.StatsTable): string { return ivs[s] === 31 || ivs[s] === undefined ? '' : ivs[s].toString(); }
+		function getJv(jvs: Partial<Dex.StatsTable> | undefined, s: keyof Dex.StatsTable): string {
+			return !jvs || !jvs[s] ? '' : jvs[s]!.toString();
+		}
 		let buf = '';
 		for (const set of team) {
 			if (buf) buf += ']';
@@ -57,34 +71,33 @@ export const Teams = new class {
 			// species
 			const speciesid = this.packName(set.species || set.name);
 			buf += `|${this.packName(set.name || set.species) === speciesid ? '' : speciesid}`;
+			// ISL schema: size is a core field (placed before item)
+			buf += `|${String(set.size || '').toUpperCase()}`;
 			// item
 			buf += `|${this.packName(set.item)}`;
-			// ability
-			buf += `|${this.packName(set.ability)}`;
+			// ISL schema: abilities field is "abilitySet/ability/ability2"
+			const abilitySet = (set.abilitySet === 2 ? 2 : 1);
+			buf += `|${abilitySet}/${this.packName(set.ability)}/${this.packName(set.ability2)}`;
 			// moves
 			buf += '|' + set.moves.map(this.packName).join(',');
 			// nature
 			buf += `|${set.nature || ''}`;
-			// evs
-			let evs = '|';
-			if (set.evs) { evs = `|${set.evs['hp'] || ''},${set.evs['atk'] || ''},${set.evs['def'] || ''},` + `${set.evs['spa'] || ''},${set.evs['spd'] || ''},${set.evs['spe'] || ''}`; }
-			buf += evs === '|,,,,,' ? '|' : evs;
 			// gender
 			buf += `|${set.gender || ''}`;
-			// ivs
-			let ivs = '|';
-			if (set.ivs) { ivs = `|${getIv(set.ivs, 'hp')},${getIv(set.ivs, 'atk')},${getIv(set.ivs, 'def')},` + `${getIv(set.ivs, 'spa')},${getIv(set.ivs, 'spd')},${getIv(set.ivs, 'spe')}`; }
-			buf += ivs === '|,,,,,' ? '|' : ivs;
+			// jvs (0 is the omitted/blank default, not 31 — there's no IV system)
+			let jvs = '|';
+			if (set.jvs) { jvs = `|${getJv(set.jvs, 'hp')},${getJv(set.jvs, 'atk')},${getJv(set.jvs, 'def')},` + `${getJv(set.jvs, 'spa')},${getJv(set.jvs, 'spd')},${getJv(set.jvs, 'spe')}`; }
+			buf += jvs === '|,,,,,' ? '|' : jvs;
 			// shiny
 			buf += `|${set.shiny ? 'S' : ''}`;
 			// level
 			buf += `|${set.level && set.level !== 100 ? set.level : ''}`;
-			// happiness
-			buf += `|${set.happiness !== undefined && set.happiness !== 255 ? set.happiness : ''}`;
-			if (set.pokeball || set.teraType || set.size) {
+			// misc: pokeball, teraType, abilitySet, guardAction
+			if (set.pokeball || set.teraType || set.abilitySet || set.guardAction) {
 				buf += `,${this.packName(set.pokeball || '')}`;
 				buf += `,${set.teraType || ''}`;
-				buf += `,${set.size || ''}`;
+				buf += `,${set.abilitySet || ''}`;
+				buf += `,${this.packName(set.guardAction || '')}`;
 			}
 		}
 		return buf;
@@ -107,6 +120,7 @@ export const Teams = new class {
 		let i = 0;
 		let j = 0;
 		let lastI = 0;
+		const clampJv = (n: number) => (n < 0 ? 0 : n > 64 ? 64 : n);
 		while (true) {
 			const set: Teams.PokemonSet = {} as any;
 			team.push(set);
@@ -120,14 +134,25 @@ export const Teams = new class {
 			set.species = species.name;
 			if (species.baseSpecies !== name) set.name = name;
 			i = j + 1;
+			// ISL schema: size is a core field (placed before item)
+			j = buf.indexOf('|', i);
+			set.size = buf.substring(i, j) || undefined;
+			i = j + 1;
 			// item
 			j = buf.indexOf('|', i);
 			set.item = Dex.items.get(buf.substring(i, j)).name;
 			i = j + 1;
-			// ability
+			// ISL schema: abilities field is "abilitySet/ability/ability2"
 			j = buf.indexOf('|', i);
-			const ability = Dex.abilities.get(buf.substring(i, j)).name;
-			set.ability = (species.abilities && ['', '0', '1', 'H', 'S'].includes(ability) ? species.abilities[ability as '0' || '0'] : ability);
+			{
+				const abilityField = buf.substring(i, j).split('/');
+				const as = Number(abilityField[0]) === 2 ? 2 : 1;
+				set.abilitySet = as;
+				const a1 = Dex.abilities.get(abilityField[1] || '').name;
+				const a2 = Dex.abilities.get(abilityField[2] || '').name;
+				set.ability = (species.abilities && ['', '0', '1', 'H', 'S'].includes(a1) ? species.abilities[a1 as '0' || '0'] : a1);
+				if (a2) { set.ability2 = (species.abilities && ['', '0', '1', 'H', 'S'].includes(a2) ? species.abilities[a2 as '0' || '0'] : a2); }
+			}
 			i = j + 1;
 			// moves
 			j = buf.indexOf('|', i);
@@ -138,38 +163,21 @@ export const Teams = new class {
 			set.nature = buf.substring(i, j) as Dex.NatureName;
 			if (set.nature as any === 'undefined') delete set.nature;
 			i = j + 1;
-			// evs
-			j = buf.indexOf('|', i);
-			if (j !== i) {
-				const evstring = buf.substring(i, j);
-				if (evstring.length > 5) {
-					const evs = evstring.split(',');
-					set.evs = {
-						hp: Number(evs[0]) || 0,
-						atk: Number(evs[1]) || 0,
-						def: Number(evs[2]) || 0,
-						spa: Number(evs[3]) || 0,
-						spd: Number(evs[4]) || 0,
-						spe: Number(evs[5]) || 0,
-					};
-				} else if (evstring === '0') { set.evs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }; }
-			}
-			i = j + 1;
 			// gender
 			j = buf.indexOf('|', i);
 			if (i !== j) set.gender = buf.substring(i, j);
 			i = j + 1;
-			// ivs
+			// jvs (this wire slot carries JVs, 0 default, 0-64 range — no IV system)
 			j = buf.indexOf('|', i);
 			if (j !== i) {
-				const ivs = buf.substring(i, j).split(',');
-				set.ivs = {
-					hp: ivs[0] === '' ? 31 : Number(ivs[0]),
-					atk: ivs[1] === '' ? 31 : Number(ivs[1]),
-					def: ivs[2] === '' ? 31 : Number(ivs[2]),
-					spa: ivs[3] === '' ? 31 : Number(ivs[3]),
-					spd: ivs[4] === '' ? 31 : Number(ivs[4]),
-					spe: ivs[5] === '' ? 31 : Number(ivs[5]),
+				const jvs = buf.substring(i, j).split(',', 6);
+				set.jvs = {
+					hp: jvs[0] === '' ? 0 : clampJv(Number(jvs[0]) || 0),
+					atk: jvs[1] === '' ? 0 : clampJv(Number(jvs[1]) || 0),
+					def: jvs[2] === '' ? 0 : clampJv(Number(jvs[2]) || 0),
+					spa: jvs[3] === '' ? 0 : clampJv(Number(jvs[3]) || 0),
+					spd: jvs[4] === '' ? 0 : clampJv(Number(jvs[4]) || 0),
+					spe: jvs[5] === '' ? 0 : clampJv(Number(jvs[5]) || 0),
 				};
 			}
 			i = j + 1;
@@ -181,16 +189,16 @@ export const Teams = new class {
 			j = buf.indexOf('|', i);
 			if (i !== j) set.level = parseInt(buf.substring(i, j), 10);
 			i = j + 1;
-			// happiness
+			// misc: pokeball, teraType, abilitySet, guardAction
 			j = buf.indexOf(']', i);
 			let misc;
-			if (j < 0) { if (i < buf.length) misc = buf.substring(i).split(',', 7); } 
-			else { if (i !== j) misc = buf.substring(i, j).split(',', 7); }
+			if (j < 0) { if (i < buf.length) misc = buf.substring(i).split(',', 4); } 
+			else { if (i !== j) misc = buf.substring(i, j).split(',', 4); }
 			if (misc) {
-				set.happiness = (misc[0] ? Number(misc[0]) : undefined);
-				set.pokeball = misc[2] || undefined;
-				set.teraType = misc[5] || undefined;
-				set.size = misc[6] || undefined;
+				set.pokeball = Dex.items.get(misc[0] || '').name || undefined;
+				set.teraType = misc[1] || undefined;
+				if (misc[2]) set.abilitySet = Number(misc[2]) === 2 ? 2 : 1;
+				set.guardAction = misc[3] ? Dex.moves.get(misc[3]).name : undefined;
 			}
 			i = j + 1;
 			if (j < 0 || i <= lastI) break;
@@ -262,14 +270,14 @@ export const Teams = new class {
 		if (set.nature && !newFormat) { text += `${set.nature} Nature\n`; } 
 		else if (['Hardy', 'Docile', 'Serious', 'Bashful', 'Quirky'].includes(set.nature!)) { text += `${set.nature!} Nature\n`; }
 		first = true;
-		if (set.ivs) {
+		if (set.jvs) {
 			for (const stat of Dex.statNames) {
-				if (set.ivs[stat] === undefined || isNaN(set.ivs[stat]) || set.ivs[stat] === 31) continue;
+				if (!set.jvs[stat]) continue;
 				if (first) {
-					text += `IVs: `;
+					text += `JVs: `;
 					first = false;
 				} else { text += ` / `; }
-				text += `${set.ivs[stat]} ${BattleStatNames[stat]}`;
+				text += `${set.jvs[stat]} ${BattleStatNames[stat]}`;
 			}
 		}
 		if (!first) { text += `\n`; }
@@ -364,18 +372,24 @@ export const Teams = new class {
 			}
 			const nature = this.getNatureFromPlusMinus(plus as StatNameExceptHP, minus as StatNameExceptHP);
 			if (nature) set.nature = nature;
-		} else if (line.startsWith('IVs: ')) {
-			const ivLines = line.slice(5).split(' / ');
-			set.ivs = { hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31 };
-			for (let ivLine of ivLines) {
-				ivLine = ivLine.trim();
-				const spaceIndex = ivLine.indexOf(' ');
+		} else if (line.startsWith('JVs: ') || line.startsWith('IVs: ')) {
+			// Accept legacy "IVs:" text too, in case of old pasted sets, but the
+			// values always land in jvs now — there's no IV system.
+			const isLegacyIV = line.startsWith('IVs: ');
+			const jvLines = line.slice(5).split(' / ');
+			set.jvs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
+			for (let jvLine of jvLines) {
+				jvLine = jvLine.trim();
+				const spaceIndex = jvLine.indexOf(' ');
 				if (spaceIndex === -1) continue;
-				const statid = BattleStatIDs[ivLine.slice(spaceIndex + 1)];
+				const statid = BattleStatIDs[jvLine.slice(spaceIndex + 1)];
 				if (!statid) continue;
-				let statval = parseInt(ivLine.slice(0, spaceIndex), 10);
-				if (isNaN(statval)) statval = 31;
-				set.ivs[statid] = statval;
+				let statval = parseInt(jvLine.slice(0, spaceIndex), 10);
+				if (isNaN(statval)) statval = 0;
+				// A legacy "31 Atk"-style IV line means "not invested" in the new
+				// system, not "31 JVs" — only non-31 legacy values carried real
+				// information (Hidden Power IVs), which don't map to JVs at all.
+				set.jvs[statid] = isLegacyIV ? 0 : (statval < 0 ? 0 : statval > 64 ? 64 : statval);
 			}
 		} else if (/^[A-Za-z]+ (N|n)ature/.exec(line)) {
 			let natureIndex = line.indexOf(' Nature');

@@ -1270,7 +1270,6 @@ var buckets=[
 {label:'Mega Stones',tags:['megastone','!fling','!pokeball','!nouse']},
 {label:'Z-Crystals',tags:['zcrystals','!fling','!pokeball','!nouse']},
 {label:'TM/TR/HM',tags:['!fling','!nouse']},
-{label:'Alcremie Sweets',tags:['sweets','!fling','!nouse']},
 {label:'Fling Only',tags:['fling','!nouse']},
 {label:'Evolution Items without an effect',tags:['evolution','tradeevo','!nouse']},
 {label:'Poké Balls',tags:['pokeball','!nouse']},
@@ -1468,7 +1467,7 @@ if(!itemClasses.includes(v))return false;
 }
 return true;
 };_proto5.
-sort=function sort(results,sortCol,reverseSort){throw new Error("invalid sortcol");};return BattleItemSearch;}(BattleTypedSearch);BattleItemSearch.itemClassNames={fragile:'Fragile',"volatile":'Volatile',berry:'Berry',consumable:'Consumable',evolution:'Evolution',tradeevo:'Trade Evolution',pokeball:'Poké Ball',healing:'Healing',statboost:'Stat Boost',statuscure:'Status Cure',resist:'Resist',reactive:'Reactive',utility:'Utility',species:'Species-specific',megastone:'Mega Stone',typeboost:'Type Boost',sweets:'Sweets',zcrystals:'Z-Crystals',evostones:'Evo Stones',weather:'Weather',terrain:'Terrain',fling:'Fling Only',nouse:'No Use'};var
+sort=function sort(results,sortCol,reverseSort){throw new Error("invalid sortcol");};return BattleItemSearch;}(BattleTypedSearch);BattleItemSearch.itemClassNames={fragile:'Fragile',"volatile":'Volatile',berry:'Berry',consumable:'Consumable',evolution:'Evolution',tradeevo:'Trade Evo',pokeball:'Poké Ball',healing:'Healing',statboost:'Stat Boost',statuscure:'Status Cure',resist:'Resist',reactive:'Reactive',utility:'Utility',species:'Species-specific',megastone:'Mega Stone',typeboost:'Type Boost',sweets:'Sweets',zcrystals:'Z-Crystals',evostones:'Evo Stones',weather:'Weather',terrain:'Terrain',fling:'Fling Only',nouse:'No Use'};var
 
 
 BattleMoveSearch=function(_BattleTypedSearch5){function BattleMoveSearch(){var _this7;for(var _len3=arguments.length,args=new Array(_len3),_key3=0;_key3<_len3;_key3++){args[_key3]=arguments[_key3];}_this7=_BattleTypedSearch5.call.apply(_BattleTypedSearch5,[this].concat(args))||this;_this7.
@@ -1490,8 +1489,6 @@ results.push(['move',id]);
 return results;
 };_proto6.
 getFlagWeightsForTypes=function getFlagWeightsForTypes(types){
-
-
 var table=window.TypeAffinityAversion;
 var weights={};
 if(!table)return weights;for(var _i53=0;_i53<

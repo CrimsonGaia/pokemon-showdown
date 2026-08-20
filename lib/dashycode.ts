@@ -1,20 +1,15 @@
 /**
  * Dashycode!
- *
  * Encodes a string in a restricted string containing only alphanumeric
  * characters and dashes.
- *
  * (The name is a riff on Punycode, which is what I originally wanted
  * to use for this purpose, but it turns out Punycode does not work on
  * arbitrary strings.)
- *
  * @author Guangcong Luo <guangcongluo@gmail.com>
  * @license MIT
  */
-
 const CODE_MAP = "23456789abcdefghijkmnpqrstuvwxyz";
 const UNSAFE_MAP = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
-
 // chunk types:
 // 0b00 = 0x0 = block separator ("wait until next dash")
 // 0b01 = 0x1 = capitalize
@@ -24,7 +19,6 @@ const UNSAFE_MAP = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
 // 0b11 = 0x3 = other
 //   0b0_11 = 0x3 = space
 //   0b1_11 = 0x7 = UTF-16 (16 more bits)
-
 /**
  * An object representing a Dashycode bitstream.
  * The stream can be either a read stream or a write stream, but not
@@ -35,7 +29,6 @@ interface DashyStream {
 	buf: number;
 	bufLength: number;
 }
-
 function streamWrite(stream: DashyStream, writeBufLength: number, writeBuf: number) {
 	stream.buf += (writeBuf << stream.bufLength);
 	stream.bufLength += writeBufLength;
@@ -45,16 +38,13 @@ function streamWrite(stream: DashyStream, writeBufLength: number, writeBuf: numb
 		stream.bufLength -= 5;
 	}
 }
-
 function streamGetCode(stream: DashyStream) {
 	const buf = stream.codeBuf + CODE_MAP.charAt(stream.buf);
-
 	// truncate trailing `2`s (0b00000 chunks)
 	let end2Len = 0;
 	while (buf.charAt(buf.length - 1 - end2Len) === '2') end2Len++;
 	return end2Len ? buf.slice(0, -end2Len) : buf;
 }
-
 function streamPeek(stream: DashyStream, readLength: number, readMask: number = 0xFFFF >> (16 - readLength)) {
 	while (stream.bufLength < readLength && stream.codeBuf.length) {
 		const next5Bits = CODE_MAP.indexOf(stream.codeBuf.charAt(0));
@@ -65,7 +55,6 @@ function streamPeek(stream: DashyStream, readLength: number, readMask: number = 
 	}
 	return stream.buf & readMask;
 }
-
 function streamRead(stream: DashyStream, readLength: number, readMask: number = 0xFFFF >> (16 - readLength)) {
 	const output = streamPeek(stream, readLength, readMask);
 	// Note: bufLength can go negative! Streams have infinite trailing 0s
@@ -73,15 +62,10 @@ function streamRead(stream: DashyStream, readLength: number, readMask: number = 
 	stream.bufLength -= readLength;
 	return output;
 }
-
 export function encode(str: string, allowCaps = false) {
 	if (!str) return '0--0';
 	let safePart = '';
-	const unsafeStream: DashyStream = {
-		codeBuf: '',
-		buf: 0x0,
-		bufLength: 0,
-	};
+	const unsafeStream: DashyStream = { codeBuf: '', buf: 0x0, bufLength: 0, };
 	let isSafe = true;
 	let alphaIndex = 0;
 	let capBuffer = 0x0;
@@ -90,17 +74,10 @@ export function encode(str: string, allowCaps = false) {
 		const isLowercase = (97 <= curCharCode && curCharCode <= 122); // a-z
 		const isUppercase = (65 <= curCharCode && curCharCode <= 90); // A-Z
 		const isNumeric = (48 <= curCharCode && curCharCode <= 57); // 0-9
-		if (capBuffer && (
-			!(isLowercase || isUppercase || isNumeric) ||
-			alphaIndex >= 8 ||
-			i === str.length
-		)) {
+		if (capBuffer && (!(isLowercase || isUppercase || isNumeric) || alphaIndex >= 8 || i === str.length)) {
 			// flush cap buffer
-			if (capBuffer === 0xD) {
-				streamWrite(unsafeStream, 3, 0x1);
-			} else {
-				streamWrite(unsafeStream, 11, capBuffer);
-			}
+			if (capBuffer === 0xD) { streamWrite(unsafeStream, 3, 0x1); } 
+			else { streamWrite(unsafeStream, 11, capBuffer); }
 			alphaIndex -= 8;
 			capBuffer = 0x0;
 		}
@@ -121,9 +98,8 @@ export function encode(str: string, allowCaps = false) {
 				}
 				if (!capBuffer) capBuffer = 0x5;
 				capBuffer += 1 << (alphaIndex + 3);
-			} else {
-				safePart += str.charAt(i);
-			}
+			} 
+			else { safePart += str.charAt(i); }
 			if (isUppercase || isLowercase) alphaIndex++;
 			continue;
 		}
@@ -144,11 +120,9 @@ export function encode(str: string, allowCaps = false) {
 			isSafe = false;
 		}
 		let unsafeMapIndex = -1;
-		if (curCharCode === -1) {
-			streamWrite(unsafeStream, 2, 0x0);
-		} else if (curCharCode === 32) { // space
-			streamWrite(unsafeStream, 3, 0x3);
-		} else if ((unsafeMapIndex = UNSAFE_MAP.indexOf(str.charAt(i))) >= 0) {
+		if (curCharCode === -1) { streamWrite(unsafeStream, 2, 0x0); } 
+		else if (curCharCode === 32) { streamWrite(unsafeStream, 3, 0x3); } // space
+		else if ((unsafeMapIndex = UNSAFE_MAP.indexOf(str.charAt(i))) >= 0) {
 			curCharCode = (unsafeMapIndex << 2) + 0x2;
 			streamWrite(unsafeStream, 7, curCharCode);
 		} else {
@@ -161,9 +135,7 @@ export function encode(str: string, allowCaps = false) {
 		safePart = safePart.slice(1);
 		unsafePart = `${unsafePart}2`;
 	}
-	if (safePart.endsWith('-')) {
-		safePart = safePart.slice(0, -1);
-	}
+	if (safePart.endsWith('-')) { safePart = safePart.slice(0, -1); }
 	if (!safePart) {
 		safePart = '0';
 		unsafePart = `0${unsafePart}`;
@@ -172,19 +144,12 @@ export function encode(str: string, allowCaps = false) {
 	if (!unsafePart) return safePart;
 	return `${safePart}--${unsafePart}`;
 }
-
 export function decode(codedStr: string) {
 	let str = '';
 	let lastDashIndex = codedStr.lastIndexOf('--');
-	if (lastDashIndex < 0) {
-		// the regular decoder can also handle this case; but this should
-		// be faster
-		return codedStr.replace(/-/g, ' ');
-	}
+	if (lastDashIndex < 0) { return codedStr.replace(/-/g, ' '); } // the regular decoder can also handle this case; but this should be faster
 	if (codedStr.charAt(lastDashIndex + 2) === '0') {
-		if (!codedStr.startsWith('0') || lastDashIndex !== 1) {
-			throw new Error("Invalid Dashycode");
-		}
+		if (!codedStr.startsWith('0') || lastDashIndex !== 1) { throw new Error("Invalid Dashycode"); }
 		lastDashIndex -= 1;
 		codedStr = '--' + codedStr.slice(4);
 	}
@@ -227,9 +192,7 @@ export function decode(codedStr: string) {
 				}
 				const toCapitalize = capBuffer & 0x1;
 				capBuffer >>= 1;
-				if (toCapitalize) {
-					curChar = String.fromCharCode(curCharCode - 32);
-				}
+				if (toCapitalize) { curChar = String.fromCharCode(curCharCode - 32); }
 			}
 			str += curChar;
 		} else {
@@ -249,11 +212,8 @@ export function decode(codedStr: string) {
 					isEmpty = false;
 					break;
 				case 0x3:
-					if (streamRead(unsafeStream, 1, 0x1)) {
-						curChar = String.fromCharCode(streamRead(unsafeStream, 16, 0xFFFF));
-					} else {
-						curChar = ' ';
-					}
+					if (streamRead(unsafeStream, 1, 0x1)) { curChar = String.fromCharCode(streamRead(unsafeStream, 16, 0xFFFF)); } 
+					else { curChar = ' '; }
 					isEmpty = false;
 					break;
 				}
@@ -264,7 +224,6 @@ export function decode(codedStr: string) {
 	}
 	return str;
 }
-
 export function vizStream(codeBuf: string, translate = true) {
 	let spacedStream = '';
 	if (codeBuf.startsWith('0')) {
@@ -280,33 +239,25 @@ export function vizStream(codeBuf: string, translate = true) {
 		buf: 0x0,
 		bufLength: 0,
 	};
-
 	function vizBlock(s: DashyStream, bufLen: number) {
 		const buf = streamRead(s, bufLen);
 		return buf.toString(2).padStart(bufLen, '0');
 	}
-
 	while (stream.bufLength > 0 || stream.codeBuf) {
 		switch (streamRead(stream, 2)) {
 		case 0x0:
 			spacedStream = (translate ? ' |' : ' 00') + spacedStream;
 			break;
 		case 0x1:
-			if (streamRead(stream, 1)) {
-				spacedStream = ' ' + vizBlock(stream, 8) + (translate ? '-cap' : '_1_01') + spacedStream;
-			} else {
-				spacedStream = (translate ? ' capfirst' : ' 0_01') + spacedStream;
-			}
+			if (streamRead(stream, 1)) { spacedStream = ' ' + vizBlock(stream, 8) + (translate ? '-cap' : '_1_01') + spacedStream; } 
+			else { spacedStream = (translate ? ' capfirst' : ' 0_01') + spacedStream; }
 			break;
 		case 0x2:
 			spacedStream = ' ' + vizBlock(stream, 5) + (translate ? '-ascii' : '_10') + spacedStream;
 			break;
 		case 0x3:
-			if (streamRead(stream, 1)) {
-				spacedStream = ' ' + vizBlock(stream, 16) + (translate ? '-utf' : '_1_11') + spacedStream;
-			} else {
-				spacedStream = (translate ? ' space' : ' 0_11') + spacedStream;
-			}
+			if (streamRead(stream, 1)) { spacedStream = ' ' + vizBlock(stream, 16) + (translate ? '-utf' : '_1_11') + spacedStream; } 
+			else { spacedStream = (translate ? ' space' : ' 0_11') + spacedStream; }
 			break;
 		}
 	}

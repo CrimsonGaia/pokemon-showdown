@@ -70,7 +70,6 @@ export interface PokemonGoData {
 export interface SpeciesDataTable { [speciesid: IDEntry]: SpeciesData | CosmeticFormeData }
 export interface ModdedSpeciesDataTable { [speciesid: IDEntry]: ModdedSpeciesData }
 export interface SpeciesFormatsDataTable { [speciesid: IDEntry]: SpeciesFormatsData }
-export interface ModdedSpeciesFormatsDataTable { [speciesid: IDEntry]: ModdedSpeciesFormatsData }
 export interface LearnsetDataTable { [speciesid: IDEntry]: LearnsetData }
 export interface ModdedLearnsetDataTable { [speciesid: IDEntry]: ModdedLearnsetData }
 export interface PokemonGoDataTable { [speciesid: IDEntry]: PokemonGoData }

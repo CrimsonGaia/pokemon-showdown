@@ -101,6 +101,9 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 	weaponDurability = 0;
 	maxWeaponDurability = 0;
 	weaponRecoveryLeft = 0;
+	/** Necrozma's light-charge counter, mirrored from the sim via `-lightcharge`. */
+	lightCharge = 0;
+	maxLightCharge = 3;
 	guardActionMoveId = '';
 	guardActionCur = 0;
 	guardActionMax = 0;
@@ -1905,6 +1908,15 @@ export class Battle {
 			this.scene.updateStatbar(poke);
 			break;
 		}
+		case '-lightcharge': {
+			const poke = this.getPokemon(args[1]);
+			if (!poke) break;
+			const [currentText, maxText] = (args[2] || '').split('/');
+			poke.lightCharge = parseInt(currentText || '0', 10) || 0;
+			poke.maxLightCharge = parseInt(maxText || '3', 10) || 3;
+			this.scene.updateStatbarIfExists(poke);
+			break;
+		}
 		case '-item': {
 			let poke = this.getPokemon(args[1])!;
 			let item = Dex.items.get(args[2]);
@@ -2373,7 +2385,7 @@ export class Battle {
 				this.scene.resultAnim(poke, 'Reflect', 'good');
 				break;
 			}
-			if (!(effect.id === 'typechange' && poke.terastallized)) { poke.addVolatile(effect.id); }
+			if (!(effect.id === 'typechange' && poke.terastallized)) { poke.addVolatile(effect.id, ...args.slice(3)); }
 			this.scene.updateStatbar(poke);
 			this.log(args, kwArgs);
 			break;

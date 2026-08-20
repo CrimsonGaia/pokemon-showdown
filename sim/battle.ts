@@ -474,6 +474,37 @@ export class Battle {
 		this.event = parentEvent;
 		return returnVal === undefined ? relayVar : returnVal;
 	}
+	/**
+	 * Returns the effectOrder of the ability slot (1 or 2) matching one of abilityIds, or
+	 * slot 1's effectOrder if abilityIds isn't given. Used to order simultaneous-priority
+	 * effects (Dancer/Musician) against Pokemon with two active abilities.
+	 */
+	getAbilityEffectOrder(pokemon: Pokemon, abilityIds?: string[]) {
+		const wanted = abilityIds?.map(id => toID(id));
+		const slots = pokemon.getAbilitySlots();
+		for (const slot of slots) {
+			if (!slot.state) continue;
+			if (!wanted || wanted.includes(slot.id)) { return slot.state.effectOrder ?? 0; }
+		}
+		return 0;
+	}
+	/**
+	 * Runs eventid against every active ability slot on holder. For call sites outside the
+	 * normal runEvent/findEventHandlers pipeline (which already dispatches to both ability
+	 * slots on its own target - see the ability1/ability2 pushes in findEventHandlers above).
+	 * This is for directly notifying a specific Pokemon's abilities from outside that pipeline,
+	 * e.g. trap checks run once per foe rather than through the foe's own handler list.
+	 */
+	runAbilityEventNotify(
+		eventid: string, holder: Pokemon, target?: Pokemon | null, source?: Pokemon | null,
+		effect?: Effect | null, ...args: any[]
+	) {
+		const slots = holder.getActiveAbilitySlots();
+		for (const slot of slots) {
+			if (!slot.state) continue;
+			this.singleEvent(eventid, slot.effect, slot.state, target ?? holder, source, effect, ...args);
+		}
+	}
 	runEvent(
 		eventid: string, target?: Pokemon | Pokemon[] | Side | Battle | null, source?: string | Pokemon | false | null,
 		sourceEffect?: Effect | null, relayVar?: any, onEffect?: boolean, fastExit?: boolean
@@ -914,7 +945,7 @@ export class Battle {
 		if (type === 'move') {
 			for (const side of this.sides) {
 				const s: any = side as any;
-				if (s.teraCharge === undefined) s.teraCharge = 30;
+				if (s.teraCharge === undefined) s.teraCharge = 25;
 				if (s.teraChargeMax === undefined) s.teraChargeMax = 100;
 				const charge = Number(s.teraCharge) || 0;
 				const max = Number(s.teraChargeMax) || 100;
@@ -1165,11 +1196,11 @@ export class Battle {
 				}
 				pokemon.trapped = pokemon.maybeTrapped = false;
 				// foe-side trapping first
-				for (const source of pokemon.foes()) { (this as any).runAbilityEventNotify('FoeTrapPokemon', source, pokemon, source); }
-				if (!pokemon.knownType || this.dex.getImmunity('trapped', pokemon)) { for (const source of pokemon.foes()) { (this as any).runAbilityEventNotify('FoeMaybeTrapPokemon', source, pokemon, source); } }
+				for (const source of pokemon.foes()) { this.runAbilityEventNotify('FoeTrapPokemon', source, pokemon, source); }
+				if (!pokemon.knownType || this.dex.getImmunity('trapped', pokemon)) { for (const source of pokemon.foes()) { this.runAbilityEventNotify('FoeMaybeTrapPokemon', source, pokemon, source); } }
 				// self-side trap immunity / clearing last
-				(this as any).runAbilityEventNotify('TrapPokemon', pokemon, pokemon);
-				if (!pokemon.knownType || this.dex.getImmunity('trapped', pokemon)) { (this as any).runAbilityEventNotify('MaybeTrapPokemon', pokemon, pokemon); }
+				this.runEvent('TrapPokemon', pokemon, pokemon);
+				if (!pokemon.knownType || this.dex.getImmunity('trapped', pokemon)) { this.runAbilityEventNotify('MaybeTrapPokemon', pokemon, pokemon); }
 				// canceling switches would leak information if a foe might have a trapping ability
 				if (this.gen > 2) {
 					for (const source of pokemon.foes()) {
@@ -1259,7 +1290,7 @@ export class Battle {
 					s.teraCharge = next;
 					if (next === 0) { for (const p of side.active) { if (p?.terastallized) { this.actions.unterastallize(p); } } }
 				}
-				if (s.megaCharge === undefined) s.megaCharge = 0;
+				if (s.megaCharge === undefined) s.megaCharge = 60;
 				if (s.megaChargeMax === undefined) s.megaChargeMax = 100;
 				const megaMax = Number(s.megaChargeMax) || 100;
 				if (!timeStopped) {
@@ -1418,7 +1449,7 @@ export class Battle {
 				const details = pokemon.details.replace(', shiny', '')
 					.replace(/(Zacian|Zamazenta)(?!-Crowned)/g, '$1-*')
 					.replace(/(Xerneas)(-[a-zA-Z?-]+)?/g, '$1-*');
-				this.addSplit(pokemon.side.id, ['poke', pokemon.side.id, details, '']);
+				this.addSplit(pokemon.side.id, ['poke', pokemon.side.id, details, ''], ['poke', pokemon.side.id, details, '']);
 			}
 			this.makeRequest('teampreview');
 		}
@@ -2510,8 +2541,8 @@ export class Battle {
 			side = new Side(options.name || `Player ${slotNum + 1}`, this, slotNum, team);
 			if (options.avatar) side.avatar = `${options.avatar}`;
 			this.sides[slotNum] = side;
-			(side as any).teraCharge = 30;
-			(side as any).megaCharge = 0;
+			(side as any).teraCharge = 25;
+			(side as any).megaCharge = 60;
 			(side as any).megaChargeMax = 100;
 		} else {
 			// edit player

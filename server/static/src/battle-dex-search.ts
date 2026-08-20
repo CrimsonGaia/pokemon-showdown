@@ -1270,7 +1270,6 @@ class BattleItemSearch extends BattleTypedSearch<'item'> {
 			{label: 'Mega Stones', tags: ['megastone', '!fling', '!pokeball', '!nouse']},
 			{label: 'Z-Crystals', tags: ['zcrystals', '!fling', '!pokeball', '!nouse']},
 			{label: 'TM/TR/HM', tags: ['!fling', '!nouse']},
-			{label: 'Alcremie Sweets', tags: ['sweets', '!fling', '!nouse']},
 			{label: 'Fling Only', tags: ['fling', '!nouse']},
 			{label: 'Evolution Items without an effect', tags: ['evolution', 'tradeevo', '!nouse']},
 			{label: 'Poké Balls', tags: ['pokeball', '!nouse']},
@@ -1382,7 +1381,7 @@ class BattleItemSearch extends BattleTypedSearch<'item'> {
 		berry: 'Berry',
 		consumable: 'Consumable',
 		evolution: 'Evolution',
-		tradeevo: 'Trade Evolution',
+		tradeevo: 'Trade Evo',
 		pokeball: 'Poké Ball',
 		healing: 'Healing',
 		statboost: 'Stat Boost',
@@ -1490,8 +1489,6 @@ class BattleMoveSearch extends BattleTypedSearch<'move'> {
 		return results;
 	}
 		private getFlagWeightsForTypes(types: readonly string[]): Record<string, number> {
-		// TypeAffinityAversion was exported in teambuilder: exports.TypeAffinityAversion = {...}
-		// In the browser, exports === window, so this is available as window.TypeAffinityAversion
 		const table = (window as any).TypeAffinityAversion as Record<string, any> | undefined;
 		const weights: Record<string, number> = {};
 		if (!table) return weights;

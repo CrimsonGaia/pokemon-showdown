@@ -955,9 +955,9 @@ export class BattleScene implements BattleSceneStub {
 			this.sideConditions[siden][id] = [rock1, rock2, rock3, rock4];
 			break;
 		case 'caltrops':
-			const surge1 = new Sprite(BattleEffects.greenmetal1, { display: 'block', x: x + side.leftof(-30), y: y - 20, z: side.z, opacity: 0.5, scale: 0.8, }, this);
-			const surge2 = new Sprite(BattleEffects.greenmetal2, { display: 'block', x: x + side.leftof(35), y: y - 15, z: side.z, opacity: 0.5, scale: 0.8, }, this);
-			const surge3 = new Sprite(BattleEffects.greenmetal1, { display: 'block', x: x + side.leftof(50), y: y - 10, z: side.z, opacity: 0.5, scale: 0.8, }, this);
+			const surge1 = new Sprite(BattleEffects.greenmetal1, { display: 'block', x: x + side.leftof(-45), y: y - 25, z: side.z, opacity: 0.5, scale: 0.8, }, this);
+			const surge2 = new Sprite(BattleEffects.greenmetal2, { display: 'block', x: x + side.leftof(45), y: y - 5, z: side.z, opacity: 0.5, scale: 0.8, }, this);
+			const surge3 = new Sprite(BattleEffects.greenmetal1, { display: 'block', x: x + side.leftof(30), y: y - 40, z: side.z, opacity: 0.5, scale: 0.8, }, this);
 			this.$spritesFront[spriteIndex].append(surge1.$el);
 			this.$spritesFront[spriteIndex].append(surge2.$el);
 			this.$spritesFront[spriteIndex].append(surge3.$el);
@@ -1005,9 +1005,15 @@ export class BattleScene implements BattleSceneStub {
 			}
 			break;
 		case 'stickyweb':
-			const web = new Sprite(BattleEffects.web, { display: 'block', x: x + 15, y: y - 35, z: side.z, opacity: 0.4, scale: 0.7, }, this);
+			const web = new Sprite(BattleEffects.web, { display: 'block', x: x + 30, y: y - 40, z: side.z, opacity: 0.6, scale: 0.7, }, this);
 			this.$spritesFront[spriteIndex].append(web.$el);
 			this.sideConditions[siden][id] = [web];
+			break;
+		case 'toxicthread':
+			const toxicWeb = new Sprite(BattleEffects.web, { display: 'block', x: x, y: y - 25, z: side.z, opacity: 0.6, scale: 0.7, }, this);
+			toxicWeb.$el.css('filter', 'brightness(0) saturate(100%) invert(31%) sepia(85%) saturate(2454%) hue-rotate(259deg) brightness(85%) contrast(95%)');
+			this.$spritesFront[spriteIndex].append(toxicWeb.$el);
+			this.sideConditions[siden][id] = [toxicWeb];
 			break;
 		}
 	}
@@ -1094,7 +1100,6 @@ export class BattleScene implements BattleSceneStub {
 	anim(pokemon: Pokemon, end: ScenePos, transition?: string) { return pokemon.sprite.anim(end, transition); }
 	beforeMove(pokemon: Pokemon) { return pokemon.sprite.beforeMove(); }
 	afterMove(pokemon: Pokemon) { return pokemon.sprite.afterMove(); }
-	//region Misc
 	setFrameHTML(html: any) {
 		this.customControls = true;
 		this.$frame.html(html);
@@ -1121,20 +1126,15 @@ export class BattleScene implements BattleSceneStub {
 		this.preloadImage(Dex.resourcePrefix + 'sprites/ani/substitute.gif');
 		this.preloadImage(Dex.resourcePrefix + 'sprites/ani-back/substitute.gif');
 	}
+	//region Battle Music
 	rollBgm() { this.setBgm(1 + this.numericId % 15); }
 	setBgm(bgmNum: number) {
 		if (this.bgmNum === bgmNum) return;
 		this.bgmNum = bgmNum;
 		switch (bgmNum) {
-		case -1: this.bgm = BattleSound.loadBgm('audio/bw2-homika-dogars.mp3', 1661, 68131, this.bgm);
-			break;
-		case -2: this.bgm = BattleSound.loadBgm('audio/xd-miror-b.mp3', 9000, 57815, this.bgm);
-			break;
-		case -3: this.bgm = BattleSound.loadBgm('audio/colosseum-miror-b.mp3', 896, 47462, this.bgm);
-			break;
 		case 1: this.bgm = BattleSound.loadBgm('audio/dpp-trainer.mp3', 13440, 96959, this.bgm);
 			break;
-		case 2: this.bgm = BattleSound.loadBgm('audio/dpp-rival.mp3', 13888, 66352, this.bgm);
+		case 2: this.bgm = BattleSound.loadBgm('audio/dpp-barry.mp3', 13888, 66352, this.bgm);
 			break;
 		case 3: this.bgm = BattleSound.loadBgm('audio/hgss-johto-trainer.mp3', 23731, 125086, this.bgm);
 			break;
@@ -1160,10 +1160,18 @@ export class BattleScene implements BattleSceneStub {
 			break;
 		case 14: this.bgm = BattleSound.loadBgm('audio/sm-trainer.mp3', 8323, 89230, this.bgm);
 			break;
-		case -101: this.bgm = BattleSound.loadBgm('audio/spl-elite4.mp3', 3962, 152509, this.bgm);
+		case 15: this.bgm = BattleSound.loadBgm('audio/sm-hau.mp3', 11389, 62158, this.bgm);
 			break;
-		case 15:
-			default: this.bgm = BattleSound.loadBgm('audio/sm-rival.mp3', 11389, 62158, this.bgm);
+		case 16: this.bgm = BattleSound.loadBgm('audio/sv-star-barrage.mp3', 34969, 434964, this.bgm);
+			break;
+		case 17: this.bgm = BattleSound.loadBgm('audio/PLACEHOLDER.mp3', 8323, 89230, this.bgm);
+			break;
+		case 18: this.bgm = BattleSound.loadBgm('audio/svtm-carmine.mp3', 7744, 13100, this.bgm);
+			break;
+		case 19: this.bgm = BattleSound.loadBgm('audio/PLACEHOLDER.mp3', 8323, 89230, this.bgm);
+			break;
+		case 20:
+			default: this.bgm = BattleSound.loadBgm('audio/PLACEHOLDER.mp3', 11389, 62158, this.bgm);
 			break;
 		}
 		this.updateBgm();
@@ -1340,6 +1348,7 @@ export class PokemonSprite extends Sprite {
 		octolock: ['Octolock', 'bad'],
 		tarshot: ['Tar Shot', 'bad'],
 		saltcure: ['Salt Cure', 'bad'],
+		needles: ['Needles', 'bad'],
 		syrupbomb: ['Syrupy', 'bad'],
 		doomdesire: null,
 		futuresight: null,
@@ -1933,7 +1942,10 @@ export class PokemonSprite extends Sprite {
 			status += '+<img src="' + Dex.resourcePrefix + 'sprites/types/' + type + '.png" alt="' + type + '" class="pixelated" /> ';
 		}
 		for (const stat in pokemon.boosts) { if (pokemon.boosts[stat]) { status += '<span class="' + pokemon.getBoostType(stat as Dex.BoostStatName) + '">' + pokemon.getBoost(stat as Dex.BoostStatName) + '</span> '; } }
-		for (let i in pokemon.volatiles) { status += PokemonSprite.getEffectTag(i); }
+		for (let i in pokemon.volatiles) {
+			if (i === 'needles' && pokemon.volatiles[i][2]) { status += `<span class="bad">Needles&nbsp;[${pokemon.volatiles[i][2]}]</span> `; } 
+			else { status += PokemonSprite.getEffectTag(i); }
+		}
 		for (let i in pokemon.turnstatuses) {
 			if (i === 'roost' && !pokemon.getTypeList().includes('Flying')) continue;
 			status += PokemonSprite.getEffectTag(i);

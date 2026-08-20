@@ -51,6 +51,7 @@
 			buf += '<p><button class="button mainmenu4" name="send" value="/smogtours">Tournaments</button></p>';
 			buf += '<p><button class="button mainmenu5 onlineonly disabled" name="send" value="/friends">Friends</button></p>';
 			buf += '<p><button class="button mainmenu6" name="joinRoom" value="resources">Info & Resources</button></p>';
+			buf += '<p><button class="button mainmenu7" name="joinRoom" value="testbattle">Test Battle</button></p>';
 			buf += '</div>';
 			this.$('.mainmenu').html(buf);
 			// right menu
@@ -104,9 +105,13 @@
 			options.attributes = options.attributes || '';
 			options.append = options.append || false;
 			options.noMinimize = options.noMinimize || false;
-			this.$pmBox[options.append ? 'append' : 'prepend']('<div class="pm-window ' + options.cssClass + '" ' + options.attributes + '><h3><button class="closebutton" tabindex="-1" aria-label="Close"><i class="fa fa-times-circle"></i></button>' + (!options.noMinimize ? '<button class="minimizebutton" tabindex="-1" aria-label="Minimize"><i class="fa fa-minus-circle"></i></button>' : '') + options.title + '</h3><div class="pm-log" style="overflow:visible;height:' + (typeof options.height === 'number' ? options.height + 'px' : options.height) + ';' + (parseInt(options.height, 10) ? 'max-height:none' : (options.maxHeight ? 'max-height:' + (typeof options.maxHeight === 'number' ? options.maxHeight + 'px' : options.maxHeight) : '')) + '">' +
-				BattleLog.sanitizeHTML(options.html) +
-				'</div></div>');
+			this.$pmBox[options.append ? 'append' : 'prepend']('<div class="pm-window ' + options.cssClass + '" ' 
+				+ options.attributes + '><h3><button class="closebutton" tabindex="-1" aria-label="Close"><i class="fa fa-times-circle"></i></button>' 
+				+ (!options.noMinimize ? '<button class="minimizebutton" tabindex="-1" aria-label="Minimize"><i class="fa fa-minus-circle"></i></button>' : '') 
+				+ options.title + '</h3><div class="pm-log" style="overflow:visible;height:' + (typeof options.height === 'number' ? options.height 
+				+ 'px' : options.height) + ';' + (parseInt(options.height, 10) ? 'max-height:none' : (options.maxHeight ? 'max-height:' 
+				+ (typeof options.maxHeight === 'number' ? options.maxHeight + 'px' : options.maxHeight) : '')) + '">' +
+				BattleLog.sanitizeHTML(options.html) + '</div></div>');
 		},
 		// region News
 		addNews: function () {
@@ -1214,6 +1219,7 @@
 			this.team = data.team;
 			this.format = data.format;
 			this.room = data.room;
+			this.onselect = data.onselect;
 			this.isMoreTeams = data.isMoreTeams || false;
 			var format = BattleFormats[data.format];
 			if (data.format.includes('@@@')) { format = BattleFormats[toID(data.format.split('@@@')[0])]; }
@@ -1354,11 +1360,17 @@
 		selectTeam: function (i) {
 			i = +i;
 			this.sourceEl.val(i).html(TeamPopup.renderTeam(i));
+			if (this.onselect) {
+				this.onselect(i);
+				this.close();
+				return;
+			}
 			if (this.sourceEl[0].offsetParent.className === 'mainmenuwrapper') {
 				var formatid = this.sourceEl.closest('form').find('button[name=format]').val();
 				app.rooms[''].curTeamIndex = i;
 				app.rooms[''].curTeamFormat = formatid;
-			} else if (this.sourceEl[0].offsetParent.className === 'tournament-box active') { app.rooms[this.room].tournamentBox.curTeamIndex = i; }
+			} 
+			else if (this.sourceEl[0].offsetParent.className === 'tournament-box active') { app.rooms[this.room].tournamentBox.curTeamIndex = i; }
 			this.close();
 		}
 	}, {

@@ -1,5 +1,4 @@
 function Storage() {}
-
 Storage.initialize = function () {
 	if (window.nodewebkit) {
 		window.fs = require('fs');
@@ -10,7 +9,6 @@ Storage.initialize = function () {
 	}
 	Storage.initPrefs();
 };
-
 Storage.safeJSON = function (callback) {
 	return function (data) {
 		if (data.length < 1) return;
@@ -18,12 +16,8 @@ Storage.safeJSON = function (callback) {
 		return callback(JSON.parse(data));
 	};
 };
-
-/*********************************************************
- * Background
- *********************************************************/
-// Backgrounds are handled separately from other prefs because
-// they're server-specific and should be loaded faster
+//region Background
+// Backgrounds are handled separately from other prefs because they're server-specific and should be loaded faster
 Storage.bg = {
 	id: '',
 	changeCount: 0,
@@ -41,10 +35,7 @@ Storage.bg = {
 		if (!bgid) {
 			if (location.host === 'smogtours.psim.us') { bgid = 'shaymin'; } 
 			else if (location.host === Config.routes.client) { bgid = ['horizon', 'ocean', 'waterfall', 'shaymin', 'charizards', 'psday'][Math.floor(Math.random() * 6)]; } 
-			else { $(document.body).css({
-					background: '',
-					'background-size': ''
-				});
+			else { $(document.body).css({ background: '', 'background-size': '' });
 				$('#mainmenubuttoncolors').remove();
 				return true;
 			}
@@ -57,10 +48,7 @@ Storage.bg = {
 		if (bgUrl.charAt(0) === '#') { background = bgUrl; } 
 		else if (bgid !== 'custom') { background = '#546bac url(' + bgUrl + ') no-repeat left center fixed'; } 
 		else { background = '#546bac url(' + bgUrl + ') no-repeat center center fixed'; }
-		$(document.body).css({
-			background: background,
-			'background-size': 'cover'
-		});
+		$(document.body).css({ background: background, 'background-size': 'cover' });
 		var attrib = '';
 		this.changeCount++;
 		if (!hues) {
@@ -170,7 +158,6 @@ try {
 	}
 } catch (e) {}
 if (!Storage.bg.id) { Storage.bg.load(); }
-
 //region Prefs
 // Prefs are canonically stored in showdown_prefs in localStorage in the origin https://play.pokemonshowdown.com
 // We try loading things from the origin, anyway, in case third-party localStorage is banned, and since prefs are cached in other places in certain cases.
@@ -241,16 +228,15 @@ var updatePrefs = function () {
 		Storage.prefs('showjoins', showjoins, true);
 	}
 	var isChrome64 = navigator.userAgent.includes(' Chrome/64.');
-	if (Storage.prefs('nogif') !== undefined) {
-		if (!isChrome64) { Storage.prefs('nogif', null); }
-	} else if (isChrome64) {
+	if (Storage.prefs('nogif') !== undefined) { if (!isChrome64) { Storage.prefs('nogif', null); } } 
+	else if (isChrome64) {
 		Storage.prefs('nogif', true);
 		Storage.whenAppLoaded(function () { app.addPopupMessage('Your version of Chrome has a bug that makes animated GIFs freeze games sometimes, so certain animations have been disabled. Only some people have the problem, so you can experiment and enable them in the Options menu setting "Disable GIFs for Chrome 64 bug".'); });
 	}
 	var colorSchemeQuerySupported = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').media !== 'not all';
 	if (Storage.prefs('theme') === 'system' && !colorSchemeQuerySupported) { Storage.prefs('theme', null); }
 	if (Storage.prefs('dark') !== undefined) {
-		if (Storage.prefs('dark')) { Storage.prefs('theme', 'dark');	}
+		if (Storage.prefs('dark')) { Storage.prefs('theme', 'dark'); }
 		Storage.prefs('dark', null);
 	}
 };
@@ -266,24 +252,18 @@ Storage.initPrefs = function () {
 		return;
 	}
 	//region Cross-origin
-	if (!('postMessage' in window)) {
-		// browser does not support cross-document messaging
-		return Storage.whenAppLoaded(function (app) { app.trigger('init:unsupported'); });
-	}
+	if (!('postMessage' in window)) { return Storage.whenAppLoaded(function (app) { app.trigger('init:unsupported'); }); } // browser does not support cross-document messaging
 	$(window).on('message', Storage.onMessage);
-	if (document.location.hostname !== Config.routes.client) {
-		$(
+	if (document.location.hostname !== Config.routes.client) { $(
 			'<iframe src="https://' + Config.routes.client + '/crossdomain.php?host=' +
 			encodeURIComponent(document.location.hostname) +
 			'&path=' + encodeURIComponent(document.location.pathname.substr(1)) +
 			'&protocol=' + encodeURIComponent(document.location.protocol) +
-			'" style="display: none;"></iframe>'
-		).appendTo('body');
+			'" style="display: none;"></iframe>').appendTo('body');
 	} else {
 		Config.server = Config.server || Config.defaultserver;
 		$('<iframe src="https://' + Config.routes.client + '/crossprotocol.html?v1.2" style="display: none;"></iframe>').appendTo('body');
-		setTimeout(function () {
-			// HTTPS may be blocked. yes, this happens, blame Avast! and BitDefender and other antiviruses that feel a need to MitM HTTPS poorly
+		setTimeout(function () { // HTTPS may be blocked. yes, this happens, blame Avast! and BitDefender and other antiviruses that feel a need to MitM HTTPS poorly
 			Storage.whenPrefsLoaded.load();
 			if (!Storage.whenTeamsLoaded.isLoaded) {
 				Storage.whenTeamsLoaded.error = 'stalled';
@@ -304,9 +284,7 @@ Storage.onMessage = function ($e) {
 	case 'c':
 		Config.server = JSON.parse(data.substr(1));
 		if (Config.server.registered && Config.server.id !== 'showdown' && Config.server.id !== 'smogtours') {
-			var $link = $('<link rel="stylesheet" ' +
-				'href="//' + Config.routes.client + '/customcss.php?server=' +
-				encodeURIComponent(Config.server.id) + '" />');
+			var $link = $('<link rel="stylesheet" ' + 'href="//' + Config.routes.client + '/customcss.php?server=' + encodeURIComponent(Config.server.id) + '" />');
 			$('head').append($link);
 		}
 		break;
@@ -316,8 +294,7 @@ Storage.onMessage = function ($e) {
 		Storage.prefs.save = function () {
 			var prefData = JSON.stringify(this.data);
 			Storage.postCrossOriginMessage('P' + prefData);
-			// in Safari, cross-origin local storage is apparently treated as session
-			// storage, so mirror the storage in the current origin just in case
+			// in Safari, cross-origin local storage is apparently treated as session storage, so mirror the storage in the current origin just in case
 			try { localStorage.setItem('showdown_prefs', prefData); } catch (e) {}
 		};
 		Storage.whenPrefsLoaded.load();
@@ -393,7 +370,22 @@ Storage.initTestClient = function () {
 	if (typeof POKEMON_SHOWDOWN_TESTCLIENT_KEY === 'string') { sid = POKEMON_SHOWDOWN_TESTCLIENT_KEY.replace(/\%2C/g, ','); }
 	Storage.whenAppLoaded(function (app) {
 		var get = $.get;
+		var post = $.post;
+		var isLocalProxyUri = function (uri) {
+			if (typeof uri !== 'string') return false;
+			if (uri.indexOf(Dex.resourcePrefix + '~~') === 0) return true;
+			if (uri.indexOf('/~~') === 0) return true;
+			var hostPath = '://' + location.host + '/~~';
+			return uri.indexOf(hostPath) !== -1;
+		};
+		var isLocalTestclientKeyUri = function (uri) {
+			if (typeof uri !== 'string') return false;
+			var keyPath = 'config/testclient-key.js';
+			if (uri.indexOf(keyPath, uri.length - keyPath.length) !== -1) return true;
+			return false;
+		};
 		$.get = function (uri, data, callback, type) {
+			if (isLocalTestclientKeyUri(uri)) { return get(uri, data, callback, type); }
 			if (type === 'html') { uri += '&testclient'; }
 			if (data) {
 				uri += '?testclient';
@@ -401,23 +393,31 @@ Storage.initTestClient = function () {
 			}
 			if (uri[0] === '/') { uri = Dex.resourcePrefix + uri.substr(1); } // relative URI
 			if (sid) {
+				data = data || {};
 				data.sid = sid;
-				get(uri, data, callback, type);
-			} else { app.addPopup(ProxyPopup, { uri: uri, callback: callback }); }
+				return get(uri, data, callback, type);
+			} else if (isLocalProxyUri(uri)) { return get(uri, data, callback, type); } 
+			else { return app.addPopup(ProxyPopup, { uri: uri, callback: callback }); }
 		};
-		var post = $.post;
 		$.post = function (uri, data, callback, type) {
 			if (type === 'html') { uri += '&testclient'; }
-			if (uri[0] === '/') {  uri = Dex.resourcePrefix + uri.substr(1); } // relative URI
+			if (uri[0] === '/') { uri = Dex.resourcePrefix + uri.substr(1); } // relative URI
 			if (sid) {
+				data = data || {};
 				data.sid = sid;
 				post(uri, data, callback, type);
-			} else {
-				var src = '<!DOCTYPE html><html><body><form action="' + BattleLog.escapeHTML(uri) + '" method="POST">';
-				src += '<input type="hidden" name="testclient">';
-				for (var i in data) { src += '<input type=hidden name="' + i + '" value="' + BattleLog.escapeHTML(data[i]) + '">'; }
-				src += '<input type=submit value="Please click this button first."></form></body></html>';
-				app.addPopup(ProxyPopup, { uri: "data:text/html;charset=UTF-8," + encodeURIComponent(src), callback: callback });
+			} 
+			else if (isLocalProxyUri(uri)) { post(uri, data, callback, type); } 
+			else {
+				var configUrl = Dex.resourcePrefix + 'config/testclient-key.js';
+				$.getScript(configUrl).done(function () {
+					if (typeof POKEMON_SHOWDOWN_TESTCLIENT_KEY === 'string') {
+						sid = POKEMON_SHOWDOWN_TESTCLIENT_KEY.replace(/\%2C/g, ',');
+						data.sid = sid;
+						post(uri, data, callback, type);
+					} 
+					else { app.addPopup(ProxyPopup, { uri: uri, callback: callback }); }
+				}).fail(function () { app.addPopup(ProxyPopup, { uri: uri, callback: callback }); });
 			}
 		};
 		Storage.whenPrefsLoaded.load();
@@ -486,16 +486,8 @@ Storage.loadRemoteTeams = function (after) {
 	}));
 };
 Storage.loadPackedTeams = function (buffer) {
-	try {
-		this.teams = Storage.unpackAllTeams(buffer);
-	} catch (e) {
-		Storage.whenAppLoaded(function (app) {
-			app.addPopup(Popup, {
-				type: 'modal',
-				htmlMessage: "Your teams are corrupt and could not be loaded. :( Staff may be able to recover it from your data. This is your data; you should save it somewhere:<br /><textarea rows=\"10\" cols=\"60\">" + BattleLog.escapeHTML(buffer) + "</textarea>"
-			});
-		});
-	}
+	try { this.teams = Storage.unpackAllTeams(buffer); } 
+	catch (e) { Storage.whenAppLoaded(function (app) { app.addPopup(Popup, { type: 'modal', htmlMessage: "Your teams are corrupt and could not be loaded. :( Staff may be able to recover it from your data. This is your data; you should save it somewhere:<br /><textarea rows=\"10\" cols=\"60\">" + BattleLog.escapeHTML(buffer) + "</textarea>" }); }); }
 };
 Storage.saveTeams = function () {
 	try {
@@ -503,7 +495,8 @@ Storage.saveTeams = function () {
 			localStorage.setItem('showdown_teams', Storage.packAllTeams(this.teams));
 			Storage.cantSave = false;
 		}
-	} catch (e) {
+	} 
+	catch (e) {
 		if (e.code === DOMException.QUOTA_EXCEEDED_ERR) { Storage.cantSave = true; } 
 		else { throw e; }
 	}
@@ -519,23 +512,17 @@ Storage.saveTeam = function () { this.saveTeams(); };
 Storage.deleteTeam = function () { this.saveTeams(); };
 Storage.saveAllTeams = function () { this.saveTeams(); };
 Storage.deleteAllTeams = function () {};
-
-
-
 //region Team importing and exporting
 function deriveAbilitiesFromSet(species, abilitySet) {
   const abil = (species && species.abilities) || {};
   const set1 = [abil['0'], abil['1']].filter(Boolean);
   const set2 = [abil['H'], abil['S']].filter(Boolean);
-
   const hasSet2 = set2.length > 0;
   let n = (abilitySet === 2 || abilitySet === '2') ? 2 : 1;
   if (!hasSet2) n = 1;
-
   const chosen = (n === 2 ? set2 : set1);
   return {abilitySet: n, ability: chosen[0] || '', ability2: chosen[1] || ''};
 }
-
 Storage.unpackAllTeams = function (buffer) {
 	if (!buffer) return [];
 	if (buffer.charAt(0) === '[' && $.trim(buffer).indexOf('\n') < 0) {
@@ -563,7 +550,6 @@ Storage.unpackAllTeams = function (buffer) {
 };
 Storage.convertLegacyEVsToJVs = function (jvs) {
 	if (!jvs) return jvs;
-
 	// If any stat is above JV cap (63), it's almost certainly legacy EVs (0–252).
 	var legacy = false;
 	for (var k in jvs) {
@@ -633,35 +619,33 @@ Storage.packTeam = function (team) {
 		buf += '|' + sz;
 		// item
 		buf += '|' + toID(set.item);
-
 		// abilities field: serialize as "X/a1/a2"
-		// abilities field: serialize as "X/a1/a2"
-var as = (set.abilitySet === 2 ? 2 : 1);
-// derive them from species + abilitySet so we don't write "1//".
-var a1name = set.ability || '';
-var a2name = set.ability2 || '';
-if (!a1name && !a2name) {
-  var derived = deriveAbilitiesFromSet(Dex.species.get(set.species), as);
-  as = derived.abilitySet;
-  a1name = derived.ability;
-  a2name = derived.ability2;
-}
-
-buf += '|' + as + '/' + toID(a1name) + '/' + toID(a2name);
+		var as = (set.abilitySet === 2 ? 2 : 1);
+		// derive them from species + abilitySet so we don't write "1//".
+		var a1name = set.ability || '';
+		var a2name = set.ability2 || '';
+		if (!a1name && !a2name) {
+			var derived = deriveAbilitiesFromSet(Dex.species.get(set.species), as);
+			as = derived.abilitySet;
+			a1name = derived.ability;
+			a2name = derived.ability2;
+		}
+		buf += '|' + as + '/' + toID(a1name) + '/' + toID(a2name);
 		// moves
 		buf += '|';
 		if (set.moves) for (var j = 0; j < set.moves.length; j++) {
 			var moveid = toID(set.moves[j]);
 			if (j && !moveid) continue;
 			buf += (j ? ',' : '') + moveid;
-			if (moveid.substr(0, 11) === 'hiddenpower' && moveid.length > 11) hasHP = true;
 		}
 		// nature
 		buf += '|' + (set.nature || '');
-		// evs
-				// jvs (stored in the old EV slot)
+		// gender 
+		if (set.gender) { buf += '|' + set.gender; } 
+		else { buf += '|'; }
+		// jvs
 		var jvs = '|';
-		var srcJVs = set.jvs || set.evs; // allow loading legacy teams
+		var srcJVs = set.jvs;
 		if (srcJVs) {
 			jvs = '|' +
 				(srcJVs['hp'] || '') + ',' +
@@ -674,55 +658,24 @@ buf += '|' + as + '/' + toID(a1name) + '/' + toID(a2name);
 		if (jvs === '|,,,,,') {
 			buf += '|';
 			if (srcJVs && srcJVs['hp'] === 0) buf += '0';
-		} else {
-			buf += jvs;
-		}
-
-		// gender
-		if (set.gender) { buf += '|' + set.gender; } 
-		else { buf += '|'; }
-				// ivs (JV system: ignore IVs; always treated as max in calc)
-		buf += '|';
-
+		} 
+		else { buf += jvs; }
 		// shiny
 		if (set.shiny) { buf += '|S'; } 
 		else { buf += '|'; }
 		// level
 		if (set.level && set.level !== 100) { buf += '|' + set.level; } 
 		else { buf += '|'; }
-		// happiness
-		if (set.happiness !== undefined && set.happiness !== 255) { buf += '|' + set.happiness; } 
-		else { buf += '|'; }
-		if (set.pokeball || (set.hpType && !hasHP) || set.gigantamax || (set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10) || set.teraType || set.abilitySet !== undefined) {
-			buf += ',' + (set.hpType || '');
+		// misc 
+		buf += '|';
+		if (set.pokeball || set.teraType || set.abilitySet !== undefined || set.guardAction) {
 			buf += ',' + toID(set.pokeball);
-			buf += ',' + (set.gigantamax ? 'G' : '');
-			buf += ',' + (set.dynamaxLevel !== undefined && set.dynamaxLevel !== 10 ? set.dynamaxLevel : '');
 			buf += ',' + (set.teraType || '');
 			buf += ',' + (set.abilitySet !== undefined ? set.abilitySet : '');
+			buf += ',' + toID(set.guardAction);
 		}
 	}
 	return buf;
-};
-Storage.fixJVsFromLegacyEVs = function (jvs) {
-	if (!jvs) return jvs;
-
-	// If any stat is over the JV cap (63), assume it's EVs and convert.
-	var looksLikeEvs = false;
-	for (var k in jvs) {
-		var v = Number(jvs[k]) || 0;
-		if (v > 63) { looksLikeEvs = true; break; }
-	}
-	if (!looksLikeEvs) return jvs;
-
-	for (var k2 in jvs) {
-		var v2 = Number(jvs[k2]) || 0;
-		v2 = Math.floor(v2 / 4);
-		if (v2 < 0) v2 = 0;
-		if (v2 > 63) v2 = 63;
-		jvs[k2] = v2;
-	}
-	return jvs;
 };
 Storage.fastUnpackTeam = function (buf) {
 	if (!buf) return [];
@@ -741,52 +694,42 @@ Storage.fastUnpackTeam = function (buf) {
 		set.species = species.name;
 		i = j + 1;
 		// size OR (back-compat) item
-j = buf.indexOf('|', i);
-var f1 = buf.substring(i, j);
-i = j + 1;
-
-// Detect new format: size is one of xs/s/m/l/xl
-var f1u = (f1 || '').toUpperCase();
-var isNew = (f1u === '' || f1u === 'XS' || f1u === 'S' || f1u === 'M' || f1u === 'L' || f1u === 'XL');
-
-if (isNew) {
-  // NEW FORMAT: size
-  set.size = f1u || 'M'; // XS/S/M/L/XL
-
-  // item (fastUnpack keeps raw)
-  j = buf.indexOf('|', i);
-  set.item = buf.substring(i, j);
-  i = j + 1;
-
-  // abilities field: "X/a1/a2" (ids)
-j = buf.indexOf('|', i);
-var abilField = buf.substring(i, j);
-i = j + 1;
-
-if (abilField) {
-  var parts = abilField.split('/');
-  set.abilitySet = Number(parts[0]) || 1;
-  set.ability = parts[1] || '';
-  set.ability2 = parts[2] || '';
-} else {
-  set.abilitySet = 1;
-  set.ability = '';
-  set.ability2 = '';
-}
-
-} else {
-  // OLD FORMAT: f1 was actually item
-  set.size = 'M';        // default
-  set.item = f1;
-
-  // old single ability field
-  j = buf.indexOf('|', i);
-  var ability = buf.substring(i, j);
-  i = j + 1;
-
-  if (species.baseSpecies === 'Zygarde' && ability === 'H') ability = 'Power Construct';
-  set.ability = (species.abilities && ['', '0', '1', 'H', 'S'].includes(ability) ? species.abilities[ability] || '!!!ERROR!!!' : ability);
-}
+		j = buf.indexOf('|', i);
+		var f1 = buf.substring(i, j);
+		i = j + 1;
+		// Detect new format: size is one of xs/s/m/l/xl
+		var f1u = (f1 || '').toUpperCase();
+		var isNew = (f1u === '' || f1u === 'XS' || f1u === 'S' || f1u === 'M' || f1u === 'L' || f1u === 'XL');
+		if (isNew) {
+			set.size = f1u || 'M'; // XS/S/M/L/XL
+			// item (fastUnpack keeps raw)
+			j = buf.indexOf('|', i);
+			set.item = buf.substring(i, j);
+			i = j + 1;
+			// abilities field: "X/a1/a2" (ids)
+			j = buf.indexOf('|', i);
+			var abilField = buf.substring(i, j);
+			i = j + 1;
+			if (abilField) {
+				var parts = abilField.split('/');
+				set.abilitySet = Number(parts[0]) || 1;
+				set.ability = parts[1] || '';
+				set.ability2 = parts[2] || '';
+			} else {
+				set.abilitySet = 1;
+				set.ability = '';
+				set.ability2 = '';
+			}
+		} else {
+			set.size = 'M';        // default
+			set.item = f1;
+			// old single ability field
+			j = buf.indexOf('|', i);
+			var ability = buf.substring(i, j);
+			i = j + 1;
+			if (species.baseSpecies === 'Zygarde' && ability === 'H') ability = 'Power Construct';
+			set.ability = (species.abilities && ['', '0', '1', 'H', 'S'].includes(ability) ? species.abilities[ability] || '!!!ERROR!!!' : ability);
+		}
 		// moves
 		j = buf.indexOf('|', i);
 		set.moves = buf.substring(i, j).split(',');
@@ -797,7 +740,7 @@ if (abilField) {
 		if (set.nature === 'undefined') set.nature = undefined;
 		if (set.nature) { set.nature = set.nature.charAt(0).toUpperCase() + set.nature.slice(1); } // BattleNatures is case sensitive, so if we don't do this sometimes stuff breaks. goody.
 		i = j + 1;
-				// jvs (read from old EV slot)
+		// jvs (read from old EV slot)
 		j = buf.indexOf('|', i);
 		if (j !== i) {
 			var jvstring = buf.substring(i, j);
@@ -812,55 +755,61 @@ if (abilField) {
 					spe: Number(jvsArr[5]) || 0
 				};
 				set.jvs = Storage.convertLegacyEVsToJVs(set.jvs);
-			} else if (jvstring === '0') {
-				set.jvs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
-			}
+			} 
+			else if (jvstring === '0') { set.jvs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }; }
 		}
-		// safety: keep old callers from breaking
-		if (set.jvs) set.evs = set.jvs;
-
 		i = j + 1;
 		// gender
 		j = buf.indexOf('|', i);
 		if (i !== j) set.gender = buf.substring(i, j);
 		i = j + 1;
-				// ivs (JV system: ignore serialized IVs)
+		// jvs (read from old EV slot)
 		j = buf.indexOf('|', i);
-		i = j + 1;
-
+		if (j !== i) {
+			var jvstring = buf.substring(i, j);
+			if (jvstring.length > 5) {
+				var jvsArr = jvstring.split(',');
+				set.jvs = {
+					hp: Number(jvsArr[0]) || 0,
+					atk: Number(jvsArr[1]) || 0,
+					def: Number(jvsArr[2]) || 0,
+					spa: Number(jvsArr[3]) || 0,
+					spd: Number(jvsArr[4]) || 0,
+					spe: Number(jvsArr[5]) || 0
+				};
+				set.jvs = Storage.convertLegacyEVsToJVs(set.jvs);
+			} 
+			else if (jvstring === '0') { set.jvs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }; }
+		}
 		i = j + 1;
 		// shiny
 		j = buf.indexOf('|', i);
 		if (i !== j) set.shiny = true;
 		i = j + 1;
-		// level
-		j = buf.indexOf('|', i);
-		if (i !== j) set.level = parseInt(buf.substring(i, j), 10);
-		i = j + 1;
-		// happiness
-		j = buf.indexOf(']', i);
+		// level 
+		var setEnd = buf.indexOf(']', i);
+		if (setEnd < 0) setEnd = buf.length;
+		var commaIdx = buf.indexOf(',', i);
+		if (commaIdx < 0 || commaIdx > setEnd) commaIdx = -1;
+		var levelEnd = (commaIdx >= 0) ? commaIdx : setEnd;
+		if (i !== levelEnd) set.level = parseInt(buf.substring(i, levelEnd), 10);
+		i = levelEnd;
+		// misc
 		var misc = undefined;
-		if (j < 0) { if (i < buf.length) misc = buf.substring(i).split(',', 8); } 
-		else { if (i !== j) misc = buf.substring(i, j).split(',', 7); }
+		if (commaIdx >= 0) { misc = buf.substring(commaIdx + 1, setEnd).split(','); }
 		if (misc) {
-			set.happiness = (misc[0] ? Number(misc[0]) : 255);
-			set.hpType = misc[1];
-			set.pokeball = misc[2];
-			set.gigantamax = !!misc[3];
-			set.dynamaxLevel = (misc[4] ? Number(misc[4]) : 10);
-			set.teraType = misc[5];
-			set.abilitySet = (misc.length > 6 && misc[6] !== '' && misc[6] !== undefined) ? Number(misc[6]) : undefined;
+			set.pokeball = misc[0] || undefined;
+			set.teraType = misc[1] || undefined;
+			set.abilitySet = (misc.length > 2 && misc[2] !== '' && misc[2] !== undefined) ? Number(misc[2]) : undefined;
+			set.guardAction = (misc.length > 3 && misc[3]) ? Dex.moves.get(misc[3]).name : undefined;
 		}
-// Only derive if the packed ability field didn't give us anything.
-// Never overwrite non-empty packed ability ids/names.
-if (!set.ability && !set.ability2) {
-  var derived = deriveAbilitiesFromSet(species, set.abilitySet || 1);
-  set.abilitySet = derived.abilitySet;
-  set.ability = derived.ability;
-  set.ability2 = derived.ability2;
-}
-		if (j < 0) break;
-		i = j + 1;
+		var derived = deriveAbilitiesFromSet(species, set.abilitySet || 1);
+		set.abilitySet = derived.abilitySet;
+		set.ability = derived.ability;
+		set.ability2 = derived.ability2;
+		i = setEnd;
+		if (setEnd >= buf.length || buf.indexOf('|', setEnd) < 0) break;
+		i = setEnd + 1;
 	}
 	return team;
 };
@@ -881,55 +830,45 @@ Storage.unpackTeam = function (buf) {
 		set.species = species.name;
 		i = j + 1;
 		// size OR (back-compat) item
-j = buf.indexOf('|', i);
-var f1 = buf.substring(i, j);
-i = j + 1;
-
-// Detect new format: size is one of xs/s/m/l/xl
-var f1u = (f1 || '').toUpperCase();
-var isNew = (f1u === '' || f1u === 'XS' || f1u === 'S' || f1u === 'M' || f1u === 'L' || f1u === 'XL');
-
-if (isNew) {
-  // NEW FORMAT
-  set.size = f1u || 'M'; // XS/S/M/L/XL
-
-  // item (normal unpack resolves to name)
-  j = buf.indexOf('|', i);
-  set.item = Dex.items.get(buf.substring(i, j)).name;
-  i = j + 1;
-
- // abilities field: "X/a1/a2" (resolve ids to names)
-j = buf.indexOf('|', i);
-var abilField = buf.substring(i, j);
-i = j + 1;
-
-if (abilField) {
-  var parts = abilField.split('/');
-  set.abilitySet = Number(parts[0]) || 1;
-
-  var a1 = parts[1] || '';
-  var a2 = parts[2] || '';
-
-  set.ability = a1 ? Dex.abilities.get(a1).name : '';
-  set.ability2 = a2 ? Dex.abilities.get(a2).name : '';
-} else {
-  set.abilitySet = 1;
-  set.ability = '';
-  set.ability2 = '';
-}
-
-} else {
-  // OLD FORMAT
-  set.size = 'M'; // default
-  set.item = Dex.items.get(f1).name;
-
-  // old single ability field
-  j = buf.indexOf('|', i);
-  var ability = Dex.abilities.get(buf.substring(i, j)).name;
-  i = j + 1;
-
-  set.ability = (species.abilities && ability in { '': 1, 0: 1, 1: 1, H: 1 } ? species.abilities[ability || '0'] : ability);
-}
+		j = buf.indexOf('|', i);
+		var f1 = buf.substring(i, j);
+		i = j + 1;
+		// Detect new format: size is one of xs/s/m/l/xl
+		var f1u = (f1 || '').toUpperCase();
+		var isNew = (f1u === '' || f1u === 'XS' || f1u === 'S' || f1u === 'M' || f1u === 'L' || f1u === 'XL');
+		if (isNew) {
+			// NEW FORMAT
+			set.size = f1u || 'M'; // XS/S/M/L/XL
+			// item (normal unpack resolves to name)
+			j = buf.indexOf('|', i);
+			set.item = Dex.items.get(buf.substring(i, j)).name;
+			i = j + 1;
+			// abilities field: "X/a1/a2" (resolve ids to names)
+			j = buf.indexOf('|', i);
+			var abilField = buf.substring(i, j);
+			i = j + 1;
+			if (abilField) {
+				var parts = abilField.split('/');
+				set.abilitySet = Number(parts[0]) || 1;
+				var a1 = parts[1] || '';
+				var a2 = parts[2] || '';
+				set.ability = a1 ? Dex.abilities.get(a1).name : '';
+				set.ability2 = a2 ? Dex.abilities.get(a2).name : '';
+			} else {
+				set.abilitySet = 1;
+				set.ability = '';
+				set.ability2 = '';
+			}
+		} else {
+			// OLD FORMAT
+			set.size = 'M'; // default
+			set.item = Dex.items.get(f1).name;
+			// old single ability field
+			j = buf.indexOf('|', i);
+			var ability = Dex.abilities.get(buf.substring(i, j)).name;
+			i = j + 1;
+			set.ability = (species.abilities && ability in { '': 1, 0: 1, 1: 1, H: 1 } ? species.abilities[ability || '0'] : ability);
+		}
 		// moves
 		j = buf.indexOf('|', i);
 		set.moves = buf.substring(i, j).split(',').map(function (moveid) { return Dex.moves.get(moveid).name; });
@@ -940,7 +879,11 @@ if (abilField) {
 		if (set.nature === 'undefined') set.nature = undefined;
 		if (set.nature) { set.nature = set.nature.charAt(0).toUpperCase() + set.nature.slice(1); } // BattleNatures is case sensitive, so if we don't do this sometimes stuff breaks. goody.
 		i = j + 1;
-				// jvs (read from old EV slot)
+		// gender
+		j = buf.indexOf('|', i);
+		if (i !== j) set.gender = buf.substring(i, j);
+		i = j + 1;
+		// jvs (read from old EV slot)
 		j = buf.indexOf('|', i);
 		if (j !== i) {
 			var jvstring = buf.substring(i, j);
@@ -955,51 +898,39 @@ if (abilField) {
 					spe: Number(jvsArr[5]) || 0
 				};
 				set.jvs = Storage.convertLegacyEVsToJVs(set.jvs);
-			} else if (jvstring === '0') {
-				set.jvs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
-			}
+			} else if (jvstring === '0') { set.jvs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }; }
 		}
 		// safety: keep old callers from breaking
 		if (set.jvs) set.evs = set.jvs;
-
-		i = j + 1;
-		// gender
-		j = buf.indexOf('|', i);
-		if (i !== j) set.gender = buf.substring(i, j);
-		i = j + 1;
-				// ivs (JV system: ignore serialized IVs)
-		j = buf.indexOf('|', i);
-		i = j + 1;
-
 		i = j + 1;
 		// shiny
 		j = buf.indexOf('|', i);
 		if (i !== j) set.shiny = true;
 		i = j + 1;
-		// level
-		j = buf.indexOf('|', i);
-		if (i !== j) set.level = parseInt(buf.substring(i, j), 10);
-		i = j + 1;
-		// happiness
-		j = buf.indexOf(']', i);
+		// level 
+		var setEnd = buf.indexOf(']', i);
+		if (setEnd < 0) setEnd = buf.length;
+		var commaIdx = buf.indexOf(',', i);
+		if (commaIdx < 0 || commaIdx > setEnd) commaIdx = -1;
+		var levelEnd = (commaIdx >= 0) ? commaIdx : setEnd;
+		if (i !== levelEnd) set.level = parseInt(buf.substring(i, levelEnd), 10);
+		i = levelEnd;
+		// misc
 		var misc = undefined;
-		if (j < 0) { if (i < buf.length) misc = buf.substring(i).split(',', 7); } 
-		else { if (i !== j) misc = buf.substring(i, j).split(',', 7); }
+		if (commaIdx >= 0) { misc = buf.substring(commaIdx + 1, setEnd).split(','); }
 		if (misc) {
-			set.happiness = (misc[0] ? Number(misc[0]) : 255);
-			set.hpType = misc[1];
-			set.pokeball = misc[2];
-			set.gigantamax = !!misc[3];
-			set.dynamaxLevel = (misc[4] ? Number(misc[4]) : 10);
-			set.teraType = misc[5];
-			set.abilitySet = (misc.length > 6 && misc[6] !== '' && misc[6] !== undefined) ? Number(misc[6]) : undefined;
+			set.pokeball = misc[0] || undefined;
+			set.teraType = misc[1] || undefined;
+			set.abilitySet = (misc.length > 2 && misc[2] !== '' && misc[2] !== undefined) ? Number(misc[2]) : undefined;
+			set.guardAction = (misc.length > 3 && misc[3]) ? Dex.moves.get(misc[3]).name : undefined;
 		}
 		var derived = deriveAbilitiesFromSet(species, set.abilitySet || 1);
-set.abilitySet = derived.abilitySet;
-set.ability = derived.ability;
-set.ability2 = derived.ability2;
-		if (j < 0 || buf.indexOf('|', j) < 0) break;
-		i = j + 1;
+		set.abilitySet = derived.abilitySet;
+		set.ability = derived.ability;
+		set.ability2 = derived.ability2;
+		i = setEnd;
+		if (setEnd >= buf.length || buf.indexOf('|', setEnd) < 0) break;
+		i = setEnd + 1;
 	}
 	return team;
 };
@@ -1012,7 +943,7 @@ Storage.packedTeamNames = function (buf) {
 		i = buf.indexOf('|', i) + 1;
 		if (!i) return [];
 		team.push(buf.substring(i, buf.indexOf('|', i)) || name);
-		for (var k = 0; k < 11; k++) {
+		for (var k = 0; k < 10; k++) {
 			i = buf.indexOf('|', i) + 1;
 			if (!i) return [];
 		}
@@ -1131,7 +1062,6 @@ Storage.importTeam = function (buffer, teams) {
     curSet.ability = parts[0] || '';
     curSet.ability2 = parts[1] || '';
     sawAbilitiesLine = true;
-
 } else if (line.substr(0, 6) === 'Size: ') {
     var sz = $.trim(line.substr(6)).toUpperCase();
     if (sz === 'XS' || sz === 'S' || sz === 'M' || sz === 'L' || sz === 'XL') curSet.size = sz;
@@ -1149,56 +1079,34 @@ Storage.importTeam = function (buffer, teams) {
 		else if (line.substr(0, 7) === 'Level: ') {
 			line = line.substr(7);
 			curSet.level = +line;
-		} else if (line.substr(0, 11) === 'Happiness: ') {
-			line = line.substr(11);
-			curSet.happiness = +line;
 		} else if (line.substr(0, 10) === 'Pokeball: ') {
 			line = line.substr(10);
 			curSet.pokeball = line;
-		} else if (line.substr(0, 14) === 'Hidden Power: ') {
+		} else if (line.substr(0, 14) === 'Guard Action: ') {
 			line = line.substr(14);
-			curSet.hpType = line;
-		} else if (line.substr(0, 11) === 'Tera Type: ') {
+			curSet.guardAction = line;
+		}else if (line.substr(0, 11) === 'Tera Type: ') {
 			line = line.substr(11);
 			curSet.teraType = line;
-		} else if (line.substr(0, 15) === 'Dynamax Level: ') {
-			line = line.substr(15);
-			curSet.dynamaxLevel = +line;
-		} else if (line === 'Gigantamax: Yes') { curSet.gigantamax = true; } 
-				else if (line.substr(0, 5) === 'EVs: ' || line.substr(0, 5) === 'JVs: ') {
-	var isEvs = (line.substr(0, 5) === 'EVs: ');
-	line = line.substr(5);
-
-	var jvLines = line.split('/');
-	curSet.jvs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
-
-	for (var j = 0; j < jvLines.length; j++) {
-		var jvLine = $.trim(jvLines[j]);
-		var spaceIndex = jvLine.indexOf(' ');
-		if (spaceIndex === -1) continue;
-
-		var statid = BattleStatIDs[jvLine.substr(spaceIndex + 1)];
-		var statval = parseInt(jvLine.substr(0, spaceIndex), 10);
-		if (!statid) continue;
-		if (isNaN(statval)) statval = 0;
-
-		// ✅ EVs (0–252) -> JVs (0–63)
-		if (isEvs) statval = Math.floor(statval / 4);
-
-		// clamp to JV range
-		if (statval < 0) statval = 0;
-		if (statval > 63) statval = 63;
-
-		curSet.jvs[statid] = statval;
-	}
-
-	// compatibility
-	curSet.evs = curSet.jvs;
-}
- 		else if (line.substr(0, 5) === 'IVs: ') {
-			// JV system: ignore IVs
+		} 
+		else if (line.substr(0, 5) === 'JVs: ') {
+			line = line.substr(5);
+			var jvLines = line.split('/');
+			curSet.jvs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
+			for (var j = 0; j < jvLines.length; j++) {
+				var jvLine = $.trim(jvLines[j]);
+				var spaceIndex = jvLine.indexOf(' ');
+				if (spaceIndex === -1) continue;
+				var statid = BattleStatIDs[jvLine.substr(spaceIndex + 1)];
+				var statval = parseInt(jvLine.substr(0, spaceIndex), 10);
+				if (!statid) continue;
+				if (isNaN(statval)) statval = 0;
+				if (statval < 0) statval = 0;
+				if (statval > 63) statval = 63;
+				curSet.jvs[statid] = statval;
+			}
 		}
- else if (line.match(/^[A-Za-z]+ (N|n)ature/)) {
+		else if (line.match(/^[A-Za-z]+ (N|n)ature/)) {
 			var natureIndex = line.indexOf(' Nature');
 			if (natureIndex === -1) natureIndex = line.indexOf(' nature');
 			if (natureIndex === -1) continue;
@@ -1208,16 +1116,6 @@ Storage.importTeam = function (buffer, teams) {
 			line = line.substr(1);
 			if (line.substr(0, 1) === ' ') line = line.substr(1);
 			if (!curSet.moves) curSet.moves = [];
-			if (line.substr(0, 14) === 'Hidden Power [') {
-				var hptype = line.substr(14, line.length - 15);
-				line = 'Hidden Power ' + hptype;
-				var type = Dex.types.get(hptype);
-				if (!curSet.ivs && type) {
-					curSet.ivs = {};
-					for (var stat in type.HPivs) { curSet.ivs[stat] = type.HPivs[stat]; }
-				}
-			}
-			if (line === 'Frustration' && curSet.happiness === undefined) { curSet.happiness = 0; }
 			curSet.moves.push(line);
 		}
 	}
@@ -1262,23 +1160,20 @@ Storage.exportTeam = function (team, gen, hidestats) {
 		if (curSet.item) { text += ' @ ' + curSet.item; }
 		text += "  \n";
 		var a1 = (curSet.ability || '').trim();
-var a2 = (curSet.ability2 || '').trim();
-if (a1 || a2) text += 'Abilities: ' + a1 + (a2 ? ' / ' + a2 : '') + "  \n";
-text += 'Size: ' + String(curSet.size || 'M').toUpperCase() + "  \n";
+		var a2 = (curSet.ability2 || '').trim();
+		if (a1 || a2) text += 'Abilities: ' + a1 + (a2 ? ' / ' + a2 : '') + "  \n";
+		text += 'Size: ' + String(curSet.size || 'M').toUpperCase() + "  \n";
 		if (curSet.level && curSet.level !== 100) { text += 'Level: ' + curSet.level + "  \n"; }
 		if (curSet.shiny) { text += 'Shiny: Yes  \n'; }
-		if (typeof curSet.happiness === 'number' && curSet.happiness !== 255 && !isNaN(curSet.happiness)) { text += 'Happiness: ' + curSet.happiness + "  \n"; }
 		if (curSet.pokeball) { text += 'Pokeball: ' + curSet.pokeball + "  \n"; }
-		if (curSet.hpType) { text += 'Hidden Power: ' + curSet.hpType + "  \n"; }
-		if (typeof curSet.dynamaxLevel === 'number' && curSet.dynamaxLevel !== 10 && !isNaN(curSet.dynamaxLevel)) { text += 'Dynamax Level: ' + curSet.dynamaxLevel + "  \n"; }
-		if (curSet.gigantamax) { text += 'Gigantamax: Yes  \n'; }
+		if (curSet.guardAction) { text += 'Guard Action: ' + curSet.guardAction + "  \n"; }
 		if (gen === 9) {
 			var species = Dex.species.get(curSet.species);
 			text += 'Tera Type: ' + (curSet.teraType || species.requiredTeraType || species.types[0]) + "  \n";
 		}
 		if (!hidestats) {
 			var first = true;
-						var jvSource = curSet.jvs || curSet.evs;
+			var jvSource = curSet.jvs || curSet.evs;
 			if (jvSource) {
 				for (var j in BattleStatNames) {
 					if (!jvSource[j]) continue;
@@ -1289,13 +1184,11 @@ text += 'Size: ' + String(curSet.size || 'M').toUpperCase() + "  \n";
 					text += '' + jvSource[j] + ' ' + BattleStatNames[j];
 				}
 			}
-
 			if (!first) { text += "  \n"; }
 			if (curSet.nature) { text += '' + curSet.nature + ' Nature' + "  \n"; }
 		}
 		if (curSet.moves) for (var j = 0; j < curSet.moves.length; j++) {
 			var move = curSet.moves[j];
-			if (move.substr(0, 13) === 'Hidden Power ') { move = move.substr(0, 13) + '[' + move.substr(13) + ']'; }
 			if (move) { text += '- ' + move + "  \n"; }
 		}
 		text += "\n";
@@ -1420,7 +1313,6 @@ Storage.nwLoadTeamFile = function (filename, localApp) {
 		if (!--self.nwTeamsLeft) { self.nwFinishedLoadingTeams(localApp); }
 		return;
 	}
-
 	var format = 'gen9';
 	var capacity = 6;
 	var bracketIndex = line.indexOf(']');

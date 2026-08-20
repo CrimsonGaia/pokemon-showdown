@@ -1,5 +1,6 @@
 import type { PokemonEventMethods, ConditionData } from './dex-conditions';
 import { assignMissingFields, BasicEffect, toID } from './dex-data';
+import type {AbilitySlot} from '../sim/pokemon';
 import { Utils } from '../lib/utils';
 interface AbilityEventMethods {
 	onCheckShow?: (this: Battle, pokemon: Pokemon) => void;

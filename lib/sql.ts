@@ -8,9 +8,7 @@ import { FS } from './fs';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore in case not installed
 import type { SQLStatement } from 'sql-template-strings';
-
 export const DB_NOT_FOUND = null;
-
 export interface SQLOptions {
 	file: string;
 	/** file to import database functions from - this should be relative to this filename. */
@@ -25,16 +23,13 @@ export interface SQLOptions {
 	 */
 	onError?: ErrorHandler;
 }
-
 type DataType = unknown[] | Record<string, unknown>;
 export type SQLInput = string | number | null;
 export interface ResultRow { [k: string]: SQLInput }
-
 export interface TransactionEnvironment {
 	db: sqlite.Database;
 	statements: Map<string, sqlite.Statement>;
 }
-
 export type DatabaseQuery = {
 	/** Prepare a statement - data is the statement. */
 	type: 'prepare', data: string,
@@ -54,22 +49,15 @@ export type DatabaseQuery = {
 	type: 'transaction', name: string, data: DataType,
 } | {
 	type: 'start', options: SQLOptions,
-} | {
-	type: 'load-extension', data: string,
-};
-
+} | { type: 'load-extension', data: string, };
 type ErrorHandler = (error: Error, data: DatabaseQuery, isParentProcess: boolean) => any;
-
 function getModule() {
 	try {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore does not exist while building NPM package???
 		return require('better-sqlite3') as typeof sqlite.default;
-	} catch {
-		return null;
-	}
+	} catch { return null; }
 }
-
 export class Statement<R extends DataType = DataType, T = any> {
 	private db: SQLDatabaseManager;
 	private statement: string;
@@ -77,23 +65,12 @@ export class Statement<R extends DataType = DataType, T = any> {
 		this.db = db;
 		this.statement = statement;
 	}
-	run(data: R) {
-		return this.db.run(this.statement, data);
-	}
-	all(data: R) {
-		return this.db.all<T>(this.statement, data);
-	}
-	get(data: R) {
-		return this.db.get<T>(this.statement, data);
-	}
-	toString() {
-		return this.statement;
-	}
-	toJSON() {
-		return this.statement;
-	}
+	run(data: R) { return this.db.run(this.statement, data); }
+	all(data: R) { return this.db.all<T>(this.statement, data); }
+	get(data: R) { return this.db.get<T>(this.statement, data); }
+	toString() { return this.statement; }
+	toJSON() { return this.statement; }
 }
-
 export class SQLDatabaseManager extends QueryProcessManager<DatabaseQuery, any> {
 	options: SQLOptions;
 	database: null | sqlite.Database = null;
@@ -104,9 +81,7 @@ export class SQLDatabaseManager extends QueryProcessManager<DatabaseQuery, any> 
 	private dbReady = false;
 	constructor(id: string, module: NodeJS.Module, options: SQLOptions) {
 		super(id, module, query => {
-			if (!this.dbReady) {
-				this.setupDatabase();
-			}
+			if (!this.dbReady) { this.setupDatabase(); }
 			try {
 				switch (query.type) {
 				case 'load-extension': {
@@ -117,9 +92,7 @@ export class SQLDatabaseManager extends QueryProcessManager<DatabaseQuery, any> 
 				case 'transaction': {
 					const transaction = this.state.transactions.get(query.name);
 					// !transaction covers db not existing, typically, but this is just to appease ts
-					if (!transaction || !this.database) {
-						return null;
-					}
+					if (!transaction || !this.database) { return null; }
 					const env: TransactionEnvironment = {
 						db: this.database,
 						statements: this.state.statements,
@@ -132,35 +105,24 @@ export class SQLDatabaseManager extends QueryProcessManager<DatabaseQuery, any> 
 					return true;
 				}
 				case 'get': {
-					if (!this.database) {
-						return null;
-					}
+					if (!this.database) { return null; }
 					return this.extractStatement(query).get(query.data);
 				}
 				case 'run': {
-					if (!this.database) {
-						return null;
-					}
+					if (!this.database) { return null; }
 					return this.extractStatement(query).run(query.data);
 				}
 				case 'all': {
-					if (!this.database) {
-						return null;
-					}
+					if (!this.database) { return null; }
 					return this.extractStatement(query).all(query.data);
 				}
 				case 'prepare':
-					if (!this.database) {
-						return null;
-					}
+					if (!this.database) { return null; }
 					this.state.statements.set(query.data, this.database.prepare(query.data));
 					return query.data;
 				}
-			} catch (error: any) {
-				return this.onError(error, query);
-			}
+			} catch (error: any) { return this.onError(error, query); }
 		});
-
 		this.options = options;
 		this.state = {
 			transactions: new Map(),
@@ -190,16 +152,10 @@ export class SQLDatabaseManager extends QueryProcessManager<DatabaseQuery, any> 
 		}
 		return statement;
 	}
-	registerFunction(key: string, cb: (...args: any) => any) {
-		this.database!.function(key, cb);
-	}
-	private extractStatement(
-		query: DatabaseQuery & { statement: string, noPrepare?: boolean }
-	) {
+	registerFunction(key: string, cb: (...args: any) => any) { this.database!.function(key, cb); }
+	private extractStatement(query: DatabaseQuery & { statement: string, noPrepare?: boolean }) {
 		query.statement = query.statement.trim();
-		const statement = query.noPrepare ?
-			this.state.statements.get(query.statement) :
-			this.cacheStatement(query.statement);
+		const statement = query.noPrepare ? this.state.statements.get(query.statement) : this.cacheStatement(query.statement);
 		if (!statement) throw new Error(`Missing cached statement "${query.statement}" where required`);
 		return statement;
 	}
@@ -211,10 +167,7 @@ export class SQLDatabaseManager extends QueryProcessManager<DatabaseQuery, any> 
 		this.database = Database ? new Database(file) : null;
 		if (extension) this.loadExtensionFile(extension);
 	}
-
-	loadExtensionFile(extension: string) {
-		return this.handleExtensions(require('../' + extension));
-	}
+	loadExtensionFile(extension: string) { return this.handleExtensions(require('../' + extension)); }
 	handleExtensions(imports: any) {
 		if (!this.database) return;
 		const {
@@ -224,14 +177,8 @@ export class SQLDatabaseManager extends QueryProcessManager<DatabaseQuery, any> 
 			onDatabaseStart,
 		} = imports;
 		// migrations usually are run here, so this needs to be first
-		if (onDatabaseStart) {
-			onDatabaseStart.call(this, this.database);
-		}
-		if (functions) {
-			for (const k in functions) {
-				this.registerFunction(k, functions[k]);
-			}
-		}
+		if (onDatabaseStart) { onDatabaseStart.call(this, this.database); }
+		if (functions) { for (const k in functions) { this.registerFunction(k, functions[k]); } }
 		if (storedTransactions) {
 			for (const t in storedTransactions) {
 				const transaction = this.database.transaction(storedTransactions[t]);
@@ -258,47 +205,32 @@ export class SQLDatabaseManager extends QueryProcessManager<DatabaseQuery, any> 
 		}
 		return result;
 	}
-	all<T = any>(
-		statement: string | Statement, data: DataType = [], noPrepare?: boolean
-	): Promise<T[]> {
+	all<T = any>(statement: string | Statement, data: DataType = [], noPrepare?: boolean): Promise<T[]> {
 		if (typeof statement !== 'string') statement = statement.toString();
 		return this.query({ type: 'all', statement, data, noPrepare });
 	}
-	get<T = any>(
-		statement: string | Statement, data: DataType = [], noPrepare?: boolean
-	): Promise<T> {
+	get<T = any>(statement: string | Statement, data: DataType = [], noPrepare?: boolean): Promise<T> {
 		if (typeof statement !== 'string') statement = statement.toString();
 		return this.query({ type: 'get', statement, data, noPrepare });
 	}
-	run(
-		statement: string | Statement, data: DataType = [], noPrepare?: boolean
-	): Promise<sqlite.RunResult> {
+	run(statement: string | Statement, data: DataType = [], noPrepare?: boolean): Promise<sqlite.RunResult> {
 		if (typeof statement !== 'string') statement = statement.toString();
 		return this.query({ type: 'run', statement, data, noPrepare });
 	}
-	transaction<T = any>(name: string, data: DataType = []): Promise<T> {
-		return this.query({ type: 'transaction', name, data });
-	}
+	transaction<T = any>(name: string, data: DataType = []): Promise<T> { return this.query({ type: 'transaction', name, data }); }
 	async prepare(statement: string): Promise<Statement | null> {
 		const source = await this.query({ type: 'prepare', data: statement });
 		if (!source) return null;
 		return new Statement(source, this);
 	}
-	exec(data: string): Promise<{ changes: number }> {
-		return this.query({ type: 'exec', data });
-	}
-	loadExtension(filepath: string) {
-		return this.query({ type: 'load-extension', data: filepath });
-	}
-
+	exec(data: string): Promise<{ changes: number }> { return this.query({ type: 'exec', data }); }
+	loadExtension(filepath: string) { return this.query({ type: 'load-extension', data: filepath }); }
 	async runFile(file: string) {
 		const contents = await FS(file).read();
 		return this.query({ type: 'exec', data: contents });
 	}
 }
-
 export const tables = new Map<string, DatabaseTable<any>>();
-
 export class DatabaseTable<T> {
 	database: SQLDatabaseManager;
 	name: string;
@@ -313,23 +245,16 @@ export class DatabaseTable<T> {
 		this.primaryKeyName = primaryKeyName;
 		tables.set(this.name, this);
 	}
-	async selectOne<R = T>(
-		entries: string | string[],
-		where?: SQLStatement
-	): Promise<R | null> {
+	async selectOne<R = T>(entries: string | string[], where?: SQLStatement): Promise<R | null> {
 		const query = where || SQL.SQL``;
 		query.append(' LIMIT 1');
 		const rows = await this.selectAll<R>(entries, query);
 		return rows?.[0] || null;
 	}
-	selectAll<R = T>(
-		entries: string | string[],
-		where?: SQLStatement
-	): Promise<R[]> {
+	selectAll<R = T>(entries: string | string[], where?: SQLStatement): Promise<R[]> {
 		const query = SQL.SQL`SELECT `;
-		if (typeof entries === 'string') {
-			query.append(` ${entries} `);
-		} else {
+		if (typeof entries === 'string') { query.append(` ${entries} `); } 
+		else {
 			for (let i = 0; i < entries.length; i++) {
 				query.append(entries[i]);
 				if (typeof entries[i + 1] !== 'undefined') query.append(', ');
@@ -357,11 +282,8 @@ export class DatabaseTable<T> {
 			const [k, v] = to[i];
 			query.append(`${k} = `);
 			query.append(SQL.SQL`${v}`);
-			if (typeof to[i + 1] !== 'undefined') {
-				query.append(', ');
-			}
+			if (typeof to[i + 1] !== 'undefined') { query.append(', '); }
 		}
-
 		if (where) {
 			query.append(` WHERE `);
 			query.append(where);
@@ -369,9 +291,7 @@ export class DatabaseTable<T> {
 		if (limit) query.append(SQL.SQL` LIMIT ${limit}`);
 		return this.run(query);
 	}
-	updateOne(to: Partial<T>, where?: SQLStatement) {
-		return this.updateAll(to, where, 1);
-	}
+	updateOne(to: Partial<T>, where?: SQLStatement) { return this.updateAll(to, where, 1); }
 	deleteAll(where?: SQLStatement, limit?: number) {
 		const query = SQL.SQL`DELETE FROM `;
 		query.append(this.name);
@@ -379,9 +299,7 @@ export class DatabaseTable<T> {
 			query.append(' WHERE ');
 			query.append(where);
 		}
-		if (limit) {
-			query.append(SQL.SQL` LIMIT ${limit}`);
-		}
+		if (limit) { query.append(SQL.SQL` LIMIT ${limit}`); }
 		return this.run(query);
 	}
 	delete(keyEntry: SQLInput) {
@@ -390,9 +308,7 @@ export class DatabaseTable<T> {
 		query.append(SQL.SQL` = ${keyEntry}`);
 		return this.deleteOne(query);
 	}
-	deleteOne(where: SQLStatement) {
-		return this.deleteAll(where, 1);
-	}
+	deleteOne(where: SQLStatement) { return this.deleteAll(where, 1); }
 	insert(colMap: Partial<T>, rest?: SQLStatement, isReplace = false) {
 		const query = SQL.SQL``;
 		query.append(`${isReplace ? 'REPLACE' : 'INSERT'} INTO ${this.name} (`);
@@ -411,48 +327,31 @@ export class DatabaseTable<T> {
 		if (rest) query.append(rest);
 		return this.database.run(query.sql, query.values);
 	}
-	replace(cols: Partial<T>, rest?: SQLStatement) {
-		return this.insert(cols, rest, true);
-	}
+	replace(cols: Partial<T>, rest?: SQLStatement) { return this.insert(cols, rest, true); }
 	update(primaryKey: SQLInput, data: Partial<T>) {
 		const query = SQL.SQL``;
 		query.append(this.primaryKeyName + ' = ');
 		query.append(SQL.SQL`${primaryKey}`);
 		return this.updateOne(data, query);
 	}
-
 	// catch-alls for "we can't fit this query into any of the wrapper functions"
-	run(sql: SQLStatement) {
-		return this.database.run(sql.sql, sql.values) as Promise<{ changes: number }>;
-	}
-	all<R = T>(sql: SQLStatement) {
-		return this.database.all<R>(sql.sql, sql.values);
-	}
+	run(sql: SQLStatement) { return this.database.run(sql.sql, sql.values) as Promise<{ changes: number }>; }
+	all<R = T>(sql: SQLStatement) { return this.database.all<R>(sql.sql, sql.values); }
 }
-
-function getSQL(
-	id: string, module: NodeJS.Module, input: SQLOptions
-) {
+function getSQL(id: string, module: NodeJS.Module, input: SQLOptions) {
 	if (typeof input === 'undefined') throw new Error(`SQLDatabaseManager factory requires 3 arguments.`);
 	if ('processes' in input) throw new Error(`Passing process count to SQLDatabaseManager factory no longer supported.`);
 	return new SQLDatabaseManager(id, module, input);
 }
-
 export const SQL = Object.assign(getSQL, {
 	DatabaseTable,
 	SQLDatabaseManager,
 	tables,
 	SQL: (() => {
-		try {
-			return require('sql-template-strings');
-		} catch {
-			return () => {
-				throw new Error("Using SQL-template-strings without it installed");
-			};
-		}
+		try { return require('sql-template-strings'); } 
+		catch { return () => { throw new Error("Using SQL-template-strings without it installed"); }; }
 	})() as typeof import('sql-template-strings').SQL,
 });
-
 export declare namespace SQL {
 	export type DatabaseManager = import('./sql').SQLDatabaseManager;
 	export type Statement = import('./sql').Statement;

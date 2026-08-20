@@ -33,6 +33,7 @@ import { type PartialModlogEntry, mainModlog } from './modlog';
 import { Replays } from './replays';
 import * as crypto from 'crypto';
 import type { SubProcessesConfig } from './config-loader';
+import { TestBattle } from './room-battle-test';
 /*********************************************************
  * the Room object.
  *********************************************************/
@@ -1757,6 +1758,25 @@ export const Rooms = {
 				Monitor.countBattle(p.latestIp, p.name);
 			}
 		}
+		return room;
+	},
+	createTestBattle(options: RoomBattleOptions & Partial<RoomSettings>) {
+		if (options.players.length !== 2 || options.players[0].user !== options.players[1].user) {
+			throw new Error(`Test battles need exactly 2 seats, both belonging to the same user`);
+		}
+		const user = options.players[0].user;
+		Ladders.cancelSearches(user);
+		options.rated = 0;
+		options.challengeType = 'unrated';
+		const roomTitle = `${user.name}'s Test Battle`;
+		const roomid = options.roomid || Rooms.global.prepBattleRoom(options.format);
+		options.isPersonal = true;
+		const room = Rooms.createGameRoom(roomid, roomTitle, options);
+		const game = new TestBattle(room, options);
+		room.game = game;
+		game.checkPrivacySettings(options);
+		user.joinRoom(room);
+		Monitor.countBattle(user.latestIp, user.name);
 		return room;
 	},
 	global: null! as GlobalRoomState,

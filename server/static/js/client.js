@@ -1376,6 +1376,7 @@ function toId() { // toId has been renamed toID
 				'lobby': ChatRoom,
 				'staff': ChatRoom,
 				'resources': ResourceRoom,
+				'testbattle': TestBattleRoom,
 				'constructor': ChatRoom
 			};
 			var typeTable = {

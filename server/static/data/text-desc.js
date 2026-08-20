@@ -1,1 +1,1 @@
-exports.BattleTextDesc = {default:{},gen9indigostarstorm:{}};
+exports.BattleTextDesc = {default:{}};

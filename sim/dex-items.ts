@@ -29,12 +29,7 @@ export interface ItemData extends Partial<Item>, PokemonEventMethods {
 	forcedGuardAction?: string;
 	blocksGuardAction?: boolean;
 }
-export type ModdedItemData = ItemData | Partial<Omit<ItemData, 'name'>> & {
-	inherit: true,
-	onCustap?: (this: Battle, pokemon: Pokemon) => void,
-};
 export interface ItemDataTable { [itemid: IDEntry]: ItemData }
-export interface ModdedItemDataTable { [itemid: IDEntry]: ModdedItemData }
 export class Item extends BasicEffect implements Readonly<BasicEffect> {
 	declare readonly effectType: 'Item';
 	/** just controls location on the item spritesheet */
@@ -78,7 +73,6 @@ export class Item extends BasicEffect implements Readonly<BasicEffect> {
 	declare readonly forcedForme?: string;
 	declare readonly isChoice?: boolean;
 	declare readonly naturalGift?: { basePower: number, type: string };
-	declare readonly spritenum?: number;
 	declare readonly boosts?: SparseBoostsTable | false;
 	declare readonly onEat?: ((this: Battle, pokemon: Pokemon) => void) | false;
 	declare readonly onUse?: ((this: Battle, pokemon: Pokemon) => void) | false;

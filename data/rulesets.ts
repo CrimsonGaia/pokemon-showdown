@@ -15,14 +15,14 @@ export const Rulesets: import('../sim/dex-formats').FormatDataTable = {
 		desc: "The standard ruleset for all official Smogon singles tiers (Ubers, OU, etc.)",
 		ruleset: [
 			'Standard AG',
-			'Sleep Clause Mod', 'Species Clause', 'Nickname Clause', 
+			'Species Clause', 'Nickname Clause', 
 		],
 	},
 	standardnext: {
 		effectType: 'ValidatorRule',
 		name: 'Standard NEXT',
 		desc: "The standard ruleset for the NEXT mod",
-		ruleset: ['+Unreleased', 'Sleep Clause Mod', 'Species Clause', 'Nickname Clause', 'HP Percentage Mod', 'Cancel Mod',],
+		ruleset: ['+Unreleased', 'Species Clause', 'Nickname Clause', 'HP Percentage Mod', 'Cancel Mod',],
 		banlist: ['Soul Dew'],
 	},
 	flatrules: {
@@ -82,14 +82,14 @@ export const Rulesets: import('../sim/dex-formats').FormatDataTable = {
 		desc: "The standard ruleset for all National Dex tiers",
 		ruleset: [
 			'Standard AG', 'NatDex Mod',
-			'Species Clause', 'Nickname Clause', 'Sleep Clause Mod',
+			'Species Clause', 'Nickname Clause', 
 		],
 	},
 	standarddraft: {
 		effectType: 'ValidatorRule',
 		name: 'Standard Draft',
 		desc: "The custom Draft League ruleset",
-		ruleset: ['Obtainable', 'Nickname Clause', '+Unreleased', '+CAP', 'Sketch Post-Gen 7 Moves', 'Team Preview', 'Sleep Clause Mod', 'Endless Battle Clause', 'HP Percentage Mod', 'Cancel Mod',],
+		ruleset: ['Obtainable', 'Nickname Clause', '+Unreleased', '+CAP', 'Sketch Post-Gen 7 Moves', 'Team Preview', 'Endless Battle Clause', 'HP Percentage Mod', 'Cancel Mod',],
 		// timer: {starting: 60 * 60, grace: 0, addPerTurn: 10, maxPerTurn: 100, timeoutAutoChoose: true},
 	},
 	obtainable: {
@@ -275,36 +275,6 @@ export const Rulesets: import('../sim/dex-formats').FormatDataTable = {
 				return positions;
 			}
 			if (!positions.includes(speciesIndex)) { return `You must bring ${species.name} to the battle.`; }
-		},
-	},
-	evlimits: {
-		effectType: 'ValidatorRule',
-		name: 'EV Limits',
-		desc: "Require EVs to be in specific ranges, such as: \"EV Limits = Atk 0-124 / Def 100-252\"",
-		hasValue: true,
-		onValidateRule(value) {
-			if (!value) throw new Error(`To remove EV limits, use "! EV Limits"`);
-			const slashedParts = value.split('/');
-			const UINT_REGEX = /^[0-9]{1,4}$/;
-			return slashedParts.map(slashedPart => {
-				const parts = slashedPart.replace('-', ' - ').replace(/ +/g, ' ').trim().split(' ');
-				const [stat, low, hyphen, high] = parts;
-				if (parts.length !== 4 || !UINT_REGEX.test(low) || hyphen !== '-' || !UINT_REGEX.test(high)) { throw new Error(`EV limits should be in the format "EV Limits = Atk 0-124 / Def 100-252"`); }
-				const statid = this.dex.toID(stat) as StatID;
-				if (!this.dex.stats.ids().includes(statid)) { throw new Error(`Unrecognized stat name "${stat}" in "${value}"`); }
-				return `${statid} ${low}-${high}`;
-			}).join(' / ');
-		},
-		onValidateSet(set) {
-			const limits = this.ruleTable.valueRules.get('evlimits')!;
-			const problems = [];
-			for (const limit of limits.split(' / ')) {
-				const [statid, range] = limit.split(' ') as [StatID, string];
-				const [low, high] = range.split('-').map(num => parseInt(num));
-				const ev = set.evs[statid];
-				if (ev < low || ev > high) { problems.push(`${set.name || set.species}'s ${this.dex.stats.names[statid]} EV (${ev}) must be ${low}-${high}`); }
-			}
-			return problems;
 		},
 	},
 	teampreview: {
@@ -949,8 +919,8 @@ export const Rulesets: import('../sim/dex-formats').FormatDataTable = {
 	indigostarstormtimer: { // Timer settings are handled by the client/server
 		effectType: 'ValidatorRule',
 		name: 'Indigo Starstorm Timer',
-		desc: "15 sec Team Preview / 20 min Your Time / 30 sec per turn",
-		onBegin() { this.add('rule', 'Indigo Starstorm Timer: 15s Team Preview, 20min Your Time, 30s per turn'); },
+		desc: "120 sec Team Preview / 20 min Your Time / 90 sec per turn",
+		onBegin() { this.add('rule', 'Indigo Starstorm Timer: 120s Team Preview, 20min Your Time, 90s per turn'); },
 	},
 	limitrestrictedindigo: {
 		effectType: 'ValidatorRule',
@@ -999,7 +969,7 @@ export const Rulesets: import('../sim/dex-formats').FormatDataTable = {
 				// Starstorm Dex new mons
 				"Obductit", "Obductrio", "Extraterrestrio", "Miltank-Paldea", "Probovine", "Pareinnha", "Hydranero", 
 				// Starstorm Dex returning mons
-				"Nidoran-F", "Nidorina", "Nidoqueen", "Nidoran-M", "Nidorino", "Nidoking", "Marowak-Alola", "Staryu", "Starmie", "Smoochum", "Jynx", "Onix", "Steelix", "Mantyke", "Mantine", "Aron", "Lairon", "Aggron", "Lunatone", "Solrock", "Baltoy", "Claydol", "Lileep", "Cradily", "Anorith", "Armaldo", "Budew", "Roselia", "Roserade", "Mr. Mime-Galar", "Mr. Rime", "Carnivine", "Audino", "Venipede", "Whirlipede", "Scolipede", "Yamask", "Yamask-Galar", "Cofagrigus", "Runerigus", "Trubbish", "Garbodor", "Vanillite", "Vanillish", "Vanilluxe", "Emolga", "Karrablast", "Escavalier", "Frillish", "Jellicent", "Ferroseed", "Ferrothorn", "Klink", "Klang", "Klinklang", "Shelmet", "Accelgor", "Genesect", "Binacle", "Barbaracle", "Bunnelby", "Diggersby", "Honedge", "Doublade", "Aegislash", "Heloptile", "Heliolisk", "Drampa", "Wimpod", "Golisopod", "Type Null", "Sylvally", "Blipbug", "Dottler", "Orbeetle", "Wooloo", "Dubwool", "Sizzlipede", "Centiskorch", "Clobbopus", "Grapploct",
+				"Nidoran-F", "Nidorina", "Nidoqueen", "Nidoran-M", "Nidorino", "Nidoking", "Marowak-Alola", "Staryu", "Starmie", "Smoochum", "Jynx", "Onix", "Steelix", "Mantyke", "Mantine", "Aron", "Lairon", "Aggron", "Lunatone", "Solrock", "Baltoy", "Claydol", "Lileep", "Cradily", "Anorith", "Armaldo", "Budew", "Roselia", "Roserade", "Mr. Mime-Galar", "Mr. Rime", "Carnivine", "Audino", "Venipede", "Whirlipede", "Scolipede", "Yamask", "Yamask-Galar", "Cofagrigus", "Runerigus", "Trubbish", "Garbodor", "Vanillite", "Vanillish", "Vanilluxe", "Emolga", "Karrablast", "Escavalier", "Frillish", "Jellicent", "Ferroseed", "Ferrothorn", "Klink", "Klang", "Klinklang", "Shelmet", "Accelgor", "Genesect", "Binacle", "Barbaracle", "Bunnelby", "Diggersby", "Honedge", "Doublade", "Aegislash", "Heloptile", "Heliolisk", "Drampa", "Wimpod", "Golisopod", "Type Null", "Silvally", "Blipbug", "Dottler", "Orbeetle", "Wooloo", "Dubwool", "Sizzlipede", "Centiskorch", "Clobbopus", "Grapploct",
 			];
 			if (!svDex.includes(species.baseSpecies) && !svDex.includes(species.name)) { return [set.species + " is not available in Indigo Starstorm."]; }
 		},
@@ -1017,7 +987,7 @@ export const Rulesets: import('../sim/dex-formats').FormatDataTable = {
 			// Starstorm Dex additions
 				"Obductit", "Obductrio", "Extraterrestrio", "Miltank-Paldea", "Probovine", "Pareinnha", "Hydranero", 
 			// Starstorm Dex returning mons
-				"Nidoran-F", "Nidorina", "Nidoqueen", "Nidoran-M", "Nidorino", "Nidoking", "Marowak-Alola", "Staryu", "Starmie", "Smoochum", "Jynx", "Onix", "Steelix", "Mantyke", "Mantine", "Aron", "Lairon", "Aggron", "Lunatone", "Solrock", "Baltoy", "Claydol", "Lileep", "Cradily", "Anorith", "Armaldo", "Budew", "Roselia", "Roserade", "Mr. Mime-Galar", "Mr. Rime", "Carnivine", "Audino", "Venipede", "Whirlipede", "Scolipede", "Yamask", "Yamask-Galar", "Cofagrigus", "Runerigus", "Trubbish", "Garbodor", "Vanillite", "Vanillish", "Vanilluxe", "Emolga", "Karrablast", "Escavalier", "Frillish", "Jellicent", "Ferroseed", "Ferrothorn", "Klink", "Klang", "Klinklang", "Shelmet", "Accelgor", "Genesect", "Binacle", "Barbaracle", "Bunnelby", "Diggersby", "Honedge", "Doublade", "Aegislash", "Heloptile", "Heliolisk", "Drampa", "Wimpod", "Golisopod", "Type Null", "Sylvally", "Blipbug", "Dottler", "Orbeetle", "Wooloo", "Dubwool", "Sizzlipede", "Centiskorch", "Clobbopus", "Grapploct",
+				"Nidoran-F", "Nidorina", "Nidoqueen", "Nidoran-M", "Nidorino", "Nidoking", "Marowak-Alola", "Staryu", "Starmie", "Smoochum", "Jynx", "Onix", "Steelix", "Mantyke", "Mantine", "Aron", "Lairon", "Aggron", "Lunatone", "Solrock", "Baltoy", "Claydol", "Lileep", "Cradily", "Anorith", "Armaldo", "Budew", "Roselia", "Roserade", "Mr. Mime-Galar", "Mr. Rime", "Carnivine", "Audino", "Venipede", "Whirlipede", "Scolipede", "Yamask", "Yamask-Galar", "Cofagrigus", "Runerigus", "Trubbish", "Garbodor", "Vanillite", "Vanillish", "Vanilluxe", "Emolga", "Karrablast", "Escavalier", "Frillish", "Jellicent", "Ferroseed", "Ferrothorn", "Klink", "Klang", "Klinklang", "Shelmet", "Accelgor", "Genesect", "Binacle", "Barbaracle", "Bunnelby", "Diggersby", "Honedge", "Doublade", "Aegislash", "Heloptile", "Heliolisk", "Drampa", "Wimpod", "Golisopod", "Type Null", "Silvally", "Blipbug", "Dottler", "Orbeetle", "Wooloo", "Dubwool", "Sizzlipede", "Centiskorch", "Clobbopus", "Grapploct",
 
 			];
 			if (!svDex.includes(species.baseSpecies) && !svDex.includes(species.name)) { return [set.species + " is not available in Pokémon Scarlet/Violet."]; }

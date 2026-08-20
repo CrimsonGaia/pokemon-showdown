@@ -950,7 +950,7 @@
 		buf += '</span> ';
 		// render flags as textual labels (escaped), showing truthy keys from move.flags
 		// but exclude implementation/internal flags from display.
-		var HIDDEN_FLAGS = new Set(['allyanim', 'bypasssub', 'cantusetwice', 'charge', 'defrost', 'distance', 'failcopycat', 'failencore', 'failinstruct', 'failmefirst', 'failmimic', 'futuremove', 'gravity', 'metronome', 'mirror', 'mustpressure', 'noassist', 'noparentalbond', 'nonsky', 'nosketch', 'nosleeptalk', 'pledgecombo', 'protect', 'recharge', 'reflectable', 'snatch']);
+		var HIDDEN_FLAGS = new Set(['allyanim', 'bypasssub', 'cantusetwice', 'charge', 'defrost', 'distance', 'failcopycat', 'failencore', 'failinstruct', 'failmefirst', 'failmimic', 'futuremove', 'gravity', 'infusible', 'metronome', 'mirror', 'mustpressure', 'noassist', 'noparentalbond', 'nonsky', 'nosketch', 'nosleeptalk', 'pledgecombo', 'protect', 'recharge', 'reflectable', 'snatch']);
 		var flagsHtml = '';
 		if (move.flags && typeof move.flags === 'object') {
 			var flagKeys = Object.keys(move.flags).filter(function (k) { return move.flags[k]; });
@@ -1037,7 +1037,6 @@ buf += Dex.getTypeIcon(move.type, false, fullMove.type2);;
 		buf += this.getCategoryDisplay(move.category);
 		buf += '</span> ';
 		// flags
-		var HIDDEN_FLAGS = new Set(['allyanim', 'bypasssub', 'charge', 'defrost', 'distance', 'failinstruct', 'gravity', 'mirror', 'nonsky', 'nosketch', 'protect', 'recharge', 'reflectable', 'snatch']);
 		var innerFlagsHtml = '';
 		if (move.flags && typeof move.flags === 'object') {
 			var innerFlagKeys = Object.keys(move.flags).filter(function (k) { return move.flags[k]; });

@@ -23,72 +23,73 @@ type SparseBoostsTable = import('./dex').Dex.SparseBoostsTable;
 export type MoveTarget =
 	'adjacentAlly' | 'adjacentAllyOrSelf' | 'adjacentFoe' | 'all' | 'allAdjacent' | 'allAdjacentFoes' |
 	'allies' | 'allySide' | 'allyTeam' | 'any' | 'foeSide' | 'normal' | 'randomNormal' | 'scripted' | 'self';
+export type MoveFlag = 0 | 1;
 export interface MoveFlags {
 	// Core Flags
-	binding?: 1; //
-	bite?: 1; // Power is multiplied by 1.5 when used by a Pokemon with the Ability Strong Jaw.
-	bullet?: 1; // Has no effect on Pokemon with the Ability Bulletproof.
-	bomb?: 1; //
-	contact?: 1; // Makes contact.
-	crash?: 1; //
-	dance?: 1; // When used by a Pokemon, other Pokemon with the Ability Dancer can attempt to execute the same move.
-	drain?: 1; //
-	explosive?: 1; //
-	heal?: 1; // Prevented from being executed or selected during Heal Block's effect.
-	powder?: 1; // Has no effect on Pokemon which are Grass-type, have the Ability Overcoat, or hold Safety Goggles.
-	pulse?: 1; // Power is multiplied by 1.5 when used by a Pokemon with the Ability Mega Launcher.
-	punch?: 1; // Power is multiplied by 1.2 when used by a Pokemon with the Ability Iron Fist.
-	slicing?: 1; // Power is multiplied by 1.5 when used by a Pokemon with the Ability Sharpness.
-	sound?: 1; // Has no effect on Pokemon with the Ability Soundproof.
-	wind?: 1; // Activates the Wind Power and Wind Rider Abilities.
+	binding?: MoveFlag; // 
+	bite?: MoveFlag; // Power is multiplied by 1.5 when used by a Pokemon with the Ability Strong Jaw.
+	bullet?: MoveFlag; // Has no effect on Pokemon with the Ability Bulletproof.
+	bomb?: MoveFlag; //
+	contact?: MoveFlag; // Makes contact.
+	crash?: MoveFlag; //
+	dance?: MoveFlag; // When used by a Pokemon, other Pokemon with the Ability Dancer can attempt to execute the same move.
+	drain?: MoveFlag; //
+	explosive?: MoveFlag; //
+	heal?: MoveFlag; // Prevented from being executed or selected during Heal Block's effect.
+	powder?: MoveFlag; // Has no effect on Pokemon which are Grass-type, have the Ability Overcoat, or hold Safety Goggles.
+	pulse?: MoveFlag; // Power is multiplied by 1.5 when used by a Pokemon with the Ability Mega Launcher.
+	punch?: MoveFlag; // Power is multiplied by 1.2 when used by a Pokemon with the Ability Iron Fist.
+	slicing?: MoveFlag; // Power is multiplied by 1.5 when used by a Pokemon with the Ability Sharpness.
+	sound?: MoveFlag; // Has no effect on Pokemon with the Ability Soundproof.
+	wind?: MoveFlag; // Activates the Wind Power and Wind Rider Abilities.
 	// Indigo Starstorm Flags
-	airborne?: 1; //cannot be used under Gravity
-	aura?: 1; //
-	beam?: 1; //
-	breath?: 1; //
-	claw?: 1; //
-	crush?: 1; //
-	kick?: 1; //
-	launch?: 1; //
-	light?: 1; //
-	lunar?: 1; //
-	magic?: 1; // ignores tera. turns target's immunities into resists. Lowered STAB modifier
-	pierce?: 1; //
-	shadow?: 1; //
-	solar?: 1; //
-	spin?: 1; //
-	sweep?: 1; //
-	throw?: 1; //
-	weapon?: 1; //
-	wing?: 1; //
+	airborne?: MoveFlag; // Cannot be used under Gravity.
+	aura?: MoveFlag; //
+	beam?: MoveFlag; //
+	breath?: MoveFlag; //
+	claw?: MoveFlag; //
+	crush?: MoveFlag; //
+	kick?: MoveFlag; //
+	launch?: MoveFlag; //
+	light?: MoveFlag; //
+	lunar?: MoveFlag; //
+	magic?: MoveFlag; // Ignores tera. Turns target's immunities into resists. Lowered STAB modifier.
+	pierce?: MoveFlag; //
+	shadow?: MoveFlag; //
+	solar?: MoveFlag; //
+	spin?: MoveFlag; //
+	sweep?: MoveFlag; //
+	throw?: MoveFlag; //
+	weapon?: MoveFlag; //
+	wing?: MoveFlag; //
 	// Other Flags
-	allyanim?: 1; // The move plays its animation when used on an ally.
-	bypasssub?: 1; // Ignores a target's substitute.
-	cantusetwice?: 1; // The user cannot select this move after a previous successful use.
-	charge?: 1; // The user is unable to make a move between turns.
-	defrost?: 1; // Thaws the user if executed successfully while the user is frozen.
-	distance?: 1; // Can target a Pokemon positioned anywhere in a Triple Battle.
-	failcopycat?: 1; // Cannot be selected by Copycat.
-	failencore?: 1; // Encore fails if target used this move.
-	failinstruct?: 1; // Cannot be repeated by Instruct.
-	failmefirst?: 1; // Cannot be selected by Me First.
-	failmimic?: 1; // Cannot be copied by Mimic.
-	futuremove?: 1; // Targets a slot, and in 2 turns damages that slot.
-	gravity?: 1; // Prevented from being executed or selected during Gravity's effect.
-	infusible?: 1; // Can occupy certain species' infusibleSlots even if not naturally learnable by that species.
-	metronome?: 1; // Can be selected by Metronome.
-	mirror?: 1; // Can be copied by Mirror Move.
-	mustpressure?: 1; // Additional PP is deducted due to Pressure when it ordinarily would not.
-	noassist?: 1; // Cannot be selected by Assist.
-	nonsky?: 1; // Prevented from being executed or selected in a Sky Battle.
-	noparentalbond?: 1; // Cannot be made to hit twice via Parental Bond.
-	nosketch?: 1; // Cannot be copied by Sketch.
-	nosleeptalk?: 1; // Cannot be selected by Sleep Talk.
-	pledgecombo?: 1; // Gems will not activate. Cannot be redirected by Storm Drain / Lightning Rod.
-	protect?: 1; // Blocked by Detect, Protect, Spiky Shield, and if not a Status move, King's Shield.
-	recharge?: 1; // If this move is successful, the user must recharge on the following turn and cannot make a move.
-	reflectable?: 1; // Bounced back to the original user by Magic Coat or the Ability Magic Bounce.
-	snatch?: 1; // Can be stolen from the original user and instead used by another Pokemon using Snatch.
+	allyanim?: MoveFlag; // The move plays its animation when used on an ally.
+	bypasssub?: MoveFlag; // Ignores a target's substitute.
+	cantusetwice?: MoveFlag; // The user cannot select this move after a previous successful use.
+	charge?: MoveFlag; // The user is unable to make a move between turns.
+	defrost?: MoveFlag; // Thaws the user if executed successfully while the user is frozen.
+	distance?: MoveFlag; // Can target a Pokemon positioned anywhere in a Triple Battle.
+	failcopycat?: MoveFlag; // Cannot be selected by Copycat.
+	failencore?: MoveFlag; // Encore fails if target used this move.
+	failinstruct?: MoveFlag; // Cannot be repeated by Instruct.
+	failmefirst?: MoveFlag; // Cannot be selected by Me First.
+	failmimic?: MoveFlag; // Cannot be copied by Mimic.
+	futuremove?: MoveFlag; // Targets a slot, and in 2 turns damages that slot.
+	gravity?: MoveFlag; // Prevented from being executed or selected during Gravity's effect.
+	infusible?: MoveFlag; // Can occupy certain species' infusibleSlots even if not naturally learnable by that species.
+	metronome?: MoveFlag; // Can be selected by Metronome.
+	mirror?: MoveFlag; // Can be copied by Mirror Move.
+	mustpressure?: MoveFlag; // Additional PP is deducted due to Pressure when it ordinarily would not.
+	noassist?: MoveFlag; // Cannot be selected by Assist.
+	nonsky?: MoveFlag; // Prevented from being executed or selected in a Sky Battle.
+	noparentalbond?: MoveFlag; // Cannot be made to hit twice via Parental Bond.
+	nosketch?: MoveFlag; // Cannot be copied by Sketch.
+	nosleeptalk?: MoveFlag; // Cannot be selected by Sleep Talk.
+	pledgecombo?: MoveFlag; // Gems will not activate. Cannot be redirected by Storm Drain / Lightning Rod.
+	protect?: MoveFlag; // Blocked by Detect, Protect, Spiky Shield, and if not a Status move, King's Shield.
+	recharge?: MoveFlag; // If this move is successful, the user must recharge on the following turn and cannot make a move.
+	reflectable?: MoveFlag; // Bounced back to the original user by Magic Coat or the Ability Magic Bounce.
+	snatch?: MoveFlag; // Can be stolen from the original user and instead used by another Pokemon using Snatch.
 }
 export interface HitEffect {
 	onHit?: MoveEventMethods['onHit'];
@@ -218,7 +219,7 @@ export interface MoveData extends EffectData, MoveEventMethods, HitEffect {
 	ignorePositiveEvasion?: boolean;
 	multiaccuracy?: boolean;
 	multihit?: number | number[];
-	multihitType?: 'parentalbond' | 'sixminded';
+	multihitType?: 'parentalbond' | 'betterthanone' | 'sixminded';
 	noDamageVariance?: boolean;
 	nonGhostTarget?: MoveTarget;
 	spreadModifier?: number;
@@ -238,16 +239,7 @@ export interface MoveData extends EffectData, MoveEventMethods, HitEffect {
 	isInfusible?: boolean; // If true, this move can occupy a species' infusibleSlots even if not naturally learnable.
 
 }
-export type ModdedMoveData = MoveData | Partial<Omit<MoveData, 'name' | 'type2'>> & {
-	inherit: true,
-	igniteBoosted?: boolean,
-	settleBoosted?: boolean,
-	bodyofwaterBoosted?: boolean,
-	longWhipBoost?: boolean,
-	gen?: number,
-};
 export interface MoveDataTable { [moveid: IDEntry]: MoveData }
-export interface ModdedMoveDataTable { [moveid: IDEntry]: ModdedMoveData }
 export interface Move extends Readonly<BasicEffect & MoveData> { readonly effectType: 'Move'; }
 interface MoveHitData {
 	[targetSlotid: string]: {
@@ -299,11 +291,6 @@ export interface ActiveMove extends MutableMove {
 	ruinedDef?: Pokemon;
 	ruinedSpA?: Pokemon;
 	ruinedSpD?: Pokemon;
-	/**
-	 * Has this move been boosted by a Z-crystal or used by a Dynamax Pokemon? Usually the same as
-	 * `isZ` or `isMax`, but hacked moves will have this be `false` and `isZ` / `isMax` be truthy.
-	 */
-	isZOrMaxPowered?: boolean;
 }
 type MoveCategory = 'Physical' | 'Special' | 'Status';
 export class DataMove extends BasicEffect implements Readonly<BasicEffect & MoveData> {
@@ -392,6 +379,8 @@ export class DataMove extends BasicEffect implements Readonly<BasicEffect & Move
 	readonly volatileStatus?: ID;
 	declare readonly guardActionCD?: number;
 	declare readonly isInfusible?: boolean;
+	declare readonly onEffectiveness?: (this: Battle, typeMod: number, target: Pokemon | null, type: string, move: ActiveMove) => number | void;
+	declare readonly onModifySTAB?: CommonHandlers['ModifierSourceMove'];
 	constructor(data: AnyObject) {
 		super(data);
 		this.fullname = `move: ${this.name}`;
@@ -431,7 +420,7 @@ export class DataMove extends BasicEffect implements Readonly<BasicEffect & Move
 		this.spreadHit = data.spreadHit || false;
 		this.forceSTAB = !!data.forceSTAB;
 		this.volatileStatus = typeof data.volatileStatus === 'string' ? (data.volatileStatus as ID) : undefined;
-		if (!this.gen) { // special handling for gen8 gmax moves (all of them have num 1000 but they are part of gen8)
+		if (!this.gen) { 
 			if (this.num >= 827) {  this.gen = 9; } 
 			else if (this.num >= 743) { this.gen = 8; } 
 			else if (this.num >= 622) { this.gen = 7; } 
@@ -443,6 +432,27 @@ export class DataMove extends BasicEffect implements Readonly<BasicEffect & Move
 			else if (this.num >= 1) { this.gen = 1; }
 		}
 		assignMissingFields(this, data);
+		// Magic moves ignore type and ability immunities (treated as resistances instead), and
+		// get an amplified STAB modifier: 1.2x if the user's type matches once, 1.4x if it matches twice.
+		// Not affected by Terastallization - only the user's original types count.
+		if (this.flags.magic) {
+			(this as any).ignoreImmunity = true;
+			(this as any).ignoreAbility = true;
+			const origEffectiveness = this.onEffectiveness;
+			(this as any).onEffectiveness = function (this: Battle, typeMod: number, target: Pokemon | null, type: string, move: ActiveMove) {
+				if (typeMod <= -99) return -1;
+				if (typeof origEffectiveness === 'function') { return origEffectiveness.call(this, typeMod, target, type, move); }
+				return typeMod;
+			};
+			(this as any).onModifySTAB = function (this: Battle, stab: number, source: Pokemon, target: Pokemon, move: ActiveMove) {
+				const moveTypes = [move.type];
+				if (move.type2 && move.type2 !== move.type) moveTypes.push(move.type2);
+				const originalTypes = source.getTypes(false, true);
+				const matches = move.forceSTAB ? moveTypes : moveTypes.filter(t => originalTypes.includes(t));
+				if (matches.length === 1) return 1.2;
+				if (matches.length === 2) return 1.4;
+			};
+		}
 	}
 }
 const EMPTY_MOVE = Utils.deepFreeze(new DataMove({ name: '', exists: false }));

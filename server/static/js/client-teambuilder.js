@@ -1,7 +1,7 @@
 (function (exports, $) {
 	// this is a useful global
 	var teams;
-	var isIndigoStarstorm = this.curTeam.format && (this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.includes('isl'));
+	var isIndigoStarstorm = this.curTeam && this.curTeam.format && (this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.includes('isl'));
 	//region Affinity/Aversion
 	exports.TypeAffinityAversion = {
 		bug: { affinity: { binding: 5, bite: 5, claw: 5, dance: 5, drain: 5, sound: 5 },
@@ -97,8 +97,10 @@
 			'click button[name=altform]': 'altForm',
 			'click .altform': 'altForm',
 			'click button.teratype': 'teraTypeSelect',
-			'click button.mega': 'MegaSelect',
+			'click button.typechart': 'typeChartSelect',
+			'click button.mega': 'megaSelect',
 			'click button.infusion': 'infusionSelect',
+			'click button.ultraburst': 'ultraBurstSelect',
 			'click button[name=formeToggle]': 'formeToggleSelect',
 			'click button[name=genderToggle]': 'genderToggleChange',
 			// stats
@@ -110,7 +112,7 @@
 			// ability set
 			'click button[name=abilitySetToggle]': 'abilitySetChange',
 			// guard action
-			'change select[name=guardAction]': 'guardActionChange',
+			'click button[name=guardActionButton]': 'guardActionOpen',
 			// affinity/aversion
 			'click .affinity-flag-icon': 'affinityFlagClick',
 			'click .aversion-flag-icon': 'aversionFlagClick',
@@ -159,6 +161,60 @@
 			case 'Fairy': return 'brightness(0) saturate(100%) invert(77%) sepia(33%) saturate(774%) hue-rotate(287deg) brightness(100%) contrast(97%)';
 			default: return 'none';
 			}
+		},
+		// Recomputes and redraws every infusion-slot icon for a set's chart row so
+		// this stays correct whether a move was placed via the infusion popup or typed in directly.
+		refreshInfusionIcons: function (chartIndex) {
+			var set = (this.curSetLoc === chartIndex) ? this.curSet : this.curSetList[chartIndex];
+			if (!set) return;
+			var dex = this.curTeam.dex;
+			var species = dex.species.get(set.species);
+			var infusibleSlots = (species && species.infusibleSlots) || 0;
+			if (!infusibleSlots) return;
+			// Walk the actual move slots in order, collecting any that are flagged infusible.
+			var infusedMoves = [];
+			for (var m = 0; m < 4 && infusedMoves.length < infusibleSlots; m++) {
+				var moveName = set.moves && set.moves[m];
+				if (!moveName) continue;
+				var move = dex.moves.get(moveName);
+				if (move && move.exists && move.flags && move.flags.infusible) infusedMoves.push(move);
+			}
+			var $teamchart = this.$('.teamchart li[value="' + chartIndex + '"]');
+			for (var slot = 0; slot < infusibleSlots; slot++) {
+				var $infusion = $teamchart.find('button.infusion[data-slot="' + slot + '"]');
+				if (!$infusion.length) continue;
+				var move = infusedMoves[slot] || null;
+				$infusion.attr('value', move ? move.name : '');
+				var infusionType = move ? move.type : '';
+				var overlayHtml = '<span style="position:relative; display:block; width:22px; height:22px;">';
+				overlayHtml += '<span style="position:absolute; left:1px; top:1px; width:20px; height:20px; border-radius:50%; background:#fff; z-index:1; pointer-events:none; box-shadow:0 1px 3px rgba(0,0,0,0.35);"></span>';
+				if (infusionType) {
+					overlayHtml += '<img src="' + Dex.resourcePrefix + 'sprites/misc/uno.png" alt="" style="position:absolute; left:10px; top:-2px; width:22px; height:20px; z-index:20; pointer-events:none;" />';
+					overlayHtml += '<img src="' + Dex.resourcePrefix + 'sprites/misc/infusebw.png" alt="Infusion" style="position:absolute; left:1px; top:1px; z-index:3; width:20px; height:20px; object-fit:contain; display:block; pointer-events:none; filter:' + this.getInfusionFilter(infusionType) + ';" />';
+				} else { overlayHtml += '<img src="' + Dex.resourcePrefix + 'sprites/misc/infuse.png" alt="Infusion" style="position:absolute; left:1px; top:1px; z-index:2; width:20px; height:20px; object-fit:contain; display:block; pointer-events:none;" />'; }
+				overlayHtml += '</span>';
+				$infusion.html(overlayHtml);
+			}
+		},
+		speciesLearnsMoveNaturally: function (species, moveid) {
+			var table = window.BattleTeambuilderTable && window.BattleTeambuilderTable['gen9indigostarstorm'];
+			if (!table || !table.learnsets) return false;
+			var dex = this.curTeam.dex;
+			var learnsetid = species.id;
+			if (!(learnsetid in table.learnsets)) {
+				learnsetid = toID(species.baseSpecies);
+				if (typeof species.battleOnly === 'string' && species.battleOnly !== species.baseSpecies) { learnsetid = toID(species.battleOnly); }
+			}
+			var seen = {};
+			while (learnsetid && !seen[learnsetid]) {
+				seen[learnsetid] = true;
+				var learnset = table.learnsets[learnsetid];
+				if (learnset && moveid in learnset && learnset[moveid].indexOf('9') > -1) return true;
+				var lsetSpecies = dex.species.get(learnsetid);
+				if (!lsetSpecies.exists) break;
+				learnsetid = toID(lsetSpecies.battleOnly || lsetSpecies.changesFrom || lsetSpecies.prevo || '');
+			}
+			return false;
 		},
 		dispatchClick: function (e) {
 			e.preventDefault();
@@ -216,7 +272,6 @@
 					this.loadTeam();
 					return this.updateTeamView();
 				}
-				this.ignoreEVLimits = (this.curTeam.gen < 3 || ((this.curTeam.format.includes('hackmons') || this.curTeam.format.endsWith('bh')) && this.curTeam.gen !== 6) || this.curTeam.format.includes('metronomebattle'));
 				if (this.curSet) { return this.updateSetView(); }
 				return this.updateTeamView();
 			}
@@ -1231,49 +1286,31 @@
 			else if (size === 'XL') sizeTiers = 2;
 			var modifiedWeight = baseWeight * (1 + (sizeTiers * sizeWeightModifier));
 			var modifiedHeight = baseHeight * (1 + (sizeTiers * sizeWeightModifier));
-			// details
+			//region Type, Item, Details
 			buf += '<div class="setcol setcol-details"><div class="setrow">';
 			buf += '<div class="setcell setcell-details"><label style="position: relative; top: 6px;">Type';
 			// Type icons 
 			var types = species.types;
 			if (types) {
-				buf += '<span style="margin-left: 8px; vertical-align: middle; position: relative; ;">';
-				for (var i = 0; i < types.length; i++) buf += Dex.getTypeIcon(types[i]);
-				buf += '</span>';
+				buf += '<button type="button" class="typechart" name="typeChart" style="background: none; border: none; padding: 0; cursor: pointer; margin-left: 8px; vertical-align: middle; position: relative;" title="View type chart"><span>';
+				for (var ti = 0; ti < types.length; ti++) buf += Dex.getTypeIcon(types[ti]);
+				buf += '</span></button>';
 				// Tera Type icon
 				var teraType = set.teraType || species.requiredTeraType || species.types[0];
 				buf += '<br><button type="button" class="teratype" name="teraType" value="' + BattleLog.escapeHTML(teraType) + '" style="background: none; border: none; padding: 0; cursor: pointer; width: 20px; height: 20px; margin-left: 4px; position: relative; top: 4px;">';
 				buf += '<img src="' + Dex.resourcePrefix + 'sprites/types/Tera' + teraType + '.png" alt="' + teraType + '" style="width: 20px; height: 20px; object-fit: contain; display: block; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5));" />';
 				buf += '</button>';
 			}
-			// Mega icons
-			var baseSpecies = species.baseSpecies ? this.curTeam.dex.species.get(species.baseSpecies) : species;
-			var otherFormes = baseSpecies.otherFormes || [];
-			for (var j = 0; j < otherFormes.length; j++) {
-				var megaSpecies = this.curTeam.dex.species.get(otherFormes[j]);
-				var requiredItem = megaSpecies.requiredItem || '';
-				var active = toID(set.item) === toID(requiredItem);
-				if (!megaSpecies.exists) continue;
-				var forme = megaSpecies.forme || "";
-				var megaLetter = null;
-				["X", "Y", "Z", "A", "Q"].some(function(letter) {
-					if (forme.includes("Mega-" + letter)) {
-						megaLetter = letter;
-						return true;
-					}
-					return false;
-				});
-				buf += '<button' + ' type="button"' + ' class="mega"' + ' data-mega="' + megaSpecies.id + '"' + ' style="background:none;border:none;padding:0;cursor:pointer;width:20px;height:20px;margin-left:8px;position:relative;top:4px;">';
-				buf += '<img src="' + Dex.resourcePrefix + 'sprites/misc/MegaSymbol' + megaLetter + '.png"' + ' alt="' + megaSpecies.name + '"' + ' style="width:20px;height:20px;object-fit:contain;display:block;' + (active ? '' : 'filter:grayscale(100%) opacity(0.35);') + '" />';						
-				buf += '</button>';
-			}
-			//region Infusion 
+			// Mega icons 
+			buf += this.getMegaIconsHTML(set, species);
+			// Ultra Burst
+			buf += this.getUltraBurstIconHTML(set, species);
+			// Infusion
 			var infusibleSlots = species.infusibleSlots || 0;
 			for (var slot = 0; slot < infusibleSlots; slot++) {
 				var move = (set.moves && set.moves[slot])? this.curTeam.dex.moves.get(set.moves[slot]): null;
 				var infusionType = move && move.exists ? move.type : '';
-				buf += '<button ' + 'class="infusion" ' + 'data-slot="' + slot + '" ' + 'name="infusion" ' + 'value="' + BattleLog.escapeHTML(move ? move.name : '') + '">';
-				buf += '<button type="button" class="infusion" name="infusion" value="' + BattleLog.escapeHTML(move0 ? move0.name : '') + '" style="background: none; border: none; padding: 0; cursor: pointer; width: 22px; height: 22px; margin-left: 8px; position: relative; top: 4px;">';
+				buf += '<button type="button" class="infusion" data-slot="' + slot + '" name="infusion" value="' + BattleLog.escapeHTML(move ? move.name : '') + '" style="background: none; border: none; padding: 0; cursor: pointer; width: 22px; height: 22px; margin-left: 8px; position: relative; top: 4px;">'
 				if (infusionType) {
 					buf += '<span style="position:relative; display:block; width:22px; height:22px;">';
 					buf += '<span style="position:absolute; left:1px; top:1px; width:20px; height:20px; border-radius:50%; background:#fff; z-index:1; pointer-events:none; box-shadow:0 1px 3px rgba(0,0,0,0.35);"></span>';
@@ -1299,14 +1336,14 @@
 			buf += '</div></div></div></div>';
 			// item icon
 			buf += '<div class="setrow setrow-icons">';
-			buf += '<div class="setcell" style="position: relative; left: 95px; top: 25px;">';
+			buf += '<div class="setcell" style="position: relative; left: 82px; top: 16px;">';
 			var itemicon = '<span class="itemicon"></span>';
 			var itemName = '';
 			if (set.item) {
 				var itemId = toID(set.item);
 				if (itemId in BattleItems) {
 					var item = BattleItems[itemId];
-					itemicon = '<span class="itemicon" style="' + Dex.getItemIcon(item) + '"></span>';
+					itemicon = '<span class="itemicon" style="' + Dex.getItemIcon(item, 3 / 8) + '"></span>';
 					itemName = item.name;
 				} else { itemName = set.item; }
 			}
@@ -1316,7 +1353,30 @@
 			if (this.curTeam.gen > 1 && !isLetsGo) buf += '<div class="setcell setcell-item"><label>Item</label><input type="text" name="item" class="textbox chartinput" value="' + BattleLog.escapeHTML(itemName) + '" autocomplete="off" /></div>';
 			buf += '</div>';
 			buf += '</div>';
-			// Ability Set column
+			//region Ability, Gender, Guard
+			buf += '<div class="setcol setcol-ability" style="align-content: end; position: relative; top: -5px;">'; ;
+			// Gender 
+			var speciesGender = species.gender; 
+			var currentGender = set.gender || '';
+			var genderButton = '';
+			if (speciesGender === 'N') { genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="" style="width: 36px; font-weight: bold; font-size: 12px; pointer-events: none; padding: 1.5px 0; height: 18px; background: rgba(128, 128, 128, 0.3); text-align: center;"><span style="position: relative; top: -2px;">—</span></button>'; } 
+			else if (speciesGender === 'M') { genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="M" style="width: 36px; font-weight: bold; font-size: 12px; pointer-events: none; padding: 1.5px 0; height: 18px; background: rgba(0, 150, 255, 0.3); text-align: center;"><span style="position: relative; top: -0.75px; left: -1px; color: #0004ffff;">♂</span></button>'; } 
+			else if (speciesGender === 'F') { genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="F" style="width: 36px; font-weight: bold; font-size: 12px; pointer-events: none; padding: 1.5px 0; height: 18px; background: rgba(255, 100, 150, 0.3); text-align: center;"><span style="position: relative; top: -2px; left: -1px; color: #ff0055ff;">♀</span></button>'; } 
+			// Male or Female - toggleable
+			else {
+				var isMale = currentGender === 'M' || !currentGender;
+				if (isMale) { genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="M" style="width: 36px; font-weight: bold; font-size: 12px; cursor: pointer; padding: 1.5px 0; height: 18px; background: linear-gradient(to right, rgba(0, 150, 255, 0.3) 50%, transparent 50%); text-align: left; padding-left: 6px;"><span style="position: relative; top: -0.75px; right: 2px; color: #0004ffff;">♂</span></button>'; } 
+				else { genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="F" style="width: 36px; font-weight: bold; font-size: 12px; cursor: pointer; padding: 1.5px 0; height: 18px; background: linear-gradient(to left, rgba(255, 100, 150, 0.3) 50%, transparent 50%); text-align: right; padding-right: 6px;"><span style="position: relative; top: -1.5px; left: 1px; color: #ff0055ff;">♀</span></button>'; }
+			}
+			buf += '<div style="display:flex; flex-direction:column; gap:3px; position:relative; margin-bottom: 4px; left: 16px;">';
+			buf += '<div style="display: flex; align-items: center; gap: 7px; margin-bottom: 4px;"><label style="font-size: 10.5px;">Gender</label>' + genderButton + '</div>';
+			buf += '</div>';
+			// Guard Action 
+			buf += '<div class="setcell" style="margin-bottom:8px; position: relative; display:flex; align-items:center;">';
+			buf += '<label style="height:22px; width:36px; font-size:10px; line-height:11px; text-align:right; margin-right:5px;">Guard<br>Action</label>';
+			buf += this.getGuardActionButtonHTML(set, species);
+			buf += '</div>';
+			// Ability Set 
 			var abilitySet = set.abilitySet || 1;
 			var hasabilityset2 = !!(species.abilities['H'] || species.abilities['S']);
 			var buttonStyle, buttonClass, buttonName, buttonText;
@@ -1333,39 +1393,17 @@
 				buttonName = ' name="abilitySetToggle" data-setindex="' + i + '"';
 				buttonText = abilitySet;
 			}
-			buf += '<div class="setcol setcol-ability" style="align-content: end; position: relative; top: -5px;">'; ;
-			// Gender 
-			var speciesGender = species.gender; 
-			var currentGender = set.gender || '';
-			var genderButton = '';
-			if (speciesGender === 'N') { genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="" style="width: 36px; font-weight: bold; font-size: 12px; pointer-events: none; padding: 1.5px 0; height: 18px; background: rgba(128, 128, 128, 0.3); text-align: center;"><span style="position: relative; top: -2px;">—</span></button>'; } 
-			else if (speciesGender === 'M') { genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="M" style="width: 36px; font-weight: bold; font-size: 12px; pointer-events: none; padding: 1.5px 0; height: 18px; background: rgba(0, 150, 255, 0.3); text-align: center;"><span style="position: relative; top: -0.75px; left: -1px; color: #0004ffff;">♂</span></button>'; } 
-			else if (speciesGender === 'F') { genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="F" style="width: 36px; font-weight: bold; font-size: 12px; pointer-events: none; padding: 1.5px 0; height: 18px; background: rgba(255, 100, 150, 0.3); text-align: center;"><span style="position: relative; top: -2px; left: -1px; color: #ff0055ff;">♀</span></button>'; } 
-			// Male or Female - toggleable
-			else {
-				var isMale = currentGender === 'M' || !currentGender;
-				if (isMale) { genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="M" style="width: 36px; font-weight: bold; font-size: 12px; cursor: pointer; padding: 1.5px 0; height: 18px; background: linear-gradient(to right, rgba(0, 150, 255, 0.3) 50%, transparent 50%); text-align: left; padding-left: 6px;"><span style="position: relative; top: -0.75px; right: 2px; color: #0004ffff;">♂</span></button>'; } 
-				else { genderButton = '<button type="button" class="textbox genderToggle" name="genderToggle" data-value="F" style="width: 36px; font-weight: bold; font-size: 12px; cursor: pointer; padding: 1.5px 0; height: 18px; background: linear-gradient(to left, rgba(255, 100, 150, 0.3) 50%, transparent 50%); text-align: right; padding-right: 6px;"><span style="position: relative; top: -1.5px; left: 1px; color: #ff0055ff;">♀</span></button>'; }
-			}
-			buf += '<div style="display:flex; flex-direction:column; gap:3px; position:relative; top:-34px; left:16px;">';
-			buf += '<div style="display: flex; align-items: center; gap: 7px;"><label style="font-size: 10.5px;">Gender</label>' + genderButton + '</div>';
-			buf += '</div>';
-			// Guard Action 
-			buf += '<div class="setcell" style="display:flex; align-items:center; gap:4px; margin-bottom:3px;">';
-			buf += '<label style="margin:0; white-space:nowrap;">Guard Action</label>';
-			buf += this.getGuardActionOptionsHTML(set, species);
-			buf += '</div>';
-			//ability set
 			buf += '<div class="setcell">';
 			buf += '<div style="display: flex; align-items: end; gap: 4px;"><label style="margin: 0;">Ability Set</label><button type="button" class="textbox' + buttonClass + '"' + buttonName + ' data-value="' + abilitySet + '" style="' + buttonStyle + '">' + buttonText + '</button></div>';
 			buf += '</div>';
 			buf += '<div class="setcell">';
-			buf += '<input type="text" name="ability" class="textbox chartinput" value="' + BattleLog.escapeHTML(set.ability) + '" autocomplete="off" style="margin: 0;" />';
+			buf += '<input type="text" name="ability" class="textbox chartinput" value="' + BattleLog.escapeHTML(set.ability) + '" autocomplete="off" style="margin: 0; height: 16px;" />';
 			buf += '</div>';
 			buf += '<div class="setcell">';
-			buf += '<input type="text" name="ability2" class="textbox chartinput" value="' + BattleLog.escapeHTML(set.ability2 || '') + '" autocomplete="off" style="margin: 0;" />';
+			buf += '<input type="text" name="ability2" class="textbox chartinput" value="' + BattleLog.escapeHTML(set.ability2 || '') + '" autocomplete="off" style="margin: 0; height: 16px;" />';
 			buf += '</div>';
 			buf += '</div>';
+			// moves
 			if (!set.moves) set.moves = [];
 			buf += '<div class="setcol setcol-moves"><div class="setcell"><label>Moves</label>';
 			buf += '<input type="text" name="move1" class="textbox chartinput" value="' + BattleLog.escapeHTML(set.moves[0]) + '" autocomplete="off" /></div>';
@@ -1387,18 +1425,18 @@
 					buf += '<div class="setcell"><label style="font-size: 8px;">Affinity - <span style="background: rgba(0,0,0,0.8); padding: 1px 3px; border-radius: 2px;"><span style="color: #5BA3FF; font-weight: bold;">1.1x</span> - <span style="color: #00CED1; font-weight: bold;">1.2x</span></span></label>';
 					buf += '<div style="display: inline-block; background: rgba(94, 161, 114, 0.4); padding: 3px 6px 3px 0px; border-radius: 3px; vertical-align: top; height: ' + affinityHeight + 'px; width: 164px;">';
 					buf += '<div style="display: flex; flex-direction: row; flex-wrap: wrap; align-content: flex-start; gap: 10.5px; width: 417px; height: 128px; transform: scale(0.38); transform-origin: left top; line-height: 0;">';
-					for (var i = 0; i < affinityAversion.affinity.length; i++) {
-						var flagData = affinityAversion.affinity[i];
+					for (var af = 0; af < affinityAversion.affinity.length; af++) {
+						var flagData = affinityAversion.affinity[af];
 						var filter = '';
 						// 2x affinity: cyan, 1x affinity: blue
 						if (flagData.count >= 2) { filter = 'filter: sepia(100%) saturate(300%) hue-rotate(140deg) brightness(1.1);'; } 
 						else { filter = 'filter: sepia(100%) saturate(400%) hue-rotate(180deg) brightness(0.9);'; }
 						var style = 'position: relative;';
-						if (i >= 15) style += ' top: -52px; left: 26px;';
-						else if (i >= 12) style += ' top: -42px;';
-						else if (i >= 9) style += ' top: -31px; left: 26px;';
-						else if (i >= 6) style += ' top: -21px;';
-						else if (i >= 3) style += ' top: -10px; left: 26px;';
+						if (af >= 15) style += ' top: -52px; left: 26px;';
+						else if (af >= 12) style += ' top: -42px;';
+						else if (af >= 9) style += ' top: -31px; left: 26px;';
+						else if (af >= 6) style += ' top: -21px;';
+						else if (af >= 3) style += ' top: -10px; left: 26px;';
 						style += ' ' + filter + ' cursor: pointer;';
 						buf += Dex.getFlagIcon(flagData.flag).replace('<img', '<img class="affinity-flag-icon" data-flag="' + BattleLog.escapeHTML(flagData.flag) + '" style="' + style + '"');
 					}
@@ -1415,18 +1453,18 @@
 					buf += '<div class="setcell" style="margin-top: 3px;"><label style="font-size: 8px;">Aversion - <span style="background: rgba(0,0,0,0.8); padding: 1px 3px; border-radius: 2px;"><span style="color: #FFD700; font-weight: bold;">0.9x</span> - <span style="color: #FF6B6B; font-weight: bold;">0.8x</span></span></label>';
 					buf += '<div style="display: inline-block; background: rgba(161, 94, 94, 0.4); padding: 3px 6px 3px 0px; border-radius: 3px; vertical-align: top; height: ' + aversionHeight + 'px; width: 164px;">';
 					buf += '<div style="display: flex; flex-direction: row; flex-wrap: wrap; align-content: flex-start; gap: 10.5px; width: 417px; height: 128px; transform: scale(0.38); transform-origin: left top; line-height: 0;">';
-					for (var i = 0; i < affinityAversion.aversion.length; i++) {
-						var flagData = affinityAversion.aversion[i];
+					for (var av = 0; av < affinityAversion.aversion.length; av++) {
+						var flagData = affinityAversion.aversion[av];
 						var filter = '';
 						// 2x aversion: red, 1x aversion: orange
 						if (flagData.count >= 2) { filter = 'filter: sepia(100%) saturate(1000%) hue-rotate(-50deg) brightness(0.9);'; } 
 						else { filter = 'filter: sepia(100%) saturate(800%) hue-rotate(-5deg) brightness(1.1);'; }
 						var style = 'position: relative;';
-						if (i >= 15) style += ' top: -52px; left: 26px;';
-						else if (i >= 12) style += ' top: -42px;';
-						else if (i >= 9) style += ' top: -31px; left: 26px;';
-						else if (i >= 6) style += ' top: -21px;';
-						else if (i >= 3) style += ' top: -10px; left: 26px;';
+						if (av >= 15) style += ' top: -52px; left: 26px;';
+						else if (av >= 12) style += ' top: -42px;';
+						else if (av >= 9) style += ' top: -31px; left: 26px;';
+						else if (av >= 6) style += ' top: -21px;';
+						else if (av >= 3) style += ' top: -10px; left: 26px;';
 						style += ' ' + filter + ' cursor: pointer;';
 						buf += Dex.getFlagIcon(flagData.flag).replace('<img', '<img class="aversion-flag-icon" data-flag="' + BattleLog.escapeHTML(flagData.flag) + '" style="' + style + '"');
 					}
@@ -1440,10 +1478,7 @@
 			buf += '<div class="setcol setcol-stats"><div class="setrow"><label>Stats</label><button class="textbox setstats" name="stats">';
 			buf += '<span class="statrow statrow-head">' + '<label></label><span class="statgraph"></span>' + '<ma></ma><ma>Base</ma>' + '<em></em><em></em>' + '<ma></ma><ma></ma><ma></ma><ma></ma><ma></ma>' + '<ma>' + (!isLetsGo ? 'JV' : 'AV') + '</ma>' + '</span>';
 			var statOrder = [];
-			for (var k in BattleStatNames) {
-				if (k === 'spd' && this.curTeam.gen === 1) continue;
-				statOrder.push(k);
-			}
+			for (var k in BattleStatNames) { statOrder.push(k); }
 			var spacer = '<em></em>';
 			var spacersmall = '<ma></ma>';
 			var statData = {};
@@ -1635,12 +1670,11 @@
 			if (this.curTeam.format.includes('letsgo')) { this.curTeam.dex = Dex.mod('gen7letsgo'); }
 			if (this.curTeam.format.includes('bdsp')) { this.curTeam.dex = Dex.mod('gen8bdsp'); }
 			if (this.curTeam.format.includes('indigostarstorm') || this.curTeam.format.toLowerCase().includes('isl')) { this.curTeam.dex = Dex.mod('gen9indigostarstorm'); }
-		if (this.curTeam.capacity !== 24 && this.curTeam.capacity !== 50) {
-			if (format.includes('indigostarstorm') || format.includes('isl')) { this.curTeam.capacity = 10; } 
-			else { this.curTeam.capacity = 6; }
-		}
-		this.save();
-			if (this.curTeam.gen === 5 && !Dex.loadedSpriteData['bw']) Dex.loadSpriteData('bw');
+			if (this.curTeam.capacity !== 24 && this.curTeam.capacity !== 50) {
+				if (format.includes('indigostarstorm') || format.includes('isl')) { this.curTeam.capacity = 10; } 
+				else { this.curTeam.capacity = 6; }
+			}
+			this.save();
 			this.update();
 		},
 		nicknameChange: function (e) {
@@ -1920,7 +1954,7 @@
 			// smogon samples don't usually have sample names, box samples usually do; either way, don't use them
 			curSet.name = this.curSet.name || undefined;
 			// never preserve current set tera, even if smogon set used default
-			if (this.curSet.gen === 9) { curSet.teraType = sampleSet.teraType || species.requiredTeraType || species.types[0]; }
+			curSet.teraType = sampleSet.teraType || species.requiredTeraType || species.types[0];
 			var text = Storage.exportTeam([curSet], this.curTeam.gen);
 			this.$('.teambuilder-pokemon-import .pokemonedit').val(text);
 		},
@@ -2060,7 +2094,6 @@
 			var maxVal = -Infinity;
 			var minVal = Infinity;
 			for (var s in stats) {
-				if (s === 'spd' && this.curTeam.gen === 1) continue;
 				var v = this.getStat(s, set);
 				stats[s] = v;
 				statList.push(s);
@@ -2170,6 +2203,12 @@
 				this.search.qType = null;
 				this.search.qName = null;
 				this.updateAbilitySetsForm();
+				return;
+			}
+			if (type === 'guardAction') {
+				this.search.qType = null;
+				this.search.qName = null;
+				this.updateGuardActionForm();
 				return;
 			}
 			var $inputEl = this.$('input[name=' + this.curChartName + ']');
@@ -2729,51 +2768,406 @@
 			this.curTeam.iconCache = '!';
 			this.save();
 		},
-		getGuardActionOptionsHTML: function (set, species) {
+		getGuardActionButtonHTML: function (set, species) {
 			var dex = this.curTeam.dex;
 			var ability = dex.abilities.get(set.ability);
 			var pool = species.guardAction || [];
-			var disabled = '';
-			var options = '';
 			if (ability.blocksGuardAction) {
-				disabled = ' disabled';
-				options = '<option value="">&mdash; (blocked by ' + BattleLog.escapeHTML(ability.name) + ')</option>';
+				set.guardAction = '';
+				return '<span class="guardActionCell" style="color:#d33; font-size:8.5px; line-height:11px; display:inline-block; max-width:70px;">Blocked by ' + BattleLog.escapeHTML(ability.name) + '</span>';
+			}
+			if (ability.forcedGuardAction) {
+				var forcedMove = dex.moves.get(ability.forcedGuardAction);
+				set.guardAction = forcedMove.name;
+				return '<button type="button" class="textbox guardActionCell" style="pointer-events:none; height:18px; width:65px; font-size:7pt; background:rgba(128,128,128,0.3); text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + BattleLog.escapeHTML(forcedMove.name) + '</button>';
+			}
+			if (!pool.length) {
+				set.guardAction = '';
+				return '<span class="guardActionCell" style="color:#d33; font-size:8.5px; line-height:11px; display:inline-block; max-width:70px;">No Guard Action</span>';
+			}
+			if (!set.guardAction || pool.map(function (m) { return toID(m); }).indexOf(toID(set.guardAction)) === -1) { set.guardAction = dex.moves.get(pool[0]).name; }
+			return '<button type="button" name="guardActionButton" class="textbox guardActionCell" style="height:18px; width:65px; font-size:7pt; cursor:pointer; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + BattleLog.escapeHTML(set.guardAction) + '</button>';
+		},
+		guardActionOpen: function (e) {
+			e.preventDefault();
+			var $target = $(e.currentTarget);
+			if (!this.curSet) {
+				var i = +$target.closest('li').prop('value');
+				this.curSet = this.curSetList[i];
+				this.curSetLoc = i;
+				this.update();
+			}
+			this.curChartName = 'guardAction';
+			this.curChartType = 'guardAction';
+			this.updateChart();
+		},
+		updateGuardActionForm: function () {
+			var set = this.curSet;
+			if (!set) return;
+			var dex = this.curTeam.dex;
+			var species = dex.species.get(set.species);
+			var ability = dex.abilities.get(set.ability);
+			var pool = species.guardAction || [];
+			function renderMoveRow(move, isCur) {
+				var acc = move.accuracy === true ? '—' : (move.accuracy + '%');
+				var bp = move.basePower || '—';
+				var cd = move.guardActionCD || 0;
+				var cdBadge =
+				'<span style="position:relative; display:inline-block; width:20px; height:20px; flex-shrink:0; cursor:help;" title="Guard Action Cooldown only goes down when the user acts during a turn. Switching, or being flinched, paralyzed, afraid etc do not count.">' +
+					'<img src="' + Dex.resourcePrefix + 'sprites/misc/GuardIcon.png" style="width:20px; height:20px; display:block;" />' +
+					'<span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; bottom: 1px; font-size:12px; font-weight:bold; color:#fff; text-shadow:0 0 2px #000, 0 0 2px #000, 1px 1px 0 #000;">' + cd + '</span>' +
+				'</span>';
+				var desc = move.shortDesc || move.desc || '';
+				return (
+					'<li class="result" style="list-style:none;">' +
+					'<a class="' + (isCur ? 'cur' : '') + '" data-entry="guardAction|' + BattleLog.escapeHTML(move.name) + '" style="display:block; height: 60px; padding:4px 6px;">' +
+						'<div style="display:flex; align-items:center; gap:6px;">' +
+							'<span style="font-size: 13pt; font-weight:bold;">' + BattleLog.escapeHTML(move.name) + '</span>' +
+							Dex.getTypeIcon(move.type) +
+							Dex.getCategoryIcon(move.category) +
+							'<span style="font-size:10px; opacity:0.8;">' + bp + ' BP</span>' +
+							'<span style="font-size:10px; opacity:0.8;">' + acc + ' ACC</span>' +
+							cdBadge +
+						'</div>' +
+						(desc ? '<div style="font-size:10pt; opacity:0.7; margin-top:2px;">' + BattleLog.escapeHTML(desc) + '</div>' : '') +
+					'</a>' +
+					'</li>'
+				);
+			}
+			var buf = '';
+			buf += '<div class="resultheader"><h3 class="has-tooltip" data-tooltip="guardactioninfo">Guard Action</h3></div>';
+			buf += '<ul class="utilichart">';
+			if (ability.blocksGuardAction) {
+				buf += '<li class="result"><em style="color:#d33;">No Guard Action - blocked by ' + BattleLog.escapeHTML(ability.name) + '</em></li>';
 				set.guardAction = '';
 			} else if (ability.forcedGuardAction) {
 				var forcedMove = dex.moves.get(ability.forcedGuardAction);
-				disabled = ' disabled';
-				options = '<option value="' + BattleLog.escapeHTML(forcedMove.name) + '" selected>' +
-					BattleLog.escapeHTML(forcedMove.name) + ' (forced by ' + BattleLog.escapeHTML(ability.name) + ')</option>';
+				buf += '<li class="result"><em>Forced by ' + BattleLog.escapeHTML(ability.name) + ':</em></li>';
+				buf += renderMoveRow(forcedMove, true);
 				set.guardAction = forcedMove.name;
 			} else if (!pool.length) {
-				disabled = ' disabled';
-				options = '<option value="">&mdash; (none available)</option>';
+				buf += '<li class="result"><em style="color:#d33;">This Pokémon has no Guard Action.</em></li>';
 				set.guardAction = '';
 			} else {
-				if (!set.guardAction) set.guardAction = dex.moves.get(pool[0]).name;
+				if (!set.guardAction || pool.map(function (m) { return toID(m); }).indexOf(toID(set.guardAction)) === -1) { set.guardAction = dex.moves.get(pool[0]).name; }
 				var curId = toID(set.guardAction);
-				for (var g = 0; g < pool.length; g++) {
-					var gMove = dex.moves.get(pool[g]);
-					var sel = (toID(gMove.name) === curId) ? ' selected' : '';
-					options += '<option value="' + BattleLog.escapeHTML(gMove.name) + '"' + sel + '>' + BattleLog.escapeHTML(gMove.name) + '</option>';
+				for (var i = 0; i < pool.length; i++) {
+					var move = dex.moves.get(pool[i]);
+					buf += renderMoveRow(move, toID(move.name) === curId);
 				}
 			}
-			return '<select name="guardAction" class="textbox"' + disabled + ' style="margin:0;">' + options + '</select>';
-		},
-		guardActionChange: function (e) {
-			var $select = $(e.currentTarget);
-			var $li = $select.closest('li');
-			var i = +$li.attr('value');
-			var set = this.curSetList[i];
-			if (!set) return;
-			set.guardAction = $select.val();
-			this.save();
+			buf += '</ul>';
+			this.$chart.html(buf);
+			this.$('.guardActionCell').text(set.guardAction || (ability.blocksGuardAction ? 'Blocked' : (!pool.length ? 'None' : set.guardAction)));
 		},
 		refreshGuardActionForAbility: function () {
 			var set = this.curSet;
 			if (!set) return;
 			var species = this.curTeam.dex.species.get(set.species);
-			this.$('select[name=guardAction]').replaceWith(this.getGuardActionOptionsHTML(set, species));
+			this.$('.guardActionCell').replaceWith(this.getGuardActionButtonHTML(set, species));
+			if (this.curChartType === 'guardAction') this.updateGuardActionForm();
+		},
+		computeStepMultiplier: function (typeMod) {
+			typeMod = Math.max(-6, Math.min(typeMod, 6));
+			var multiplier = 1;
+			if (typeMod > 0) {
+				var fullSteps = Math.floor(typeMod);
+				var halfStep = typeMod % 1 >= 0.5;
+				for (var i = 0; i < fullSteps; i++) multiplier *= 2;
+				if (halfStep) multiplier *= 1.5;
+			} else if (typeMod < 0) {
+				var absTypeMod = Math.abs(typeMod);
+				var fullSteps2 = Math.floor(absTypeMod);
+				var halfStep2 = absTypeMod % 1 >= 0.5;
+				for (var j = 0; j < fullSteps2; j++) multiplier /= 2;
+				if (halfStep2) multiplier /= 1.5;
+			}
+			return multiplier;
+		},
+		computeTypeChart: function (types) {
+			var allTypeNames = Dex.types.names().filter(function (t) { return t !== 'Banal'; });
+			var defTypes = types.filter(function (t) { return t; });
+			function getEffectivenessStep(attackType, defendType) {
+				var defendTypeData = Dex.types.get(defendType);
+				var val = defendTypeData.damageTaken ? defendTypeData.damageTaken[attackType] : undefined;
+				if (val === 1) return 1;
+				if (val === 2) return -1;
+				return 0;
+			}
+
+			var defense = [];
+			var immunities = [];
+			allTypeNames.forEach(function (attackType) {
+				var typeMod = 0;
+				var immune = false;
+				defTypes.forEach(function (defendType) {
+					var defendTypeData = Dex.types.get(defendType);
+					var val = defendTypeData.damageTaken ? defendTypeData.damageTaken[attackType] : undefined;
+					if (val === 3) immune = true;
+					typeMod += getEffectivenessStep(attackType, defendType);
+				});
+				if (immune) { immunities.push({ kind: 'type', name: attackType }); } 
+				else { defense.push({ kind: 'type', name: attackType, typeMod: typeMod, thick: true }); }
+			});
+			var flagSet = {};
+			defTypes.forEach(function (defendType) {
+				var defendTypeData = Dex.types.get(defendType);
+				if (!defendTypeData.damageTaken) return;
+				for (var key in defendTypeData.damageTaken) {
+					if (allTypeNames.indexOf(key) !== -1 || key === 'Stellar' || key === 'Banal') continue; 
+					if (key === 'trapped' || key === 'flinch' ) continue; 
+					flagSet[key] = true;
+				}
+			});
+			Object.keys(flagSet).sort().forEach(function (flag) {
+				var multiplier = 1;
+				var immune = false;
+				defTypes.forEach(function (defendType) {
+					var defendTypeData = Dex.types.get(defendType);
+					var val = defendTypeData.damageTaken ? defendTypeData.damageTaken[flag] : undefined;
+					if (val === 3) { immune = true; } 
+					else if (val === 1) { multiplier *= 1.5; } 
+					else if (val === 2) { multiplier *= 0.5; }
+				});
+				if (immune) { immunities.push({ kind: 'flag', name: flag }); } 
+				else if (multiplier !== 1) { defense.push({ kind: 'flag', name: flag, multiplier: multiplier, thick: false }); }
+			});
+			var offense = [];
+			offense.push({ kind: 'stab', name: 'Single-type STAB', multiplier: 1.5, thick: true, type1: defTypes[0] || null });
+			if (defTypes.length === 2) { offense.push({ kind: 'stab', name: 'Dual-type STAB', multiplier: 1.7, thick: true, type1: defTypes[0], type2: defTypes[1] }); }
+			var offenseFlagSet = {};
+			defTypes.forEach(function (atkType) {
+				var atkTypeData = Dex.types.get(atkType);
+				if (atkTypeData.affinity) { for (var f in atkTypeData.affinity) { if (atkTypeData.affinity[f] === 5) offenseFlagSet[f] = true; } }
+				if (atkTypeData.aversion) { for (var g in atkTypeData.aversion) { if (atkTypeData.aversion[g] === 6) offenseFlagSet[g] = true; } }
+			});
+			Object.keys(offenseFlagSet).sort().forEach(function (flag) {
+				var modifier = 0;
+				defTypes.forEach(function (atkType) {
+					var atkTypeData = Dex.types.get(atkType);
+					if (atkTypeData.affinity && atkTypeData.affinity[flag] === 5) modifier += 0.1;
+					if (atkTypeData.aversion && atkTypeData.aversion[flag] === 6) modifier -= 0.1;
+				});
+				if (modifier !== 0) { offense.push({ kind: 'flag', name: flag, multiplier: 1 + modifier, thick: false }); }
+			});
+			return { defense: defense, immunities: immunities, offense: offense };
+		},
+		buildTypeChart: function (entry) {
+			var height = (typeof entry.typeMod === 'number') ? entry.typeMod : Math.log2(entry.multiplier);
+			var multiplier = (typeof entry.typeMod === 'number') ? this.computeStepMultiplier(entry.typeMod) : entry.multiplier;
+			var iconHtml, iconWidth, iconHeight;
+			if (entry.kind === 'flag' && Dex.isStatusName(entry.name)) {
+				iconHtml = Dex.getStatusIcon(entry.name);
+				iconWidth = 60; iconHeight = 14;
+			}
+			else if (entry.kind === 'flag' && Dex.isFieldEffectName(entry.name)) {
+				iconHtml = Dex.getFieldEffectIcon(entry.name);
+				iconWidth = 60; iconHeight = 14;
+			}
+			else if (entry.kind === 'flag') {
+				iconHtml = Dex.getFlagIcon(entry.name);
+				iconWidth = 66; iconHeight = 16;
+			}
+			else if (entry.kind === 'stab') {
+				if (entry.type2) {
+					iconHtml = Dex.getTypeIcon(entry.type1 || null) + '<span style="display:inline-block; font-weight:bold; font-size:11px; margin:0 3px; vertical-align:middle;">+</span>' + Dex.getTypeIcon(entry.type2 || null);
+					iconWidth = 78; iconHeight = 14;
+				} else {
+					iconHtml = Dex.getTypeIcon(entry.type1 || null);
+					iconWidth = 32; iconHeight = 14;
+				}
+			} 
+			else {
+				iconHtml = Dex.getTypeIcon(entry.name);
+				iconWidth = 32; iconHeight = 14;
+			}
+			var label = entry.name.charAt(0).toUpperCase() + entry.name.slice(1);
+			return { iconHtml: iconHtml, label: label, height: height, iconWidth: iconWidth, iconHeight: iconHeight, multiplier: multiplier };
+		},
+		renderTypeChartAxis: function (items, opts) {
+			opts = opts || {};
+			var immunities = opts.immunities || [];
+			var tiers = {};
+			var tierKeys = [];
+			for (var i = 0; i < items.length; i++) {
+				var multiplier = items[i].multiplier;
+				var key = Math.round(multiplier * 100) / 100;
+				if (!tiers[key]) {
+					tiers[key] = [];
+					tierKeys.push(key);
+				}
+				tiers[key].push(items[i]);
+			}
+			tierKeys.sort(function (a, b) { return b - a; });
+			var dividerStyle = 'border-top:1px dotted #bbb; padding-top:8px;';
+			function renderLabel(label) {
+				var match = label.match(/^(.*?)\s*(\[.*\])$/);
+				if (match) {
+					return '<div style="white-space:nowrap;">' + match[1] + '</div><div style="white-space:nowrap;">' + match[2] + '</div>';
+				}
+				return '<div style="white-space:nowrap;">' + label + '</div>';
+			}
+			var buf = '<div class="typechart-groups" style="display:flex; flex-direction:column; gap:8px; width:100%;">';
+			for (var t = 0; t < tierKeys.length; t++) {
+				var multiplier = tierKeys[t];
+				var rowItems = tiers[multiplier];
+				var label;
+				if ((opts.offense) && (multiplier >= 1.5)) { label = (Math.round(multiplier * 100) / 100) + 'x Damage [STAB]'; } 
+				else if ((opts.offense) && (multiplier > 1)) { label = (Math.round(multiplier * 100) / 100) + 'x Damage [Affinity]'; } 
+				else if ((opts.offense) && (multiplier < 1)) { label = (Math.round(multiplier * 100) / 100) + 'x Damage [Aversion]'; } 
+				else if (multiplier > 1) { label = (Math.round(multiplier * 100) / 100) + 'x weak'; } 
+				else if (multiplier < 1) { label = (Math.round((1 / multiplier) * 100) / 100) + 'x resist'; } 
+				else { label = '1x [Neutral]'; }
+				buf += '<div class="typechart-group" style="display:flex; align-items:center; gap:8px;' + (t > 0 ? dividerStyle : '') + '">';
+				buf += '<div style="flex:1 1 auto; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:4px;">';
+				for (var k = 0; k < rowItems.length; k++) {
+					var item = rowItems[k];
+					var title = item.label + ' (' + (Math.round(item.multiplier * 100) / 100) + 'x)';
+					buf += '<div class="typechart-icon-wrap" style="width:' + item.iconWidth + 'px; height:' + item.iconHeight + 'px; display:inline-flex; align-items:center; white-space:nowrap;" title="' + BattleLog.escapeHTML(title) + '">';
+					buf += item.iconHtml;
+					buf += '</div>';
+				}
+				buf += '</div>';
+				buf += '<div style="flex:0 0 50px; font-size:10px; font-weight:bold; text-align:right; display:flex; flex-direction:column; align-items:flex-end;">' + renderLabel(label) + '</div>';
+				buf += '</div>';
+			}
+			// Immunities
+			if (immunities.length) {
+				buf += '<div class="typechart-group typechart-immunity-group" style="display:flex; align-items:center; gap:8px;' + (tierKeys.length ? dividerStyle : '') + '">';
+				buf += '<div style="flex:1 1 auto; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap: 3px;">';
+				for (var j = 0; j < immunities.length; j++) {
+					var immunity = immunities[j];
+					var isFlag = immunity.kind === 'flag';
+					var isStatus = isFlag && Dex.isStatusName(immunity.name);
+					var isFieldEffect = isFlag && !isStatus && Dex.isFieldEffectName(immunity.name);
+					var iconHtml = isStatus ? Dex.getStatusIcon(immunity.name) : (isFieldEffect ? Dex.getFieldEffectIcon(immunity.name) : (isFlag ? Dex.getFlagIcon(immunity.name) : Dex.getTypeIcon(immunity.name)));
+					var iconWidth = isStatus ? 60 : (isFieldEffect ? 16 : (isFlag ? 66 : 32));
+					var iconHeight = isStatus ? 14 : (isFieldEffect ? 16 : (isFlag ? 16 : 14));
+					var label = immunity.name.charAt(0).toUpperCase() + immunity.name.slice(1);
+					buf += '<div class="typechart-icon-wrap" style="width:' + iconWidth + 'px; height:' + iconHeight + 'px; display:inline-flex; align-items:center; white-space:nowrap;" title="' + BattleLog.escapeHTML(label) + ' (0x)">';
+					buf += iconHtml;
+					buf += '</div>';
+				}
+				buf += '</div>';
+				buf += '<div style="flex:0 0 50px; font-size:10px; font-weight:bold; text-align:right; display:flex; flex-direction:column; align-items:flex-end;">' + renderLabel('0x [Immune]') + '</div>';
+				buf += '</div>';
+			}
+			if (!tierKeys.length && !immunities.length) { buf += '<div style="text-align:center; opacity:0.6; font-size:11px; padding:8px;">None</div>'; }
+			buf += '</div>';
+			return buf;
+		},
+		renderTypeChartSection: function (chart, opts) {
+			opts = opts || {};
+			var room = this;
+			var colWidth = opts.colWidth || 300;
+			var defenseItems = chart.defense.map(function (e) { return room.buildTypeChart(e); });
+			var offenseItems = chart.offense.map(function (e) { return room.buildTypeChart(e); });
+			var buf = '<div style="display:flex; align-items:flex-start; flex-wrap:wrap; justify-content:center;">';
+			// Defense
+			buf += '<div class="typechart-col" style="flex:1 1 ' + colWidth + 'px; min-width:' + colWidth + 'px; padding-right: 6px;">';
+			buf += '<p style="text-align:center; font-weight:bold; margin-bottom:4px;">Defense</p>';
+			buf += room.renderTypeChartAxis(defenseItems, { width: colWidth, immunities: chart.immunities });
+			buf += '</div>';
+			// Offense
+			buf += '<div class="typechart-col" style="flex:1 1 ' + colWidth + 'px; min-width:' + colWidth + 'px; padding-left: 6px; border-left:1px solid #bbb;">';
+			buf += '<p style="text-align:center; font-weight:bold; margin-bottom:4px;">Offense</p>';
+			buf += room.renderTypeChartAxis(offenseItems, { width: colWidth, offense: true });
+			buf += '</div>';
+			buf += '</div>';
+			return buf;
+		},
+		getMegaFormeGroups: function (species) {
+			var dex = this.curTeam.dex;
+			var baseSpecies = species.baseSpecies ? dex.species.get(species.baseSpecies) : species;
+			var otherFormes = baseSpecies.otherFormes || [];
+			var megaByLetter = {};
+			for (var j = 0; j < otherFormes.length; j++) {
+				var megaSpecies = dex.species.get(otherFormes[j]);
+				if (!megaSpecies.exists) continue;
+				var forme = megaSpecies.forme || "";
+				var megaLetter = null;
+				["X", "Y", "Z", "A", "Q"].some(function (letter) {
+					if (forme.includes("Mega-" + letter)) { megaLetter = letter; return true; }
+					return false;
+				});
+				if (!megaLetter) continue;
+				var isStellar = /-Stellar$/.test(forme);
+				if (!megaByLetter[megaLetter]) { megaByLetter[megaLetter] = {}; }
+				if (isStellar) { megaByLetter[megaLetter].stellarSpecies = megaSpecies; }
+				else { megaByLetter[megaLetter].species = megaSpecies; }
+			}
+			var groups = [];
+			["X", "Y", "Z", "A", "Q"].forEach(function (letter) {
+				var entry = megaByLetter[letter];
+				if (!entry || !entry.species) return; // needs a non-Stellar base forme to anchor the entry
+				groups.push({ letter: letter, species: entry.species, stellarSpecies: entry.stellarSpecies || null });
+			});
+			return groups;
+		},
+		ensureMegaRainbowStyle: function () {
+			if (document.getElementById('megaRainbowStyle')) return;
+			var style = document.createElement('style');
+			style.id = 'megaRainbowStyle';
+			style.textContent =
+				'@keyframes megaRainbowGlow {' +
+				'0% { filter: drop-shadow(0 0 4px #ff4d4d) hue-rotate(0deg); }' +
+				'100% { filter: drop-shadow(0 0 4px #ff4d4d) hue-rotate(360deg); }' +
+				'}';
+			document.head.appendChild(style);
+		},
+		getMegaIconsHTML: function (set, species) {
+			this.ensureMegaRainbowStyle();
+			var groups = this.getMegaFormeGroups(species);
+			var buf = '<span class="mega-icons">';
+			groups.forEach(function (group) {
+				var megaSpecies = group.species;
+				var requiredItem = (megaSpecies.requiredItems && megaSpecies.requiredItems[0]) || '';
+				var stoneEquipped = toID(set.item) === toID(requiredItem);
+				var stellarActive = !!group.stellarSpecies && stoneEquipped && toID(set.teraType) === 'stellar';
+				var imgStyle = 'width:30px;height:30px;object-fit:contain; position: relative; top: -6px; right: 6px;display:block;opacity:' + (stoneEquipped ? '1' : '0.4') + ';';
+				if (stellarActive) { imgStyle += 'animation:megaRainbowGlow 2s linear infinite;'; }
+				buf += '<button type="button" class="mega" data-mega="' + megaSpecies.id + '" data-letter="' + group.letter + '" style="background:none;border:none;padding:0;cursor:pointer;width:20px;height:20px;margin-left:8px;position:relative;top:4px;">';
+				buf += '<img src="' + Dex.resourcePrefix + 'sprites/misc/MegaSymbol' + group.letter + '.png" alt="' + megaSpecies.name + '" class="mega-icon-img" style="' + imgStyle + '" />';
+				buf += '</button>';
+			});
+			buf += '</span>';
+			return buf;
+		},
+		refreshMegaIcons: function (set, $scope) {
+			set = set || this.curSet;
+			if (!set) return;
+			var species = this.curTeam.dex.species.get(set.species);
+			var $target = $scope ? $scope.find('.mega-icons') : this.$('.mega-icons');
+			$target.replaceWith(this.getMegaIconsHTML(set, species));
+		},
+		getUltraBurstSpecies: function (species) {
+			var dex = this.curTeam.dex;
+			var baseSpecies = species.baseSpecies ? dex.species.get(species.baseSpecies) : species;
+			if (baseSpecies.name !== 'Necrozma') return null;
+			var otherFormes = baseSpecies.otherFormes || [];
+			for (var j = 0; j < otherFormes.length; j++) {
+				var forme = dex.species.get(otherFormes[j]);
+				if (forme.exists && forme.forme === 'Ultra') return forme;
+			}
+			return null;
+		},
+		getUltraBurstIconHTML: function (set, species) {
+			var ultraSpecies = this.getUltraBurstSpecies(species);
+			if (!ultraSpecies) return '<span class="ultraburst-icon"></span>';
+			var imgStyle = 'width:30px;height:30px;object-fit:contain; position: relative; top: -5px; right: 5px;display:block;';
+			var buf = '<span class="ultraburst-icon">';
+			buf += '<button type="button" class="ultraburst" style="background:none;border:none;padding:0;cursor:pointer;width:20px;height:20px;margin-left:8px;position:relative;top:4px;">';
+			buf += '<img src="' + Dex.resourcePrefix + 'sprites/misc/UltraBurstSymbol.png" alt="' + ultraSpecies.name + '" class="ultraburst-icon-img" style="' + imgStyle + '" />';
+			buf += '</button>';
+			buf += '</span>';
+			return buf;
+		},
+		refreshUltraBurstIcon: function (set, $scope) {
+			set = set || this.curSet;
+			if (!set) return;
+			var species = this.curTeam.dex.species.get(set.species);
+			var $target = $scope ? $scope.find('.ultraburst-icon') : this.$('.ultraburst-icon');
+			$target.replaceWith(this.getUltraBurstIconHTML(set, species));
 		},
 		//#region Set Detail Form
 		updateDetailsForm: function () {
@@ -2958,6 +3352,19 @@
 			if (!set) return;
 			app.addPopup(TeraTypePopup, { curSet: set, index: i, room: this });
 		},
+		typeChartSelect: function (e) {
+			var set, i;
+			if (this.curSet) {
+				set = this.curSet;
+				i = this.curSetLoc;
+			} else {
+				i = +$(e.currentTarget).closest('li').attr('value');
+				set = this.curSetList[i];
+			}
+			if (!set) return;
+			var species = this.curTeam.dex.species.get(set.species);
+			app.addPopup(TypePopup, { curSet: set, index: i, room: this, species: species });
+		},
 		megaSelect: function (e) {
 			var set, i;
 			if (this.curSet) {
@@ -2968,8 +3375,24 @@
 				set = this.curSetList[i];
 			}
 			if (!set) return;
-			var megaSpecies = this.curTeam.dex.species.get($(e.currentTarget).data('mega'));
-			app.addPopup(MegaPopup, { curSet: set, index: i, room: this, megaSpecies: megaSpecies, });
+			var species = this.curTeam.dex.species.get(set.species);
+			var groups = this.getMegaFormeGroups(species);
+			app.addPopup(MegaPopup, { curSet: set, index: i, room: this, species: species, groups: groups, });
+		},
+		ultraBurstSelect: function (e) {
+			var set, i;
+			if (this.curSet) {
+				set = this.curSet;
+				i = this.curSetLoc;
+			} else {
+				i = +$(e.currentTarget).closest('li').attr('value');
+				set = this.curSetList[i];
+			}
+			if (!set) return;
+			var species = this.curTeam.dex.species.get(set.species);
+			var ultraSpecies = this.getUltraBurstSpecies(species);
+			if (!ultraSpecies) return;
+			app.addPopup(UltraBurstPopup, { curSet: set, room: this, species: species, ultraSpecies: ultraSpecies, });
 		},
 		infusionSelect: function (e) {
 			var set, i;
@@ -3274,6 +3697,8 @@
 			case 'item':
 				this.curSet.item = val;
 				this.updatePokemonSprite();
+				this.refreshMegaIcons();
+				this.refreshUltraBurstIcon();
 				if (selectNext) this.$(this.$('input[name=ability]').length ? 'input[name=ability]' : 'input[name=move' + (this.slot + 1) + ']').select();
 				break;
 			case 'ability':
@@ -3286,6 +3711,15 @@
 				this.curSet.ability2 = val;
 				this.curTeam.iconCache = '!';
 				if (selectNext) this.$('input[name=move' + (this.slot + 1) + ']').select();
+				break;
+			case 'guardAction':
+				this.curSet.guardAction = val;
+				this.curTeam.iconCache = '!';
+				this.updateGuardActionForm();
+				if (selectNext) {
+					this.stats();
+					this.$('button.setstats').focus();
+				}
 				break;
 			case 'move1':
 				this.unChooseMove(this.curSet.moves[0]);
@@ -3316,11 +3750,14 @@
 				this.curSet.moves[3] = val;
 				this.chooseMove(val);
 				if (selectNext) {
-					this.stats();
-					this.$('button.setstats').focus();
+					this.curChartName = 'guardAction';
+					this.curChartType = 'guardAction';
+					this.updateChart();
+					this.$('button[name=guardActionButton]').focus();
 				}
 				break;
 			}
+			if (inputName.indexOf('move') === 0) { this.refreshInfusionIcons(this.curSetLoc); }
 			this.save();
 		},
 		unChooseMove: function (moveName) {
@@ -3722,29 +4159,50 @@
 			Storage.saveTeam(this.room.curTeam);
 		}
 	});
+	//region Infusion popup
 	var InfusionPopup = this.InfusionPopup = Popup.extend({
 		type: 'semimodal',
 		initialize: function (data) {
 			this.room = data.room;
 			this.curSet = data.curSet;
 			this.chartIndex = data.index;
+			this.slot = data.slot;
 			var dex = this.room.curTeam.dex;
 			var species = dex.species.get(this.curSet.species);
 			var infusibleSlots = (species && species.infusibleSlots) || 0;
 			var infusibleMoves = dex.moves.all().filter(function (m) { return m.flags && m.flags.infusible; });
-			var buf = '';
-			buf += '<div style="width: 330px; max-width: 90vw;">';
-			buf += '<p><strong>Infusible Moves</strong> <button name="close" class="button">Cancel</button></p>';
-			buf += '<p>This Pokémon can have ' + infusibleSlots + ' infusible move' + (infusibleSlots === 1 ? '' : 's') + '.</p>';
-			buf += '<p>Infusible moves are special bonus moves gained after evolution. If the Pokémon can already learn the move naturally, put it in a diffferent move slot, it will not consume the slot anyway.</p>';
-			buf += '<hr />';
-			buf += '<div style="max-height: 420px; overflow-y: auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;">';
-			buf += '</div>';
-			buf += '</div>';
+			// Split out moves the species already learns naturally ,they get shown separately and can't be selected from here 
+			var trueInfusibleMoves = [];
+			var naturalInfusibleMoves = [];
 			for (var i = 0; i < infusibleMoves.length; i++) {
 				var move = infusibleMoves[i];
-				buf += '<button name="selectMove" value="' + move.id + '" class="button" style="text-align:left;">' + move.name + '</button>';
+				if (this.room.speciesLearnsMoveNaturally(species, move.id)) { naturalInfusibleMoves.push(move); }
+				else { trueInfusibleMoves.push(move); }
 			}
+			var buf = '';
+			buf += '<div style="width: 400px; max-width: 90vw; margin-bottom: 10px;">';
+			buf += '<p><strong>Infusible Moves</strong> <button name="close" class="button">Cancel</button></p>';
+			buf += '<p>This Pokémon can learn ' + infusibleSlots + ' infusible move' + (infusibleSlots === 1 ? '' : 's') + '.</p>';
+			buf += '<p>When an infusible Pokémon evolves, they learn the infusible move they have been hit by the most over their life, so they can have one for each evolution stage.</p>';
+			buf += '<hr />';
+			buf += '<div style="max-height: 420px; overflow-y: auto;">';
+			buf += '<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;">';
+			for (var j = 0; j < trueInfusibleMoves.length; j++) {
+				var tMove = trueInfusibleMoves[j];
+				buf += '<button name="selectMove" value="' + tMove.id + '" class="button" style="text-align:left;">' + tMove.name + '</button>';
+			}
+			buf += '</div>';
+			if (naturalInfusibleMoves.length) {
+				buf += '<hr />';
+				buf += '<p style="color: #888; font-size: 11px;">These moves are infusible, but ' + species.name + ' can learn them naturally, so they\'ve been separated.</p>';
+				buf += '<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;">';
+				for (var k = 0; k < naturalInfusibleMoves.length; k++) {
+					var nMove = naturalInfusibleMoves[k];
+					buf += '<button disabled="disabled" class="button disabled" style="text-align:left; cursor: default; opacity: 0.5;">' + nMove.name + '</button>';
+				}
+				buf += '</div>';
+			}
+			buf += '</div>';
 			buf += '</div>';
 			this.$el.html(buf).appendTo('body');
 		},
@@ -3752,24 +4210,308 @@
 			var dex = this.room.curTeam.dex;
 			var move = dex.moves.get(moveid);
 			if (!move || !move.exists) return;
-
 			if (!this.curSet.moves) this.curSet.moves = ['', '', '', ''];
-			this.curSet.moves[this.slot] = move.name;
+			var moveSlotIndex = -1;
+			for (var idx = 0; idx < 4; idx++) { if (!this.curSet.moves[idx]) { moveSlotIndex = idx; break; } }
+			if (moveSlotIndex === -1) return;
+			this.curSet.moves[moveSlotIndex] = move.name;
 			this.close();
 			this.room.save();
 			var $teamchart = this.room.$('.teamchart li[value="' + this.chartIndex + '"]');
-			$teamchart.find('input[name=move' + (this.slot + 1) + ']').val(move.name);
-			var $infusion = $teamchart.find('button.infusion[data-slot="' + this.slot + '"]');
-			$infusion.attr('value', move.name);
-			var overlayHtml = '';
-			overlayHtml += '<span style="position:relative; display:block; width:22px; height:22px;">';
-			overlayHtml += '<span style="position:absolute; left:1px; top:1px; width:20px; height:20px; border-radius:50%; background:#fff; z-index:1; pointer-events:none; box-shadow:0 1px 3px rgba(0,0,0,0.35);"></span>';
-			overlayHtml += '<img src="' + Dex.resourcePrefix + 'sprites/misc/uno.png" alt="" style="position:absolute; left:10px; top:-2px; width:22px; height:20px; z-index:20; pointer-events:none;" />';
-			overlayHtml += '<img src="' + Dex.resourcePrefix + 'sprites/misc/infusebw.png" alt="Infusion" style="position:absolute; left:1px; top:1px; z-index:3; width:20px; height:20px; object-fit:contain; display:block; pointer-events:none; filter:' + this.room.getInfusionFilter(move.type) + ';" />';
-			overlayHtml += '</span>';
-			$infusion.html(overlayHtml);
+			$teamchart.find('input[name=move' + (moveSlotIndex + 1) + ']').val(move.name);
+			this.room.refreshInfusionIcons(this.chartIndex);
 		}
 	});
+	//region Mega popup
+	var MegaPopup = this.MegaPopup = Popup.extend({
+		type: 'semimodal',
+		initialize: function (data) {
+			this.room = data.room;
+			this.curSet = data.curSet;
+			this.chartIndex = data.index;
+			this.species = data.species;
+			this.groups = data.groups || [];
+			var dex = this.room.curTeam.dex;
+			var set = this.curSet;
+			var species = this.species;
+			var cardWidth = 300;
+			var cardCount = Math.max(this.groups.length, 1);
+			var popupWidth = cardCount * cardWidth;
+			this.$el.addClass('mega-popup');
+			function formatMegaDisplayName(rawName) {
+				var name = rawName
+					.replace('-Mega-X', ' X')
+					.replace('-Mega-Y', ' Y')
+					.replace('-Mega-Z', ' Z')
+					.replace('-Mega-A', ' A')
+					.replace('-Mega-Q', ' Q')
+					.replace('-Mega', '')
+					.replace('-Stellar', ' (Stellar)');
+				return 'Mega ' + name;
+			}
+			function renderMegaCard(letter, formeSpecies, selectName, isActive, compareSpecies) {
+				var requiredItem = formeSpecies.requiredItems && formeSpecies.requiredItems[0];
+				var stoneItem = requiredItem ? dex.items.get(requiredItem) : null;
+				var baseForCompare = compareSpecies || dex.species.get(formeSpecies.baseSpecies || species.baseSpecies || species.name);
+				var formeStats = formeSpecies.baseStats || {};
+				var baseStatsForCompare = baseForCompare.baseStats || {};
+				var spriteName = formeSpecies.id.replace(/mega/, '-mega');
+				var displayName = formatMegaDisplayName(formeSpecies.name);
+				var isIllegal = formeSpecies.tier === 'Illegal';
+				var borderColor = '#4CAF50';
+				if (isIllegal) { borderColor = '#dc2626'; } 
+				var cardBuf = '';
+				cardBuf += '<div style="display:flex; width:' + cardWidth + 'px; flex-shrink:0; gap:0;">';
+				cardBuf += '<button name="' + selectName + '" value="' + letter + '" style="background:none; border:3px solid ' + borderColor + '; border-radius:10px 0 0 10px; cursor:pointer; padding-bottom:6px; display:flex; flex-direction:column; width:140px; overflow:hidden;">';
+				cardBuf += '<div style="position:relative; width:128px; height:128px; right:4px; margin:0 auto;">';
+				cardBuf += '<div style="position:absolute; top:4px; left:4px; z-index:2; display:flex; flex-direction:column; gap:1px;">';
+				var formeTypes = formeSpecies.types || [];
+				for (var ti = 0; ti < formeTypes.length; ti++) { cardBuf += Dex.getTypeIcon(formeTypes[ti]); }
+				cardBuf += '</div>';
+				cardBuf += '<img src="' + Dex.resourcePrefix + 'sprites/dex2d/' + spriteName + '.png" ' + 'alt="' + BattleLog.escapeHTML(formeSpecies.name) + '" ' + 'style="width:128px; height:128px; position: relative; top: 6px; object-fit:contain;' + (isIllegal ? ' filter:saturate(0.2);' : '') + '" />';
+				cardBuf += '<img src="' + Dex.resourcePrefix + 'sprites/misc/MegaSymbol' + letter + '.png" ' + 'alt="" ' + 'style="position:absolute; top:-4px; right:-4px; width:40px; height:40px; object-fit:contain; z-index:2;" />';
+				if (isIllegal) { cardBuf += '<div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;">' + '<span style="font-weight:900; font-size:16px; letter-spacing:1px; color:#fff; text-shadow:0 0 3px #000, 0 0 3px #000, 1px 1px 0 #000; text-transform:uppercase;">ILLEGAL</span>' + '</div>'; }
+				cardBuf += '</div>';
+				cardBuf += '<span style="font-size: 12px; text-align:center; margin-top:6px; margin-bottom:2px;">' + BattleLog.escapeHTML(displayName) + '</span>';
+				cardBuf += '<div style="background:#111; width:calc(100% + 16px); margin:0px 0px -8px -8px; display:flex; align-items:center; gap:2px;">';
+				if (stoneItem) {
+					cardBuf += '<span style="width:32px; height:32px; display:inline-block; ' + Dex.getItemIcon(stoneItem, 3 / 8) + '"></span>';
+					cardBuf += '<span style="font-size:14px; color:white;">' + BattleLog.escapeHTML(stoneItem.name) + '</span>';
+				} 
+				else { cardBuf += '<span style="font-size:14px; color:white;">Unknown</span>'; }
+				cardBuf += '</div>';
+				cardBuf += '</button>';
+				cardBuf += '<div class="mega-sidebar" style="background:#e5e5e5; width:110px; gap:2px;">';
+				var statList = [ ['HP', 'hp'], ['Atk', 'atk'], ['Def', 'def'], ['SpA', 'spa'], ['SpD', 'spd'], ['Spe', 'spe'],];
+				for (var st = 0; st < statList.length; st++) {
+					var label = statList[st][0];
+					var key = statList[st][1];
+					var oldValue = baseStatsForCompare[key] || 0;
+					var newValue = formeStats[key] || 0;
+					var color = '#888';
+					if (newValue > oldValue) color = '#3b82f6';
+					if (newValue < oldValue) color = '#dc2626';
+					cardBuf += '<div style="display:flex; align-items:center; border-radius:4px; padding:0px 1px; font-size:12px; gap:2px;">';
+					cardBuf += '<span style="font-weight:bold; width:28px;">' + label + '</span>';
+					cardBuf += '<span style="width:25px; text-align:center;">' + oldValue + '</span>';
+					cardBuf += '→ ';
+					cardBuf += '<span style="color:' + color + '; width:25px; text-align:center; font-weight:bold;">' + newValue + '</span>';
+					cardBuf += '</div>';
+				}
+				// Guard action
+				cardBuf += '<div style="border-radius:4px; padding:1px; font-size:12px;">';
+				cardBuf += '<b>Guard Action</b>';
+				var guardActions = formeSpecies.guardAction || [];
+				if (!Array.isArray(guardActions)) guardActions = [guardActions];
+				if (guardActions.length) {
+					for (var ga = 0; ga < guardActions.length; ga++) {
+						var guardMove = dex.moves.get(guardActions[ga]);
+						if (guardMove && guardMove.exists) { cardBuf += '<div>' + BattleLog.escapeHTML(guardMove.name) + '</div>'; }
+					}
+				} 
+				else { cardBuf += '<div style="margin-top:2px;">None</div>'; }
+				cardBuf += '</div>';
+				// Abilities
+				cardBuf += '<div style="border-radius:4px; padding:1px; font-size:12px;">';
+				cardBuf += '<b>Ability Set</b>';
+				var primaryAbility = (formeSpecies.abilities && formeSpecies.abilities['0']) || '&mdash;';
+				var secondaryAbility = (formeSpecies.abilities && formeSpecies.abilities['1']) || '&mdash;';
+				cardBuf += '<div style="margin-top:2px;">' + BattleLog.escapeHTML(primaryAbility || 'Unknown') + '</div>';
+				cardBuf += '<div style="margin-top:1px;">' + BattleLog.escapeHTML(secondaryAbility || 'Unknown') + '</div>';
+				cardBuf += '</div>';
+				cardBuf += '</div>'; // sidebar
+				cardBuf += '</div>'; // card wrapper
+				return cardBuf;
+			}
+			var buf = '';
+			buf += '<div style="width:100%; max-width:95vw;">';
+			buf += '<p style="font-size:20px;">' + '<strong>Mega Evolution</strong> ' + '<button name="close" class="button">Cancel</button>' + '</p>';
+			buf += '<p style="width:unset;">This Pokémon is capable of Mega Evolution!</p>';
+			buf += '<p style="width:unset;">Mega Evolution is a powerful mid battle transformation that can alter type, abilities, and boosts stats, but requires a certain Mega Stone to be held, and 100 Mega Charge to activate. 20 charge is gained per turn. Drain rates depend on the letter associated with that Mega Evolution. While Terastallized, your Mega Charge does not drain. Mega stones cannot be destroyed or knocked off.</p>';
+			if (!this.groups.length) { buf += '<p style="opacity:0.75; width:unset;">' + BattleLog.escapeHTML(this.species.name) + ' has no Mega Evolutions.</p>'; } 
+			else { // Normal Mega cards
+				buf += '<div style="display:flex; flex-direction:row; flex-wrap:nowrap; gap:0; padding-bottom:8px; width:100%;">';
+				for (var i = 0; i < this.groups.length; i++) {
+					var group = this.groups[i];
+					var megaSpecies = group.species;
+					var mainRequiredItem = megaSpecies.requiredItems && megaSpecies.requiredItems[0];
+					var mainIsActive = toID(set.item) === toID(mainRequiredItem);
+					buf += renderMegaCard( group.letter, megaSpecies, 'selectForme', mainIsActive);
+				}
+				buf += '</div>';
+				// Stellar upgrades
+				var stellarGroups = this.groups.filter(function (g) { return !!g.stellarSpecies; });
+				if (stellarGroups.length) {
+					buf += '<hr />';
+					buf += '<p style="opacity:0.8; width:unset;">These Mega formes have a Stellar upgrade. First Mega evolve, then on the next turn Terastallize into the Stellar type to use.</p>';
+					buf += '<div style="display:flex; flex-direction:row; flex-wrap:nowrap; gap:0; padding-bottom:8px; width:100%;">';
+					for (var s = 0; s < stellarGroups.length; s++) {
+						var sGroup = stellarGroups[s];
+						var stellarSpecies = sGroup.stellarSpecies;
+						var stellarRequiredItem = stellarSpecies.requiredItems && stellarSpecies.requiredItems[0];
+						var stellarActive = toID(set.item) === toID(stellarRequiredItem) && toID(set.teraType) === 'stellar';
+						buf += renderMegaCard( sGroup.letter, stellarSpecies, 'selectStellarForme', stellarActive, sGroup.species);
+					}
+					buf += '</div>';
+				}
+			}
+			buf += '</div>';
+			this.$el.html(buf).appendTo('body');
+			this.$el.css({ width: popupWidth + 'px', maxWidth: '95vw', boxSizing: 'border-box'	});
+		},
+		selectForme: function (letter) {
+			var group = this.groups.filter(function (g) { return g.letter === letter; })[0];
+			if (!group) return;
+			this.curSet.item = (group.species.requiredItems && group.species.requiredItems[0]) || '';
+			this.close();
+			this.applyChanges();
+		},
+		selectStellarForme: function (letter) {
+			var group = this.groups.filter(function (g) { return g.letter === letter; })[0];
+			if (!group || !group.stellarSpecies) return;
+			this.curSet.item = (group.stellarSpecies.requiredItems && group.stellarSpecies.requiredItems[0]) || '';
+			this.curSet.teraType = 'Stellar';
+			this.close();
+			this.applyChanges();
+		},
+		applyChanges: function () {
+			this.room.save();
+			var species = this.room.curTeam.dex.species.get(this.curSet.species);
+			var $teamchart = this.room.$('.teamchart li[value="' + this.chartIndex + '"]');
+			$teamchart.find('input[name=item]').val(this.curSet.item);
+			var teraType = this.curSet.teraType || species.requiredTeraType || species.types[0];
+			$teamchart.find('button.teratype').attr('value', teraType);
+			$teamchart.find('button.teratype img')
+				.attr('src', Dex.resourcePrefix + 'sprites/types/Tera' + teraType + '.png')
+				.attr('alt', teraType);
+			this.room.refreshMegaIcons(this.curSet, $teamchart);
+		}
+	});
+	//region Ultra Burst popup
+	var UltraBurstPopup = this.UltraBurstPopup = Popup.extend({
+		type: 'semimodal',
+		initialize: function (data) {
+			this.room = data.room;
+			this.curSet = data.curSet;
+			this.species = data.species;
+			this.ultraSpecies = data.ultraSpecies;
+			var dex = this.room.curTeam.dex;
+			var species = this.species;
+			var ultraSpecies = this.ultraSpecies;
+			var cardWidth = 500;
+			this.$el.addClass('mega-popup');
+			var requiredItem = 'Ultranecrozium Z';
+			var stoneItem = dex.items.get(requiredItem);
+			var baseForCompare = dex.species.get(species.baseSpecies || species.name);
+			var formeStats = ultraSpecies.baseStats || {};
+			var baseStatsForCompare = baseForCompare.baseStats || {};
+			var spriteName = ultraSpecies.id;
+			var cardBuf = '';
+			cardBuf += '<div style="display:flex; width:' + 'px; flex-shrink:0; gap:0;">';
+			cardBuf += '<div style="border:3px solid #7c3aed; border-radius:10px 0 0 10px; padding-bottom:6px; display:flex; flex-direction:column; height: 145px; width:140px; overflow:hidden;">';
+			cardBuf += '<div style="position:relative; width:128px; height:128px; right:4px; margin:0 auto;">';
+			cardBuf += '<div style="position:absolute; top:4px; left:4px; z-index:2; display:flex; flex-direction:column; gap:1px;">';
+			var formeTypes = ultraSpecies.types || [];
+			for (var ti = 0; ti < formeTypes.length; ti++) { cardBuf += Dex.getTypeIcon(formeTypes[ti]); }
+			cardBuf += '</div>';
+			cardBuf += '<img src="' + Dex.resourcePrefix + 'sprites/dex2d/necrozma-ultra.png" ' + 'alt="' + BattleLog.escapeHTML(ultraSpecies.name) + '" ' + 'style="width:150px; height:150px; position: relative; top: 6px; object-fit:contain;" />';
+			cardBuf += '<img src="' + Dex.resourcePrefix + 'sprites/misc/UltraBurstSymbol.png" ' + 'alt="" ' + 'style="position:absolute; top:0px; right:-12px; width:40px; height:40px; object-fit:contain; z-index:2;" />';
+			cardBuf += '</div>';
+			cardBuf += '<span style="font-size: 14px; font-weight: bold; text-align:center;">' + 'Ultra Necrozma' + '</span>';
+			cardBuf += '</div>';
+			cardBuf += '</div>'; // card (no button — nothing to select)
+			cardBuf += '<div class="mega-sidebar" style="background:#e5e5e5; width:110px; gap:2px;">';
+			var statList = [ ['HP', 'hp'], ['Atk', 'atk'], ['Def', 'def'], ['SpA', 'spa'], ['SpD', 'spd'], ['Spe', 'spe'],];
+			for (var st = 0; st < statList.length; st++) {
+				var label = statList[st][0];
+				var key = statList[st][1];
+				var oldValue = baseStatsForCompare[key] || 0;
+				var newValue = formeStats[key] || 0;
+				var color = '#888';
+				if (newValue > oldValue) color = '#3b82f6';
+				if (newValue < oldValue) color = '#dc2626';
+				cardBuf += '<div style="display:flex; align-items:center; border-radius:4px; padding:0px 1px; font-size:12px; gap:2px;">';
+				cardBuf += '<span style="font-weight:bold; width:28px;">' + label + '</span>';
+				cardBuf += '<span style="width:25px; text-align:center;">' + oldValue + '</span>';
+				cardBuf += '→ ';
+				cardBuf += '<span style="color:' + color + '; width:25px; text-align:center; font-weight:bold;">' + newValue + '</span>';
+				cardBuf += '</div>';
+			}
+			cardBuf += '<div style="border-radius:4px; padding:1px; font-size:12px;">';
+			cardBuf += '<b>Guard Action</b>';
+			var guardActions = ultraSpecies.guardAction || [];
+			if (!Array.isArray(guardActions)) guardActions = [guardActions];
+			if (guardActions.length) {
+				for (var ga = 0; ga < guardActions.length; ga++) {
+					var guardMove = dex.moves.get(guardActions[ga]);
+					if (guardMove && guardMove.exists) { cardBuf += '<div>' + BattleLog.escapeHTML(guardMove.name) + '</div>'; }
+				}
+			} else { cardBuf += '<div style="margin-top:2px;">None</div>'; }
+			cardBuf += '</div>';
+			cardBuf += '<div style="border-radius:4px; padding:1px; font-size:12px;">';
+			cardBuf += '<b>Ability Set</b>';
+			var primaryAbility = (ultraSpecies.abilities && ultraSpecies.abilities['0']) || '&mdash;';
+			var secondaryAbility = (ultraSpecies.abilities && ultraSpecies.abilities['1']) || '&mdash;';
+			cardBuf += '<div style="margin-top:2px;">' + BattleLog.escapeHTML(primaryAbility || 'Unknown') + '</div>';
+			cardBuf += '<div style="margin-top:1px;">' + BattleLog.escapeHTML(secondaryAbility || 'Unknown') + '</div>';
+			cardBuf += '</div>';
+			cardBuf += '</div>'; // sidebar
+			cardBuf += '</div>'; // card wrapper
+			var buf = '';
+			buf += '<div style="width:100%; max-width:95vw;">';
+			buf += '<p style="font-size:20px;">' + '<strong>Ultra Burst</strong> ' + '<button name="close" class="button">Close</button>' + '</p>';
+			buf += '<p style="width:unset;">Necrozma can regain its true form by performing Ultra Burst.</p>';
+			buf += '<p style="width:unset;">If Necrozma, Necrozma-Dawn-Wings, or Necrozma-Dusk-Mane are hit with a light move, their Ultra Burst Counter will go down. After (surviving) the 3rd hit over the course of a battle, Necrozma will Ultra Burst automatically.</p>';
+			buf += '<div style="display:flex; flex-direction:row; flex-wrap:nowrap; gap:0; padding-bottom:8px; width:100%;">';
+			buf += cardBuf;
+			buf += '</div>';
+			buf += '</div>';
+			this.$el.html(buf).appendTo('body');
+			this.$el.css({ width: cardWidth + 'px', maxWidth: '95vw', boxSizing: 'border-box' });
+		}
+	});
+	//region Type popup
+	var TypePopup = this.TypePopup = Popup.extend({
+		type: 'semimodal',
+		initialize: function (data) {
+			this.room = data.room;
+			this.curSet = data.curSet;
+			this.chartIndex = data.index;
+			this.species = data.species;
+			this.$el.addClass('type-popup');
+			var room = this.room;
+			var species = this.species;
+			var types = species.types || [];
+			var chart = room.computeTypeChart(types);
+			var buf = '';
+			buf += '<div>';
+			buf += '<p style="font-size:20px;"><strong>' + BattleLog.escapeHTML(species.name) + ' Type Chart</strong> <button name="close" class="button">Cancel</button></p>';
+			buf += room.renderTypeChartSection(chart, {});
+			if (types.length === 2) {
+				buf += '<div style="margin-top:10px;">';
+				buf += '<button type="button" name="toggleDetails" class="button" style="width:100%;">Show details &#9662;</button>';
+				buf += '<div class="typechart-details-section" style="display:none; margin-top:14px;">';
+				for (var ti = 0; ti < types.length; ti++) {
+					var typeChart = room.computeTypeChart([types[ti]]);
+					buf += '<p style="text-align:center; font-weight:bold; text-decoration:underline; margin-bottom:6px;">' + BattleLog.escapeHTML(types[ti]) + ' only</p>';
+					buf += room.renderTypeChartSection(typeChart, { colWidth: 220, immWidth: 150 });
+					if (ti < types.length - 1) buf += '<hr style="margin:14px 0;" />';
+				}
+				buf += '</div>';
+				buf += '</div>';
+			}
+			buf += '</div>';
+			this.$el.html(buf).appendTo('body');
+		},
+		toggleDetails: function () {
+			var $section = this.$el.find('.typechart-details-section');
+			var $button = this.$el.find('button[name=toggleDetails]');
+			var isOpen = $section.is(':visible');
+			$section.css('display', isOpen ? 'none' : 'block');
+			$button.html(isOpen ? 'Show details &#9662;' : 'Hide details &#9652;');
+		}
+	});
+	//region Tera Type popup
 	var TeraTypePopup = this.TeraTypePopup = Popup.extend({
 		type: 'semimodal',
 		initialize: function (data) {
@@ -3778,7 +4520,8 @@
 			this.chartIndex = data.index;
 			var species = this.room.curTeam.dex.species.get(this.curSet.species);
 			var currentTeraType = this.curSet.teraType || species.requiredTeraType || species.types[0];
-			var types = Dex.types.all();
+			buf += '<select name="teratype" class="button">';
+			var types = Dex.types.all().filter(function (t) { return t.name !== 'Banal'; });
 			var buf = '';
 			buf += '<p>Select Tera Type or <button name="close" class="button">Cancel</button></p>';
 			buf += '<div style="display: grid; grid-template-columns: repeat(5, 1fr);">';
@@ -3798,9 +4541,8 @@
 		},
 		selectType: function (value) {
 			var species = this.room.curTeam.dex.species.get(this.curSet.species);
-			if (value === species.types[0]) {
-				delete this.curSet.teraType;
-			} else { this.curSet.teraType = value; }
+			if (value === species.types[0]) { delete this.curSet.teraType; } 
+			else { this.curSet.teraType = value; }
 			this.close();
 			this.room.save();
 			// Update the tera type icon without focusing/updating the whole view
@@ -3808,6 +4550,7 @@
 			var $teamchart = this.room.$('.teamchart li[value="' + this.chartIndex + '"]');
 			$teamchart.find('button.teratype').attr('value', teraType);
 			$teamchart.find('button.teratype img').attr('src', Dex.resourcePrefix + 'sprites/types/Tera' + teraType + '.png').attr('alt', teraType);
+			this.room.refreshMegaIcons(this.curSet, $teamchart);
 		}
 	});	
 })(window, jQuery);

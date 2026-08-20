@@ -98,6 +98,8 @@ export interface SideRequestData {
 	pokemon: PokemonSwitchRequestData[];
 	teraCharge?: number;    
 	teraChargeMax?: number;  // 100
+	megaCharge?: number;
+	megaChargeMax?: number;  // 100
 	noCancel?: boolean;
 }
 export interface SwitchRequest {
@@ -177,6 +179,7 @@ export class Side {
 		this.team = team;
 		this.pokemon = [];
 		for (const set of this.team) { this.addPokemon(set); } // console.log("NEW POKEMON: " + (this.team[i] ? this.team[i].name : '[unidentified]'));
+		console.log('SIDE CONSTRUCTED', this.id, 'team.length=', this.team.length, 'pokemon.length=', this.pokemon.length, this.pokemon.map(p => p.species.name));
 		switch (this.battle.gameType) {
 		case 'doubles':
 			this.active = [null!, null!];
@@ -261,10 +264,12 @@ export class Side {
 			pokemon: [] as PokemonSwitchRequestData[],
 		};
 		for (const pokemon of this.pokemon) { data.pokemon.push(pokemon.getSwitchRequestData(forAlly)); }
-		// Tera Charge is PRIVATE: included only in this side's request JSON.
+		// Tera Charge and Mega Charge are PRIVATE: included only in this side's request JSON.
 		const s: any = this;
 		data.teraCharge = Number.isFinite(s.teraCharge) ? s.teraCharge : 0;
 		data.teraChargeMax = Number.isFinite(s.teraChargeMax) ? s.teraChargeMax : 100;
+		data.megaCharge = Number.isFinite(s.megaCharge) ? s.megaCharge : 0;
+		data.megaChargeMax = Number.isFinite(s.megaChargeMax) ? s.megaChargeMax : 100;
 		return data;
 	}
 	randomFoe() {
@@ -510,7 +515,6 @@ export class Side {
 		if (megaq && !pokemon.canMegaEvoQ) { return this.emitChoiceError(`Can't move: ${pokemon.name} can't mega evolve Q`); }
 		if ((megax || megay || megaz || megaa || megaq) && this.choice.mega && !mixandmega) { return this.emitChoiceError(`Can't move: You can only mega-evolve once per battle`); }
 		const ultra = (event === 'ultra');
-		if (ultra && !pokemon.canUltraBurst) { return this.emitChoiceError(`Can't move: ${pokemon.name} can't ultra burst`); }
 		if (ultra && this.choice.ultra && !mixandmega) { return this.emitChoiceError(`Can't move: You can only ultra burst once per battle`); }
 		const terastallize = (event === 'terastallize');
 		if (terastallize && !pokemon.canTerastallize) { return this.emitChoiceError(`Can't move: ${pokemon.name} can't Terastallize.`); }

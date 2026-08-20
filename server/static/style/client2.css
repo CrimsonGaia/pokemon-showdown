@@ -1721,16 +1721,6 @@ pre.textbox.textbox-empty[placeholder]:before {
 	background: #BB2222;
 	text-shadow: none;
 }
-/* Tera charge meter button (next to Timer) */
-.terachargebutton {
-	float: right;          /* pairs with Timer’s float:right */
-	width: 190px;          /* wider than Timer */
-	position: relative;
-	overflow: hidden;
-	padding: 0 10px;
-	height: 28px;
-	line-height: 28px;
-}
 
 /* background track */
 .terachargebutton .teracharge-meter {
@@ -1759,16 +1749,57 @@ pre.textbox.textbox-empty[placeholder]:before {
 	z-index: 1;
 	font-weight: bold;
 }
+.megachargebutton {
+	float: right;
+	width: 96px;
+	position: relative;
+	overflow: hidden;
+	padding: 0 10px;
+	height: 24px;
+	line-height: 24px;
+}
+.megachargebutton .megacharge-text {
+	z-index: 1;
+	font-weight: bolder;
+}
+.megachargebutton.megacharge-armed {
+	border-color: rgb(247 85 197 / 30%);
+	box-shadow: 0 0 0 2px rgba(139,95,191,0.5) inset;
+	background: rgba(139,95,191,0.15);
+}
 .battle-controls p {
 	margin: 2px 0 8px 0;
+	padding: 0 8px;
+}
+.battle-controls .whatdo-hpline {
+	margin: 2px 0 -4px 0;
 	padding: 0 8px;
 }
 .battle-controls .whatdo {
 	margin-top: -2px;
 	padding: 0 8px;
 	font-size: 9pt;
-	line-height: 2;
 	color: #555555;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+.battle-controls .whatdo-left {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+.battle-controls .whatdo-right {
+	display: flex;
+	align-items: center;
+	flex: none;
+	gap: 4px;
+	border-left: 1px solid #CCCCCC;
+	padding-left: 8px;
+	margin-left: 8px;
 }
 .battle-controls .whatdo small {
 	padding: 1px 2px;

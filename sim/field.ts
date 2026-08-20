@@ -14,6 +14,8 @@ export class Field {
 	weatherState: EffectState;
 	terrain: ID;
 	terrainState: EffectState;
+	room: ID;
+	roomState: EffectState;
 	pseudoWeather: { [id: string]: EffectState };
 	constructor(battle: Battle) {
 		this.battle = battle;
@@ -24,6 +26,8 @@ export class Field {
 		this.weatherState = this.battle.initEffectState({ id: '' });
 		this.terrain = '';
 		this.terrainState = this.battle.initEffectState({ id: '' });
+		this.room = '';
+		this.roomState = this.battle.initEffectState({ id: '' });
 		this.pseudoWeather = {};
 	}
 	toJSON(): AnyObject { return State.serializeField(this); }
@@ -144,36 +148,6 @@ export class Field {
 		return terrain.map(toID).includes(ourTerrain);
 	}
 	getTerrain() { return this.battle.dex.conditions.getByID(this.terrain); }
-	addPseudoWeather(
-		status: string | Condition,
-		source: Pokemon | 'debug' | null = null,
-		sourceEffect: Effect | null = null
-	): boolean {
-		if (!source && this.battle.event?.target) source = this.battle.event.target;
-		if (source === 'debug') source = this.battle.sides[0].active[0];
-		status = this.battle.dex.conditions.get(status);
-		let state = this.pseudoWeather[status.id];
-		if (state) {
-			if (!(status as any).onFieldRestart) return false;
-			return this.battle.singleEvent('FieldRestart', status, state, this, source, sourceEffect);
-		}
-		state = this.pseudoWeather[status.id] = this.battle.initEffectState({
-			id: status.id,
-			source,
-			sourceSlot: source?.getSlot(),
-			duration: status.duration,
-		});
-		if (status.durationCallback) {
-			if (!source) throw new Error(`setting fieldcond without a source`);
-			state.duration = status.durationCallback.call(this.battle, source, source, sourceEffect);
-		}
-		if (!this.battle.singleEvent('FieldStart', status, state, this, source, sourceEffect)) {
-			delete this.pseudoWeather[status.id];
-			return false;
-		}
-		this.battle.runEvent('PseudoWeatherChange', source, source, status);
-		return true;
-	}
 	setRoom(
 		status: string | Condition,
 		source: Pokemon | 'debug' | null = null,
@@ -203,6 +177,54 @@ export class Field {
 		for (const room of roomTypes) { if (room !== status.id && this.pseudoWeather[room]) { this.removePseudoWeather(room); } }
 		// Now add the new room
 		return this.addPseudoWeather(status, source, sourceEffect);
+	}
+	clearRoom() {
+		if (!this.room) return false;
+		const prevRoom = this.getRoom();
+		this.battle.singleEvent('FieldEnd', prevRoom, this.pseudoWeather[prevRoom.id], this);
+		this.battle.clearEffectState(this.pseudoWeather[prevRoom.id]);
+		this.battle.eachEvent('PseudoWeatherChange');
+		return true;
+	}
+	effectiveRoom(target?: Pokemon | Side | Battle) {
+		if (this.battle.event && !target) target = this.battle.event.target;
+		return this.battle.runEvent('TryRoom', target) ? this.room : '';
+	}
+	isRoom(room: string | string[], target?: Pokemon | Side | Battle) {
+		const ourRoom = this.effectiveRoom(target);
+		if (!Array.isArray(room)) { return ourRoom === toID(room); }
+		return room.map(toID).includes(ourRoom);
+	}
+	getRoom() { return this.battle.dex.conditions.getByID(this.room); }
+	addPseudoWeather(
+		status: string | Condition,
+		source: Pokemon | 'debug' | null = null,
+		sourceEffect: Effect | null = null
+	): boolean {
+		if (!source && this.battle.event?.target) source = this.battle.event.target;
+		if (source === 'debug') source = this.battle.sides[0].active[0];
+		status = this.battle.dex.conditions.get(status);
+		let state = this.pseudoWeather[status.id];
+		if (state) {
+			if (!(status as any).onFieldRestart) return false;
+			return this.battle.singleEvent('FieldRestart', status, state, this, source, sourceEffect);
+		}
+		state = this.pseudoWeather[status.id] = this.battle.initEffectState({
+			id: status.id,
+			source,
+			sourceSlot: source?.getSlot(),
+			duration: status.duration,
+		});
+		if (status.durationCallback) {
+			if (!source) throw new Error(`setting fieldcond without a source`);
+			state.duration = status.durationCallback.call(this.battle, source, source, sourceEffect);
+		}
+		if (!this.battle.singleEvent('FieldStart', status, state, this, source, sourceEffect)) {
+			delete this.pseudoWeather[status.id];
+			return false;
+		}
+		this.battle.runEvent('PseudoWeatherChange', source, source, status);
+		return true;
 	}
 	getPseudoWeather(status: string | Effect) {
 		status = this.battle.dex.conditions.get(status);
