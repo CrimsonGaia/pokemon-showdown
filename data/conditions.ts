@@ -2014,27 +2014,6 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 			if (ability1 === 'windpower' || ability2 === 'windpower') { pokemon.addVolatile('charge'); }
 		},
 	},
-	roundhousekick: {
-		name: 'Roundhouse Kick',
-		duration: 1,
-		onStart(target) {
-			this.add('-singleturn', target, 'Roundhouse Kick');
-			this.add('-message', `${target.name} is focusing to counter incoming attacks!`);
-		},
-		onSourceModifyDamage(damage, source, target, move) {
-			if (move.category !== 'Status') {
-				this.add('-activate', target, 'Roundhouse Kick');
-				return this.chainModify(0.125);
-			}
-		},
-		onAfterMoveSecondary(target, source, move) {
-			if (!source || source === target || !source.hp || !target.hp) return;
-			if (move.category !== 'Status') {
-				this.add('-message', `${target.name} counters with a kick!`);
-				this.actions.useMove('roundhousekickcounter', target);
-			}
-		},
-	},
 	stellaroriginal: {
 		name: 'stellaroriginal',
 		noCopy: true,

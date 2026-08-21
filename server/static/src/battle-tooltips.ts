@@ -144,7 +144,6 @@ export class BattleTooltips {
 		// ISL/custom statuses
 		aura: "Aura_IS.png",
 		bubbleblight: "Bubbleblight_IS.png",
-		curse: "Curse_IS.png",
 		dragonblight: "Dragonblight_IS.png",
 		drowsy: "Drowsy_IS.png",
 		fear: "Fear_IS.png",
@@ -282,6 +281,19 @@ export class BattleTooltips {
 			let cur = parseInt(args[3], 10) || 0;
 			let max = parseInt(args[4], 10) || 0;
 			buf = this.showGuardActionCDTooltip(move, pokemon, serverPokemon, cur, max);
+			break;
+		}
+		case 'megacharge': { // megacharge|CUR|MAX
+			let cur = parseInt(args[1], 10) || 0;
+			let max = parseInt(args[2], 10) || 0;
+			buf = this.showMegaChargeTooltip(cur, max);
+			break;
+		}
+		case 'teracharge': { // teracharge|CUR|MAX|[ALREADYTERA]
+			let cur = parseInt(args[1], 10) || 0;
+			let max = parseInt(args[2], 10) || 0;
+			let alreadyTera = args[3] === '1';
+			buf = this.showTeraChargeTooltip(cur, max, alreadyTera);
 			break;
 		}
 		case 'pokemon': { // pokemon|SIDE|POKEMON
@@ -445,7 +457,7 @@ export class BattleTooltips {
 			});
 		}
 		text += `<h2>${move.name}<br />`;
-		text += Dex.getTypeIcon(moveType);
+		text += Dex.getTypeIcon(moveType, false, move.type2 || null);
 		text += ` ${Dex.getCategoryIcon(category)}</h2>`;
 		// Check if there are more than one active Pokémon to check for multiple possible BPs.
 		let showingMultipleBasePowers = false;
@@ -557,6 +569,27 @@ export class BattleTooltips {
 			`Guard Action Cooldown: Ready` :
 			`Guard Action Cooldown: ${remaining} more action${remaining === 1 ? '' : 's'} <small>(${cur}/${max})</small>`;
 		return this.showMoveTooltip(move, '', pokemon, serverPokemon, undefined, cooldownText);
+	}
+	showMegaChargeTooltip(cur: number, max: number) {
+		let text = `<p><strong>Mega Charge</strong> <small>(${cur}/${max})</small></p>`;
+		text += `<p class="tooltip-section">Mega Evolution is a powerful mid-battle transformation that can alter type, `;
+		text += `abilities, and boost stats, but requires a certain Mega Stone to be held, and ${max} Mega Charge to activate. `;
+		text += `20 charge is gained per turn while no Mega is on the field. Drain rates depend on the letter associated `;
+		text += `with that Mega Evolution. While Terastallized, your Mega Charge does not drain. Mega stones cannot be `;
+		text += `destroyed or knocked off.</p>`;
+		return `<div class="tooltipinner-wrapper">${text}</div>`;
+	}
+	showTeraChargeTooltip(cur: number, max: number, alreadyTera?: boolean) {
+		let text = `<p><strong>Tera Charge</strong> <small>(${cur}/${max})</small></p>`;
+		if (alreadyTera) {
+			text += `<p class="tooltip-section">Only one of your Pokemon may be Terastallized at a time - this button `;
+			text += `is disabled until it reverts.</p>`;
+		}
+		text += `<p class="tooltip-section">Terastallizing changes your Pokemon's type and boosts STAB, and requires `;
+		text += `${max} Tera Charge to activate. Charge builds passively each turn, more slowly if an ally has already `;
+		text += `Terastallized this battle, and drains each turn your Pokemon stays Terastallized at a rate depending `;
+		text += `on its form. Charge is restored to 0 once it hits empty, reverting the Terastallization.</p>`;
+		return `<div class="tooltipinner-wrapper">${text}</div>`;
 	}
 	/**
 	 * Needs either a Pokemon or a ServerPokemon, but note that neither are guaranteed: If you hover over a possible switch-in that's

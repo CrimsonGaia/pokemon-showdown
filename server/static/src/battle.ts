@@ -2924,7 +2924,10 @@ export class Battle {
 	}
 	rememberTeamPreviewPokemon(sideid: string, details: string) {
 		const { siden } = this.parsePokemonId(sideid);
-		return this.sides[siden].addPokemon('', '', details);
+		const side = this.sides[siden];
+		const pokemon = side.addPokemon('', '', details);
+		side.sidebarPokemon.push(pokemon);
+		return pokemon;
 	}
 	findCorrespondingPokemon(serverPokemon: { ident: string, details: string }) {
 		const { siden } = this.parsePokemonId(serverPokemon.ident);

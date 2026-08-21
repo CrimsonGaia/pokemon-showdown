@@ -219,7 +219,6 @@ function BattleTooltips(battle){var _this=this;this.battle=void 0;this.
 
 
 
-
 clickTooltipEvent=function(e){
 if(BattleTooltips.isLocked){
 e.preventDefault();
@@ -282,6 +281,19 @@ var _serverPokemon=this.battle.myPokemon[_teamIndex];
 var cur=parseInt(args[3],10)||0;
 var max=parseInt(args[4],10)||0;
 buf=this.showGuardActionCDTooltip(_move,_pokemon,_serverPokemon,cur,max);
+break;
+}
+case'megacharge':{
+var _cur=parseInt(args[1],10)||0;
+var _max=parseInt(args[2],10)||0;
+buf=this.showMegaChargeTooltip(_cur,_max);
+break;
+}
+case'teracharge':{
+var _cur2=parseInt(args[1],10)||0;
+var _max2=parseInt(args[2],10)||0;
+var alreadyTera=args[3]==='1';
+buf=this.showTeraChargeTooltip(_cur2,_max2,alreadyTera);
 break;
 }
 case'pokemon':{
@@ -445,7 +457,7 @@ category:category})
 );
 }
 text+="<h2>"+move.name+"<br />";
-text+=Dex.getTypeIcon(moveType);
+text+=Dex.getTypeIcon(moveType,false,move.type2||null);
 text+=" "+Dex.getCategoryIcon(category)+"</h2>";
 
 var showingMultipleBasePowers=false;
@@ -557,6 +569,27 @@ var cooldownText=cur>=max?"Guard Action Cooldown: Ready":"Guard Action Cooldown:
 
 remaining+" more action"+(remaining===1?'':'s')+" <small>("+cur+"/"+max+")</small>";
 return this.showMoveTooltip(move,'',pokemon,serverPokemon,undefined,cooldownText);
+};_proto2.
+showMegaChargeTooltip=function showMegaChargeTooltip(cur,max){
+var text="<p><strong>Mega Charge</strong> <small>("+cur+"/"+max+")</small></p>";
+text+="<p class=\"tooltip-section\">Mega Evolution is a powerful mid-battle transformation that can alter type, ";
+text+="abilities, and boost stats, but requires a certain Mega Stone to be held, and "+max+" Mega Charge to activate. ";
+text+="20 charge is gained per turn while no Mega is on the field. Drain rates depend on the letter associated ";
+text+="with that Mega Evolution. While Terastallized, your Mega Charge does not drain. Mega stones cannot be ";
+text+="destroyed or knocked off.</p>";
+return"<div class=\"tooltipinner-wrapper\">"+text+"</div>";
+};_proto2.
+showTeraChargeTooltip=function showTeraChargeTooltip(cur,max,alreadyTera){
+var text="<p><strong>Tera Charge</strong> <small>("+cur+"/"+max+")</small></p>";
+if(alreadyTera){
+text+="<p class=\"tooltip-section\">Only one of your Pokemon may be Terastallized at a time - this button ";
+text+="is disabled until it reverts.</p>";
+}
+text+="<p class=\"tooltip-section\">Terastallizing changes your Pokemon's type and boosts STAB, and requires ";
+text+=max+" Tera Charge to activate. Charge builds passively each turn, more slowly if an ally has already ";
+text+="Terastallized this battle, and drains each turn your Pokemon stays Terastallized at a rate depending ";
+text+="on its form. Charge is restored to 0 once it hits empty, reverting the Terastallization.</p>";
+return"<div class=\"tooltipinner-wrapper\">"+text+"</div>";
 };_proto2.
 
 
@@ -1407,9 +1440,9 @@ if(move.id==='gyroball'&&target){
 var _this$getSpeedRange3=this.getSpeedRange(target),_minSpe=_this$getSpeedRange3[0],_maxSpe=_this$getSpeedRange3[1];
 var _min=Math.floor(25*_minSpe/modifiedStats.spe)||1;
 if(_min>150)_min=150;
-var _max=Math.floor(25*_maxSpe/modifiedStats.spe)||1;
-if(_max>150)_max=150;
-value.setRange(_min,_max);
+var _max3=Math.floor(25*_maxSpe/modifiedStats.spe)||1;
+if(_max3>150)_max3=150;
+value.setRange(_min,_max3);
 }
 
 if(serverPokemon.item){
@@ -1843,7 +1876,7 @@ if(baseAbilityName&&baseAbilityName!==abilityName)text+=' (base: '+baseAbilityNa
 if(abilityData.baseAbility){text='<small>Ability:</small> '+this.battle.dex.abilities.get(abilityData.baseAbility).name;}
 if(!text&&abilityData.possibilities.length&&!hidePossible&&!(tier.includes('Almost Any Ability')||tier.includes('Hackmons')||tier.includes('Inheritance')||tier.includes('Metronome'))){text='<small>Possible abilities:</small> '+abilityData.possibilities.join(', ');}
 return text;
-};return BattleTooltips;}();BattleTooltips.STATUS_ICON_PATH=Dex.resourcePrefix+"sprites/status-is/";BattleTooltips.STATUS_ICON_FILE={brn:"Burn_IS.png",psn:"Poison_IS.png",tox:"Toxic_IS.png",slp:"Sleep_IS.png",par:"Paralysis_IS.png",frz:"Frozen_IS.png",aura:"Aura_IS.png",bubbleblight:"Bubbleblight_IS.png",curse:"Curse_IS.png",dragonblight:"Dragonblight_IS.png",drowsy:"Drowsy_IS.png",fear:"Fear_IS.png",frostbite:"Frostbite_IS.png"};BattleTooltips.LONG_TAP_DELAY=500;BattleTooltips.LONG_CLICK_DELAY=700;BattleTooltips.longTapTimeout=0;BattleTooltips.elem=null;BattleTooltips.parentElem=null;BattleTooltips.isLocked=false;BattleTooltips.isPressed=false;BattleTooltips.zMoveEffects={'clearnegativeboost':"Restores negative stat stages to 0",'crit2':"Crit ratio +2",'heal':"Restores HP 100%",'curse':"Restores HP 100% if user is Ghost type, otherwise Attack +1",'redirect':"Redirects opposing attacks to user",'healreplacement':"Restores replacement's HP 100%"};BattleTooltips.incenseTypes={'Odd Incense':'Psychic','Rock Incense':'Rock','Rose Incense':'Grass','Sea Incense':'Water','Wave Incense':'Water'};BattleTooltips.itemTypes={'Black Belt':'Fighting','Black Glasses':'Dark','Charcoal':'Fire','Dragon Fang':'Dragon','Fairy Feather':'Fairy','Hard Stone':'Rock','Magnet':'Electric','Metal Coat':'Steel','Miracle Seed':'Grass','Mystic Water':'Water','Never-Melt Ice':'Ice','Poison Barb':'Poison','Sharp Beak':'Flying','Silk Scarf':'Normal','Silver Powder':'Bug','Soft Sand':'Ground','Spell Tag':'Ghost','Twisted Spoon':'Psychic'};BattleTooltips.orbUsers={'Latias':['Soul Dew'],'Latios':['Soul Dew'],'Dialga':['Adamant Crystal','Adamant Orb'],'Palkia':['Lustrous Globe','Lustrous Orb'],'Giratina':['Griseous Core','Griseous Orb'],'Venomicon':['Vile Vial']};BattleTooltips.orbTypes={'Soul Dew':['Psychic','Dragon'],'Adamant Crystal':['Steel','Dragon'],'Adamant Orb':['Steel','Dragon'],'Lustrous Globe':['Water','Dragon'],'Lustrous Orb':['Water','Dragon'],'Griseous Core':['Ghost','Dragon'],'Griseous Orb':['Ghost','Dragon'],'Vile Vial':['Poison','Flying']};BattleTooltips.noGemMoves=['Fire Pledge','Fling','Grass Pledge','Struggle','Water Pledge'];var
+};return BattleTooltips;}();BattleTooltips.STATUS_ICON_PATH=Dex.resourcePrefix+"sprites/status-is/";BattleTooltips.STATUS_ICON_FILE={brn:"Burn_IS.png",psn:"Poison_IS.png",tox:"Toxic_IS.png",slp:"Sleep_IS.png",par:"Paralysis_IS.png",frz:"Frozen_IS.png",aura:"Aura_IS.png",bubbleblight:"Bubbleblight_IS.png",dragonblight:"Dragonblight_IS.png",drowsy:"Drowsy_IS.png",fear:"Fear_IS.png",frostbite:"Frostbite_IS.png"};BattleTooltips.LONG_TAP_DELAY=500;BattleTooltips.LONG_CLICK_DELAY=700;BattleTooltips.longTapTimeout=0;BattleTooltips.elem=null;BattleTooltips.parentElem=null;BattleTooltips.isLocked=false;BattleTooltips.isPressed=false;BattleTooltips.zMoveEffects={'clearnegativeboost':"Restores negative stat stages to 0",'crit2':"Crit ratio +2",'heal':"Restores HP 100%",'curse':"Restores HP 100% if user is Ghost type, otherwise Attack +1",'redirect':"Redirects opposing attacks to user",'healreplacement':"Restores replacement's HP 100%"};BattleTooltips.incenseTypes={'Odd Incense':'Psychic','Rock Incense':'Rock','Rose Incense':'Grass','Sea Incense':'Water','Wave Incense':'Water'};BattleTooltips.itemTypes={'Black Belt':'Fighting','Black Glasses':'Dark','Charcoal':'Fire','Dragon Fang':'Dragon','Fairy Feather':'Fairy','Hard Stone':'Rock','Magnet':'Electric','Metal Coat':'Steel','Miracle Seed':'Grass','Mystic Water':'Water','Never-Melt Ice':'Ice','Poison Barb':'Poison','Sharp Beak':'Flying','Silk Scarf':'Normal','Silver Powder':'Bug','Soft Sand':'Ground','Spell Tag':'Ghost','Twisted Spoon':'Psychic'};BattleTooltips.orbUsers={'Latias':['Soul Dew'],'Latios':['Soul Dew'],'Dialga':['Adamant Crystal','Adamant Orb'],'Palkia':['Lustrous Globe','Lustrous Orb'],'Giratina':['Griseous Core','Griseous Orb'],'Venomicon':['Vile Vial']};BattleTooltips.orbTypes={'Soul Dew':['Psychic','Dragon'],'Adamant Crystal':['Steel','Dragon'],'Adamant Orb':['Steel','Dragon'],'Lustrous Globe':['Water','Dragon'],'Lustrous Orb':['Water','Dragon'],'Griseous Core':['Ghost','Dragon'],'Griseous Orb':['Ghost','Dragon'],'Vile Vial':['Poison','Flying']};BattleTooltips.noGemMoves=['Fire Pledge','Fling','Grass Pledge','Struggle','Water Pledge'];var
 
 BattleStatGuesser=function(){
 

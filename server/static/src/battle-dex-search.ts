@@ -1697,10 +1697,27 @@ class BattleMoveSearch extends BattleTypedSearch<'move'> {
 	}
 	//region Flag Search
 	class BattleFlagSearch extends BattleTypedSearch<'flag'> {
+		static HIDDEN_FLAGS = new Set([
+			'allyanim', 'bypasssub', 'cantusetwice', 'charge', 'defrost', 'distance', 'failcopycat',
+			'failencore', 'failinstruct', 'failmefirst', 'failmimic', 'futuremove', 'gravity', 'infusible',
+			'metronome', 'mirror', 'mustpressure', 'noassist', 'noparentalbond', 'nonsky', 'nosketch',
+			'nosleeptalk', 'pledgecombo', 'protect', 'recharge', 'reflectable', 'snatch',
+		]);
 		getTable() { return BattleFlags; }
 		getDefaultResults(reverseSort?: boolean): SearchRow[] {
+			const seen: { [id: string]: 1 } = {};
 			const results: SearchRow[] = [];
-			for (let id in BattleFlags) { results.push(['flag', id as ID]); }
+			for (const move of this.dex.moves.all()) {
+				if (!move.flags) continue;
+				for (const flagId in move.flags) {
+					if (!(move.flags as AnyObject)[flagId]) continue;
+					if (BattleFlagSearch.HIDDEN_FLAGS.has(flagId)) continue;
+					if (seen[flagId]) continue;
+					seen[flagId] = 1;
+					results.push(['flag', flagId as ID]);
+				}
+			}
+			results.sort((a, b) => (a[1] as string).localeCompare(b[1] as string));
 			if (reverseSort) results.reverse();
 			return results;
 		}

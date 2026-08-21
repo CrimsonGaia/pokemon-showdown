@@ -499,9 +499,13 @@
 			var rawMax = st.max;
 			// Display values (always out of 100)
 			var d = this.getTeraChargeDisplay(rawCur, rawMax);
+			var mySide = this.battle && this.battle.mySide;
+			var alreadyTera = !!(mySide && mySide.pokemon && mySide.pokemon.some(function (p) { return !!p.terastallized; }));
+			var tooltipArgs = 'teracharge|' + rawCur + '|' + rawMax + (alreadyTera ? '|1' : '');
 			return '' +
-				'<button class="button terachargebutton" type="button" name="teracharge" ' +
-				'title="Tera Charge: ' + d.cur + '/' + d.max + '" ' +
+				'<button class="button terachargebutton has-tooltip" type="button" name="teracharge" ' +
+				'data-tooltip="' + BattleLog.escapeHTML(tooltipArgs) + '" ' +
+				'aria-label="Tera Charge: ' + d.cur + '/' + d.max + '" ' +
 				'style="position:relative;overflow:hidden;">' +
 					// FULL-BUTTON fill layer
 					'<span class="teracharge-fill" style="' +
@@ -534,9 +538,11 @@
 			if (!st) return '';
 			var letter = this.canMegaEvoLetter;
 			var cur = Math.max(0, Math.min(100, Math.round(st.cur / (st.max || 100) * 100)));
+			var tooltipArgs = 'megacharge|' + st.cur + '|' + st.max;
 			return '' +
-				'<button class="button megachargebutton" type="button" name="megacharge" ' +
-				'title="Mega Charge: ' + st.cur + '/' + st.max + '" ' +
+				'<button class="button megachargebutton has-tooltip" type="button" name="megacharge" ' +
+				'data-tooltip="' + BattleLog.escapeHTML(tooltipArgs) + '" ' +
+				'aria-label="Mega Charge: ' + st.cur + '/' + st.max + '" ' +
 				'style="position:relative;overflow:hidden;">' +
 					'<span class="megacharge-fill" style="' +
 						'position:absolute;left:0;top:0;bottom:0;width:' + cur + '%;' +
@@ -560,7 +566,8 @@
 			var isFull = cur >= 100;
 			if (!isFull) this.megaEvoArmedIndex = null; // can't stay armed if charge dropped below full
 			$btn.toggleClass('megacharge-armed', this.megaEvoArmedIndex === this.getCurrentChoiceIndex());
-			$btn.attr('title', 'Mega Charge: ' + st.cur + '/' + st.max + (isFull ? ' (click to Mega Evolve)' : ''));
+			$btn.attr('aria-label', 'Mega Charge: ' + st.cur + '/' + st.max + (isFull ? ' (click to Mega Evolve)' : ''));
+			$btn.attr('data-tooltip', 'megacharge|' + st.cur + '|' + st.max);
 		},
 		getCurrentChoiceIndex: function () {
 			return (this.choice && this.choice.choices) ? this.choice.choices.length : 0;
@@ -591,6 +598,24 @@
 			return '' +
 				'<span class="whatdo-left">' + '<span class="whatdo-title">' + title + '</span>' + '</span>' +
 				'<span class="whatdo-right">' + '<span class="whatdo-guard">' + (guardHTML || '') + '</span>' + right + '</span>';
+		},
+		getDualTypeStyle: function (type1, type2) {
+			var typeHS = {
+				Normal: [60, 14], Fighting: [3, 40], Flying: [255, 20], Poison: [300, 30],
+				Ground: [44, 27], Rock: [49, 35], Bug: [66, 42], Ghost: [262, 21],
+				Steel: [240, 6], Fire: [25, 40], Water: [222, 29], Grass: [100, 30],
+				Electric: [48, 41], Psychic: [342, 33], Ice: [180, 15], Dragon: [257, 39],
+				Dark: [24, 18], Fairy: [310, 41], Banal: [66, 42], Stellar: [244, 40]
+			};
+			var textOverride = { Stellar: 'hsl(244,24%,24%)', Banal: 'hsl(27,42%,41%)' };
+			function bg(t) { var hs = typeHS[t] || [0, 0]; return 'hsl(' + hs[0] + ',' + hs[1] + '%,93%)'; }
+			function text(t) { var hs = typeHS[t] || [0, 0]; return textOverride[t] || ('hsl(' + hs[0] + ',' + hs[1] + '%,41%)'); }
+			var bgGrad = 'linear-gradient(to top right, ' + bg(type1) + ' 50%, ' + bg(type2) + ' 50%)';
+			var textGrad = 'linear-gradient(to top right, ' + text(type1) + ' 50%, ' + text(type2) + ' 50%)';
+			return {
+				buttonStyle: 'background:' + bgGrad + ';',
+				textStyle: 'background-image:' + textGrad + ';-webkit-background-clip:text;background-clip:text;' + '-webkit-text-fill-color:transparent;color:transparent;'
+			};
 		},
 		getGuardActionColorStyle: function (guardType) {
 			var typeColor = {
@@ -738,7 +763,8 @@
 			var alreadyTera = !!(mySide && mySide.pokemon && mySide.pokemon.some(function (p) { return !!p.terastallized; }));
 			if (alreadyTera) {
 				this.terastallizeArmedIndex = null;
-				$btn.attr('title', 'Tera is already active (only one Pokémon may be Terastallized at a time).');
+				$btn.attr('aria-label', 'Tera is already active (only one Pokémon may be Terastallized at a time).');
+				$btn.attr('data-tooltip', 'teracharge|' + rawCur + '|' + rawMax + '|1');
 				$btn.addClass('teracharge-disabled');
 				$btn.find('.teracharge-typeicon').hide();
 				if (this._teraChargeDisplayCur == null || this._teraChargeDisplayMax == null) {
@@ -767,7 +793,8 @@
 				return;
 			} else { $btn.removeClass('teracharge-disabled'); }
 			// Normal (not already tera)
-			$btn.attr('title', 'Tera Charge: ' + cur + '/' + max);
+			$btn.attr('aria-label', 'Tera Charge: ' + cur + '/' + max);
+			$btn.attr('data-tooltip', 'teracharge|' + rawCur + '|' + rawMax);
 			if (this._teraChargeDisplayCur == null || this._teraChargeDisplayMax == null) {
 				this._teraChargeDisplayCur = cur;
 				this._teraChargeDisplayMax = max;
@@ -1064,9 +1091,9 @@
 					movebuttons += '<button class="movebutton ' + typeClass + ' has-tooltip"' + styleAttr + ' name="chooseMove" value="' + (m + 1) + '" data-move="' + BattleLog.escapeHTML(moveData.move) + '" data-target="' + BattleLog.escapeHTML(moveData.target) + '" data-tooltip="' + BattleLog.escapeHTML(tooltipArgs) + '">';
 					hasMoves = true;
 				}
-				var nameStyle = dualStyle ? ' style="' + dualStyle.textStyle + '"' : '';
+				var smallStyle = dualStyle ? ' style="' + dualStyle.textStyle + '"' : '';
 				var typeLabel = moveType ? Dex.getTypeIcon(moveType, false, moveType2) : "Unknown";
-				movebuttons += '<span' + nameStyle + '>' + BattleLog.escapeHTML(name) + '</span><br />' + '<small class="type"' + nameStyle + '>' + typeLabel + '</small> <small class="pp"' + nameStyle + '>' + pp + '</small>&nbsp;</button> ';
+				movebuttons += BattleLog.escapeHTML(name) + '<br />' + '<small class="type"' + smallStyle + '>' + typeLabel + '</small> <small class="pp"' + smallStyle + '>' + pp + '</small>&nbsp;</button> ';
 			}
 			if (!hasMoves) { moveMenu += '<button class="movebutton" name="chooseMove" value="0" data-move="Struggle" data-target="randomNormal">Struggle<br /><small class="type">Normal</small> <small class="pp">&ndash;</small>&nbsp;</button> '; } 
 			else { moveMenu += movebuttons; }

@@ -2924,7 +2924,10 @@ return pokemon;
 };_proto3.
 rememberTeamPreviewPokemon=function rememberTeamPreviewPokemon(sideid,details){
 var _this$parsePokemonId3=this.parsePokemonId(sideid),siden=_this$parsePokemonId3.siden;
-return this.sides[siden].addPokemon('','',details);
+var side=this.sides[siden];
+var pokemon=side.addPokemon('','',details);
+side.sidebarPokemon.push(pokemon);
+return pokemon;
 };_proto3.
 findCorrespondingPokemon=function findCorrespondingPokemon(serverPokemon){
 var _this$parsePokemonId4=this.parsePokemonId(serverPokemon.ident),siden=_this$parsePokemonId4.siden;

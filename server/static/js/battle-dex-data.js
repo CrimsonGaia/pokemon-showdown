@@ -1032,7 +1032,8 @@ Move=
 
 
 
-function Move(id,name,data){this.effectType='Move';this.id=void 0;this.name=void 0;this.gen=void 0;this.exists=void 0;this.basePower=void 0;this.accuracy=void 0;this.pp=void 0;this.type=void 0;this.category=void 0;this.priority=void 0;this.target=void 0;this.pressureTarget=void 0;this.flags=void 0;this.critRatio=void 0;this.damage=void 0;this.desc=void 0;this.shortDesc=void 0;this.isNonstandard=void 0;this.ohko=void 0;this.recoil=void 0;this.heal=void 0;this.multihit=void 0;this.hasCrashDamage=void 0;this.basePowerCallback=void 0;this.noPPBoosts=void 0;this.status=void 0;this.secondaries=void 0;this.num=void 0;this.isInfusible=void 0;this.guardActionCD=void 0;
+
+function Move(id,name,data){this.effectType='Move';this.id=void 0;this.name=void 0;this.gen=void 0;this.exists=void 0;this.basePower=void 0;this.accuracy=void 0;this.pp=void 0;this.type=void 0;this.type2=void 0;this.category=void 0;this.priority=void 0;this.target=void 0;this.pressureTarget=void 0;this.flags=void 0;this.critRatio=void 0;this.damage=void 0;this.desc=void 0;this.shortDesc=void 0;this.isNonstandard=void 0;this.ohko=void 0;this.recoil=void 0;this.heal=void 0;this.multihit=void 0;this.hasCrashDamage=void 0;this.basePowerCallback=void 0;this.noPPBoosts=void 0;this.status=void 0;this.secondaries=void 0;this.num=void 0;this.isInfusible=void 0;this.guardActionCD=void 0;
 if(!data||typeof data!=='object')data={};
 if(data.name)name=data.name;
 this.name=Dex.sanitizeName(name);
@@ -1043,6 +1044,7 @@ this.basePower=data.basePower||0;
 this.accuracy=data.accuracy||0;
 this.pp=data.pp||1;
 this.type=data.type||'???';
+this.type2=data.type2||undefined;
 this.category=data.category||'Physical';
 this.priority=data.priority||0;
 this.target=data.target||'normal';

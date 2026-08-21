@@ -854,7 +854,7 @@ export type NatureName = 'Adamant' | 'Bashful' | 'Bold' | 'Brave' | 'Calm' | 'Ca
 export type StatNameExceptHP = 'atk' | 'def' | 'spa' | 'spd' | 'spe';
 export type TypeName = 'Normal' | 'Fighting' | 'Flying' | 'Poison' | 'Ground' | 'Rock' | 'Bug' | 'Ghost' | 'Steel' |
 	'Fire' | 'Water' | 'Grass' | 'Electric' | 'Psychic' | 'Ice' | 'Dragon' | 'Dark' | 'Fairy' | 'Stellar' | '???';
-export type StatusName = 'par' | 'psn' | 'frz' | 'slp' | 'brn' | 'aura' | 'bubbleblight' | 'curse' | 'dragonblight' | 'fear' | 'frostbite' | 'drowsy' | 'tox';
+export type StatusName = 'par' | 'psn' | 'frz' | 'slp' | 'brn' | 'aura' | 'bubbleblight' | 'dragonblight' | 'fear' | 'frostbite' | 'drowsy' | 'tox';
 export type BoostStatName = 'atk' | 'def' | 'spa' | 'spd' | 'spe' | 'evasion' | 'accuracy' | 'spc';
 export type GenderName = 'M' | 'F' | 'N';
 export interface Effect {
@@ -1010,6 +1010,7 @@ export class Move implements Effect {
 	readonly accuracy: number | true;
 	readonly pp: number;
 	readonly type: TypeName;
+	readonly type2?: TypeName;
 	readonly category: 'Physical' | 'Special' | 'Status';
 	readonly priority: number;
 	readonly target: MoveTarget;
@@ -1043,6 +1044,7 @@ export class Move implements Effect {
 		this.accuracy = data.accuracy || 0;
 		this.pp = data.pp || 1;
 		this.type = data.type || '???';
+		this.type2 = data.type2 || undefined;
 		this.category = data.category || 'Physical';
 		this.priority = data.priority || 0;
 		this.target = data.target || 'normal';

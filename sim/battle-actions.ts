@@ -457,6 +457,17 @@ export class BattleActions {
 	hitStepTryHitEvent(targets: Pokemon[], pokemon: Pokemon, move: ActiveMove) {
 		const hitResults = this.battle.runEvent('TryHit', targets, pokemon, move);
 		if (move.weaponmove && move.weaponDamageOnProtect !== false) { for (let i = 0; i < targets.length; i++) { if (hitResults[i] === false) { this.applyWeaponMoveDamage(pokemon, move, 'protect'); } } }
+		for (let i = 0; i < targets.length; i++) {
+			if (hitResults[i] === false && move.pierce) {
+				const target = targets[i];
+				const protectedByVolatile = [ 'banefulbunker', 'burningbulwark', 'defendorder', 'detect', 'kingsshield', 'obstruct', 'protect', 'silktrap', 'spikyshield', 'mirrorshield', 'guard', 'guardlv2' ].some(effectid => target.volatiles[effectid]);
+				const protectedBySide = [ 'craftyshield', 'matblock', 'quickguard', 'wideguard', ].some(effectid => target.side.getSideCondition(effectid));
+				if (protectedByVolatile || protectedBySide) {
+					hitResults[i] = true;
+					target.getMoveHitData(move).pierced = move.pierce;
+				}
+			}
+		}
 		if (!hitResults.includes(true) && hitResults.includes(false)) {
 			this.battle.add('-fail', pokemon);
 			this.battle.attrLastMove('[still]');
@@ -547,7 +558,7 @@ export class BattleActions {
 		if (move.breaksProtect) {
 			for (const target of targets) {
 				let broke = false;
-				for (const effectid of [ 'banefulbunker', 'burningbulwark', 'kingsshield', 'obstruct', 'protect', 'silktrap', 'spikyshield', 'mirrorshield', ]) { if (target.removeVolatile(effectid)) broke = true; }
+				for (const effectid of [ 'banefulbunker', 'burningbulwark', 'defendorder', 'detect', 'kingsshield', 'obstruct', 'protect', 'silktrap', 'spikyshield', 'mirrorshield', 'guard', 'guardlv2' ]) { if (target.removeVolatile(effectid)) broke = true; }
 				if (this.battle.gen >= 6 || !target.isAlly(pokemon)) { for (const effectid of ['craftyshield', 'matblock', 'quickguard', 'wideguard']) { if (target.side.removeSideCondition(effectid)) broke = true; } }
 				if (broke) {
 					if (move.id === 'feint') { this.battle.add('-activate', target, 'move: Feint'); } 
@@ -1329,10 +1340,10 @@ export class BattleActions {
 		// Final modifier. Modifiers that modify damage after min damage check, such as Life Orb.
 		baseDamage = this.battle.runEvent('ModifyDamage', pokemon, target, move, baseDamage);
 		const pierced = target.getMoveHitData(move).pierced;
-			if (pierced) {
-				baseDamage = this.battle.modify(baseDamage, pierced[0] / pierced[1]);
-				this.battle.add('-pierce', target, `${pierced[0]}/${pierced[1]}`, `${pierced[0]}/${pierced[1]} of the damage went through.`);
-			}
+		if (pierced) {
+			baseDamage = this.battle.modify(baseDamage, pierced[0] / pierced[1]);
+			this.battle.add('-message', `${pokemon.name} broke through! Dealing ${pierced[0]}/${pierced[1]} of the normal damage.`);
+		}
 		// Generation 6-7 moves the check for minimum 1 damage after the final modifier
 		if (!baseDamage) return 1;
 		// ...but 16-bit truncation happens even later, and can truncate to 0

@@ -324,11 +324,11 @@ export const Dex = new class implements ModdedDex {
 			if (data && typeof data.exists === 'boolean') return data;
 			if (!data) data = { exists: false };
 			let flag = new Flag(id, name, data);
-			window.BattleFlags[id] = BattleFlags;
-			return flag ;
+			window.BattleFlags[id] = flag;
+			return flag;
 		},
 	};
-		//region item definition
+	//region item definition
 	items = {
 		get: (nameOrItem: string | Item | null | undefined): Item => {
 			if (nameOrItem && typeof nameOrItem !== 'string') { return nameOrItem; } // TODO: don't accept Items here
@@ -799,7 +799,7 @@ export const Dex = new class implements ModdedDex {
 		const flagText = sanitizedFlag.charAt(0).toUpperCase() + sanitizedFlag.slice(1);
 		return `<img src="${Dex.resourcePrefix}sprites/flagicons/${sanitizedFlag}.png" alt="${flagText}" height="32" width="132" class="pixelated" onerror="this.style.display='none'; this.nextSibling.style.display='inline';" /><span style="display: none;">${flagText}</span>`;
 	}
-	statusNames = ['par', 'psn', 'tox', 'brn', 'frz', 'slp', 'aura', 'bubbleblight', 'curse', 'dragonblight', 'fear', 'frostbite', 'drowsy', 'confusion', 'flinch'];
+	statusNames = ['par', 'psn', 'tox', 'brn', 'frz', 'slp', 'aura', 'bubbleblight', 'dragonblight', 'fear', 'frostbite', 'drowsy', 'confusion', 'flinch'];
 	isStatusName(name: string | null) {
 		if (!name) return false;
 		return this.statusNames.indexOf(toID(name)) !== -1;
@@ -817,7 +817,6 @@ export const Dex = new class implements ModdedDex {
 		case 'slp': sanitizedStatus = 'Sleep'; break;
 		case 'aura': sanitizedStatus = 'Aura'; break;
 		case 'bubbleblight': sanitizedStatus = 'Bubbleblight'; break;
-		case 'curse': sanitizedStatus = 'Curse'; break;
 		case 'dragonblight': sanitizedStatus = 'Dragonblight'; break;
 		case 'fear': sanitizedStatus = 'Fear'; break;
 		case 'frostbite': sanitizedStatus = 'Frostbite'; break;

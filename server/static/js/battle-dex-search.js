@@ -1697,16 +1697,33 @@ sort=function sort(results,sortCol,reverseSort){throw new Error("invalid sortcol
 
 
 BattleFlagSearch=function(_BattleTypedSearch7){function BattleFlagSearch(){return _BattleTypedSearch7.apply(this,arguments)||this;}_inheritsLoose(BattleFlagSearch,_BattleTypedSearch7);var _proto8=BattleFlagSearch.prototype;_proto8.
+
+
+
+
+
+
 getTable=function getTable(){return BattleFlags;};_proto8.
 getDefaultResults=function getDefaultResults(reverseSort){
-var results=[];
-for(var id in BattleFlags){results.push(['flag',id]);}
+var seen={};
+var results=[];for(var _i59=0,_this$dex$moves$all2=
+this.dex.moves.all();_i59<_this$dex$moves$all2.length;_i59++){var move=_this$dex$moves$all2[_i59];
+if(!move.flags)continue;
+for(var flagId in move.flags){
+if(!move.flags[flagId])continue;
+if(BattleFlagSearch.HIDDEN_FLAGS.has(flagId))continue;
+if(seen[flagId])continue;
+seen[flagId]=1;
+results.push(['flag',flagId]);
+}
+}
+results.sort(function(a,b){return a[1].localeCompare(b[1]);});
 if(reverseSort)results.reverse();
 return results;
 };_proto8.
 getBaseResults=function getBaseResults(){return this.getDefaultResults();};_proto8.
 filter=function filter(row,filters){throw new Error("invalid filter");};_proto8.
-sort=function sort(results,sortCol,reverseSort){throw new Error("invalid sortcol");};return BattleFlagSearch;}(BattleTypedSearch);var
+sort=function sort(results,sortCol,reverseSort){throw new Error("invalid sortcol");};return BattleFlagSearch;}(BattleTypedSearch);BattleFlagSearch.HIDDEN_FLAGS=new Set(['allyanim','bypasssub','cantusetwice','charge','defrost','distance','failcopycat','failencore','failinstruct','failmefirst','failmimic','futuremove','gravity','infusible','metronome','mirror','mustpressure','noassist','noparentalbond','nonsky','nosketch','nosleeptalk','pledgecombo','protect','recharge','reflectable','snatch']);var
 
 
 BattleTypeSearch=function(_BattleTypedSearch8){function BattleTypeSearch(){return _BattleTypedSearch8.apply(this,arguments)||this;}_inheritsLoose(BattleTypeSearch,_BattleTypedSearch8);var _proto9=BattleTypeSearch.prototype;_proto9.
