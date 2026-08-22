@@ -6,7 +6,7 @@
  * @license MIT
  */
 import { Dex, type ModdedDex, toID, type ID } from "./battle-dex";
-export type SearchType = ( 'pokemon' | 'type' | 'tier' | 'move' | 'flag' | 'item' | 'ability' | 'egggroup' | 'category' | 'article' | 'itemclass' );
+export type SearchType = ( 'pokemon' | 'type' | 'tier' | 'move' | 'flag' | 'item' | 'ability' | 'egggroup' | 'category' | 'article' | 'itemclass' | 'guardaction' );
 export type SearchRow = ( [SearchType, ID, number?, number?] | ['sortpokemon' | 'sortmove' | 'sortitem', ''] | ['header' | 'html', string] );
 type SearchFilter = [string, string];
 /** ID, SearchType, index (if alias), offset (if offset alias) */
@@ -34,6 +34,7 @@ export class DexSearch {
 		article: 9,
 		flag: 10,
 		itemclass: 11,
+		guardaction: 12,
 	};
 	static typeName = {
 		pokemon: 'Pok\u00e9mon',
@@ -47,6 +48,7 @@ export class DexSearch {
 		category: 'Category',
 		article: 'Article',
 		itemclass: 'Item Class',
+		guardaction: 'Guard Action',
 	};
 	firstPokemonColumn: 'Tier' | 'Number' = 'Number';
 	/**
@@ -65,6 +67,7 @@ export class DexSearch {
 		case 'item': return new BattleItemSearch('item', format, speciesOrSet);
 		case 'move': return new BattleMoveSearch('move', format, speciesOrSet);
 		case 'flag': return new BattleFlagSearch('flag', format, speciesOrSet);
+		case 'guardaction': return new BattleGuardActionSearch('guardaction', format, speciesOrSet);
 		case 'ability': return new BattleAbilitySearch('ability', format, speciesOrSet);
 		case 'type': return new BattleTypeSearch('type', format, speciesOrSet);
 		case 'category': return new BattleCategorySearch('category', format, speciesOrSet);
@@ -98,9 +101,10 @@ export class DexSearch {
 		let [type] = entry;
 		if (this.typedSearch.searchType === 'pokemon') {
 			if (type === this.sortCol) this.sortCol = null;
-			if (!['type', 'move', 'flag', 'ability', 'tier'].includes(type)) return false;
+			if (!['type', 'move', 'flag', 'ability', 'tier', 'guardaction'].includes(type)) return false;
 			if (type === 'type') entry[1] = this.capitalizeFirst(entry[1]);
 			if (type === 'move') entry[1] = toID(entry[1]);
+			if (type === 'guardaction') entry[1] = toID(entry[1]);
 			if (type === 'flag') { entry[1] = this.capitalizeFirst(entry[1]); }
 			if (type === 'ability') entry[1] = this.dex.abilities.get(entry[1]).name;
 			if (type === 'tier') {
@@ -277,7 +281,7 @@ export class DexSearch {
 		// We split the output buffers into 8 buckets. Bucket 0 is usually unused, and buckets 1-7 represent pokemon, types, moves, etc (see typeTable).
 		// When we're done, the buffers are concatenated together to form our results, with each buffer getting its own header, unlike
 		// Notes: if we have a searchType, that searchType's buffer will be on top
-		let bufs: SearchRow[][] = [[], [], [], [], [], [], [], [], [], [], [], []];
+		let bufs: SearchRow[][] = [[], [], [], [], [], [], [], [], [], [], [], [], []];
 		let topbufIndex = -1;
 		let count = 0;
 		let nearMatch = false;
@@ -320,8 +324,8 @@ export class DexSearch {
 			let typeIndex = DexSearch.typeTable[type];
 			// For performance, with a query length of 1, we only fill the first bucket
 			if (query.length === 1 && typeIndex !== (searchType ? searchTypeIndex : 1)) continue;
-			// For pokemon queries, accept types/tier/abilities/moves/eggroups/flags as filters
-			if (searchType === 'pokemon' && (typeIndex === 5 || (typeIndex > 7 && typeIndex !== 10))) continue;
+						// For pokemon queries, accept types/tier/abilities/moves/eggroups/flags/guard actions as filters
+			if (searchType === 'pokemon' && (typeIndex === 5 || (typeIndex > 7 && typeIndex !== 10 && typeIndex !== 12))) continue;
 			// For move queries, accept types/categories/flags as filters
 			if (searchType === 'move' && ((typeIndex !== 8 && typeIndex !== 10 && typeIndex > 4) || typeIndex === 3)) continue;
 			// For move queries in the teambuilder, don't accept pokemon as filters
@@ -577,6 +581,7 @@ abstract class BattleTypedSearch<T extends SearchType> {
 		else if (sortCol === 'category') { return [this.sortRow!, ...BattleCategorySearch.prototype.getDefaultResults.call(this, reverseSort)]; } 
 		else if (sortCol === 'ability') { return [this.sortRow!, ...BattleAbilitySearch.prototype.getDefaultResults.call(this, reverseSort)]; } 
 		else if (sortCol === 'flag') { return [this.sortRow!, ...BattleFlagSearch.prototype.getDefaultResults.call(this, reverseSort)]; }
+		else if (sortCol === 'guardaction') { return [this.sortRow!, ...BattleGuardActionSearch.prototype.getDefaultResults.call(this, reverseSort)]; }
 		if (!this.baseResults) { this.baseResults = this.getBaseResults(); }
 		if (!this.baseIllegalResults) {
 			const legalityFilter: { [id: string]: 1 } = {};
@@ -989,6 +994,8 @@ class BattlePokemonSearch extends BattleTypedSearch<'pokemon'> {
 				break;
 			case 'flag': if (value === 'Mega') { if (!species.isMega) return false; } // Special case for Mega since it uses isMega property
 				else { if (!species.tags || !species.tags.includes(value)) return false; }
+				break;
+			case 'guardaction': if (!species.guardAction || !species.guardAction.includes(value)) return false;
 				break;
 			}
 		}
@@ -1688,6 +1695,20 @@ class BattleMoveSearch extends BattleTypedSearch<'move'> {
 				['category', 'special' as ID],
 				['category', 'status' as ID],
 			];
+			if (reverseSort) results.reverse();
+			return results;
+		}
+		getBaseResults() { return this.getDefaultResults(); }
+		filter(row: SearchRow, filters: string[][]): boolean { throw new Error("invalid filter"); }
+		sort(results: SearchRow[], sortCol: string | null, reverseSort?: boolean): SearchRow[] { throw new Error("invalid sortcol"); }
+	}
+	//region Guard Action Search
+	class BattleGuardActionSearch extends BattleTypedSearch<'guardaction'> {
+		getTable() { return BattleMovedex; }
+		getDefaultResults(reverseSort?: boolean): SearchRow[] {
+			const results: SearchRow[] = [];
+			for (const move of this.dex.moves.all()) { if (move.guardActionCD) results.push(['guardaction', move.id]); }
+			results.sort((a, b) => (a[1] as string).localeCompare(b[1] as string));
 			if (reverseSort) results.reverse();
 			return results;
 		}

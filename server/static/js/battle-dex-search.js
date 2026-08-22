@@ -57,6 +57,8 @@ DexSearch=function(){
 
 
 
+
+
 function DexSearch(){var searchType=arguments.length>0&&arguments[0]!==undefined?arguments[0]:'';var formatid=arguments.length>1&&arguments[1]!==undefined?arguments[1]:'';var species=arguments.length>2&&arguments[2]!==undefined?arguments[2]:'';this.query='';this.dex=Dex;this.typedSearch=null;this.results=null;this.prependResults=null;this.exactMatch=false;this.firstPokemonColumn='Number';this.sortCol=null;this.reverseSort=false;this.filters=null;this.setType(searchType,formatid,species);}var _proto=DexSearch.prototype;_proto.
 getTypedSearch=function getTypedSearch(searchType){var format=arguments.length>1&&arguments[1]!==undefined?arguments[1]:'';var speciesOrSet=arguments.length>2&&arguments[2]!==undefined?arguments[2]:'';
 if(!searchType)return null;
@@ -65,6 +67,7 @@ case'pokemon':return new BattlePokemonSearch('pokemon',format,speciesOrSet);
 case'item':return new BattleItemSearch('item',format,speciesOrSet);
 case'move':return new BattleMoveSearch('move',format,speciesOrSet);
 case'flag':return new BattleFlagSearch('flag',format,speciesOrSet);
+case'guardaction':return new BattleGuardActionSearch('guardaction',format,speciesOrSet);
 case'ability':return new BattleAbilitySearch('ability',format,speciesOrSet);
 case'type':return new BattleTypeSearch('type',format,speciesOrSet);
 case'category':return new BattleCategorySearch('category',format,speciesOrSet);
@@ -98,9 +101,10 @@ if(!this.typedSearch)return false;
 var type=entry[0];
 if(this.typedSearch.searchType==='pokemon'){
 if(type===this.sortCol)this.sortCol=null;
-if(!['type','move','flag','ability','tier'].includes(type))return false;
+if(!['type','move','flag','ability','tier','guardaction'].includes(type))return false;
 if(type==='type')entry[1]=this.capitalizeFirst(entry[1]);
 if(type==='move')entry[1]=toID(entry[1]);
+if(type==='guardaction')entry[1]=toID(entry[1]);
 if(type==='flag'){entry[1]=this.capitalizeFirst(entry[1]);}
 if(type==='ability')entry[1]=this.dex.abilities.get(entry[1]).name;
 if(type==='tier'){
@@ -277,7 +281,7 @@ searchPasses.push(['fuzzy',i,'']);
 
 
 
-var bufs=[[],[],[],[],[],[],[],[],[],[],[],[]];
+var bufs=[[],[],[],[],[],[],[],[],[],[],[],[],[]];
 var topbufIndex=-1;
 var count=0;
 var nearMatch=false;
@@ -321,7 +325,7 @@ var typeIndex=DexSearch.typeTable[type];
 
 if(query.length===1&&typeIndex!==(searchType?searchTypeIndex:1))continue;
 
-if(searchType==='pokemon'&&(typeIndex===5||typeIndex>7&&typeIndex!==10))continue;
+if(searchType==='pokemon'&&(typeIndex===5||typeIndex>7&&typeIndex!==10&&typeIndex!==12))continue;
 
 if(searchType==='move'&&(typeIndex!==8&&typeIndex!==10&&typeIndex>4||typeIndex===3))continue;
 
@@ -500,7 +504,7 @@ if(left>=BattleSearchIndex.length-1)left=BattleSearchIndex.length-1;else
 if(BattleSearchIndex[left+1][0]&&BattleSearchIndex[left][0]<query)left++;
 if(left&&BattleSearchIndex[left-1][0]===query)left--;
 return left;
-};return DexSearch;}();DexSearch.typeTable={pokemon:1,type:2,tier:3,move:4,item:5,ability:6,egggroup:7,category:8,article:9,flag:10,itemclass:11};DexSearch.typeName={pokemon:"Pok\xE9mon",type:'Type',tier:'Tiers',move:'Moves',flag:'Flags',item:'Items',ability:'Abilities',egggroup:'Egg group',category:'Category',article:'Article',itemclass:'Item Class'};var
+};return DexSearch;}();DexSearch.typeTable={pokemon:1,type:2,tier:3,move:4,item:5,ability:6,egggroup:7,category:8,article:9,flag:10,itemclass:11,guardaction:12};DexSearch.typeName={pokemon:"Pok\xE9mon",type:'Type',tier:'Tiers',move:'Moves',flag:'Flags',item:'Items',ability:'Abilities',egggroup:'Egg group',category:'Category',article:'Article',itemclass:'Item Class',guardaction:'Guard Action'};var
 
 
 BattleTypedSearch=function(){
@@ -576,7 +580,8 @@ getResults=function getResults(filters,sortCol,reverseSort){var _this=this,_ille
 if(sortCol==='type'){return[this.sortRow].concat(BattleTypeSearch.prototype.getDefaultResults.call(this,reverseSort));}else
 if(sortCol==='category'){return[this.sortRow].concat(BattleCategorySearch.prototype.getDefaultResults.call(this,reverseSort));}else
 if(sortCol==='ability'){return[this.sortRow].concat(BattleAbilitySearch.prototype.getDefaultResults.call(this,reverseSort));}else
-if(sortCol==='flag'){return[this.sortRow].concat(BattleFlagSearch.prototype.getDefaultResults.call(this,reverseSort));}
+if(sortCol==='flag'){return[this.sortRow].concat(BattleFlagSearch.prototype.getDefaultResults.call(this,reverseSort));}else
+if(sortCol==='guardaction'){return[this.sortRow].concat(BattleGuardActionSearch.prototype.getDefaultResults.call(this,reverseSort));}
 if(!this.baseResults){this.baseResults=this.getBaseResults();}
 if(!this.baseIllegalResults){
 var legalityFilter={};for(var _i8=0,_this$baseResults2=
@@ -989,6 +994,8 @@ case'move':if(!this.canLearn(species.id,value))return false;
 break;
 case'flag':if(value==='Mega'){if(!species.isMega)return false;}else
 {if(!species.tags||!species.tags.includes(value))return false;}
+break;
+case'guardaction':if(!species.guardAction||!species.guardAction.includes(value))return false;
 break;
 }
 }
@@ -1696,18 +1703,32 @@ filter=function filter(row,filters){throw new Error("invalid filter");};_proto7.
 sort=function sort(results,sortCol,reverseSort){throw new Error("invalid sortcol");};return BattleCategorySearch;}(BattleTypedSearch);var
 
 
-BattleFlagSearch=function(_BattleTypedSearch7){function BattleFlagSearch(){return _BattleTypedSearch7.apply(this,arguments)||this;}_inheritsLoose(BattleFlagSearch,_BattleTypedSearch7);var _proto8=BattleFlagSearch.prototype;_proto8.
+BattleGuardActionSearch=function(_BattleTypedSearch7){function BattleGuardActionSearch(){return _BattleTypedSearch7.apply(this,arguments)||this;}_inheritsLoose(BattleGuardActionSearch,_BattleTypedSearch7);var _proto8=BattleGuardActionSearch.prototype;_proto8.
+getTable=function getTable(){return BattleMovedex;};_proto8.
+getDefaultResults=function getDefaultResults(reverseSort){
+var results=[];for(var _i59=0,_this$dex$moves$all2=
+this.dex.moves.all();_i59<_this$dex$moves$all2.length;_i59++){var move=_this$dex$moves$all2[_i59];if(move.guardActionCD)results.push(['guardaction',move.id]);}
+results.sort(function(a,b){return a[1].localeCompare(b[1]);});
+if(reverseSort)results.reverse();
+return results;
+};_proto8.
+getBaseResults=function getBaseResults(){return this.getDefaultResults();};_proto8.
+filter=function filter(row,filters){throw new Error("invalid filter");};_proto8.
+sort=function sort(results,sortCol,reverseSort){throw new Error("invalid sortcol");};return BattleGuardActionSearch;}(BattleTypedSearch);var
+
+
+BattleFlagSearch=function(_BattleTypedSearch8){function BattleFlagSearch(){return _BattleTypedSearch8.apply(this,arguments)||this;}_inheritsLoose(BattleFlagSearch,_BattleTypedSearch8);var _proto9=BattleFlagSearch.prototype;_proto9.
 
 
 
 
 
 
-getTable=function getTable(){return BattleFlags;};_proto8.
+getTable=function getTable(){return BattleFlags;};_proto9.
 getDefaultResults=function getDefaultResults(reverseSort){
 var seen={};
-var results=[];for(var _i59=0,_this$dex$moves$all2=
-this.dex.moves.all();_i59<_this$dex$moves$all2.length;_i59++){var move=_this$dex$moves$all2[_i59];
+var results=[];for(var _i61=0,_this$dex$moves$all4=
+this.dex.moves.all();_i61<_this$dex$moves$all4.length;_i61++){var move=_this$dex$moves$all4[_i61];
 if(!move.flags)continue;
 for(var flagId in move.flags){
 if(!move.flags[flagId])continue;
@@ -1720,21 +1741,21 @@ results.push(['flag',flagId]);
 results.sort(function(a,b){return a[1].localeCompare(b[1]);});
 if(reverseSort)results.reverse();
 return results;
-};_proto8.
-getBaseResults=function getBaseResults(){return this.getDefaultResults();};_proto8.
-filter=function filter(row,filters){throw new Error("invalid filter");};_proto8.
+};_proto9.
+getBaseResults=function getBaseResults(){return this.getDefaultResults();};_proto9.
+filter=function filter(row,filters){throw new Error("invalid filter");};_proto9.
 sort=function sort(results,sortCol,reverseSort){throw new Error("invalid sortcol");};return BattleFlagSearch;}(BattleTypedSearch);BattleFlagSearch.HIDDEN_FLAGS=new Set(['allyanim','bypasssub','cantusetwice','charge','defrost','distance','failcopycat','failencore','failinstruct','failmefirst','failmimic','futuremove','gravity','infusible','metronome','mirror','mustpressure','noassist','noparentalbond','nonsky','nosketch','nosleeptalk','pledgecombo','protect','recharge','reflectable','snatch']);var
 
 
-BattleTypeSearch=function(_BattleTypedSearch8){function BattleTypeSearch(){return _BattleTypedSearch8.apply(this,arguments)||this;}_inheritsLoose(BattleTypeSearch,_BattleTypedSearch8);var _proto9=BattleTypeSearch.prototype;_proto9.
-getTable=function getTable(){return window.BattleTypeChart;};_proto9.
+BattleTypeSearch=function(_BattleTypedSearch9){function BattleTypeSearch(){return _BattleTypedSearch9.apply(this,arguments)||this;}_inheritsLoose(BattleTypeSearch,_BattleTypedSearch9);var _proto10=BattleTypeSearch.prototype;_proto10.
+getTable=function getTable(){return window.BattleTypeChart;};_proto10.
 getDefaultResults=function getDefaultResults(reverseSort){
 var results=[];
 for(var id in window.BattleTypeChart){results.push(['type',id]);}
 if(reverseSort)results.reverse();
 return results;
-};_proto9.
-getBaseResults=function getBaseResults(){return this.getDefaultResults();};_proto9.
-filter=function filter(row,filters){throw new Error("invalid filter");};_proto9.
+};_proto10.
+getBaseResults=function getBaseResults(){return this.getDefaultResults();};_proto10.
+filter=function filter(row,filters){throw new Error("invalid filter");};_proto10.
 sort=function sort(results,sortCol,reverseSort){throw new Error("invalid sortcol");};return BattleTypeSearch;}(BattleTypedSearch);
 //# sourceMappingURL=battle-dex-search.js.map

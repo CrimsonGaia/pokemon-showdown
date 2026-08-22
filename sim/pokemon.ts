@@ -1740,45 +1740,6 @@ export class Pokemon {
 			else if ('telekinesis' in this.volatiles) { result = false; } 
 			else if (item === 'airballoon') { result = false; }
 		}
-		// Sticky Web/Spikes/Toxic Spikes/Caltrops apply immediately when a Pokemon becomes newly
-		// grounded mid-battle (e.g. losing Levitate, Gravity going up) -- ported from scripts.ts,
-		// which had this but wasn't reachable from anywhere else once merged.
-		const wasGrounded = this.volatiles['trackgroundedstate']?.grounded;
-		if (!wasGrounded && result === true && !negateImmunity && this.isActive) {
-			const side = this.side;
-			if (side.sideConditions['stickyweb']) {
-				if (!this.hasItem('heavydutyboots')) {
-					this.battle.add('-activate', this, 'move: Sticky Web');
-					this.battle.boost({ spe: -1 }, this, side.foe.active[0], this.battle.dex.getActiveMove('stickyweb'));
-				}
-			}
-			if (side.sideConditions['spikes']) {
-				if (!this.hasItem('heavydutyboots') && !this.hasType('Bug')) {
-					const layers = side.sideConditions['spikes'].layers;
-					const damageAmounts = [0, 3, 4, 6]; // 1/8, 1/6, 1/4
-					this.battle.damage(damageAmounts[layers] * this.maxhp / 24);
-				}
-			}
-			if (side.sideConditions['toxicspikes']) {
-				if (this.hasType('Poison')) {
-					this.battle.add('-sideend', side, 'move: Toxic Spikes', `[of] ${this}`);
-					side.removeSideCondition('toxicspikes');
-				} else if (!this.hasType('Steel') && !this.hasItem('heavydutyboots') && !this.hasType('Bug')) {
-					const layers = side.sideConditions['toxicspikes'].layers;
-					if (layers >= 2) { this.trySetStatus('tox', side.foe.active[0]); } 
-					else { this.trySetStatus('psn', side.foe.active[0]); }
-				}
-			}
-			if (side.sideConditions['caltrops']) {
-				if (!this.hasItem('heavydutyboots')) {
-					const layers = side.sideConditions['caltrops'].layers || 1;
-					const damageAmounts = [0, 3, 4, 6]; // 1/8, 1/6, 1/4
-					this.battle.damage(damageAmounts[layers] * this.maxhp / 24);
-				}
-			}
-		}
-		if (!this.volatiles['trackgroundedstate']) { this.addVolatile('trackgroundedstate' as ID); }
-		if (this.volatiles['trackgroundedstate']) { this.volatiles['trackgroundedstate'].grounded = !!result; }
 		return result;
 	}
 	isSemiInvulnerable() { return (this.volatiles['fly'] || this.volatiles['bounce'] || this.volatiles['dive'] || this.volatiles['dig'] || this.volatiles['phantomforce'] || this.volatiles['shadowforce'] || this.isSkyDropped()); }

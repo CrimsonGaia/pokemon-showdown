@@ -3846,6 +3846,34 @@ p.or:after {
 	border-bottom: none;
 }
 
+.pokemon-grid-guardaction {
+	grid-column: 1 / -1;
+	padding: 4px 0;
+	border-top: 1px solid #CCCCCC;
+	border-bottom: 1px solid #CCCCCC;
+}
+.pokemon-grid-guardaction-header {
+	font-size: 8pt;
+	color: #999999;
+	text-align: center;
+	margin-bottom: 2px;
+}
+.pokemon-grid-guardaction-row {
+	display: flex;
+	width: 100%;
+}
+.pokemon-grid-guardaction-move {
+	flex: 1;
+	text-align: center;
+	font-size: 8pt;
+	padding: 0 2px;
+}
+.pokemon-grid-guardaction {
+	width: 100%;
+	padding: 4px 0;
+	border-top: 1px solid #CCCCCC;
+	border-bottom: 1px solid #CCCCCC;
+}
 .pokemon-grid-stats {
 	grid-column: 1 / -1;
 	display: grid;
@@ -3854,6 +3882,7 @@ p.or:after {
 	max-height: 28px;
 	border-top: 1px solid #b8b8b8;
 }
+
 .pokemon-grid-stat {
 	display: flex;
 	flex-direction: column;

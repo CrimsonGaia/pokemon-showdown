@@ -248,7 +248,7 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 		effectType: 'Status',
 		onStart(target, source, sourceEffect) {
 			this.add('-status', target, 'frostbite');
-			this.effectState.startTime = this.random(1, 3);
+			this.effectState.startTime = this.random(1, 4);
 			this.effectState.time = this.effectState.startTime;
 		},
         onModifySpA(spa, pokemon) { return Math.floor(spa * (2/3)); },
@@ -351,7 +351,7 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 		effectType: 'Status',
 		onStart(target, source, sourceEffect) {
 			this.add('-status', target, 'drowsy');
-			let duration = this.random(1, 3);
+			let duration = this.random(1, 4);
 			// Halve drowsy duration for Electric and Flying types
 			if (target.hasType('Electric') || target.hasType('Flying')) { duration = Math.ceil(duration / 2); }
 			this.effectState.startTime = duration;
@@ -874,11 +874,12 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 		onStart(pokemon) { this.add('-start', pokemon, 'Magnet Rise'); },
 		onEnd(pokemon) { this.add('-end', pokemon, 'Magnet Rise'); },
 	},
-	// #region PP Exhaution
+	// #region PP Exhaustion
 	defeathered: {
 		name: 'Defeathered',
 		noCopy: true,
 		onStart(target) { this.add('-start', target, 'Defeathered'); },
+		onAfterMove(target, source, move) { this.add('-message', `${target.name} was plucked thin! It can't even fly anymore.`); },
 		onTypePriority: -1,
 		onType(types, pokemon) {
 			this.effectState.typeWas = types;

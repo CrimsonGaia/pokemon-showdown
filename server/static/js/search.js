@@ -55,49 +55,18 @@
 			self.sortCol = self.engine.sortCol;
 			self.find('');
 		});
-		this.$el.on('change', '#flag-icons-toggle', function (e) {
-			console.log('[FLAG CHECKBOX] change event fired');
-			var checked = e.currentTarget.checked;
-			console.log('[FLAG CHECKBOX] checked:', checked);
-			Storage.prefs('flagicons', checked);
-			console.log('[FLAG CHECKBOX] preference saved, refreshing...');
-			// Force a complete re-render by clearing the rendered state and re-rendering
-			self.renderedIndex = 0;
-			self.renderingDone = false;
-			self.updateScroll();
-		});
-		this.$el.on('click', '#flag-icons-toggle', function (e) {
-			console.log('[FLAG CHECKBOX] click event fired');
-		});
-		this.$el.on('change', '#category-display-toggle', function (e) {
-			var value = e.currentTarget.value;
-			Storage.prefs('categorydisplay', value);
-			self.renderedIndex = 0;
-			self.renderingDone = false;
-			self.updateScroll();
-		});
-		this.$el.on('change', '#flag-tint-toggle', function (e) {
-			var value = e.currentTarget.value;
-			Storage.prefs('flagtint', value);
-			self.renderedIndex = 0;
-			self.renderingDone = false;
-			self.updateScroll();
-		});
-		this.$el.on('change', '#dex-display-toggle', function (e) {
-			var value = e.currentTarget.value;
-			Storage.prefs('dexdisplay', value);
-			self.renderedIndex = 0;
-			self.renderingDone = false;
-			self.updateScroll();
-		});
-		this.$el.on('change', '#dex-grid-bg-toggle', function (e) {
-			var value = e.currentTarget.value;
-			Storage.prefs('dexgridbg', value);
-			self.renderedIndex = 0;
-			self.renderingDone = false;
-			self.updateScroll();
+		this.$el.on('click', 'button[name=openViewMode]', function (e) {
+			e.preventDefault();
+			var searchType = self.engine && self.engine.typedSearch && self.engine.typedSearch.searchType;
+			var popupClass = searchType === 'move' ? MoveViewModePopup : PokemonViewModePopup;
+			app.addPopup(popupClass, { search: self, sourceEl: $(e.currentTarget) });
 		});
 	}
+	Search.prototype.refreshDisplay = function () {
+		this.renderedIndex = 0;
+		this.renderingDone = false;
+		this.updateScroll();
+	};
 	Search.prototype.$ = function (query) { return this.$el.find(query); };
 	var POKEMON_GRID_TYPE_COLORS = {
 		normal: '#d9d7b3',
@@ -420,6 +389,9 @@
 		case 'flag':
 			var flag = { name: id[0].toUpperCase() + id.substr(1), id: id };
 			return this.renderFlagRow(flag, matchStart, matchLength, errorMessage);
+		case 'guardaction':
+			var gaMove = this.engine.dex.moves.get(id);
+			return this.renderGuardActionRow(gaMove, matchStart, matchLength, errorMessage);
 		case 'itemclass':
 			var itemclass = {name: ITEM_CLASS_LABELS[id] || id[0].toUpperCase() + id.substr(1), id: id};
 			return this.renderItemClassRow(itemclass, matchStart, matchLength, errorMessage);
@@ -446,23 +418,8 @@
 		else { buf += '<button class="sortcol statsortcol' + (this.sortCol === 'spa' ? ' cur' : '') + '" data-sort="spa">Spc</button>'; }
 		buf += '<button class="sortcol statsortcol' + (this.sortCol === 'spe' ? ' cur' : '') + '" data-sort="spe">Spe</button>';
 		buf += '<button class="sortcol statsortcol' + (this.sortCol === 'bst' ? ' cur' : '') + '" data-sort="bst">BST</button>';
-		buf += '<span style="margin: 0 5px; color: #999;">|</span>';
-		var dexDisplay = Dex.prefs('dexdisplay') || 'list';
-		var dexGridBg = Dex.prefs('dexgridbg') || 'faint';
-		buf += '<label style="font-size: 9px; display: inline-flex; align-items: center; vertical-align: middle;">';
-		buf += '<span style="margin-right: 1px; line-height: 1;">View:</span>';
-		buf += '<select id="dex-display-toggle" style="font-size: 9px; padding: 1px 3px 1px 1px; appearance: none; -webkit-appearance: none; -moz-appearance: none; width: 40px;">';
-		buf += '<option value="list"' + (dexDisplay === 'list' ? ' selected' : '') + '>List</option>';
-		buf += '<option value="grid"' + (dexDisplay === 'grid' ? ' selected' : '') + '>Grid</option>';
-		buf += '</select></label>';
-		buf += '<span style="margin: 0 4px 0 6px; color: #999;">|</span>';
-		buf += '<label style="font-size: 9px; display: inline-flex; align-items: center; vertical-align: middle;">';
-		buf += '<span style="margin-right: 1px; line-height: 1;">BG:</span>';
-		buf += '<select id="dex-grid-bg-toggle" style="font-size: 9px; padding: 1px 3px 1px 1px; appearance: none; -webkit-appearance: none; -moz-appearance: none; width: 48px;">';
-		buf += '<option value="none"' + (dexGridBg === 'none' ? ' selected' : '') + '>None</option>';
-		buf += '<option value="faint"' + (dexGridBg === 'faint' ? ' selected' : '') + '>Faint</option>';
-		buf += '<option value="bright"' + (dexGridBg === 'bright' ? ' selected' : '') + '>Bright</option>';
-		buf += '</select></label>';
+		buf += '<button class="sortcol guardactionsortcol' + (this.sortCol === 'guardaction' ? ' cur' : '') + '" data-sort="guardaction">Guard Action</button>';
+		buf += '<button class="sortcol" name="openViewMode" style="float: right; width: auto; padding: 0 6px; border-left: 1px solid #999;"><i class="fa fa-sliders"></i> View Mode</button>';
 		buf += '</div></li>';
 		return buf;
 	};
@@ -476,28 +433,7 @@
 		buf += '<button class="sortcol widelabelcol' + (this.sortCol === 'accuracy' ? ' cur' : '') + '" data-sort="accuracy">Accuracy</button>';
 		buf += '<button class="sortcol labelcol' + (this.sortCol === 'crit' ? ' cur' : '') + '" data-sort="crit" style="margin-left: 0;">Crit</button>';
 		buf += '<button class="sortcol pplabelcol' + (this.sortCol === 'pp' ? ' cur' : '') + '" data-sort="pp" style="margin-left: 0;">PP</button>';
-		buf += '<span style="margin: 0 5px; color: #999;">|</span>';
-		var categoryDisplay = Dex.prefs('categorydisplay') || 'icons';
-		buf += '<label style="font-size: 9px; display: inline-flex; align-items: center; vertical-align: middle;">';
-		buf += '<span style="margin-right: 1px; line-height: 1;">Category Icons:</span>';
-		buf += '<select id="category-display-toggle" style="font-size: 9px; padding: 1px 3px 1px 1px; appearance: none; -webkit-appearance: none; -moz-appearance: none; width: 42px;">';
-		buf += '<option value="icons"' + (categoryDisplay === 'icons' ? ' selected' : '') + '>Icons</option>';
-		buf += '<option value="text"' + (categoryDisplay === 'text' ? ' selected' : '') + '>Text</option>';
-		buf += '<option value="both"' + (categoryDisplay === 'both' ? ' selected' : '') + '>Both</option>';
-		buf += '</select></label>';
-		buf += '<span style="margin: 0 5px; color: #999;">|</span>';
-		var flagIconsChecked = Dex.prefs('flagicons') !== false;
-		buf += '<label style="font-size: 9px; cursor: pointer; display: inline-flex; align-items: center; vertical-align: middle; margin-right: 4px;">';
-		buf += '<span style="line-height: 1; margin-right: 2px;">Flag Icons</span><input type="checkbox" id="flag-icons-toggle" style="margin: 0; vertical-align: middle;"' + (flagIconsChecked ? ' checked' : '') + '></label>';
-		var flagTint = Dex.prefs('flagtint') || 'both';
-		buf += '<label style="font-size: 9px; display: inline-flex; align-items: center; vertical-align: middle;">';
-		buf += '<span style="margin-right: 1px; line-height: 1;">Flag Tint:</span>';
-		buf += '<select id="flag-tint-toggle" style="font-size: 9px; padding: 1px 3px 1px 1px; appearance: none; -webkit-appearance: none; -moz-appearance: none; width: 40px;">';
-		buf += '<option value="none"' + (flagTint === 'none' ? ' selected' : '') + '>None</option>';
-		buf += '<option value="icons"' + (flagTint === 'icons' ? ' selected' : '') + '>Icons</option>';
-		buf += '<option value="text"' + (flagTint === 'text' ? ' selected' : '') + '>Text</option>';
-		buf += '<option value="both"' + (flagTint === 'both' ? ' selected' : '') + '>Both</option>';
-		buf += '</select></label>';
+		buf += '<button class="sortcol" name="openViewMode" style="float: right; width: auto; padding: 0 6px; border-left: 1px solid #999;"><i class="fa fa-sliders"></i> View Mode</button>';
 		buf += '</div></li>';
 		return buf;
 	};
@@ -588,6 +524,9 @@
 			bst += stats[i];
 		}
 		buf += '<span class="col bstcol"><em>BST<br />' + bst + '</em></span> ';
+		// guard action
+		var guardActionList = (pokemon.guardAction && pokemon.guardAction.length) ? pokemon.guardAction.map(function (id) { return this.engine.dex.moves.get(id).name; }, this).join(', ') : '\u2014';
+		buf += '<span class="col guardactioncol">' + guardActionList + '</span> ';
 		buf += '</a></li>';
 		return buf;
 	};
@@ -686,6 +625,13 @@
 		buf += '</div>';
 		buf += '</div>';
 		buf += '</div>'; // close .pokemon-grid-right
+		if (pokemon.guardAction && pokemon.guardAction.length) {
+			buf += '<div class="pokemon-grid-guardaction">';
+			buf += '<div class="pokemon-grid-guardaction-header">Guard Action</div>';
+			buf += '<div class="pokemon-grid-guardaction-row">';
+			for (var gaIdx = 0; gaIdx < pokemon.guardAction.length; gaIdx++) { buf += '<span class="pokemon-grid-guardaction-move">' + this.engine.dex.moves.get(pokemon.guardAction[gaIdx]).name + '</span>'; }
+			buf += '</div></div>';
+		}
 		buf += '<div class="pokemon-grid-stats">';
 		buf += '<div class="pokemon-grid-stat"><label>HP</label><span>' + (stats.hp || 0) + '</span></div>';
 		buf += '<div class="pokemon-grid-stat"><label>ATK</label><span>' + (stats.atk || 0) + '</span></div>';
@@ -1033,7 +979,7 @@
 		// type
 		buf += '<span class="col typecol">';
 		const fullMove = Dex.moves.get(move.id);
-buf += Dex.getTypeIcon(move.type, false, fullMove.type2);;
+		buf += Dex.getTypeIcon(move.type, false, fullMove.type2);;
 		buf += this.getCategoryDisplay(move.category);
 		buf += '</span> ';
 		// flags
@@ -1171,27 +1117,45 @@ buf += Dex.getTypeIcon(move.type, false, fullMove.type2);;
 			buf += errorMessage + '</a></li>';
 			return buf;
 		}
-	buf += '</a></li>';
-	return buf;
-};
-Search.prototype.renderFlagRow = function (flag, matchStart, matchLength, errorMessage) {
-	var attrs = '';
-	if (Search.urlRoot) attrs = ' href="' + Search.urlRoot + 'categories/' + flag.id + '" data-target="push"';
-	var buf = '<li class="result"><a' + attrs + ' data-entry="flag|' + BattleLog.escapeHTML(flag.name) + '">';
-	// name
-	var name = flag.name;
-	if (matchLength) { name = name.substr(0, matchStart) + '<b>' + name.substr(matchStart, matchLength) + '</b>' + name.substr(matchStart + matchLength); }
-	buf += '<span class="col namecol">' + name + '</span> ';
-	// flag icon
-	buf += '<span class="col flagcol" style="margin-left: 6px;">' + Dex.getFlagIcon(flag.id) + '</span> ';
-	// error
-	if (errorMessage) {
-		buf += errorMessage + '</a></li>';
+		buf += '</a></li>';
 		return buf;
-	}
-	buf += '</a></li>';
-	return buf;
-};
+	};
+	Search.prototype.renderGuardActionRow = function (move, matchStart, matchLength, errorMessage) {
+		var attrs = '';
+		if (Search.urlRoot) attrs = ' href="' + Search.urlRoot + 'moves/' + move.id + '" data-target="push"';
+		var buf = '<li class="result"><a' + attrs + ' data-entry="guardaction|' + BattleLog.escapeHTML(move.name) + '">';
+		// name
+		var name = move.name;
+		if (matchLength) { name = name.substr(0, matchStart) + '<b>' + name.substr(matchStart, matchLength) + '</b>' + name.substr(matchStart + matchLength); }
+		buf += '<span class="col movenamecol">' + name + '</span> ';
+		// cooldown
+		buf += '<span class="col labelcol">CD <em>' + (move.guardActionCD || 0) + '</em></span> ';
+		// error
+		if (errorMessage) {
+			buf += errorMessage + '</a></li>';
+			return buf;
+		}
+		buf += '</a></li>';
+		return buf;
+	};
+	Search.prototype.renderFlagRow = function (flag, matchStart, matchLength, errorMessage) {
+		var attrs = '';
+		if (Search.urlRoot) attrs = ' href="' + Search.urlRoot + 'categories/' + flag.id + '" data-target="push"';
+		var buf = '<li class="result"><a' + attrs + ' data-entry="flag|' + BattleLog.escapeHTML(flag.name) + '">';
+		// name
+		var name = flag.name;
+		if (matchLength) { name = name.substr(0, matchStart) + '<b>' + name.substr(matchStart, matchLength) + '</b>' + name.substr(matchStart + matchLength); }
+		buf += '<span class="col namecol">' + name + '</span> ';
+		// flag icon
+		buf += '<span class="col flagcol" style="margin-left: 6px;">' + Dex.getFlagIcon(flag.id) + '</span> ';
+		// error
+		if (errorMessage) {
+			buf += errorMessage + '</a></li>';
+			return buf;
+		}
+		buf += '</a></li>';
+		return buf;
+	};
 	Search.prototype.renderArticleRow = function (article, matchStart, matchLength, errorMessage) {
 		var attrs = '';
 		if (Search.urlRoot) attrs = ' href="' + Search.urlRoot + 'articles/' + article.id + '" data-target="push"';
@@ -1274,6 +1238,72 @@ Search.prototype.renderFlagRow = function (flag, matchStart, matchLength, errorM
 	Search.renderFlagRow = Search.prototype.renderFlagRow;
 	Search.renderEggGroupRow = Search.prototype.renderEggGroupRow;
 	Search.renderTierRow = Search.prototype.renderTierRow;
-	Search.renderItemClassRow = Search.prototype.renderItemClassRow;
+		Search.renderItemClassRow = Search.prototype.renderItemClassRow;
+	var PokemonViewModePopup = exports.PokemonViewModePopup = Popup.extend({
+		initialize: function (data) {
+			this.search = data.search;
+			var dexDisplay = Dex.prefs('dexdisplay') || 'list';
+			var dexGridBg = Dex.prefs('dexgridbg') || 'faint';
+			var buf = '';
+			buf += '<p><label class="optlabel">View:</label> <select name="dexdisplay">';
+			buf += '<option value="list"' + (dexDisplay === 'list' ? ' selected' : '') + '>List</option>';
+			buf += '<option value="grid"' + (dexDisplay === 'grid' ? ' selected' : '') + '>Grid</option>';
+			buf += '</select></p>';
+			buf += '<p><label class="optlabel">Grid background:</label> <select name="dexgridbg">';
+			buf += '<option value="none"' + (dexGridBg === 'none' ? ' selected' : '') + '>None</option>';
+			buf += '<option value="faint"' + (dexGridBg === 'faint' ? ' selected' : '') + '>Faint</option>';
+			buf += '<option value="bright"' + (dexGridBg === 'bright' ? ' selected' : '') + '>Bright</option>';
+			buf += '</select></p>';
+			this.$el.html(buf).css('min-width', 160);
+		},
+		events: { 'change select[name=dexdisplay]': 'setDexDisplay', 'change select[name=dexgridbg]': 'setDexGridBg' },
+		setDexDisplay: function (e) {
+			Storage.prefs('dexdisplay', e.currentTarget.value);
+			if (this.search) this.search.refreshDisplay();
+		},
+		setDexGridBg: function (e) {
+			Storage.prefs('dexgridbg', e.currentTarget.value);
+			if (this.search) this.search.refreshDisplay();
+		}
+	});
+	var MoveViewModePopup = exports.MoveViewModePopup = Popup.extend({
+		initialize: function (data) {
+			this.search = data.search;
+			var categoryDisplay = Dex.prefs('categorydisplay') || 'icons';
+			var flagIconsChecked = Dex.prefs('flagicons') !== false;
+			var flagTint = Dex.prefs('flagtint') || 'both';
+			var buf = '';
+			buf += '<p><label class="optlabel">Category icons:</label> <select name="categorydisplay">';
+			buf += '<option value="icons"' + (categoryDisplay === 'icons' ? ' selected' : '') + '>Icons</option>';
+			buf += '<option value="text"' + (categoryDisplay === 'text' ? ' selected' : '') + '>Text</option>';
+			buf += '<option value="both"' + (categoryDisplay === 'both' ? ' selected' : '') + '>Both</option>';
+			buf += '</select></p>';
+			buf += '<p><label class="checkbox"><input type="checkbox" name="flagicons"' + (flagIconsChecked ? ' checked' : '') + ' /> Flag icons</label></p>';
+			buf += '<p><label class="optlabel">Flag tint:</label> <select name="flagtint">';
+			buf += '<option value="none"' + (flagTint === 'none' ? ' selected' : '') + '>None</option>';
+			buf += '<option value="icons"' + (flagTint === 'icons' ? ' selected' : '') + '>Icons</option>';
+			buf += '<option value="text"' + (flagTint === 'text' ? ' selected' : '') + '>Text</option>';
+			buf += '<option value="both"' + (flagTint === 'both' ? ' selected' : '') + '>Both</option>';
+			buf += '</select></p>';
+			this.$el.html(buf).css('min-width', 160);
+		},
+		events: {
+			'change select[name=categorydisplay]': 'setCategoryDisplay',
+			'change input[name=flagicons]': 'setFlagIcons',
+			'change select[name=flagtint]': 'setFlagTint'
+		},
+		setCategoryDisplay: function (e) {
+			Storage.prefs('categorydisplay', e.currentTarget.value);
+			if (this.search) this.search.refreshDisplay();
+		},
+		setFlagIcons: function (e) {
+			Storage.prefs('flagicons', !!e.currentTarget.checked);
+			if (this.search) this.search.refreshDisplay();
+		},
+		setFlagTint: function (e) {
+			Storage.prefs('flagtint', e.currentTarget.value);
+			if (this.search) this.search.refreshDisplay();
+		}
+	});
 	exports.BattleSearch = Search;
 })(window, jQuery);

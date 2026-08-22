@@ -550,11 +550,11 @@ Storage.unpackAllTeams = function (buffer) {
 };
 Storage.convertLegacyEVsToJVs = function (jvs) {
 	if (!jvs) return jvs;
-	// If any stat is above JV cap (63), it's almost certainly legacy EVs (0–252).
+	// If any stat is above the JV cap (64), it's almost certainly legacy EVs, so divide by 4 for fast conversion
 	var legacy = false;
 	for (var k in jvs) {
 		var v = Number(jvs[k]) || 0;
-		if (v > 63) { legacy = true; break; }
+		if (v > 64) { legacy = true; break; }
 	}
 	if (!legacy) return jvs;
 
@@ -562,7 +562,7 @@ Storage.convertLegacyEVsToJVs = function (jvs) {
 		var v2 = Number(jvs[k2]) || 0;
 		v2 = Math.floor(v2 / 4);
 		if (v2 < 0) v2 = 0;
-		if (v2 > 63) v2 = 63;
+		if (v2 > 64) v2 = 64;
 		jvs[k2] = v2;
 	}
 	return jvs;
@@ -734,30 +734,11 @@ Storage.fastUnpackTeam = function (buf) {
 		j = buf.indexOf('|', i);
 		set.moves = buf.substring(i, j).split(',');
 		i = j + 1;
-		// nature
+				// nature
 		j = buf.indexOf('|', i);
 		set.nature = buf.substring(i, j);
 		if (set.nature === 'undefined') set.nature = undefined;
 		if (set.nature) { set.nature = set.nature.charAt(0).toUpperCase() + set.nature.slice(1); } // BattleNatures is case sensitive, so if we don't do this sometimes stuff breaks. goody.
-		i = j + 1;
-		// jvs (read from old EV slot)
-		j = buf.indexOf('|', i);
-		if (j !== i) {
-			var jvstring = buf.substring(i, j);
-			if (jvstring.length > 5) {
-				var jvsArr = jvstring.split(',');
-				set.jvs = {
-					hp: Number(jvsArr[0]) || 0,
-					atk: Number(jvsArr[1]) || 0,
-					def: Number(jvsArr[2]) || 0,
-					spa: Number(jvsArr[3]) || 0,
-					spd: Number(jvsArr[4]) || 0,
-					spe: Number(jvsArr[5]) || 0
-				};
-				set.jvs = Storage.convertLegacyEVsToJVs(set.jvs);
-			} 
-			else if (jvstring === '0') { set.jvs = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }; }
-		}
 		i = j + 1;
 		// gender
 		j = buf.indexOf('|', i);
@@ -797,16 +778,19 @@ Storage.fastUnpackTeam = function (buf) {
 		// misc
 		var misc = undefined;
 		if (commaIdx >= 0) { misc = buf.substring(commaIdx + 1, setEnd).split(','); }
-		if (misc) {
+				if (misc) {
 			set.pokeball = misc[0] || undefined;
 			set.teraType = misc[1] || undefined;
-			set.abilitySet = (misc.length > 2 && misc[2] !== '' && misc[2] !== undefined) ? Number(misc[2]) : undefined;
+			if (misc.length > 2 && misc[2] !== '' && misc[2] !== undefined) { set.abilitySet = Number(misc[2]); }
 			set.guardAction = (misc.length > 3 && misc[3]) ? Dex.moves.get(misc[3]).name : undefined;
 		}
-		var derived = deriveAbilitiesFromSet(species, set.abilitySet || 1);
-		set.abilitySet = derived.abilitySet;
-		set.ability = derived.ability;
-		set.ability2 = derived.ability2;
+		if (!set.ability && !set.ability2) {
+			// Only fall back to species-derived abilities if nothing was actually packed for this set
+			var derived = deriveAbilitiesFromSet(species, set.abilitySet || 1);
+			set.abilitySet = derived.abilitySet;
+			set.ability = derived.ability;
+			set.ability2 = derived.ability2;
+		}
 		i = setEnd;
 		if (setEnd >= buf.length || buf.indexOf('|', setEnd) < 0) break;
 		i = setEnd + 1;
@@ -918,16 +902,19 @@ Storage.unpackTeam = function (buf) {
 		// misc
 		var misc = undefined;
 		if (commaIdx >= 0) { misc = buf.substring(commaIdx + 1, setEnd).split(','); }
-		if (misc) {
+				if (misc) {
 			set.pokeball = misc[0] || undefined;
 			set.teraType = misc[1] || undefined;
-			set.abilitySet = (misc.length > 2 && misc[2] !== '' && misc[2] !== undefined) ? Number(misc[2]) : undefined;
+			if (misc.length > 2 && misc[2] !== '' && misc[2] !== undefined) { set.abilitySet = Number(misc[2]); }
 			set.guardAction = (misc.length > 3 && misc[3]) ? Dex.moves.get(misc[3]).name : undefined;
 		}
-		var derived = deriveAbilitiesFromSet(species, set.abilitySet || 1);
-		set.abilitySet = derived.abilitySet;
-		set.ability = derived.ability;
-		set.ability2 = derived.ability2;
+		if (!set.ability && !set.ability2) {
+			// Only fall back to species-derived abilities if nothing was actually packed for this set
+			var derived = deriveAbilitiesFromSet(species, set.abilitySet || 1);
+			set.abilitySet = derived.abilitySet;
+			set.ability = derived.ability;
+			set.ability2 = derived.ability2;
+		}
 		i = setEnd;
 		if (setEnd >= buf.length || buf.indexOf('|', setEnd) < 0) break;
 		i = setEnd + 1;
@@ -990,7 +977,8 @@ Storage.importTeam = function (buffer, teams) {
 	if (teams === true) {
 		Storage.teams = [];
 		teams = Storage.teams;
-	} else if (text.length === 1 || (text.length === 2 && !text[1])) { return Storage.unpackTeam(text[0]); }
+	} 
+	else if (text.length === 1 || (text.length === 2 && !text[1])) { return Storage.unpackTeam(text[0]); }
 	for (var i = 0; i < text.length; i++) {
 		var line = $.trim(text[i]);
 		if (line === '' || line === '---') { curSet = null; sawAbilitiesLine = false; } 
@@ -1056,25 +1044,24 @@ Storage.importTeam = function (buffer, teams) {
 				curSet.species = Dex.species.get(line).name;
 				curSet.name = '';
 			}
-		} else if (line.substr(0, 10) === 'Abilities: ') {
-    var s = $.trim(line.substr(10));
-    var parts = s.split('/').map(function (p) { return $.trim(p); }).filter(Boolean);
-    curSet.ability = parts[0] || '';
-    curSet.ability2 = parts[1] || '';
-    sawAbilitiesLine = true;
-} else if (line.substr(0, 6) === 'Size: ') {
-    var sz = $.trim(line.substr(6)).toUpperCase();
-    if (sz === 'XS' || sz === 'S' || sz === 'M' || sz === 'L' || sz === 'XL') curSet.size = sz;
+		} else if (line.substr(0, 11) === 'Abilities: ') {
+			var s = $.trim(line.substr(11));
+			var parts = s.split('/').map(function (p) { return $.trim(p); }).filter(Boolean);
+			curSet.ability = parts[0] || '';
+			curSet.ability2 = parts[1] || '';
+			sawAbilitiesLine = true;
+		} else if (line.substr(0, 6) === 'Size: ') {
+			var sz = $.trim(line.substr(6)).toUpperCase();
+			if (sz === 'XS' || sz === 'S' || sz === 'M' || sz === 'L' || sz === 'XL') curSet.size = sz;
 
-} else if (line.substr(0, 7) === 'Trait: ') {
-    line = line.substr(7);
-    // Only accept if Abilities: wasn't already used, or if ability is still empty
-    if (!sawAbilitiesLine || !curSet.ability) curSet.ability = line;
-
-} else if (line.substr(0, 9) === 'Ability: ') {
-    line = line.substr(9);
-    // Only accept if Abilities: wasn't already used, or if ability is still empty
-    if (!sawAbilitiesLine || !curSet.ability) curSet.ability = line;
+		} else if (line.substr(0, 7) === 'Trait: ') {
+			line = line.substr(7);
+			// Only accept if Abilities: wasn't already used, or if ability is still empty
+			if (!sawAbilitiesLine || !curSet.ability) curSet.ability = line;
+		} else if (line.substr(0, 9) === 'Ability: ') {
+			line = line.substr(9);
+			// Only accept if Abilities: wasn't already used, or if ability is still empty
+			if (!sawAbilitiesLine || !curSet.ability) curSet.ability = line;
 		} else if (line === 'Shiny: Yes') { curSet.shiny = true; } 
 		else if (line.substr(0, 7) === 'Level: ') {
 			line = line.substr(7);
@@ -1102,7 +1089,7 @@ Storage.importTeam = function (buffer, teams) {
 				if (!statid) continue;
 				if (isNaN(statval)) statval = 0;
 				if (statval < 0) statval = 0;
-				if (statval > 63) statval = 63;
+				if (statval > 64) statval = 64;
 				curSet.jvs[statid] = statval;
 			}
 		}

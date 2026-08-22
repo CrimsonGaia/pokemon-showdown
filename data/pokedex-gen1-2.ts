@@ -248,7 +248,7 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		types: ["Electric"],
 		baseStats: { hp: 46, atk: 62, def: 56, spa: 56, spd: 67, spe: 96 },
 		abilities: { // ABILITY SET 1
-			0: "Lighning Rod",
+			0: "Lightning Rod",
 			1: "Minus",
 					// ABILITY SET 2
 			H: "Lightning Rod",
@@ -277,7 +277,7 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		types: ["Electric"],
 		baseStats: { hp: 60, atk: 90, def: 55, spa: 90, spd: 80, spe: 110 },
 		abilities: { // ABILITY SET 1
-			0: "Lighning Rod",
+			0: "Lightning Rod",
 			1: "Minus",
 					// ABILITY SET 2
 			H: "Lightning Rod",

@@ -709,16 +709,16 @@
 	width: 167px;
 }
 .utilichart .typesortcol {
-	width: 68px;
+	width: 48px;
 }
 .utilichart .catsortcol {
 	width: 66px;
 }
 .utilichart .abilitysortcol {
-	width: 172px;
+	width: 190px;
 }
 .utilichart .statsortcol {
-	width: 24px;
+	width: 23px;
 	text-align: right;
 }
 .utilichart .sortcol.typecol {
@@ -740,4 +740,7 @@
 }
 .utilichart .sortcol.pplabelcol {
 	width: 25px;
+}
+.utilichart .guardactionsortcol {
+	width: 90px;
 }

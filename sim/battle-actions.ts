@@ -544,7 +544,8 @@ export class BattleActions {
 				if (move.smartTarget) { move.smartTarget = false; } 
 				else {
 					if (!move.spreadHit) this.battle.attrLastMove('[miss]');
-					this.battle.add('-miss', pokemon, target);
+					const missHandled = this.battle.runEvent('Miss', target, pokemon, move);
+					if (!missHandled) this.battle.add('-miss', pokemon, target);
 				}
 				if (!move.ohko && pokemon.hasItem('blunderpolicy') && pokemon.useItem()) { this.battle.boost({ spe: 2 }, pokemon); }
 				hitResults[i] = false;
@@ -686,7 +687,10 @@ export class BattleActions {
 				accuracy = this.battle.runEvent('ModifyAccuracy', target, pokemon, move, accuracy);
 				if (!move.alwaysHit) {
 					accuracy = this.battle.runEvent('Accuracy', target, pokemon, move, accuracy);
-					if (accuracy !== true && !this.battle.randomChance(accuracy, 100)) break;
+					if (accuracy !== true && !this.battle.randomChance(accuracy, 100)) {
+						this.battle.runEvent('Miss', target, pokemon, move);
+						break;
+					}
 				}
 			}
 			const moveData = move;

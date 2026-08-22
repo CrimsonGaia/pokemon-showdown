@@ -248,23 +248,24 @@ export const Teams = new class Teams {
 			if (i !== j) set.shiny = true;
 			i = j + 1;
 			// level
-			j = buf.indexOf('|', i);
-			if (j < 0) return null;
-			if (i !== j) set.level = parseInt(buf.substring(i, j));
-			i = j + 1;
+			let setEnd = buf.indexOf(']', i);
+			if (setEnd < 0) setEnd = buf.length;
+			let commaIdx = buf.indexOf(',', i);
+			if (commaIdx < 0 || commaIdx > setEnd) commaIdx = -1;
+			const levelEnd = commaIdx >= 0 ? commaIdx : setEnd;
+			if (i !== levelEnd) set.level = parseInt(buf.substring(i, levelEnd));
+			i = levelEnd;
 			// misc: pokeball, teraType, abilitySet, guardAction
-			j = buf.indexOf(']', i);
 			let misc;
-			if (j < 0) { if (i < buf.length) misc = buf.substring(i).split(',', 9); } 
-			else { if (i !== j) misc = buf.substring(i, j).split(',', 9); }
+			if (commaIdx >= 0) { misc = buf.substring(commaIdx, setEnd).split(',', 9); }
 			if (misc) {
 				set.pokeball = this.unpackName(misc[1] || '', Dex.items);
 				set.teraType = misc[2];
 				if (misc[3] !== undefined && misc[3] !== '') set.abilitySet = Number(misc[3]) as 1 | 2;
 				if (misc[4] !== undefined && misc[4] !== '') set.guardAction = this.unpackName(misc[4], Dex.moves);
 			}
-			if (j < 0) break;
-			i = j + 1;
+			if (setEnd >= buf.length) break;
+			i = setEnd + 1;
 		}
 		return team;
 	}

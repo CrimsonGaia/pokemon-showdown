@@ -1501,7 +1501,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		priority: 0,
 		critRatio: 6,
 		flags: { contact: 1, pierce: 1, slicing: 1, protect: 1, mirror: 1, metronome: 1 },
-		pierce: [1, 4],
+		pierce: [1, 3],
 		onTryHit(pokemon) {
 			// will shatter screens through sub, before you hit
 			pokemon.side.removeSideCondition('reflect');
@@ -1512,8 +1512,8 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		   { chance: 20, status: 'dragonblight', },
 		   { chance: 10, self: { status: 'dragonblight' }, },
 	   ],
-		desc: "20% chance to inflict Dragonblight on target. 5% chance to inflict Dragonblight on user",
-		shortDesc: "20% Dragonblight, 5% self-inflict Dragonblight",
+		desc: "20% chance to inflict Dragonblight on target. 5% chance to inflict Dragonblight on user; PIERCE: Breaks through protection effects, dealing 1/3 the usual damage",
+		shortDesc: "20% Dragonblight, 5% self-inflict Dragonblight; PIERCE: Breaks through protection effects, dealing 1/3 the usual damage",
 		target: "normal",
 	},
 	dragondarts: {
@@ -1527,12 +1527,12 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		priority: 0,
 		critRatio: 5,
 		flags: { protect: 1, pierce: 1, mirror: 1, metronome: 1, noparentalbond: 1 },
-		pierce: [1, 6],
+		pierce: [1, 5],
 		multihit: 2,
 		smartTarget: true,
 		secondary: null,
-		desc: "Hits 2 times; PIERCE: Breaks through protection effects, dealing 1/6 the usual damage; SMART TARGET: Each hit swaps targets, between foes. if only 1 foe remains, or one of them dies during this move, all remaining hits target the remaining foe. This will avoid protecting foes",
-		shortDesc: "Hits twice. Smart Target",
+		desc: "Hits 2 times; PIERCE: Breaks through protection effects, dealing 1/5 the usual damage; SMART TARGET: Each hit swaps targets, between foes. if only 1 foe remains, or one of them dies during this move, all remaining hits target the remaining foe. This will avoid protecting foes",
+		shortDesc: "Hits twice. Smart Target; PIERCE: Breaks through protection effects, dealing 1/5 the usual damage",
 		target: "normal",
 	},
 	dragonhammer: {
@@ -1631,10 +1631,10 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		priority: 0,
 		critRatio: 8,
 		flags: { contact: 1, pierce: 1, protect: 1, mirror: 1, distance: 1, metronome: 1 },
-		pierce: [1, 4],
+		pierce: [1, 2],
 		secondary: null,
-		desc: "PIERCE: Breaks through protection effects, dealing 1/4 the usual damage",
-		shortDesc: "",
+		desc: "PIERCE: Breaks through protection effects, dealing 1/2 the usual damage",
+		shortDesc: "PIERCE: Breaks through protection effects, dealing 1/2 the usual damage",
 		target: "any",
 	},
 	drillrun: {
@@ -1651,7 +1651,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		pierce: [1, 4],
 		secondary: null,
 		desc: "PIERCE: Breaks through protection effects, dealing 1/4 the usual damage",
-		shortDesc: "",
+		shortDesc: "PIERCE: Breaks through protection effects, dealing 1/4 the usual damage",
 		target: "normal",
 	},
 	drumbeating: {
@@ -1907,7 +1907,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		},
 		secondary: null,
 		desc: "If this move kills target: Grants user the 'Fell Stinger' aura for 3 turns; PIERCE: Breaks through protection effects, dealing 1/4 the usual damage",
-		shortDesc: "If this move kills target: Grants user the 'Fell Stinger' aura for 3 turns",
+		shortDesc: "If this move kills target: Grants user the 'Fell Stinger' aura for 3 turns; PIERCE: Breaks through protection effects, dealing 1/4 the usual damage",
 		target: "normal",
 	},
 	firefang: {
@@ -2354,11 +2354,11 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		priority: 0,
 		critRatio: 5,
 		flags: { contact: 1, pierce: 1, protect: 1, mirror: 1, metronome: 1 },
-		pierce: [1, 3],
+		pierce: [1, 4],
 		multihit: [2, 5],
 		secondary: null,
-		desc: "Hits 2-5 times [4-5 times with Loaded Dice]; PIERCE: Breaks through protection effects, dealing 1/6 the usual damage",
-		shortDesc: "Hits 2-5 times [4-5 times with Loaded Dice]",
+		desc: "Hits 2-5 times [4-5 times with Loaded Dice]; PIERCE: Breaks through protection effects, dealing 1/4 the usual damage",
+		shortDesc: "Hits 2-5 times [4-5 times with Loaded Dice]; PIERCE: Breaks through protection effects, dealing 1/4 the usual damage",
 		target: "normal",
 	},
 	furycutter: {
@@ -2498,10 +2498,10 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		priority: 0,
 		critRatio: 2,
 		flags: { pierce: 1, protect: 1, mirror: 1 },
-		pierce: [1, 6],
+		pierce: [1, 5],
 		secondary: null,
-		desc: "PIERCE: Breaks through protection effects, dealing 1/6 the usual damage",
-		shortDesc: "Deals 1/8 the usual damage thru protection effects",
+		desc: "PIERCE: Breaks through protection effects, dealing 1/5 the usual damage",
+		shortDesc: "PIERCE: Breaks through protection effects, dealing 1/5 the usual damage",
 		target: "allAdjacentFoes",
 	},
 	glaiverush: {
@@ -2872,10 +2872,10 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		priority: 0,
 		critRatio: 3,
 		flags: { contact: 1, pierce: 1, protect: 1, mirror: 1, metronome: 1 },
-		pierce: [1, 4],
+		pierce: [1, 5],
 		secondary: null,
-		desc: "PIERCE: Breaks through protection effects, dealing 1/4 the usual damage",
-		shortDesc: "",
+		desc: "PIERCE: Breaks through protection effects, dealing 1/5 the usual damage",
+		shortDesc: "PIERCE: Breaks through protection effects, dealing 1/5 the usual damage",
 		target: "normal",
 	},
 	hornleech: {
@@ -3061,7 +3061,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		multihit: [2, 5],
 		secondary: null,
 		desc: "Hits 2-5 times [4-5 times with Loaded Dice]; PIERCE: Breaks through protection effects, dealing 1/6 the usual damage",
-		shortDesc: "Hits 2-5 times [4-5 times with Loaded Dice]",
+		shortDesc: "Hits 2-5 times [4-5 times with Loaded Dice]; PIERCE: Breaks through protection effects, dealing 1/6 the usual damage",
 		target: "normal",
 	},
 	ironhead: {
@@ -3193,7 +3193,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		flags: { crash: 1, pierce: 1, weapon: 1, mirror: 1, metronome: 1 },
 		hasCrashDamage: true,
 		onMoveFail(target, source, move) { this.damage(Math.floor(source.baseMaxhp / (source.status === 'bubbleblight' ? 5 : 10)), source, source, this.dex.conditions.get('Joust')); },
-		pierce: [1, 4],
+		pierce: [1, 2],
 		secondary: null,
 		weaponmove: true,
 		weaponDamage: 5,
@@ -3201,8 +3201,8 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 			const wasHit = pokemon.attackedBy.some(p => p.damage > 0 && p.thisTurn);
 			if (wasHit) { pokemon.addVolatile('spent'); }
 		},
-		desc: "if user was not hit this turn: 1.5x Power. If user was hit this turn: until user's next action, they are Spent: they take 2x incoming damage, and moves that target them are perfectly accurate; CRASH: User takes 1/10HP as damage when this move misses or is blocked",
-		shortDesc: "1.5x power if not hit this turn. Spent if hit this turn; CRASH: User takes 1/10HP as damage when this move misses or is blocked",
+		desc: "if user was not hit this turn: 1.5x Power. If user was hit this turn: until user's next action, they are Spent: they take 2x incoming damage, and moves that target them are perfectly accurate; CRASH: User takes 1/10HP as damage when this move misses or is blocked; PIERCE: Breaks through protection effects, dealing 1/2 the usual damage",
+		shortDesc: "1.5x power if not hit this turn. Spent if hit this turn; CRASH: User takes 1/10HP as damage when this move misses or is blocked; PIERCE: Breaks through protection effects, dealing 1/2 the usual damage",
 		target: "normal",
 	},
 	knockoff: {
@@ -3653,7 +3653,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		pierce: [1, 2],
 		secondary: null,
 		desc: "PIERCE: Breaks through protection effects, dealing 1/2 the usual damage",
-		shortDesc: "",
+		shortDesc: "PIERCE: Breaks through protection effects, dealing 1/2 the usual damage",
 		target: "normal",
 	},
 	mortalspin: {
@@ -3730,7 +3730,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		priority: 0,
 		critRatio: 5,
 		flags: { contact: 1, pierce: 1, protect: 1, mirror: 1, metronome: 1 },
-		pierce: [1, 6],
+		pierce: [1, 5],
 		secondary: { chance: 100, volatileStatus: 'needlearm', },
 		condition: {
 			noCopy: true,
@@ -3753,8 +3753,8 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 			},
 			onEnd(pokemon) { this.add('-end', pokemon, 'Needles'); },
 		},
-		desc: "Leaves needles in the target, dealing 1/10 HP each turn. Stacks up to 2 times.",
-		shortDesc: "Deals 1/10 HP each turn; stacks up to 2 times.",
+		desc: "Leaves needles in the target, dealing 1/10 HP each turn. Stacks up to 2 times; PIERCE: Breaks through protection effects, dealing 1/5 the usual damage",
+		shortDesc: "Deals 1/10 HP each turn; stacks up to 2 times; PIERCE: Breaks through protection effects, dealing 1/5 the usual damage",
 		target: "normal",
 	},
 	nightslash: {
@@ -3941,7 +3941,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		pierce: [1, 6],
 		secondary: { chance: 20, boosts: { def: -1 }, },
 		desc: "20% chance to lower target's Defense [-1 stage]; PIERCE: Breaks through protection effects, dealing 1/6 the usual damage",
-		shortDesc: "20% -1 DEF: Target",
+		shortDesc: "20% -1 DEF: Target; PIERCE: Breaks through protection effects, dealing 1/6 the usual damage",
 		target: "any",
 	},
 	petalblizzard: {
@@ -4004,7 +4004,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		multihit: [2, 5],
 		secondary: null,
 		desc: "Hits 2-5 times [4-5 times with Loaded Dice]; PIERCE: Breaks through protection effects, dealing 1/6 the usual damage",
-		shortDesc: "Hits 2-5 times [4-5 times with Loaded Dice]",
+		shortDesc: "Hits 2-5 times [4-5 times with Loaded Dice]; PIERCE: Breaks through protection effects, dealing 1/6 the usual damage",
 		target: "normal",
 	},
 	pixiewing: {
@@ -4096,7 +4096,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		pierce: [1, 6], 
 		secondary: { chance: 20, status: 'psn', },
 		desc: "20% chance to Poison target; PIERCE: Breaks through protection effects, dealing 1/6 the usual damage",
-		shortDesc: "20% Poison",
+		shortDesc: "20% Poison; PIERCE: Breaks through protection effects, dealing 1/6 the usual damage",
 		target: "normal",
 	},
 	poisonsting: {
@@ -4113,7 +4113,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		pierce: [1, 6],
 		secondary: { chance: 50, status: 'psn', },
 		desc: "50% chance to Poison target; PIERCE: Breaks through protection effects, dealing 1/6 the usual damage",
-		shortDesc: "50% Poison",
+		shortDesc: "50% Poison; PIERCE: Breaks through protection effects, dealing 1/6 the usual damage",
 		target: "normal",
 	},
 	poisontail: {
@@ -4279,9 +4279,9 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		priority: 0,
 		critRatio: 6,
 		flags: { pierce: 1, protect: 1, mirror: 1, nonsky: 1, nosketch: 1, },
-		pierce: [1, 6],
-		desc: "PIERCE: Breaks through protection effects, dealing 1/6 the usual damage",
-		shortDesc: "",
+		pierce: [1, 3],
+		desc: "PIERCE: Breaks through protection effects, dealing 1/3 the usual damage",
+		shortDesc: "PIERCE: Breaks through protection effects, dealing 1/3 the usual damage",
 		target: "allAdjacentFoes",
 	},
 	present: {
@@ -5619,7 +5619,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 			   { chance: 10, volatileStatus: 'curse', },
 		   ],
 		desc: "Traps target. 10% chance to Curse target; PIERCE: Breaks through protection effects, dealing 1/6 the usual damage",
-		shortDesc: "Traps target. 10% Curse",
+		shortDesc: "Traps target. 10% Curse; PIERCE: Breaks through protection effects, dealing 1/6 the usual damage",
 		target: "normal",
 	},
 	steamroller: {
@@ -5633,17 +5633,23 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		priority: 0,
 		critRatio: 5,
 		flags: { contact: 1, crush: 1, protect: 1, mirror: 1, metronome: 1 },
-		secondary: { chance: 30, volatileStatus: 'flinch', },
+		secondary: { chance: 20, volatileStatus: 'flinch', },
 		onAfterHit(target, source) { if (source.hp) { this.field.clearTerrain(); } },
 		onAfterSubDamage(damage, target, source) { if (source.hp) { this.field.clearTerrain(); } },
-		desc: "30% chance to Flinch target. Removes terrain on-hit",
-		shortDesc: "30% Flinch. Removes terrain on-hit",
+		onBasePower(basePower, source, target, move) {
+			if (this.field.terrain) {
+				this.debug('steel roller terrain boost');
+				return 120;
+			}
+		},
+		desc: "20% chance to Flinch target. 1.5x power over any Terrain. Removes terrain on-hit",
+		shortDesc: "20% Flinch. 1.5x power over any Terrain. Removes terrain on-hit",
 		target: "normal",
 	},
 	steelroller: {
 		num: 798,
 		accuracy: 100,
-		basePower: 100,
+		basePower: 75,
 		type: "Steel",
 		category: "Physical",
 		name: "Steel Roller",
@@ -5653,9 +5659,15 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		flags: { contact: 1, crush: 1, spin: 1, protect: 1, mirror: 1, metronome: 1 },
 		onHit() { this.field.clearTerrain(); },
 		onAfterSubDamage() { this.field.clearTerrain(); },
+		onBasePower(basePower, source, target, move) {
+			if (this.field.terrain) {
+				this.debug('steel roller terrain boost');
+				return 120;
+			}
+		},
 		secondary: null,
-		desc: "Removes terrain on-hit",
-		shortDesc: "Removes terrain on-hit",
+		desc: "Removes terrain on-hit. 1.5x power over any Terrain.",
+		shortDesc: "Removes terrain on-hit. 1.5x power over any Terrain.",
 		target: "normal",
 	},
 	steelwing: {
@@ -5756,7 +5768,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		pierce: [1, 4],
 		secondary: null,
 		desc: "PIERCE: Breaks through protection effects, dealing 1/4 the usual damage",
-		shortDesc: "",
+		shortDesc: "PIERCE: Breaks through protection effects, dealing 1/4 the usual damage",
 		target: "normal",
 	},
 	strength: {
@@ -6179,7 +6191,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		pierce: [1, 2],
 		secondary: { chance: 50, boosts: {def: -1,}, },
 		desc: "50% chance to lower target's Defense [-1 stage]; PIERCE: Breaks through protection effects, dealing 1/2 the usual damage",
-		shortDesc: "50% chance to lower target's Defense [-1 stage]",
+		shortDesc: "50% chance to lower target's Defense [-1 stage]; PIERCE: Breaks through protection effects, dealing 1/2 the usual damage",
 		target: "normal",
 	},
 	tripleaxel: {
@@ -6269,7 +6281,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		multihit: 2,
 		secondary: { chance: 20, status: 'psn', },
 		desc: "Hits 2 times. 20% chance to Poison target; PIERCE: Breaks through protection effects, dealing 1/2 the usual damage",
-		shortDesc: "Hits 2 times. 20% Poison",
+		shortDesc: "Hits 2 times. 20% Poison; PIERCE: Breaks through protection effects, dealing 1/2 the usual damage",
 		target: "normal",
 	},
 	undyingedge: {
@@ -10442,7 +10454,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		tracksTarget: true,
 		secondary: null,
 		desc: "Immune to redirection; PIERCE: Breaks through protection effects, dealing 1/4 the usual damage",
-		shortDesc: "Immune to redirection",
+		shortDesc: "Immune to redirection; PIERCE: Breaks through protection effects, dealing 1/4 the usual damage",
 		target: "normal",
 	},
 	snore: {
@@ -10602,14 +10614,14 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		priority: 0,
 		critRatio: 3,
 		flags: { pierce: 1, cantusetwice: 1, failinstruct: 1, protect: 1, mirror: 1, metronome: 1 },
-		pierce: [1, 6],
+		pierce: [1, 4],
 		onHit(target, source) {
 			for (const side of source.side.foeSidesWithConditions()) { side.addSideCondition('spikes'); }
 			source.side.addSideCondition('spikes');
 		},
 		secondary: null,
-		desc: "Sets Spikes on both sides of the field on hit.",
-		shortDesc: "Sets Spikes on both sides.",
+		desc: "Sets Spikes on both sides of the field on hit; PIERCE: Breaks through protection effects, dealing 1/4 the usual damage",
+		shortDesc: "Sets Spikes on both sides; PIERCE: Breaks through protection effects, dealing 1/4 the usual damage",
 		target: "normal",
 	},
 	spitup: {
@@ -11929,49 +11941,51 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		target: "self",
 	},
 	aquaring: {
-		num: 392,
-		accuracy: true,
-		basePower: 0,
-		type: "Water",
-		category: "Status",
-		name: "Aqua Ring",
-		pp: 32,
-		priority: 0,
-		flags: { snatch: 1, metronome: 1 },
-		volatileStatus: 'aquaring',
-		condition: {
-			onStart(pokemon) { this.add('-start', pokemon, 'Aqua Ring'); },
-			onResidualOrder: 6,
-			onResidual(pokemon) {
-				this.heal(pokemon.baseMaxhp / (pokemon.hasAbility(['hydration']) ? 8 : 16));
-				if (pokemon.maxWeaponDurability > 0) {
-					const restore = Math.ceil(pokemon.maxWeaponDurability * 0.1);
-					if (restore > 0 && pokemon.weaponDurability < pokemon.maxWeaponDurability) {
-						pokemon.weaponDurability = Math.min(
-							pokemon.maxWeaponDurability,
-							pokemon.weaponDurability + restore
-						);
-					}
-				}
-			},
-			onSetStatus(status, target, source, effect) {
-				if (status.id === 'brn' || status.id === 'bubbleblight') {
-					this.add('-immune', target, '[from] Aqua Ring');
-					return false;
-				}
-			},
-			onModifySecondaries(secondaries) {
-				return secondaries.map(secondary => {
-					if (secondary.chance) { return {...secondary, chance: secondary.chance * 0.5}; }
-					return secondary;
-				});
-			},
-		},
-		secondary: null,
-		desc: "Self-inflicted volatile: Heal 1/16HP per turn. Restores 10% of max weapon durability per turn. Immune to Bubbleblight and Burn. 1/2 chance of secondary effects that target the user",
-		shortDesc: "Self-inflicted volatile: Heal 1/16HP/turn and restore 10% max weapon durability. Immune to Bubbleblight and Burn. 1/2 chance of secondary effects",
-		target: "allyTeam",
-	},
+        num: 392,
+        accuracy: true,
+        basePower: 0,
+        type: "Water",
+        category: "Status",
+        name: "Aqua Ring",
+        pp: 32,
+        priority: 0,
+        flags: { snatch: 1, metronome: 1 },
+        onHit(target, source, move) {
+            let success = false;
+            for (const ally of source.side.active) {
+                if (!ally || ally.fainted) continue;
+                if (ally.addVolatile('aquaring', source, move)) { success = true; }
+            }
+            return success;
+        },
+        condition: {
+            onStart(pokemon) { this.add('-start', pokemon, 'Aqua Ring'); },
+            onResidualOrder: 6,
+            onResidual(pokemon) {
+                this.heal(pokemon.baseMaxhp / (pokemon.hasAbility(['hydration']) ? 8 : 16));
+                if (pokemon.maxWeaponDurability > 0) {
+                    const restore = Math.ceil(pokemon.maxWeaponDurability * 0.1);
+                    if (restore > 0 && pokemon.weaponDurability < pokemon.maxWeaponDurability) { pokemon.weaponDurability = Math.min(pokemon.maxWeaponDurability, pokemon.weaponDurability + restore); }
+                }
+            },
+            onSetStatus(status, target, source, effect) {
+                if (status.id === 'brn' || status.id === 'bubbleblight') {
+                    this.add('-immune', target, '[from] Aqua Ring');
+                    return false;
+                }
+            },
+            onModifySecondaries(secondaries) {
+                return secondaries.map(secondary => {
+                    if (secondary.chance) { return { ...secondary, chance: secondary.chance * 0.5, }; }
+                    return secondary;
+                });
+            },
+        },
+        secondary: null,
+        desc: "User and allies gain Aqua Ring. Heal 1/16HP per turn. Restores 10% of max weapon durability per turn. Immune to Bubbleblight and Burn. 1/2 chance of secondary effects that target the user",
+        shortDesc: "User and allies gain Aqua Ring. Heal 1/16HP/turn and restore 10% max weapon durability. Immune to Bubbleblight and Burn. 1/2 chance of secondary effects",
+        target: "allyTeam",
+    },
 	aromatherapy: {
 		num: 312,
 		accuracy: true,
@@ -12561,7 +12575,10 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		self: {volatileStatus: 'coil',},
 		condition: {
 			noCopy: true,
-			onStart(pokemon) { this.add('-singlemove', pokemon, 'Coil', '[silent]'); },
+			onStart(pokemon) {
+                this.add('-singlemove', pokemon, 'Coil', '[silent]');
+                this.add('-message', `${pokemon.name} took a defensive stance!`);
+            },
 			onAccuracy() { return true; },
 			onSourceModifyDamage() { return this.chainModify(0.75); },
 			onBeforeMovePriority: 100,
@@ -12773,15 +12790,16 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		flags: { shadow: 1, protect: 1, reflectable: 1, mirror: 1, metronome: 1, nosketch: 1 },
 		status: 'drowsy',
 		onHit(target, source, move) {
-			if (target.status === 'drowsy' && target.statusState.time) {
-				const wasAtMinimum = target.statusState.time === target.statusState.startTime;
-				target.statusState.time--;
-				if (wasAtMinimum || target.statusState.time <= 0) {
-					this.add('-message', `${target.name} fell asleep immediately!`);
-					target.cureStatus();
-					target.setStatus('slp');
-				} else { this.add('-message', `${target.name}'s drowsiness is worsening!`);}
+			if (target.status !== 'drowsy' || !target.statusState.time) return;
+			const drowsyTime = target.statusState.time;
+			target.statusState.time--;
+			if (target.statusState.time <= 0) {
+				this.add('-message', `${target.name} cannot keep their eyes open! [Dark Void immediately increments the Drowsy timer by 1. You happened to have a Drowsy timer of 1]`);
+				target.cureStatus();
+				target.setStatus('slp');
+				return;
 			}
+			this.add('-message', `${target.name}'s drowsiness is intense! [Dark Void immediately increments the Drowsy timer by 1]`);
 		},
 		secondary: null,
 		desc: "Makes targets Drowsy, immediately increments the timer by 1",
@@ -12828,6 +12846,10 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 				else { this.add('-activate', target, 'move: Protect');}
 				const lockedmove = source.getVolatile('lockedmove');
 				if (lockedmove) { if (source.volatiles['lockedmove'].duration === 2) { delete source.volatiles['lockedmove']; } }
+				if (move.pierce) {
+					target.getMoveHitData(move).pierced = move.pierce;
+					return;
+				}
 				return this.NOT_FAIL;
 			},
 		},
@@ -12850,14 +12872,23 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		volatileStatus: 'defensecurl',
 		condition: {
 			noCopy: true,
-			onStart(pokemon) { this.effectState.guardActive = true; },
-			onRestart(pokemon) { this.effectState.guardActive = true; },
+			onStart(pokemon) {
+				this.add('-start', pokemon, 'Defense Curl');
+				this.add('-message', `${pokemon.name} took a defensive stance!`);
+				this.effectState.guardActive = true;
+			},
+			onRestart(pokemon) {
+				this.add('-start', pokemon, 'Defense Curl');
+				this.effectState.guardActive = true;
+			},
 			onSourceModifyDamage(damage, source, target, move) { if (this.effectState.guardActive) { return this.chainModify([1024, 4096]); } },
+			onModifyDamage(damage, source, target, move) { if (move && move.flags && move.flags.spin) { return this.chainModify(1.5); } },
 			onResidualOrder: 14,
 			onResidual(pokemon) {
 				if (this.effectState.guardActive) {
 					this.boost({ def: 1 }, pokemon);
 					this.effectState.guardActive = false;
+					this.add('-message', `${pokemon.name} stood up, but is ready to roll!`);
 				}
 			},
 		},
@@ -13097,22 +13128,40 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		category: "Status",
 		name: "Double Team",
 		pp: 12,
-		priority: -1,
+		priority: 1,
 		flags: { snatch: 1, metronome: 1 },
 		volatileStatus: 'doubleteam',
 		condition: {
-			duration: 2,
 			onStart(pokemon) { this.add('-start', pokemon, 'Double Team'); },
+			onMiss(target, source, move) {
+				this.add('-message', `The illusion took the hit`);
+				target.removeVolatile('doubleteam');
+			},
+			onModifyAccuracy(accuracy) {
+				if (typeof accuracy !== 'number') return;
+				return this.chainModify(0.5);
+			},
 			onPrepareHit(source, target, move) {
 				if (move.category === 'Status' || move.multihit || move.flags['charge'] || move.flags['futuremove'] || move.spreadHit) return;
 				move.multihit = 2;
 				move.multihitType = 'parentalbond';
+				this.effectState.silentEnd = true;
+				this.effectState.followUp = true;
+				source.removeVolatile('doubleteam');
 			},
-			onEnd(pokemon) { this.add('-end', pokemon, 'Double Team'); },
+			onAfterMove(source, target, move) {
+				if (this.effectState.followUp) { this.add('-message', `The clone followed up`); }
+			},
+			onResidualOrder: 14,
+			onResidual(pokemon) { this.boost({ spe: 2 }, pokemon); },
+			onEnd(pokemon) {
+				if (this.effectState.silentEnd) return;
+				this.add('-end', pokemon, 'Double Team');
+			},
 		},
 		secondary: null,
-		desc: "-1 priority. Boosts user's Speed [+2 stages]. User's next move [if used in the next turn] hits twice, the 2nd hit deals 1/4 damage",
-		shortDesc: "-1 priority. +2 SPE: User. Next move has parental bond effect",
+		desc: "-1 priority. Halves accuracy of moves used against the user this turn. At the end of the turn, boosts the user's Speed [+1 stage]. User's next move hits twice, the 2nd hit deals 1/4 damage. If a move misses the user, the illusion takes the hit and Double Team ends.",
+		shortDesc: "+1 Speed at end of turn; halves accuracy; next move has Parental Bond effect",
 		target: "self",
 	},
 	dragoncheer: { //boost handled in sim\battle-actions\getDamage
@@ -13484,11 +13533,20 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		guardActionCD: 2,
 		flags: { light: 1, protect: 1, reflectable: 1, mirror: 1, metronome: 1 },
 		boosts: {},
-		secondary: { chance: 100, volatileStatus: 'flinch', },
-		onModifyMove(move, pokemon, target) { if ((this.dex.getEffectiveness('light', pokemon) >= 0)) { move.secondary = null; } },
-		desc: "100% chance to Flinch, unless user resists Light moves",
-		shortDesc: "100% Flinch, unless user resists Light moves",
-		target: "all",
+		volatileStatus: 'flinch',
+		onHit(target) {
+			for (const type of target.getTypes()) {
+				const typeData = this.dex.types.get(type);
+				if (typeData?.damageTaken?.light === 2) {
+					target.removeVolatile('flinch');
+					return;
+				}
+			}
+		},
+		secondary: null,
+		desc: "100% chance to Flinch, unless target resists Light moves",
+		shortDesc: "100% Flinch, unless target resists Light moves",
+		target: "allAdjacent",
 	},
 	flatter: {
 		num: 260,
@@ -13734,12 +13792,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		priority: 0,
 		flags: { sound: 1, weapon: 1, protect: 1, reflectable: 1, mirror: 1, bypasssub: 1, metronome: 1 },
 		status: 'drowsy',
-		onTryHit(target, source, move) {
-			if (target.hasType('Grass')) {
-				this.add('-immune', target, '[from] type: Grass');
-				return null;
-			}
-		},
+		onTryImmunity(target) { return !target.hasType('Grass'); },
 		secondary: null,
 		desc: "Makes target Drowsy, Grass types are immune; SOUND: This move bypasses substitutes",
 		shortDesc: "Makes target Drowsy, Grass types are immune",
@@ -13878,6 +13931,10 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 				else { this.add('-activate', target, 'move: Guard'); }
 				const lockedmove = source.getVolatile('lockedmove');
 				if (lockedmove) { if (source.volatiles['lockedmove'].duration === 2) { delete source.volatiles['lockedmove']; } }
+				if (move.pierce) {
+					target.getMoveHitData(move).pierced = move.pierce;
+					return;
+				}
 				return this.NOT_FAIL;
 			},
 		},
@@ -13912,6 +13969,10 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 				else { this.add('-activate', target, 'move: GuardLv2'); }
 				const lockedmove = source.getVolatile('lockedmove');
 				if (lockedmove) { if (source.volatiles['lockedmove'].duration === 2) { delete source.volatiles['lockedmove']; } }
+				if (move.pierce) {
+					target.getMoveHitData(move).pierced = move.pierce;
+					return;
+				}
 				return this.NOT_FAIL;
 			},
 		},
@@ -15078,6 +15139,10 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 				this.add('-activate', target, 'move: Mat Block', move.name);
 				const lockedmove = source.getVolatile('lockedmove');
 				if (lockedmove) { if (source.volatiles['lockedmove'].duration === 2) { delete source.volatiles['lockedmove']; } }
+				if (move.pierce) {
+					target.getMoveHitData(move).pierced = move.pierce;
+					return;
+				}
 				return this.NOT_FAIL;
 			},
 		},
@@ -16095,6 +16160,10 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 				this.add('-activate', target, 'move: Quick Guard');
 				const lockedmove = source.getVolatile('lockedmove');
 				if (lockedmove) { if (source.volatiles['lockedmove'].duration === 2) { delete source.volatiles['lockedmove']; } }
+				if (move.pierce) {
+					target.getMoveHitData(move).pierced = move.pierce;
+					return;
+				}
 				return this.NOT_FAIL;
 			},
 		},
@@ -18453,6 +18522,10 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 				this.add('-activate', target, 'move: Wide Guard');
 				const lockedmove = source.getVolatile('lockedmove');
 				if (lockedmove) { if (source.volatiles['lockedmove'].duration === 2) { delete source.volatiles['lockedmove']; } }
+				if (move.pierce) {
+					target.getMoveHitData(move).pierced = move.pierce;
+					return;
+				}
 				return this.NOT_FAIL;
 			},
 		},

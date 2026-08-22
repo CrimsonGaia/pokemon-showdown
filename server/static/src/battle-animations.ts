@@ -1294,7 +1294,6 @@ export class PokemonSprite extends Sprite {
 		throatchop: ['Throat Chop', 'bad'],
 		confusion: ['Confused', 'bad'],
 		healblock: ['Heal Block', 'bad'],
-		yawn: ['Drowsy', 'bad'],
 		flashfire: ['Flash Fire', 'good'],
 		imprison: ['Imprisoning foe', 'good'],
 		autotomize: ['Lightened', 'neutral'],
@@ -1348,7 +1347,6 @@ export class PokemonSprite extends Sprite {
 		octolock: ['Octolock', 'bad'],
 		tarshot: ['Tar Shot', 'bad'],
 		saltcure: ['Salt Cure', 'bad'],
-		needles: ['Needles', 'bad'],
 		syrupbomb: ['Syrupy', 'bad'],
 		doomdesire: null,
 		futuresight: null,
@@ -1401,6 +1399,9 @@ export class PokemonSprite extends Sprite {
 		// Gen 1
 		lightscreen: ['Light Screen', 'good'],
 		reflect: ['Reflect', 'good'],
+		// Indigo Starstorm
+		needles: ['Needles', 'bad'],
+		defeathered: ['Defeathered', 'bad'],
 	};
 	forme = '';
 	cryurl: string | undefined = undefined;

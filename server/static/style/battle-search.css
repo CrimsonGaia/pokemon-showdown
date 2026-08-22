@@ -165,6 +165,15 @@
 .dexlist .bstcol {
 	padding-left: 2px;
 }
+.dexlist .guardactioncol {
+	padding-top: 8px;
+	height: 21px;
+	font-size: 8pt;
+	width: 90px;
+	text-align: center;
+	padding-left: 6px;
+	white-space: nowrap;
+}
 .dexlist .labelcol em,
 .dexlist .widelabelcol em,
 .dexlist .pplabelcol em,
@@ -390,6 +399,9 @@
 }
 .dexlist .ppsortcol {
 	width: 23px;
+}
+.dexlist .guardactionsortcol {
+	width: 90px;
 }
 
 .dexlist .result a {
