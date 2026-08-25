@@ -627,8 +627,8 @@ if(clientPokemon!=null&&clientPokemon.volatiles.typechange||clientPokemon!=null&
 text+="<span class=\"textaligned-typeicons\">"+types.map(function(type){return Dex.getTypeIcon(type);}).join(' ')+"</span>";
 if(pokemon.terastallized){text+="&nbsp; &nbsp; <small>(base: <span class=\"textaligned-typeicons\">"+this.getPokemonTypes(pokemon,true).map(function(type){return Dex.getTypeIcon(type);}).join(' ')+"</span>)</small>";}else
 if(knownPokemon.teraType&&!this.battle.rules['Terastal Clause']){text+="&nbsp; &nbsp; <small>(Tera Type: <span class=\"textaligned-typeicons\">"+Dex.getTypeIcon(knownPokemon.teraType)+"</span>)</small>";}
-text+=this.renderGuardActionBadge(clientPokemon);
 text+="</h2>";
+text+=this.renderGuardActionBadge(clientPokemon);
 }
 if(illusionIndex){text+="<p class=\"tooltip-section\"><strong>Possible Illusion #"+illusionIndex+"</strong>"+levelBuf+"</p>";}
 if(pokemon.fainted){text+='<p><small>HP:</small> (fainted)</p>';}else
@@ -688,8 +688,8 @@ if(_item)itemText='<small>Item:</small> '+_item+_itemEffect;
 }
 if(abilityText){text+="<p>"+abilityText+"</p>";}
 if(itemText){
-var itemIcon=serverPokemon!=null&&serverPokemon.item?"<span style=\"display:inline-block;width:24px;height:24px;vertical-align:middle;"+Dex.getItemIcon(serverPokemon.item)+"\"></span> ":
-clientPokemon!=null&&clientPokemon.item?"<span style=\"display:inline-block;width:24px;height:24px;vertical-align:middle;"+Dex.getItemIcon(clientPokemon.item)+"\"></span> ":'';
+var iconOf=function(item){return"<span style=\"display:inline-block;width:24px;height:24px;vertical-align:middle;"+Dex.getItemIcon(item,24/96)+"\"></span> ";};
+var itemIcon=serverPokemon!=null&&serverPokemon.item?iconOf(serverPokemon.item):clientPokemon!=null&&clientPokemon.item?iconOf(clientPokemon.item):'';
 text+="<p>"+itemIcon+itemText+"</p>";
 }
 text+=this.renderWeaponState(clientPokemon,serverPokemon);
@@ -988,9 +988,11 @@ var cur=(clientPokemon==null?void 0:clientPokemon.guardActionCur)||0;
 var max=(clientPokemon==null?void 0:clientPokemon.guardActionMax)||0;
 if(!max)return'';
 var remaining=Math.max(0,max-cur);
-return"&nbsp; &nbsp; <span style=\"position:relative; display:inline-block; width:20px; height:20px; vertical-align:middle; cursor:help;\" title=\"Guard Action Cooldown\">"+("<img src=\""+
-Dex.resourcePrefix+"sprites/misc/GuardIcon.png\" style=\"width:20px; height:20px; display:block;\" />")+(
-remaining>0?"<span style=\"position:absolute; inset:0; display:flex; align-items:center; justify-content:center; bottom:1px; font-size:12px; font-weight:bold; color:#fff; text-shadow:0 0 2px #000, 0 0 2px #000, 1px 1px 0 #000;\">"+remaining+"</span>":'')+"</span>";
+return"<div style=\"position:absolute; top:4px; right:6px; display:flex; align-items:center; gap:4px; pointer-events:none;\">"+"<small style=\"white-space:nowrap;\">Guard Action cooldown</small>"+"<span style=\"position:relative; display:inline-block; width:20px; height:20px;\">"+("<img src=\""+
+
+
+Dex.resourcePrefix+"sprites/misc/GuardIcon.png\" style=\"width:20px; height:20px; display:block;\" />")+("<span style=\"position:absolute; inset:0; display:flex; align-items:center; justify-content:center; bottom:1px; font-size:12px; font-weight:bold; color:#fff; text-shadow:0 0 2px #000, 0 0 2px #000, 1px 1px 0 #000;\">"+
+remaining+"</span>")+"</span></div>";
 
 };_proto2.
 
@@ -1785,21 +1787,17 @@ hidePossible)
 var text='';
 var abilityData=this.getPokemonAbilityData(clientPokemon,serverPokemon);
 var tier=this.battle.tier;
-var isISLFormat=(tier==null?void 0:tier.toLowerCase().includes('indigostarstorm'))||(tier==null?void 0:tier.toLowerCase().includes('isl'));
-
-
-if(isISLFormat&&(clientPokemon||serverPokemon)){
+var abilityData0=this.getPokemonAbilityData(clientPokemon,serverPokemon);
+var hasSecondAbilitySlot=!!(abilityData0.ability2||abilityData0.baseAbility2);
+if(clientPokemon||serverPokemon){
 var status=(clientPokemon==null?void 0:clientPokemon.status)||(serverPokemon==null?void 0:serverPokemon.status)||'';
-var _abilityData=this.getPokemonAbilityData(clientPokemon,serverPokemon);
-
+var _abilityData=abilityData0;
 var nameOf=function(id){return id?_this5.battle.dex.abilities.get(id).name:'';};
 var esc=function(s){return BattleLog.escapeHTML(s);};
-
 var cur1=_abilityData.ability||_abilityData.baseAbility||'';
 var base1=_abilityData.baseAbility||cur1||'';
 var cur2=_abilityData.ability2||_abilityData.baseAbility2||'';
 var base2=_abilityData.baseAbility2||cur2||'';
-
 var cur1Name=nameOf(cur1);
 var cur2Name=nameOf(cur2);
 var base1Name=nameOf(base1);
@@ -1807,14 +1805,7 @@ var base2Name=nameOf(base2);
 
 
 
-
-var isOwnPokemon=
-!!clientPokemon&&(
-
-clientPokemon.side===this.battle.mySide||
-clientPokemon.side===this.battle.mySide.ally);
-
-
+var isOwnPokemon=!!clientPokemon&&(clientPokemon.side===this.battle.mySide||clientPokemon.side===this.battle.mySide.ally);
 
 var sets=[];
 for(var i=0;i<_abilityData.possibilities.length;i+=2){
@@ -1827,13 +1818,11 @@ if(set.length)sets.push(set);
 }
 
 
-
 var revealed=[];
 if(cur1)revealed.push(cur1);else
 if(base1)revealed.push(base1);
 if(cur2)revealed.push(cur2);else
 if(base2)revealed.push(base2);
-
 var revealedSet=new Set(revealed);
 var boldIfRevealed=function(id){
 var n=nameOf(id);
@@ -1842,31 +1831,18 @@ var rendered=esc(n);
 return revealedSet.has(id)?"<strong>"+rendered+"</strong>":rendered;
 };
 
-
 if(isOwnPokemon){
-var out="<small>Ability Set:</small><br />";
-
-if(cur1Name){
-out+="<span class=\"ability-line\">"+esc(cur1Name)+"</span><br />";
-}else if(base1Name){
-out+="<span class=\"ability-line\">"+esc(base1Name)+"</span><br />";
-}
-
+var out="<span class=\"abilityset-title set-known\">Ability Set:</span><br />";
+if(cur1Name){out+="<span class=\"ability-line\">"+esc(cur1Name)+"</span><br />";}else
+if(base1Name){out+="<span class=\"ability-line\">"+esc(base1Name)+"</span><br />";}
 if(status==='aura'&&cur2Name){
-if(base2Name&&base2Name!==cur2Name){
-out+="<span class=\"ability-line\"><strong>"+esc(cur2Name)+"</strong> <small>(replaces "+esc(base2Name)+")</small></span><br />";
-}else{
-out+="<span class=\"ability-line\"><strong>"+esc(cur2Name)+"</strong></span><br />";
-}
-}else if(cur2Name){
-out+="<span class=\"ability-line\">"+esc(cur2Name)+"</span><br />";
-}else if(base2Name){
-out+="<span class=\"ability-line\">"+esc(base2Name)+"</span><br />";
-}
-
+if(base2Name&&base2Name!==cur2Name){out+="<span class=\"ability-line\"><strong>"+esc(cur2Name)+"</strong> <small>(replaces "+esc(base2Name)+")</small></span><br />";}else
+{out+="<span class=\"ability-line\"><strong>"+esc(cur2Name)+"</strong></span><br />";}
+}else
+if(cur2Name){out+="<span class=\"ability-line\">"+esc(cur2Name)+"</span><br />";}else
+if(base2Name){out+="<span class=\"ability-line\">"+esc(base2Name)+"</span><br />";}
 return out;
 }
-
 
 
 var possible=sets;
@@ -1875,28 +1851,20 @@ possible=sets.filter(function(set){return revealed.every(function(r){return set.
 if(!possible.length)possible=sets;
 }
 
-
 if(possible.length===1){
 var s=possible[0];
-var _out="<small>Ability Set:</small><br />";for(var _i64=0;_i64<
-s.length;_i64++){var id=s[_i64];
-_out+="<span class=\"ability-line\">"+boldIfRevealed(id)+"</span><br />";
-}
-if(status==='aura'&&cur2Name&&base2Name&&base2Name!==cur2Name){
-_out+="<span class=\"ability-line\"><small>"+esc(cur2Name)+" currently replaces "+esc(base2Name)+"</small></span><br />";
-}
+var _out="<span class=\"abilityset-title set-known\">Ability Set:</span><br />";for(var _i64=0;_i64<
+s.length;_i64++){var id=s[_i64];_out+="<span class=\"ability-line\">"+boldIfRevealed(id)+"</span><br />";}
+if(status==='aura'&&cur2Name&&base2Name&&base2Name!==cur2Name){_out+="<span class=\"ability-line\"><small>"+esc(cur2Name)+" currently replaces "+esc(base2Name)+"</small></span><br />";}
 return _out;
 }
-
 if(possible.length&&!hidePossible){
 var _out2="<small>Possible ability sets:</small><br />";
 for(var _s=0;_s<possible.length;_s++){
 var setNum=_s+1;
 var setClass=setNum===1?'set-1':setNum===2?'set-2':'';
 _out2+="<span class=\"abilityset-title "+setClass+"\">Set "+setNum+"</span><br />";for(var _i66=0,_possible$_s2=
-possible[_s];_i66<_possible$_s2.length;_i66++){var _id=_possible$_s2[_i66];
-_out2+="<span class=\"ability-line\">"+boldIfRevealed(_id)+"</span><br />";
-}
+possible[_s];_i66<_possible$_s2.length;_i66++){var _id=_possible$_s2[_i66];_out2+="<span class=\"ability-line\">"+boldIfRevealed(_id)+"</span><br />";}
 }
 return _out2;
 }

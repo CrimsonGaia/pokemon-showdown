@@ -842,9 +842,9 @@ export class BattleActions {
 			this.battle.runEvent('DamagingHit', damagedTargets, pokemon, move, damagedDamage);
 			for (const t of damagedTargets) {
 				if (move.type === 'Electric' && t.hasType('Electric')) {
-					if (!t.volatiles['charged']) {
-						t.addVolatile('charged');
-						this.battle.add('-start', t, 'charged', '[from] Electric type');
+					if (!t.volatiles['charge']) {
+						t.addVolatile('charge');
+						this.battle.add('-start', t, 'charge', '[from] Electric type');
 					}
 				}
 				t.tryLightCharge(pokemon, move);

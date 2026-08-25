@@ -1444,7 +1444,8 @@ export class Battle {
 				const details = pokemon.details.replace(', shiny', '')
 					.replace(/(Zacian|Zamazenta)(?!-Crowned)/g, '$1-*')
 					.replace(/(Xerneas)(-[a-zA-Z?-]+)?/g, '$1-*');
-				this.addSplit(pokemon.side.id, ['poke', pokemon.side.id, details, ''], ['poke', pokemon.side.id, details, '']);
+				const itemName = pokemon.item ? this.dex.items.get(pokemon.item).name : '';
+				this.addSplit(pokemon.side.id, ['poke', pokemon.side.id, details, itemName], ['poke', pokemon.side.id, details, itemName]);
 			}
 			this.makeRequest('teampreview');
 		}

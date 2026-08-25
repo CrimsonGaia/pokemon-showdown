@@ -1209,19 +1209,12 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		onModifyAtk(atk, attacker, defender, move) { if (move.type === 'Electric') { return this.chainModify(1.2); } },
 		onModifySpA(spa, attacker, defender, move) { if (move.type === 'Electric') { return this.chainModify(1.2); } },
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.explosive) { return this.chainModify(1.5); } },
-		onDamagingHit(damage, target, source, move) { if (move.type === 'Electric') { 
-			this.add('-activate', target, 'ability: Pressurized Cell');
-			const explosionDamage = this.actions.getDamage(target,  target, { basePower: 40, type: 'Electric', category: 'Special', });
-			for (const pokemon of this.getAllActive()) { 
-				if (pokemon && !pokemon.fainted) { 
-					this.damage(explosionDamage, pokemon, target, {
-						id: 'pressurizedcell',
-						effectType: 'Ability',
-						flags: { explosive: 1 },
-					});
-				}
+		onDamagingHit(damage, target, source, move) {
+			if (move.type === 'Electric') { 
+				if (move.id === 'pressurizedcell') return;
+				this.add('-activate', target, 'ability: Pressurized Cell');
+				this.actions.useMove('pressurizedcell', target, { sourceEffect: this.dex.abilities.get('pressurizedcell'), });
 			}
-		}
 		},
 		flags: {},
 		name: "Pressurized Cell",
@@ -1315,20 +1308,12 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 				this.add('-immune', target, '[from] ability: Resonance');
 				if (move.flags?.wind && move.category !== 'Status') {
 					this.add('-activate', target, 'ability: Resonance');
-					const damage = this.actions.getDamage(source, target, move);
-					const counterDamage = Math.floor((typeof damage === 'number' ? damage : 0) * 1.2);
-					for (const foe of target.foes()) {
-						this.damage(counterDamage, foe, target, {
-							id: 'resonance',
-							effectType: 'Ability',
-							flags: {sound: 1},
-						});
-					}
+					const resonanceMove = this.dex.getActiveMove('resonance');
+					// Resonance has 1.2x the incoming move's base power.
+					resonanceMove.basePower = Math.floor(move.basePower * 1.2);
+					this.actions.useMove(resonanceMove, target, { sourceEffect: this.dex.abilities.get('resonance'), });
 				}
-				if (move.flags?.sound) {
-					this.add('-activate', target, 'ability: Resonance');
-					this.boost({spatk: 1}, target, target, this.effect);
-				}
+				if (move.flags?.sound) { this.boost({spa: 1}, target, target, this.effect); }
 				return null;
 			}
 		},
@@ -1403,19 +1388,16 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		num: 1053,
 	},
 	seismiccore: {
-		onStart(pokemon) { this.effectState.active = true; },
+		onStart(pokemon) { this.effectState.active = false; },
 		onResidualOrder: 28,
 		onResidual(pokemon) {
 			this.effectState.active = !this.effectState.active;
 			if (!this.effectState.active) return;
-			const foes = pokemon.foes().filter(foe => !foe.fainted);
-			if (foes.length === 0) return;
+			const foes = pokemon.foes().filter(foe => !foe.fainted && foe.isActive);
+			if (!foes.length) return;
 			const target = this.sample(foes);
 			this.add('-activate', pokemon, 'ability: Seismic Core');
-			// Determine category based on which attacking stat is lower 
-			const category = pokemon.getStat('atk', false, true) < pokemon.getStat('spa', false, true) ? 'Physical' : 'Special';
-			const damage = this.actions.getDamage( pokemon, target, { basePower: 55, type: 'Fire', category: category, } );
-			this.damage(damage, target, pokemon, { id: 'seismiccore', effectType: 'Ability', flags: { bomb: 1 }, });
+			this.actions.useMove('seismiccore', pokemon, { target, sourceEffect: this.dex.abilities.get('seismiccore'), });
 		},
 		flags: {},
 		name: "Seismic Core",
@@ -2402,15 +2384,13 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 				return false;
 			}
 		},
-		onAnyDamage(damage, target, source, effect) { if (effect && effect.name === 'Aftermath') { return false; } },
 		onAnySetStatus(status, target, source, effect) { 
 			if (status.id === 'brn') { 
 				this.add('-immune', target, '[from] ability: Damp');
 				return false;
 			}
 		},
-		onAnyBasePower(basePower, user, target, move) { if ( (move.type === 'Fire') || (move.flags && (move.flags.bomb || move.flags.contact)) )  { return this.chainModify(0.5); }
-		},
+		onAnyBasePower(basePower, user, target, move) { if ( (move.type === 'Fire') || (move.flags && (move.flags.bomb || move.flags.contact)) )  { return this.chainModify(0.5); } },
 		flags: { breakable: 1 },
 		name: "Damp",
 		shortDesc: "The field is immune to burn, and takes 1/2 damage from Fire type, Bomb, Contact moves. Explosive moves and Aftermath cannot activate while Damp is active.",
@@ -3656,11 +3636,10 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 	aftermath: {
 		onDamagingHitOrder: 1,
 		onDamagingHit(damage, target, source, move) {
-			if (!target.hp) { // When fainting from a damaging move, deal 1/4 of own MaxHP to all adjacent pokemon as typeless explosive
-				const explosionDamage = Math.max(1, Math.floor(target.maxhp / 4));
+			if (move.id === 'aftermath') return;
+			if (!target.hp) {
 				this.add('-activate', target, 'ability: Aftermath');
-				for (const adjacent of target.adjacentFoes()) { this.damage(explosionDamage, adjacent, target, {id: 'aftermath', effectType: 'Ability', flags: { explosive: 1 }, isExternal: true}); }
-				for (const adjacent of target.adjacentAllies()) { this.damage(explosionDamage, adjacent, target, {id: 'aftermath', effectType: 'Ability', flags: { explosive: 1 }, isExternal: true}); }
+				this.actions.useMove('aftermath', target, { sourceEffect: this.dex.abilities.get('aftermath'), });
 			}
 		},
 		flags: {notransform: 1},
@@ -5836,7 +5815,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		onAllyBasePowerPriority: 22,
 		onAllyBasePower(basePower, attacker, defender, move) { 
 			if (attacker !== this.effectState.target && move.category === 'Special') { 
-				if (this.effectState.target.volatiles['charged']) { 
+				if (this.effectState.target.volatiles['charge']) { 
 					this.debug('Battery supercharged boost');
 					return this.chainModify(1.5);
 				}
@@ -5846,9 +5825,9 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		},
 		onHit(target, source, move) { 
 			if (move.type === 'Electric' && target.hasAbility('battery')) { 
-				if (!target.volatiles['charged']) {
-					target.addVolatile('charged');
-					this.add('-start', target, 'charged', '[from] ability: Battery');
+				if (!target.volatiles['charge']) {
+					target.addVolatile('charge');
+					this.add('-start', target, 'charge', '[from] ability: Battery');
 				}
 			}
 		},

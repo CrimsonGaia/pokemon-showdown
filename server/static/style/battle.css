@@ -31,7 +31,7 @@ License: GPLv2
 /* Ability set header colors in tooltips */
 #tooltipwrapper .abilityset-title.set-1 { color: #2e9d3f; } /* green */
 #tooltipwrapper .abilityset-title.set-2 { color: #2b6fdd; } /* blue */
-
+#tooltipwrapper .abilityset-title.set-known { color: #b8860b; } /* gold - the set is fully known */
 
 .battle {
 	position: absolute;
@@ -379,6 +379,11 @@ License: GPLv2
 	align-items: flex-start;
 	padding: 2px 0px;
 	z-index: 1;
+}
+.battleteambar-pool {
+	display: flex;
+	gap: 2px;
+	margin: 0 4px;
 }
 .battleteambar-p1 {
 	display: flex;

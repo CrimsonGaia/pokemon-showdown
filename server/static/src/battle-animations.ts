@@ -476,21 +476,38 @@ export class BattleScene implements BattleSceneStub {
 		}
 		return BattleLog.escapeHTML(name);
 	}
-	getTeamBarHTML(side: Side, isP1: boolean): string {
+		getTeamBarHTML(side: Side, isP1: boolean): string {
 		let html = '';
-		const isISLFormat = this.battle.tier?.toLowerCase().includes('indigostarstorm') || this.battle.tier?.toLowerCase().includes('isl');
-		const teamSource = isISLFormat ? side.fullTeam : side.pokemon;
-		const teamSize = teamSource.length;
-		for (let i = 0; i < teamSize; i++) {
-			const pokemon = teamSource[i];
+		const s = side as any;
+		const fullTeam: Pokemon[] = (s.fullTeam?.length ? s.fullTeam : null) ||
+			(s.sidebarPokemon?.length ? s.sidebarPokemon : null) || side.pokemon || [];
+		const revealedSlots = new Set<number>();
+		for (let i = 0; i < side.pokemon.length; i++) { if (side.pokemon[i]?.searchid || side.pokemon[i]?.fainted) revealedSlots.add(i); }
+		for (let i = 0; i < fullTeam.length; i++) {
+			const pokemon = fullTeam[i];
 			if (!pokemon) continue;
+			const revealed = revealedSlots.has(i);
 			const status = pokemon.fainted ? ' fainted' : (pokemon.status ? ' status' : '');
 			const iconStyle = Dex.getPokemonIcon(pokemon);
+			const opacityStyle = revealed ? '' : 'opacity:0.35;';
+			const knownItem = side.pokemon[i]?.item;
 			let itemIconHTML = '';
-			if (pokemon.item && pokemon.item !== '(exists)') { itemIconHTML = `<span class="itemicon" style="${Dex.getItemIcon(pokemon.item)}"></span>`; } 
-			else { itemIconHTML = `<span class="itemicon itemicon-unknown">?</span>`; }
-			html += `<span class="picon battleteambar-sprite${status}" style="${iconStyle}">${itemIconHTML}</span>`;
+			if (knownItem && knownItem !== '(exists)') { itemIconHTML = `<span class="itemicon" data-teambar-item="${isP1 ? 'p1' : 'p2'}-${i}" style="${Dex.getItemIcon(knownItem, 24 / 96)}"></span>`; } 
+			else { itemIconHTML = `<span class="itemicon itemicon-unknown" data-teambar-item="${isP1 ? 'p1' : 'p2'}-${i}">?</span>`; }
+			html += `<span class="picon has-tooltip battleteambar-sprite${status}" data-tooltip="pokemon|${side.n}|${i}" style="${iconStyle}${opacityStyle}">${itemIconHTML}</span>`;
 		}
+		return html;
+	}
+	getTeamBarPoolHTML(side: Side, isP1: boolean): string {
+		const pooled = (side as any).teamsheetItems as (string | null)[] | undefined;
+		if (!pooled?.length) return '';
+		let html = '<div class="battleteambar-pool">';
+		for (let j = 0; j < pooled.length; j++) {
+			const item = pooled[j];
+			if (!item) continue; // already attributed - pulled from the pool once its owner's item is known
+			html += `<span class="itemicon battleteambar-poolicon" data-teambar-pool="${isP1 ? 'p1' : 'p2'}-${j}" style="${Dex.getItemIcon(item)}"></span>`;
+		}
+		html += '</div>';
 		return html;
 	}
 	getSidebarHTML(side: Side, posStr: string): string {
@@ -639,9 +656,45 @@ export class BattleScene implements BattleSceneStub {
 	updateTeamBar() {
 		const p1Side = this.battle.nearSide;
 		const p2Side = this.battle.farSide;
+		// Snapshot where each pooled icon currently sits, before this render potentially
+		// removes it from the pool - that position is the animation's starting point.
+		const preRects = new Map<string, DOMRect>();
+		this.$battleteambar.find('[data-teambar-pool]').each((_, el) => {
+			preRects.set('' + $(el).data('teambar-pool'), el.getBoundingClientRect());
+		});
+		// A pooled item is "attributed" the instant its owner's real item becomes known in
+		// battle - pull it from the pool before rendering so it isn't shown in both places.
+		for (const side of [p1Side, p2Side]) {
+			const pooled = (side as any).teamsheetItems as (string | null)[] | undefined;
+			if (!pooled?.length) continue;
+			for (let i = 0; i < side.pokemon.length; i++) { if (side.pokemon[i]?.item) pooled[i] = null; }
+		}
 		const p1HTML = this.getTeamBarHTML(p1Side, true);
 		const p2HTML = this.getTeamBarHTML(p2Side, false);
-		this.$battleteambar.html( `<div class="battleteambar-p1">${p1HTML}</div>` + `<div class="battleteambar-p2">${p2HTML}</div>`);
+		const p1PoolHTML = this.getTeamBarPoolHTML(p1Side, true);
+		const p2PoolHTML = this.getTeamBarPoolHTML(p2Side, false);
+		this.$battleteambar.html(
+			`<div class="battleteambar-p1">${p1PoolHTML}${p1HTML}</div>` +
+			`<div class="battleteambar-p2">${p2HTML}${p2PoolHTML}</div>`
+		);
+		// FLIP: any pool icon present before this render but gone now just got attributed -
+		// fly a floating clone from its old pool position to its new slot on the topbar.
+		preRects.forEach((fromRect, slotKey) => {
+			const $target = this.$battleteambar.find(`[data-teambar-item="${slotKey}"]`);
+			if (!$target.length) return;
+			const toRect = ($target[0] as HTMLElement).getBoundingClientRect();
+			const $clone = $target.clone().css({
+				position: 'fixed', margin: 0, zIndex: 999, pointerEvents: 'none', transition: 'none',
+				left: fromRect.left, top: fromRect.top, width: fromRect.width, height: fromRect.height,
+			}).appendTo('body');
+			requestAnimationFrame(() => {
+				$clone.css({
+					transition: 'left 0.4s ease, top 0.4s ease, width 0.4s ease, height 0.4s ease',
+					left: toRect.left, top: toRect.top, width: toRect.width, height: toRect.height,
+				});
+			});
+			setTimeout(() => $clone.remove(), 450);
+		});
 	}
 	updateStatbars() {
 		for (const side of this.battle.sides) { for (const active of side.active) { if (active) active.sprite.updateStatbar(active); } }
@@ -682,12 +735,11 @@ export class BattleScene implements BattleSceneStub {
 		}
 		this.$tooltips.html(tooltipBuf);
 	}
-	teamPreview() {
+		teamPreview() {
 		let newBGNum = 0;
 		for (let siden = 0; siden < 2 || (this.battle.gameType === 'multi' && siden < 4); siden++) {
 			let side = this.battle.sides[siden];
-			const isISLFormat = this.battle.tier?.toLowerCase().includes('indigostarstorm') || this.battle.tier?.toLowerCase().includes('isl');
-			if (isISLFormat) { side.fullTeam = side.pokemon.slice(); }
+			side.fullTeam = side.pokemon.slice();
 			const spriteIndex = +this.battle.viewpointSwitched ^ (siden % 2);
 			let textBuf = '';
 			let buf = '';

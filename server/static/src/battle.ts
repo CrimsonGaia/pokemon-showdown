@@ -511,6 +511,7 @@ export class Side {
 	isFar: boolean;
 	foe: Side = null!;
 	ally: Side | null = null;
+	teamsheetItems: (string | null)[] = [];
 	avatar = 'unknown';
 	badges: string[] = [];
 	rating = '';
@@ -1725,6 +1726,14 @@ export class Battle {
 			this.activateAbility(this.getPokemon(kwArgs.of) || poke, fromeffect);
 			this.log(args, kwArgs);
 			this.scene.resultAnim(poke, 'Immune', 'neutral');
+			break;
+		}
+		case '-guardactioncd': {
+			let poke = this.getPokemon(args[1]);
+			if (poke) {
+				poke.guardActionCur = parseInt(args[2], 10) || 0;
+				poke.guardActionMax = parseInt(args[3], 10) || 0;
+			}
 			break;
 		}
 		case '-miss': {
@@ -3236,8 +3245,12 @@ export class Battle {
 			}
 			case 'poke': {
 				let pokemon = this.rememberTeamPreviewPokemon(args[1], args[2]);
+				// Item is now revealed at team preview, but deliberately not attributed to this icon yet - it's pooled in the topbar until it's genuinely revealed in battle.
 				if (args[3] === 'mail') { pokemon.item = '(mail)'; } 
-				else if (args[3] === 'item') { pokemon.item = '(exists)'; }
+				else if (args[3]) {
+					const { siden } = this.parsePokemonId(args[1]);
+					this.sides[siden].teamsheetItems[this.sides[siden].pokemon.length - 1] = args[3];
+				}
 				break;
 			}
 			case 'updatepoke': {
@@ -3262,10 +3275,13 @@ export class Battle {
 				if (!team.length) return;
 				const side = this.getSide(args[1]);
 				side.clearPokemon();
+				side.teamsheetItems = [];
 				for (const set of team) {
 					const details = set.species + (!set.level || set.level === 100 ? '' : `, L${set.level}`) + (!set.gender || set.gender === 'N' ? '' : `, ${set.gender}`) + (set.shiny ? ', shiny' : '');
 					const pokemon = side.addPokemon('', '', details);
-					if (set.item) pokemon.item = set.item;
+					// Item is deliberately NOT written to pokemon.item here - open team sheets reveals it as
+					// known-but-unattributed (pooled in the topbar) until it's genuinely revealed in battle.
+					side.teamsheetItems.push(set.item || null);
 					if (set.ability) pokemon.rememberAbility(set.ability);
 					for (const move of set.moves) { pokemon.rememberMove(move, 0); }
 					if (set.teraType) pokemon.teraType = set.teraType;

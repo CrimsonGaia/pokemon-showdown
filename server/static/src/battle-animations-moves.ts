@@ -2268,6 +2268,84 @@ export const BattleMoveAnims: AnimTable = {
 			}, 'linear');
 		},
 	},
+	aftermath: {
+		anim(scene, [attacker]) {
+			scene.showEffect('fireball', {
+				x: attacker.x + 40,
+				y: attacker.y,
+				z: attacker.z,
+				scale: 0,
+				opacity: 0.6,
+			}, {
+				scale: 6,
+				opacity: 0,
+			}, 'decel');
+			scene.showEffect('fireball', {
+				x: attacker.x - 40,
+				y: attacker.y - 20,
+				z: attacker.z,
+				scale: 0,
+				opacity: 0.6,
+				time: 150,
+			}, {
+				scale: 6,
+				opacity: 0,
+			}, 'decel');
+			scene.showEffect('fireball', {
+				x: attacker.x + 10,
+				y: attacker.y + 20,
+				z: attacker.z,
+				scale: 0,
+				opacity: 0.6,
+				time: 300,
+			}, {
+				scale: 6,
+				opacity: 0,
+			}, 'decel');
+			attacker.delay(450).anim({
+				scale: 4,
+				time: 400,
+				opacity: 0,
+			}, 'linear');
+		},
+	},
+	pressurizedcell: {
+		anim(scene, [attacker]) {
+			scene.showEffect('fireball', {
+				x: attacker.x + 40,
+				y: attacker.y,
+				z: attacker.z,
+				scale: 0,
+				opacity: 0.6,
+			}, {
+				scale: 6,
+				opacity: 0,
+			}, 'decel');
+			scene.showEffect('fireball', {
+				x: attacker.x - 40,
+				y: attacker.y - 20,
+				z: attacker.z,
+				scale: 0,
+				opacity: 0.6,
+				time: 150,
+			}, {
+				scale: 6,
+				opacity: 0,
+			}, 'decel');
+			scene.backgroundEffect('#f8ffba', 600, 0.6);
+			scene.showEffect('wisp', {
+				x: attacker.leftof(-10),
+				y: attacker.y + 10,
+				z: attacker.z,
+				scale: 0.1,
+				opacity: 0.8,
+			}, {
+				scale: 15,
+				opacity: 0.8,
+				time: 500,
+			}, 'linear', 'fade');
+		},
+	},
 	populationbomb: {
 		anim(scene, [attacker, defender]) {
 			BattleOtherAnims.contactattack.anim(scene, [attacker, defender]);
@@ -14298,6 +14376,49 @@ export const BattleMoveAnims: AnimTable = {
 		},
 	},
 	hypervoice: {
+		anim(scene, [attacker]) {
+			scene.showEffect('iceball', {
+				x: attacker.x,
+				y: attacker.y,
+				z: attacker.z,
+				scale: 0,
+				opacity: 0.5,
+				time: 0,
+			}, {
+				z: attacker.behind(-50),
+				scale: 7,
+				opacity: 0,
+				time: 400,
+			}, 'linear');
+			scene.showEffect('iceball', {
+				x: attacker.x,
+				y: attacker.y,
+				z: attacker.z,
+				scale: 0,
+				opacity: 0.5,
+				time: 150,
+			}, {
+				z: attacker.behind(-50),
+				scale: 7,
+				opacity: 0,
+				time: 600,
+			}, 'linear');
+			scene.showEffect('iceball', {
+				x: attacker.x,
+				y: attacker.y,
+				z: attacker.z,
+				scale: 0,
+				opacity: 0.5,
+				time: 300,
+			}, {
+				z: attacker.behind(-50),
+				scale: 7,
+				opacity: 0,
+				time: 800,
+			}, 'linear');
+		},
+	},
+	resonance: {
 		anim(scene, [attacker]) {
 			scene.showEffect('iceball', {
 				x: attacker.x,
@@ -37243,7 +37364,59 @@ export const BattleMoveAnims: AnimTable = {
 			}, 'swing');
 		},
 	},
+	//region Indigo Starstorm moves
+	seismiccore: {
+		anim(scene, [attacker, defender]) {
+			const offscreenHeight = 350;
+			const fallHeight = 220;
+			scene.showEffect('rock1', {
+				x: attacker.x,
+				y: attacker.y,
+				z: attacker.z,
+				scale: 0.15,
+				opacity: 0,
+			}, {
+				x: attacker.x,
+				y: attacker.y + offscreenHeight,
+				z: attacker.z,
+				scale: 0.6,
+				opacity: 1,
+				time: 350,
+			}, 'accel');
+			scene.showEffect('rock1', {
+				x: attacker.x,
+				y: attacker.y + offscreenHeight,
+				z: attacker.z,
+				scale: 0.6,
+				opacity: 1,
+				time: 350,
+			}, {
+				x: attacker.x,
+				y: attacker.y + offscreenHeight,
+				z: attacker.z,
+				scale: 0,
+				opacity: 0,
+				time: 850,
+			}, 'accel');
+			scene.showEffect('rock1', {
+				x: defender.x,
+				y: defender.y + fallHeight,
+				z: defender.z,
+				scale: 0.6,
+				opacity: 0,
+				time: 1000,
+			}, {
+				x: defender.x,
+				y: defender.y,
+				z: defender.z,
+				scale: 0.6,
+				opacity: 1,
+				time: 1550,
+			}, 'ballistic', 'explode');
+		},
+	},
 };
+
 //region placeholder 
 BattleMoveAnims['torment'] = { anim: BattleMoveAnims['swagger'].anim };
 BattleMoveAnims['mefirst'] = { anim: BattleMoveAnims['mimic'].anim };

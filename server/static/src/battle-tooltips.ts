@@ -627,8 +627,8 @@ export class BattleTooltips {
 			text += `<span class="textaligned-typeicons">${types.map(type => Dex.getTypeIcon(type)).join(' ')}</span>`;
 			if (pokemon.terastallized) { text += `&nbsp; &nbsp; <small>(base: <span class="textaligned-typeicons">${this.getPokemonTypes(pokemon, true).map(type => Dex.getTypeIcon(type)).join(' ')}</span>)</small>`; } 
 			else if (knownPokemon.teraType && !this.battle.rules['Terastal Clause']) { text += `&nbsp; &nbsp; <small>(Tera Type: <span class="textaligned-typeicons">${Dex.getTypeIcon(knownPokemon.teraType)}</span>)</small>`; }
-			text += this.renderGuardActionBadge(clientPokemon);
 			text += `</h2>`;
+			text += this.renderGuardActionBadge(clientPokemon);
 		}
 		if (illusionIndex) { text += `<p class="tooltip-section"><strong>Possible Illusion #${illusionIndex}</strong>${levelBuf}</p>`; }
 		if (pokemon.fainted) { text += '<p><small>HP:</small> (fainted)</p>'; } 
@@ -688,8 +688,8 @@ export class BattleTooltips {
 		}
 		if (abilityText) { text += `<p>${abilityText}</p>`; }
 		if (itemText) {
-			const itemIcon = serverPokemon?.item ? `<span style="display:inline-block;width:24px;height:24px;vertical-align:middle;${Dex.getItemIcon(serverPokemon.item)}"></span> ` :
-				(clientPokemon?.item ? `<span style="display:inline-block;width:24px;height:24px;vertical-align:middle;${Dex.getItemIcon(clientPokemon.item)}"></span> ` : '');
+			const iconOf = (item: string) => `<span style="display:inline-block;width:24px;height:24px;vertical-align:middle;${Dex.getItemIcon(item, 24 / 96)}"></span> `;
+			const itemIcon = serverPokemon?.item ? iconOf(serverPokemon.item) : (clientPokemon?.item ? iconOf(clientPokemon.item) : '');
 			text += `<p>${itemIcon}${itemText}</p>`;
 		}
 		text += this.renderWeaponState(clientPokemon, serverPokemon);
@@ -988,10 +988,12 @@ export class BattleTooltips {
 		const max = clientPokemon?.guardActionMax || 0;
 		if (!max) return ''; // this Pokemon has no Guard Action, or we don't currently know its state
 		const remaining = Math.max(0, max - cur);
-		return `&nbsp; &nbsp; <span style="position:relative; display:inline-block; width:20px; height:20px; vertical-align:middle; cursor:help;" title="Guard Action Cooldown">` +
+		return `<div style="position:absolute; top:4px; right:6px; display:flex; align-items:center; gap:4px; pointer-events:none;">` +
+			`<small style="white-space:nowrap;">Guard Action cooldown</small>` +
+			`<span style="position:relative; display:inline-block; width:20px; height:20px;">` +
 			`<img src="${Dex.resourcePrefix}sprites/misc/GuardIcon.png" style="width:20px; height:20px; display:block;" />` +
-			(remaining > 0 ? `<span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; bottom:1px; font-size:12px; font-weight:bold; color:#fff; text-shadow:0 0 2px #000, 0 0 2px #000, 1px 1px 0 #000;">${remaining}</span>` : '') +
-			`</span>`;
+			`<span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; bottom:1px; font-size:12px; font-weight:bold; color:#fff; text-shadow:0 0 2px #000, 0 0 2px #000, 1px 1px 0 #000;">${remaining}</span>` +
+			`</span></div>`;
 	}
 	// Necrozma/Necrozma-Dawn-Wings/Necrozma-Dusk-Mane shows a countdown of light hits until it Ultra Bursts. 
 	// Starts at 3, counts down.
@@ -1785,36 +1787,25 @@ export class BattleTooltips {
 		let text = '';
 		const abilityData = this.getPokemonAbilityData(clientPokemon, serverPokemon);
 		const tier = this.battle.tier;
-		const isISLFormat = tier?.toLowerCase().includes('indigostarstorm') || tier?.toLowerCase().includes('isl');
-		// ISL formats: two-ability sets, Aura overrides slot 2.
-		// Also keep ambiguity when shared abilities exist.
-		if (isISLFormat && (clientPokemon || serverPokemon)) {
+		const abilityData0 = this.getPokemonAbilityData(clientPokemon, serverPokemon);
+		const hasSecondAbilitySlot = !!(abilityData0.ability2 || abilityData0.baseAbility2);
+		if ((clientPokemon || serverPokemon)) {
 			const status = (clientPokemon as any)?.status || (serverPokemon as any)?.status || '';
-			const abilityData = this.getPokemonAbilityData(clientPokemon, serverPokemon);
-
+			const abilityData = abilityData0;
 			const nameOf = (id: string) => id ? this.battle.dex.abilities.get(id).name : '';
 			const esc = (s: string) => BattleLog.escapeHTML(s);
-
 			const cur1 = abilityData.ability || abilityData.baseAbility || '';
 			const base1 = abilityData.baseAbility || cur1 || '';
 			const cur2 = abilityData.ability2 || abilityData.baseAbility2 || '';
 			const base2 = abilityData.baseAbility2 || cur2 || '';
-
 			const cur1Name = nameOf(cur1);
 			const cur2Name = nameOf(cur2);
 			const base1Name = nameOf(base1);
 			const base2Name = nameOf(base2);
-
 			// Only our own / ally Pokémon should force the fully-known "Ability Set" view.
 			// Enemy Pokémon can still have partial/revealed ability data, so serverPokemon
 			// existing does NOT by itself mean the set is fully known.
-			const isOwnPokemon =
-				!!clientPokemon &&
-				(
-					clientPokemon.side === this.battle.mySide ||
-					clientPokemon.side === this.battle.mySide.ally
-				);
-
+			const isOwnPokemon = !!clientPokemon && (clientPokemon.side === this.battle.mySide || clientPokemon.side === this.battle.mySide.ally);
 			// Build possible sets from the flat list [a1, a2, a1, a2, ...]
 			const sets: string[][] = [];
 			for (let i = 0; i < abilityData.possibilities.length; i += 2) {
@@ -1825,7 +1816,6 @@ export class BattleTooltips {
 				if (a2) set.push(a2);
 				if (set.length) sets.push(set);
 			}
-
 			// Abilities that are actually revealed/known right now.
 			// Use currently revealed slots first; only fall back to base slot if current is absent.
 			const revealed: string[] = [];
@@ -1833,7 +1823,6 @@ export class BattleTooltips {
 			else if (base1) revealed.push(base1);
 			if (cur2) revealed.push(cur2);
 			else if (base2) revealed.push(base2);
-
 			const revealedSet = new Set(revealed);
 			const boldIfRevealed = (id: string) => {
 				const n = nameOf(id);
@@ -1841,32 +1830,19 @@ export class BattleTooltips {
 				const rendered = esc(n);
 				return revealedSet.has(id) ? `<strong>${rendered}</strong>` : rendered;
 			};
-
 			// Own Pokémon: always show the actual set, never the possible-set view.
 			if (isOwnPokemon) {
-				let out = `<small>Ability Set:</small><br />`;
-
-				if (cur1Name) {
-					out += `<span class="ability-line">${esc(cur1Name)}</span><br />`;
-				} else if (base1Name) {
-					out += `<span class="ability-line">${esc(base1Name)}</span><br />`;
-				}
-
+				let out = `<span class="abilityset-title set-known">Ability Set:</span><br />`;
+				if (cur1Name) { out += `<span class="ability-line">${esc(cur1Name)}</span><br />`; } 
+				else if (base1Name) { out += `<span class="ability-line">${esc(base1Name)}</span><br />`; }
 				if (status === 'aura' && cur2Name) {
-					if (base2Name && base2Name !== cur2Name) {
-						out += `<span class="ability-line"><strong>${esc(cur2Name)}</strong> <small>(replaces ${esc(base2Name)})</small></span><br />`;
-					} else {
-						out += `<span class="ability-line"><strong>${esc(cur2Name)}</strong></span><br />`;
-					}
-				} else if (cur2Name) {
-					out += `<span class="ability-line">${esc(cur2Name)}</span><br />`;
-				} else if (base2Name) {
-					out += `<span class="ability-line">${esc(base2Name)}</span><br />`;
-				}
-
+					if (base2Name && base2Name !== cur2Name) { out += `<span class="ability-line"><strong>${esc(cur2Name)}</strong> <small>(replaces ${esc(base2Name)})</small></span><br />`; } 
+					else { out += `<span class="ability-line"><strong>${esc(cur2Name)}</strong></span><br />`; }
+				} 
+				else if (cur2Name) { out += `<span class="ability-line">${esc(cur2Name)}</span><br />`; } 
+				else if (base2Name) { out += `<span class="ability-line">${esc(base2Name)}</span><br />`; }
 				return out;
 			}
-
 			// Opponent/unknown Pokémon:
 			// Narrow only by revealed abilities. If ambiguity remains, keep all matching sets.
 			let possible = sets;
@@ -1874,29 +1850,21 @@ export class BattleTooltips {
 				possible = sets.filter(set => revealed.every(r => set.includes(r)));
 				if (!possible.length) possible = sets;
 			}
-
 			// Aura defines slot 2 right now; if that uniquely identifies the set, show the single set.
 			if (possible.length === 1) {
 				const s = possible[0];
-				let out = `<small>Ability Set:</small><br />`;
-				for (const id of s) {
-					out += `<span class="ability-line">${boldIfRevealed(id)}</span><br />`;
-				}
-				if (status === 'aura' && cur2Name && base2Name && base2Name !== cur2Name) {
-					out += `<span class="ability-line"><small>${esc(cur2Name)} currently replaces ${esc(base2Name)}</small></span><br />`;
-				}
+				let out = `<span class="abilityset-title set-known">Ability Set:</span><br />`;
+				for (const id of s) { out += `<span class="ability-line">${boldIfRevealed(id)}</span><br />`; }
+				if (status === 'aura' && cur2Name && base2Name && base2Name !== cur2Name) { out += `<span class="ability-line"><small>${esc(cur2Name)} currently replaces ${esc(base2Name)}</small></span><br />`; }
 				return out;
 			}
-
 			if (possible.length && !hidePossible) {
 				let out = `<small>Possible ability sets:</small><br />`;
 				for (let s = 0; s < possible.length; s++) {
 					const setNum = s + 1;
 					const setClass = setNum === 1 ? 'set-1' : (setNum === 2 ? 'set-2' : '');
 					out += `<span class="abilityset-title ${setClass}">Set ${setNum}</span><br />`;
-					for (const id of possible[s]) {
-						out += `<span class="ability-line">${boldIfRevealed(id)}</span><br />`;
-					}
+					for (const id of possible[s]) { out += `<span class="ability-line">${boldIfRevealed(id)}</span><br />`; }
 				}
 				return out;
 			}
