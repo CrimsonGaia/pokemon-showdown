@@ -529,7 +529,7 @@ export class Pokemon {
 		if (this.weaponDurability === 0 && this.weaponRecoveryLeft > 0) { message += `|[recover]${this.weaponRecoveryLeft}`; }
 		this.battle.add('-weapon', this, message);
 	}
-	tickWeaponRecovery() {
+		tickWeaponRecovery() {
 		if (this.maxWeaponDurability <= 0) return false;
 		if (this.weaponDurability > 0) return false;
 		if (this.weaponRecoveryLeft <= 0) return false;
@@ -537,6 +537,15 @@ export class Pokemon {
 		if (this.weaponRecoveryLeft <= 0) {
 			this.weaponDurability = this.maxWeaponDurability;
 			this.weaponRecoveryLeft = 0;
+			const crownedForme: { [k: string]: [string, string] } = {
+				zacian: ['Zacian-Crowned', 'rustedsword'],
+				zamazenta: ['Zamazenta-Crowned', 'rustedshield'],
+			};
+			const target = crownedForme[this.species.id];
+			if (target && !this.item) {
+				this.setItem(target[1]);
+				this.formeChange(target[0], null, true);
+			}
 			this.sendWeaponState();
 			this.battle.add('-message', `${this.name}'s weapon recovered!`);
 			return true;
@@ -1126,13 +1135,34 @@ export class Pokemon {
 		if (!species) return false;
 		// Weapon and Guard Action are species-derived, so a forme change needs to check the new form
 		// Transform intentionally does NOT do this — see transformInto 
-		const newMaxWeaponDurability = species.weapondurability || 0;
+		// If the new forme doesn't define its own weapon stats, keep the current ones instead of hard-zeroing them
+		// e.g. reverting zama crowned -> base on weapon break shouldn't erase max durability, or recovery can never finish.
+		const newMaxWeaponDurability = species.weapondurability || this.maxWeaponDurability;
 		if (newMaxWeaponDurability !== this.maxWeaponDurability) {
+			// Scale current durability proportionally rather than resetting, so a partially broken weapon
+			// transferring between formes with different maxes keeps the same relative durability
+			this.weaponDurability = this.maxWeaponDurability > 0 ?
+				Math.round(this.weaponDurability * newMaxWeaponDurability / this.maxWeaponDurability) :
+				newMaxWeaponDurability;
 			this.maxWeaponDurability = newMaxWeaponDurability;
-			this.weaponDurability = Math.min(this.weaponDurability, newMaxWeaponDurability);
 			this.sendWeaponState();
 		}
-		this.weaponRecovery = species.weaponrecovery || 0;
+		this.weaponRecovery = species.weaponrecovery || this.weaponRecovery;
+		// Zacian/Zamazenta swap Iron Head <-> Behemoth Blade/Bash as they enter or leave their Crowned forme.
+		if (species.baseSpecies === 'Zacian' || species.baseSpecies === 'Zamazenta') {
+			const weaponMoveOf: { [k: string]: ID } = { 'Zacian-Crowned': 'behemothblade' as ID, 'Zamazenta-Crowned': 'behemothbash' as ID };
+			const targetMoveId = weaponMoveOf[species.name] || ('ironhead' as ID);
+			const weaponMoveIds: ID[] = ['behemothblade' as ID, 'behemothbash' as ID, 'ironhead' as ID];
+			const weaponSlot = this.baseMoveSlots.findIndex(slot => weaponMoveIds.includes(slot.id));
+			if (weaponSlot >= 0 && this.baseMoveSlots[weaponSlot].id !== targetMoveId) {
+				const newMove = this.battle.dex.moves.get(targetMoveId);
+				this.baseMoveSlots[weaponSlot] = {
+					move: newMove.name, id: newMove.id, pp: newMove.pp, maxpp: newMove.pp,
+					target: newMove.target, disabled: false, disabledSource: '', used: false,
+				};
+				this.moveSlots = this.baseMoveSlots.slice();
+			}
+		}
 		const guardActionPool = (species.guardAction || []).map(toID);
 		if (guardActionPool.length) { if (!guardActionPool.includes(this.guardAction)) { this.guardAction = guardActionPool[0]; } } 
 		else { this.guardAction = '' as ID; }
@@ -1146,12 +1176,13 @@ export class Pokemon {
 			this.battle.add('detailschange', this, details);
 			this.updateMaxHp();
 			if (!source) { this.formeRegression = true; } // Tera forme text goes here
-			else if (source.effectType === 'Item') {
+			else if (source.effectType === 'Item' && species.requiredItem) {
 				this.canTerastallize = null; // National Dex behavior
 				this.battle.add('-mega', this, apparentSpecies, species.requiredItem);
 				this.moveThisTurnResult = true; // Mega Evolution counts as an action for Truant
 				this.formeRegression = true;
 			} else if (source.effectType === 'Status') { this.battle.add('-formechange', this, species.name, message); }
+			else if (source.effectType === 'Item') { this.battle.add('-formechange', this, species.name, message, `[from] item: ${source.name}`); }
 		} else {
 			if (source?.effectType === 'Ability') { this.battle.add('-formechange', this, species.name, message, `[from] ability: ${source.name}`); } 
 			else { this.battle.add('-formechange', this, this.illusion ? this.illusion.species.name : species.name, message); }
@@ -1589,7 +1620,7 @@ export class Pokemon {
 	getNature() { return this.battle.dex.natures.get(this.set.nature); }
 	addVolatile(
 		status: string | Condition, source: Pokemon | null = null, sourceEffect: Effect | null = null,
-		linkedStatus: string | Condition | null = null
+		linkedStatus: string | Condition | null = null, ignoreImmunities = false
 	): boolean | any {
 		let result;
 		status = this.battle.dex.conditions.get(status);
@@ -1609,7 +1640,7 @@ export class Pokemon {
 			if (!status.onRestart) return false;
 			return this.battle.singleEvent('Restart', status, this.volatiles[status.id], this, source, sourceEffect);
 		}
-		if (!this.runStatusImmunity(status.id)) {
+		if (!ignoreImmunities && !this.runStatusImmunity(status.id)) {
 			this.battle.debug('immune to volatile status');
 			if ((sourceEffect as Move)?.status) { this.battle.add('-immune', this); }
 			return false;
@@ -1721,23 +1752,40 @@ export class Pokemon {
 		return types;
 	}
 	isGrounded(negateImmunity = false): boolean | null {
+		if (!this.battle.suppressingAbility(this)) {
+			// these abilities are immune to grounding effects
+			const groundingImmunity = this.hasAbility('antigravitysystem') ? 'antigravitysystem' :
+				this.hasAbility('cargoflier') && !('roost' in this.volatiles) ? 'cargoflier' :
+				this.hasAbility('icestilts') ? 'icestilts' :
+				this.hasAbility('lunamancy') ? 'lunamancy' : '';
+			if (groundingImmunity) {
+				this.battle.add('-activate', this, `ability: ${this.battle.dex.abilities.get(groundingImmunity).name}`);
+				return false;
+			}
+			// Lunamancy forces opposing Pokemon to the ground under sun/eclipse
+			if (this.foes().some(pokemon => pokemon.hp && pokemon.hasAbility('lunamancy') && !this.battle.suppressingAbility(pokemon)) && this.battle.field.isWeather(['sunnyday', 'desolateland', 'eclipse'])) { return true; }
+			// Lunamancy protects an ally that is naturally airborne
+			if (this.side.pokemon.some(pokemon => pokemon !== this && pokemon.hp && pokemon.hasAbility('lunamancy') && !this.battle.suppressingAbility(pokemon))) { 
+				if ( 
+					this.hasType('Flying') || this.hasAbility('levitate') || this.hasAbility('eelevate') || this.hasAbility('aerodynamic') ||
+					'magnetrise' in this.volatiles || 'telekinesis' in this.volatiles || 'discombobulated' in this.volatiles || (!this.ignoringItem() && this.item === 'airballoon')
+				) { return false; }
+			}
+		}
 		let result: boolean | null = true;
-		if ('gravity' in this.battle.field.pseudoWeather) { result = true; } 
-		else if ('ingrain' in this.volatiles) { result = true; } 
-		else if ('smackdown' in this.volatiles) { result = true; } 
+		if ('gravity' in this.battle.field.pseudoWeather) { result = true; }
+		else if ('ingrain' in this.volatiles) { result = true; }
+		else if ('smackdown' in this.volatiles) { result = true; }
 		else {
 			const item = (this.ignoringItem() ? '' : this.item);
-			if (item === 'ironball') { result = true; } 
-			// If a Fire/Flying type uses Burn Up and Roost, it becomes ???/Flying-type, but it's still grounded.
-			else if (!negateImmunity && this.hasType('Flying') && !(this.hasType('???') && 'roost' in this.volatiles)) { result = false; } 
-			else if (this.hasAbility('levitate') && !this.battle.suppressingAbility(this)) { result = null; } 
-			else if (this.hasAbility('eelevate') && !this.battle.suppressingAbility(this)) { result = null; } 
-			else if (this.hasAbility('icestilts') && !this.battle.suppressingAbility(this)) { result = null; } 
-			else if (this.hasAbility('aerodynamic') && !this.battle.suppressingAbility(this)) { result = null; } 
-			else if (this.hasAbility('cargoflier') && !this.battle.suppressingAbility(this)) { result = null; } 
-			else if (this.hasType('bug') && (this.effectiveWeather('turbulentwinds') || this.effectiveWeather('deltastream'))) { result = false; } 
-			else if ('magnetrise' in this.volatiles) { result = false; } 
-			else if ('telekinesis' in this.volatiles) { result = false; } 
+			if (item === 'ironball') { result = true; }
+			else if (!negateImmunity && this.hasType('Flying') && !(this.hasType('???') && 'roost' in this.volatiles)) { result = false; }
+			else if (this.hasAbility('levitate') && !this.battle.suppressingAbility(this)) { result = null; }
+			else if (this.hasAbility('eelevate') && !this.battle.suppressingAbility(this)) { result = null; }
+			else if (this.hasAbility('aerodynamic') && !this.battle.suppressingAbility(this)) { result = null; }
+			else if (this.hasType('bug') && (this.effectiveWeather('turbulentwinds') || this.effectiveWeather('deltastream'))) { result = false; }
+			else if ('magnetrise' in this.volatiles) { result = false; }
+			else if ('telekinesis' in this.volatiles) { result = false; }
 			else if (item === 'airballoon') { result = false; }
 		}
 		return result;

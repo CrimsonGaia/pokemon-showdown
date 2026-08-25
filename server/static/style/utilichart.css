@@ -145,9 +145,8 @@
 }
 .utilichart .numcol {
 	width: 24px;
-	padding-right: 5px;
 	text-align: right;
-	color: #999999;
+	color: #434343;
 	padding-top: 8px;
 	font-size: 8pt;
 	white-space: nowrap;
@@ -184,7 +183,23 @@
 	text-align: center;
 	width: 104px;
 }
-
+.utilichart .guardactionlabelcol {
+	margin-left: -5px;
+}
+.utilichart .guardactioncol {
+	padding-top: 8px;
+	height: 21px;
+	font-size: 8pt;
+	width: 60px;
+	text-align: center;
+}
+.utilichart .twoguardactioncol {
+	padding-top: 1px;
+	height: 28px;
+	font-size: 8pt;
+	width: 60px;
+	text-align: center;
+}
 .utilichart .flaglabelcol em,
 .utilichart .labelcol em,
 .utilichart .widelabelcol em,
@@ -554,6 +569,10 @@
 	color: #AA2222;
 	border-radius: 4px;
 }
+.utilichart .filtercol {
+	padding-left: 4px;
+
+}
 .utilichart .filtercol em {
 	padding: 2px 4px;
 	height: auto;
@@ -742,5 +761,5 @@
 	width: 25px;
 }
 .utilichart .guardactionsortcol {
-	width: 90px;
+	width: 120px;
 }

@@ -143,8 +143,8 @@ export class BattleScene implements BattleSceneStub {
 		this.$frame.append(this.$battleteambar);
 		this.$frame.append(this.$battle);
 		this.$bg = $('<div class="backdrop" style="background-image:url(' + Dex.resourcePrefix + this.backdropImage + ');display:block;opacity:0.8"></div>');
-		this.$terrain = $('<div class="weather"></div>');
-		this.$weather = $('<div class="weather"></div>');
+		this.$terrain = $('<div class="weather terrainbox"></div>');
+		this.$weather = $('<div class="weather weatherbox"></div>');
 		this.$bgEffect = $('<div></div>');
 		this.$sprite = $('<div></div>');
 		this.$sprites = [$('<div></div>'), $('<div></div>')];
@@ -784,15 +784,11 @@ export class BattleScene implements BattleSceneStub {
 				   eclipse: 'Eclipse',
 			};
 			weatherhtml = `${weatherNameTable[this.battle.weather] || this.battle.weather}`;
-			if (this.battle.weatherMinTimeLeft !== 0) { weatherhtml += ` <small>(${this.battle.weatherMinTimeLeft} or ${this.battle.weatherTimeLeft} turns)</small>`; } 
-			else if (this.battle.weatherTimeLeft !== 0) { weatherhtml += ` <small>(${this.battle.weatherTimeLeft} turn${this.battle.weatherTimeLeft === 1 ? '' : 's'})</small>`; }
+			if (this.battle.weatherTimeLeft !== 0) { weatherhtml += ` <small>(${this.battle.weatherTimeLeft} turn${this.battle.weatherTimeLeft === 1 ? '' : 's'})</small>`; }
 			const nullifyWeather = this.battle.abilityActive(['Air Lock', 'Cloud Nine']);
 			weatherhtml = `${nullifyWeather ? '<s>' : ''}${weatherhtml}${nullifyWeather ? '</s>' : ''}`;
 		}
-		for (const pseudoWeather of this.battle.pseudoWeather) {
-			if (toID(pseudoWeather[0]).endsWith('terrain')) continue;
-			weatherhtml += this.pseudoWeatherLeft(pseudoWeather);
-		}
+		for (const pseudoWeather of this.battle.pseudoWeather) { weatherhtml += this.pseudoWeatherLeft(pseudoWeather); }
 		return weatherhtml;
 	}
 	sideConditionsLeft(side: Side, all?: boolean) {
@@ -804,22 +800,15 @@ export class BattleScene implements BattleSceneStub {
 		const isIntense = ['desolateland', 'primordialsea', 'deltastream', 'eclipse'].includes(this.curWeather);
 		this.$weather.animate({ opacity: 1.0, }, 300)
 		.animate({ opacity: isIntense ? 0.9 : 0.5, }, 300);
+		this.updateWeather();
 	}
 	updateWeather(instant?: boolean) {
 		if (!this.animating) return;
 		let isIntense = false;
 		let weather = this.battle.weather;
 		if (this.battle.abilityActive(['Air Lock', 'Cloud Nine'])) { weather = '' as ID; }
-		let terrain = '' as ID;
-		let terrainTurns = 0;
-		let terrainMaxTurns = 0;
-		for (const pseudoWeatherData of this.battle.pseudoWeather) {
-			const pwID = toID(pseudoWeatherData[0]);
-			if (!pwID.endsWith('terrain')) continue;
-			terrain = pwID;
-			terrainTurns = pseudoWeatherData[1];
-			terrainMaxTurns = pseudoWeatherData[2];
-		}
+		let terrain = this.battle.terrain;
+		let terrainTurns = this.battle.terrainTimeLeft;
 		if (weather === 'desolateland' || weather === 'primordialsea' || weather === 'deltastream' || weather === 'eclipse') { isIntense = true; }
 		let weatherhtml = this.weatherLeft();
 		for (const side of this.battle.sides) { weatherhtml += this.sideConditionsLeft(side); }
@@ -835,17 +824,16 @@ export class BattleScene implements BattleSceneStub {
 		let terrainhtml = '';
 		if (terrain) {
 			terrainhtml = `${terrainNameTable[terrain] || terrain}`;
-			if (terrainMaxTurns) { terrainhtml += ` <small>(${terrainTurns} or ${terrainMaxTurns} turns)</small>`; } 
-			else if (terrainTurns) { terrainhtml += ` <small>(${terrainTurns} turn${terrainTurns === 1 ? '' : 's'})</small>`; }
+			if (terrainTurns) { terrainhtml += ` <small>(${terrainTurns} turn${terrainTurns === 1 ? '' : 's'})</small>`; }
 		}
 		if (terrainhtml) terrainhtml = `<br />` + terrainhtml;
 		if (instant) {
 			this.$weather.html('<em>' + weatherhtml + '</em>');
 			this.$terrain.html('<em>' + terrainhtml + '</em>');
 			if (this.curWeather === weather && this.curTerrain === terrain) return;
-			this.$terrain.attr('class', terrain ? 'weather ' + terrain + 'weather' : 'weather');
+			this.$terrain.attr('class', terrain ? 'weather terrainbox ' + terrain + 'weather' : 'weather terrainbox');
 			this.curTerrain = terrain;
-			this.$weather.attr('class', weather ? 'weather ' + weather + 'weather' : 'weather');
+			this.$weather.attr('class', weather ? 'weather weatherbox ' + weather + 'weather' : 'weather weatherbox');
 			this.$weather.css('opacity', isIntense || !weather ? 0.9 : 0.5);
 			this.curWeather = weather;
 			return;
@@ -853,14 +841,14 @@ export class BattleScene implements BattleSceneStub {
 		if (weather !== this.curWeather) {
 			this.$weather.animate({ opacity: 0, }, 
 			this.curWeather ? 300 : 100, () => {
-				this.$weather.html('<em>' + weatherhtml + '</em>');
-				this.$weather.attr('class', weather ? 'weather ' + weather + 'weather' : 'weather');
-				this.$weather.animate({ opacity: isIntense || !weather ? 0.9 : 0.5 }, 300);
+			this.$weather.html('<em>' + weatherhtml + '</em>');
+			this.$weather.attr('class', weather ? 'weather weatherbox ' + weather + 'weather' : 'weather weatherbox');
+			this.$weather.animate({ opacity: isIntense || !weather ? 0.9 : 0.5 }, 300);
 			});
 			this.curWeather = weather;
 		} else { this.$weather.html('<em>' + weatherhtml + '</em>'); }
 		if (terrain !== this.curTerrain) { this.$terrain.animate({ top: 360, opacity: 0, }, this.curTerrain ? 400 : 1, () => {
-				this.$terrain.attr('class', terrain ? 'weather ' + terrain + 'weather' : 'weather');
+				this.$terrain.attr('class', terrain ? 'weather terrainbox ' + terrain + 'weather' : 'weather terrainbox');
 				this.$terrain.html('<em>' + terrainhtml + '</em>');
 				this.$terrain.animate({ top: 0, opacity: 1 }, 400);
 			});
@@ -1400,8 +1388,10 @@ export class PokemonSprite extends Sprite {
 		lightscreen: ['Light Screen', 'good'],
 		reflect: ['Reflect', 'good'],
 		// Indigo Starstorm
-		needles: ['Needles', 'bad'],
 		defeathered: ['Defeathered', 'bad'],
+		needles: ['Needles', 'bad'],
+		spent: ['Spent', 'bad'],
+		tripped: ['Tripped', 'bad']
 	};
 	forme = '';
 	cryurl: string | undefined = undefined;

@@ -1242,12 +1242,6 @@ export class Battle {
 		}
 		this.add('turn', this.turn);
 		if (!this.ended) {
-			for (const pokemon of this.getAllPokemon()) {
-				if (!pokemon || pokemon.fainted) continue;
-				pokemon.tickWeaponRecovery();
-			}
-		}
-		if (!this.ended) {
 			if (!this.field.getPseudoWeather('timebreak')) {
 				for (const pokemon of this.getAllPokemon()) {
 					if (!pokemon || pokemon.fainted) continue;
@@ -1279,10 +1273,11 @@ export class Battle {
 						const isBaxmegastellarY =
 							teraOnFieldMon.species.id === 'baxcaliburmegastellary' ||
 							teraOnFieldMon.species.name === 'Baxcalibur-Mega-Y-Stellar';
-						delta = -(isTerapagos ? 50 : 40); // gain : drain
-						delta = -(isGlimmmegastellar ? 25 : 30); 
-						delta = -(isBaxmegastellarQ ? 25 : 30); 
-						delta = -(isBaxmegastellarY ? 50 : 30); 
+						if (isTerapagos) { delta = -50; }
+						else if (isGlimmmegastellar) { delta = -25; }
+						else if (isBaxmegastellarQ) { delta = -25; }
+						else if (isBaxmegastellarY) { delta = -50; }
+						else { delta = -40; }
 					} else { delta = hasAnyTera ? 10 : 25; } 
 					let next = Number(s.teraCharge) + delta;
 					if (next < 0) next = 0;
@@ -1497,7 +1492,7 @@ export class Battle {
 			if (boostBy) {
 				success = true;
 				switch (effect?.id) {
-				case 'bellydrum': case 'angerpoint':
+				case 'bellydrum':
 					this.add('-setboost', target, 'atk', target.boosts['atk'], '[from] ' + effect.fullname);
 					break;
 				case 'zpower':
@@ -1853,9 +1848,8 @@ export class Battle {
 	getTarget(pokemon: Pokemon, move: string | Move, targetLoc: number, originalTarget?: Pokemon) {
 		move = this.dex.moves.get(move);
 		let tracksTarget = move.tracksTarget;
-		// Stalwart sets trackTarget in ModifyMove, but ModifyMove happens after getTarget, so we need to manually check for Stalwart here
-		if (pokemon.hasAbility(['stalwart', 'propellertail'])) tracksTarget = true;
-		if (tracksTarget && originalTarget?.isActive) { return originalTarget; } // smart-tracking move's original target is on the field: target it
+		if (pokemon.hasAbility(['stalwart', 'propellertail', 'aromaveil'])) { tracksTarget = true; }
+		if (tracksTarget && originalTarget?.isActive) { return originalTarget; } 
 		// banning Dragon Darts from directly targeting itself is done in side.ts, but Dragon Darts can target itself if Ally Switch is used afterwards
 		if (move.smartTarget) {
 			const curTarget = pokemon.getAtLoc(targetLoc);
@@ -1929,8 +1923,7 @@ export class Battle {
 			faintData = this.faintQueue.shift()!;
 			const pokemon: Pokemon = faintData.target;
 			if (!pokemon.fainted && this.runEvent('BeforeFaint', pokemon, faintData.source, faintData.effect)) {
-				this.add('faint', pokemon);
-				if (!pokemon.isActive) {  this.add('message', `${pokemon.name} was killed by ${pokemon.side.name}!`); } 
+				if (!pokemon.isActive) { this.add('message', `${pokemon.name} was killed by ${pokemon.side.name}!`); } 
 				else { this.add('faint', pokemon); }
 				if (pokemon.side.pokemonLeft) pokemon.side.pokemonLeft--;
 				if (pokemon.side.totalFainted < 100) pokemon.side.totalFainted++;
@@ -2035,6 +2028,12 @@ export class Battle {
 				if (!species) continue;
 				pokemon.baseSpecies = rawSpecies;
 				pokemon.details = pokemon.getUpdatedDetails();
+				pokemon.maxWeaponDurability = species.weapondurability || 0;
+				pokemon.weaponDurability = pokemon.maxWeaponDurability;
+				pokemon.weaponRecovery = species.weaponrecovery || 0;
+				const guardActionPool = (species.guardAction || []).map(toID);
+				if (guardActionPool.length) { if (!guardActionPool.includes(pokemon.guardAction)) { pokemon.guardAction = guardActionPool[0]; } } 
+				else { pokemon.guardAction = '' as ID; }
 				pokemon.setAbility(species.abilities['0'], null, null, true, false, 1);
 				if (species.abilities['1']) { pokemon.setAbility(species.abilities['1'], null, null, true, false, 2); }
 				pokemon.baseAbility1 = pokemon.ability1;

@@ -15,9 +15,7 @@
  * @author Guangcong Luo <guangcongluo@gmail.com>
  * @license MIT
  */
-
 /* eslint-disable */
-
 // MD5 minified
 function MD5(f){function i(b,c){var d,e,f,g,h;f=b&2147483648;g=c&2147483648;d=b&1073741824;e=c&1073741824;h=(b&1073741823)+(c&1073741823);return d&e?h^2147483648^f^g:d|e?h&1073741824?h^3221225472^f^g:h^1073741824^f^g:h^f^g}function j(b,c,d,e,f,g,h){b=i(b,i(i(c&d|~c&e,f),h));return i(b<<g|b>>>32-g,c)}function k(b,c,d,e,f,g,h){b=i(b,i(i(c&e|d&~e,f),h));return i(b<<g|b>>>32-g,c)}function l(b,c,e,d,f,g,h){b=i(b,i(i(c^e^d,f),h));return i(b<<g|b>>>32-g,c)}function m(b,c,e,d,f,g,h){b=i(b,i(i(e^(c|~d),
 f),h));return i(b<<g|b>>>32-g,c)}function n(b){var c="",e="",d;for(d=0;d<=3;d++)e=b>>>d*8&255,e="0"+e.toString(16),c+=e.substr(e.length-2,2);return c}var g=[],o,p,q,r,b,c,d,e,f=function(b){for(var b=b.replace(/\r\n/g,"\n"),c="",e=0;e<b.length;e++){var d=b.charCodeAt(e);d<128?c+=String.fromCharCode(d):(d>127&&d<2048?c+=String.fromCharCode(d>>6|192):(c+=String.fromCharCode(d>>12|224),c+=String.fromCharCode(d>>6&63|128)),c+=String.fromCharCode(d&63|128))}return c}(f),g=function(b){var c,d=b.length;c=
@@ -31,10 +29,8 @@ b=m(b,c,d,e,g[f+12],6,1700485571),e=m(e,b,c,d,g[f+3],10,2399980690),d=m(d,e,b,c,
 function formatText(input, isTrusted) {
 	if (input == null) return '';
 	let str = String(input);
-
 	// If trusted, allow HTML through (server-controlled / already-sanitized paths)
 	if (isTrusted) return str;
-
 	// Escape HTML
 	str = str
 		.replace(/&/g, '&amp;')
@@ -42,14 +38,9 @@ function formatText(input, isTrusted) {
 		.replace(/>/g, '&gt;')
 		.replace(/"/g, '&quot;')
 		.replace(/'/g, '&#039;');
-
 	// Linkify URLs
-	str = str.replace(/\bhttps?:\/\/[^\s<>"']+/g, (url) => {
-		return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-	});
-
+	str = str.replace(/\bhttps?:\/\/[^\s<>"']+/g, (url) => { return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`; });
 	// Preserve newlines (popups often use them)
 	str = str.replace(/\n/g, '<br />');
-
 	return str;
 }

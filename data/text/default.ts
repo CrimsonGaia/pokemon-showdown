@@ -128,7 +128,7 @@ export const DefaultText: { [id: IDEntry]: DefaultText } = {
 		hitCountSingular: "  The Pok\u00E9mon was hit 1 time!",
 	},
 
-	// stats
+	// region stats
 	hp: {
 		statName: "HP",
 		statShortName: "HP",
@@ -163,11 +163,15 @@ export const DefaultText: { [id: IDEntry]: DefaultText } = {
 		statName: "Special",
 		statShortName: "Spc",
 	},
+	crit: {
+		statName: "Crit Ratio",
+		statShortName: "Crit",
+	},
 	stats: {
 		statName: "stats",
 	},
 
-	// statuses
+	// region statuses
 	brn: {
 		start: "  [POKEMON] was burned!",
 		startFromItem: "  [POKEMON] was burned by the [ITEM]!",
@@ -263,7 +267,7 @@ export const DefaultText: { [id: IDEntry]: DefaultText } = {
 		fail: "  [POKEMON] shook its head. It seems like it can't use this move...",
 	},
 
-	// weather
+	// region weather
 	sandstorm: {
 		weatherName: "Sandstorm",
 		start: "  A sandstorm kicked up!",
@@ -340,7 +344,7 @@ export const DefaultText: { [id: IDEntry]: DefaultText } = {
 		block: "  [POKEMON] is protected by the Psychic Terrain!",
 	},
 
-	// field effects
+	// region field effects
 	gravity: {
 		start: "  Gravity intensified!",
 		end: "  Gravity returned to normal!",

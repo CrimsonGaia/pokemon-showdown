@@ -497,6 +497,7 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 			this.add('cant', pokemon, 'tripped');
 			return false;
 		},
+		onEnd(target) { this.add('-end', target, 'tripped', '[silent]'); },
 	},
 	magicdust: { // also changes ghost type contact resist to weakness, implemented in scripts.ts
 			name: 'Magic Dust',
@@ -1408,8 +1409,8 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 			}
 		},
 		onFieldStart(field, source, effect) {
-			if (effect?.effectType === 'Ability') { this.add('-fieldstart', 'terrain: Electric Terrain', '[from] ability: ' + effect.name, `[of] ${source}`); } 
-			else { this.add('-fieldstart', 'terrain: Electric Terrain'); }
+			if (effect?.effectType === 'Ability') { this.add('-terrain', 'Electric Terrain', '[from] ability: ' + effect.name, `[of] ${source}`, '[duration] ' + this.field.terrainState.duration); } 
+			else { this.add('-terrain', 'Electric Terrain', '[duration] ' + this.field.terrainState.duration); }
 			for (const pokemon of this.getAllActive()) {
 				if (pokemon.hasType('Steel')) {
 					pokemon.addVolatile('electricterrainairborne');
@@ -1419,6 +1420,7 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 		},
 		onFieldResidualOrder: 27,
 		onFieldResidualSubOrder: 7,
+		onFieldResidual() { this.add('-terrain', 'Electric Terrain', '[upkeep]'); },
 		onFieldEnd() {
 			for (const pokemon of this.getAllActive()) {
 				if (pokemon.volatiles['electricterrainairborne']) {
@@ -1426,7 +1428,7 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 					this.add('-message', `${pokemon.name} fell to the ground.`);
 				}
 			}
-			this.add('-fieldend', 'terrain: Electric Terrain');
+			this.add('-terrain', 'none');
 		},
 	},
 	grassyterrain: {
@@ -1450,12 +1452,13 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 			}
 		},
 		onFieldStart(field, source, effect) {
-			if (effect?.effectType === 'Ability') { this.add('-fieldstart', 'terrain: Grassy Terrain', '[from] ability: ' + effect.name, `[of] ${source}`); } 
-			else { this.add('-fieldstart', 'terrain: Grassy Terrain'); }
+			if (effect?.effectType === 'Ability') { this.add('-terrain', 'Grassy Terrain', '[from] ability: ' + effect.name, `[of] ${source}`, '[duration] ' + this.field.terrainState.duration); } 
+			else { this.add('-terrain', 'Grassy Terrain', '[duration] ' + this.field.terrainState.duration); }
 		},
 		onFieldResidualOrder: 27,
 		onFieldResidualSubOrder: 7,
 		onFieldResidual() {
+			this.add('-terrain', 'Grassy Terrain', '[upkeep]');
 			for (const pokemon of this.getAllActive()) {
 				if (pokemon.isGrounded() && !pokemon.isSemiInvulnerable()) {
 					if ((pokemon.hasType('Steel') && !pokemon.hasType('Grass')) || (pokemon.hasType('Ghost') && !pokemon.hasType('Grass'))) { this.debug('Steel and Ghost type don\'t receive Grassy Terrain healing'); } 
@@ -1468,7 +1471,7 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 				else { this.debug(`Pokemon semi-invuln or not grounded; Grassy Terrain skipped`); }
 			}
 		},
-		onFieldEnd() { this.add('-fieldend', 'terrain: Grassy Terrain'); },
+		onFieldEnd() { this.add('-terrain', 'none'); },
 	},
 	mistyterrain: {
 		name: "Misty Terrain",
@@ -1516,12 +1519,13 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 			}
 		},
 		onFieldStart(field, source, effect) {
-			if (effect?.effectType === 'Ability') { this.add('-fieldstart', 'terrain: Misty Terrain', '[from] ability: ' + effect.name, `[of] ${source}`); } 
-			else { this.add('-fieldstart', 'terrain: Misty Terrain'); }
+			if (effect?.effectType === 'Ability') { this.add('-terrain', 'Misty Terrain', '[from] ability: ' + effect.name, `[of] ${source}`, '[duration] ' + this.field.terrainState.duration); } 
+			else { this.add('-terrain', 'Misty Terrain', '[duration] ' + this.field.terrainState.duration); }
 		},
 		onFieldResidualOrder: 27,
 		onFieldResidualSubOrder: 7,
-		onFieldEnd() { this.add('-fieldend', 'Misty Terrain'); },
+		onFieldResidual() { this.add('-terrain', 'Misty Terrain', '[upkeep]'); },
+		onFieldEnd() { this.add('-terrain', 'none'); },
 	},
 	psychicterrain: {
 		name: "Psychic Terrain",
@@ -1553,31 +1557,32 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 			if (baseMove.priority > 0 && source && source.hasType && source.hasType('Normal')) { return; }
 			this.add('-activate', target, 'terrain: Psychic Terrain');
 				return null;
-			},
-			onBasePowerPriority: 6,
-			onBasePower(basePower, attacker, defender, move) {
-				// If boostedpsyparticle is true, fliers are affected as if grounded
-				const isAffected = this.boostedpsyparticle ? true : attacker.isGrounded();
-				if (move.type === 'Psychic' && isAffected && !attacker.isSemiInvulnerable()) {
-					this.debug('psychic terrain boost');
-					return this.chainModify([5325, 4096]);
-				}
-				if (move.flags && move.flags.pulse && isAffected && !attacker.isSemiInvulnerable()) {
-					this.debug('psychic terrain pulse boost');
-					return this.chainModify(1.3);
-				}
-			},
-			onFieldStart(field, source, effect) {
-				if (effect?.effectType === 'Ability') { this.add('-fieldstart', 'terrain: Psychic Terrain', '[from] ability: ' + effect.name, `[of] ${source}`); } 
-				else { this.add('-fieldstart', 'terrain: Psychic Terrain'); }
-			},
-			onFieldResidualOrder: 27,
-			onFieldResidualSubOrder: 7,
-			onFieldEnd() {
-				this.add('-fieldend', 'terrain: Psychic Terrain');
-				// Reset boostedpsyparticle when terrain ends
-				this.boostedpsyparticle = false;
-			},
+		},
+		onBasePowerPriority: 6,
+		onBasePower(basePower, attacker, defender, move) {
+			// If boostedpsyparticle is true, fliers are affected as if grounded
+			const isAffected = this.boostedpsyparticle ? true : attacker.isGrounded();
+			if (move.type === 'Psychic' && isAffected && !attacker.isSemiInvulnerable()) {
+				this.debug('psychic terrain boost');
+				return this.chainModify([5325, 4096]);
+			}
+			if (move.flags && move.flags.pulse && isAffected && !attacker.isSemiInvulnerable()) {
+				this.debug('psychic terrain pulse boost');
+				return this.chainModify(1.3);
+			}
+		},
+		onFieldStart(field, source, effect) {
+			if (effect?.effectType === 'Ability') { this.add('-terrain', 'Psychic Terrain', '[from] ability: ' + effect.name, `[of] ${source}`, '[duration] ' + this.field.terrainState.duration); } 
+			else { this.add('-terrain', 'Psychic Terrain', '[duration] ' + this.field.terrainState.duration); }
+		},
+		onFieldResidualOrder: 27,
+		onFieldResidualSubOrder: 7,
+		onFieldResidual() { this.add('-terrain', 'Psychic Terrain', '[upkeep]'); },
+		onFieldEnd() {
+			this.add('-terrain', 'none');
+			// Reset boostedpsyparticle when terrain ends
+			this.boostedpsyparticle = false;
+		},
 	},
 	toxicterrain: {
 		name: "Toxic Terrain",
@@ -1590,14 +1595,15 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 		onModifySpDPriority: 10,
 		onModifySpD(spd, pokemon) { if (pokemon.hasType('Steel')) { return this.modify(spd, 0.7); } },
 		onFieldStart(field, source, effect) {
-			if (effect?.effectType === 'Ability') { this.add('-fieldstart', 'terrain: Toxic Terrain', '[from] ability: ' + effect.name, `[of] ${source}`); } 
-			else { this.add('-fieldstart', 'terrain: Toxic Terrain'); }
+			if (effect?.effectType === 'Ability') { this.add('-terrain', 'Toxic Terrain', '[from] ability: ' + effect.name, `[of] ${source}`, '[duration] ' + this.field.terrainState.duration); } 
+			else { this.add('-terrain', 'Toxic Terrain', '[duration] ' + this.field.terrainState.duration); }
 			for (const pokemon of this.getAllActive()) { if ((pokemon as any).toxicTerrainCounter === undefined) { (pokemon as any).toxicTerrainCounter = 0; } }
 		},
 		onSwitchIn(pokemon) { if ((pokemon as any).toxicTerrainCounter === undefined) { (pokemon as any).toxicTerrainCounter = 0; } },
 		onFieldResidualOrder: 27,
 		onFieldResidualSubOrder: 7,
 		onFieldResidual() {
+			this.add('-terrain', 'Toxic Terrain', '[upkeep]');
 			for (const pokemon of this.getAllActive()) {
 				if (!pokemon.isGrounded() || pokemon.isSemiInvulnerable()) continue;
 				if (pokemon.hasType('Poison') || pokemon.hasType('Steel')) continue;
@@ -1627,7 +1633,7 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 				if ((pokemon as any).toxicTerrainCounter >= threshold) { if (pokemon.trySetStatus('tox')) { (pokemon as any).toxicTerrainCounter = 0; } }
 			}
 		},
-		onFieldEnd() { this.add('-fieldend', 'terrain: Toxic Terrain'); },
+		onFieldEnd() { this.add('-terrain', 'none'); },
 	},
 	//#region Other Field Effects
 	gravity: {
@@ -1771,17 +1777,17 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 		onFieldResidualSubOrder: 8,
 		onFieldResidual() {
 			for (const pokemon of this.getAllActive()) {
-				if (!pokemon?.hp || pokemon.fainted) continue;
+				if (!pokemon?.hp || pokemon.fainted || !pokemon.isGrounded()) continue;
 				if (pokemon.hasType('Fire')) continue;
 				const types = pokemon.getTypes();
 				let typeMod = 0;
 				for (const type of types) { typeMod += this.dex.getEffectiveness('Fire', type); }
 				let divisor = 16; // neutral by default
-				if (typeMod >= 2) divisor = 6;      // 4x weak
-				else if (typeMod === 1) divisor = 10; // 2x weak
-				else if (typeMod === 0) divisor = 16; // neutral
-				else if (typeMod === -1) divisor = 24; // resist
-				else divisor = 32; // 4x resist or better
+				if (typeMod >= 2) divisor = 6; // 4x weak
+				else if (typeMod === 1) divisor = 8; // 2x weak
+				else if (typeMod === 0) divisor = 12; // neutral
+				else if (typeMod === -1) divisor = 16; // resist
+				else divisor = 24; // 4x resist or better
 				this.damage(pokemon.baseMaxhp / divisor, pokemon);
 			}
 		},
@@ -1823,7 +1829,7 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 		onFieldResidual() {
 			for (const pokemon of this.getAllActive()) {
 				if (!pokemon?.hp || pokemon.fainted) continue;
-				if (pokemon.hasType('Dragon') || pokemon.hasType('Fairy')) continue;
+				if (pokemon.hasType('Dragon') || pokemon.hasType('Fairy') || !pokemon.isGrounded()) continue;
 				const types = pokemon.getTypes();
 				let typeMod = 0;
 				for (const type of types) { typeMod += this.dex.getEffectiveness('Dragon', type); }

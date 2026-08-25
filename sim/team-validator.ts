@@ -237,7 +237,7 @@ export class TeamValidator {
 			if (problem) problems.push(problem);
 		}
 		// Guard Action validation: species pool first, then let the ability override it.
-		const guardActionPool = (species.guardAction || []).map(m => toID(m));
+		const guardActionPool = [...new Set([...(species.guardAction || []), ...(tierSpecies.guardAction || [])])].map(m => toID(m));
 		const abilityForcedGuardAction = (ability as any).forcedGuardAction ? toID((ability as any).forcedGuardAction) : '';
 		const abilityBlocksGuardAction = !!(ability as any).blocksGuardAction;
 		if (abilityBlocksGuardAction) { delete set.guardAction; } 
@@ -245,8 +245,7 @@ export class TeamValidator {
 		else if (guardActionPool.length) {
 			let guardActionId = toID(set.guardAction);
 			if (!guardActionId) { guardActionId = guardActionPool[0]; }
-			if (!guardActionPool.includes(guardActionId)) { problems.push(`${name}'s Guard Action (${set.guardAction}) is not one of its available Guard Actions (${species.guardAction!.join(', ')}).`); } 
-			else {
+			if (!guardActionPool.includes(guardActionId)) { problems.push(`${name}'s Guard Action (${set.guardAction}) is not one of its available Guard Actions (${guardActionPool.join(', ')}).`); }			else {
 				const guardMove = dex.moves.get(guardActionId);
 				set.guardAction = guardMove.exists ? guardMove.name : guardActionId;
 			}

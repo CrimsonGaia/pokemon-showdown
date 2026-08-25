@@ -629,18 +629,19 @@
 		},
 		getGuardState: function (active) {
 			if (!active || active.guardAction == null) return null;
+			var maxVal = Number(active.guardAction.max);
 			return {
 				id: active.guardAction.id,
 				name: active.guardAction.name,
 				type: active.guardAction.type,
 				cur: Number(active.guardAction.cur) || 0,
-				max: Number(active.guardAction.max) || 1
+				max: Number.isFinite(maxVal) ? maxVal : 1
 			};
 		},
 		getGuardDisplay: function (rawCur, rawMax) {
 			if (!Number.isFinite(rawCur)) rawCur = 0;
-			if (!Number.isFinite(rawMax) || rawMax <= 0) rawMax = 2;
-			var pct = Math.round(rawCur / rawMax * 100);
+			if (!Number.isFinite(rawMax)) rawMax = 2;
+			var pct = rawMax <= 0 ? 100 : Math.round(rawCur / rawMax * 100);
 			if (pct < 0) pct = 0;
 			if (pct > 100) pct = 100;
 			return {cur: rawCur, max: rawMax, pct: pct};

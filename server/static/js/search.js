@@ -58,8 +58,8 @@
 		this.$el.on('click', 'button[name=openViewMode]', function (e) {
 			e.preventDefault();
 			var searchType = self.engine && self.engine.typedSearch && self.engine.typedSearch.searchType;
-			var popupClass = searchType === 'move' ? MoveViewModePopup : PokemonViewModePopup;
-			app.addPopup(popupClass, { search: self, sourceEl: $(e.currentTarget) });
+			var popupClass = searchType === 'move' ? MoveViewModePopup : (searchType === 'item' ? ItemViewModePopup : PokemonViewModePopup);
+			app.addPopup(popupClass, { search: self, sourceEl: e.currentTarget });
 		});
 	}
 	Search.prototype.refreshDisplay = function () {
@@ -221,7 +221,8 @@
 			var i = this.renderedIndex;
 			var finalIndex = i + (forceAdd ? 255 : 255);
 			if (finalIndex > resultSet.length) finalIndex = resultSet.length;
-			var buf = '';
+						var buf = '';
+			var sectionRowOpen = false;
 			while (i < finalIndex) {
 				var row = resultSet[i];
 				var errorMessage = '';
@@ -234,18 +235,35 @@
 					mStart = row[2];
 					mEnd = row[3];
 				}
+				if (isItemGrid && row[0] === 'header') {
+					if (sectionRowOpen) { buf += '</div></li>'; sectionRowOpen = false; }
+					buf += this.renderRow(row[1], row[0], mStart, mEnd, errorMessage, '');
+					// force 1-3 item sections into 1 row
+					var itemColumnCount = Dex.prefs('itemcolumns') || 4;
+					var sectionCount = 0;
+					for (var j = i + 1; j < resultSet.length && resultSet[j][0] !== 'header'; j++) sectionCount++;
+					if (sectionCount > 0 && sectionCount < itemColumnCount) {
+						buf += '<li class="result item-grid-section-wrapper"><div class="item-grid-section-row" style="--item-grid-cols:' + itemColumnCount + '">';
+						sectionRowOpen = true;
+					}
+					i++;
+					continue;
+				}
 				buf += this.renderRow(
 					row[1],
 					row[0],
 					mStart,
 					mEnd,
 					errorMessage,
-					row[1] in this.cur ? ' class="cur"' : ''
+					row[1] in this.cur ? ' class="cur"' : '',
+					sectionRowOpen
 				);
 				i++;
 			}
+			if (sectionRowOpen) buf += '</div></li>';
 			if (!this.renderedIndex) {
-				this.el.innerHTML = '<ul class="utilichart ' + (isPokemonGrid ? 'pokemon-grid-view' : 'item-grid-view') + '">' + buf + (i < resultSet.length ? '<li class="result more"><p><button class="button big">More</button></p></li>' : '') + '</ul>';
+				var itemColumnStyle = isItemGrid ? ' style="column-count:' + (Dex.prefs('itemcolumns') || 4) + '"' : '';
+				this.el.innerHTML = '<ul class="utilichart ' + (isPokemonGrid ? 'pokemon-grid-view' : 'item-grid-view') + '"' + itemColumnStyle + '>' + buf + (i < resultSet.length ? '<li class="result more"><p><button class="button big">More</button></p></li>' : '') + '</ul>';
 				this.moreVisible = i < resultSet.length;
 			} else {
 				if (this.moreVisible) {
@@ -325,7 +343,7 @@
 	};
 	// region Rendering functions
 	// These all have static versions
-	Search.prototype.renderRow = function (id, type, matchStart, matchLength, errorMessage, attrs) {
+	Search.prototype.renderRow = function (id, type, matchStart, matchLength, errorMessage, attrs, forceDiv) {
 		// errorMessage = '<span class="col illegalcol"><em>' + errorMessage + '</em></span>';
 		switch (type) {
 		case 'html':
@@ -347,7 +365,7 @@
 			return this.renderMoveRow(move, matchStart, matchLength, errorMessage, attrs);
 		case 'item':
 			var item = this.engine.dex.items.get(id);
-			return this.renderItemGridRow(item, matchStart, matchLength, errorMessage, attrs);
+			return this.renderItemGridRow(item, matchStart, matchLength, errorMessage, attrs, forceDiv);
 		case 'ability':
 			var ability = this.engine.dex.abilities.get(id);
 			return this.renderAbilityRow(ability, matchStart, matchLength, errorMessage, attrs);
@@ -392,6 +410,9 @@
 		case 'guardaction':
 			var gaMove = this.engine.dex.moves.get(id);
 			return this.renderGuardActionRow(gaMove, matchStart, matchLength, errorMessage);
+		case 'tier':
+			var tierEntry = { name: id, id: id };
+			return this.renderCategoryRow(tierEntry, matchStart, matchLength, errorMessage);
 		case 'itemclass':
 			var itemclass = {name: ITEM_CLASS_LABELS[id] || id[0].toUpperCase() + id.substr(1), id: id};
 			return this.renderItemClassRow(itemclass, matchStart, matchLength, errorMessage);
@@ -408,6 +429,7 @@
 		buf += '<button class="sortcol pnamesortcol' + (this.sortCol === 'name' ? ' cur' : '') + '" data-sort="name">Name</button>';
 		buf += '<button class="sortcol typesortcol' + (this.sortCol === 'type' ? ' cur' : '') + '" data-sort="type">Types</button>';
 		buf += '<button class="sortcol abilitysortcol' + (this.sortCol === 'ability' ? ' cur' : '') + '" data-sort="ability">Abilities</button>';
+		buf += '<button class="sortcol guardactionsortcol' + (this.sortCol === 'guardaction' ? ' cur' : '') + '" data-sort="guardaction">Guard Action</button>';
 		buf += '<button class="sortcol statsortcol' + (this.sortCol === 'hp' ? ' cur' : '') + '" data-sort="hp">HP</button>';
 		buf += '<button class="sortcol statsortcol' + (this.sortCol === 'atk' ? ' cur' : '') + '" data-sort="atk">Atk</button>';
 		buf += '<button class="sortcol statsortcol' + (this.sortCol === 'def' ? ' cur' : '') + '" data-sort="def">Def</button>';
@@ -418,7 +440,6 @@
 		else { buf += '<button class="sortcol statsortcol' + (this.sortCol === 'spa' ? ' cur' : '') + '" data-sort="spa">Spc</button>'; }
 		buf += '<button class="sortcol statsortcol' + (this.sortCol === 'spe' ? ' cur' : '') + '" data-sort="spe">Spe</button>';
 		buf += '<button class="sortcol statsortcol' + (this.sortCol === 'bst' ? ' cur' : '') + '" data-sort="bst">BST</button>';
-		buf += '<button class="sortcol guardactionsortcol' + (this.sortCol === 'guardaction' ? ' cur' : '') + '" data-sort="guardaction">Guard Action</button>';
 		buf += '<button class="sortcol" name="openViewMode" style="float: right; width: auto; padding: 0 6px; border-left: 1px solid #999;"><i class="fa fa-sliders"></i> View Mode</button>';
 		buf += '</div></li>';
 		return buf;
@@ -440,6 +461,7 @@
 	Search.prototype.renderItemSortRow = function () {
 		var buf = '<li class="result"><div class="sortrow">';
 		buf += '<span class="sortcol itemnamecol" style="cursor: default;">Class</span>';
+		buf += '<button type="button" class="sortcol" name="openViewMode" style="float: right; width: auto; padding: 0 6px; border-left: 1px solid #999;"><i class="fa fa-sliders"></i> View Mode</button>';
 		buf += '</div></li>';
 		return buf;
 	};
@@ -507,6 +529,13 @@
 			buf += '<span class="col abilitycol"></span>';
 			buf += '<span class="col abilitycol"></span>';
 		}
+		// guard action
+		var guardAction = pokemon.guardAction || [];
+		var gaNames = guardAction.map(function (id) { return this.engine.dex.moves.get(id).name; }, this);
+		if (gaNames.length > 1) { buf += '<span class="col twoguardactioncol">' + gaNames[0] + '<br />' + gaNames[1] + '</span>'; } 
+		else if (gaNames.length === 1) { buf += '<span class="col guardactioncol">' + gaNames[0] + '</span>'; } 
+		else { buf += '<span class="col guardactioncol">\u2014</span>'; }
+		buf += '<span class="col guardactioncol">' + (gaNames.length > 2 ? gaNames[2] : '') + '</span>';
 		// base stats
 		var stats = pokemon.baseStats;
 		buf += '<span class="col statcol"><em>HP</em><br />' + stats.hp + '</span> ';
@@ -524,9 +553,6 @@
 			bst += stats[i];
 		}
 		buf += '<span class="col bstcol"><em>BST<br />' + bst + '</em></span> ';
-		// guard action
-		var guardActionList = (pokemon.guardAction && pokemon.guardAction.length) ? pokemon.guardAction.map(function (id) { return this.engine.dex.moves.get(id).name; }, this).join(', ') : '\u2014';
-		buf += '<span class="col guardactioncol">' + guardActionList + '</span> ';
 		buf += '</a></li>';
 		return buf;
 	};
@@ -536,7 +562,7 @@
 		if (!pokemon) return '<li class="result pokemon-grid-card">Unrecognized pokemon</li>';
 		var id = toID(pokemon.name);
 		if (Search.urlRoot) attrs += ' href="' + Search.urlRoot + 'pokemon/' + id + '" data-target="push"';
-		var buf = '<li class="result pokemon-grid-card">';
+		var buf = '<li class="result pokemon-grid-card' + (errorMessage ? ' pokemon-grid-illegal' : '') + '">';
 		var types = pokemon.types || [];
 		var type1 = toID(types[0] || 'normal');
 		var type2 = toID(types[1] || '');
@@ -603,7 +629,7 @@
 		buf += '<div class="pokemon-grid-type">';
 		for (var i = 0; i < types.length; i++) { buf += Dex.getTypeIcon(types[i]); }
 		buf += '</div>';
-		buf += '<div class="pokemon-grid-icon"><span style="' + Dex.getPokemonIcon(pokemon.name) + '"></span></div>';
+				buf += '<div class="pokemon-grid-icon"><span style="' + Dex.getPokemonIcon(pokemon.name) + '"></span>' + (errorMessage ? '<div class="pokemon-grid-illegal-tag">' + errorMessage + '</div>' : '') + '</div>';
 		buf += '<div class="pokemon-grid-measure"><span>' + height + '</span><span>' + weight + '</span></div>';
 		buf += '<div class="pokemon-grid-meta pokemon-grid-tags"><span>' + specialCategory + '</span></div>';
 		buf += '</div>';
@@ -625,13 +651,15 @@
 		buf += '</div>';
 		buf += '</div>';
 		buf += '</div>'; // close .pokemon-grid-right
-		if (pokemon.guardAction && pokemon.guardAction.length) {
-			buf += '<div class="pokemon-grid-guardaction">';
-			buf += '<div class="pokemon-grid-guardaction-header">Guard Action</div>';
-			buf += '<div class="pokemon-grid-guardaction-row">';
-			for (var gaIdx = 0; gaIdx < pokemon.guardAction.length; gaIdx++) { buf += '<span class="pokemon-grid-guardaction-move">' + this.engine.dex.moves.get(pokemon.guardAction[gaIdx]).name + '</span>'; }
-			buf += '</div></div>';
+		buf += '<div class="pokemon-grid-guardaction">';
+		buf += '<div class="pokemon-grid-guardaction-header">Guard Action</div>';
+		buf += '<div class="pokemon-grid-guardaction-divider"></div>';
+		buf += '<div class="pokemon-grid-guardaction-row">';
+		for (var gaIdx = 0; gaIdx < 3; gaIdx++) {
+			if (pokemon.guardAction && pokemon.guardAction[gaIdx]) { buf += '<span class="pokemon-grid-guardaction-move">' + this.engine.dex.moves.get(pokemon.guardAction[gaIdx]).name + '</span>'; } 
+			else { buf += '<span class="pokemon-grid-guardaction-move">\u2014</span>'; }
 		}
+		buf += '</div></div>'; // close .pokemon-grid-guardaction
 		buf += '<div class="pokemon-grid-stats">';
 		buf += '<div class="pokemon-grid-stat"><label>HP</label><span>' + (stats.hp || 0) + '</span></div>';
 		buf += '<div class="pokemon-grid-stat"><label>ATK</label><span>' + (stats.atk || 0) + '</span></div>';
@@ -801,13 +829,14 @@
 		return buf;
 	};
 	// #region item grid search
-	Search.prototype.renderItemGridRow = function (item, matchStart, matchLength, errorMessage, attrs) {
+	Search.prototype.renderItemGridRow = function (item, matchStart, matchLength, errorMessage, attrs, forceDiv) {
 		if (!attrs) attrs = '';
-		if (!item) return '<li class="result item-grid-card">Unrecognized item</li>';
+		var tag = forceDiv ? 'div' : 'li';
+		if (!item) return '<' + tag + ' class="result item-grid-card">Unrecognized item</' + tag + '>';
 		var id = toID(item.name);
 		var itemClasses = getItemClasses(item, id);
 		if (Search.urlRoot) attrs += ' href="' + Search.urlRoot + 'items/' + id + '" data-target="push"';
-		var buf = '<li class="result item-grid-card"><a' + attrs + ' data-entry="item|' + BattleLog.escapeHTML(item.name) + '">';
+		var buf = '<' + tag + ' class="result item-grid-card"><a' + attrs + ' data-entry="item|' + BattleLog.escapeHTML(item.name) + '">';
 		var name = item.name;
 		if (matchLength) { name = name.substr(0, matchStart) + '<b>' + name.substr(matchStart, matchLength) + '</b>' + name.substr(matchStart + matchLength); }
 		var fullDesc = item.shortDesc || item.desc || '';
@@ -835,7 +864,7 @@
 		else { buf += '<div class="item-grid-desc">' + BattleLog.escapeHTML(mainDesc) + '</div>'; }
 		buf += '</div>';
 		if (fragileDesc) { buf += '<div class="' + barClasses + '">' + BattleLog.escapeHTML(fragileDesc) + '</div>'; }
-		buf += '</a></li>';
+		buf += '</a></' + tag + '>';
 		return buf;
 	};
 	// #region ability search
@@ -1129,7 +1158,13 @@
 		if (matchLength) { name = name.substr(0, matchStart) + '<b>' + name.substr(matchStart, matchLength) + '</b>' + name.substr(matchStart + matchLength); }
 		buf += '<span class="col movenamecol">' + name + '</span> ';
 		// cooldown
-		buf += '<span class="col labelcol">CD <em>' + (move.guardActionCD || 0) + '</em></span> ';
+		var cd = move.guardActionCD || 0;
+		var cdBadge =
+			'<span style="position:relative; display:inline-block; width:20px; height:20px; flex-shrink:0; cursor:help;" title="Guard Action Cooldown only goes down when the user acts during a turn. Switching, or being flinched, paralyzed, afraid etc do not count.">' +
+				'<img src="' + Dex.resourcePrefix + 'sprites/misc/GuardIcon.png" style="width:20px; height:20px; display:block;" />' +
+				'<span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; bottom:1px; font-size:12px; font-weight:bold; color:#fff; text-shadow:0 0 2px #000, 0 0 2px #000, 1px 1px 0 #000;">' + cd + '</span>' +
+			'</span>';
+		buf += '<span class="col guardactionlabelcol">' + cdBadge + '</span> ';
 		// error
 		if (errorMessage) {
 			buf += errorMessage + '</a></li>';
@@ -1302,6 +1337,22 @@
 		},
 		setFlagTint: function (e) {
 			Storage.prefs('flagtint', e.currentTarget.value);
+			if (this.search) this.search.refreshDisplay();
+		}
+	});
+	var ItemViewModePopup = exports.ItemViewModePopup = Popup.extend({
+		initialize: function (data) {
+			this.search = data.search;
+			var itemColumns = Dex.prefs('itemcolumns') || 4;
+			var buf = '';
+			buf += '<p><label class="optlabel">Columns:</label> <select name="itemcolumns">';
+			for (var n = 1; n <= 4; n++) { buf += '<option value="' + n + '"' + (itemColumns === n ? ' selected' : '') + '>' + n + '</option>'; }
+			buf += '</select></p>';
+			this.$el.html(buf).css('min-width', 160);
+		},
+		events: { 'change select[name=itemcolumns]': 'setItemColumns' },
+		setItemColumns: function (e) {
+			Storage.prefs('itemcolumns', Number(e.currentTarget.value));
 			if (this.search) this.search.refreshDisplay();
 		}
 	});

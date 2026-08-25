@@ -333,7 +333,7 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 		[this.baseAbility2, other.baseAbility2] = [other.baseAbility2, this.baseAbility2];
 	}
 	getBoost(boostStat: Dex.BoostStatName) {
-		let boostStatTable = { atk: 'Atk', def: 'Def', spa: 'SpA', spd: 'SpD', spe: 'Spe', accuracy: 'Accuracy', evasion: 'Evasion', spc: 'Spc', };
+		let boostStatTable = { atk: 'Atk', def: 'Def', spa: 'SpA', spd: 'SpD', spe: 'Spe', accuracy: 'Accuracy', evasion: 'Evasion', spc: 'Spc', crit: 'Crit Ratio' };
 		if (!this.boosts[boostStat]) { return '1&times;&nbsp;' + boostStatTable[boostStat]; }
 		if (this.boosts[boostStat] > 6) this.boosts[boostStat] = 6;
 		if (this.boosts[boostStat] < -6) this.boosts[boostStat] = -6;
@@ -918,6 +918,9 @@ export class Battle {
 	pseudoWeather = [] as WeatherState[];
 	weatherTimeLeft = 0;
 	weatherMinTimeLeft = 0;
+	terrain = '' as ID;
+	terrainTimeLeft = 0;
+	terrainMinTimeLeft = 0;
 	/**
 	 * The side from which perspective we're viewing. Should be identical to
 	 * `nearSide` except in multi battles, where `nearSide` is always the first
@@ -1080,6 +1083,9 @@ export class Battle {
 		this.weather = '' as ID;
 		this.weatherTimeLeft = 0;
 		this.weatherMinTimeLeft = 0;
+		this.terrain = '' as ID;
+		this.terrainTimeLeft = 0;
+		this.terrainMinTimeLeft = 0;
 		this.pseudoWeather = [];
 		this.lastMove = '';
 		for (const side of this.sides) { if (side) side.reset(); }
@@ -1174,7 +1180,7 @@ export class Battle {
 		this.turnsSinceMoved = 0;
 		this.scene.updateAcceleration();
 	}
-	changeWeather(weatherName: string, poke?: Pokemon, isUpkeep?: boolean, ability?: Dex.Effect) {
+	changeWeather(weatherName: string, poke?: Pokemon, isUpkeep?: boolean, ability?: Dex.Effect, exactDuration?: number) {
 		let weather = toID(weatherName);
 		if (!weather || weather === 'none') { weather = '' as ID; }
 		if (isUpkeep) {
@@ -1186,20 +1192,50 @@ export class Battle {
 			return;
 		}
 		if (weather) {
-			let isExtremeWeather = (weather === 'deltastream' || weather === 'desolateland' || weather === 'primordialsea');
-			if (poke) {
-				if (ability) { this.activateAbility(poke, ability.name); }
-				this.weatherTimeLeft = (this.gen <= 5 || isExtremeWeather) ? 0 : 8;
-				this.weatherMinTimeLeft = (this.gen <= 5 || isExtremeWeather) ? 0 : 5;
-			} else if (isExtremeWeather) {
-				this.weatherTimeLeft = 0;
+			if (exactDuration !== undefined) {
+				// Indigo Starstorm doesn't hide exact field-effect duration - use the real value if the server sent one.
+				this.weatherTimeLeft = exactDuration;
 				this.weatherMinTimeLeft = 0;
 			} else {
-				this.weatherTimeLeft = (this.gen <= 3 ? 5 : 8);
-				this.weatherMinTimeLeft = (this.gen <= 3 ? 0 : 5);
+				let isExtremeWeather = (weather === 'deltastream' || weather === 'desolateland' || weather === 'primordialsea');
+				if (poke) {
+					if (ability) { this.activateAbility(poke, ability.name); }
+					this.weatherTimeLeft = (this.gen <= 5 || isExtremeWeather) ? 0 : 8;
+					this.weatherMinTimeLeft = (this.gen <= 5 || isExtremeWeather) ? 0 : 5;
+				} else if (isExtremeWeather) {
+					this.weatherTimeLeft = 0;
+					this.weatherMinTimeLeft = 0;
+				} else {
+					this.weatherTimeLeft = (this.gen <= 3 ? 5 : 8);
+					this.weatherMinTimeLeft = (this.gen <= 3 ? 0 : 5);
+				}
 			}
 		}
 		this.weather = weather;
+		this.scene.updateWeather();
+	}
+	changeTerrain(terrainName: string, poke?: Pokemon, isUpkeep?: boolean, ability?: Dex.Effect, exactDuration?: number) {
+		let terrain = toID(terrainName);
+		if (!terrain || terrain === 'none') { terrain = '' as ID; }
+		if (isUpkeep) {
+			if (this.terrain && this.terrainTimeLeft) {
+				this.terrainTimeLeft--;
+				if (this.terrainMinTimeLeft !== 0) this.terrainMinTimeLeft--;
+			}
+			if (this.seeking === null) { this.scene.upkeepWeather(); }
+			return;
+		}
+		if (terrain) {
+			if (poke && ability) { this.activateAbility(poke, ability.name); }
+			if (exactDuration !== undefined) {
+				this.terrainTimeLeft = exactDuration;
+				this.terrainMinTimeLeft = 0;
+			} else {
+				this.terrainTimeLeft = (this.gen > 6) ? 8 : 5;
+				this.terrainMinTimeLeft = (this.gen > 6) ? 5 : 0;
+			}
+		}
+		this.terrain = terrain;
 		this.scene.updateWeather();
 	}
 	swapSideConditions() {
@@ -2709,12 +2745,23 @@ export class Battle {
 			this.log(args, kwArgs);
 			break;
 		}
-		case '-weather': {
+				case '-weather': {
 			let effect = Dex.getEffect(args[1]);
 			let poke = this.getPokemon(kwArgs.of) || undefined;
 			let ability = Dex.getEffect(kwArgs.from);
 			if (!effect.id || effect.id === 'none') { kwArgs.from = this.weather; }
-			this.changeWeather(effect.name, poke, !!kwArgs.upkeep, ability);
+			let exactDuration = kwArgs.duration !== undefined ? Number(kwArgs.duration) : undefined;
+			this.changeWeather(effect.name, poke, !!kwArgs.upkeep, ability, exactDuration);
+			this.log(args, kwArgs);
+			break;
+		}
+		case '-terrain': {
+			let effect = Dex.getEffect(args[1]);
+			let poke = this.getPokemon(kwArgs.of) || undefined;
+			let ability = Dex.getEffect(kwArgs.from);
+			if (!effect.id || effect.id === 'none') { kwArgs.from = this.terrain; }
+			let exactDuration = kwArgs.duration !== undefined ? Number(kwArgs.duration) : undefined;
+			this.changeTerrain(effect.name, poke, !!kwArgs.upkeep, ability, exactDuration);
 			this.log(args, kwArgs);
 			break;
 		}
@@ -2725,16 +2772,6 @@ export class Battle {
 			this.activateAbility(poke, fromeffect);
 			let minTimeLeft = 5;
 			let maxTimeLeft = 0;
-			if (effect.id.endsWith('terrain')) {
-				for (let i = this.pseudoWeather.length - 1; i >= 0; i--) {
-					let pwID = toID(this.pseudoWeather[i][0]);
-					if (pwID.endsWith('terrain')) {
-						this.pseudoWeather.splice(i, 1);
-						continue;
-					}
-				}
-				if (this.gen > 6) maxTimeLeft = 8;
-			}
 			if (kwArgs.persistent) minTimeLeft += 2;
 			this.addPseudoWeather(effect.name, minTimeLeft, maxTimeLeft);
 			switch (effect.id) {

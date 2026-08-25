@@ -547,6 +547,9 @@ License: GPLv2
 	margin: 24px 0 0 115px;
 	font-size: 12pt;
 }
+.terrainbox em {
+	margin-top: 44px;
+}
 .weather em small {
 	font-style: normal;
 }

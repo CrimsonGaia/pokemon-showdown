@@ -855,7 +855,7 @@ export type StatNameExceptHP = 'atk' | 'def' | 'spa' | 'spd' | 'spe';
 export type TypeName = 'Normal' | 'Fighting' | 'Flying' | 'Poison' | 'Ground' | 'Rock' | 'Bug' | 'Ghost' | 'Steel' |
 	'Fire' | 'Water' | 'Grass' | 'Electric' | 'Psychic' | 'Ice' | 'Dragon' | 'Dark' | 'Fairy' | 'Stellar' | '???';
 export type StatusName = 'par' | 'psn' | 'frz' | 'slp' | 'brn' | 'aura' | 'bubbleblight' | 'dragonblight' | 'fear' | 'frostbite' | 'drowsy' | 'tox';
-export type BoostStatName = 'atk' | 'def' | 'spa' | 'spd' | 'spe' | 'evasion' | 'accuracy' | 'spc';
+export type BoostStatName = 'atk' | 'def' | 'spa' | 'spd' | 'spe' | 'evasion' | 'accuracy' | 'spc' | 'crit';
 export type GenderName = 'M' | 'F' | 'N';
 export interface Effect {
 	readonly id: ID;

@@ -210,8 +210,13 @@ export class BattleActions {
 			this.battle.singleEvent('AfterMove', move, null, pokemon, target, move);
 			this.battle.runEvent('AfterMove', pokemon, target, move);
 			// Guard Action cooldown only decrements when the Pokemon successfully uses a move.
-			// This ensures it doesn't decrease when Pokemon are switched out or immobilized by flinch, para, etc.
-			if (moveDidSomething && pokemon.guardActionCooldown && pokemon.guardActionCooldown > 0) { pokemon.guardActionCooldown--; }
+			// It doesn't decrease when Pokemon are switched out or immobilized by flinch, para, etc.
+			if (moveDidSomething && pokemon.guardActionCooldown && pokemon.guardActionCooldown > 0) {
+				pokemon.guardActionCooldown--;
+				const guardMove = pokemon.getGuardActionMove();
+				const max = guardMove?.guardActionCD ?? 2;
+				this.battle.add('-guardactioncd', pokemon, Math.max(0, max - pokemon.guardActionCooldown), max);
+			}
 			if (move.flags['cantusetwice'] && pokemon.removeVolatile(move.id)) { this.battle.add('-hint', `Some effects can force a Pokemon to use ${move.name} again in a row.`); }
 			// TODO: Refactor to use BattleQueue#prioritizeAction in onAnyAfterMove handlers
 			// Dancer's activation order is completely different from any other event, so it's handled separately
@@ -414,6 +419,14 @@ export class BattleActions {
 		const hitResult = this.battle.singleEvent('Try', move, null, pokemon, targets[0], move) &&
 			this.battle.singleEvent('PrepareHit', move, {}, targets[0], pokemon, move) &&
 			this.battle.runEvent('PrepareHit', pokemon, targets[0], move);
+		if (move.multihitType === 'betterthanone' && targets.length === 1) {
+			const foes = pokemon.side.foe.active.filter(foe => foe && foe.hp);
+			const front = pokemon.side.foe.active[pokemon.side.foe.active.length - 1 - pokemon.position];
+			if (front && foes.includes(front)) {
+				const other = foes.find(foe => foe !== front);
+				targets = other ? [front, other] : [front];
+			} else if (foes.length) { targets = [foes[0]]; }
+		}
 		if (!hitResult) {
 			if (hitResult === false) {
 				this.battle.add('-fail', pokemon);
@@ -427,7 +440,7 @@ export class BattleActions {
 			if (!hitResults) continue;
 			targets = targets.filter((val, i) => hitResults[i] || hitResults[i] === 0);
 			atLeastOneFailure = atLeastOneFailure || hitResults.some(val => val === false);
-			if (move.smartTarget && atLeastOneFailure) move.smartTarget = false;
+			if ((move.smartTarget || move.multihitType === 'betterthanone') && atLeastOneFailure) move.smartTarget = false;
 			if (!targets.length) { break; }
 		}
 		move.hitTargets = targets;
@@ -468,7 +481,7 @@ export class BattleActions {
 				}
 			}
 		}
-		if (!hitResults.includes(true) && hitResults.includes(false)) {
+		if (hitResults.every((hr: any) => hr === false)) {
 			this.battle.add('-fail', pokemon);
 			this.battle.attrLastMove('[still]');
 		}
@@ -658,12 +671,12 @@ export class BattleActions {
 			if (hit > 1 && pokemon.status === 'slp' && (!isSleepUsable || this.battle.gen === 4)) break;
 			if (targets.every(target => !target?.hp)) break;
 			move.hit = hit;
-			if (move.smartTarget && targets.length > 1) {
+			if ((move.smartTarget || move.multihitType === 'betterthanone') && targets.length > 1) {
 				targetsCopy = [targets[hit - 1]];
 				damage = [damage[hit - 1]];
 			} else { targetsCopy = targets.slice(0); }
 			const target = targetsCopy[0]; // some relevant-to-single-target-moves-only things are hardcoded
-			if (target && typeof move.smartTarget === 'boolean') { 
+			if (target && (typeof move.smartTarget === 'boolean' || move.multihitType === 'betterthanone')) {
 				if (hit > 1) { this.battle.addMove('-anim', pokemon, move.name, target); } 
 				else { this.battle.retargetLastMove(target); }
 			}
@@ -736,7 +749,7 @@ export class BattleActions {
 		if (hit === 1) return damage.fill(false); // hit is 1 higher than the actual hit count
 		if (nullDamage) damage.fill(false);
 		this.battle.faintMessages(false, false, !pokemon.hp);
-		if (move.multihit && typeof move.smartTarget !== 'boolean') { this.battle.add('-hitcount', targets[0], hit - 1); }
+		if (move.multihit && typeof move.smartTarget !== 'boolean' && move.multihitType !== 'betterthanone') { this.battle.add('-hitcount', targets[0], hit - 1); }
 		if ((move.recoil) && move.totalDamage) {
 			const hpBeforeRecoil = pokemon.hp;
 			let recoilBase = move.totalDamage;
@@ -1554,5 +1567,9 @@ export class BattleActions {
 		// Cooldown comes from the move itself; default to 2 if unset for safety.
 		pokemon.guardActionCooldown = guardMove.guardActionCD ?? 2;
 		this.battle.add('-message', `${pokemon.name} used ${guardMove.name}!`);
+		// Broadcast the fresh cooldown immediately instead of only via this Pokemon's own next
+		// |request|, which could be a full turn away and left the tooltip badge stale until then.
+		const max = guardMove.guardActionCD ?? 2;
+		this.battle.add('-guardactioncd', pokemon, Math.max(0, max - pokemon.guardActionCooldown), max);
 	}
 }

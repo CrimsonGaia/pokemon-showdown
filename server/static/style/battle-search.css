@@ -169,9 +169,16 @@
 	padding-top: 8px;
 	height: 21px;
 	font-size: 8pt;
-	width: 90px;
+	width: 60px;
 	text-align: center;
-	padding-left: 6px;
+	white-space: nowrap;
+}
+.dexlist .twoguardactioncol {
+	padding-top: 1px;
+	height: 28px;
+	font-size: 8pt;
+	width: 60px;
+	text-align: center;
 	white-space: nowrap;
 }
 .dexlist .labelcol em,
@@ -401,7 +408,7 @@
 	width: 23px;
 }
 .dexlist .guardactionsortcol {
-	width: 90px;
+	width: 120px;
 }
 
 .dexlist .result a {

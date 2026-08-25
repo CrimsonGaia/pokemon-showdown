@@ -60,15 +60,11 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		rating: 4,
 		num: 1081,
 	},
-	antigravitysystem: {
-		onImmunity(type, pokemon) {
-			const groundingEffects = ['gravity', 'ingrain', 'smackdown', 'ironball', 'gastroacid', 'terrain', 'ground'];
-			if (groundingEffects.includes(type)) return false;
-		},
+	antigravitysystem: { // airborneness and grounding immunity implemented in sim/pokemon.js:Pokemon#isGrounded
 		onTryAddVolatile(status, target) { if (status.id === 'tripped') { return null; } },
 		flags: {},
 		name: "Anti Gravity System",
-		shortDesc: "Immune to grounding effects (Gravity, Ingrain, Smack Down, Iron Ball, terrain, Ground). Cannot be tripped.",
+		shortDesc: "User becomes airborne, and is immune to grounding effects (Gravity, Ingrain, Smack Down, Iron Ball, terrain, Ground). Cannot be tripped.",
 		rating: 2,
 		num: 1002,
 	},
@@ -157,23 +153,22 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		rating: 2.5,
 		num: 1005,
 	},
-	betterthanone: {
-		onPrepareHit(source, target, move) { // After using a Biting or Piercing move, followup with a 25% power attack (reference: Parental Bond)
+	betterthanone: { //multihitType implemented in battle-actions#trySpreadMoveHit
+		onPrepareHit(source, target, move) {
 			if (move.category === 'Status' || move.multihit || move.flags?.charge || move.flags?.futuremove || move.spreadHit) return;
 			if (move.flags?.bite || move.flags?.pierce) {
 				move.multihit = 2;
-				move.multihitType = 'parentalbond';
-				move.smartTarget = true; 
+				move.multihitType = 'betterthanone';
 			}
 		},
-		onSourceBasePower(basePower, target, source, move) { if (move.multihitType === 'betterthanone' && move.hit > 1) { return this.chainModify(0.25); } }, // for reference, Parental Bond does 50%
+		onSourceBasePower(basePower, target, source, move) { if (move.multihitType === 'betterthanone' && move.hit > 1) { return this.chainModify(0.25); } }, 
 		onBeforeMovePriority: 11,
 		onBeforeMove(pokemon, target, move) { if (pokemon.status === 'slp') { move.sleepUsable = true; } },
 		flags: {},
 		name: "Better Than One",
 		shortDesc: "Bite/Piercing moves hit twice; second hit at 25% power. Can act while asleep.",
 		rating: 3,
-		num: 1006,
+		num: 1006, 
 	},
 	blazingbell: {
 		onModifyTypePriority: -1,
@@ -279,11 +274,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		rating: 2.5,
 		num: 1011,
 	},
-	cargoflier: { // airborneness implemented in sim/pokemon.js:Pokemon#isGrounded
-		onImmunity(type, pokemon) {
-			const groundingEffects = ['gravity', 'ingrain', 'smackdown', 'ironball', 'gastroacid', 'terrain', 'ground'];
-			if (groundingEffects.includes(type) && type !== 'roost') return false;
-		},
+	cargoflier: { // airborneness and grounding immunity implemented in sim/pokemon.js:Pokemon#isGrounded
 		flags: {},
 		name: "Cargo Flier",
 		shortDesc: "User becomes airborne, and is immune to grounding effects (Gravity, Ingrain, Smack Down, Iron Ball, terrain, Ground) except Roost.",
@@ -841,30 +832,11 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		rating: 3.5,
 		num: 1035,
 	},
-	lunamancy: {
+	lunamancy: { //airbornnes, grounding immunity, and sun grounding implemented in pokemon.ts#isGrounded
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.lunar || move.flags?.magic) { return this.chainModify(1.3); } },
-		onImmunity(type, pokemon) {
-			const groundingEffects = ['gravity', 'ingrain', 'smackdown', 'ironball'];
-			if (groundingEffects.includes(type)) return false;
-		},
-		onAllyImmunity(type, pokemon) {
-			const groundingEffects = ['gravity', 'ingrain', 'smackdown', 'ironball'];
-			if (groundingEffects.includes(type)) return false;
-		},
-		onResidualOrder: 28,
-		onResidualSubOrder: 2,
-		onResidual(pokemon) { if (this.field.isWeather(['sunnyday', 'desolateland', 'eclipse'])) {
-				for (const target of pokemon.foes()) {
-					if (target.fainted || !target.hp) continue;
-					if (target.volatiles['smackdown']) continue;
-					target.addVolatile('smackdown');
-					this.add('-start', target, 'Smack Down', '[from] ability: Lunamancy');
-				}
-			}
-		},
 		flags: {},
 		name: "Lunamancy",
-		shortDesc: "1.3x power with Lunar moves. Immune to grounding effects. Under sun, inflicts Smack Down on foes each turn.",
+		shortDesc: "1.3x power with Lunar moves. User becomes airborne and is immune to grounding effects. Under Eclipse or Sun, inflicts Smack Down on foes each turn.",
 		rating: 3.5,
 		num: 1036,
 	},
@@ -2263,8 +2235,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 	blaze: { // Immune to damage under Rain
 		onDamage(damage, target, source, effect) { 
 			if (target.hp > target.maxhp / 5 && ['raindance', 'primordialsea', 'sandstorm', 'turbulentwinds'].includes(target.battle.field.effectiveWeather())) {
-				this.add('-ability', target, 'Blaze');
-				this.add('-immune', target, '[from] ability: Blaze [Rain]');
+				this.add('-immune', target, '[from] ability: Blaze');
 				return false;
 			}
 		},
@@ -2416,10 +2387,10 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		num: 14,
 	},
 	cutecharm: {
-		onDamagingHit(damage, target, source, move) { if (this.checkMoveMakesContact(move, source, target)) { if (this.randomChance(6, 10)) { source.addVolatile('attract', this.effectState.target); } } },
+		onDamagingHit(damage, target, source, move) { if (this.checkMoveMakesContact(move, source, target)) { if (this.randomChance(5, 10)) { source.addVolatile('attract', this.effectState.target); } } },
 		flags: {},
 		name: "Cute Charm",
-		shortDesc: "60% chance to infatuate attackers on Contact.",
+		shortDesc: "50% chance to infatuate attackers on Contact.",
 		rating: 0.5,
 		num: 56,
 	},
@@ -2432,7 +2403,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			}
 		},
 		onAnyDamage(damage, target, source, effect) { if (effect && effect.name === 'Aftermath') { return false; } },
-		onSetStatus(status, target, source, effect) { 
+		onAnySetStatus(status, target, source, effect) { 
 			if (status.id === 'brn') { 
 				this.add('-immune', target, '[from] ability: Damp');
 				return false;
@@ -3517,13 +3488,13 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 				return slots.some((slot: any) => slot.id !== 'noability' && !slot.effect.flags['notrace']);
 			});
 			if (!possibleTargets.length) return;
-			const target = this.sample(possibleTargets);
+			const target = pokemon.side.foe.active[pokemon.side.foe.active.length - 1 - pokemon.position];
+			if (!target || !possibleTargets.includes(target)) return;
 			const targetSlots = (target as any).getActiveAbilitySlots?.() || [];
-			const possibleSlots = targetSlots.filter((slot: any) =>
-				slot.id !== 'noability' && !slot.effect.flags['notrace']
-			);
+			const possibleSlots = targetSlots.filter((slot: any) =>slot.id !== 'noability' && !slot.effect.flags['notrace']);
 			if (!possibleSlots.length) return;
-			const copiedSlot = this.sample(possibleSlots);
+			const copiedSlot = targetSlots[0];
+			if (copiedSlot.id === 'noability' || copiedSlot.effect.flags['notrace']) return;
 			const traceSlot = pokemon.ability1 === 'trace' ? 1 : 2;
 			pokemon.setAbility(copiedSlot.effect, target, null, false, false, traceSlot);
 		},
@@ -3725,12 +3696,8 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			if (!target.hp) return;
 			if (move?.effectType === 'Move' && target.getMoveHitData(move).crit) { this.boost({atk: 3}, target, target); }
 		},
-		onAnyAfterMove(source, target, move) {
-			if (source.moveLastTurnResult === false) {
-				this.boost({atk: 3}, target, target);
-				return move.basePower * 2;
-			}
-		},
+		onAfterMove(source, target, move) { if (source.moveThisTurnResult === false) { this.boost({atk: 3}, source, source); } },
+		onMoveAborted(source, target, move) { this.boost({atk: 3}, source, source); },
 		flags: {},
 		name: "Anger Point",
 		shortDesc: "When user misses a move, fails a move, or is hit by a critical hit: boost Attack +3 stages.",
@@ -3768,8 +3735,6 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			if (!pokemon.hp) return;
 			for (const target of pokemon.foes()) { if (target.status === 'slp' || target.hasAbility('comatose')) { this.damage(target.baseMaxhp / 8, target, pokemon); } }
 		},
-		onAllyAfterStatus(target, source, status, effect) { if (status === 'slp' && target.status !== 'slp') { target.trySetStatus('fear', source); } },
-		onFoeAfterStatus(target, source, status, effect) { if (status === 'slp' && target.status !== 'slp') { target.trySetStatus('fear', source); } },
 		flags: {},
 		name: "Bad Dreams",
 		shortDesc: "At end of turn, deal 1/8HP to Sleeping foes. If a Sleeping ally or foe wakes up: inflict them with Fear.",
@@ -4585,10 +4550,13 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 	bigpecks: {
 		onTryBoost(boost, target, source, effect) {
 			if (source && target === source) return;
-			if ((boost.def && boost.def < 0) || (boost.atk && boost.atk < 0)) {
-				if (boost.def && boost.def < 0) delete boost.def;
-				if (boost.atk && boost.atk < 0) delete boost.atk;
-				if (!(effect as ActiveMove).secondaries && effect.id !== 'octolock') { this.add("-fail", target, "unboost", "Attack/Defense", "[from] ability: Big Pecks", `[of] ${target}`); }
+			if (boost.def && boost.def < 0) {
+				delete boost.def;
+				if (!(effect as ActiveMove).secondaries && effect.id !== 'octolock') { this.add("-fail", target, "unboost", "Defense", "[from] ability: Big Pecks", `[of] ${target}`); }
+			}
+			if (boost.atk && boost.atk < 0) {
+				delete boost.atk;
+				if (!(effect as ActiveMove).secondaries && effect.id !== 'octolock') { this.add("-fail", target, "unboost", "Attack", "[from] ability: Big Pecks", `[of] ${target}`); }
 			}
 		},
 		onBasePower(basePower, attacker, defender, move) { if (move.flags?.pierce || move.flags?.wing) { return this.chainModify(1.3); } },		
@@ -4618,8 +4586,12 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 				}
 			}
 		},
-		onBasePowerPriority: 7,
-		onBasePower(basePower, attacker, defender, move) { if (move.flags?.magic) { return this.chainModify(1.5); } },		flags: {},
+		onSourceModifyDamage(damage, source, target, move) {
+			let mod = 1;
+			if (move.flags['magic']) mod *= 1.5;
+			return this.chainModify(mod);
+		},	
+		flags: {},
 		name: "Cursed Body",
 		shortDesc: "Weak to Magic moves. When user is hit by a damaging move: 30% chance to disable the move used, and curse the attacker.",
 		rating: 2,
@@ -5313,6 +5285,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 				}
 			}
 		},
+
 		flags: { breakable: 1 },
 		name: "Aroma Veil",
 		shortDesc: "Protects user and allies from redirection effects, and moves that limit their own move choices.",
@@ -5400,8 +5373,8 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 	},
 	cheekpouch: {
 		onEatItem(item, pokemon) {
-			if (item.isBerry) pokemon.addVolatile('stockpile');
 			this.heal(pokemon.baseMaxhp / 3);
+			if (item.isBerry) pokemon.addVolatile('stockpile');
 		},
 		flags: {},
 		name: "Cheek Pouch",

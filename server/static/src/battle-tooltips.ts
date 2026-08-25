@@ -20,6 +20,7 @@ export class ModifiableValue {
 	serverPokemon: ServerPokemon;
 	itemName: string;
 	abilityName: string;
+	abilityName2: string;
 	weatherName: string;
 	isAccuracy = false;
 	constructor(battle: Battle, pokemon: Pokemon, serverPokemon: ServerPokemon) {
@@ -29,7 +30,9 @@ export class ModifiableValue {
 		this.serverPokemon = serverPokemon;
 		this.itemName = this.battle.dex.items.get(serverPokemon.item).name;
 		const ability = serverPokemon.ability || pokemon?.ability || serverPokemon.baseAbility;
+		const ability2 = serverPokemon.ability2 || pokemon?.ability2 || serverPokemon.baseAbility2;
 		this.abilityName = this.battle.dex.abilities.get(ability).name;
+		this.abilityName2 = ability2 ? this.battle.dex.abilities.get(ability2).name : '';
 		this.weatherName = this.battle.dex.moves.get(battle.weather).exists ?
 		this.battle.dex.moves.get(battle.weather).name : this.battle.dex.abilities.get(battle.weather).name;
 	}
@@ -57,13 +60,14 @@ export class ModifiableValue {
 		return true;
 	}
 	tryAbility(abilityName: string) {
-		if (abilityName !== this.abilityName) return false;
+		const slot = abilityName === this.abilityName ? 1 : abilityName === this.abilityName2 ? 2 : 0;
+		if (!slot) return false;
 		if (this.pokemon?.volatiles['gastroacid']) {
 			this.comment.push(` (${abilityName} suppressed by Gastro Acid)`);
 			return false;
 		}
-		// Check for Neutralizing Gas
-		if (!this.pokemon?.effectiveAbility(this.serverPokemon)) return false;
+		if (slot === 1) { if (!this.pokemon?.effectiveAbility(this.serverPokemon)) return false; } 
+		else { if (!this.pokemon?.effectiveAbility2(this.serverPokemon)) return false; }
 		return true;
 	}
 	tryWeather(weatherName?: string) {
@@ -298,10 +302,13 @@ export class BattleTooltips {
 		}
 		case 'pokemon': { // pokemon|SIDE|POKEMON
 			// mouse over sidebar pokemon
-			// pokemon definitely exists, serverPokemon always ignored
 			let sideIndex = parseInt(args[1], 10);
 			let side = this.battle.sides[sideIndex];
-			let pokemon = side.pokemon[parseInt(args[2], 10)];
+			let pokemonIndex = parseInt(args[2], 10);
+			let pokemon = side.pokemon[pokemonIndex];
+			let serverPokemon: ServerPokemon | null = null;
+			if (side === this.battle.mySide && this.battle.myPokemon) { serverPokemon = this.battle.myPokemon[pokemonIndex]; }
+			if (side === this.battle.mySide.ally && this.battle.myAllyPokemon) { serverPokemon = this.battle.myAllyPokemon[pokemonIndex]; }
 			if (args[3] === 'illusion') {
 				buf = '';
 				const species = pokemon.getBaseSpecies().baseSpecies;
@@ -312,7 +319,7 @@ export class BattleTooltips {
 						index++;
 					}
 				}
-			} else { buf = this.showPokemonTooltip(pokemon); }
+			} else { buf = this.showPokemonTooltip(pokemon, serverPokemon); }
 			break;
 		}
 		case 'activepokemon': { // activepokemon|SIDE|ACTIVE
@@ -620,6 +627,7 @@ export class BattleTooltips {
 			text += `<span class="textaligned-typeicons">${types.map(type => Dex.getTypeIcon(type)).join(' ')}</span>`;
 			if (pokemon.terastallized) { text += `&nbsp; &nbsp; <small>(base: <span class="textaligned-typeicons">${this.getPokemonTypes(pokemon, true).map(type => Dex.getTypeIcon(type)).join(' ')}</span>)</small>`; } 
 			else if (knownPokemon.teraType && !this.battle.rules['Terastal Clause']) { text += `&nbsp; &nbsp; <small>(Tera Type: <span class="textaligned-typeicons">${Dex.getTypeIcon(knownPokemon.teraType)}</span>)</small>`; }
+			text += this.renderGuardActionBadge(clientPokemon);
 			text += `</h2>`;
 		}
 		if (illusionIndex) { text += `<p class="tooltip-section"><strong>Possible Illusion #${illusionIndex}</strong>${levelBuf}</p>`; }
@@ -649,7 +657,6 @@ export class BattleTooltips {
 			}
 			text += '</p>';
 		}
-		text += this.renderGuardActionBadge(clientPokemon);
 		text += this.renderLightChargeBadge(clientPokemon);
 		const supportsAbilities = this.battle.gen > 2 && !this.battle.tier.includes("Let's Go");
 		let abilityText = '';
@@ -679,12 +686,11 @@ export class BattleTooltips {
 			if (itemEffect) itemEffect = ' (' + itemEffect + ')';
 			if (item) itemText = '<small>Item:</small> ' + item + itemEffect;
 		}
-		if (abilityText || itemText) {
-			text += '<p>';
-			text += abilityText;
-			if (abilityText && itemText) { text += ' / '; } // ability/item on one line
-			text += itemText;
-			text += '</p>';
+		if (abilityText) { text += `<p>${abilityText}</p>`; }
+		if (itemText) {
+			const itemIcon = serverPokemon?.item ? `<span style="display:inline-block;width:24px;height:24px;vertical-align:middle;${Dex.getItemIcon(serverPokemon.item)}"></span> ` :
+				(clientPokemon?.item ? `<span style="display:inline-block;width:24px;height:24px;vertical-align:middle;${Dex.getItemIcon(clientPokemon.item)}"></span> ` : '');
+			text += `<p>${itemIcon}${itemText}</p>`;
 		}
 		text += this.renderWeaponState(clientPokemon, serverPokemon);
 		text += this.renderStats(clientPokemon, serverPokemon, !isActive);
@@ -692,7 +698,9 @@ export class BattleTooltips {
 			// move list
 			text += `<p class="tooltip-section">`;
 			const battlePokemon = clientPokemon || this.battle.findCorrespondingPokemon(pokemon);
+			const currentGuardActionId = clientPokemon?.guardActionMoveId ? toID(clientPokemon.guardActionMoveId) : null;
 			for (const moveid of serverPokemon.moves) {
+				if (currentGuardActionId && toID(moveid) === currentGuardActionId) continue;
 				const move = this.battle.dex.moves.get(moveid);
 				let moveName = `&#8226; ${move.name}`;
 				if (battlePokemon?.moveTrack) {
@@ -979,13 +987,11 @@ export class BattleTooltips {
 		const cur = clientPokemon?.guardActionCur || 0;
 		const max = clientPokemon?.guardActionMax || 0;
 		if (!max) return ''; // this Pokemon has no Guard Action, or we don't currently know its state
-		const ready = cur >= max;
 		const remaining = Math.max(0, max - cur);
-		return `<p><small>Guard Action:</small> ` +
-			`<span class="tooltip-guard-badge${ready ? ' ready' : ''}">` +
-				`<i class="fa fa-shield"></i>` +
-				(ready ? '' : `<span class="tooltip-guard-badge-count">${remaining}</span>`) +
-			`</span></p>`;
+		return `&nbsp; &nbsp; <span style="position:relative; display:inline-block; width:20px; height:20px; vertical-align:middle; cursor:help;" title="Guard Action Cooldown">` +
+			`<img src="${Dex.resourcePrefix}sprites/misc/GuardIcon.png" style="width:20px; height:20px; display:block;" />` +
+			(remaining > 0 ? `<span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; bottom:1px; font-size:12px; font-weight:bold; color:#fff; text-shadow:0 0 2px #000, 0 0 2px #000, 1px 1px 0 #000;">${remaining}</span>` : '') +
+			`</span>`;
 	}
 	// Necrozma/Necrozma-Dawn-Wings/Necrozma-Dusk-Mane shows a countdown of light hits until it Ultra Bursts. 
 	// Starts at 3, counts down.
@@ -998,7 +1004,7 @@ export class BattleTooltips {
 		return `<p><small>Light Charge:</small> ` + `<span class="tooltip-light-badge${remaining === 0 ? ' ready' : ''}">` +
 				`<i class="fa fa-sun-o"></i>` + `<span class="tooltip-light-badge-count">${remaining}</span>` + `</span></p>`;
 	}
-	private renderTypeMatchups(clientPokemon: Pokemon | null, serverPokemon?: ServerPokemon | null, compact?: boolean) {
+		private renderTypeMatchups(clientPokemon: Pokemon | null, serverPokemon?: ServerPokemon | null, compact?: boolean) {
 		// Defensive typing (Tera-aware).
 		const pokemon = clientPokemon || serverPokemon;
 		if (!pokemon) return '';
@@ -1006,16 +1012,27 @@ export class BattleTooltips {
 		// Attack types list from the dex types table (includes modded types if the dex is modded).
 		const attackTypes: Dex.TypeName[] = this.battle.dex.types.names()
 		.map(n => n as Dex.TypeName);
+		// Every real move flag (same enumeration BattleFlagSearch uses): scan every move's .flags for truthy keys.
+		const allFlags = new Set<string>();
+		for (const move of this.battle.dex.moves.all()) {
+			if (!move.flags) continue;
+			for (const flagId in move.flags) { if ((move.flags as AnyObject)[flagId]) allFlags.add(flagId); }
+		}
 		const weaknesses4x: Dex.TypeName[] = [];
 		const weaknesses2x: Dex.TypeName[] = [];
 		const resistsQuarter: Dex.TypeName[] = [];
 		const resistsHalf: Dex.TypeName[] = [];
 		const immunities: Dex.TypeName[] = [];
+		const flagWeaknesses4x: string[] = [];
+		const flagWeaknesses2x: string[] = [];
+		const flagResistsQuarter: string[] = [];
+		const flagResistsHalf: string[] = [];
+		const flagImmunities: string[] = [];
+		const damageTakenOf = (defType: string) => (this.battle.dex as any).types?.get?.(defType)?.damageTaken;
 		for (const atkType of attackTypes) {
 			let mult = 1;
 			for (const defType of types) {
-				const typeData: any = (this.battle.dex as any).types?.get?.(defType);
-				const dt = typeData?.damageTaken;
+				const dt = damageTakenOf(defType);
 				if (!dt) continue;
 				// Showdown client typechart uses type IDs as keys
 				const key = toID(atkType);
@@ -1025,34 +1042,51 @@ export class BattleTooltips {
 				else if (val === 2) mult *= 0.5;
 				else if (val === 3) { mult = 0; break; }
 			}
-
 			if (mult === 0) immunities.push(atkType);
 			else if (mult === 4) weaknesses4x.push(atkType);
 			else if (mult === 2) weaknesses2x.push(atkType);
 			else if (mult === 0.25) resistsQuarter.push(atkType);
 			else if (mult === 0.5) resistsHalf.push(atkType);
 		}
-		const renderIcons = (list: Dex.TypeName[]) => list.length ?
-			`<span class="textaligned-typeicons">${list.map(t => Dex.getTypeIcon(t)).join(' ')}</span>` :
+		// Flags carry their own independent weak/resist/immune multiplier, same table, keyed by flag id instead of type id.
+		for (const flag of allFlags) {
+			let mult = 1;
+			for (const defType of types) {
+				const dt = damageTakenOf(defType);
+				if (!dt) continue;
+				const val = dt[flag];
+				if (val === 1) mult *= 2;
+				else if (val === 2) mult *= 0.5;
+				else if (val === 3) { mult = 0; break; }
+			}
+			if (mult === 1) continue; // only list flags that actually deviate from neutral
+			if (mult === 0) flagImmunities.push(flag);
+			else if (mult === 4) flagWeaknesses4x.push(flag);
+			else if (mult === 2) flagWeaknesses2x.push(flag);
+			else if (mult === 0.25) flagResistsQuarter.push(flag);
+			else if (mult === 0.5) flagResistsHalf.push(flag);
+		}
+		const renderIcons = (list: Dex.TypeName[], flagList: string[] = []) => (list.length || flagList.length) ?
+			`<span class="textaligned-typeicons">${[...list.map(t => Dex.getTypeIcon(t)), ...flagList.map(f => Dex.getFlagIcon(f))].join(' ')}</span>` :
 			`<small>(none)</small>`;
 		const weakParts: string[] = [];
-		if (weaknesses4x.length) weakParts.push(`<small>4×</small> ${renderIcons(weaknesses4x)}`);
-		if (weaknesses2x.length) weakParts.push(`<small>2×</small> ${renderIcons(weaknesses2x)}`);
+		if (weaknesses4x.length || flagWeaknesses4x.length) weakParts.push(`<small>4×</small> ${renderIcons(weaknesses4x, flagWeaknesses4x)}`);
+		if (weaknesses2x.length || flagWeaknesses2x.length) weakParts.push(`<small>2×</small> ${renderIcons(weaknesses2x, flagWeaknesses2x)}`);
 		const weakLine = weakParts.length ? weakParts.join('&nbsp; ') : '<small>(none)</small>';
 		const resistParts: string[] = [];
-		if (resistsQuarter.length) resistParts.push(`<small>¼×</small> ${renderIcons(resistsQuarter)}`);
-		if (resistsHalf.length) resistParts.push(`<small>½×</small> ${renderIcons(resistsHalf)}`);
+		if (resistsQuarter.length || flagResistsQuarter.length) resistParts.push(`<small>¼×</small> ${renderIcons(resistsQuarter, flagResistsQuarter)}`);
+		if (resistsHalf.length || flagResistsHalf.length) resistParts.push(`<small>½×</small> ${renderIcons(resistsHalf, flagResistsHalf)}`);
 		const resistLine = resistParts.length ? resistParts.join('&nbsp; ') : '<small>(none)</small>';
-		const immuneLine = immunities.length ? renderIcons(immunities) : '<small>(none)</small>';
+		const immuneLine = (immunities.length || flagImmunities.length) ? renderIcons(immunities, flagImmunities) : '<small>(none)</small>';
 		if (compact) {
 			// Same data as the full breakdown, condensed to one line and with
 			// empty categories dropped entirely instead of showing "(none)".
 			const parts: string[] = [];
-			if (weaknesses4x.length) parts.push(`<small>4×</small> ${renderIcons(weaknesses4x)}`);
-			if (weaknesses2x.length) parts.push(`<small>2×</small> ${renderIcons(weaknesses2x)}`);
-			if (resistsQuarter.length) parts.push(`<small>¼×</small> ${renderIcons(resistsQuarter)}`);
-			if (resistsHalf.length) parts.push(`<small>½×</small> ${renderIcons(resistsHalf)}`);
-			if (immunities.length) parts.push(`<small>0×</small> ${renderIcons(immunities)}`);
+			if (weaknesses4x.length || flagWeaknesses4x.length) parts.push(`<small>4×</small> ${renderIcons(weaknesses4x, flagWeaknesses4x)}`);
+			if (weaknesses2x.length || flagWeaknesses2x.length) parts.push(`<small>2×</small> ${renderIcons(weaknesses2x, flagWeaknesses2x)}`);
+			if (resistsQuarter.length || flagResistsQuarter.length) parts.push(`<small>¼×</small> ${renderIcons(resistsQuarter, flagResistsQuarter)}`);
+			if (resistsHalf.length || flagResistsHalf.length) parts.push(`<small>½×</small> ${renderIcons(resistsHalf, flagResistsHalf)}`);
+			if (immunities.length || flagImmunities.length) parts.push(`<small>0×</small> ${renderIcons(immunities, flagImmunities)}`);
 			if (!parts.length) return '';
 			return `<p>${parts.join('&nbsp; ')}</p>`;
 		}

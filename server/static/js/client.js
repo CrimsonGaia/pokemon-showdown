@@ -1290,9 +1290,7 @@ function toId() { // toId has been renamed toID
 				}
 			});
 		},
-		/*********************************************************
-		 * Rooms
-		 *********************************************************/
+		//region Rooms
 		initializeRooms: function () {
 			this.rooms = Object.create(null); // {}
 			this.roomList = [];
@@ -1735,9 +1733,7 @@ function toId() { // toId has been renamed toID
 			Storage.prefs('autojoin', curAutojoin);
 		},
 		playNotificationSound: function () { if (window.BattleSound && !Dex.prefs('mute')) { BattleSound.playSound('audio/notification.wav', Dex.prefs('notifvolume')); } },
-		/*********************************************************
-		 * Popups
-		 *********************************************************/
+		//region Popups
 		popups: null,
 		initializePopups: function () { this.popups = []; },
 		addPopup: function (type, data) {

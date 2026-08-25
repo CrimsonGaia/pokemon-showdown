@@ -8166,6 +8166,7 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			trickroom: ["9M", "9L70"],
 			skydrop: ["9L75"],
 			skyattack: ["9L77"],
+			psychoshift: ["9L80"],
 // TM/TR moves
 			bravebird: ["9M"],
 			dualwingbeat: ["9M"],
@@ -9721,6 +9722,7 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 	noctowl: {
 		learnset: {
 // Level-up moves
+			psychoshift: ["9L0"],
 			echoedvoice: ["9L1"],
 			growl: ["9L1"],
 			peck: ["9L1"],
@@ -13960,6 +13962,7 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			terablast: ["9M"],
 
 			dig: ["9M"],
+			hail: ["9M"],
 			toxic: ["9M"],
 		},
 	},
@@ -20506,6 +20509,7 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			guardsplit: ["9L65"],
 			healingwish: ["9L70"],
 			healblock: ["9L75"],
+			psychoshift: ["9L75"],
 			psywave: ["9L80"],
 			twister: ["9L85"],
 			telekinesis: ["9L90"],
@@ -20596,6 +20600,7 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			powersplit: ["9L65"],
 			memento: ["9L70"],
 			healblock: ["9L75"],
+			psychoshift: ["9L75"],
 			psywave: ["9L80"],
 			twister: ["9L85"],
 			telekinesis: ["9L90"],
@@ -20948,6 +20953,7 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			superpower: ["9L37"],
 			swift: ["9M", "9L37"],
 			gravity: ["9M", "9L37"],
+			psychoshift: ["9L43"],
 			skillswap: ["9M", "9L43"],
 			cosmicpower: ["9L55"],
 			agility: ["9M", "9L55"],
@@ -26377,6 +26383,7 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			aurorabeam: ["9L12"],
 			psybeam: ["9M", "9L18"],
 			allyswitch: ["9L24"],
+			psychoshift: ["9L24"],
 			slash: ["9L30"],
 			moonlight: ["9L42"],
 			safeguard: ["9M", "9L48"],
@@ -37821,11 +37828,13 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			fakeout: ["9E"],
 			partingshot: ["9E"],
 			powertrip: ["9E"],
+			snore: ["9E"],
 		},
 	},
 	torracat: {
 		learnset: {
 // Level-up moves
+			round: ['9L0'],
 			ember: ["9L1"],
 			growl: ["9L1"],
 			scratch: ["9L1"],
@@ -37862,6 +37871,8 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			endeavor: ["9M"],
 			temperflare: ["9M"],
 			terablast: ["9M"],
+
+			bellow: ["9M"],
 		},
 	},
 	incineroar: {
@@ -37872,6 +37883,7 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			scratch: ["9L1"],
 			ember: ["9L1"],
 			growl: ["9L1"],
+			round: ['9L1'],
 			throatchop: ["9M", "9L1"],
 			bulkup: ["9M", "9L1"],
 			roar: ["9M", "9L9"],
@@ -44234,6 +44246,7 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			guardsplit: ["9L45"],
 			psychicterrain: ["9M", "9L50"],
 			discombobulate: ["9L55"],
+			psychoshift: ["9L60"],
 // TM/TR moves
 			drainpunch: ["9M"],
 			playrough: ["9M"],
@@ -52970,6 +52983,7 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			embargo: ["9L72"],
 			encore: ["9L72"],
 			allyswitch: ["9L76"],
+			psychoshift: ["9L76"],
         // TM/TR moves
             blizzard: ["9M"],
 			hail: ["9M"],
@@ -53018,6 +53032,7 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			embargo: ["9L72"],
 			encore: ["9L72"],
 			allyswitch: ["9L76"],
+			psychoshift: ["9L76"],
 			jetpunch: ["9L80"],
         // TM/TR moves
 			aurasphere: ["9M"],
@@ -53081,6 +53096,7 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			embargo: ["9L72"],
 			encore: ["9L72"],
 			allyswitch: ["9L76"],
+			psychoshift: ["9L76"],
 			jetpunch: ["9L80"],
 			shortcircuit: ["9L84"],
 			fakeout: ["9L88"],

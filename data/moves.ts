@@ -3192,8 +3192,8 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		critRatio: 6,
 		flags: { crash: 1, pierce: 1, weapon: 1, mirror: 1, metronome: 1 },
 		hasCrashDamage: true,
-		onMoveFail(target, source, move) { this.damage(Math.floor(source.baseMaxhp / (source.status === 'bubbleblight' ? 5 : 10)), source, source, this.dex.conditions.get('Joust')); },
-		pierce: [1, 2],
+		onMoveFail(target, source, move) { this.damage(Math.floor(source.baseMaxhp / (source.status === 'bubbleblight' ? 3 : 6)), source, source, this.dex.conditions.get('Joust')); },
+		pierce: [1, 4],
 		secondary: null,
 		weaponmove: true,
 		weaponDamage: 5,
@@ -4175,7 +4175,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 				this.add('-enditem', target, item.name, '[from] move: Poltergeist');
 			}
 		},
-		ignoreImmunity: {Normal: true},
+		ignoreImmunity: {Ghost: true},
 		secondary: null,
 		desc: "Fails unless target is Steel or has a held item. Triggers Fragile/Volatile item effects. Hits Normal types. If target is an ally, BP is 35 instead", 
 		shortDesc: "Fails unless target is Steel or has a held item. Triggers Fragile/Volatile item effects. Hits Normal types. If target is an ally, BP is 35 instead",
@@ -4390,11 +4390,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		flags: { protect: 1, mirror: 1, metronome: 1, slicing: 1 },
 		secondary: null,
 		onBasePower(basePower, source, target, move) {
-			if (
-				this.field.isTerrain('electricterrain') ||
-				this.field.isTerrain('grassyterrain') ||
-				this.field.isTerrain('psychicterrain')
-			) {
+			if (this.field.isTerrain('electricterrain') || this.field.isTerrain('grassyterrain') || this.field.isTerrain('psychicterrain')) {
 				this.debug('psyblade terrain boost');
 				return 120;
 			}
@@ -4603,6 +4599,9 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 			case 'Tauros-Paldea-Aqua':
 				move.type = 'Water';
 				break;
+			case 'Tauros':
+				move.type = 'Normal';
+				break;
 			}
 		},
 		onAfterMoveSecondarySelf(pokemon, target, move) {
@@ -4613,8 +4612,8 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 			} as any);
 		},
 		secondary: null,
-		desc: "Destroys screens (Reflect, Light Screen, Aurora Veil) before attacking. Grants user 'Raging Bull' Aura for 2 turns. Changes type based on Tauros-Paldea's form; CRASH: User takes 1/10HP as damage when this move misses or is blocked",
-		shortDesc: "Breaks screens. Grants user 'Raging Bull' Aura for 2 turns. Changes type based on Tauros-Paldea's form; CRASH: User takes 1/16HP as damage when this move misses or is blocked",
+		desc: "Destroys screens (Reflect, Light Screen, Aurora Veil) before attacking. Grants user 'Raging Bull' Aura for 2 turns. Changes type based on Tauros's form; CRASH: User takes 1/10HP as damage when this move misses or is blocked",
+		shortDesc: "Breaks screens. Grants user 'Raging Bull' Aura for 2 turns. Changes type based on Tauros's form; CRASH: User takes 1/16HP as damage when this move misses or is blocked",
 		target: "normal",
 	},
 	ragingfury: {
@@ -5464,7 +5463,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 					pokemon.removeVolatile('twoturnmove');
 					this.add('-start', pokemon, 'Smack Down');
 				}
-			}, // groundedness implemented in battle.engine.js:BattlePokemon#isGrounded
+			}, // groundedness implemented in pokemon.ts#isGrounded
 		},
 		secondary: null,
 		desc: "Grounds fliers",
@@ -6932,7 +6931,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		flags: { aura: 1, bullet: 1, pulse: 1, infusible: 1, protect: 1, mirror: 1, distance: 1, metronome: 1, },
 		secondary: null,
 		onTry(source) { if (source.status !== 'aura') { this.damage(source.baseMaxhp / 24, source, source); } },
-        onBasePower(basePower, pokemon, target, move) { if (target.status === 'aura' || target.volatiles['aura']) { return this.chainModify(1.5); } },
+        onBasePower(basePower, pokemon, target, move) { if (target.status === 'aura') { return this.chainModify(1.5); } },
 		desc: "1.5x power if target has an active Aura",
 		shortDesc: "1.5x power if target has an Aura",
 		target: "any",
@@ -8159,11 +8158,11 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 					} as any);
 				}
 				else if (target.hasType('Fire')) { target.setStatus('brn', source, null, true); }
-				else if (target.hasType('Ghost')) { target.addVolatile('curse', source); }
+				else if (target.hasType('Ghost')) { target.addVolatile('curse', source, move, null, true); }
 				else if (target.hasType('Ice')) { target.setStatus('frostbite', source, null, true); }
 				else if (target.hasType('Normal')) { target.setStatus('drowsy', source, null, true); }
 				else if (target.hasType('Poison')) { target.setStatus('psn', source, null, true); }
-				else if (target.hasType('Psychic')) { target.addVolatile('confusion', source); }
+				else if (target.hasType('Psychic')) { target.addVolatile('confusion', source, move, null, true); }
 			},
 		},
 		desc: "10% chance to Flinch target. 70% chance to status based on target's type, ignoring immunities [Dragon-Dragonblight/Electric-Paralysis/Fighting-'Migraine' Aura/Fire-Burn/Ghost-Curse/Ice-Frostbite/Normal-Drowsy/Poison-Poison/Psychic-Confusion]",
@@ -9371,6 +9370,12 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		critRatio: 3,
 		flags: { magic: 1, infusible: 1, protect: 1, mirror: 1, metronome: 1, bullet: 1 },
 		secondary: { chance: 50, boosts: {spa: -1,}, },
+		onBasePower(basePower, source, target, move) {
+			if (this.field.isTerrain('mistyterrain')) {
+				this.debug('mist ball terrain boost');
+				return 120;
+			}
+		},
 		desc: "50% chance to lower target's Special Attack [-1 stage]. 1.5x power over Misty Terrain; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Ability/Type based immunities become resistances",
 		shortDesc: "50% -1 Sp.ATK: Target. 1.5x power over Misty Terrain",
 		target: "normal",
@@ -12767,7 +12772,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		},
 		onTryHit(target, source, move) {
 			if (!source.hasType('Ghost')) {
-				delete move.status;
+				delete move.volatileStatus;
 				delete move.onHit;
 				move.self = { boosts: { spe: -1, atk: 1, def: 1 } };
 			} 
@@ -13792,7 +13797,6 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		priority: 0,
 		flags: { sound: 1, weapon: 1, protect: 1, reflectable: 1, mirror: 1, bypasssub: 1, metronome: 1 },
 		status: 'drowsy',
-		onTryImmunity(target) { return !target.hasType('Grass'); },
 		secondary: null,
 		desc: "Makes target Drowsy, Grass types are immune; SOUND: This move bypasses substitutes",
 		shortDesc: "Makes target Drowsy, Grass types are immune",
@@ -14430,6 +14434,20 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		flags: { snatch: 1, metronome: 1 },
 		boosts: {atk: 1, accuracy: 1, crit: 2,},
 		secondary: null,
+		self: { volatileStatus: 'honeclaws' },
+		condition: {
+			noCopy: true,
+			onStart(pokemon) { this.add('-start', pokemon, 'Hone Claws'); },
+			onBasePowerPriority: 8,
+			onBasePower(basePower, attacker, defender, move) {
+				if (move.flags['claw'] || move.flags['pierce']) {
+					this.debug('Hone Claws boost');
+					return this.chainModify([4915, 4096]);
+				}
+			},
+		},
+		desc: "Boosts user's Attack, Accuracy +1 stage, and Crit Ratio +2 stages. Until user switches out, gain an affinity for Claw/Pierce moves.",
+		shortDesc: "+1 Atk, +1 Acc, +2 Crit. Volatile: Claw/Pierce affinity",
 		target: "self",
 	},
 	hottake: {
@@ -14502,7 +14520,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 				this.add('-activate', target, 'move: Hyperspace Barrier');
 				return this.NOT_FAIL;
 			},
-			onDamagingHit(damage, target, source, move) {
+			onHit(target, source, move) {
 				if (!source || source === target) return;
 				if (!this.checkMoveMakesContact(move, source, target)) return;
 				if (!move.flags['pierce']) return;
@@ -15176,7 +15194,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		priority: 5,
 		guardActionCD: 1,
 		flags: { snatch: 1, metronome: 1 },
-		boosts: {atk: 1},
+		boosts: {atk: 1, crit: 1},
 		self: { volatileStatus: 'meditate' },
 		condition: {
 			duration: 1,
@@ -15185,24 +15203,18 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 				this.effectState.wasHit = false;
 			},
 			onModifyAccuracyPriority: -1,
-			onModifyAccuracy(accuracy, target, source, move) {
-				if (move.category === 'Status') return;
-				this.debug('Meditate - decreasing accuracy');
-				return this.chainModify([5, 10]);
+			onModifyAccuracy(accuracy) {
+				if (typeof accuracy !== 'number') return;
+				return this.chainModify(0.5);
 			},
 			onHit(target, source, move) {
 				if (move?.category !== 'Status') {
 					this.effectState.wasHit = true;
+					this.add('-message', `${target.name}'s zen was broken!`);
 					target.removeVolatile('meditate');
 				}
 			},
-			onEnd(target) {
-				if (!this.effectState.wasHit) {
-					this.boost({atk: 1, crit: 2}, target, target);
-					target.addVolatile('focusenergy');
-					this.add('-start', target, 'move: Focus Energy', '[from] move: Meditate');
-				}
-			},
+			onEnd(target) { if (!this.effectState.wasHit) { this.boost({atk: 1, crit: 1}, target, target); } },
 		},
 		secondary: null,
 		desc: "+5 priority. At start of turn, user meditates, increasing evasion 50% until hit, boosting user's Attack and Crit Ratio. If user wasn't hit: At end of turn, trigger the boost again.",
@@ -15609,7 +15621,6 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		basePower: 0,
 		type: "Normal",
 		category: "Status",
-		isNonstandard: "Past",
 		name: "Nature Power",
 		pp: 20,
 		priority: 0,
@@ -15621,16 +15632,18 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 			else if (this.field.isTerrain('grassyterrain')) 
 				{ move = 'energyball'; } 
 			else if (this.field.isTerrain('mistyterrain')) 
-				{ move = 'moonblast'; } 
+				{ move = 'mistball'; } 
 			else if (this.field.isTerrain('psychicterrain')) 
 				{ move = 'psychic'; }
 			else if (this.field.isTerrain('toxicterrain')) 
-				{ move = 'poison'; }
+				{ move = 'sludgebomb'; }
 			this.actions.useMove(move, pokemon, { target });
 			return null;
 		},
 		callsMove: true,
 		secondary: null,
+		desc: "Attack depends on terrain. [None: Tri-Attack, Electric: Thunderbolt, Grassy: Energy Ball, Misty: Mist Ball, Psychic: Psychic, Toxic: Sludge Bomb]",
+		shortDesc: "Attack depends on terrain. [None: Tri-Attack, Electric: Thunderbolt, Grassy: Energy Ball, Misty: Mist Ball, Psychic: Psychic, Toxic: Sludge Bomb]",
 		target: "normal",
 	},
 	nightmare: {
@@ -16055,16 +16068,16 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		pp: 16,
 		priority: 0,
 		flags: { protect: 1, mirror: 1, metronome: 1 },
-		onTryHit(target, source, move) {
-			if (!source.status && !Object.keys(source.volatiles).length) return false;
-			if (source.status) move.status = source.status;
-			// Transfer all volatile statuses except those that shouldn't be copied
-			const excludedVolatiles = [ "substitute", "stall", "protect", "mirrorshield", "matblock", "maxguard", "banefulbunker", "kingsshield", "spikyshield" ];
+		onTryHit(target, source) { if (!source.status && !Object.keys(source.volatiles).length) { return false; } },
+		onHit(target, source) {
+			if (source.status) {
+				target.trySetStatus(source.status, source);
+				source.cureStatus();
+			}
 			for (const v in source.volatiles) {
-				if (!excludedVolatiles.includes(v)) {
-					target.addVolatile(v);
-					source.removeVolatile(v);
-				}
+				if (v === 'substitute') continue;
+				target.addVolatile(v, source);
+				source.removeVolatile(v);
 			}
 		},
 		self: { onHit(pokemon) { pokemon.cureStatus(); }, },
@@ -16730,34 +16743,24 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 				const shielded = target.hasItem?.('Ability Shield') || target.hasItem?.('abilityshield');
 				if (target === source) return;
 				if ((move.flags['bypasssub'] || move.infiltrates) && !shielded) return;
-				if ((move.flags['bypasssub'] || move.infiltrates) && shielded) {
-					this.add('-block', target, 'item: Ability Shield');
-				}
+				if ((move.flags['bypasssub'] || move.infiltrates) && shielded) { this.add('-block', target, 'item: Ability Shield'); }
 				let damage = this.actions.getDamage(source, target, move);
 				if (!damage && damage !== 0) {
 					this.add('-fail', source);
 					this.attrLastMove('[still]');
 					return null;
 				}
-				if (damage > target.volatiles['shadowclone'].hp) {
-					damage = target.volatiles['shadowclone'].hp as number;
-				}
+				if (damage > target.volatiles['shadowclone'].hp) { damage = target.volatiles['shadowclone'].hp as number; }
 				target.volatiles['shadowclone'].hp -= damage;
 				source.lastDamage = damage;
 
 				if (target.volatiles['shadowclone'].hp <= 0) {
 					if (move.ohko) this.add('-ohko');
 					target.removeVolatile('shadowclone');
-				} else {
-					this.add('-activate', target, 'move: Shadow Clone', '[damage]');
-				}
-
-				if (move.recoil || move.id === 'chloroblast') {
-					this.damage(this.actions.calcRecoilDamage(damage, move, source), source, target, 'recoil');
-				}
-				if (move.drain) {
-					this.heal(Math.ceil(damage * move.drain[0] / move.drain[1]), source, target, 'drain');
-				}
+				} 
+				else { this.add('-activate', target, 'move: Shadow Clone', '[damage]'); }
+				if (move.recoil || move.id === 'chloroblast') { this.damage(this.actions.calcRecoilDamage(damage, move, source), source, target, 'recoil'); }
+				if (move.drain) { this.heal(Math.ceil(damage * move.drain[0] / move.drain[1]), source, target, 'drain'); }
 				this.singleEvent('AfterSubDamage', move, null, target, source, move, damage);
 				this.runEvent('AfterSubDamage', target, source, move, damage);
 				return this.HIT_SUBSTITUTE;
@@ -16786,17 +16789,12 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		pp: 30,
 		priority: 0,
 		flags: { snatch: 1, metronome: 1 },
-		boosts: {atk: 1, accuracy: 1},
+		boosts: {atk: 1, accuracy: 1, crit: 1,},
+		secondary: null,
 		self: { volatileStatus: 'sharpen' },
-		onHit(target, source, move) {
-			this.boost({crit: 2}, source, source, move);
-			source.addVolatile('focusenergy');
-		},
 		condition: {
 			noCopy: true,
-			onStart(pokemon) {
-				this.add('-start', pokemon, 'Sharpen');
-			},
+			onStart(pokemon) { this.add('-start', pokemon, 'Sharpen'); },
 			onBasePowerPriority: 8,
 			onBasePower(basePower, attacker, defender, move) {
 				if (move.flags['slicing'] || move.flags['weapon']) {
@@ -16805,9 +16803,8 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 				}
 			},
 		},
-		secondary: null,
-		desc: "Boosts user's Attack, Accuracy, and Crit Ratio. Volatile: Gain affinity for Slice/Weapon moves.",
-		shortDesc: "+1 Atk, +1 Acc, +2 Crit. Volatile: Slice/Weapon affinity",
+		desc: "Boosts user's Attack, Accuracy, and Crit Ratio +1 stage. Until user switches out, gain an affinity for Slice/Weapon moves.",
+		shortDesc: "+1 Atk, +1 Acc, +1 Crit. Volatile: Slice/Weapon affinity",
 		target: "self",
 	},
 	shatteredpsyche: {
@@ -16952,6 +16949,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		name: "Silk Trap",
 		pp: 8,
 		priority: 4,
+		guardActionCD: 1,
 		flags: {},
 		stallingMove: true,
 		volatileStatus: 'silktrap',
@@ -17943,17 +17941,13 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 			onStart(pokemon) {this.add('-start', pokemon, 'Tar Shot');},
 			onTrapPokemon(pokemon) {if (!pokemon.trapped) {pokemon.tryTrap();}},
 			onModifyPriority(priority, pokemon, target, move) {if (pokemon && pokemon.volatiles['tarshot']) {return priority - 0.1;}},
-			onResidualPriority: 9,
-			onResidual(pokemon) {
-				const damage = this.damage(pokemon.baseMaxhp / 10, pokemon, pokemon);
-				if (damage) {this.add('-damage', pokemon, pokemon.getHealth);}
-			},
+			onResidualOrder: 9,
+			onResidual(pokemon) { this.damage(pokemon.baseMaxhp / 10); },
 			onDamagingHit(damage, target, source, move) {
 				if (move.type === 'Fire') {
 					this.add('-activate', target, 'ability: Tar Shot');
 					this.add('-message', `A tar bubble exploded!`);
 					const tarDamage = this.damage(target.baseMaxhp / 10, target, target);
-					if (tarDamage) {this.add('-damage', target, target.getHealth);}
 				}
 			},
 			onEffectivenessPriority: -2,
@@ -18048,8 +18042,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		priority: 0,
 		flags: { protect: 1, reflectable: 1, mirror: 1, allyanim: 1, metronome: 1 },
 		volatileStatus: 'telekinesis',
-		onTryHit(target, source, move) {
-			// Additional Gravity check for Z-move variant
+		onTryHit(target, source, move) { // Additional Gravity check for Z-move variant
 			if (this.field.getPseudoWeather('Gravity')) {
 				this.attrLastMove('[still]');
 				this.add('cant', source, 'move: Gravity', move);
@@ -18704,55 +18697,6 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		target: "normal",
 	},
 	//#region PAST GEN MOVES
-	conversion: {
-		num: 160,
-		accuracy: true,
-		basePower: 0,
-		type: "Normal",
-		category: "Status",
-		isNonstandard: "Past",
-		name: "Conversion",
-		pp: 30,
-		priority: 0,
-		flags: { snatch: 1, metronome: 1 },
-		onHit(target) {
-			const type = this.dex.moves.get(target.moveSlots[0].id).type;
-			if (target.hasType(type) || !target.setType(type)) return false;
-			this.add('-start', target, 'typechange', type);
-		},
-		secondary: null,
-		target: "self",
-	},
-	conversion2: {
-		num: 176,
-		accuracy: true,
-		basePower: 0,
-		type: "Normal",
-		category: "Status",
-		isNonstandard: "Past",
-		name: "Conversion 2",
-		pp: 30,
-		priority: 0,
-		flags: { bypasssub: 1, metronome: 1 },
-		onHit(target, source) {
-			if (!target.lastMoveUsed) { return false; }
-			const possibleTypes = [];
-			const attackType = target.lastMoveUsed.type;
-			for (const typeName of this.dex.types.names()) {
-				if (source.hasType(typeName)) continue;
-				const typeCheck = this.dex.types.get(typeName).damageTaken[attackType];
-				if (typeCheck === 2 || typeCheck === 3) { possibleTypes.push(typeName); }
-			}
-			if (!possibleTypes.length) { return false;
-			}
-			const randomType = this.sample(possibleTypes);
-
-			if (!source.setType(randomType)) return false;
-			this.add('-start', source, 'typechange', randomType);
-		},
-		secondary: null,
-		target: "normal",
-	},
 	minimize: {
 		num: 107,
 		accuracy: true,

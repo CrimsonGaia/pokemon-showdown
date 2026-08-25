@@ -215,8 +215,6 @@ export const TypeChart: import('../sim/dex-data').TypeDataTable = {
 	},
 	fairy: {
 		damageTaken: {
-			//Immune
-			aura: 3,
 			// Weak
 			binding: 1,
 			magic: 1,
@@ -239,6 +237,7 @@ export const TypeChart: import('../sim/dex-data').TypeDataTable = {
 			Stellar: 0,
 			Water: 0,
 			// Resist
+			aura: 2,
 			weapon: 2,
 			Banal: 2,
 			Dragon: 2,

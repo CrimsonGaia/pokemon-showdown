@@ -68,6 +68,7 @@ export class DexSearch {
 		case 'move': return new BattleMoveSearch('move', format, speciesOrSet);
 		case 'flag': return new BattleFlagSearch('flag', format, speciesOrSet);
 		case 'guardaction': return new BattleGuardActionSearch('guardaction', format, speciesOrSet);
+		case 'tier': return new BattleTierSearch('tier', format, speciesOrSet);
 		case 'ability': return new BattleAbilitySearch('ability', format, speciesOrSet);
 		case 'type': return new BattleTypeSearch('type', format, speciesOrSet);
 		case 'category': return new BattleCategorySearch('category', format, speciesOrSet);
@@ -282,6 +283,7 @@ export class DexSearch {
 		// When we're done, the buffers are concatenated together to form our results, with each buffer getting its own header, unlike
 		// Notes: if we have a searchType, that searchType's buffer will be on top
 		let bufs: SearchRow[][] = [[], [], [], [], [], [], [], [], [], [], [], [], []];
+		let illegalBuf: SearchRow[] = [];
 		let topbufIndex = -1;
 		let count = 0;
 		let nearMatch = false;
@@ -366,15 +368,19 @@ export class DexSearch {
 			if (searchType && searchTypeIndex !== typeIndex) { if (!instafilter || instafilterSort[typeIndex] < instafilterSort[instafilter[2]]) { instafilter = [type, id, typeIndex]; } }
 			// show types above Arceus formes
 			if (topbufIndex < 0 && searchTypeIndex < 2 && passType === 'alias' && !bufs[1].length && bufs[2].length) { topbufIndex = 2; }
+			let isIllegal = false;
 			if (illegal && typeIndex === searchTypeIndex) {
 				if (!(id in illegal)) {
 					if (!bufs[0].length) { bufs[0] = [['header', DexSearch.typeName[type]]]; }
 					typeIndex = 0;
-				} else {
-					continue;
-				}
-			} else {
-				if (!bufs[typeIndex].length) { bufs[typeIndex] = [['header', DexSearch.typeName[type]]]; }
+				} 
+				else { isIllegal = true; }
+			} else { if (!bufs[typeIndex].length) { bufs[typeIndex] = [['header', DexSearch.typeName[type]]]; } }
+			if (isIllegal) {
+				if (illegalBuf.length && illegalBuf[illegalBuf.length - 1][1] === id && passType === 'alias') continue;
+				illegalBuf.push([type, id, matchStart, matchEnd]);
+				count++;
+				continue;
 			}
 			// don't match duplicate aliases
 			let curBufLength = (passType === 'alias' && bufs[typeIndex].length);
@@ -410,11 +416,9 @@ export class DexSearch {
 			}
 			if (matches.length) { topbuf = [['header', 'Tiers'], ...matches, ...topbuf]; }
 		}
-		if (instafilter && count < 20) {
-			// Result count is less than 20, so we can instafilter
-			bufs.push(this.instafilter(searchType, instafilter[0], instafilter[1]));
-		}
+		if (instafilter && count < 20) { bufs.push(this.instafilter(searchType, instafilter[0], instafilter[1])); }
 		this.results = Array.prototype.concat.apply(topbuf, bufs);
+		if (illegalBuf.length) { this.results = [...this.results, ['header', 'Illegal results'], ...illegalBuf]; }
 		return this.results;
 	}
 	private instafilter(searchType: SearchType | '', fType: SearchType, fId: ID): SearchRow[] {
@@ -582,6 +586,7 @@ abstract class BattleTypedSearch<T extends SearchType> {
 		else if (sortCol === 'ability') { return [this.sortRow!, ...BattleAbilitySearch.prototype.getDefaultResults.call(this, reverseSort)]; } 
 		else if (sortCol === 'flag') { return [this.sortRow!, ...BattleFlagSearch.prototype.getDefaultResults.call(this, reverseSort)]; }
 		else if (sortCol === 'guardaction') { return [this.sortRow!, ...BattleGuardActionSearch.prototype.getDefaultResults.call(this, reverseSort)]; }
+		else if (sortCol === 'tier') { return [this.sortRow!, ...BattleTierSearch.prototype.getDefaultResults.call(this, reverseSort)]; }
 		if (!this.baseResults) { this.baseResults = this.getBaseResults(); }
 		if (!this.baseIllegalResults) {
 			const legalityFilter: { [id: string]: 1 } = {};
@@ -1066,6 +1071,7 @@ class BattleAbilitySearch extends BattleTypedSearch<'ability'> {
 	getDefaultResults(reverseSort?: boolean): SearchRow[] {
 		const results: SearchRow[] = [];
 		for (let id in BattleAbilities) { results.push(['ability', id as ID]); }
+		results.sort(([type1, id1], [type2, id2]) =>this.dex.abilities.get(id1).name.localeCompare(this.dex.abilities.get(id2).name));
 		if (reverseSort) results.reverse();
 		return results;
 	}
@@ -1707,7 +1713,33 @@ class BattleMoveSearch extends BattleTypedSearch<'move'> {
 		getTable() { return BattleMovedex; }
 		getDefaultResults(reverseSort?: boolean): SearchRow[] {
 			const results: SearchRow[] = [];
-			for (const move of this.dex.moves.all()) { if (move.guardActionCD) results.push(['guardaction', move.id]); }
+			const seen = new Set<ID>();
+			for (const move of this.dex.moves.all()) {
+				if (!move.guardActionCD || seen.has(move.id)) continue;
+				seen.add(move.id);
+				results.push(['guardaction', move.id]);
+			}
+			results.sort((a, b) => (a[1] as string).localeCompare(b[1] as string));
+			if (reverseSort) results.reverse();
+			return results;
+		}
+		getBaseResults() { return this.getDefaultResults(); }
+		filter(row: SearchRow, filters: string[][]): boolean { throw new Error("invalid filter"); }
+		sort(results: SearchRow[], sortCol: string | null, reverseSort?: boolean): SearchRow[] { throw new Error("invalid sortcol"); }
+	}
+	//region Tier Search
+	class BattleTierSearch extends BattleTypedSearch<'tier'> {
+		getTable() { return window.BattleTeambuilderTable; }
+		getDefaultResults(reverseSort?: boolean): SearchRow[] {
+			const seen: { [id: string]: 1 } = {};
+			const results: SearchRow[] = [];
+			for (const id in window.BattlePokedex) {
+				const species = this.dex.species.get(id as ID);
+				const tier = this.getTier(species);
+				if (!tier || seen[tier]) continue;
+				seen[tier] = 1;
+				results.push(['tier', tier as ID]);
+			}
 			results.sort((a, b) => (a[1] as string).localeCompare(b[1] as string));
 			if (reverseSort) results.reverse();
 			return results;

@@ -1050,6 +1050,8 @@ Storage.importTeam = function (buffer, teams) {
 			curSet.ability = parts[0] || '';
 			curSet.ability2 = parts[1] || '';
 			sawAbilitiesLine = true;
+		} else if (line.substr(0, 13) === 'Ability Set: ') {
+			curSet.abilitySet = $.trim(line.substr(13)) === '2' ? 2 : 1;
 		} else if (line.substr(0, 6) === 'Size: ') {
 			var sz = $.trim(line.substr(6)).toUpperCase();
 			if (sz === 'XS' || sz === 'S' || sz === 'M' || sz === 'L' || sz === 'XL') curSet.size = sz;
@@ -1149,6 +1151,7 @@ Storage.exportTeam = function (team, gen, hidestats) {
 		var a1 = (curSet.ability || '').trim();
 		var a2 = (curSet.ability2 || '').trim();
 		if (a1 || a2) text += 'Abilities: ' + a1 + (a2 ? ' / ' + a2 : '') + "  \n";
+		if (curSet.abilitySet === 2) text += 'Ability Set: 2  \n';
 		text += 'Size: ' + String(curSet.size || 'M').toUpperCase() + "  \n";
 		if (curSet.level && curSet.level !== 100) { text += 'Level: ' + curSet.level + "  \n"; }
 		if (curSet.shiny) { text += 'Shiny: Yes  \n'; }

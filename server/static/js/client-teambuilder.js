@@ -2894,7 +2894,6 @@
 				if (val === 2) return -1;
 				return 0;
 			}
-
 			var defense = [];
 			var immunities = [];
 			allTypeNames.forEach(function (attackType) {
@@ -2927,7 +2926,7 @@
 					var val = defendTypeData.damageTaken ? defendTypeData.damageTaken[flag] : undefined;
 					if (val === 3) { immune = true; } 
 					else if (val === 1) { multiplier *= 1.5; } 
-					else if (val === 2) { multiplier *= 0.5; }
+					else if (val === 2) { multiplier *= 0.67; }
 				});
 				if (immune) { immunities.push({ kind: 'flag', name: flag }); } 
 				else if (multiplier !== 1) { defense.push({ kind: 'flag', name: flag, multiplier: multiplier, thick: false }); }
@@ -4001,15 +4000,9 @@
 					var sp = dex.species.get(formeName);
 					if (!sp) continue;
 					if (
-						sp.isMega ||
-						sp.isPrimal ||
-						sp.isUltra ||
-						sp.forme === 'Mega' ||
-						sp.forme === 'Mega-X' ||
-						sp.forme === 'Mega-Y' ||
-						sp.forme === 'Primal' ||
-						sp.forme === 'Ultra' ||
-						sp.battleOnly
+						sp.isPrimal || sp.isUltra || sp.forme === 'Primal' || sp.forme === 'Ultra' ||
+						sp.isMega || sp.forme === 'Mega' || sp.forme === 'Mega-X' || sp.forme === 'Mega-Y' || sp.forme === 'Mega-Z' || sp.forme === 'Mega-A' || sp.forme === 'Mega-Q'
+						
 					) { continue; }
 					formeIds.push(toID(formeName));
 				}
@@ -4098,6 +4091,7 @@
 			this.curSet.species = newSpecies.name;
 			// If nickname is blank OR was effectively the old species name, update it to match the new species
 			if (!this.curSet.name || toID(this.curSet.name) === toID(oldSpeciesName)) { this.curSet.name = newSpecies.name; }
+			if (newSpecies.requiredItems && newSpecies.requiredItems.length === 1) { this.curSet.item = newSpecies.requiredItems[0]; }
 			this.close();
 			var room = this.room;
 			// In focused view, the correct slot is curSetLoc.

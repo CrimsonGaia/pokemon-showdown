@@ -3647,7 +3647,6 @@ p.or:after {
 }
 
 .utilichart.pokemon-grid-view > li.result.pokemon-grid-card {
-	height: 170px;
 	margin: 0;
 	box-sizing: border-box;
 }
@@ -3746,6 +3745,7 @@ p.or:after {
 	background: rgba(255, 255, 255, 0.35);
 }
 .pokemon-grid-icon {
+	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -3760,6 +3760,23 @@ p.or:after {
 	transform: scale(2);
 	transform-origin: center center;
 	image-rendering: pixelated;
+}
+.pokemon-grid-illegal .pokemon-grid-icon > span {
+	filter: grayscale(100%);
+	opacity: 0.45;
+}
+.pokemon-grid-illegal-tag {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 1;
+	pointer-events: none;
+}
+.pokemon-grid-illegal-tag .col {
+	float: none;
+	padding: 0;
+	height: auto;
 }
 .pokemon-grid-measure {
 	display: flex;
@@ -3848,31 +3865,34 @@ p.or:after {
 
 .pokemon-grid-guardaction {
 	grid-column: 1 / -1;
-	padding: 4px 0;
+	display: flex;
+	align-items: center;
+	padding: 2px 6px;
 	border-top: 1px solid #CCCCCC;
 	border-bottom: 1px solid #CCCCCC;
 }
 .pokemon-grid-guardaction-header {
 	font-size: 8pt;
-	color: #999999;
-	text-align: center;
-	margin-bottom: 2px;
+	font-weight: bold;
+	padding-right: 10px;
+	width: 34px;
+}
+.pokemon-grid-guardaction-divider {
+	width: 1px;
+	align-self: stretch;
+	background: #CCCCCC;
+	margin-right: 6px;
 }
 .pokemon-grid-guardaction-row {
 	display: flex;
-	width: 100%;
+	flex: 1;
+	min-width: 0;
 }
 .pokemon-grid-guardaction-move {
 	flex: 1;
-	text-align: center;
-	font-size: 8pt;
+	font-size: 7pt;
 	padding: 0 2px;
-}
-.pokemon-grid-guardaction {
-	width: 100%;
-	padding: 4px 0;
-	border-top: 1px solid #CCCCCC;
-	border-bottom: 1px solid #CCCCCC;
+	text-align: center;
 }
 .pokemon-grid-stats {
 	grid-column: 1 / -1;
@@ -3947,6 +3967,16 @@ p.or:after {
 /*Item Grid View*/
 
 
+
+
+.utilichart.item-grid-view {
+	display: block;
+	column-count: 4;
+	column-gap: 4px;
+	padding: 0 5px;
+	height: auto;
+}
+
 .utilichart.item-grid-view::after {
 	display: none;
 	content: none;
@@ -3958,19 +3988,16 @@ p.or:after {
 	padding: 0;
 }
 
-.utilichart.item-grid-view {
-	display: block !important;
-	column-count: 4;
-	column-gap: 4px;
-	padding: 0 5px;
-	height: auto;
-}
-
 .utilichart.item-grid-view > li.result:not(.item-grid-card) {
-	flex: 0 0 100%;
+	display: block;
 	width: 100%;
+	margin: 0 0 6px 0;
+	break-inside: avoid;
+	-webkit-column-break-inside: avoid;
+	page-break-inside: avoid;
+	column-span: all;
+	-webkit-column-span: all;
 }
-
 
 .utilichart.item-grid-view > li.result.item-grid-card {
 	display: inline-block;
@@ -3988,9 +4015,7 @@ p.or:after {
 	height: auto !important;
 	contain: none !important;
 }
-
-.utilichart.item-grid-view > li.result:not(.item-grid-card) {
-	display: block;
+.utilichart.item-grid-view > li.result.item-grid-section-wrapper {
 	width: 100% !important;
 	margin: 0 0 6px 0;
 	break-inside: avoid;
@@ -3998,6 +4023,18 @@ p.or:after {
 	page-break-inside: avoid;
 	column-span: all;
 	-webkit-column-span: all;
+}
+.utilichart.item-grid-view .item-grid-section-row {
+	display: flex;
+	gap: 4px;
+	--item-grid-cols: 4;
+}
+.utilichart.item-grid-view .item-grid-section-row > .item-grid-card {
+	display: block;
+	flex: 0 0 calc((100% - (var(--item-grid-cols) - 1) * 4px) / var(--item-grid-cols));
+	max-width: calc((100% - (var(--item-grid-cols) - 1) * 4px) / var(--item-grid-cols));
+	min-width: 0;
+	margin: 0 !important;
 }
 
 .item-grid-classes {
@@ -4021,7 +4058,8 @@ p.or:after {
 	box-sizing: border-box;
 }
 
-.utilichart.item-grid-view > li.result.item-grid-card > a {
+.utilichart.item-grid-view > li.result.item-grid-card > a,
+.utilichart.item-grid-view .item-grid-card > a {
 	display: block;
 	width: 97%;
 	height: auto !important;
@@ -4037,18 +4075,20 @@ p.or:after {
 	text-decoration: none;
 }
 
-.utilichart.item-grid-view > li.result.item-grid-card > a:hover {
+.utilichart.item-grid-view > li.result.item-grid-card > a:hover,
+.utilichart.item-grid-view .item-grid-card > a:hover {
 	border-color: #777;
 }
 
-.utilichart.item-grid-view > li.result.item-grid-card > a.cur {
+.utilichart.item-grid-view > li.result.item-grid-card > a.cur,
+.utilichart.item-grid-view .item-grid-card > a.cur {
 	border-color: #5b9dd9;
 }
 
-.utilichart.item-grid-view li.item-grid-card > a,
-.utilichart.item-grid-view li.item-grid-card .item-grid-main,
-.utilichart.item-grid-view li.item-grid-card .item-grid-desc,
-.utilichart.item-grid-view li.item-grid-card .item-grid-fragilebar {
+.utilichart.item-grid-view .item-grid-card > a,
+.utilichart.item-grid-view .item-grid-card .item-grid-main,
+.utilichart.item-grid-view .item-grid-card .item-grid-desc,
+.utilichart.item-grid-view .item-grid-card .item-grid-fragilebar {
 	height: auto;
 	max-height: none;
 	overflow: visible;
