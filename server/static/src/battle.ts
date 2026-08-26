@@ -2333,9 +2333,6 @@ export class Battle {
 			case 'healblock':
 				this.scene.resultAnim(poke, 'Heal Block', 'bad');
 				break;
-			case 'yawn':
-				this.scene.resultAnim(poke, 'Drowsy', 'slp');
-				break;
 			case 'taunt':
 				this.scene.resultAnim(poke, 'Taunted', 'bad');
 				break;
@@ -3249,7 +3246,9 @@ export class Battle {
 				if (args[3] === 'mail') { pokemon.item = '(mail)'; } 
 				else if (args[3]) {
 					const { siden } = this.parsePokemonId(args[1]);
-					this.sides[siden].teamsheetItems[this.sides[siden].pokemon.length - 1] = args[3];
+					const side = this.sides[siden];
+					const idx = side.pokemon.indexOf(pokemon);
+					if (idx >= 0) side.teamsheetItems[idx] = args[3];
 				}
 				break;
 			}

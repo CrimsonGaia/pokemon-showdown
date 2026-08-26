@@ -494,18 +494,19 @@ var knownItem=(_side$pokemon$_i=side.pokemon[_i5])==null?void 0:_side$pokemon$_i
 var itemIconHTML='';
 if(knownItem&&knownItem!=='(exists)'){itemIconHTML="<span class=\"itemicon\" data-teambar-item=\""+(isP1?'p1':'p2')+"-"+_i5+"\" style=\""+Dex.getItemIcon(knownItem,24/96)+"\"></span>";}else
 {itemIconHTML="<span class=\"itemicon itemicon-unknown\" data-teambar-item=\""+(isP1?'p1':'p2')+"-"+_i5+"\">?</span>";}
-html+="<span class=\"picon has-tooltip battleteambar-sprite"+status+"\" data-tooltip=\"pokemon|"+side.n+"|"+_i5+"\" style=\""+iconStyle+opacityStyle+"\">"+itemIconHTML+"</span>";
+html+="<span class=\"picon has-tooltip battleteambar-sprite"+status+"\" data-tooltip=\"pokemon|"+side.n+"|"+_i5+"\" style=\""+iconStyle+";"+opacityStyle+"\">"+itemIconHTML+"</span>";
 }
 return html;
 };_proto.
 getTeamBarPoolHTML=function getTeamBarPoolHTML(side,isP1){
 var pooled=side.teamsheetItems;
-if(!(pooled!=null&&pooled.length))return'';
-var html='<div class="battleteambar-pool">';
+var html="<div class=\"battleteambar-pool battleteambar-pool-"+(isP1?'p1':'p2')+"\">";
+if(pooled!=null&&pooled.length){
 for(var j=0;j<pooled.length;j++){
 var item=pooled[j];
 if(!item)continue;
 html+="<span class=\"itemicon battleteambar-poolicon\" data-teambar-pool=\""+(isP1?'p1':'p2')+"-"+j+"\" style=\""+Dex.getItemIcon(item)+"\"></span>";
+}
 }
 html+='</div>';
 return html;
@@ -664,18 +665,24 @@ preRects.set(''+$(el).data('teambar-pool'),el.getBoundingClientRect());
 });for(var _i17=0,_ref2=
 
 
+
+
 [p1Side,p2Side];_i17<_ref2.length;_i17++){var side=_ref2[_i17];
 var pooled=side.teamsheetItems;
 if(!(pooled!=null&&pooled.length))continue;
-for(var i=0;i<side.pokemon.length;i++){var _side$pokemon$i3;if((_side$pokemon$i3=side.pokemon[i])!=null&&_side$pokemon$i3.item)pooled[i]=null;}
+for(var i=0;i<side.pokemon.length;i++){var _side$pokemon$i3,_side$pokemon$i4,_side$pokemon$i5;
+var revealed=((_side$pokemon$i3=side.pokemon[i])==null?void 0:_side$pokemon$i3.searchid)||((_side$pokemon$i4=side.pokemon[i])==null?void 0:_side$pokemon$i4.fainted);
+if(revealed&&(_side$pokemon$i5=side.pokemon[i])!=null&&_side$pokemon$i5.item)pooled[i]=null;
+}
 }
 var p1HTML=this.getTeamBarHTML(p1Side,true);
 var p2HTML=this.getTeamBarHTML(p2Side,false);
 var p1PoolHTML=this.getTeamBarPoolHTML(p1Side,true);
 var p2PoolHTML=this.getTeamBarPoolHTML(p2Side,false);
 this.$battleteambar.html(
-"<div class=\"battleteambar-p1\">"+p1PoolHTML+p1HTML+"</div>"+("<div class=\"battleteambar-p2\">"+
-p2HTML+p2PoolHTML+"</div>")
+"<div class=\"battleteambar-p1\">"+p1HTML+"</div>"+("<div class=\"battleteambar-pools\">"+
+p1PoolHTML+p2PoolHTML+"</div>")+("<div class=\"battleteambar-p2\">"+
+p2HTML+"</div>")
 );
 
 

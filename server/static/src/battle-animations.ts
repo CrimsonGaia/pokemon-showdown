@@ -494,18 +494,19 @@ export class BattleScene implements BattleSceneStub {
 			let itemIconHTML = '';
 			if (knownItem && knownItem !== '(exists)') { itemIconHTML = `<span class="itemicon" data-teambar-item="${isP1 ? 'p1' : 'p2'}-${i}" style="${Dex.getItemIcon(knownItem, 24 / 96)}"></span>`; } 
 			else { itemIconHTML = `<span class="itemicon itemicon-unknown" data-teambar-item="${isP1 ? 'p1' : 'p2'}-${i}">?</span>`; }
-			html += `<span class="picon has-tooltip battleteambar-sprite${status}" data-tooltip="pokemon|${side.n}|${i}" style="${iconStyle}${opacityStyle}">${itemIconHTML}</span>`;
+			html += `<span class="picon has-tooltip battleteambar-sprite${status}" data-tooltip="pokemon|${side.n}|${i}" style="${iconStyle};${opacityStyle}">${itemIconHTML}</span>`;
 		}
 		return html;
 	}
 	getTeamBarPoolHTML(side: Side, isP1: boolean): string {
 		const pooled = (side as any).teamsheetItems as (string | null)[] | undefined;
-		if (!pooled?.length) return '';
-		let html = '<div class="battleteambar-pool">';
-		for (let j = 0; j < pooled.length; j++) {
-			const item = pooled[j];
-			if (!item) continue; // already attributed - pulled from the pool once its owner's item is known
-			html += `<span class="itemicon battleteambar-poolicon" data-teambar-pool="${isP1 ? 'p1' : 'p2'}-${j}" style="${Dex.getItemIcon(item)}"></span>`;
+		let html = `<div class="battleteambar-pool battleteambar-pool-${isP1 ? 'p1' : 'p2'}">`;
+		if (pooled?.length) {
+			for (let j = 0; j < pooled.length; j++) {
+				const item = pooled[j];
+				if (!item) continue; // already attributed - pulled from the pool once its owner's item is known
+				html += `<span class="itemicon battleteambar-poolicon" data-teambar-pool="${isP1 ? 'p1' : 'p2'}-${j}" style="${Dex.getItemIcon(item)}"></span>`;
+			}
 		}
 		html += '</div>';
 		return html;
@@ -662,20 +663,26 @@ export class BattleScene implements BattleSceneStub {
 		this.$battleteambar.find('[data-teambar-pool]').each((_, el) => {
 			preRects.set('' + $(el).data('teambar-pool'), el.getBoundingClientRect());
 		});
-		// A pooled item is "attributed" the instant its owner's real item becomes known in
-		// battle - pull it from the pool before rendering so it isn't shown in both places.
+		// A pooled item is only attributed once its own Pokemon has actually been sent into
+		// battle at least once - not the instant the client happens to know the item, which for
+		// your own team is essentially immediate from the |request|. This keeps even your own
+		// team's items visually flying out of the pool instead of skipping straight to attributed.
 		for (const side of [p1Side, p2Side]) {
 			const pooled = (side as any).teamsheetItems as (string | null)[] | undefined;
 			if (!pooled?.length) continue;
-			for (let i = 0; i < side.pokemon.length; i++) { if (side.pokemon[i]?.item) pooled[i] = null; }
+			for (let i = 0; i < side.pokemon.length; i++) {
+				const revealed = side.pokemon[i]?.searchid || side.pokemon[i]?.fainted;
+				if (revealed && side.pokemon[i]?.item) pooled[i] = null;
+			}
 		}
 		const p1HTML = this.getTeamBarHTML(p1Side, true);
 		const p2HTML = this.getTeamBarHTML(p2Side, false);
 		const p1PoolHTML = this.getTeamBarPoolHTML(p1Side, true);
 		const p2PoolHTML = this.getTeamBarPoolHTML(p2Side, false);
 		this.$battleteambar.html(
-			`<div class="battleteambar-p1">${p1PoolHTML}${p1HTML}</div>` +
-			`<div class="battleteambar-p2">${p2HTML}${p2PoolHTML}</div>`
+			`<div class="battleteambar-p1">${p1HTML}</div>` +
+			`<div class="battleteambar-pools">${p1PoolHTML}${p2PoolHTML}</div>` +
+			`<div class="battleteambar-p2">${p2HTML}</div>`
 		);
 		// FLIP: any pool icon present before this render but gone now just got attributed -
 		// fly a floating clone from its old pool position to its new slot on the topbar.

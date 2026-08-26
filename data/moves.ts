@@ -17345,7 +17345,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 				this.effectState.layers++;
 			},
 			onSwitchIn(pokemon) {
-				if (!pokemon.isGrounded() || pokemon.hasItem('heavydutyboots') || pokemon.hasType('Bug')) return;
+				if (!pokemon.isGrounded() || pokemon.hasItem('heavydutyboots') || pokemon.hasAbility('eartheater') || pokemon.hasType('Bug')) return;
 				const damageAmounts = [0, 3, 4, 6]; // 1/8, 1/6, 1/4
 				this.damage(damageAmounts[this.effectState.layers] * pokemon.maxhp / 24);
 			},

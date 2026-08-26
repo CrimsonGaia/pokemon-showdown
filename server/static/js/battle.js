@@ -2333,9 +2333,6 @@ break;
 case'healblock':
 this.scene.resultAnim(_poke36,'Heal Block','bad');
 break;
-case'yawn':
-this.scene.resultAnim(_poke36,'Drowsy','slp');
-break;
 case'taunt':
 this.scene.resultAnim(_poke36,'Taunted','bad');
 break;
@@ -3249,17 +3246,19 @@ var pokemon=this.rememberTeamPreviewPokemon(args[1],args[2]);
 if(args[3]==='mail'){pokemon.item='(mail)';}else
 if(args[3]){
 var _this$parsePokemonId6=this.parsePokemonId(args[1]),siden=_this$parsePokemonId6.siden;
-this.sides[siden].teamsheetItems[this.sides[siden].pokemon.length-1]=args[3];
+var _side7=this.sides[siden];
+var idx=_side7.pokemon.indexOf(pokemon);
+if(idx>=0)_side7.teamsheetItems[idx]=args[3];
 }
 break;
 }
 case'updatepoke':{
 var _this$parsePokemonId7=this.parsePokemonId(args[1]),_siden=_this$parsePokemonId7.siden;
-var _side7=this.sides[_siden];
-for(var i=0;i<_side7.pokemon.length;i++){
-var _pokemon2=_side7.pokemon[i];
+var _side8=this.sides[_siden];
+for(var i=0;i<_side8.pokemon.length;i++){
+var _pokemon2=_side8.pokemon[i];
 if(_pokemon2.details!==args[2]&&_pokemon2.checkDetails(args[2])){
-_side7.addPokemon('','',args[2],i);
+_side8.addPokemon('','',args[2],i);
 break;
 }
 }
@@ -3273,15 +3272,15 @@ break;
 case'showteam':{
 var team=Teams.unpack(args[2]);
 if(!team.length)return;
-var _side8=this.getSide(args[1]);
-_side8.clearPokemon();
-_side8.teamsheetItems=[];for(var _i68=0;_i68<
+var _side9=this.getSide(args[1]);
+_side9.clearPokemon();
+_side9.teamsheetItems=[];for(var _i68=0;_i68<
 team.length;_i68++){var set=team[_i68];
 var details=set.species+(!set.level||set.level===100?'':", L"+set.level)+(!set.gender||set.gender==='N'?'':", "+set.gender)+(set.shiny?', shiny':'');
-var _pokemon3=_side8.addPokemon('','',details);
+var _pokemon3=_side9.addPokemon('','',details);
 
 
-_side8.teamsheetItems.push(set.item||null);
+_side9.teamsheetItems.push(set.item||null);
 if(set.ability)_pokemon3.rememberAbility(set.ability);for(var _i70=0,_set$moves2=
 set.moves;_i70<_set$moves2.length;_i70++){var move=_set$moves2[_i70];_pokemon3.rememberMove(move,0);}
 if(set.teraType)_pokemon3.teraType=set.teraType;

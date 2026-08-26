@@ -363,7 +363,7 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 			this.add('-message', `${pokemon.name} is drowsing.`);
 			this.effectState.time--;
 			if (this.effectState.time <= 0) { // Remove drowsy and set sleep directly, bypassing status block
-				this.add('-message', `${pokemon.name} fell asleep from drowsiness.`);
+				this.add('-message', `${pokemon.name} fell asleep.`);
 				pokemon.cureStatus();
 				pokemon.setStatus('slp');
 			}

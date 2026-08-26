@@ -1692,16 +1692,16 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		num: 1101,
 	},
 	superconductor: {
-		onModifySpe(spe, pokemon) { if (this.field.isWeather(['hail', 'snow', 'snowscape'])) { return this.chainModify(1.25); } },
+		onModifySpe(spe, pokemon) { if (this.field.isWeather(['hail', 'snowscape'])) { return this.chainModify(1.25); } },
 		onTryHit(target, source, move) { 
-			if (this.field.isWeather(['hail', 'snow', 'snowscape']) && move.type === 'Electric') { 
+			if (this.field.isWeather(['hail', 'snowscape']) && move.type === 'Electric') { 
 				this.add('-immune', target, '[from] ability: Superconducto');
 				return null;
 			}
 		},
-		onStart(pokemon) { if (this.field.isWeather(['hail', 'snow', 'snowscape'])) { pokemon.addVolatile('superconductoairborne'); } },
+		onStart(pokemon) { if (this.field.isWeather(['hail', 'snowscape'])) { pokemon.addVolatile('superconductoairborne'); } },
 		onWeatherChange(target, source, sourceEffect) {
-			if (this.field.isWeather(['hail', 'snow', 'snowscape'])) { target.addVolatile('superconductoairborne'); }
+			if (this.field.isWeather(['hail', 'snowscape'])) { target.addVolatile('superconductoairborne'); }
 			else { target.removeVolatile('superconductoairborne'); }
 		},
 		condition: {
@@ -1803,7 +1803,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		num: 1067,
 	},
 	thunderhead: {
-		onBasePower(basePower, attacker, defender, move) { if (move.type === 'Electric' && this.field.isWeather(['hail', 'snow', 'snowscape', 'raindance', 'primordialsea'])) { return this.chainModify(1.3); } },
+		onBasePower(basePower, attacker, defender, move) { if (move.type === 'Electric' && this.field.isWeather(['hail', 'snowscape', 'raindance', 'primordialsea'])) { return this.chainModify(1.3); } },
 		onImmunity(type, pokemon) { if (type === 'hail') return false; },
 		flags: {},
 		name: "Thunderhead",
@@ -2423,7 +2423,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		onFractionalPriorityPriority: -2,
 		onFractionalPriority(priority, pokemon, target, move) { // 10% chance to move first in priority bracket, 100% if asleep
 			if (move && move.category === "Status" && (pokemon.ability1 === "myceliummight" || pokemon.ability2 === "myceliummight")) return;
-			if (priority <= 0 && (pokemon.status === 'slp' || this.randomChance(1, 10))) { 
+			if (pokemon.status === 'slp' || this.randomChance(1, 10)) { 
 				this.add('-activate', pokemon, 'ability: Early Bird');
 				return 0.1;
 			}
@@ -3738,14 +3738,13 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		num: 88,
 	},
 	drowsypower: {
-		onSetStatus(status, target, source, effect) { 
-			if (status.id === 'slp' && target.hasAbility('drowsypower')) { 
-				for (const mon of this.getAllActive()) { 
-					if (mon !== target && mon.hp && !mon.hasAbility('drowsypower')) {
-						if (mon.status && mon.status !== 'aura' && mon.status !== 'drowsy' && mon.status !== 'slp') { mon.cureStatus(); } // Only override if not aura, drowsy, or sleep
-						if (!mon.status || mon.status === 'drowsy') { mon.trySetStatus('drowsy', target, this.effect); }
-					}
-				}
+		onAfterSetStatus(status, target, source, effect) {
+			this.add('-ability', source, 'Drowsy Power');
+			if (status.id !== 'slp') return;
+			for (const mon of this.getAllActive()) {
+				if (mon === target || !mon.hp || mon.hasAbility('drowsypower')) continue;
+				if (mon.status && mon.status !== 'aura' && mon.status !== 'drowsy' && mon.status !== 'slp') { mon.cureStatus(); }
+				if (!mon.status || mon.status === 'drowsy') { mon.trySetStatus('drowsy', target, this.effect); }
 			}
 		},
 		flags: {},
@@ -3761,17 +3760,13 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 				return null;
 			}
 		},
-		onSourceBasePowerPriority: 17,
-		onSourceBasePower(basePower, attacker, defender, move) { if (move.type === 'Fire') { return this.chainModify(1.25); } },
-        onSourceModifyDamage(damage, source, target, move) { 
-			if (move.type === 'Ice') { 
-				this.debug('Dry Skin reduces Ice damage');
-				return this.chainModify(0.75);
-            }
-        },
+        onSourceModifyDamage(damage, source, target, move) {  
+			if (move.type === 'Fire') { return this.chainModify(1.25); }
+			if (move.type === 'Ice') {  return this.chainModify(0.75); } 
+		},
 		onWeather(target, source, effect) {
 			if (target.hasItem('utilityumbrella')) return;
-			if (effect.id === 'raindance' || effect.id === 'primordialsea' || effect.id === 'snow') { this.heal(target.baseMaxhp / 8); } 
+			if (effect.id === 'raindance' || effect.id === 'primordialsea' || effect.id === 'snowscape') { this.heal(target.baseMaxhp / 8); } 
 			else if (effect.id === 'sunnyday' || effect.id === 'desolateland') { this.damage(target.baseMaxhp / 8, target, target); }
 		},
 		flags: { breakable: 1 },
@@ -7249,14 +7244,14 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		rating: 4,
 		num: 311,
 	},
-	eartheater: {
+	eartheater: { //spikes immunity implemented in spikes move def
 		onTryHit(target, source, move) { 
 			if (target !== source && move.type === 'Ground') { 
 				if (!this.heal(target.baseMaxhp / 4)) { this.add('-immune', target, '[from] ability: Earth Eater'); }
 				return null;
 			}
 		},
-		onSwitchIn(pokemon) { // Absorb Spikes on entry (like Poison types absorb Toxic Spikes)
+		onSwitchIn(pokemon) { // Absorb Spikes on entry
 			const side = pokemon.side;
 			const spikes = side.sideConditions['spikes'];
 			if (spikes) {

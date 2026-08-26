@@ -380,10 +380,17 @@ License: GPLv2
 	padding: 2px 0px;
 	z-index: 1;
 }
+.battleteambar-pools {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex: 0 0 auto;
+}
 .battleteambar-pool {
 	display: flex;
 	gap: 2px;
-	margin: 0 4px;
+	min-height: 24px;
+	align-items: center;
 }
 .battleteambar-p1 {
 	display: flex;
