@@ -517,7 +517,6 @@ p.or:after {
 	height: 32px;
 	padding: 0 5px;
 	font-size: 9pt;
-	text-align: left;
 	font-family: Verdana, Helvetica, Arial, sans-serif;
 	cursor: pointer;
 
@@ -535,9 +534,17 @@ p.or:after {
 	box-shadow: inset 0px 1px 2px #D2D2D2, 0px 0px 5px #2266AA;
 }
 .select.teamselect {
-	height: 82px;
-	white-space: nowrap;
-	overflow: hidden;
+    height: 82px;
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+}
+.select.teamselect:after {
+    position: absolute;
+    top: 50%;
+    right: 5px;
+    transform: translateY(-50%);
+    float: none;
 }
 .teamselect strong {
 	display: block;
@@ -3057,10 +3064,10 @@ p.or:after {
 .altform {
 	margin-left: 4px;
 	margin-top: 4px;
-}/*********************************************************
+}
+/*********************************************************
  * Popups
  *********************************************************/
-
 .ps-popup .label {
 	width: 210px;
 	margin: 0 auto;

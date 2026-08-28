@@ -1636,6 +1636,34 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 		onFieldEnd() { this.add('-terrain', 'none'); },
 	},
 	//#region Other Field Effects
+	forestscurse: {
+		onFieldStart(field, source) { this.add('-fieldstart', 'Forest\'s Curse', `[of] ${source}`); },
+		onTrapPokemon(pokemon) {
+			if (!pokemon.isGrounded()) return;
+			pokemon.tryTrap(true);
+		},
+		onMaybeTrapPokemon(pokemon) {
+			if (!pokemon.isGrounded()) return;
+			pokemon.maybeTrapped = true;
+		},
+		onResidual() {
+			for (const side of this.sides) {
+				for (const target of side.active) {
+					if (!target) continue;
+					if (target.hasType(['Flying', 'Ghost', 'Grass'])) continue;
+					if (!target.isGrounded()) continue;
+					if (!target.volatiles['leechseed']) { target.addVolatile('leechseed', this.effectState.source); }
+					if (target.hp < target.maxhp / 2 && !target.hasType('Grass')) {
+						if (!target.setType(target.getTypes(true).concat('Grass'))) continue;
+						this.add('-start', target, 'typeadd', 'Grass', '[from] Forest\'s Curse');
+					}
+				}
+			}
+		},
+		onFieldEnd() { this.add('-fieldend', 'Forest\'s Curse'); },
+		name: "Forest's Curse",
+		shortDesc: "Traps all grounded Pokemon. At the end of each turn, grounded non-Flying/Ghost/Grass Pokemon are seeded; Pokemon below 50% HP gain Grass typing.",
+	},
 	gravity: {
 		name: "Gravity",
 		duration: 5,

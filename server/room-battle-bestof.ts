@@ -24,7 +24,7 @@ export class BestOfPlayer extends RoomGamePlayer<BestOfGame> {
 		if (!user?.connected) return;
 		this.dcAutoloseTime = null;
 		const room = this.game.room;
-		const battleRoom = Rooms.get(this.game.games[this.game.games.length - 1]?.room);
+		const battleRoom = this.game.battleRoom;
 		const gameNum = this.game.games.length + 1;
 		if (this.ready === false) {
 			const notification = `|tempnotify|choice|Next game|It's time for game ${gameNum} in your best-of-${this.game.bestOf}!`;
@@ -62,7 +62,11 @@ export class BestOfGame extends RoomGame<BestOfPlayer> {
 	options: Omit<RoomBattleOptions, 'players'> & { parent: Room, players: null };
 	forcedSettings: { modchat?: string | null, privacy?: string | null } = {};
 	ties = 0;
-	games: { room: RoomID, winner: BestOfPlayer | null | undefined, rated: number }[] = [];
+	games: { winner: BestOfPlayer | null | undefined, rated: number }[] = [];
+	/** The single room used for every game in the set - never recreated after game 1. */
+	battleRoom: GameRoom | null = null;
+	/** Captured once from the real room at game 1; reused for every subsequent game's `games[]` entry since the room's own .rated gets zeroed after that (the series computes ELO once, at the end, not per game). */
+	gameRated = 0;
 	playerNum = 0;
 	/** null = tie, undefined = not ended */
 	winner: BestOfPlayer | null | undefined = undefined;
@@ -144,15 +148,10 @@ export class BestOfGame extends RoomGame<BestOfPlayer> {
 		) { this.room.settings.modchat = '\u2606'; }
 	}
 	setPrivacyOfGames(privacy: PrivacySetting) {
-		for (let i = 0; i < this.games.length; i++) {
-			const room = Rooms.get(this.games[i].room)!;
-			const prevRoom = Rooms.get(this.games[i - 1]?.room);
-			const gameNum = i + 1;
-			room.setPrivate(privacy);
-			this.room.add(`|uhtmlchange|game${gameNum}|<a href="/${room.roomid}">${room.title}</a>`);
-			room.add(`|uhtmlchange|bestof|<h2><strong>Game ${gameNum}</strong> of <a href="/${this.roomid}">a best-of-${this.bestOf}</a></h2>`).update();
-			if (prevRoom) { prevRoom.add(`|uhtmlchange|next|Next: <a href="/${room.roomid}"><strong>Game ${gameNum} of ${this.bestOf}</strong></a>`).update(); }
-		}
+		const room = this.battleRoom;
+		if (!room) return;
+		room.setPrivate(privacy);
+		room.add(`|uhtmlchange|bestof|<h2><strong>Game ${this.games.length}</strong> of <a href="/${this.roomid}">a best-of-${this.bestOf}</a></h2>`).update();
 		this.updateDisplay();
 	}
 	clearWaiting() {
@@ -183,28 +182,35 @@ export class BestOfGame extends RoomGame<BestOfPlayer> {
 		const prevBattleRoom = this.waitingBattle;
 		if (!prevBattleRoom && this.games.length) return; // should never happen
 		this.clearWaiting();
-		const options = this.getOptions();
-		if (!options) {
-			for (const p of this.players) {
-				if (!p.getUser()) {
-					// tbc this isn't just being offline, it's changing name or being offline for 15 minutes
-					this.forfeitPlayer(p, ` lost by being unavailable at the start of a game.`);
-					return;
+		if (!this.battleRoom) {
+			// Game 1 only: create the single room used for the whole set.
+			const options = this.getOptions();
+			if (!options) {
+				for (const p of this.players) {
+					if (!p.getUser()) {
+						// tbc this isn't just being offline, it's changing name or being offline for 15 minutes
+						this.forfeitPlayer(p, ` lost by being unavailable at the start of a game.`);
+						return;
+					}
 				}
+				throw new Error(`Failed to get options for ${this.roomid}`);
 			}
-			throw new Error(`Failed to get options for ${this.roomid}`);
+			const battleRoom = Rooms.createBattle(options);
+			// shouldn't happen even in lockdown
+			if (!battleRoom) throw new Error("Failed to create battle for " + this.title);
+			this.battleRoom = battleRoom;
+			this.gameRated = battleRoom.rated;
+			// the absolute result is what counts for rating
+			battleRoom.rated = 0;
+			if (this.needsTimer) { battleRoom.battle?.timer.start(); }
+		} else {
+			// Every later game reuses the same room and sim process - only the underlying Battle
+			// restarts (fresh HP/PP/status/field; mega/tera charge carries over automatically).
+			if (!this.battleRoom.battle) throw new Error(`Missing battle for ${this.roomid}`);
+			this.battleRoom.battle.startNextGame();
 		}
-		const battleRoom = Rooms.createBattle(options);
-		// shouldn't happen even in lockdown
-		if (!battleRoom) throw new Error("Failed to create battle for " + this.title);
-		this.games.push({
-			room: battleRoom.roomid,
-			winner: undefined,
-			rated: battleRoom.rated,
-		});
-		// the absolute result is what counts for rating
-		battleRoom.rated = 0;
-		if (this.needsTimer) { battleRoom.battle?.timer.start(); }
+		this.games.push({ winner: undefined, rated: this.gameRated });
+		const battleRoom = this.battleRoom;
 		const gameNum = this.games.length;
 		const p1 = this.players[0];
 		const p2 = this.players[1];
@@ -212,11 +218,9 @@ export class BestOfGame extends RoomGame<BestOfPlayer> {
 			Utils.html`|html|<table width="100%"><tr><td align="left">${p1.name}</td><td align="right">${p2.name}</tr>` +
 			`<tr><td align="left">${this.renderWins(p1)}</td><td align="right">${this.renderWins(p2)}</tr></table>`
 		);
-		battleRoom.add(`|uhtml|bestof|<h2><strong>Game ${gameNum}</strong> of <a href="/${this.roomid}">a best-of-${this.bestOf}</a></h2>`).update();
+		battleRoom.add(`|uhtmlchange|bestof|<h2><strong>Game ${gameNum}</strong> of <a href="/${this.roomid}">a best-of-${this.bestOf}</a></h2>`).update();
 		this.room.add(`|html|<h2>Game ${gameNum}</h2>`);
-		this.room.add(Utils.html`|uhtml|game${gameNum}|<a href="/${battleRoom.roomid}">${battleRoom.title}</a>`);
 		this.updateDisplay();
-		prevBattleRoom?.add(`|uhtml|next|Next: <a href="/${battleRoom.roomid}"><strong>Game ${gameNum} of ${this.bestOf}</strong></a>`).update();
 	}
 	renderWins(player: BestOfPlayer) {
 		const wins = this.games.filter(game => game.winner === player).length;
@@ -284,11 +288,12 @@ export class BestOfGame extends RoomGame<BestOfPlayer> {
 		}
 		buf += `</tr></table>`;
 		this.room.add(`|fieldhtml|<center>${buf}</center>`);
-		buf = this.games.map(({ room, winner }, index) => {
+		const link = this.battleRoom ? [`<a href="/${this.battleRoom.roomid}">`, `</a>`] : ['', ''];
+		buf = this.games.map(({ winner }, index) => {
 			let progress = `being played`;
 			if (winner) progress = Utils.html`won by ${winner.name}`;
 			if (winner === null) progress = `tied`;
-			return Utils.html`<p>Game ${index + 1}: <a href="/${room}"><strong>${progress}</strong></a></p>`;
+			return `<p>Game ${index + 1}: ${link[0]}<strong>${progress}</strong>${link[1]}</p>`;
 		}).join('');
 		if (this.winner) { buf += Utils.html`<p>${this.winner.name} won!</p>`; } 
 		else if (this.winner === null) { buf += `<p>The battle was tied.</p>`; }
@@ -297,7 +302,7 @@ export class BestOfGame extends RoomGame<BestOfPlayer> {
 	}
 	override startTimer() {
 		this.needsTimer = true;
-		for (const { room } of this.games) { Rooms.get(room)?.battle?.timer.start(); }
+		this.battleRoom?.battle?.timer.start();
 	}
 	override onBattleWin(room: Room, winnerid: ID) {
 		if (this.ended) return; // can happen if the bo3 is destroyed fsr
@@ -384,8 +389,8 @@ export class BestOfGame extends RoomGame<BestOfPlayer> {
 		let p1score = 0.5;
 		if (winner === p1) { p1score = 1; } 
 		else if (winner === p2) { p1score = 0; }
-		const { rated, room } = this.games[this.games.length - 1];
-		if (rated) { void Rooms.get(room)?.battle?.updateLadder(p1score, winnerid); }
+			const { rated } = this.games[this.games.length - 1];
+		if (rated) { void this.battleRoom?.battle?.updateLadder(p1score, winnerid); }
 	}
 	override forfeit(user: User | string, message = '') {
 		const userid = (typeof user !== 'string') ? user.id : toID(user);
@@ -397,13 +402,13 @@ export class BestOfGame extends RoomGame<BestOfPlayer> {
 		this.winner = this.players.find(p => p !== loser)!;
 		this.room.add(`||${loser.name}${message || ' forfeited.'}`);
 		this.end(this.winner.id);
-		const lastBattle = Rooms.get(this.games[this.games.length - 1].room)?.battle;
+		const lastBattle = this.battleRoom?.battle;
 		if (lastBattle && !lastBattle.ended) lastBattle.forfeit(loser.id, message);
 		return true;
 	}
 	override destroy() {
 		this.setEnded();
-		for (const { room } of this.games) Rooms.get(room)?.setParent(null);
+		this.battleRoom?.setParent(null);
 		this.games = [];
 		for (const p of this.players) p.destroy();
 		this.players = [];

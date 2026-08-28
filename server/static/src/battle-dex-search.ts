@@ -280,8 +280,7 @@ export class DexSearch {
 			searchPasses.push(['fuzzy', i, '']);
 		}
 		// We split the output buffers into 8 buckets. Bucket 0 is usually unused, and buckets 1-7 represent pokemon, types, moves, etc (see typeTable).
-		// When we're done, the buffers are concatenated together to form our results, with each buffer getting its own header, unlike
-		// Notes: if we have a searchType, that searchType's buffer will be on top
+		// When we're done, the buffers are concatenated together to form our results, with each buffer getting its own header
 		let bufs: SearchRow[][] = [[], [], [], [], [], [], [], [], [], [], [], [], []];
 		let illegalBuf: SearchRow[] = [];
 		let topbufIndex = -1;
@@ -1135,13 +1134,9 @@ class BattleItemSearch extends BattleTypedSearch<'item'> {
 	override sortRow: SearchRow = ['sortitem', ''];
 		getDefaultResults(): SearchRow[] {
 		let table: any = BattleTeambuilderTable;
-		if (this.formatType?.startsWith('bdsp')) { table = table['gen8bdsp']; } 
-		else if (this.formatType === 'bw1') { table = table['gen5bw1']; } 
-		else if (this.formatType === 'rs') { table = table['gen3rs']; } 
-		else if ((this.formatType as any) === 'indigostarstorm') { table = table['gen9indigostarstorm']; } 
+		if ((this.formatType as any) === 'indigostarstorm') { table = table['gen9indigostarstorm']; } 
 		else if (this.formatType === 'natdex') { table = table[`gen${this.dex.gen}natdex`]; } 
 		else if (this.formatType?.endsWith('doubles')) { table = table[`gen${this.dex.gen}doubles`]; } 
-		else if (this.formatType === 'metronome') { table = table[`gen${this.dex.gen}metronome`]; } 
 		else if (this.dex.gen < 9) { table = table[`gen${this.dex.gen}`]; } 
 		else { table = table['gen9'] || table; }
 		if (!table || (!table.items && !table.itemSet)) return [];
@@ -1169,11 +1164,8 @@ class BattleItemSearch extends BattleTypedSearch<'item'> {
 			if (id.endsWith('incense') || /\bIncense\b/i.test(name)) return true;
 			return false;
 		};
-		const isISL =
-			(this.formatType as any) === 'indigostarstorm' ||
-			this.dex?.modid === 'gen9indigostarstorm' ||
-			(this.format || '').includes('isl') ||
-			(this.format || '').includes('indigostarstorm');
+		const isISL = (this.formatType as any) === 'indigostarstorm' || this.dex?.modid === 'gen9indigostarstorm' ||
+			(this.format || '').includes('isl') || (this.format || '').includes('indigostarstorm');
 		console.log('[ITEM SEARCH BRANCH]', {
 			format: this.format,
 			formatType: this.formatType,

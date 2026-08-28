@@ -1900,7 +1900,7 @@ export class Battle {
 	checkFainted() {
 		for (const side of this.sides) {
 			for (const pokemon of side.active) {
-				if (pokemon.fainted) {
+				if (pokemon && pokemon.fainted) {
 					pokemon.status = 'fnt' as ID;
 					pokemon.switchFlag = true;
 				}
@@ -1964,6 +1964,10 @@ export class Battle {
 				if (this.faintQueue.length >= faintQueueLeft) checkWin = true;
 			}
 		}
+		// Marks switchFlag on anything that just fainted above - without this, .fainted gets set
+		// but nothing ever tells the switch-request logic in the main action loop that a
+		// replacement is needed, and the empty slot just sits there for the rest of the battle.
+		this.checkFainted();
 		if (checkWin && this.checkWin(faintData)) return true;
 		if (faintData && length) { this.runEvent('AfterFaint', faintData.target, faintData.source, faintData.effect, length); }
 		return false;
@@ -2541,9 +2545,12 @@ export class Battle {
 			side = new Side(options.name || `Player ${slotNum + 1}`, this, slotNum, team);
 			if (options.avatar) side.avatar = `${options.avatar}`;
 			this.sides[slotNum] = side;
-			(side as any).teraCharge = 25;
-			(side as any).megaCharge = 60;
-			(side as any).megaChargeMax = 100;
+			// mega and tera charge carry over between sets
+			const carry = (options as any).carryOverCharge;
+			(side as any).teraCharge = carry?.tera ?? 25;
+			(side as any).teraChargeMax = carry?.teraMax ?? 100;
+			(side as any).megaCharge = carry?.mega ?? 60;
+			(side as any).megaChargeMax = carry?.megaMax ?? 100;
 		} else {
 			// edit player
 			side = this.sides[slotNum];

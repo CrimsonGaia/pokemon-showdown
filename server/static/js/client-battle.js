@@ -320,10 +320,13 @@
 			if (this.battle.ended) {
 				var replayDownloadButton = '<span style="float:right;"><a href="//' + Config.routes.replays + '/download" class="button replayDownloadButton"><i class="fa fa-download"></i> Download replay</a><br /><br /><button class="button" name="saveReplay"><i class="fa fa-upload"></i> Upload and share replay</button></span>';
 				// battle has ended
-				if (this.side) {
+								if (this.side) {
 					// was a player
 					this.closeNotification('choice');
-					this.$controls.html('<div class="controls"><p>' + replayDownloadButton + '<button class="button" name="instantReplay"><i class="fa fa-undo"></i><br />Instant replay</button></p><p><button class="button" name="closeAndMainMenu"><strong>Main menu</strong><br /><small>(closes this battle)</small></button> <button class="button" name="closeAndRematch"><strong>Rematch</strong><br /><small>(closes this battle)</small></button></p></div>');
+					var runbackButtons = this.mySeat ?
+						' <button class="button" name="runback" value="3"><strong>Runback</strong><br /><small>(best-of-3)</small></button>' +
+						' <button class="button" name="runback" value="5"><strong>Runback</strong><br /><small>(best-of-5)</small></button>' : '';
+					this.$controls.html('<div class="controls"><p>' + replayDownloadButton + '<button class="button" name="instantReplay"><i class="fa fa-undo"></i><br />Instant replay</button></p><p><button class="button" name="closeAndMainMenu"><strong>Main menu</strong><br /><small>(closes this battle)</small></button> <button class="button" name="closeAndRematch"><strong>Rematch</strong><br /><small>(closes this battle)</small></button>' + runbackButtons + '</p></div>');
 				} else { this.$controls.html('<div class="controls"><p>' + replayDownloadButton + '<button class="button" name="instantReplay"><i class="fa fa-undo"></i><br />Instant replay</button></p>' + switchViewpointButton + '</div>'); }
 			} else if (this.side) {
 				// player
@@ -1586,6 +1589,7 @@
 			this.close();
 			app.focusRoom('');
 		},
+		runback: function (value) { app.send('/runback ' + value); },
 		closeAndRematch: function () {
 			app.once('response:fullformat', function (data) {
 				app.rooms[''].requestNotifications();

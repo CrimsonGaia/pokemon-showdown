@@ -2882,8 +2882,8 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		prevo: "Bayleef",
 		evoLevel: 32,
 		eggGroups: ["Monster", "Grass"],
-		otherFormes: ["Meganium-Mega"],
-		formeOrder: ["Meganium", "Meganium-Mega"],
+		otherFormes: ["Meganium-Mega-X", "Meganium-Mega-Y"],
+		formeOrder: ["Meganium", "Meganium-Mega-X", "Meganium-Mega-Y"],
 		tags: ["3rd Stage", "Fully Evolved"],
 	},
 	cyndaquil: {
@@ -3772,8 +3772,11 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		gender: "F",
 		baseStats: { hp: 60, atk: 60, def: 60, spa: 85, spd: 85, spe: 85 },
 		abilities: { // ABILITY SET 1
-			0: "Prankster",
+			0: "Fear Eater",
 			1: "Levitate",
+					// ABILITY SET 2
+			H: "Prankster",
+			S: "Levitate",
 		},
 		guardAction: ["disperse"],
 		heightm: 0.7,

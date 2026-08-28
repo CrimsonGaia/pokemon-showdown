@@ -281,7 +281,6 @@ searchPasses.push(['fuzzy',i,'']);
 }
 
 
-
 var bufs=[[],[],[],[],[],[],[],[],[],[],[],[],[]];
 var illegalBuf=[];
 var topbufIndex=-1;
@@ -1133,15 +1132,11 @@ sort=function sort(results,sortCol,reverseSort){throw new Error("invalid sortcol
 BattleItemSearch=function(_BattleTypedSearch4){function BattleItemSearch(){var _this6;for(var _len2=arguments.length,args=new Array(_len2),_key2=0;_key2<_len2;_key2++){args[_key2]=arguments[_key2];}_this6=_BattleTypedSearch4.call.apply(_BattleTypedSearch4,[this].concat(args))||this;_this6.
 
 sortRow=['sortitem',''];return _this6;}_inheritsLoose(BattleItemSearch,_BattleTypedSearch4);var _proto5=BattleItemSearch.prototype;_proto5.getTable=function getTable(){return BattleItems;};_proto5.
-getDefaultResults=function getDefaultResults(){var _this$formatType5,_this$formatType6,_this$dex,_this$dex2,_this7=this;
+getDefaultResults=function getDefaultResults(){var _this$formatType5,_this$dex,_this$dex2,_this7=this;
 var table=BattleTeambuilderTable;
-if((_this$formatType5=this.formatType)!=null&&_this$formatType5.startsWith('bdsp')){table=table['gen8bdsp'];}else
-if(this.formatType==='bw1'){table=table['gen5bw1'];}else
-if(this.formatType==='rs'){table=table['gen3rs'];}else
 if(this.formatType==='indigostarstorm'){table=table['gen9indigostarstorm'];}else
 if(this.formatType==='natdex'){table=table["gen"+this.dex.gen+"natdex"];}else
-if((_this$formatType6=this.formatType)!=null&&_this$formatType6.endsWith('doubles')){table=table["gen"+this.dex.gen+"doubles"];}else
-if(this.formatType==='metronome'){table=table["gen"+this.dex.gen+"metronome"];}else
+if((_this$formatType5=this.formatType)!=null&&_this$formatType5.endsWith('doubles')){table=table["gen"+this.dex.gen+"doubles"];}else
 if(this.dex.gen<9){table=table["gen"+this.dex.gen];}else
 {table=table['gen9']||table;}
 if(!table||!table.items&&!table.itemSet)return[];
@@ -1169,11 +1164,8 @@ if(id.endsWith('fossil')||id.startsWith('fossilized')||/\bFossil\b/i.test(name)|
 if(id.endsWith('incense')||/\bIncense\b/i.test(name))return true;
 return false;
 };
-var isISL=
-this.formatType==='indigostarstorm'||
-((_this$dex=this.dex)==null?void 0:_this$dex.modid)==='gen9indigostarstorm'||
-(this.format||'').includes('isl')||
-(this.format||'').includes('indigostarstorm');
+var isISL=this.formatType==='indigostarstorm'||((_this$dex=this.dex)==null?void 0:_this$dex.modid)==='gen9indigostarstorm'||
+(this.format||'').includes('isl')||(this.format||'').includes('indigostarstorm');
 console.log('[ITEM SEARCH BRANCH]',{
 format:this.format,
 formatType:this.formatType,
@@ -1534,7 +1526,7 @@ return score;
 
 
 
-getBaseResults=function getBaseResults(){var _this$formatType7,_this$formatType8,_lsetTable;
+getBaseResults=function getBaseResults(){var _this$formatType6,_this$formatType7,_lsetTable;
 if(!this.species)return this.getDefaultResults();
 var dex=this.dex;
 var species=dex.species.get(this.species);
@@ -1546,24 +1538,24 @@ var sketchMoves=[];
 var sketch=false;
 var gen=""+dex.gen;
 var lsetTable=BattleTeambuilderTable;
-if((_this$formatType7=this.formatType)!=null&&_this$formatType7.startsWith('predlc'))lsetTable=lsetTable['gen9predlc'];
-if((_this$formatType8=this.formatType)!=null&&_this$formatType8.startsWith('svdlc1'))lsetTable=lsetTable['gen9dlc1'];
+if((_this$formatType6=this.formatType)!=null&&_this$formatType6.startsWith('predlc'))lsetTable=lsetTable['gen9predlc'];
+if((_this$formatType7=this.formatType)!=null&&_this$formatType7.startsWith('svdlc1'))lsetTable=lsetTable['gen9dlc1'];
 if(this.formatType==='indigostarstorm')lsetTable=lsetTable['gen9indigostarstorm']||lsetTable;
 console.log('[DEBUG getMovesList] formatType:',this.formatType,'has learnsets?',!!((_lsetTable=lsetTable)!=null&&_lsetTable.learnsets));
 while(learnsetid){
 var learnset=lsetTable.learnsets[learnsetid];
 console.log('[DEBUG getMovesList] learnsetid:',learnsetid,'has learnset?',!!learnset,'move count:',learnset?Object.keys(learnset).length:0);
 if(learnset){
-for(var moveid in learnset){var _this$formatType9,_BattleTeambuilderTab,_this$formatType10,_BattleTeambuilderTab2,_this$formatType11,_BattleTeambuilderTab3;
+for(var moveid in learnset){var _this$formatType8,_BattleTeambuilderTab,_this$formatType9,_BattleTeambuilderTab2,_this$formatType10,_BattleTeambuilderTab3;
 var learnsetEntry=learnset[moveid];
 var move=dex.moves.get(moveid);
 var minGenCode={6:'p',7:'q',8:'g',9:'a'};
 if(regionBornLegality&&!learnsetEntry.includes(minGenCode[dex.gen])){continue;}
 if(this.eggMovesOnly(learnsetid,species.id)&&(!learnsetEntry.includes('e')||dex.gen!==9)){continue;}
 if(this.formatType!=='natdex'&&move.isNonstandard==="Past"){continue;}
-if((_this$formatType9=this.formatType)!=null&&_this$formatType9.startsWith('dlc1')&&(_BattleTeambuilderTab=BattleTeambuilderTable['gen8dlc1'])!=null&&_BattleTeambuilderTab.nonstandardMoves.includes(moveid)){continue;}
-if((_this$formatType10=this.formatType)!=null&&_this$formatType10.includes('predlc')&&this.formatType!=='predlcnatdex'&&(_BattleTeambuilderTab2=BattleTeambuilderTable['gen9predlc'])!=null&&_BattleTeambuilderTab2.nonstandardMoves.includes(moveid)){continue;}
-if((_this$formatType11=this.formatType)!=null&&_this$formatType11.includes('svdlc1')&&this.formatType!=='svdlc1natdex'&&(_BattleTeambuilderTab3=BattleTeambuilderTable['gen9dlc1'])!=null&&_BattleTeambuilderTab3.nonstandardMoves.includes(moveid)){continue;}
+if((_this$formatType8=this.formatType)!=null&&_this$formatType8.startsWith('dlc1')&&(_BattleTeambuilderTab=BattleTeambuilderTable['gen8dlc1'])!=null&&_BattleTeambuilderTab.nonstandardMoves.includes(moveid)){continue;}
+if((_this$formatType9=this.formatType)!=null&&_this$formatType9.includes('predlc')&&this.formatType!=='predlcnatdex'&&(_BattleTeambuilderTab2=BattleTeambuilderTable['gen9predlc'])!=null&&_BattleTeambuilderTab2.nonstandardMoves.includes(moveid)){continue;}
+if((_this$formatType10=this.formatType)!=null&&_this$formatType10.includes('svdlc1')&&this.formatType!=='svdlc1natdex'&&(_BattleTeambuilderTab3=BattleTeambuilderTable['gen9dlc1'])!=null&&_BattleTeambuilderTab3.nonstandardMoves.includes(moveid)){continue;}
 if(moves.includes(moveid))continue;
 moves.push(moveid);
 if(moveid==='sketch')sketch=true;

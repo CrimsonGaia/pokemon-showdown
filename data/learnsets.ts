@@ -36961,6 +36961,7 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			shadowpunch: ["9L52"],
 			shadowclone: ["9L56"],
 			brutalswing: ["9L60"],
+			strengthsap: ["9L64"],
 // TM/TR moves
 			bulldoze: ["9M"],
 			dig: ["9M"],

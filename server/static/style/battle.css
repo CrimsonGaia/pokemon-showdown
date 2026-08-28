@@ -1060,3 +1060,17 @@ License: GPLv2
 		border-bottom: 2px solid #444444;
 	}
 }
+
+.set-game-divider {
+	margin: 10px 0;
+	padding: 6px 10px;
+	border-radius: 4px;
+	text-align: center;
+	font-size: 11pt;
+	font-weight: bold;
+}
+.set-game-grey { background: rgba(130,130,130,0.22); border: 1px solid rgba(130,130,130,0.5); }
+.set-game-yellow { background: rgba(210,180,40,0.20); border: 1px solid rgba(210,180,40,0.5); }
+.set-game-green { background: rgba(60,180,90,0.20); border: 1px solid rgba(60,180,90,0.5); }
+.set-game-blue { background: rgba(60,120,220,0.20); border: 1px solid rgba(60,120,220,0.5); }
+.set-game-purple { background: rgba(165,70,200,0.20); border: 1px solid rgba(165,70,200,0.5); }

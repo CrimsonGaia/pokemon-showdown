@@ -18531,7 +18531,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		num: 261,
 		accuracy: 85,
 		basePower: 0,
-		type: "Fire",
+		type: "Ghost",
 		category: "Status",
 		name: "Will-O-Wisp",
 		pp: 10,
@@ -18712,6 +18712,28 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		shortDesc: "This move is tied to an ability effect. If you're seeing this, something is wrong",
 		target: "allAdjacent",
 	},
+	fluxscraps: {
+		num: -1096,
+		accuracy: true,
+		basePower: 0,
+		type: "Steel",
+		category: "Status",
+		name: "Flux Scraps",
+		pp: 1,
+		priority: 0,
+		flags: { metronome: 1 },
+		sideCondition: 'fluxscraps',
+		condition: {
+			onSideStart(side) { this.add('-sidestart', side, 'move: Flux Scraps'); },
+			onSwitchIn(pokemon) {
+				if (pokemon.hasItem('heavydutyboots')) return;
+				const typeMod = this.clampIntRange(pokemon.runEffectiveness(this.dex.getActiveMove('fluxscraps')), -6, 6);
+				this.damage(pokemon.maxhp * (2 ** typeMod) / 8);
+			},
+		},
+		secondary: null,
+		target: "foeSide",
+	},
 	pressurizedcell: {
 		accuracy: true,
 		basePower: 40,
@@ -18792,25 +18814,6 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		boosts: {evasion: 2,},
 		secondary: null,
 		target: "self",
-	},
-	forestscurse: {
-		num: 571,
-		accuracy: 100,
-		basePower: 0,
-		type: "Grass",
-		category: "Status",
-		isNonstandard: "Past",
-		name: "Forest's Curse",
-		pp: 20,
-		priority: 0,
-		flags: { protect: 1, reflectable: 1, mirror: 1, allyanim: 1, metronome: 1 },
-		onHit(target) {
-			if (target.hasType('Grass')) return false;
-			if (!target.addType('Grass')) return false;
-			this.add('-start', target, 'typeadd', 'Grass', '[from] move: Forest\'s Curse');
-		},
-		secondary: null,
-		target: "normal",
 	},
 	fissure: {
 		num: 90,

@@ -1077,33 +1077,32 @@ export class BattleActions {
 	 * Normal PS return value rules apply:
 	 * undefined = success, null = silent failure, false = loud failure
 	 */
-	getDamage(source: Pokemon, target: Pokemon, move: string | number | ActiveMove, suppressMessages = false): number | undefined | null | false {
+	getDamage( source: Pokemon, target: Pokemon, move: string | number | ActiveMove, suppressMessages = false, skipAbilityShield = false): number | undefined | null | false {
 		if (typeof move === 'string') move = this.dex.getActiveMove(move);
 		if (typeof move === 'number') {
 			const basePower = move;
 			move = new Dex.Move({ basePower, type: '???', category: 'Physical', willCrit: false, }) as ActiveMove;
 			move.hit = 0;
 		}
-		const baseDamageCalc = this.constructor.prototype.getDamage;
 		const calculateFusionDamage = () => {
 			const originalOverride = (move as any).overrideDefensiveStat;
 			try {
 				(move as any).overrideDefensiveStat = 'def';
-				const damageWithDef = baseDamageCalc.call(this, source, target, move, suppressMessages);
+				const damageWithDef = this.getDamage(source, target, move, suppressMessages, true);
 				(move as any).overrideDefensiveStat = 'spd';
-				const damageWithSpD = baseDamageCalc.call(this, source, target, move, suppressMessages);
+				const damageWithSpD = this.getDamage(source, target, move, suppressMessages, true);
 				if (typeof damageWithDef === 'number' && typeof damageWithSpD === 'number') { return Math.floor((damageWithDef + damageWithSpD) / 2); }
 				return damageWithDef === false || damageWithSpD === false ?
 					false :
 					damageWithDef || damageWithSpD;
 			} finally {
-				if (originalOverride) { (move as any).overrideDefensiveStat = originalOverride; } 
+				if (originalOverride) { (move as any).overrideDefensiveStat = originalOverride; }
 				else { delete (move as any).overrideDefensiveStat; }
 			}
 		};
 		const isFusionMode = (move.id === 'fusionbolt' || move.id === 'fusionflare') && (move as any).fusionMode;
 		// Ability Shield: ignore enemy abilities during defensive damage calculation
-		if (source && target && source !== target && target.hasItem?.('abilityshield')) {
+		if (!skipAbilityShield && source && target && source !== target && target.hasItem?.('abilityshield')) {
 			const s = source as any;
 			const saved = {
 				ability: s.ability,
@@ -1123,8 +1122,7 @@ export class BattleActions {
 			delete s.abilityState2;
 			try {
 				if (isFusionMode) return calculateFusionDamage();
-				// @ts-ignore
-				return baseDamageCalc.call(this, source, target, move, suppressMessages);
+				return this.getDamage(source, target, move, suppressMessages, true);
 			} finally {
 				s.ability = saved.ability;
 				s.baseAbility = saved.baseAbility;
@@ -1139,7 +1137,7 @@ export class BattleActions {
 		if (!target.runImmunity(move, !suppressMessages)) { return false; }
 		if (move.ohko) return this.battle.gen === 3 ? target.hp : target.maxhp;
 		if (move.damageCallback) return move.damageCallback.call(this.battle, source, target);
-		if (move.damage === 'level') { return source.level; } 
+		if (move.damage === 'level') { return source.level; }
 		else if (move.damage) { return move.damage; }
 		const category = this.battle.getCategory(move);
 		let basePower: number | false | null = move.basePower;
@@ -1153,8 +1151,8 @@ export class BattleActions {
 		critMult = [96, 64, 48, 24, 16, 12, 8, 6, 4, 3, 2, 1.5, 1.333, 1.2, 1];
 		const moveHit = target.getMoveHitData(move);
 		moveHit.crit = move.willCrit || false;
-		if (move.willCrit === undefined) {	// If critRatio <= 0, never crit
-			if (critRatio > 0) { moveHit.crit = this.battle.randomChance(1, critMult[critRatio]); } 
+		if (move.willCrit === undefined) {  // If critRatio <= 0, never crit
+			if (critRatio > 0) { moveHit.crit = this.battle.randomChance(1, critMult[critRatio]); }
 			else { moveHit.crit = false; }
 		}
 		if (moveHit.crit) { moveHit.crit = this.battle.runEvent('CriticalHit', target, null, move); }

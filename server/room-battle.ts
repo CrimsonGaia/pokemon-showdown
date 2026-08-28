@@ -46,6 +46,7 @@ export class RoomBattlePlayer extends RoomGamePlayer<RoomBattle> {
 	readonly slot: SideID;
 	readonly channelIndex: ChannelIndex;
 	request: BattleRequestTracker;
+	lastCharge: { tera: number, teraMax: number, mega: number, megaMax: number } | null = null;
 	wantsTie: boolean;
 	wantsOpenTeamSheets: boolean | null;
 	eliminated: boolean;
@@ -446,6 +447,7 @@ export class RoomBattle extends RoomGame<RoomBattlePlayer> {
 	turn = 0;
 	rqid = 1;
 	requestCount = 0;
+	gameNumber = 1; // Which game of a best-of set this room is currently on. Stays 1 for a battle that's never used startNextGame
 	options: RoomBattleOptions;
 	frozen?: boolean;
 	dataResolvers?: [((args: string[]) => void), ((error: Error) => void)][];
@@ -692,6 +694,12 @@ export class RoomBattle extends RoomGame<RoomBattlePlayer> {
 					isWait: request.wait ? 'cantUndo' : false,
 					choice: '',
 				};
+				if (request.side) {
+					this[slot].lastCharge = {
+						tera: request.side.teraCharge ?? 25, teraMax: request.side.teraChargeMax ?? 100,
+						mega: request.side.megaCharge ?? 60, megaMax: request.side.megaChargeMax ?? 100,
+					};
+				}
 				this.requestCount++;
 				player?.sendRoom(`|request|${requestJSON}`);
 				if (!request.update) this.timer.nextRequest(player);
@@ -1137,6 +1145,44 @@ export class RoomBattle extends RoomGame<RoomBattlePlayer> {
 		);
 	}
 
+		/**
+	 * Starts a fresh game in this same room, reusing the existing sim process/stream instead of
+	 * creating a new one - the sim's `>start` handler already just does `this.battle = new Battle(...)`,
+	 * so a stream can host any number of battles across its lifetime, one at a time.
+	 * HP/PP/status/field all reset naturally since it's a brand new Battle; mega/tera charge carry over
+	 * via each player's cached lastCharge. Does not touch anything about revealed-knowledge tracking -
+	 * that lives client-side and this room is never destroyed, so it's untouched by this.
+	 */
+	startNextGame() {
+		this.gameNumber++;
+		this.started = false;
+		(this as any).ended = false;
+		this.score = null;
+		this.turn = 0;
+		this.rqid = 1;
+		this.requestCount = 0;
+		const battleOptions = {
+			formatid: this.format,
+			roomid: this.roomid,
+			rated: this.rated ? 'Rated battle' : (this.options.ratedMessage || ''),
+		};
+		void this.stream.write(`>start ` + JSON.stringify(battleOptions));
+		for (const player of this.players) {
+			if (!player) continue;
+			const idx = this.players.indexOf(player);
+			const originalOptions = this.options.players[idx];
+			const playerOptions: AnyObject = {
+				name: player.name,
+				avatar: `${player.getUser()?.avatar || ''}`,
+				team: originalOptions?.team,
+			};
+			if (player.lastCharge) playerOptions.carryOverCharge = player.lastCharge;
+			void this.stream.write(`>player ${player.slot} ${JSON.stringify(playerOptions)}`);
+		}
+		const gameColors = ['grey', 'yellow', 'green', 'blue', 'purple'];
+		const color = gameColors[Math.min(this.gameNumber - 1, gameColors.length - 1)];
+		this.room.add(`|html|<div class="set-game-divider set-game-${color}"><strong>Game ${this.gameNumber}</strong></div>`).update();
+	}
 	override destroy() {
 		if (!this.ended) {
 			this.setEnded();

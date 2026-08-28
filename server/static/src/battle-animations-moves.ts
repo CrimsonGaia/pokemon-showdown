@@ -20116,6 +20116,75 @@ export const BattleMoveAnims: AnimTable = {
 			}, 'ballistic');
 		},
 	},
+	fluxscraps: {
+        anim(scene, [attacker, defender]) {
+            const side = scene.battle.sides.find(side => side.isFar !== attacker.isFrontSprite)!;
+            let x = side.x;
+            let y = side.y;
+            if (scene.battle.gameType === 'freeforall') {
+                x += side.isFar ? 20 : -20;
+                if (side.n > 1) {
+                    x += side.isFar ? -140 : 140;
+                    y += side.isFar ? 14 : -20;
+                }
+            }
+            scene.showEffect('rocks', {
+                x: attacker.x,
+                y: attacker.y,
+                z: attacker.z,
+                scale: 0.1,
+                opacity: 0.5,
+            }, {
+                x: x + side.leftof(-90),
+                y: y + 30,
+                z: side.z,
+                scale: 0.5,
+                opacity: 1,
+            }, 'ballistic');
+            scene.showEffect('rocks', {
+                x: attacker.x,
+                y: attacker.y,
+                z: attacker.z,
+                scale: 0.1,
+                opacity: 0.5,
+                time: 75,
+            }, {
+                x: x + side.leftof(-55),
+                y: y + 40,
+                z: side.z,
+                scale: 0.5,
+                opacity: 1,
+            }, 'ballistic');
+            scene.showEffect('rocks', {
+                x: attacker.x,
+                y: attacker.y,
+                z: attacker.z,
+                scale: 0.1,
+                opacity: 0.5,
+                time: 150,
+            }, {
+                x: x + side.leftof(25),
+                y: y + 35,
+                z: side.z,
+                scale: 0.5,
+                opacity: 1,
+            }, 'ballistic');
+            scene.showEffect('rocks', {
+                x: attacker.x,
+                y: attacker.y,
+                z: attacker.z,
+                scale: 0.1,
+                opacity: 0.5,
+                time: 225,
+            }, {
+                x: x + side.leftof(-5),
+                y: y + 45,
+                z: side.z,
+                scale: 0.5,
+                opacity: 1,
+            }, 'ballistic');
+        },
+    },
 	gmaxsteelsurge: {
 		anim(scene, [attacker, defender]) {
 			scene.backgroundEffect('#000000', 1200, 0.3);

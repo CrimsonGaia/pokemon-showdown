@@ -3,9 +3,42 @@
  * A RoomBattle where one real user can occupy more than one seat (both p1 and p2), for locally testing both sides of a battle.
  * @license MIT
  */
-import { RoomBattle, type RoomBattlePlayer, type RoomBattlePlayerOptions } from './room-battle';
+import { RoomBattle, type RoomBattlePlayer, type RoomBattlePlayerOptions, type RoomBattleOptions } from './room-battle';
 export class TestBattle extends RoomBattle {
 	readonly dualSeat = true;
+	/** 1, 3, or 5. Mutable so /runback can retroactively extend a finished set. */
+	bestOf: 1 | 3 | 5 = 1;
+	wins: { p1: number, p2: number } = { p1: 0, p2: 0 };
+	constructor(room: GameRoom, options: RoomBattleOptions) {
+		super(room, options);
+		const requested = (options as any).bestOf;
+		if (requested === 3 || requested === 5) this.bestOf = requested;
+	}
+	override async end(winnerName: unknown) {
+		const winnerid = toID(winnerName);
+		if (winnerid === this.p1.id) this.wins.p1++;
+		else if (winnerid === this.p2.id) this.wins.p2++;
+		await super.end(winnerName);
+		if (this.bestOf > 1) {
+			const decided = this.setDecided();
+			this.room.add(
+				`|html|<div class="infobox">Game ${this.gameNumber} result: ${this.wins.p1}-${this.wins.p2}` +
+				`${decided ? ` - set won!` : ` - use /runback to continue the set`}</div>`
+			).update();
+		}
+	}
+	/** True once one side has clinched the set outright under the current bestOf target. */
+	setDecided() {
+		const need = Math.floor(this.bestOf / 2) + 1;
+		return this.wins.p1 >= need || this.wins.p2 >= need;
+	}
+	/** Runback: retroactively raise the target (1->3->5) and continue in this same room. */
+	runback(newBestOf: 3 | 5) {
+		if (newBestOf <= this.bestOf) return false;
+		this.bestOf = newBestOf;
+		this.startNextGame();
+		return true;
+	}
 	/**
 	 * RoomGame.addPlayer keys playerTable by the bare userid and refuses a second registration for the same id. 
 	 * Seat-scope the key instead (`p1:userid`, `p2:userid`) so the same real user can hold both seats.
@@ -142,7 +175,7 @@ export class TestBattle extends RoomBattle {
 				player.active = true;
 				this.timer.checkActivity();
 				this.room.add(`|player|${player.slot}|${user.name}|${user.avatar}|`);
-				Chat.runHandlers('onBattleJoin', player.slot, user, this);
+				Chat.runHandlers('onBattleJoin', player.slot, user, this.room);
 			}
 		}
 	}

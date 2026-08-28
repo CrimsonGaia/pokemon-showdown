@@ -425,13 +425,13 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		onResidualSubOrder: 3,
 		onResidual(pokemon) {
 			if (!pokemon.hp) return;
-			let totalDrained = 0;
-			for (const target of this.getAllActive()) {
-				if (target === pokemon || target.status !== 'fear' || !target.hp) continue;
-				const damage = this.damage(target.baseMaxhp / 16, target, pokemon);
-				if (damage) totalDrained += damage;
+			for (const target of [...pokemon.foes(), ...pokemon.allies()]) {
+				if (target.status === 'fear') {
+					const dmg = target.baseMaxhp / 16;
+					this.damage(dmg, target, pokemon);
+					this.heal(dmg, pokemon, pokemon);
+				}
 			}
-			if (totalDrained) { this.heal(totalDrained, pokemon, pokemon); }
 		},
 		flags: { breakable: 1 },
 		name: "Fear Eater",
@@ -502,41 +502,37 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 	},
 	flamepads: {
 		onModifyMove(move, pokemon) { if (move.flags?.kick) { delete move.flags['contact']; } },
-		onDamagingHit(damage, target, source, move) { if (move.flags?.kick && this.randomChance(1, 5)) { target.trySetStatus('brn', source); } },
+		onSourceDamagingHit(damage, target, source, move) {
+			if (target.hasAbility('shielddust') || target.hasItem('covertcloak')) return;
+			if (move.flags?.kick) { if (this.randomChance(1, 5)) { target.trySetStatus('brn', source); } }
+		},
 		flags: {},
 		name: "Flame Pads",
-		shortDesc: "This Pokemon's Kick moves lose contact. 20% chance to burn when hit by Kick moves.",
+		shortDesc: "This Pokemon's Kick moves lose contact and gain a 20% chance to burn",
 		rating: 3,
 		num: 1019,
 	},
 	fluxconduit: {
-		sideCondition: 'fluxscraps',
-		condition: {
-			duration: 0,
-			onSideStart(side) { this.add('-sidestart', side, 'ability: Flux Conduit'); },
-			onSwitchIn(pokemon) {
-				if (pokemon.hasItem('heavydutyboots')) return;
-				const typeMod = this.clampIntRange(pokemon.runEffectiveness(this.dex.getActiveAbility('Flux Conduit')), -6, 6);
-				this.damage(pokemon.maxhp * (2 ** typeMod) / 8);
-			},
+		onStart(pokemon) { 
+			this.add('-activate', pokemon, 'ability: Flux Conduit'); 
+			this.actions.useMove('fluxscraps', pokemon, { sourceEffect: this.dex.abilities.get('fluxconduit'), }); 
 		},
-		onAnyRedirectTarget(target, source, move) { 
-			// Steel type poekemon are locked onto this Pokémon
-			if (!source.knownType || source.hasType('Steel') && target !== this.effectState.target && this.effectState.target.isAdjacent(target)) { return this.effectState.target; }
-			// Electric and Steel type moves are locked onto this Pokémon
-			if (move.type === 'Electric' && target !== this.effectState.target && this.effectState.target.isAdjacent(target)) { return this.effectState.target; }
-			if (move.type === 'Steel' && target !== this.effectState.target && this.effectState.target.isAdjacent(target)) { return this.effectState.target; }
+		onEnd(pokemon) { pokemon.side.removeSideCondition('fluxscraps'); },
+		onAnyRedirectTarget(target, source, move) {
+			const activeMove = move as Move;
+			const holder = this.effectState.target;
+			if (source !== holder && (source.hasType('Steel') || source.hasType('Electric') || activeMove.type === 'Steel') && target !== holder && holder.isAdjacent(target)) { return holder; }
 		},
-		onFoeBeforeMove(pokemon, target, move) { if (pokemon.hasType('Steel') && target !== this.effectState.target && this.effectState.target.isAdjacent(pokemon)) { return this.effectState.target; } },
+		onFoeBeforeMove(pokemon, target, move) { if ((pokemon.hasType('Steel') || pokemon.hasType('Electric') || move.type === 'Steel') && target !== this.effectState.target && this.effectState.target.isAdjacent(pokemon)) { return this.effectState.target; } },
 		onTrapPokemonPriority: -10,
 		onTrapPokemon(pokemon) { if (pokemon.adjacentFoes().some(foe => foe.hasAbility('magnetpull'))) { pokemon.trapped = false; } },
 		onMaybeTrapPokemonPriority: -10,
 		onMaybeTrapPokemon(pokemon) { if (pokemon.adjacentFoes().some(foe => foe.hasAbility('magnetpull'))) { pokemon.maybeTrapped = false; } },
 		flags: {},
 		name: "Flux Conduit",
-		shortDesk: "",
+		shortDesc: "While user is on the field, sets Flux Scraps. Steel and Electric type Pokemon, and Steel type moves are locked onto the user. User is immune to Magnet Pull.",
 		rating: 4,
-		num: 1096
+		num: 1096,
 	},
 	foodpouch: {
 		onSwitchInPriority: -2,
@@ -548,25 +544,10 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		num: 1020,
 	},
 	forestscurse: {
-		onFoeTrapPokemon(pokemon) {
-			if (pokemon.hasType(['Flying', 'Ghost', 'Grass'])) return;
-			if (pokemon.isAdjacent(this.effectState.target)) { pokemon.tryTrap(true); }
-		},
-		onFoeMaybeTrapPokemon(pokemon, source) {
-			if (!source) source = this.effectState.target;
-			if (!source || !pokemon.isAdjacent(source)) return;
-			if (pokemon.hasType(['Flying', 'Ghost', 'Grass'])) return;
-			pokemon.maybeTrapped = true;
-		},
-		onResidual(pokemon) {
-			for (const target of pokemon.foes()) {
-				if (target.hasType(['Flying', 'Ghost', 'Grass'])) continue;
-				if (!target.volatiles['leechseed']) { target.addVolatile('leechseed', pokemon); }
-				if (target.hp <= target.maxhp / 2 && !target.hasType('Grass')) {
-					if (!target.setType(target.getTypes(true).concat('Grass'))) continue;
-					this.add('-start', target, 'typeadd', 'Grass', '[from] ability: Forest\'s Curse', '[of] ' + pokemon);
-				}
-			}
+		onStart(source) { this.field.addPseudoWeather('forestscurse', source); },
+		onEnd(pokemon) {
+			if (this.field.pseudoWeather['forestscurse']?.source !== pokemon) return;
+			this.field.removePseudoWeather('forestscurse');
 		},
 		flags: {},
 		name: "Forest's Curse",
@@ -2792,12 +2773,13 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			if (!source || !pokemon.isAdjacent(source)) return;
 			if (!pokemon.knownType || pokemon.hasType('Steel')) { pokemon.maybeTrapped = true; }
 		},
-		onRedirectTarget(target, source, source2, move) { 
-			// Steel type poekemon are locked onto this Pokémon
-			if ((!source.knownType || source.hasType('Steel')) && target !== this.effectState.target && this.effectState.target.isAdjacent(target)) { return this.effectState.target; }
-			// Electric and Steel type moves are locked onto this Pokémon
-			if (move.type === 'Electric' && target !== this.effectState.target && this.effectState.target.isAdjacent(target)) { return this.effectState.target; }
-			if (move.type === 'Steel' && target !== this.effectState.target && this.effectState.target.isAdjacent(target)) { return this.effectState.target; }
+		onRedirectTarget(target, source, source2, move) {
+			const holder = this.effectState.target;
+			// Steel-type Pokemon are locked onto this Pokemon,
+			if (source && source !== holder && (!source.knownType || source.hasType('Steel')) && target !== holder && holder.isAdjacent(target)) { return holder; }
+			// Electric and Steel type moves are locked onto this Pokemon.
+			if (source !== holder && move.type === 'Electric' && target !== holder && holder.isAdjacent(target)) { return holder; }
+			if (source !== holder && move.type === 'Steel' && target !== holder && holder.isAdjacent(target)) { return holder; }
 		},
 		onFoeBeforeMove(pokemon, target, move) { if (pokemon.hasType('Steel') && target !== this.effectState.target && this.effectState.target.isAdjacent(pokemon)) { return this.effectState.target; } },
 		flags: {},
@@ -4602,25 +4584,19 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 	flareboost: {
 		onModifySpAPriority: 5,
 		onModifySpA(spa, pokemon) { if (pokemon.status === 'brn') { return this.chainModify(1.5); } },
+		onModifySpePriority: 5,
 		onModifySpe(spe, pokemon) { if (pokemon.status === 'brn') { return this.chainModify(1.5); } },
-		onTryHit(target, source, move) { 
-			if (target !== source && move.type === 'Fire') { 
-				this.add('-immune', target, '[from] ability: Flare Boost');
-				return null;
-			}
-		},
-		onDamagingHit(damage, target, source, move) {
-			if (target !== source && move.type === 'Fire') { 
-				if (!this.boost({ spa: 1, spe: 1 }, target, target)) { this.add('-immune', target, '[from] ability: Flare Boost'); }
-				return null;
-			}
-		},
+		onSourceModifyAtkPriority: 6,
+		onSourceModifyAtk(atk, attacker, defender, move) {  if (move.type === 'Fire') {  return this.chainModify(0.5);  }  },
+		onSourceModifySpAPriority: 5,
+		onSourceModifySpA(atk, attacker, defender, move) {  if (move.type === 'Fire') {  return this.chainModify(0.5); } },
+		onDamagingHit(damage, target, source, move) { if (target !== source && move.type === 'Fire') { this.boost({spa: 1, spe: 1}, target, target); } },
 		flags: {},
 		name: "Flare Boost",
-		shortDesc: "While user is Burned: 1.5x Special Attack and Speed. Immune to Fire type moves. When hit by a Fire type move: +1 stage Special Attack and Speed.",
+		shortDesc: "While user is Burned: 1.5x Special Attack and Speed. Resist Fire type moves. When hit by a Fire type move: +1 stage Special Attack and Speed.",
 		rating: 2,
 		num: 138,
-		},
+	},
 	friendguard: {
 		onAnyModifyDamage(damage, source, target, move) { 
 			if (target !== this.effectState.target && target.isAlly(this.effectState.target)) { 
@@ -5527,7 +5503,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		shortDesc: "Protects user from Status conditions, redirection effects, and stat lowering effects. Under Sun, or over Grassy/Misty Terrain: this effect extends to the ally.",
 		rating: 0,
 		num: 166,
-		},
+	},
 	furcoat: {
 		onModifyDefPriority: 6,
 		onModifyDef(def) { return this.chainModify(2); },

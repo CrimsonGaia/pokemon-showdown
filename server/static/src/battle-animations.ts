@@ -1001,6 +1001,17 @@ export class BattleScene implements BattleSceneStub {
 			this.$spritesFront[spriteIndex].append(rock4.$el);
 			this.sideConditions[siden][id] = [rock1, rock2, rock3, rock4];
 			break;
+		case 'fluxscraps':
+			const rocks1 = new Sprite(BattleEffects.rocks, {display: 'block', x: x + side.leftof(-90), y: y + 30, z: side.z, opacity: 1, scale: 0.5, filter: 'brightness(1.8) grayscale(0.3)'}, this);
+			const rocks2 = new Sprite(BattleEffects.rocks, {display: 'block', x: x + side.leftof(-55), y: y + 40, z: side.z, opacity: 1, scale: 0.5, filter: 'brightness(1.8) grayscale(0.3)'}, this);
+			const rocks3 = new Sprite(BattleEffects.rocks, {display: 'block', x: x + side.leftof(25), y: y + 35, z: side.z, opacity: 1, scale: 0.5, filter: 'brightness(1.8) grayscale(0.3)'}, this);
+			const rocks4 = new Sprite(BattleEffects.rocks, {display: 'block', x: x + side.leftof(-5), y: y + 45, z: side.z, opacity: 1, scale: 0.5, filter: 'brightness(1.8) grayscale(0.3)'}, this);
+			this.$spritesFront[spriteIndex].append(rocks1.$el);
+			this.$spritesFront[spriteIndex].append(rocks2.$el);
+			this.$spritesFront[spriteIndex].append(rocks3.$el);
+			this.$spritesFront[spriteIndex].append(rocks4.$el);
+			this.sideConditions[siden][id] = [rocks1, rocks2, rocks3, rocks4];
+			break;
 		case 'caltrops':
 			const surge1 = new Sprite(BattleEffects.greenmetal1, { display: 'block', x: x + side.leftof(-45), y: y - 25, z: side.z, opacity: 0.5, scale: 0.8, }, this);
 			const surge2 = new Sprite(BattleEffects.greenmetal2, { display: 'block', x: x + side.leftof(45), y: y - 5, z: side.z, opacity: 0.5, scale: 0.8, }, this);
