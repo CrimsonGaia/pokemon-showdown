@@ -300,7 +300,7 @@ export class BattleTooltips {
 			buf = this.showTeraChargeTooltip(cur, max, alreadyTera);
 			break;
 		}
-		case 'pokemon': { // pokemon|SIDE|POKEMON
+				case 'pokemon': { // pokemon|SIDE|POKEMON
 			// mouse over sidebar pokemon
 			let sideIndex = parseInt(args[1], 10);
 			let side = this.battle.sides[sideIndex];
@@ -320,6 +320,17 @@ export class BattleTooltips {
 					}
 				}
 			} else { buf = this.showPokemonTooltip(pokemon, serverPokemon); }
+			break;
+		}
+		case 'teambar': { // teambar|SIDE|POKEMON - the topbar tracker. Always restricted, even for your own side.
+			let sideIndex = parseInt(args[1], 10);
+			let side = this.battle.sides[sideIndex];
+			let pokemonIndex = parseInt(args[2], 10);
+			const s = side as any;
+			const fullTeam = (s.fullTeam?.length ? s.fullTeam : null) || (s.sidebarPokemon?.length ? s.sidebarPokemon : null) || side.pokemon || [];
+			let pokemon = fullTeam[pokemonIndex];
+			if (!pokemon) { buf = ''; break; }
+			buf = this.showPokemonTooltip(pokemon, null, false, undefined, true);
 			break;
 		}
 		case 'activepokemon': { // activepokemon|SIDE|ACTIVE
@@ -603,7 +614,7 @@ export class BattleTooltips {
 	 * never been switched in before, you'll only have a ServerPokemon, and if you hover over an opponent's pokemon, you'll only have a Pokemon.
 	 * isActive is true if hovering over a pokemon in the battlefield, and false if hovering over a pokemon in the Switch menu.
 	 */
-	showPokemonTooltip(clientPokemon: Pokemon | null, serverPokemon?: ServerPokemon | null, isActive?: boolean, illusionIndex?: number) {
+		showPokemonTooltip(clientPokemon: Pokemon | null, serverPokemon?: ServerPokemon | null, isActive?: boolean, illusionIndex?: number, restricted?: boolean) {
 		const pokemon = clientPokemon || serverPokemon!;
 		let text = '';
 		let genderBuf = '';
@@ -660,9 +671,10 @@ export class BattleTooltips {
 		text += this.renderLightChargeBadge(clientPokemon);
 		const supportsAbilities = this.battle.gen > 2 && !this.battle.tier.includes("Let's Go");
 		let abilityText = '';
-		if (supportsAbilities) { abilityText = this.getPokemonAbilityText(clientPokemon, serverPokemon, isActive, !!illusionIndex && illusionIndex > 1); }
+		if (supportsAbilities) { abilityText = this.getPokemonAbilityText(clientPokemon, serverPokemon, isActive, !!illusionIndex && illusionIndex > 1, restricted); }
 		let itemText = '';
-		if (serverPokemon) {
+		let resolvedItemId = '';
+		if (serverPokemon && !restricted) {
 			let item = '';
 			let itemEffect = '';
 			if (clientPokemon?.prevItem) {
@@ -670,7 +682,7 @@ export class BattleTooltips {
 				let prevItem = this.battle.dex.items.get(clientPokemon.prevItem).name;
 				itemEffect += clientPokemon.prevItemEffect ? prevItem + ' was ' + clientPokemon.prevItemEffect : 'was ' + prevItem;
 			}
-			if (serverPokemon.item) item = this.battle.dex.items.get(serverPokemon.item).name;
+			if (serverPokemon.item) { item = this.battle.dex.items.get(serverPokemon.item).name; resolvedItemId = serverPokemon.item; }
 			if (itemEffect) itemEffect = ' (' + itemEffect + ')';
 			if (item) itemText = '<small>Item:</small> ' + item + itemEffect;
 		} else if (clientPokemon) {
@@ -682,19 +694,20 @@ export class BattleTooltips {
 				let prevItem = this.battle.dex.items.get(clientPokemon.prevItem).name;
 				itemEffect += clientPokemon.prevItemEffect ? prevItem + ' was ' + clientPokemon.prevItemEffect : 'was ' + prevItem;
 			}
-			if (pokemon.item) item = this.battle.dex.items.get(pokemon.item).name;
+			const knownItem = restricted ? (clientPokemon as any).revealedItem : pokemon.item;
+			if (knownItem) { item = this.battle.dex.items.get(knownItem).name; resolvedItemId = knownItem; }
 			if (itemEffect) itemEffect = ' (' + itemEffect + ')';
 			if (item) itemText = '<small>Item:</small> ' + item + itemEffect;
 		}
 		if (abilityText) { text += `<p>${abilityText}</p>`; }
 		if (itemText) {
 			const iconOf = (item: string) => `<span style="display:inline-block;width:24px;height:24px;vertical-align:middle;${Dex.getItemIcon(item, 24 / 96)}"></span> `;
-			const itemIcon = serverPokemon?.item ? iconOf(serverPokemon.item) : (clientPokemon?.item ? iconOf(clientPokemon.item) : '');
+			const itemIcon = resolvedItemId ? iconOf(resolvedItemId) : '';
 			text += `<p>${itemIcon}${itemText}</p>`;
 		}
-		text += this.renderWeaponState(clientPokemon, serverPokemon);
-		text += this.renderStats(clientPokemon, serverPokemon, !isActive);
-		if (serverPokemon && !isActive) {
+		text += this.renderWeaponState(clientPokemon, restricted ? null : serverPokemon);
+		text += this.renderStats(clientPokemon, restricted ? null : serverPokemon, !isActive);
+		if (serverPokemon && !isActive && !restricted) {
 			// move list
 			text += `<p class="tooltip-section">`;
 			const battlePokemon = clientPokemon || this.battle.findCorrespondingPokemon(pokemon);
@@ -825,7 +838,7 @@ export class BattleTooltips {
 		if (this.battle.abilityActive(['Air Lock', 'Cloud Nine'])) { weather = '' as ID; }
 		if (item === 'choiceband' && !clientPokemon?.volatiles['dynamax']) { stats.atk = Math.floor(stats.atk * 1.5); }
 		if (ability === 'purepower' || ability === 'hugepower') { stats.atk *= 2; }
-		if (ability === 'hustle' || (ability === 'gorillatactics' && !clientPokemon?.volatiles['dynamax'])) { stats.atk = Math.floor(stats.atk * 1.5); }
+		if (ability === 'hustle' || (ability === 'gorillatactics')) { stats.atk = Math.floor(stats.atk * 1.5); }
 		if (weather) {
 			if (this.battle.gen >= 4 && this.pokemonHasType(pokemon, 'Rock') && weather === 'sandstorm') { stats.spd = Math.floor(stats.spd * 1.5); }
 			if (this.pokemonHasType(pokemon, 'Ice') && weather === 'snowscape') { stats.def = Math.floor(stats.def * 1.5); }
@@ -855,6 +868,7 @@ export class BattleTooltips {
 			stats.atk = Math.floor(stats.atk * 0.5);
 			stats.spa = Math.floor(stats.spa * 0.5);
 		}
+		if (ability === 'lightmetal') { speedModifiers.push(1.2); }
 		if (clientPokemon) {
 			if (clientPokemon.volatiles['slowstart']) {
 				stats.atk = Math.floor(stats.atk * 0.5);
@@ -995,6 +1009,7 @@ export class BattleTooltips {
 			`<span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; bottom:1px; font-size:12px; font-weight:bold; color:#fff; text-shadow:0 0 2px #000, 0 0 2px #000, 1px 1px 0 #000;">${remaining}</span>` +
 			`</span></div>`;
 	}
+	//region Light Charge
 	// Necrozma/Necrozma-Dawn-Wings/Necrozma-Dusk-Mane shows a countdown of light hits until it Ultra Bursts. 
 	// Starts at 3, counts down.
 	private renderLightChargeBadge(clientPokemon: Pokemon | null): string {
@@ -1098,6 +1113,7 @@ export class BattleTooltips {
 			`<p><small>Immunities:</small> ${immuneLine}</p>`
 		);
 	}
+	//region PP
 	getPPUseText(moveTrackRow: [string, number], showKnown?: boolean) {
 		let [moveName, ppUsed] = moveTrackRow;
 		let move;
@@ -1119,6 +1135,7 @@ export class BattleTooltips {
 		}
 		return 0;
 	}
+	//region Get Speed Ranges
 	// Calculates possible Speed stat range of an opponent
 	getSpeedRange(pokemon: Pokemon): [number, number] {
 		const tr = Math.trunc || Math.floor;
@@ -1173,6 +1190,7 @@ export class BattleTooltips {
 		}
 		return [min, max];
 	}
+	//region Get Move Type
 	//Gets the proper current type for moves with a variable type.
 	getMoveType(move: Dex.Move, value: ModifiableValue, forMaxMove?: boolean | Dex.Move): 
 	[Dex.TypeName, 'Physical' | 'Special' | 'Status'] {
@@ -1291,7 +1309,7 @@ export class BattleTooltips {
 		}
 		return [moveType, category];
 	}
-	// Gets the current accuracy for a move.
+	//region Accuracy
 	getMoveAccuracy(move: Dex.Move, value: ModifiableValue, target?: Pokemon) {
 		value.reset(move.accuracy === true ? 0 : move.accuracy, true);
 		let pokemon = value.pokemon;
@@ -1342,12 +1360,24 @@ export class BattleTooltips {
 				value.modify(1.1, "Victory Star");
 			}
 		}
+		for (const active of [...pokemon.side.active, ...pokemon.side.foe.active]) {
+			if (!active || active.fainted) continue;
+			if (active.ability === 'Illuminate') {
+				accuracyModifiers.push(4506);
+				value.modify(1.1, "Illuminate");
+			}
+		}
 		if (value.tryAbility('Hustle') && move.category === 'Physical') {
-			accuracyModifiers.push(3277);
-			value.abilityModify(0.8, "Hustle");
-		} else if (value.tryAbility('Compound Eyes')) {
+			accuracyModifiers.push(2048);
+			value.abilityModify(0.5, "Hustle");
+		} 
+		else if (value.tryAbility('Compound Eyes')) {
 			accuracyModifiers.push(5325);
 			value.abilityModify(1.3, "Compound Eyes");
+		}
+		else if (value.tryAbility('Keen Eye')) {
+			accuracyModifiers.push(4915);
+			value.abilityModify(1.2, "Keen Eye");
 		}
 		if (value.tryItem('Wide Lens')) {
 			accuracyModifiers.push(4505);
@@ -1375,6 +1405,7 @@ export class BattleTooltips {
 		if (this.battle.gen === 1 && !toID(this.battle.tier).includes('stadium')) { value.set((Math.floor(value.value * 255 / 100) / 256) * 100); }
 		return value;
 	}
+	//region Move BasePower
 	// Gets the proper current base power for moves which have a variable base power.
 	// Takes into account the target for some moves.
 	// If it is unsure of the actual base power, it gives an estimate.
@@ -1520,6 +1551,7 @@ export class BattleTooltips {
 		}
 		if (!value.value) return value;
 		// Other ability boosts
+		if (move.flags?.light) { value.abilityModify(1.5, "Illuminate"); }
 		if (pokemon.status === 'brn' && move.category === 'Special') { value.abilityModify(1.5, "Flare Boost"); }
 		if (move.flags['punch']) { value.abilityModify(1.2, 'Iron Fist'); }
 		if (move.flags['pulse']) { value.abilityModify(1.5, "Mega Launcher"); }
@@ -1656,6 +1688,7 @@ export class BattleTooltips {
 		'Struggle',
 		'Water Pledge',
 	];
+	//region Item Boost
 	getItemBoost(move: Dex.Move, value: ModifiableValue, moveType: Dex.TypeName) {
 		let item = this.battle.dex.items.get(value.serverPokemon.item);
 		let itemName = item.name;
@@ -1730,7 +1763,7 @@ export class BattleTooltips {
 		else if (this.battle.myPokemon) { serverPokemon = this.battle.myPokemon[ally.slot]; }
 		return ally.effectiveAbility(serverPokemon);
 	}
-	getPokemonAbilityData(clientPokemon: Pokemon | null, serverPokemon: ServerPokemon | null | undefined) {
+	getPokemonAbilityData(clientPokemon: Pokemon | null, serverPokemon: ServerPokemon | null | undefined, restricted?: boolean) {
 		const abilityData: {
   			ability: string; baseAbility: string;
   			ability2: string; baseAbility2: string;
@@ -1740,7 +1773,14 @@ export class BattleTooltips {
   			ability2: '', baseAbility2: '',
   			possibilities: [],
 		};
-		if (clientPokemon) {
+		if (clientPokemon && restricted) {
+			const cp: any = clientPokemon;
+			if (cp.revealedAbility) abilityData.ability = cp.revealedAbility;
+			if (cp.revealedAbility2) abilityData.ability2 = cp.revealedAbility2;
+			const speciesForme = clientPokemon.getSpeciesForme() || serverPokemon?.speciesForme || '';
+			const species = this.battle.dex.species.get(speciesForme);
+			if (species.exists && species.abilities) { abilityData.possibilities = Object.values(species.abilities); }
+		} else if (clientPokemon) {
 			if (clientPokemon.ability) {
 				abilityData.ability = clientPokemon.ability || clientPokemon.baseAbility;
 				if (clientPokemon.baseAbility) { abilityData.baseAbility = clientPokemon.baseAbility; }
@@ -1765,7 +1805,7 @@ export class BattleTooltips {
 				}
 			}
 		}
-		if (serverPokemon) {
+		if (serverPokemon && !restricted) {
 			// ServerPokemon (request payload) is authoritative and updates immediately.
 			// Always prefer it when present, otherwise stale clientPokemon can mislead tooltips.
 			const sp: any = serverPokemon;
@@ -1782,12 +1822,13 @@ export class BattleTooltips {
 		clientPokemon: Pokemon | null,
 		serverPokemon: ServerPokemon | null | undefined,
 		isActive: boolean | undefined,
-		hidePossible?: boolean
+		hidePossible?: boolean,
+		restricted?: boolean
 	) {
 		let text = '';
-		const abilityData = this.getPokemonAbilityData(clientPokemon, serverPokemon);
+		const abilityData = this.getPokemonAbilityData(clientPokemon, serverPokemon, restricted);
 		const tier = this.battle.tier;
-		const abilityData0 = this.getPokemonAbilityData(clientPokemon, serverPokemon);
+		const abilityData0 = abilityData;
 		const hasSecondAbilitySlot = !!(abilityData0.ability2 || abilityData0.baseAbility2);
 		if ((clientPokemon || serverPokemon)) {
 			const status = (clientPokemon as any)?.status || (serverPokemon as any)?.status || '';
@@ -1805,8 +1846,7 @@ export class BattleTooltips {
 			// Only our own / ally Pokémon should force the fully-known "Ability Set" view.
 			// Enemy Pokémon can still have partial/revealed ability data, so serverPokemon
 			// existing does NOT by itself mean the set is fully known.
-			const isOwnPokemon = !!clientPokemon && (clientPokemon.side === this.battle.mySide || clientPokemon.side === this.battle.mySide.ally);
-			// Build possible sets from the flat list [a1, a2, a1, a2, ...]
+			const isOwnPokemon = !restricted && !!clientPokemon && (clientPokemon.side === this.battle.mySide || clientPokemon.side === this.battle.mySide.ally);			// Build possible sets from the flat list [a1, a2, a1, a2, ...]
 			const sets: string[][] = [];
 			for (let i = 0; i < abilityData.possibilities.length; i += 2) {
 				const a1 = abilityData.possibilities[i];

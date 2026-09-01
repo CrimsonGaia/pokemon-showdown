@@ -98,6 +98,7 @@ export class Pokemon {
 	ability2: ID;
 	abilityState1: EffectState;
 	abilityState2: EffectState;
+	usedAuraAbilities: Set<string>;
 	item: ID;
 	itemState: EffectState;
 	lastItem: ID;
@@ -311,6 +312,7 @@ export class Pokemon {
 		this.ability2 = this.baseAbility2;
 		this.abilityState1 = this.battle.initEffectState({ id: this.ability1, target: this });
 		this.abilityState2 = this.battle.initEffectState({ id: this.ability2, target: this });
+		this.usedAuraAbilities = new Set();
 		this.item = toID(set.item);
 		this.itemState = this.battle.initEffectState({ id: this.item, target: this });
 		this.lastItem = '';
@@ -1379,6 +1381,9 @@ export class Pokemon {
 	) {
 		if (!this.hp) return false;
 		status = this.battle.dex.conditions.get(status);
+		if (status.id === 'aura' && this.status && this.status !== 'aura') {
+			this.clearStatus();
+		}
 		if (this.battle.event) {
 			if (!source) source = this.battle.event.source;
 			if (!sourceEffect) sourceEffect = this.battle.effect;
@@ -1844,7 +1849,9 @@ export class Pokemon {
 			for (const attackingType of moveTypes) {
 				for (const defendingType of defendingTypes) {
 					let typeMod = this.battle.dex.getEffectiveness(attackingType, defendingType);
+					if (move.flags?.magic && !this.battle.dex.getImmunity(attackingType, defendingType)) typeMod = -1;
 					typeMod = this.battle.singleEvent('Effectiveness', move, null, this, defendingType, move, typeMod);
+					totalTypeMod += this.battle.runEvent('Effectiveness', this, defendingType, move, typeMod);
 					totalTypeMod += this.battle.runEvent('Effectiveness', this, defendingType, move, typeMod);
 				}
 			}
@@ -1888,26 +1895,25 @@ export class Pokemon {
 		}
 		return totalTypeMod;
 	}
-	/** false = immune, true = not immune */
-	runImmunity(source: ActiveMove | string, message?: string | boolean) {
-		if (!source) return true;
-		const type: string = typeof source !== 'string' ? source.type : source;
-		if (typeof source !== 'string') { if (source.ignoreImmunity && (source.ignoreImmunity === true || source.ignoreImmunity[type])) { return true; } }
-		if (!type || type === '???') return true;
-		if (!this.battle.dex.types.isName(type)) { throw new Error("Use runStatusImmunity for " + type); }
-		const negateImmunity = !this.battle.runEvent('NegateImmunity', this, type);
-		const notImmune = type === 'Ground' ?
-			this.isGrounded(negateImmunity) :
-			negateImmunity || this.battle.dex.getImmunity(type, this);
-		if (notImmune) return true;
-		if (!message) return false;
-		if (notImmune === null) { this.battle.add('-immune', this, '[from] ability: Levitate'); } 
-		else { this.battle.add('-immune', this); }
+		/** false = immune, true = not immune */
+	runImmunity(type:string,message?:boolean,source?:Pokemon,move?:ActiveMove){
+		if(!source)return true;
+		if(source.ignoreImmunity&&(source.ignoreImmunity===true||source.ignoreImmunity[type]))return true;
+		if(!type||type==='???')return true;
+		if(!this.battle.dex.types.isName(type))throw new Error("Use runStatusImmunity for "+type);
+		const negateImmunity=!this.battle.runEvent('NegateImmunity',this,type);
+		const notImmune=type==='Ground'?this.isGrounded(negateImmunity):negateImmunity||this.battle.dex.getImmunity(type,this);
+		if(notImmune)return true;
+		if(move?.flags?.magic)return true;
+		if(!message)return false;
+		if(notImmune===null)this.battle.add('-immune',this,'[from] ability: Levitate');
+		else this.battle.add('-immune',this);
 		return false;
 	}
 	runStatusImmunity(type: string, message?: string) {
 		if (this.fainted) return false;
 		if (!type) return true;
+		if (type === 'aura') return true;
 		if (!this.battle.dex.getImmunity(type, this)) {
 			this.battle.debug('natural status immunity');
 			if (message) { this.battle.add('-immune', this); }

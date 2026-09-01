@@ -969,7 +969,7 @@ export const Rulesets: import('../sim/dex-formats').FormatDataTable = {
 				// Starstorm Dex new mons
 				"Obductit", "Obductrio", "Extraterrestrio", "Miltank-Paldea", "Probovine", "Pareinnha", "Hydranero", 
 				// Starstorm Dex returning mons
-				"Nidoran-F", "Nidorina", "Nidoqueen", "Nidoran-M", "Nidorino", "Nidoking", "Marowak-Alola", "Staryu", "Starmie", "Smoochum", "Jynx", "Onix", "Steelix", "Mantyke", "Mantine", "Aron", "Lairon", "Aggron", "Lunatone", "Solrock", "Baltoy", "Claydol", "Lileep", "Cradily", "Anorith", "Armaldo", "Budew", "Roselia", "Roserade", "Mr. Mime-Galar", "Mr. Rime", "Carnivine", "Audino", "Venipede", "Whirlipede", "Scolipede", "Yamask", "Yamask-Galar", "Cofagrigus", "Runerigus", "Trubbish", "Garbodor", "Vanillite", "Vanillish", "Vanilluxe", "Emolga", "Karrablast", "Escavalier", "Frillish", "Jellicent", "Ferroseed", "Ferrothorn", "Klink", "Klang", "Klinklang", "Shelmet", "Accelgor", "Genesect", "Binacle", "Barbaracle", "Bunnelby", "Diggersby", "Honedge", "Doublade", "Aegislash", "Heloptile", "Heliolisk", "Drampa", "Wimpod", "Golisopod", "Type: Null", "Silvally", "Blipbug", "Dottler", "Orbeetle", "Wooloo", "Dubwool", "Sizzlipede", "Centiskorch", "Clobbopus", "Grapploct",
+				"Nidoran-F", "Nidorina", "Nidoqueen", "Nidoran-M", "Nidorino", "Nidoking", "Marowak-Alola", "Staryu", "Starmie", "Smoochum", "Jynx", "Onix", "Steelix", "Mantyke", "Mantine", "Aron", "Lairon", "Aggron", "Lunatone", "Solrock", "Baltoy", "Claydol", "Lileep", "Cradily", "Anorith", "Armaldo", "Budew", "Roselia", "Roserade", "Mr. Mime-Galar", "Mr. Rime", "Carnivine", "Munna", "Musharna", "Audino", "Venipede", "Whirlipede", "Scolipede", "Yamask", "Yamask-Galar", "Cofagrigus", "Runerigus", "Trubbish", "Garbodor", "Vanillite", "Vanillish", "Vanilluxe", "Emolga", "Karrablast", "Escavalier", "Frillish", "Jellicent", "Ferroseed", "Ferrothorn", "Klink", "Klang", "Klinklang", "Shelmet", "Accelgor", "Genesect", "Binacle", "Barbaracle", "Bunnelby", "Diggersby", "Honedge", "Doublade", "Aegislash", "Heloptile", "Heliolisk", "Drampa", "Wimpod", "Golisopod", "Type: Null", "Silvally", "Blipbug", "Dottler", "Orbeetle", "Wooloo", "Dubwool", "Sizzlipede", "Centiskorch", "Clobbopus", "Grapploct",
 			];
 			if (!svDex.includes(species.baseSpecies) && !svDex.includes(species.name)) { return [set.species + " is not available in Indigo Starstorm."]; }
 		},
@@ -987,7 +987,7 @@ export const Rulesets: import('../sim/dex-formats').FormatDataTable = {
 			// Starstorm Dex additions
 				"Obductit", "Obductrio", "Extraterrestrio", "Miltank-Paldea", "Probovine", "Pareinnha", "Hydranero", 
 			// Starstorm Dex returning mons
-				"Nidoran-F", "Nidorina", "Nidoqueen", "Nidoran-M", "Nidorino", "Nidoking", "Marowak-Alola", "Staryu", "Starmie", "Smoochum", "Jynx", "Onix", "Steelix", "Mantyke", "Mantine", "Aron", "Lairon", "Aggron", "Lunatone", "Solrock", "Baltoy", "Claydol", "Lileep", "Cradily", "Anorith", "Armaldo", "Budew", "Roselia", "Roserade", "Mr. Mime-Galar", "Mr. Rime", "Carnivine", "Audino", "Venipede", "Whirlipede", "Scolipede", "Yamask", "Yamask-Galar", "Cofagrigus", "Runerigus", "Trubbish", "Garbodor", "Vanillite", "Vanillish", "Vanilluxe", "Emolga", "Karrablast", "Escavalier", "Frillish", "Jellicent", "Ferroseed", "Ferrothorn", "Klink", "Klang", "Klinklang", "Shelmet", "Accelgor", "Genesect", "Binacle", "Barbaracle", "Bunnelby", "Diggersby", "Honedge", "Doublade", "Aegislash", "Heloptile", "Heliolisk", "Drampa", "Wimpod", "Golisopod", "Type: Null", "Silvally", "Blipbug", "Dottler", "Orbeetle", "Wooloo", "Dubwool", "Sizzlipede", "Centiskorch", "Clobbopus", "Grapploct",
+				"Nidoran-F", "Nidorina", "Nidoqueen", "Nidoran-M", "Nidorino", "Nidoking", "Marowak-Alola", "Staryu", "Starmie", "Smoochum", "Jynx", "Onix", "Steelix", "Mantyke", "Mantine", "Aron", "Lairon", "Aggron", "Lunatone", "Solrock", "Baltoy", "Claydol", "Lileep", "Cradily", "Anorith", "Armaldo", "Budew", "Roselia", "Roserade", "Mr. Mime-Galar", "Mr. Rime", "Carnivine", "Munna", "Musharna", "Audino", "Venipede", "Whirlipede", "Scolipede", "Yamask", "Yamask-Galar", "Cofagrigus", "Runerigus", "Trubbish", "Garbodor", "Vanillite", "Vanillish", "Vanilluxe", "Emolga", "Karrablast", "Escavalier", "Frillish", "Jellicent", "Ferroseed", "Ferrothorn", "Klink", "Klang", "Klinklang", "Shelmet", "Accelgor", "Genesect", "Binacle", "Barbaracle", "Bunnelby", "Diggersby", "Honedge", "Doublade", "Aegislash", "Heloptile", "Heliolisk", "Drampa", "Wimpod", "Golisopod", "Type: Null", "Silvally", "Blipbug", "Dottler", "Orbeetle", "Wooloo", "Dubwool", "Sizzlipede", "Centiskorch", "Clobbopus", "Grapploct",
 
 			];
 			if (!svDex.includes(species.baseSpecies) && !svDex.includes(species.name)) { return [set.species + " is not available in Pokémon Scarlet/Violet."]; }
@@ -1176,27 +1176,21 @@ export const Rulesets: import('../sim/dex-formats').FormatDataTable = {
 	desc: "All items are revealed at battle start (but not which Pokémon holds them)",
 	onBegin() {
 		this.add('rule', 'Item Reveal: All items revealed at start');
-		// Collect all items from both sides
-		const p1Items: string[] = [];
-		const p2Items: string[] = [];
+		const p1ItemsIndexed: string[] = [];
+		const p2ItemsIndexed: string[] = [];
 		for (const pokemon of this.sides[0].pokemon) {
-			if (pokemon.item) {
-				const item = this.dex.items.get(pokemon.item);
-				p1Items.push(item.name);
-			}
+			p1ItemsIndexed.push(pokemon.item ? this.dex.items.get(pokemon.item).name : '');
 		}
 		for (const pokemon of this.sides[1].pokemon) {
-			if (pokemon.item) {
-				const item = this.dex.items.get(pokemon.item);
-				p2Items.push(item.name);
-			}
+			p2ItemsIndexed.push(pokemon.item ? this.dex.items.get(pokemon.item).name : '');
 		}
-		// Sort items alphabetically for consistency
-		p1Items.sort();
-		p2Items.sort();
-		// Display items for each side
+		const p1Items = p1ItemsIndexed.filter(Boolean).sort();
+		const p2Items = p2ItemsIndexed.filter(Boolean).sort();
 		if (p1Items.length) { this.add('message', `${this.sides[0].name}'s team items: ${p1Items.join(', ')}`); }
 		if (p2Items.length) { this.add('message', `${this.sides[1].name}'s team items: ${p2Items.join(', ')}`); }
+		// Structured line the client actually parses into the topbar's item pool.
+		this.add('itemreveal', this.sides[0].id, p1ItemsIndexed.join(','));
+		this.add('itemreveal', this.sides[1].id, p2ItemsIndexed.join(','));
 		},
 	},
 	freezeclause: {

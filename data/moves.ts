@@ -1182,7 +1182,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		pp: 20,
 		priority: 0,
 		critRatio: 7,
-		flags: { contact: 1, slicing: 1, protect: 1, mirror: 1, metronome: 1 },
+		flags: { contact: 1, claw: 1, slicing: 1, protect: 1, mirror: 1, metronome: 1 },
 		secondary: { chance: 10, status: 'psn', },
 		onAfterMove(pokemon, target, move) { if (target.getMoveHitData(move).crit) { target.trySetStatus('tox', pokemon); } },
 		desc: "10% chance to poison target. On a critical hit, 100% chance to inflict Toxic Poison instead",
@@ -2372,7 +2372,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		pp: 28,
 		priority: 0,
 		critRatio: 6,
-		flags: { contact: 1, slicing: 1, protect: 1, mirror: 1, metronome: 1  },
+		flags: { contact: 1, claw: 1, slicing: 1, protect: 1, mirror: 1, metronome: 1  },
 		multihit: [2, 5],
 		secondary: null,
 		desc: "Hits 2-5 times [4-5 times with Loaded Dice]. Power boosts by 6 each time user is hit by a damaging move [up to 100]",
@@ -4553,6 +4553,20 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		shortDesc: "+1 priority",
 		target: "normal",
 	},
+	rakestrike: {
+		num: 13400,
+		accuracy: 100,
+		basePower: 85,
+		type: "Flying",
+		category: "Physical",
+		name: "Rake Strike",
+		pp: 10,
+		priority: 0,
+		critRatio: 7,
+		flags: { contact: 1, claw: 1, kicking: 1, slicing: 1, protect: 1 },
+		secondary: null,
+		target: "normal",
+	},
 	ragefist: {
 		num: 889,
 		accuracy: 100,
@@ -4920,7 +4934,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		critRatio: 6,
 		flags: { contact: 1, spin: 1, protect: 1, mirror: 1, metronome: 1, failinstruct: 1, noparentalbond: 1 },
 		onModifyMove(move, pokemon, target) {
-			if (pokemon.volatiles['rollout'] || pokemon.status === 'slp' || !target) return;
+			if (pokemon.volatiles['rollout'] || pokemon.status === 'slp' || pokemon.hasAbility('comatose') || pokemon.hasAbility('dreamer') || !target) return;
 			pokemon.addVolatile('rollout');
 			if (move.sourceEffect) pokemon.lastMoveTargetLoc = pokemon.getLocOf(target);
 		},
@@ -5417,7 +5431,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		pp: 24,
 		priority: 0,
 		critRatio: 7,
-		flags: { contact: 1, protect: 1, mirror: 1, metronome: 1, slicing: 1 },
+		flags: { contact: 1, claw: 1, slicing: 1, protect: 1, mirror: 1, metronome: 1},
 		secondary: null,
 		desc: "",
 		shortDesc: "",
@@ -5924,10 +5938,26 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		pp: 6,
 		priority: 0,
 		critRatio: 15,
-		flags: { contact: 1, protect: 1, mirror: 1, punch: 1 },
+		flags: { contact: 1, punch: 1, protect: 1, mirror: 1 },
 		willCrit: true,
 		multihit: 3,
 		secondary: null,
+		target: "normal",
+	},
+	swoop: {
+		num: 13400,
+		accuracy: 100,
+		basePower: 75,
+		type: "Flying",
+		category: "Physical",
+		name: "Swoop",
+		pp: 20,
+		priority: 0,
+		critRatio: 6,
+		flags: { contact: 1, airborne: 1, claw: 1, kicking: 1, protect: 1 },
+		secondary: null,
+		desc: "AIRBORNE: This move fails under the effects of Gravity or Smackdown, or if user is holding an iron Ball",
+		shortDesc: "AIRBORNE: This move fails under the effects of Gravity or Smackdown, or if user is holding an iron Ball",
 		target: "normal",
 	},
 	tackle: {
@@ -7371,9 +7401,12 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		priority: 0,
 		critRatio: 5,
 		flags: { protect: 1, mirror: 1, sound: 1, bypasssub: 1 },
-		secondary: { chance: 100, boosts: {atk: -1,}, },
-		desc: "Lowers target's Attack [-1 stage]; SOUND: This move bypasses substitutes",
-		shortDesc: "-1 ATK: Target",
+		secondaries: [
+			{ chance: 30, volatileStatus: 'attract'},
+			{ chance: 100, boosts: {atk: -1,}, }
+		],
+		desc: "Lowers target's Attack [-1 stage]. 30% chance to attract targets; SOUND: This move bypasses substitutes",
+		shortDesc: "30% Attract; -1 ATK: Target",
 		target: "allAdjacentFoes",
 	},
 	chillingwater: {
@@ -7798,7 +7831,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		critRatio: 0,
 		flags: { drain: 1, heal: 1, protect: 1, mirror: 1, metronome: 1 },
 		drain: [3, 4],
-		onTryImmunity(target) { return target.status === 'slp' || target.hasAbility('comatose'); },
+		onTryImmunity(target) { return target.status === 'slp' || target.hasAbility('comatose') || target.hasAbility('dreamer'); },
 		secondary: null,
 		desc: "User recovers 3/4 damage dealt. Fails unless target is Asleep",
 		shortDesc: "User recovers 3/4 damage dealt. Fails unless target is Asleep",
@@ -8798,7 +8831,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		accuracy: 100,
 		basePower: 65,
 		basePowerCallback(pokemon, target, move) {
-			if (target.status || target.hasAbility('comatose')) {
+			if (target.status || target.hasAbility('comatose') || target.hasAbility('dreamer')) {
 				this.debug('BP doubled from status condition');
 				return move.basePower * 2;
 			}
@@ -9008,7 +9041,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		accuracy: 100,
 		basePower: 65,
 		basePowerCallback(pokemon, target, move) {
-			if (target.status || target.hasAbility('comatose')) return move.basePower * 2;
+			if (target.status || target.hasAbility('comatose') || target.hasAbility('dreamer')) return move.basePower * 2;
 			return move.basePower;
 		},
 		type: "Ghost",
@@ -9059,7 +9092,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		shortDesc: "Inflicts Bind",
 		target: "normal",
 	},
-	judgement: {
+	judgment: {
 		num: 449,
 		accuracy: 100,
 		basePower: 100,
@@ -10474,7 +10507,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		critRatio: 1,
 		flags: { protect: 1, mirror: 1, sound: 1, bypasssub: 1 },
 		sleepUsable: true,
-		onTry(source) { return source.status === 'slp' || source.hasAbility('comatose'); },
+		onTry(source) { return source.status === 'slp' || source.hasAbility('comatose') || source.hasAbility('dreamer'); },
 		secondary: { chance: 30, volatileStatus: 'flinch', },
 		desc: "Fails unless user is Asleep; SOUND: This move bypasses substitutes",
 		shortDesc: "Fails unless user is Asleep",
@@ -15666,12 +15699,12 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		condition: {
 			noCopy: true,
 			onStart(pokemon) {
-				if (pokemon.status !== 'slp' && !pokemon.hasAbility('comatose')) { return false; }
+				if (pokemon.status !== 'slp' && !pokemon.hasAbility('comatose') && !pokemon.hasAbility('dreamer')) { return false; }
 				this.add('-start', pokemon, 'Nightmare');
 			},
 			onResidualOrder: 11,
 			onResidual(pokemon) { this.damage(pokemon.baseMaxhp / 4); },
-			onEnd(pokemon) { if (pokemon.status !== 'slp' && !pokemon.hasAbility('comatose')) { pokemon.trySetStatus('fear', pokemon); } },
+			onEnd(pokemon) { if (pokemon.status !== 'slp' && !pokemon.hasAbility('comatose') && !pokemon.hasAbility('dreamer')) { pokemon.trySetStatus('fear', pokemon); } },
 		},
 		secondary: null,
 		desc: "Fails unless target is Asleep or Drowsy. If target is Drowsy, they fall Asleep immediately. Deals 1/4HP until they wake up. When awoken, they are Feared; MAGIC: Ignore target's Ability/Type based immunities",
@@ -16392,7 +16425,6 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		flags: { snatch: 1, heal: 1, metronome: 1 },
 		onTry(source, target, move) {
 			if (move && move.name === 'Sleep Talk') { return true; }
-			if (source.status === 'slp') return false;
 			if (source.hp === source.maxhp) {
 				this.add('-fail', source, 'heal');
 				return null;
@@ -17166,7 +17198,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		priority: 0,
 		flags: { failencore: 1, nosleeptalk: 1, noassist: 1, failcopycat: 1, failmimic: 1, },
 		sleepUsable: true,
-		onTry(source) { return source.status === 'slp' || source.hasAbility('comatose'); },
+		onTry(source) { return source.status === 'slp' || source.hasAbility('comatose') || source.hasAbility('dreamer'); },
 		onHit(pokemon) {
 			const moves = [];
 			for (const moveSlot of pokemon.moveSlots) {
@@ -18677,7 +18709,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		category: "Status",
 		name: "Yawn",
 		pp: 16,
-		priority: 0,
+		priority: -2,
 		flags: { breath: 1, protect: 1, reflectable: 1, mirror: 1, metronome: 1 },
 		volatileStatus: 'yawn',
 		onTryHit(target) { if (target.status || !target.runStatusImmunity('slp')) { return false; } },
@@ -19100,7 +19132,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		priority: 0,
 		flags: { contact: 1, protect: 1, mirror: 1, metronome: 1, bullet: 1, noparentalbond: 1 },
 		onModifyMove(move, pokemon, target) {
-			if (pokemon.volatiles['iceball'] || pokemon.status === 'slp' || !target) return;
+			if (pokemon.volatiles['iceball'] || pokemon.status === 'slp' || pokemon.hasAbility('comatose') || pokemon.hasAbility('dreamer') || !target) return;
 			pokemon.addVolatile('iceball');
 			if (move.sourceEffect) pokemon.lastMoveTargetLoc = pokemon.getLocOf(target);
 		},
@@ -19478,7 +19510,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		accuracy: 100,
 		basePower: 70,
 		basePowerCallback(pokemon, target, move) {
-			if (target.status === 'slp' || target.hasAbility('comatose')) {
+			if (target.status === 'slp' || target.hasAbility('comatose') || target.hasAbility('dreamer')) {
 				this.debug('BP doubled on sleeping target');
 				return move.basePower * 2;
 			}
@@ -19852,29 +19884,6 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		},
 		secondary: null,
 		target: "normal",
-	},
-	camouflage: {
-		num: 293,
-		accuracy: true,
-		basePower: 0,
-		type: "Normal",
-		category: "Status",
-		isNonstandard: "Past",
-		name: "Camouflage",
-		pp: 20,
-		priority: 0,
-		flags: { snatch: 1, metronome: 1 },
-		onHit(target) {
-			let newType = 'Normal';
-			if (this.field.isTerrain('electricterrain')) { newType = 'Electric'; } 
-			else if (this.field.isTerrain('grassyterrain')) { newType = 'Grass'; } 
-			else if (this.field.isTerrain('mistyterrain')) { newType = 'Fairy'; } 
-			else if (this.field.isTerrain('psychicterrain')) { newType = 'Psychic'; }
-			if (target.getTypes().join() === newType || !target.setType(newType)) return false;
-			this.add('-start', target, 'typechange', newType);
-		},
-		secondary: null,
-		target: "self",
 	},
 	captivate: {
 		num: 445,

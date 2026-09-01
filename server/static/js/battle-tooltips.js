@@ -322,23 +322,34 @@ index++;
 }else{buf=this.showPokemonTooltip(_pokemon2,_serverPokemon2);}
 break;
 }
+case'teambar':{var _s$fullTeam,_s$sidebarPokemon;
+var _sideIndex=parseInt(args[1],10);
+var _side=this.battle.sides[_sideIndex];
+var _pokemonIndex=parseInt(args[2],10);
+var s=_side;
+var fullTeam=((_s$fullTeam=s.fullTeam)!=null&&_s$fullTeam.length?s.fullTeam:null)||((_s$sidebarPokemon=s.sidebarPokemon)!=null&&_s$sidebarPokemon.length?s.sidebarPokemon:null)||_side.pokemon||[];
+var _pokemon3=fullTeam[_pokemonIndex];
+if(!_pokemon3){buf='';break;}
+buf=this.showPokemonTooltip(_pokemon3,null,false,undefined,true);
+break;
+}
 case'activepokemon':{
 
 
-var _sideIndex=parseInt(args[1],10);
-var _side=this.battle.sides[+this.battle.viewpointSwitched^_sideIndex];
+var _sideIndex2=parseInt(args[1],10);
+var _side2=this.battle.sides[+this.battle.viewpointSwitched^_sideIndex2];
 var activeIndex=parseInt(args[2],10);
-var _pokemonIndex=activeIndex;
+var _pokemonIndex2=activeIndex;
 if(activeIndex>=1&&this.battle.sides.length>2){
-_pokemonIndex-=1;
-_side=this.battle.sides[_side.n+2];
+_pokemonIndex2-=1;
+_side2=this.battle.sides[_side2.n+2];
 }
-var _pokemon3=_side.active[activeIndex];
+var _pokemon4=_side2.active[activeIndex];
 var _serverPokemon3=null;
-if(_side===this.battle.mySide&&this.battle.myPokemon){_serverPokemon3=this.battle.myPokemon[_pokemonIndex];}
-if(_side===this.battle.mySide.ally&&this.battle.myAllyPokemon){_serverPokemon3=this.battle.myAllyPokemon[_pokemonIndex];}
-if(!_pokemon3)return false;
-buf=this.showPokemonTooltip(_pokemon3,_serverPokemon3,true);
+if(_side2===this.battle.mySide&&this.battle.myPokemon){_serverPokemon3=this.battle.myPokemon[_pokemonIndex2];}
+if(_side2===this.battle.mySide.ally&&this.battle.myAllyPokemon){_serverPokemon3=this.battle.myAllyPokemon[_pokemonIndex2];}
+if(!_pokemon4)return false;
+buf=this.showPokemonTooltip(_pokemon4,_serverPokemon3,true);
 break;
 }
 case'switchpokemon':{
@@ -346,13 +357,13 @@ case'switchpokemon':{
 
 
 var _activeIndex=parseInt(args[1],10);
-var _pokemon4=null;
+var _pokemon5=null;
 
 
 
 
 var _serverPokemon4=this.battle.myPokemon[_activeIndex];
-buf=this.showPokemonTooltip(_pokemon4,_serverPokemon4);
+buf=this.showPokemonTooltip(_pokemon5,_serverPokemon4);
 break;
 }
 case'allypokemon':{
@@ -360,12 +371,12 @@ case'allypokemon':{
 
 
 var _activeIndex2=parseInt(args[1],10);
-var _pokemon5=null;
+var _pokemon6=null;
 
 
 
 var _serverPokemon5=this.battle.myAllyPokemon?this.battle.myAllyPokemon[_activeIndex2]:null;
-buf=this.showPokemonTooltip(_pokemon5,_serverPokemon5);
+buf=this.showPokemonTooltip(_pokemon6,_serverPokemon5);
 break;
 }
 case'field':{
@@ -603,7 +614,7 @@ return"<div class=\"tooltipinner-wrapper\">"+text+"</div>";
 
 
 
-showPokemonTooltip=function showPokemonTooltip(clientPokemon,serverPokemon,isActive,illusionIndex){var _this3=this;
+showPokemonTooltip=function showPokemonTooltip(clientPokemon,serverPokemon,isActive,illusionIndex,restricted){var _this3=this;
 var pokemon=clientPokemon||serverPokemon;
 var text='';
 var genderBuf='';
@@ -660,9 +671,10 @@ text+='</p>';
 text+=this.renderLightChargeBadge(clientPokemon);
 var supportsAbilities=this.battle.gen>2&&!this.battle.tier.includes("Let's Go");
 var abilityText='';
-if(supportsAbilities){abilityText=this.getPokemonAbilityText(clientPokemon,serverPokemon,isActive,!!illusionIndex&&illusionIndex>1);}
+if(supportsAbilities){abilityText=this.getPokemonAbilityText(clientPokemon,serverPokemon,isActive,!!illusionIndex&&illusionIndex>1,restricted);}
 var itemText='';
-if(serverPokemon){
+var resolvedItemId='';
+if(serverPokemon&&!restricted){
 var item='';
 var itemEffect='';
 if(clientPokemon!=null&&clientPokemon.prevItem){
@@ -670,7 +682,7 @@ item='None';
 var prevItem=this.battle.dex.items.get(clientPokemon.prevItem).name;
 itemEffect+=clientPokemon.prevItemEffect?prevItem+' was '+clientPokemon.prevItemEffect:'was '+prevItem;
 }
-if(serverPokemon.item)item=this.battle.dex.items.get(serverPokemon.item).name;
+if(serverPokemon.item){item=this.battle.dex.items.get(serverPokemon.item).name;resolvedItemId=serverPokemon.item;}
 if(itemEffect)itemEffect=' ('+itemEffect+')';
 if(item)itemText='<small>Item:</small> '+item+itemEffect;
 }else if(clientPokemon){
@@ -682,19 +694,20 @@ if(_itemEffect)_itemEffect+='; ';
 var _prevItem=this.battle.dex.items.get(clientPokemon.prevItem).name;
 _itemEffect+=clientPokemon.prevItemEffect?_prevItem+' was '+clientPokemon.prevItemEffect:'was '+_prevItem;
 }
-if(pokemon.item)_item=this.battle.dex.items.get(pokemon.item).name;
+var knownItem=restricted?clientPokemon.revealedItem:pokemon.item;
+if(knownItem){_item=this.battle.dex.items.get(knownItem).name;resolvedItemId=knownItem;}
 if(_itemEffect)_itemEffect=' ('+_itemEffect+')';
 if(_item)itemText='<small>Item:</small> '+_item+_itemEffect;
 }
 if(abilityText){text+="<p>"+abilityText+"</p>";}
 if(itemText){
 var iconOf=function(item){return"<span style=\"display:inline-block;width:24px;height:24px;vertical-align:middle;"+Dex.getItemIcon(item,24/96)+"\"></span> ";};
-var itemIcon=serverPokemon!=null&&serverPokemon.item?iconOf(serverPokemon.item):clientPokemon!=null&&clientPokemon.item?iconOf(clientPokemon.item):'';
+var itemIcon=resolvedItemId?iconOf(resolvedItemId):'';
 text+="<p>"+itemIcon+itemText+"</p>";
 }
-text+=this.renderWeaponState(clientPokemon,serverPokemon);
-text+=this.renderStats(clientPokemon,serverPokemon,!isActive);
-if(serverPokemon&&!isActive){
+text+=this.renderWeaponState(clientPokemon,restricted?null:serverPokemon);
+text+=this.renderStats(clientPokemon,restricted?null:serverPokemon,!isActive);
+if(serverPokemon&&!isActive&&!restricted){
 
 text+="<p class=\"tooltip-section\">";
 var battlePokemon=clientPokemon||this.battle.findCorrespondingPokemon(pokemon);
@@ -825,7 +838,7 @@ var weather=this.battle.weather;
 if(this.battle.abilityActive(['Air Lock','Cloud Nine'])){weather='';}
 if(item==='choiceband'&&!(clientPokemon!=null&&clientPokemon.volatiles['dynamax'])){stats.atk=Math.floor(stats.atk*1.5);}
 if(ability==='purepower'||ability==='hugepower'){stats.atk*=2;}
-if(ability==='hustle'||ability==='gorillatactics'&&!(clientPokemon!=null&&clientPokemon.volatiles['dynamax'])){stats.atk=Math.floor(stats.atk*1.5);}
+if(ability==='hustle'||ability==='gorillatactics'){stats.atk=Math.floor(stats.atk*1.5);}
 if(weather){
 if(this.battle.gen>=4&&this.pokemonHasType(pokemon,'Rock')&&weather==='sandstorm'){stats.spd=Math.floor(stats.spd*1.5);}
 if(this.pokemonHasType(pokemon,'Ice')&&weather==='snowscape'){stats.def=Math.floor(stats.def*1.5);}
@@ -855,6 +868,7 @@ if(ability==='defeatist'&&serverPokemon.hp<=serverPokemon.maxhp/2){
 stats.atk=Math.floor(stats.atk*0.5);
 stats.spa=Math.floor(stats.spa*0.5);
 }
+if(ability==='lightmetal'){speedModifiers.push(1.2);}
 if(clientPokemon){
 if(clientPokemon.volatiles['slowstart']){
 stats.atk=Math.floor(stats.atk*0.5);
@@ -997,6 +1011,7 @@ remaining+"</span>")+"</span></div>";
 };_proto2.
 
 
+
 renderLightChargeBadge=function renderLightChargeBadge(clientPokemon){
 if(!clientPokemon)return'';
 var speciesId=toID(clientPokemon.speciesForme);
@@ -1098,6 +1113,7 @@ resistLine+"</p>")+("<p><small>Immunities:</small> "+
 immuneLine+"</p>"));
 
 };_proto2.
+
 getPPUseText=function getPPUseText(moveTrackRow,showKnown){
 var moveName=moveTrackRow[0],ppUsed=moveTrackRow[1];
 var move;
@@ -1119,6 +1135,7 @@ if(move.name===moveName)return _ppUsed;
 }
 return 0;
 };_proto2.
+
 
 getSpeedRange=function getSpeedRange(pokemon){var _pokemon$volatiles$tr;
 var tr=Math.trunc||Math.floor;
@@ -1173,6 +1190,7 @@ min=isCGT?max:tr(tr(2*baseSpe*level/100+5)*minNature);
 }
 return[min,max];
 };_proto2.
+
 
 getMoveType=function getMoveType(move,value,forMaxMove)
 {
@@ -1341,21 +1359,33 @@ if(ability==='Victory Star'){
 accuracyModifiers.push(4506);
 value.modify(1.1,"Victory Star");
 }
+}for(var _i50=0,_ref6=[].concat(
+pokemon.side.active,pokemon.side.foe.active);_i50<_ref6.length;_i50++){var _active=_ref6[_i50];
+if(!_active||_active.fainted)continue;
+if(_active.ability==='Illuminate'){
+accuracyModifiers.push(4506);
+value.modify(1.1,"Illuminate");
+}
 }
 if(value.tryAbility('Hustle')&&move.category==='Physical'){
-accuracyModifiers.push(3277);
-value.abilityModify(0.8,"Hustle");
-}else if(value.tryAbility('Compound Eyes')){
+accuracyModifiers.push(2048);
+value.abilityModify(0.5,"Hustle");
+}else
+if(value.tryAbility('Compound Eyes')){
 accuracyModifiers.push(5325);
 value.abilityModify(1.3,"Compound Eyes");
+}else
+if(value.tryAbility('Keen Eye')){
+accuracyModifiers.push(4915);
+value.abilityModify(1.2,"Keen Eye");
 }
 if(value.tryItem('Wide Lens')){
 accuracyModifiers.push(4505);
 value.itemModify(1.1,"Wide Lens");
 }
 
-var chain=4096;for(var _i50=0;_i50<
-accuracyModifiers.length;_i50++){var mod=accuracyModifiers[_i50];if(mod!==4096){chain=chain*mod+2048>>12;}}
+var chain=4096;for(var _i52=0;_i52<
+accuracyModifiers.length;_i52++){var mod=accuracyModifiers[_i52];if(mod!==4096){chain=chain*mod+2048>>12;}}
 
 value.set(move.accuracy);
 if(move.id==='hurricane'||move.id==='thunder'){
@@ -1378,7 +1408,8 @@ return value;
 
 
 
-getMoveBasePower=function getMoveBasePower(move,moveType,value){var target=arguments.length>3&&arguments[3]!==undefined?arguments[3]:null;
+
+getMoveBasePower=function getMoveBasePower(move,moveType,value){var _move$flags;var target=arguments.length>3&&arguments[3]!==undefined?arguments[3]:null;
 var pokemon=value.pokemon;
 var serverPokemon=value.serverPokemon;
 
@@ -1419,14 +1450,14 @@ value.set(basePower);
 if(['hex','infernalparade'].includes(move.id)&&target!=null&&target.status){value.modify(2,move.name+' + status');}
 if(move.id==='lastrespects'){value.set(Math.min(50+50*pokemon.side.faintCounter));}
 if(move.id==='punishment'&&target){
-var boostCount=0;for(var _i52=0,_Object$values2=
-Object.values(target.boosts);_i52<_Object$values2.length;_i52++){var boost=_Object$values2[_i52];if(boost>0)boostCount+=boost;}
+var boostCount=0;for(var _i54=0,_Object$values2=
+Object.values(target.boosts);_i54<_Object$values2.length;_i54++){var boost=_Object$values2[_i54];if(boost>0)boostCount+=boost;}
 value.set(Math.min(60+20*boostCount,200));
 }
 if(move.id==='smellingsalts'&&target){if(target.status==='par'){value.modify(2,'Smelling Salts + Paralysis');}}
 if(['storedpower','powertrip'].includes(move.id)&&target){
-var _boostCount=0;for(var _i54=0,_Object$values4=
-Object.values(pokemon.boosts);_i54<_Object$values4.length;_i54++){var _boost=_Object$values4[_i54];if(_boost>0)_boostCount+=_boost;}
+var _boostCount=0;for(var _i56=0,_Object$values4=
+Object.values(pokemon.boosts);_i56<_Object$values4.length;_i56++){var _boost=_Object$values4[_i56];if(_boost>0)_boostCount+=_boost;}
 value.set(20+20*_boostCount);
 }
 if(move.id==='trumpcard'){
@@ -1520,6 +1551,7 @@ undefined);
 }
 if(!value.value)return value;
 
+if((_move$flags=move.flags)!=null&&_move$flags.light){value.abilityModify(1.5,"Illuminate");}
 if(pokemon.status==='brn'&&move.category==='Special'){value.abilityModify(1.5,"Flare Boost");}
 if(move.flags['punch']){value.abilityModify(1.2,'Iron Fist');}
 if(move.flags['pulse']){value.abilityModify(1.5,"Mega Launcher");}
@@ -1550,8 +1582,8 @@ value.abilityModify(1.2,"Normalize");
 if(move.recoil||move.hasCrashDamage){value.abilityModify(1.2,'Reckless');}
 if(move.category!=='Status'){
 var auraBoosted='';
-var auraBroken=false;for(var _i56=0,_pokemon$side$active4=
-pokemon.side.active;_i56<_pokemon$side$active4.length;_i56++){var ally=_pokemon$side$active4[_i56];
+var auraBroken=false;for(var _i58=0,_pokemon$side$active4=
+pokemon.side.active;_i58<_pokemon$side$active4.length;_i58++){var ally=_pokemon$side$active4[_i58];
 if(!ally||ally.fainted)continue;
 var allyAbility=this.getAllyAbility(ally);
 if(moveType==='Fairy'&&allyAbility==='Fairy Aura'){auraBoosted='Fairy Aura';}else
@@ -1560,8 +1592,8 @@ if(allyAbility==='Aura Break'){auraBroken=true;}else
 if(allyAbility==='Battery'&&ally!==pokemon&&move.category==='Special'){value.modify(1.3,'Battery');}else
 if(allyAbility==='Power Spot'&&ally!==pokemon){value.modify(1.3,'Power Spot');}else
 if(allyAbility==='Steely Spirit'&&moveType==='Steel'){value.modify(1.5,'Steely Spirit');}
-}for(var _i58=0,_pokemon$side$foe$act2=
-pokemon.side.foe.active;_i58<_pokemon$side$foe$act2.length;_i58++){var foe=_pokemon$side$foe$act2[_i58];
+}for(var _i60=0,_pokemon$side$foe$act2=
+pokemon.side.foe.active;_i60<_pokemon$side$foe$act2.length;_i60++){var foe=_pokemon$side$foe$act2[_i60];
 if(!foe||foe.fainted)continue;
 if(foe.ability==='Fairy Aura'&&moveType==='Fairy'){auraBoosted='Fairy Aura';}else
 if(foe.ability==='Dark Aura'&&moveType==='Dark'){auraBoosted='Dark Aura';}else
@@ -1604,6 +1636,7 @@ move.id==='steelroller'&&
 {value.set(0,'no Terrain');}
 return value;
 };_proto2.
+
 
 
 
@@ -1720,8 +1753,8 @@ if(!pokemon.getTypes){return this.battle.dex.species.get(pokemon.speciesForme).t
 return pokemon.getTypeList(undefined,preterastallized);
 };_proto2.
 pokemonHasType=function pokemonHasType(pokemon,type,types){
-if(!types)types=this.getPokemonTypes(pokemon);for(var _i60=0,_types3=
-types;_i60<_types3.length;_i60++){var curType=_types3[_i60];if(curType===type)return true;}
+if(!types)types=this.getPokemonTypes(pokemon);for(var _i62=0,_types3=
+types;_i62<_types3.length;_i62++){var curType=_types3[_i62];if(curType===type)return true;}
 return false;
 };_proto2.
 getAllyAbility=function getAllyAbility(ally){
@@ -1730,7 +1763,7 @@ if(this.battle.myAllyPokemon){serverPokemon=this.battle.myAllyPokemon[ally.slot]
 if(this.battle.myPokemon){serverPokemon=this.battle.myPokemon[ally.slot];}
 return ally.effectiveAbility(serverPokemon);
 };_proto2.
-getPokemonAbilityData=function getPokemonAbilityData(clientPokemon,serverPokemon){
+getPokemonAbilityData=function getPokemonAbilityData(clientPokemon,serverPokemon,restricted){
 var abilityData=
 
 
@@ -1740,23 +1773,30 @@ ability:'',baseAbility:'',
 ability2:'',baseAbility2:'',
 possibilities:[]
 };
-if(clientPokemon){
+if(clientPokemon&&restricted){
+var cp=clientPokemon;
+if(cp.revealedAbility)abilityData.ability=cp.revealedAbility;
+if(cp.revealedAbility2)abilityData.ability2=cp.revealedAbility2;
+var speciesForme=clientPokemon.getSpeciesForme()||(serverPokemon==null?void 0:serverPokemon.speciesForme)||'';
+var species=this.battle.dex.species.get(speciesForme);
+if(species.exists&&species.abilities){abilityData.possibilities=Object.values(species.abilities);}
+}else if(clientPokemon){
 if(clientPokemon.ability){
 abilityData.ability=clientPokemon.ability||clientPokemon.baseAbility;
 if(clientPokemon.baseAbility){abilityData.baseAbility=clientPokemon.baseAbility;}
 
-var cp=clientPokemon;
-if(cp.ability2)abilityData.ability2=cp.ability2;
-if(cp.baseAbility2)abilityData.baseAbility2=cp.baseAbility2;
+var _cp=clientPokemon;
+if(_cp.ability2)abilityData.ability2=_cp.ability2;
+if(_cp.baseAbility2)abilityData.baseAbility2=_cp.baseAbility2;
 }else{
-var speciesForme=clientPokemon.getSpeciesForme()||(serverPokemon==null?void 0:serverPokemon.speciesForme)||'';
-var species=this.battle.dex.species.get(speciesForme);
-if(species.exists&&species.abilities){
-abilityData.possibilities=Object.values(species.abilities);
+var _speciesForme=clientPokemon.getSpeciesForme()||(serverPokemon==null?void 0:serverPokemon.speciesForme)||'';
+var _species=this.battle.dex.species.get(_speciesForme);
+if(_species.exists&&_species.abilities){
+abilityData.possibilities=Object.values(_species.abilities);
 if(this.battle.rules['Frantic Fusions Mod']){
 var fusionSpecies=this.battle.dex.species.get(clientPokemon.name);
-if(fusionSpecies.exists&&fusionSpecies.name!==species.name){for(var _i62=0,_Object$values6=
-Object.values(fusionSpecies.abilities);_i62<_Object$values6.length;_i62++){var newAbility=_Object$values6[_i62];
+if(fusionSpecies.exists&&fusionSpecies.name!==_species.name){for(var _i64=0,_Object$values6=
+Object.values(fusionSpecies.abilities);_i64<_Object$values6.length;_i64++){var newAbility=_Object$values6[_i64];
 if(abilityData.possibilities.includes(newAbility))continue;
 abilityData.possibilities.push(newAbility);
 }
@@ -1765,7 +1805,7 @@ abilityData.possibilities.push(newAbility);
 }
 }
 }
-if(serverPokemon){
+if(serverPokemon&&!restricted){
 
 
 var sp=serverPokemon;
@@ -1782,12 +1822,13 @@ getPokemonAbilityText=function getPokemonAbilityText(
 clientPokemon,
 serverPokemon,
 isActive,
-hidePossible)
+hidePossible,
+restricted)
 {var _this5=this;
 var text='';
-var abilityData=this.getPokemonAbilityData(clientPokemon,serverPokemon);
+var abilityData=this.getPokemonAbilityData(clientPokemon,serverPokemon,restricted);
 var tier=this.battle.tier;
-var abilityData0=this.getPokemonAbilityData(clientPokemon,serverPokemon);
+var abilityData0=abilityData;
 var hasSecondAbilitySlot=!!(abilityData0.ability2||abilityData0.baseAbility2);
 if(clientPokemon||serverPokemon){
 var status=(clientPokemon==null?void 0:clientPokemon.status)||(serverPokemon==null?void 0:serverPokemon.status)||'';
@@ -1805,8 +1846,7 @@ var base2Name=nameOf(base2);
 
 
 
-var isOwnPokemon=!!clientPokemon&&(clientPokemon.side===this.battle.mySide||clientPokemon.side===this.battle.mySide.ally);
-
+var isOwnPokemon=!restricted&&!!clientPokemon&&(clientPokemon.side===this.battle.mySide||clientPokemon.side===this.battle.mySide.ally);
 var sets=[];
 for(var i=0;i<_abilityData.possibilities.length;i+=2){
 var a1=_abilityData.possibilities[i];
@@ -1853,8 +1893,8 @@ if(!possible.length)possible=sets;
 
 if(possible.length===1){
 var s=possible[0];
-var _out="<span class=\"abilityset-title set-known\">Ability Set:</span><br />";for(var _i64=0;_i64<
-s.length;_i64++){var id=s[_i64];_out+="<span class=\"ability-line\">"+boldIfRevealed(id)+"</span><br />";}
+var _out="<span class=\"abilityset-title set-known\">Ability Set:</span><br />";for(var _i66=0;_i66<
+s.length;_i66++){var id=s[_i66];_out+="<span class=\"ability-line\">"+boldIfRevealed(id)+"</span><br />";}
 if(status==='aura'&&cur2Name&&base2Name&&base2Name!==cur2Name){_out+="<span class=\"ability-line\"><small>"+esc(cur2Name)+" currently replaces "+esc(base2Name)+"</small></span><br />";}
 return _out;
 }
@@ -1863,8 +1903,8 @@ var _out2="<small>Possible ability sets:</small><br />";
 for(var _s=0;_s<possible.length;_s++){
 var setNum=_s+1;
 var setClass=setNum===1?'set-1':setNum===2?'set-2':'';
-_out2+="<span class=\"abilityset-title "+setClass+"\">Set "+setNum+"</span><br />";for(var _i66=0,_possible$_s2=
-possible[_s];_i66<_possible$_s2.length;_i66++){var _id=_possible$_s2[_i66];_out2+="<span class=\"ability-line\">"+boldIfRevealed(_id)+"</span><br />";}
+_out2+="<span class=\"abilityset-title "+setClass+"\">Set "+setNum+"</span><br />";for(var _i68=0,_possible$_s2=
+possible[_s];_i68<_possible$_s2.length;_i68++){var _id=_possible$_s2[_i68];_out2+="<span class=\"ability-line\">"+boldIfRevealed(_id)+"</span><br />";}
 }
 return _out2;
 }
@@ -2386,8 +2426,8 @@ while(getStat(stat,ev,nature)<origStats[stat]){ev+=4;}
 return ev;
 };
 var origSpread=Object.assign({evs:set.evs},origNature);
-var origLeftoverEVs=508;for(var _i68=0,_Dex$statNames2=
-Dex.statNames;_i68<_Dex$statNames2.length;_i68++){var _origSpread$evs;var stat=_Dex$statNames2[_i68];origLeftoverEVs-=((_origSpread$evs=origSpread.evs)==null?void 0:_origSpread$evs[stat])||0;}
+var origLeftoverEVs=508;for(var _i70=0,_Dex$statNames2=
+Dex.statNames;_i70<_Dex$statNames2.length;_i70++){var _origSpread$evs;var stat=_Dex$statNames2[_i70];origLeftoverEVs-=((_origSpread$evs=origSpread.evs)==null?void 0:_origSpread$evs[stat])||0;}
 
 if(origLeftoverEVs>4)return null;
 
@@ -2402,8 +2442,8 @@ var bestMinus=origNature.minus||'atk';
 var bestMinusMinEVs=origSpread.evs[bestMinus];
 var savedEVs=0;
 
-if(!minusTooLow){for(var _i70=0,_Dex$statNamesExceptH12=
-Dex.statNamesExceptHP;_i70<_Dex$statNamesExceptH12.length;_i70++){var _stat=_Dex$statNamesExceptH12[_i70];
+if(!minusTooLow){for(var _i72=0,_Dex$statNamesExceptH12=
+Dex.statNamesExceptHP;_i72<_Dex$statNamesExceptH12.length;_i72++){var _stat=_Dex$statNamesExceptH12[_i72];
 if(origStats[_stat]<origStats[bestMinus]){
 var minEVs=getMinEVs(_stat,{minus:_stat});
 if(minEVs>252)continue;
@@ -2415,8 +2455,8 @@ bestMinusMinEVs=minEVs;
 }
 }
 }
-if(!plusTooHigh){for(var _i72=0,_Dex$statNamesExceptH14=
-Dex.statNamesExceptHP;_i72<_Dex$statNamesExceptH14.length;_i72++){var _stat2=_Dex$statNamesExceptH14[_i72];
+if(!plusTooHigh){for(var _i74=0,_Dex$statNamesExceptH14=
+Dex.statNamesExceptHP;_i74<_Dex$statNamesExceptH14.length;_i74++){var _stat2=_Dex$statNamesExceptH14[_i74];
 
 if(_stat2!==origNature.plus&&origSpread.evs[_stat2]&&_stat2!==bestMinus){
 var _minEVs=getMinEVs(_stat2,{plus:_stat2});
@@ -2446,8 +2486,8 @@ if(bestPlus!==origNature.plus||bestMinus!==origNature.minus){
 newSpread.evs[bestPlus]=bestPlusMinEVs;
 newSpread.evs[bestMinus]=bestMinusMinEVs;
 if(origNature.plus&&origNature.plus!==bestPlus&&origNature.plus!==bestMinus){newSpread.evs[origNature.plus]=getMinEVs(origNature.plus,newSpread);}
-if(origNature.minus&&origNature.minus!==bestPlus&&origNature.minus!==bestMinus){newSpread.evs[origNature.minus]=getMinEVs(origNature.minus,newSpread);}for(var _i74=0,_Dex$statNames4=
-Dex.statNames;_i74<_Dex$statNames4.length;_i74++){var _stat3=_Dex$statNames4[_i74];if(!newSpread.evs[_stat3])delete newSpread.evs[_stat3];}
+if(origNature.minus&&origNature.minus!==bestPlus&&origNature.minus!==bestMinus){newSpread.evs[origNature.minus]=getMinEVs(origNature.minus,newSpread);}for(var _i76=0,_Dex$statNames4=
+Dex.statNames;_i76<_Dex$statNames4.length;_i76++){var _stat3=_Dex$statNames4[_i76];if(!newSpread.evs[_stat3])delete newSpread.evs[_stat3];}
 return Object.assign({},newSpread,{savedEVs:savedEVs});
 }else if(!plusTooHigh&&!minusTooLow){
 if(Math.floor(getStat(bestPlus,bestMinusMinEVs,newSpread)/11)<=Math.ceil(origStats[bestMinus]/9)){
@@ -2459,8 +2499,8 @@ newSpread.evs[origNature.plus]=getMinEVs(origNature.plus,newSpread);
 newSpread.evs[origNature.minus]=getMinEVs(origNature.minus,newSpread);
 savedEVs+=(origSpread.evs[origNature.plus]||0)-newSpread.evs[origNature.plus];
 savedEVs+=(origSpread.evs[origNature.minus]||0)-newSpread.evs[origNature.minus];
-if(savedEVs<0)return null;for(var _i76=0,_Dex$statNames6=
-Dex.statNames;_i76<_Dex$statNames6.length;_i76++){var _stat4=_Dex$statNames6[_i76];if(!newSpread.evs[_stat4])delete newSpread.evs[_stat4];}
+if(savedEVs<0)return null;for(var _i78=0,_Dex$statNames6=
+Dex.statNames;_i78<_Dex$statNames6.length;_i78++){var _stat4=_Dex$statNames6[_i78];if(!newSpread.evs[_stat4])delete newSpread.evs[_stat4];}
 return Object.assign({},newSpread,{savedEVs:savedEVs});
 }
 }

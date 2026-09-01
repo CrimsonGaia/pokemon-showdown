@@ -85,6 +85,9 @@ export class Pokemon implements PokemonDetails, PokemonHealth {
 	baseAbility = '';
 	ability2 = '';
 	baseAbility2 = '';
+	revealedAbility = '';
+	revealedAbility2 = '';
+	revealedItem = '';
 	item = '';
 	itemEffect = '';
 	prevItem = '';
@@ -1185,7 +1188,10 @@ export class Battle {
 		let weather = toID(weatherName);
 		if (!weather || weather === 'none') { weather = '' as ID; }
 		if (isUpkeep) {
-			if (this.weather && this.weatherTimeLeft) {
+			if (exactDuration !== undefined) {
+				this.weatherTimeLeft = exactDuration;
+				this.weatherMinTimeLeft = 0;
+			} else if (this.weather && this.weatherTimeLeft) {
 				this.weatherTimeLeft--;
 				if (this.weatherMinTimeLeft !== 0) this.weatherMinTimeLeft--;
 			}
@@ -1219,7 +1225,10 @@ export class Battle {
 		let terrain = toID(terrainName);
 		if (!terrain || terrain === 'none') { terrain = '' as ID; }
 		if (isUpkeep) {
-			if (this.terrain && this.terrainTimeLeft) {
+			if (exactDuration !== undefined) {
+				this.terrainTimeLeft = exactDuration;
+				this.terrainMinTimeLeft = 0;
+			} else if (this.terrain && this.terrainTimeLeft) {
 				this.terrainTimeLeft--;
 				if (this.terrainMinTimeLeft !== 0) this.terrainMinTimeLeft--;
 			}
@@ -1413,14 +1422,16 @@ export class Battle {
 		}
 		this.scene.animReset(pokemon);
 	}
-	activateAbility(pokemon: Pokemon | null, effectOrName: Dex.Effect | string, isNotBase?: boolean, slot: 1 | 2 = 1) {
+	activateAbility(pokemon: Pokemon | null, effectOrName: Dex.Effect | string, isNotBase?: boolean, slot: 1 | 2 = 1, isCounter?: boolean) {
 		if (!pokemon || !effectOrName) return;
 		if (typeof effectOrName !== 'string') {
 			if (effectOrName.effectType !== 'Ability') return;
 			effectOrName = effectOrName.name;
 		}
-		this.scene.abilityActivateAnim(pokemon, effectOrName);
+		this.scene.abilityActivateAnim(pokemon, effectOrName, isCounter);
 		pokemon.rememberAbility(effectOrName, isNotBase, slot);
+		const revealedName = Dex.abilities.get(effectOrName).name;
+		if (slot === 2) { pokemon.revealedAbility2 = revealedName; } else { pokemon.revealedAbility = revealedName; }
 	}
 	runMinor(args: Args, kwArgs: KWArgs, nextArgs?: Args, nextKwargs?: KWArgs) {
 		if (nextArgs && nextKwargs) {
@@ -1979,6 +1990,7 @@ export class Battle {
 				} else { throw new Error('No Pokemon in -item message'); }
 			}
 			poke.item = item.name;
+			poke.revealedItem = item.name;
 			poke.itemEffect = '';
 			poke.removeVolatile('airballoon' as ID);
 			if (item.id === 'airballoon') poke.addVolatile('airballoon' as ID);
@@ -2046,6 +2058,7 @@ export class Battle {
 			let effect = Dex.getEffect(kwArgs.from);
 			if (this.gen > 4 || effect.id !== 'knockoff') {
 				poke.item = '';
+				poke.revealedItem = '';
 				poke.itemEffect = '';
 				poke.prevItem = item.name;
 				poke.prevItemEffect = '';
@@ -2110,6 +2123,7 @@ export class Battle {
 			let ability = Dex.abilities.get(args[2]);
 			let oldAbility = Dex.abilities.get(args[3]);
 			let effect = Dex.getEffect(kwArgs.from);
+			const isCounterAbility = effect.effectType === 'Ability';
 			let ofpoke = this.getPokemon(kwArgs.of);
 			let slot: 1 | 2 = (kwArgs.slot === '2' ? 2 : 1);
 			// Hard rules (so Aura never overwrites slot 1 even if kwArgs.slot is missing)
@@ -2776,9 +2790,8 @@ export class Battle {
 			let poke = this.getPokemon(kwArgs.of);
 			let fromeffect = Dex.getEffect(kwArgs.from);
 			this.activateAbility(poke, fromeffect);
-			let minTimeLeft = 5;
+			let minTimeLeft = kwArgs.persistent ? 0 : 5;
 			let maxTimeLeft = 0;
-			if (kwArgs.persistent) minTimeLeft += 2;
 			this.addPseudoWeather(effect.name, minTimeLeft, maxTimeLeft);
 			switch (effect.id) {
 			case 'gravity':
@@ -3233,6 +3246,11 @@ export class Battle {
 			}
 			case 'prematureend': {
 				this.prematureEnd();
+				break;
+			}
+			case 'itemreveal': {
+				const { siden } = this.parsePokemonId(args[1]);
+				this.sides[siden].teamsheetItems = args[2].split(',');
 				break;
 			}
 			case 'clearpoke': {

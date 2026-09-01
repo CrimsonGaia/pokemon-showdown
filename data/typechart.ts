@@ -832,6 +832,7 @@ export const TypeChart: import('../sim/dex-data').TypeDataTable = {
 			// Neutral
 			Stellar: 0,
 			// Resist
+			aura: 2,
 			bite: 2,
 			crash: 2,
 			crush: 2,

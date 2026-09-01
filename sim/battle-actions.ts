@@ -494,10 +494,7 @@ export class BattleActions {
 	hitStepTypeImmunity(targets: Pokemon[], pokemon: Pokemon, move: ActiveMove) {
 		if (move.ignoreImmunity === undefined) { move.ignoreImmunity = (move.category === 'Status'); }
 		const hitResults = [];
-		for (let i = 0; i < targets.length; i++) {
-			hitResults[i] = targets[i].runImmunity(move, !move.smartTarget);
-			if (!hitResults[i]) targets[i].tryLightCharge(pokemon, move);
-		}
+		for (const i of targets.keys()) { hitResults[i] = targets[i].runImmunity(move, !move.smartTarget); }
 		return hitResults;
 	}
 	hitStepTryImmunity(targets: Pokemon[], pokemon: Pokemon, move: ActiveMove) {
@@ -1134,7 +1131,7 @@ export class BattleActions {
 			}
 		}
 		if (isFusionMode) return calculateFusionDamage();
-		if (!target.runImmunity(move, !suppressMessages)) { return false; }
+		if (!target.runImmunity(move, !suppressMessages, !!move.flags?.magic)) { return false; }
 		if (move.ohko) return this.battle.gen === 3 ? target.hp : target.maxhp;
 		if (move.damageCallback) return move.damageCallback.call(this.battle, source, target);
 		if (move.damage === 'level') { return source.level; }

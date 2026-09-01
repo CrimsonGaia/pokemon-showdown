@@ -1313,7 +1313,7 @@ export const Pokedex: import('../sim/dex-species').SpeciesDataTable = {
 		name: "Chandelure",
 		types: ["Ghost", "Fire"],
 		gender: "N",
-		baseStats: { hp: 60, atk: 55, def: 90, spa: 145, spd: 90, spe: 80 },
+		baseStats: { hp: 85, atk: 60, def: 75, spa: 145, spd: 75, spe: 80 },
 		abilities: { // ABILITY SET 1
             0: "Soul Eater",
             1: "Illuminate",

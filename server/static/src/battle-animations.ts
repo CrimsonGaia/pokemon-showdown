@@ -494,17 +494,21 @@ export class BattleScene implements BattleSceneStub {
 			let itemIconHTML = '';
 			if (knownItem && knownItem !== '(exists)') { itemIconHTML = `<span class="itemicon" data-teambar-item="${isP1 ? 'p1' : 'p2'}-${i}" style="${Dex.getItemIcon(knownItem, 24 / 96)}"></span>`; } 
 			else { itemIconHTML = `<span class="itemicon itemicon-unknown" data-teambar-item="${isP1 ? 'p1' : 'p2'}-${i}">?</span>`; }
-			html += `<span class="picon has-tooltip battleteambar-sprite${status}" data-tooltip="pokemon|${side.n}|${i}" style="${iconStyle};${opacityStyle}">${itemIconHTML}</span>`;
-		}
+			html += `<span class="picon has-tooltip battleteambar-sprite${status}" data-tooltip="teambar|${side.n}|${i}" style="${iconStyle};${opacityStyle}">${itemIconHTML}</span>`;		}
 		return html;
 	}
 	getTeamBarPoolHTML(side: Side, isP1: boolean): string {
 		const pooled = (side as any).teamsheetItems as (string | null)[] | undefined;
 		let html = `<div class="battleteambar-pool battleteambar-pool-${isP1 ? 'p1' : 'p2'}">`;
 		if (pooled?.length) {
-			for (let j = 0; j < pooled.length; j++) {
-				const item = pooled[j];
-				if (!item) continue; // already attributed - pulled from the pool once its owner's item is known
+			// Display order is shuffled to prevent observant players from figuring out the items anyway
+			const indices = pooled.map((_, j) => j).filter(j => pooled[j]);
+			for (let k = indices.length - 1; k > 0; k--) {
+				const swapIdx = Math.floor(Math.random() * (k + 1));
+				[indices[k], indices[swapIdx]] = [indices[swapIdx], indices[k]];
+			}
+			for (const j of indices) {
+				const item = pooled[j]!;
 				html += `<span class="itemicon battleteambar-poolicon" data-teambar-pool="${isP1 ? 'p1' : 'p2'}-${j}" style="${Dex.getItemIcon(item)}"></span>`;
 			}
 		}
@@ -886,9 +890,18 @@ export class BattleScene implements BattleSceneStub {
 			if (terrainTurns) { terrainhtml += ` <small>(${terrainTurns} turn${terrainTurns === 1 ? '' : 's'})</small>`; }
 		}
 		if (terrainhtml) terrainhtml = `<br />` + terrainhtml;
+		// Terrain's box no longer assumes weather is exactly one line tall - its position is
+		// recomputed from wherever the weather box's content actually ends, so it drops down to
+		// fit any number of stacked lines (weather, every side's active conditions, etc.)
+		// instead of overlapping whenever more than weather+terrain alone are active.
+		const repositionTerrain = () => {
+			const weatherBottom = this.$weather.position().top + (this.$weather.outerHeight() || 0);
+			this.$terrain.css('top', weatherBottom);
+		};
 		if (instant) {
 			this.$weather.html('<em>' + weatherhtml + '</em>');
 			this.$terrain.html('<em>' + terrainhtml + '</em>');
+			repositionTerrain();
 			if (this.curWeather === weather && this.curTerrain === terrain) return;
 			this.$terrain.attr('class', terrain ? 'weather terrainbox ' + terrain + 'weather' : 'weather terrainbox');
 			this.curTerrain = terrain;
@@ -903,16 +916,18 @@ export class BattleScene implements BattleSceneStub {
 			this.$weather.html('<em>' + weatherhtml + '</em>');
 			this.$weather.attr('class', weather ? 'weather weatherbox ' + weather + 'weather' : 'weather weatherbox');
 			this.$weather.animate({ opacity: isIntense || !weather ? 0.9 : 0.5 }, 300);
+			repositionTerrain();
 			});
 			this.curWeather = weather;
-		} else { this.$weather.html('<em>' + weatherhtml + '</em>'); }
+		} else { this.$weather.html('<em>' + weatherhtml + '</em>'); repositionTerrain(); }
 		if (terrain !== this.curTerrain) { this.$terrain.animate({ top: 360, opacity: 0, }, this.curTerrain ? 400 : 1, () => {
 				this.$terrain.attr('class', terrain ? 'weather terrainbox ' + terrain + 'weather' : 'weather terrainbox');
 				this.$terrain.html('<em>' + terrainhtml + '</em>');
-				this.$terrain.animate({ top: 0, opacity: 1 }, 400);
+				const weatherBottom = this.$weather.position().top + (this.$weather.outerHeight() || 0);
+				this.$terrain.animate({ top: weatherBottom, opacity: 1 }, 400);
 			});
 			this.curTerrain = terrain;
-		}
+		} else { repositionTerrain(); }
 	}
 	resetTurn() {
 		if (this.battle.turn <= 0) {
@@ -1103,8 +1118,9 @@ export class BattleScene implements BattleSceneStub {
 		pokemon.sprite.updateStatbar(pokemon);
 		if (this.acceleration < 3) this.waitFor($effect);
 	}
-	abilityActivateAnim(pokemon: Pokemon, result: string) {
+	abilityActivateAnim(pokemon: Pokemon, result: string, isCounter?: boolean) {
 		if (!this.animating) return;
+		BattleSound.playEffect(isCounter ? 'audio/sfx/counter_ability_activation.wav' : 'audio/sfx/ability_activation.wav');
 		this.$fx.append(`<div class="result abilityresult"><strong>${result}</strong></div>`);
 		let $effect = this.$fx.children().last();
 		$effect.delay(this.timeOffset).css({ display: 'block', opacity: 0, top: pokemon.sprite.top + 15, left: pokemon.sprite.left - 75, }).animate({ opacity: 1, }, 1);

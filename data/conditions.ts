@@ -1,3 +1,4 @@
+// NOTE: Duration: 0 means it lasts forever
 export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 	// #region Status	
 	aura: {
@@ -17,9 +18,14 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 			let auraAbility = 'No Ability';
 			let auraName = 'Aura';
 			let auraDuration = 5; // Default duration
-			if (sourceEffect?.auraAbility) { auraAbility = sourceEffect.auraAbility; }
-			if (sourceEffect?.auraName) { auraName = sourceEffect.auraName; }
-			if (sourceEffect?.auraDuration) { auraDuration = sourceEffect.auraDuration; }
+			const auraEffect = sourceEffect as Effect & {
+				auraAbility?: string;
+				auraName?: string;
+				auraDuration?: number;
+			};
+			if (auraEffect.auraAbility) auraAbility = auraEffect.auraAbility;
+			if (auraEffect.auraName) auraName = auraEffect.auraName;
+			if (auraEffect.auraDuration) auraDuration = auraEffect.auraDuration;
 			// Store the aura ability, name, and duration in the status state
 			this.effectState.auraAbility = auraAbility;
 			this.effectState.auraName = auraName;
@@ -700,7 +706,7 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 		name: 'lockedmove',
 		duration: 2,
 		onResidual(target) {
-			if (target.status === 'slp') { delete target.volatiles['lockedmove']; } // don't lock, and bypass confusion for calming
+			if (target.status === 'slp' || target.hasAbility('comatose') || target.hasAbility('dreamer')) { delete target.volatiles['lockedmove']; } // don't lock, and bypass confusion for calming
 			this.effectState.trueDuration--;
 		},
 		onStart(target, source, effect) {
@@ -1637,31 +1643,59 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 	},
 	//#region Other Field Effects
 	forestscurse: {
-		onFieldStart(field, source) { this.add('-fieldstart', 'Forest\'s Curse', `[of] ${source}`); },
+		name: "Forest's Curse",
+		duration: 0,
+		onFieldStart(field, source) { // Preserve the Pokemon that originally created Forest's Curse. This is important because the ability can later be Skill Swapped.
+			this.effectState.source = source;
+			this.effectState.isForestscurse = true;
+			this.add('-fieldstart', 'Forest\'s Curse', `[of] ${source}`, '[persistent]');
+		},
 		onTrapPokemon(pokemon) {
 			if (!pokemon.isGrounded()) return;
+			if (pokemon.hasType(['Flying', 'Ghost', 'Grass'])) return;
 			pokemon.tryTrap(true);
 		},
 		onMaybeTrapPokemon(pokemon) {
 			if (!pokemon.isGrounded()) return;
+			if (pokemon.hasType(['Flying', 'Ghost', 'Grass'])) return;
 			pokemon.maybeTrapped = true;
 		},
+		onUpdate() {
+			for (const side of this.sides) {
+				for (const pokemon of side.active) {
+					if (!pokemon) continue;
+					if (pokemon.hasType(['Flying', 'Ghost', 'Grass'])) {
+						pokemon.maybeTrapped = false;
+						pokemon.trapped = false;
+					}
+				}
+			}
+		},
 		onResidual() {
+			const source = this.effectState.source;
 			for (const side of this.sides) {
 				for (const target of side.active) {
 					if (!target) continue;
 					if (target.hasType(['Flying', 'Ghost', 'Grass'])) continue;
 					if (!target.isGrounded()) continue;
-					if (!target.volatiles['leechseed']) { target.addVolatile('leechseed', this.effectState.source); }
+					if (!target.volatiles['leechseed'] && source) { target.addVolatile('leechseed', source, this.effect); }
 					if (target.hp < target.maxhp / 2 && !target.hasType('Grass')) {
 						if (!target.setType(target.getTypes(true).concat('Grass'))) continue;
-						this.add('-start', target, 'typeadd', 'Grass', '[from] Forest\'s Curse');
+						this.add( '-start', target, 'typeadd', 'Grass', '[from] Forest\'s Curse');
 					}
 				}
 			}
 		},
-		onFieldEnd() { this.add('-fieldend', 'Forest\'s Curse'); },
-		name: "Forest's Curse",
+		onEnd() {
+			for (const side of this.sides) {
+				for (const pokemon of side.active) {
+					if (!pokemon) continue;
+					const leechSeed = pokemon.volatiles['leechseed'];
+					if (leechSeed?.sourceEffect === this.effect) { pokemon.removeVolatile('leechseed'); }
+				}
+			}
+			this.add('-fieldend', 'Forest\'s Curse');
+		},
 		shortDesc: "Traps all grounded Pokemon. At the end of each turn, grounded non-Flying/Ghost/Grass Pokemon are seeded; Pokemon below 50% HP gain Grass typing.",
 	},
 	gravity: {
@@ -1738,7 +1772,6 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 		duration: 5,
 		durationCallback(source, effect) { return 5; },
 		onEffectiveness(typeMod, target, type, move) { return -typeMod; },
-		onNegateImmunity() { return false; },
 		onFieldStart(field, source, effect) {
 			if (effect?.effectType === 'Ability') { this.add('-fieldstart', 'move: Inverse Room', '[from] ability: ' + effect.name, `[of] ${source}`); } 
 			else { this.add('-fieldstart', 'move: Inverse Room'); }

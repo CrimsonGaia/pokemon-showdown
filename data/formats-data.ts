@@ -273,6 +273,7 @@ export const FormatsData: import('../sim/dex-species').SpeciesFormatsDataTable =
 	lileep: {tier: "Reg α"},
 	budew: {tier: "Reg α"},
 	aron: {tier: "Reg α"},
+	munna: {tier: "Reg α"},
 	yamask: {tier: "Reg α"},
 	yamaskgalar: {tier: "Reg α"},
 	trubbish: {tier: "Reg α"},
@@ -294,6 +295,7 @@ export const FormatsData: import('../sim/dex-species').SpeciesFormatsDataTable =
 	clobbopus: {tier: "Reg α"},
 
 	miltankpaldea: {tier: "Reg α"},
+	boufallantpaldea: {tier: "Reg α"},
 	obductit: {tier: "Reg α"},
 	// region Reg Δ
 	ivysaur: {tier: "Reg Δ"},
@@ -723,6 +725,7 @@ export const FormatsData: import('../sim/dex-species').SpeciesFormatsDataTable =
 	mantine: {tier: "Reg β"},
 	armaldo: {tier: "Reg β"},
 	cradily: {tier: "Reg β"},
+	musharna: {tier: "Reg β"},
 	cofagrigus: {tier: "Reg β"},
 	runerigus: {tier: "Reg β"},
 	garbodor: {tier: "Reg β"},
@@ -757,6 +760,8 @@ export const FormatsData: import('../sim/dex-species').SpeciesFormatsDataTable =
 	grapploct: {tier: "Reg β"},
 	
 	probovine: {tier: "Reg β"},
+	affrohm: {tier: "Reg β"},
+	
 
 	slowbromega: {tier: "Reg β"},
 	gyaradosmega: {tier: "Reg β"},
@@ -1296,8 +1301,6 @@ export const FormatsData: import('../sim/dex-species').SpeciesFormatsDataTable =
 	simisear: {isNonstandard: "Past"},
 	panpour: {isNonstandard: "Past"},
 	simipour: {isNonstandard: "Past"},
-	munna: {isNonstandard: "Past"},
-	musharna: {isNonstandard: "Past"},
 	pidove: {isNonstandard: "Past"},
 	tranquill: {isNonstandard: "Past"},
 	unfezant: {isNonstandard: "Past"},

@@ -112,7 +112,10 @@ Pokemon=function(){
 
 
 
-function Pokemon(data,side){this.name='';this.speciesForme='';this.ident='';this.details='';this.searchid='';this.side=void 0;this.slot=0;this.fainted=false;this.hp=0;this.maxhp=1000;this.level=100;this.gender='N';this.shiny=false;this.hpcolor='g';this.moves=[];this.ability='';this.baseAbility='';this.ability2='';this.baseAbility2='';this.item='';this.itemEffect='';this.prevItem='';this.prevItemEffect='';this.terastallized='';this.teraType='';this.boosts={};this.status='';this.statusStage=0;this.volatiles={};this.turnstatuses={};this.movestatuses={};this.lastMove='';this.weaponDurability=0;this.maxWeaponDurability=0;this.weaponRecoveryLeft=0;this.lightCharge=0;this.maxLightCharge=3;this.guardActionMoveId='';this.guardActionCur=0;this.guardActionMax=0;this.moveTrack=[];this.statusData={sleepTurns:0,toxicTurns:0,fearTurns:0};this.timesAttacked=0;this.sprite=void 0;
+
+
+
+function Pokemon(data,side){this.name='';this.speciesForme='';this.ident='';this.details='';this.searchid='';this.side=void 0;this.slot=0;this.fainted=false;this.hp=0;this.maxhp=1000;this.level=100;this.gender='N';this.shiny=false;this.hpcolor='g';this.moves=[];this.ability='';this.baseAbility='';this.ability2='';this.baseAbility2='';this.revealedAbility='';this.revealedAbility2='';this.revealedItem='';this.item='';this.itemEffect='';this.prevItem='';this.prevItemEffect='';this.terastallized='';this.teraType='';this.boosts={};this.status='';this.statusStage=0;this.volatiles={};this.turnstatuses={};this.movestatuses={};this.lastMove='';this.weaponDurability=0;this.maxWeaponDurability=0;this.weaponRecoveryLeft=0;this.lightCharge=0;this.maxLightCharge=3;this.guardActionMoveId='';this.guardActionCur=0;this.guardActionMax=0;this.moveTrack=[];this.statusData={sleepTurns:0,toxicTurns:0,fearTurns:0};this.timesAttacked=0;this.sprite=void 0;
 this.side=side;
 this.speciesForme=data.speciesForme;
 this.details=data.details;
@@ -1185,7 +1188,10 @@ changeWeather=function changeWeather(weatherName,poke,isUpkeep,ability,exactDura
 var weather=toID(weatherName);
 if(!weather||weather==='none'){weather='';}
 if(isUpkeep){
-if(this.weather&&this.weatherTimeLeft){
+if(exactDuration!==undefined){
+this.weatherTimeLeft=exactDuration;
+this.weatherMinTimeLeft=0;
+}else if(this.weather&&this.weatherTimeLeft){
 this.weatherTimeLeft--;
 if(this.weatherMinTimeLeft!==0)this.weatherMinTimeLeft--;
 }
@@ -1219,7 +1225,10 @@ changeTerrain=function changeTerrain(terrainName,poke,isUpkeep,ability,exactDura
 var terrain=toID(terrainName);
 if(!terrain||terrain==='none'){terrain='';}
 if(isUpkeep){
-if(this.terrain&&this.terrainTimeLeft){
+if(exactDuration!==undefined){
+this.terrainTimeLeft=exactDuration;
+this.terrainMinTimeLeft=0;
+}else if(this.terrain&&this.terrainTimeLeft){
 this.terrainTimeLeft--;
 if(this.terrainMinTimeLeft!==0)this.terrainMinTimeLeft--;
 }
@@ -1413,14 +1422,16 @@ break;
 }
 this.scene.animReset(pokemon);
 };_proto3.
-activateAbility=function activateAbility(pokemon,effectOrName,isNotBase){var slot=arguments.length>3&&arguments[3]!==undefined?arguments[3]:1;
+activateAbility=function activateAbility(pokemon,effectOrName,isNotBase){var slot=arguments.length>3&&arguments[3]!==undefined?arguments[3]:1;var isCounter=arguments.length>4?arguments[4]:undefined;
 if(!pokemon||!effectOrName)return;
 if(typeof effectOrName!=='string'){
 if(effectOrName.effectType!=='Ability')return;
 effectOrName=effectOrName.name;
 }
-this.scene.abilityActivateAnim(pokemon,effectOrName);
+this.scene.abilityActivateAnim(pokemon,effectOrName,isCounter);
 pokemon.rememberAbility(effectOrName,isNotBase,slot);
+var revealedName=Dex.abilities.get(effectOrName).name;
+if(slot===2){pokemon.revealedAbility2=revealedName;}else{pokemon.revealedAbility=revealedName;}
 };_proto3.
 runMinor=function runMinor(args,kwArgs,nextArgs,nextKwargs){
 if(nextArgs&&nextKwargs){
@@ -1979,6 +1990,7 @@ break;
 }else{throw new Error('No Pokemon in -item message');}
 }
 _poke26.item=item.name;
+_poke26.revealedItem=item.name;
 _poke26.itemEffect='';
 _poke26.removeVolatile('airballoon');
 if(item.id==='airballoon')_poke26.addVolatile('airballoon');
@@ -2046,6 +2058,7 @@ var _item=Dex.items.get(args[2]);
 var _effect12=Dex.getEffect(kwArgs.from);
 if(this.gen>4||_effect12.id!=='knockoff'){
 _poke27.item='';
+_poke27.revealedItem='';
 _poke27.itemEffect='';
 _poke27.prevItem=_item.name;
 _poke27.prevItemEffect='';
@@ -2110,6 +2123,7 @@ var _poke28=this.getPokemon(args[1]);
 var ability=Dex.abilities.get(args[2]);
 var oldAbility=Dex.abilities.get(args[3]);
 var _effect13=Dex.getEffect(kwArgs.from);
+var isCounterAbility=_effect13.effectType==='Ability';
 var _ofpoke10=this.getPokemon(kwArgs.of);
 var slot=kwArgs.slot==='2'?2:1;
 
@@ -2776,9 +2790,8 @@ var _effect24=Dex.getEffect(args[1]);
 var _poke43=this.getPokemon(kwArgs.of);
 var _fromeffect5=Dex.getEffect(kwArgs.from);
 this.activateAbility(_poke43,_fromeffect5);
-var _minTimeLeft=5;
+var _minTimeLeft=kwArgs.persistent?0:5;
 var _maxTimeLeft=0;
-if(kwArgs.persistent)_minTimeLeft+=2;
 this.addPseudoWeather(_effect24.name,_minTimeLeft,_maxTimeLeft);
 switch(_effect24.id){
 case'gravity':
@@ -3235,6 +3248,11 @@ case'prematureend':{
 this.prematureEnd();
 break;
 }
+case'itemreveal':{
+var _this$parsePokemonId6=this.parsePokemonId(args[1]),siden=_this$parsePokemonId6.siden;
+this.sides[siden].teamsheetItems=args[2].split(',');
+break;
+}
 case'clearpoke':{
 this.p1.clearPokemon();
 this.p2.clearPokemon();
@@ -3245,16 +3263,16 @@ var pokemon=this.rememberTeamPreviewPokemon(args[1],args[2]);
 
 if(args[3]==='mail'){pokemon.item='(mail)';}else
 if(args[3]){
-var _this$parsePokemonId6=this.parsePokemonId(args[1]),siden=_this$parsePokemonId6.siden;
-var _side7=this.sides[siden];
+var _this$parsePokemonId7=this.parsePokemonId(args[1]),_siden=_this$parsePokemonId7.siden;
+var _side7=this.sides[_siden];
 var idx=_side7.pokemon.indexOf(pokemon);
 if(idx>=0)_side7.teamsheetItems[idx]=args[3];
 }
 break;
 }
 case'updatepoke':{
-var _this$parsePokemonId7=this.parsePokemonId(args[1]),_siden=_this$parsePokemonId7.siden;
-var _side8=this.sides[_siden];
+var _this$parsePokemonId8=this.parsePokemonId(args[1]),_siden2=_this$parsePokemonId8.siden;
+var _side8=this.sides[_siden2];
 for(var i=0;i<_side8.pokemon.length;i++){
 var _pokemon2=_side8.pokemon[i];
 if(_pokemon2.details!==args[2]&&_pokemon2.checkDetails(args[2])){
