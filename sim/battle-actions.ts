@@ -364,7 +364,7 @@ export class BattleActions {
 			return false;
 		}
 		this.battle.singleEvent('UseMoveMessage', move, null, pokemon, target, move);
-		if (move.ignoreImmunity === undefined) { move.ignoreImmunity = (move.category === 'Status'); }
+		if (move.ignoreImmunity === undefined) { move.ignoreImmunity = false; }
 		if (this.battle.gen !== 4 && move.selfdestruct === 'always') { this.battle.faint(pokemon, pokemon, move); }
 		let damage: number | false | undefined | '' = false;
 		if (move.target === 'all' || move.target === 'foeSide' || move.target === 'allySide' || move.target === 'allyTeam') {
@@ -492,7 +492,7 @@ export class BattleActions {
 		return hitResults;
 	}
 	hitStepTypeImmunity(targets: Pokemon[], pokemon: Pokemon, move: ActiveMove) {
-		if (move.ignoreImmunity === undefined) { move.ignoreImmunity = (move.category === 'Status'); }
+		if (move.ignoreImmunity === undefined) { move.ignoreImmunity = false; }
 		const hitResults = [];
 		for (const i of targets.keys()) { hitResults[i] = targets[i].runImmunity(move, !move.smartTarget); }
 		return hitResults;
@@ -500,19 +500,16 @@ export class BattleActions {
 	hitStepTryImmunity(targets: Pokemon[], pokemon: Pokemon, move: ActiveMove) {
 		const hitResults = [];
 		for (const [i, target] of targets.entries()) {
-			if (this.battle.gen >= 6 && move.flags['powder'] && target !== pokemon && !this.dex.getImmunity('powder', target)) {
-				this.battle.debug('natural powder immunity');
+			if (!move.ignoreImmunity && !this.battle.singleEvent('TryImmunity', move, {}, target, pokemon, move)) {
 				this.battle.add('-immune', target);
 				hitResults[i] = false;
-			} else if (!move.ignoreImmunity && !this.battle.singleEvent('TryImmunity', move, {}, target, pokemon, move)) {
-				this.battle.add('-immune', target);
-				hitResults[i] = false;
-			} else if (this.battle.gen >= 7 && move.pranksterBoosted && pokemon.hasAbility('prankster') && !targets[i].isAlly(pokemon) && !this.dex.getImmunity('prankster', target)) {
+			} else if (move.pranksterBoosted && pokemon.hasAbility('prankster') && !targets[i].isAlly(pokemon) && !this.dex.getImmunity('prankster', target)) {
 				this.battle.debug('natural prankster immunity');
 				if (target.illusion || !(move.status && !this.dex.getImmunity(move.status, target))) { this.battle.hint("Since gen 7, Dark is immune to Prankster moves."); }
 				this.battle.add('-immune', target);
 				hitResults[i] = false;
-			} else { hitResults[i] = true; }
+			} 
+			else { hitResults[i] = true; }
 		}
 		return hitResults;
 	}
@@ -1131,7 +1128,7 @@ export class BattleActions {
 			}
 		}
 		if (isFusionMode) return calculateFusionDamage();
-		if (!target.runImmunity(move, !suppressMessages, !!move.flags?.magic)) { return false; }
+		if(!target.runImmunity(move,!suppressMessages))return false;
 		if (move.ohko) return this.battle.gen === 3 ? target.hp : target.maxhp;
 		if (move.damageCallback) return move.damageCallback.call(this.battle, source, target);
 		if (move.damage === 'level') { return source.level; }
@@ -1295,43 +1292,25 @@ export class BattleActions {
 		// Clamp to -6 to 6 range (supports decimal values for flag effectiveness)
 		typeMod = Math.max(-6, Math.min(typeMod, 6));
 		target.getMoveHitData(move).typeMod = typeMod;
-		// Type effectiveness messages
+				// Type effectiveness messages
 		if (!suppressMessages && typeMod !== 0) {
-			switch (typeMod) {
-			// Resistance
-			case -6:
-			case -5.5:
-			case -5:
-				this.battle.add('-message', "It's ineffective...");
-				break;
-			case -4:
-				this.battle.add('-message', "It's barely effective...");
-				break;
-			case -3:
-				this.battle.add('-message', "It's hardly effective...");
-				break;
-			case -2:
-				this.battle.add('-resisted', target); // "It's not very effective..."
-				break;
-			case -1.5:
-				this.battle.add('-message', "It's mostly effective...");
-				break;
-			// Weakness
-			case 0.5:
-				this.battle.add('-message', "It's very effective!");
-				break;
-			case 1:
-				this.battle.add('-supereffective', target); // "It's super effective!"
-				break;
-			case 1.5:
-				this.battle.add('-message', "It's severely effective!");
-				break;
-			case 2:
-				this.battle.add('-message', "It's extremely effective!");
-				break;
-			default:
+			// Range-based rather than exact-match: flag-based weak/resist bonuses (see
+			// Pokemon.runEffectiveness) add fractional amounts like +0.585/-0.415 that essentially
+			// never land exactly on a clean 0.5-increment, so an exact-match switch here would miss
+			// almost every real move. Each tier's reference value is used as its lower (for weakness)
+			// or upper (for resistance) bound instead.
+			if (typeMod > 0) {
 				if (typeMod >= 2.5) { this.battle.add('-message', "It's supremely effective!"); }
-				break;
+				else if (typeMod >= 2) { this.battle.add('-message', "It's extremely effective!"); }
+				else if (typeMod >= 1.5) { this.battle.add('-message', "It's severely effective!"); }
+				else if (typeMod >= 1) { this.battle.add('-supereffective', target); } // "It's super effective!"
+				else { this.battle.add('-message', "It's very effective!"); }
+			} else {
+				if (typeMod <= -5) { this.battle.add('-message', "It's ineffective..."); }
+				else if (typeMod <= -4) { this.battle.add('-message', "It's barely effective..."); }
+				else if (typeMod <= -3) { this.battle.add('-message', "It's hardly effective..."); }
+				else if (typeMod <= -2) { this.battle.add('-resisted', target); } // "It's not very effective..."
+				else { this.battle.add('-message', "It's mostly effective..."); }
 			}
 		}
 		if (typeMod > 0) { // Apply type effectiveness: each full point is 2x, each 0.5 is 1.5x

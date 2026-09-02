@@ -5954,11 +5954,11 @@ if(_id11==='lockon'||_id11==='mindreader'){
 var _template48=this.template('start',_effect11);
 return _line15+_template48.replace('[POKEMON]',this.pokemon(kwArgs.of)).replace('[SOURCE]',this.pokemon(_pokemon19));
 }
-if((_id11==='mummy'||_id11==='lingeringaroma')&&kwArgs.ability){
+if((_id11==='mummy'||_id11==='lingeringaroma'||_id11==='wanderingspirit')&&kwArgs.ability){
 _line15+=this.ability(kwArgs.ability,_target2);
-_line15+=this.ability(_id11==='mummy'?'Mummy':'Lingering Aroma',_target2);
-var _template49=this.template('changeAbility',_id11);
-return _line15+_template49.replace('[TARGET]',this.pokemon(_target2));
+_line15+=this.ability(_id11==='mummy'?'Mummy':_id11==='lingeringaroma'?'Lingering Aroma':'Wandering Spirit',_target2);
+var _template49=this.template('changeAbility','mummy');
+return _line15+_template49.replace('[TARGET]',this.pokemon(_target2)).replace('Mummy',_id11==='wanderingspirit'?'Wandering Spirit':_id11==='lingeringaroma'?'Lingering Aroma':'Mummy');
 }
 if(_id11==='commander'){
 if(_target2===_pokemon19)return _line15;

@@ -92,6 +92,7 @@ export interface EventMethods {
 	onSetStatus?: (this: Battle, status: Condition, target: Pokemon, source: Pokemon, effect: Effect) => boolean | null | void;
 	onSetWeather?: (this: Battle, target: Pokemon, source: Pokemon, weather: Condition) => boolean | void;
 	onSideConditionStart?: (this: Battle, target: Side, source: Pokemon, sideCondition: Condition) => void;
+	onTrySideCondition?: (this: Battle, target: Side, source: Pokemon, sideCondition: Condition) => boolean | null | void;
 	onStallMove?: (this: Battle, pokemon: Pokemon) => boolean | void;
 	onSwitchIn?: (this: Battle, pokemon: Pokemon) => void;
 	onSwitchOut?: (this: Battle, pokemon: Pokemon) => void;

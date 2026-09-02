@@ -1050,7 +1050,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		onDamagingHit(damage, target, source, move) {
 			if (this.checkMoveMakesContact(move, source, target, true)) {
 				this.damage(source.baseMaxhp / 8, source, target);
-				if (this.randomChance(1, 10)) { source.trySetStatus('frostbite', target, move); }
+				if (this.randomChance(2, 10)) { source.trySetStatus('frostbite', target, move); }
 		   }
 		},
 	    flags: {},
@@ -2034,11 +2034,11 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 	esperwing: {
 		onModifySpe(spe, pokemon) { return this.chainModify(2); },
 		onModifyCritRatio(critRatio, pokemon, target, move) { return critRatio + 4; },
-		onStart(pokemon) { 
-			if (this.field.isTerrain('psychicterrain')) { 
-				(this.field as any).boostedpsyparticle = true; 
+		onStart(pokemon) {
+			if (this.field.isTerrain('psychicterrain')) {
+				this.field.terrainState.boostedpsyparticle = true;
 				this.add('-fieldactivate', 'Psychic Terrain particles boosted');
-			} 
+			}
 		},
 		flags: {},
 		name: "Esper Wing",
@@ -2152,11 +2152,14 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		num: -13,
 	},
 	mentalsurge: {
-		onStart(pokemon) { 
-			if (this.field.isTerrain('psychicterrain')) { 
-				(this.field as any).boostedpsyparticle = true; 
+		onStart(pokemon) {
+			if (!this.field.isTerrain('psychicterrain')) {
+				this.field.setTerrain('psychicterrain');
+			}
+			if (this.field.isTerrain('psychicterrain')) {
+				this.field.terrainState.boostedpsyparticle = true;
 				this.add('-fieldactivate', 'Psychic Terrain particles boosted');
-			} 
+			}
 		},
 		flags: {},
 		name: "Mental Surge",
@@ -2999,7 +3002,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		},
 		flags: { breakable: 1 },
 		name: "Marvel Scale",
-		shortDesc: "If users is statused: 1.5x DEF and Special Defense, and user becomes immune to the secondary effects of moves. User reists Light moves.",
+		shortDesc: "If users is statused: 1.5x DEF and Special Defense and user becomes immune to the secondary effects of moves. User reists Light moves.",
 		rating: 3,
 		num: 63,
 	},
@@ -3626,7 +3629,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			const copiedSlot = targetSlots[0];
 			if (copiedSlot.id === 'noability' || copiedSlot.effect.flags['notrace']) return;
 			const traceSlot = pokemon.ability1 === 'trace' ? 1 : 2;
-			pokemon.setAbility(copiedSlot.effect, target, null, false, false, traceSlot);
+			pokemon.setAbility(copiedSlot.effect, target, null, true, false, traceSlot);
 		},
 		flags: { failroleplay: 1, noentrain: 1, notrace: 1 },
 		name: "Trace",
@@ -4242,6 +4245,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		},
 		onTryAddVolatile(status, target, source, sourceEffect) {
 			if (status.id === 'charge' && !source.volatiles['motordrivechargeboosted']) {
+				this.add('-ability', source, 'Motor Drive');
 				this.boost({ spe: 1 }, source, source, null, true);
 				source.addVolatile('motordrivechargeboosted');
 			}
@@ -4987,31 +4991,33 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		num: 135,
 	},
 	magicbounce:{
-		onTryHitPriority:1,
-		onTryHit(target,source,move){
-			if(target===source||move.hasBounced||target.isSemiInvulnerable())return;
-			if(!move.flags?.reflectable&&!move.flags?.magic)return;
-			const newMove=this.dex.getActiveMove(move.id);
-			newMove.hasBounced=true;
-			newMove.pranksterBoosted=false;
-			move.hasBounced=true;
-			this.add('-ability',target,'Magic Bounce');
-			this.add('-message',`${target.name} bounced the ${move.name} back!`);
-			this.actions.useMove(newMove,target,{target:source});
+		onTryHitPriority: 1,
+		onTryHit(target, source, move) {
+			if (target === source || (move as any).bouncedTargets?.has(target) || target.isSemiInvulnerable()) return;
+			if (!move.flags?.reflectable && !move.flags?.magic) return;
+			const newMove = this.dex.getActiveMove(move.id);
+			newMove.hasBounced = true;
+			newMove.pranksterBoosted = false;
+			if (!(move as any).bouncedTargets) (move as any).bouncedTargets = new Set();
+			(move as any).bouncedTargets.add(target);
+			this.add('-ability', target, 'Magic Bounce');
+			this.add('-message', `${target.name} bounced the ${move.name} back!`);
+			this.actions.useMove(newMove, target, {target: source});
 			return null;
 		},
-		onAllyTryHitPriority:1,
-		onAllyTryHit(target,source,move){
-			const holder=this.effectState.target;
-			if(!holder||target===holder||source.side===holder.side||move.hasBounced||target.isSemiInvulnerable())return;
-			if(!move.flags?.reflectable&&!move.flags?.magic)return;
-			const newMove=this.dex.getActiveMove(move.id);
-			newMove.hasBounced=true;
-			newMove.pranksterBoosted=false;
-			move.hasBounced=true;
-			this.add('-ability',holder,'Magic Bounce');
-			this.add('-message',`${holder.name} bounced the ${move.name} back!`);
-			this.actions.useMove(newMove,holder,{target:source});
+		onAllyTryHitPriority: 1,
+		onAllyTryHit(target, source, move) {
+			const holder = this.effectState.target;
+			if (!holder || target === holder || source.side === holder.side || (move as any).bouncedTargets?.has(target) || target.isSemiInvulnerable()) return;
+			if (!move.flags?.reflectable && !move.flags?.magic) return;
+			const newMove = this.dex.getActiveMove(move.id);
+			newMove.hasBounced = true;
+			newMove.pranksterBoosted = false;
+			if (!(move as any).bouncedTargets) (move as any).bouncedTargets = new Set();
+			(move as any).bouncedTargets.add(target);
+			this.add('-ability', holder, 'Magic Bounce');
+			this.add('-message', `${holder.name} bounced the ${move.name} back!`);
+			this.actions.useMove(newMove, holder, {target: source});
 			return null;
 		},
 		flags:{breakable:1},
@@ -5041,14 +5047,15 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		rating: 3.5,
 		num: 136,
 	},
-	mummy: { // always replace ability1 
+	mummy: { 
 		onDamagingHit(damage, target, source, move) {
-			const sourceAbility = source.getAbility(1);
-			if (sourceAbility.flags['cantsuppress'] || sourceAbility.id === 'mummy') return;
+			const abilitySlot = target.getActiveAbilitySlots().find(slot => slot.id === this.effect.id)?.slot ?? 1;
+			const sourceAbility = source.getAbility(abilitySlot);
+			if (sourceAbility.flags['cantsuppress'] || sourceAbility.id === this.effect.id) return;
 			if (this.checkMoveMakesContact(move, source, target, !source.isAlly(target))) {
-				const oldAbility = source.getAbility(1).id;
-				source.setAbility('mummy', target, null, false, false, 1);
-				if (oldAbility && oldAbility !== 'mummy') { this.add('-activate', target, 'ability: Mummy', this.dex.abilities.get(oldAbility).name, `[of] ${source}`); }
+				const oldAbility = sourceAbility.id;
+				if (oldAbility && oldAbility !== this.effect.id) { this.add('-activate', target, `ability: ${this.effect.name}`, this.dex.abilities.get(oldAbility).name, `[of] ${source}`); }
+				source.setAbility(this.effect.id, target, null, true, false, abilitySlot);
 			}
 		},
 		flags: {},
@@ -6289,7 +6296,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			const ability = target.getAbility(1); // always copy Slot 1
 			if (ability.flags['noreceiver'] || ability.id === 'noability') return;
 			const slot = holder.ability1 === 'powerofalchemy' ? 1 : 2; // replace the slot PoA was in
-			holder.setAbility(ability, target, null, false, false, slot);
+			holder.setAbility(ability, target, null, true, false, slot);
 		},
 		onSourceModifyDamage(damage, source, target, move) {
 			if (move.flags?.magic) {
@@ -6377,7 +6384,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			const ability = target.getAbility(1); // always copy Slot 1
 			if (ability.flags['noreceiver'] || ability.id === 'noability') return;
 			const slot = holder.ability1 === 'receiver' ? 1 : 2; // replace the slot Receiver was in
-			holder.setAbility(ability, target, null, false, false, slot);
+			holder.setAbility(ability, target, null, true, false, slot);
 		},
 		flags: { failroleplay: 1, noreceiver: 1, noentrain: 1 },
 		name: "Receiver",
@@ -7224,13 +7231,14 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 	},
 	wanderingspirit: {
 		onDamagingHit(damage, target, source, move) {
-			const sourceAbility = source.getAbility(1);
-			if (sourceAbility.flags['cantsuppress'] || sourceAbility.id === 'wanderingspirit') return;
+			const abilitySlot = target.getActiveAbilitySlots().find(slot => slot.id === this.effect.id)?.slot ?? 1;
+			const sourceAbility = source.getAbility(abilitySlot);
+			if (sourceAbility.flags['cantsuppress'] || sourceAbility.id === this.effect.id) return;
 			if (target.volatiles['dynamax']) return;
 			if (this.checkMoveMakesContact(move, source, target)) {
-				const oldAbility = source.getAbility(1).id;
-				source.setAbility('wanderingspirit', target, null, false, false, 1);
-				if (oldAbility && oldAbility !== 'wanderingspirit') { this.add('-activate', target, 'ability: Wandering Spirit', this.dex.abilities.get(oldAbility).name, `[of] ${source}`); }
+				const oldAbility = sourceAbility.id;
+				if (oldAbility && oldAbility !== this.effect.id) { this.add('-activate', target, `ability: ${this.effect.name}`, this.dex.abilities.get(oldAbility).name, `[of] ${source}`); }
+				source.setAbility(this.effect.id, target, null, true, false, abilitySlot);
 			}
 		},
 		flags: {},

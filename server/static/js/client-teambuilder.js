@@ -4055,12 +4055,22 @@
 			for (var n = 0; n < allIds.length; n++) {
 				var sid = allIds[n];
 				var sp = dex.species.get(sid);
-				// Display text: everything after first hyphen, else "Base"
+				var formeTypes = sp.types || [];
+				var typeIcons = '';
+				for (var ti = 0; ti < formeTypes.length; ti++) { typeIcons += Dex.getTypeIcon(formeTypes[ti]); }
+				var requiredItem = (sp.requiredItems && sp.requiredItems.length) ? sp.requiredItems[0] : '';
+				var requiredItemDisplay = '';
+				if (requiredItem) {
+					requiredItemDisplay =
+						'<div style="position:absolute; bottom:0; left:-10px; width:calc(100% + 20px); height:25px; z-index:3; text-align:center; pointer-events:none; color:#fff; font-weight:bold; white-space:nowrap; background:rgba(0,0,0,0.4);">' +
+							'<div style="position:absolute; top:2px; left:0; width:100%; font-size:9px; line-height:10px;">Requires</div>' +
+							'<div style="position:absolute; bottom:-1px; left:0; width:100%; font-size:10px; line-height:12px; display:flex; align-items:center; justify-content:center; gap:2px;">' +
+								'<span style="position:relative; top:3px;">' + BattleLog.escapeHTML(requiredItem) + '</span>' +
+								'<span style="display:inline-block; flex:0 0 24px; position: relative; bottom: 3px; left: 2px; width:24px; height:24px; ' + Dex.getItemIcon(requiredItem) + ' background-size:24px 24px;"></span>' +
+							'</div>' +
+						'</div>';
+				}
 				var dash = sp.name.indexOf('-');
-				var displayName = (dash >= 0 ? sp.name.slice(dash + 1) : 'Base');
-				// sprite id rules: use PS teambuilder sprite helper
-				// IMPORTANT: sprite filenames keep hyphens, but toID() removes them.
-				// Build sprite filename as: baseid + '-' + suffix (derived from toID form)
 				var spid = toID(sp.name);
 				var suffix = (spid.startsWith(baseId) ? spid.slice(baseId.length) : '');
 				var spriteId = baseId + (suffix ? '-' + suffix : '');
@@ -4071,12 +4081,16 @@
 				var resize = (spriteData.h ? 'background-size:' + spriteData.h + 'px;' : '');
 				var displayName = (sp.forme ? sp.forme : (sp.name.includes('-') ? sp.name.split('-').slice(1).join('-') : 'Base'));
 				var isCur = (toID(curSpecies.name) === toID(sp.name));
-				// Each option: sprite + label underneath
 				buf += '<div style="float:left; width:' + (spriteSize + 12) + 'px; margin: 3px; text-align:center;">';
+				buf += '<div style="position:relative; width:' + spriteSize + 'px; height:' + spriteSize + 'px; margin:0 auto;">';
+				buf += '<div style="position:absolute; top:2px; left:2px; z-index:2; display:flex; flex-direction:column; gap:1px;">' + typeIcons + '</div>';
+				buf += requiredItemDisplay;
 				buf += '<button name="setSpecies" value="' + BattleLog.escapeHTML(sp.name) + '" class="option' + (isCur ? ' cur' : '') + '" style="';
 				buf += 'background-image:url(' + Dex.resourcePrefix + spriteData.spriteDir + '/' + spriteId + '.png);' + spriteDim + resize + '"></button>';
+				buf += '</div>';
 				buf += '<div style="display:block; width:100%; font-size:11px; line-height:12px; margin-top: 4px; text-align:center;">' +
 					BattleLog.escapeHTML(displayName) + '</div>';
+				buf += requiredItemDisplay;
 				buf += '</div>';
 			}
 			buf += '<div style="clear:both"></div>';

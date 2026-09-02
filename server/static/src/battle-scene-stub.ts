@@ -14,9 +14,9 @@ export class BattleSceneStub {
 	messagebarOpen = false;
 	log: BattleLog = { add: (args: Args, kwargs?: KWArgs) => {} } as any;
 	$frame?: JQuery;
-	abilityActivateAnim(pokemon: Pokemon, result: string): void { }
+	abilityActivateAnim(pokemon: Pokemon, result: string, isCounter?: boolean): void { }
 	addPokemonSprite(pokemon: Pokemon): PokemonSprite { return null!; }
-	addSideCondition(siden: number, id: ID, instant?: boolean): void { }
+	addSideCondition(siden: number, id: ID, instant?: boolean, returning?: boolean): void { }
 	animationOff(): void { }
 	animationOn(): void { }
 	maybeCloseMessagebar(args: Args, kwArgs: KWArgs): boolean { return false; }
@@ -32,7 +32,7 @@ export class BattleSceneStub {
 	pause(): void { }
 	setMute(muted: boolean): void { }
 	preemptCatchup(): void { }
-	removeSideCondition(siden: number, id: ID): void { }
+	removeSideCondition(siden: number, id: ID, instant?: boolean): void { }
 	reset(): void { }
 	resetBgm(): void { }
 	updateBgm(): void { }

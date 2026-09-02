@@ -936,7 +936,7 @@ export class Battle {
 		for (const side of this.sides) { for (const pokemon of side.active) { if (pokemon && (includeFainted || !pokemon.fainted)) { pokemonList.push(pokemon); } } }
 		return pokemonList;
 	}
-	makeRequest(type?: RequestState) {
+	makeRequest(type?: RequestState, immediateOnly?: boolean) {
 		if (type) {
 			this.requestState = type;
 			for (const side of this.sides) side.clearChoice();
@@ -972,7 +972,7 @@ export class Battle {
 			const pickedTeamSize = this.ruleTable.pickedTeamSize;
 			this.add(`teampreview${pickedTeamSize ? `|${pickedTeamSize}` : ''}`);
 		}
-		const requests = this.getRequests(type);
+		const requests = this.getRequests(type, immediateOnly);
 		for (let i = 0; i < this.sides.length; i++) this.sides[i].activeRequest = requests[i];
 		this.sentRequests = false;
 		if (this.sides.every(side => side.isChoiceDone())) { throw new Error(`Choices are done immediately after a request`); }
@@ -984,14 +984,22 @@ export class Battle {
 			side.clearChoice();
 		}
 	}
-	getRequests(type: RequestState) { // default to no request
+	getRequests(type: RequestState, immediateOnly?: boolean) { // default to no request
 		const requests: ChoiceRequest[] = Array(this.sides.length).fill(null);
 		switch (type) {
 		case 'switch':
 			for (let i = 0; i < this.sides.length; i++) {
 				const side = this.sides[i];
 				if (!side.pokemonLeft) continue;
-				const switchTable = side.active.map(pokemon => !!pokemon?.switchFlag);
+				// immediateOnly (mid-turn requests only) excludes fainted replacements - those are
+				// deferred to end-of-turn (see turnLoop()) so the new Pokemon isn't exposed to the
+				// rest of the turn it fainted in. Living forced-switches (U-turn, Eject Button,
+				// Emergency Exit, etc.) still request immediately as before.
+				const switchTable = side.active.map(pokemon => {
+					if (!pokemon?.switchFlag) return false;
+					if (immediateOnly && pokemon.fainted) return false;
+					return true;
+				});
 				if (switchTable.some(Boolean)) { requests[i] = { forceSwitch: switchTable, side: side.getRequestData() }; }
 			}
 			break;
@@ -2310,9 +2318,11 @@ export class Battle {
 				}
 			}
 		}
-		for (const playerSwitch of switches) {
-			if (playerSwitch) {
-				this.makeRequest('switch');
+		for (let i = 0; i < this.sides.length; i++) {
+			if (!switches[i]) continue;
+			const hasLivingSwitch = this.sides[i].active.some(pokemon => pokemon && pokemon.switchFlag && !pokemon.fainted);
+			if (hasLivingSwitch) {
+				this.makeRequest('switch', true);
 				return true;
 			}
 		}
@@ -2340,6 +2350,10 @@ export class Battle {
 		while ((action = this.queue.shift())) {
 			this.runAction(action);
 			if (this.requestState || this.ended) return;
+		}
+		if (this.sides.some(side => side.active.some(pokemon => pokemon && pokemon.switchFlag))) {
+			this.makeRequest('switch');
+			return;
 		}
 		this.endTurn();
 		this.midTurn = false;

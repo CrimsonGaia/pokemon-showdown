@@ -77,7 +77,9 @@ BattleScene=function(){
 
 
 
-function BattleScene(battle,$frame,$logFrame){var _this=this;this.battle=void 0;this.animating=true;this.acceleration=1;this.gen=7;this.mod='';this.activeCount=1;this.numericId=0;this.$frame=void 0;this.$battle=null;this.$options=null;this.log=void 0;this.$terrain=null;this.$weather=null;this.$bgEffect=null;this.$bg=null;this.$sprite=null;this.$sprites=[null,null];this.$spritesFront=[null,null];this.$stat=null;this.$fx=null;this.$leftbar=null;this.$rightbar=null;this.$battleteambar=null;this.$turn=null;this.$messagebar=null;this.$delay=null;this.$hiddenMessage=null;this.$tooltips=null;this.tooltips=void 0;this.sideConditions=[{},{}];this.preloadDone=0;this.preloadNeeded=0;this.bgm=null;this.backdropImage='';this.bgmNum=0;this.preloadCache={};this.messagebarOpen=false;this.customControls=false;this.interruptionCount=1;this.curWeather='';this.curTerrain='';this.timeOffset=0;this.pokemonTimeOffset=0;this.minDelay=0;this.activeAnimations=$();
+
+
+function BattleScene(battle,$frame,$logFrame){var _this=this;this.battle=void 0;this.animating=true;this.acceleration=1;this.gen=7;this.mod='';this.activeCount=1;this.numericId=0;this.$frame=void 0;this.$battle=null;this.$options=null;this.log=void 0;this.$terrain=null;this.$weather=null;this.$bgEffect=null;this.$bg=null;this.$sprite=null;this.$sprites=[null,null];this.$spritesFront=[null,null];this.$stat=null;this.$fx=null;this.$leftbar=null;this.$rightbar=null;this.$battleteambar=null;this.$turn=null;this.$messagebar=null;this.$delay=null;this.$hiddenMessage=null;this.$tooltips=null;this.tooltips=void 0;this.sideConditions=[{},{}];this.preloadDone=0;this.preloadNeeded=0;this.bgm=null;this.backdropImage='';this.bgmNum=0;this.preloadCache={};this.messagebarOpen=false;this.customControls=false;this.interruptionCount=1;this.curWeather='';this.curTerrain='';this.teamBarRefreshScheduled=false;this.teamBarPoolOrder={p1:null,p2:null};this.timeOffset=0;this.pokemonTimeOffset=0;this.minDelay=0;this.activeAnimations=$();
 this.battle=battle;
 $frame.addClass('battle');
 this.$frame=$frame;
@@ -100,7 +102,7 @@ var origAddDiv=(_logAny$addDiv=logAny.addDiv)==null?void 0:_logAny$addDiv.bind(t
 if(origAddDiv){
 logAny.addDiv=function(){
 var ret=origAddDiv.apply(void 0,arguments);
-Promise.resolve().then(function(){return _this.updateTeamBar();});
+_this.scheduleTeamBarRefresh();
 return ret;
 };
 }
@@ -499,17 +501,13 @@ return html;
 };_proto.
 getTeamBarPoolHTML=function getTeamBarPoolHTML(side,isP1){
 var pooled=side.teamsheetItems;
-var html="<div class=\"battleteambar-pool battleteambar-pool-"+(isP1?'p1':'p2')+"\">";
+var key=isP1?'p1':'p2';
+var html="<div class=\"battleteambar-pool battleteambar-pool-"+key+"\" style=\"display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(5,1fr);grid-auto-flow:column;gap:2px;\">";
 if(pooled!=null&&pooled.length){
-
-var indices=pooled.map(function(_,j){return j;}).filter(function(j){return pooled[j];});
-for(var _k=indices.length-1;_k>0;_k--){
-var swapIdx=Math.floor(Math.random()*(_k+1));var _ref=
-[indices[swapIdx],indices[_k]];indices[_k]=_ref[0];indices[swapIdx]=_ref[1];
-}for(var _i7=0;_i7<
-indices.length;_i7++){var j=indices[_i7];
+var order=this.getStablePoolOrder(key,pooled);for(var _i7=0;_i7<
+order.length;_i7++){var j=order[_i7];
 var item=pooled[j];
-html+="<span class=\"itemicon battleteambar-poolicon\" data-teambar-pool=\""+(isP1?'p1':'p2')+"-"+j+"\" style=\""+Dex.getItemIcon(item)+"\"></span>";
+html+="<span class=\"itemicon battleteambar-poolicon\" data-teambar-pool=\""+key+"-"+j+"\" style=\""+Dex.getItemIcon(item)+";width:48px;height:48px;\"></span>";
 }
 }
 html+='</div>';
@@ -658,7 +656,33 @@ this.updateLeftSidebar();
 this.updateRightSidebar();
 this.updateTeamBar();
 };_proto.
-updateTeamBar=function updateTeamBar(){var _this4=this;
+scheduleTeamBarRefresh=function scheduleTeamBarRefresh(){var _this4=this;
+if(this.teamBarRefreshScheduled)return;
+this.teamBarRefreshScheduled=true;
+Promise.resolve().then(function(){
+_this4.teamBarRefreshScheduled=false;
+_this4.updateTeamBar();
+});
+};_proto.
+getStablePoolOrder=function getStablePoolOrder(key,pooled){
+var liveIndices=new Set(pooled.map(function(v,j){return v?j:-1;}).filter(function(j){return j>=0;}));
+var order=this.teamBarPoolOrder[key];
+if(!order){
+
+order=[].concat(liveIndices);
+for(var _k=order.length-1;_k>0;_k--){
+var swapIdx=Math.floor(Math.random()*(_k+1));var _ref=
+[order[swapIdx],order[_k]];order[_k]=_ref[0];order[swapIdx]=_ref[1];
+}
+}else{
+
+
+order=order.filter(function(j){return liveIndices.has(j);});
+}
+this.teamBarPoolOrder[key]=order;
+return order;
+};_proto.
+updateTeamBar=function updateTeamBar(){var _this5=this;
 var p1Side=this.battle.nearSide;
 var p2Side=this.battle.farSide;
 
@@ -684,14 +708,14 @@ var p2HTML=this.getTeamBarHTML(p2Side,false);
 var p1PoolHTML=this.getTeamBarPoolHTML(p1Side,true);
 var p2PoolHTML=this.getTeamBarPoolHTML(p2Side,false);
 this.$battleteambar.html(
-"<div class=\"battleteambar-p1\">"+p1HTML+"</div>"+("<div class=\"battleteambar-pools\">"+
+"<div class=\"battleteambar-p1\">"+p1HTML+"</div>"+("<div class=\"battleteambar-pools\" style=\"display:flex;flex-direction:row;gap:6px;\">"+
 p1PoolHTML+p2PoolHTML+"</div>")+("<div class=\"battleteambar-p2\">"+
 p2HTML+"</div>")
 );
 
 
 preRects.forEach(function(fromRect,slotKey){
-var $target=_this4.$battleteambar.find("[data-teambar-item=\""+slotKey+"\"]");
+var $target=_this5.$battleteambar.find("[data-teambar-item=\""+slotKey+"\"]");
 if(!$target.length)return;
 var toRect=$target[0].getBoundingClientRect();
 var $clone=$target.clone().css({
@@ -713,6 +737,7 @@ this.battle.sides;_i21<_this$battle$sides4.length;_i21++){var side=_this$battle$
 this.updateTeamBar();
 };_proto.
 resetSides=function resetSides(skipEmpty){
+this.teamBarPoolOrder={p1:null,p2:null};
 if(!skipEmpty){for(var _i25=0,_this$$sprites2=this.$sprites;_i25<_this$$sprites2.length;_i25++){var $spritesContainer=_this$$sprites2[_i25];$spritesContainer.empty();}}for(var _i27=0,_this$battle$sides6=
 this.battle.sides;_i27<_this$battle$sides6.length;_i27++){var _side$missedPokemon;var side=_this$battle$sides6[_i27];
 side.z=side.isFar?200:0;
@@ -865,7 +890,7 @@ this.$weather.animate({opacity:1.0},300).
 animate({opacity:isIntense?0.9:0.5},300);
 this.updateWeather();
 };_proto.
-updateWeather=function updateWeather(instant){var _this5=this;
+updateWeather=function updateWeather(instant){var _this6=this;
 if(!this.animating)return;
 var isIntense=false;
 var weather=this.battle.weather;
@@ -895,8 +920,8 @@ if(terrainhtml)terrainhtml="<br />"+terrainhtml;
 
 
 var repositionTerrain=function(){
-var weatherBottom=_this5.$weather.position().top+(_this5.$weather.outerHeight()||0);
-_this5.$terrain.css('top',weatherBottom);
+var weatherBottom=_this6.$weather.position().top+(_this6.$weather.outerHeight()||0);
+_this6.$terrain.css('top',weatherBottom);
 };
 if(instant){
 this.$weather.html('<em>'+weatherhtml+'</em>');
@@ -913,18 +938,18 @@ return;
 if(weather!==this.curWeather){
 this.$weather.animate({opacity:0},
 this.curWeather?300:100,function(){
-_this5.$weather.html('<em>'+weatherhtml+'</em>');
-_this5.$weather.attr('class',weather?'weather weatherbox '+weather+'weather':'weather weatherbox');
-_this5.$weather.animate({opacity:isIntense||!weather?0.9:0.5},300);
+_this6.$weather.html('<em>'+weatherhtml+'</em>');
+_this6.$weather.attr('class',weather?'weather weatherbox '+weather+'weather':'weather weatherbox');
+_this6.$weather.animate({opacity:isIntense||!weather?0.9:0.5},300);
 repositionTerrain();
 });
 this.curWeather=weather;
 }else{this.$weather.html('<em>'+weatherhtml+'</em>');repositionTerrain();}
 if(terrain!==this.curTerrain){this.$terrain.animate({top:360,opacity:0},this.curTerrain?400:1,function(){
-_this5.$terrain.attr('class',terrain?'weather terrainbox '+terrain+'weather':'weather terrainbox');
-_this5.$terrain.html('<em>'+terrainhtml+'</em>');
-var weatherBottom=_this5.$weather.position().top+(_this5.$weather.outerHeight()||0);
-_this5.$terrain.animate({top:weatherBottom,opacity:1},400);
+_this6.$terrain.attr('class',terrain?'weather terrainbox '+terrain+'weather':'weather terrainbox');
+_this6.$terrain.html('<em>'+terrainhtml+'</em>');
+var weatherBottom=_this6.$weather.position().top+(_this6.$weather.outerHeight()||0);
+_this6.$terrain.animate({top:weatherBottom,opacity:1},400);
 });
 this.curTerrain=terrain;
 }else{repositionTerrain();}
@@ -961,7 +986,7 @@ var sprite=new PokemonSprite(Dex.getSpriteData(pokemon,pokemon.side.isFar,{gen:t
 if(sprite.$el)this.$sprites[+pokemon.side.isFar].append(sprite.$el);
 return sprite;
 };_proto.
-addSideCondition=function addSideCondition(siden,id,instant){
+addSideCondition=function addSideCondition(siden,id,instant,returning){
 if(!this.animating)return;
 var side=this.battle.sides[siden];
 var spriteIndex=+side.isFar;
@@ -1005,22 +1030,45 @@ this.$spritesFront[spriteIndex].append(mist.$el);
 this.sideConditions[siden][id]=[mist];
 mist.anim({opacity:0.7,time:instant?0:400}).anim({opacity:0.3,time:instant?0:300});
 break;
-case'stealthrock':
-var rock1=new Sprite(BattleEffects.rock1,{display:'block',x:x+side.leftof(-40),y:y-10,z:side.z,opacity:0.5,scale:0.2},this);
-var rock2=new Sprite(BattleEffects.rock2,{display:'block',x:x+side.leftof(-20),y:y-40,z:side.z,opacity:0.5,scale:0.2},this);
-var rock3=new Sprite(BattleEffects.rock1,{display:'block',x:x+side.leftof(30),y:y-20,z:side.z,opacity:0.5,scale:0.2},this);
-var rock4=new Sprite(BattleEffects.rock2,{display:'block',x:x+side.leftof(10),y:y-30,z:side.z,opacity:0.5,scale:0.2},this);
+case'stealthrock':{
+var settlePos=[
+{x:x+side.leftof(-90),y:y-5,scale:0.22},
+{x:x+side.leftof(-35),y:y-30,scale:0.23},
+{x:x+side.leftof(35),y:y-15,scale:0.23},
+{x:x+side.leftof(90),y:y-30,scale:0.22}];
+
+var liftedPos=[
+{x:x+side.leftof(-110),y:y+80,scale:0.28},
+{x:x+side.leftof(-55),y:y+105,scale:0.28},
+{x:x+side.leftof(55),y:y+80,scale:0.28},
+{x:x+side.leftof(110),y:y+100,scale:0.28}];
+
+var startPos=returning?liftedPos:settlePos;
+var startOpacity=returning?0.075:0.8;
+var rock1=new Sprite(BattleEffects.rock1,{display:'block',x:startPos[0].x,y:startPos[0].y,z:side.z,opacity:startOpacity,scale:startPos[0].scale},this);
+var rock2=new Sprite(BattleEffects.rock2,{display:'block',x:startPos[1].x,y:startPos[1].y,z:side.z,opacity:startOpacity,scale:startPos[1].scale},this);
+var rock3=new Sprite(BattleEffects.rock1,{display:'block',x:startPos[2].x,y:startPos[2].y,z:side.z,opacity:startOpacity,scale:startPos[2].scale},this);
+var rock4=new Sprite(BattleEffects.rock2,{display:'block',x:startPos[3].x,y:startPos[3].y,z:side.z,opacity:startOpacity,scale:startPos[3].scale},this);
 this.$spritesFront[spriteIndex].append(rock1.$el);
 this.$spritesFront[spriteIndex].append(rock2.$el);
 this.$spritesFront[spriteIndex].append(rock3.$el);
 this.$spritesFront[spriteIndex].append(rock4.$el);
 this.sideConditions[siden][id]=[rock1,rock2,rock3,rock4];
+if(returning){
+[rock1,rock2,rock3,rock4].forEach(function(rock,i){
+rock.anim({x:settlePos[i].x,y:settlePos[i].y,scale:settlePos[i].scale,opacity:0.8,time:1200},'swing');
+});
+}
 break;
+}
 case'fluxscraps':
-var rocks1=new Sprite(BattleEffects.rocks,{display:'block',x:x+side.leftof(-90),y:y+30,z:side.z,opacity:1,scale:0.5,filter:'brightness(1.8) grayscale(0.3)'},this);
-var rocks2=new Sprite(BattleEffects.rocks,{display:'block',x:x+side.leftof(-55),y:y+40,z:side.z,opacity:1,scale:0.5,filter:'brightness(1.8) grayscale(0.3)'},this);
-var rocks3=new Sprite(BattleEffects.rocks,{display:'block',x:x+side.leftof(25),y:y+35,z:side.z,opacity:1,scale:0.5,filter:'brightness(1.8) grayscale(0.3)'},this);
-var rocks4=new Sprite(BattleEffects.rocks,{display:'block',x:x+side.leftof(-5),y:y+45,z:side.z,opacity:1,scale:0.5,filter:'brightness(1.8) grayscale(0.3)'},this);
+var rocks1=new Sprite(BattleEffects.rocks,{display:'block',x:x+side.leftof(-90),y:y+30,z:side.z,opacity:1,scale:0.5},this);
+var rocks2=new Sprite(BattleEffects.rocks,{display:'block',x:x+side.leftof(-55),y:y+40,z:side.z,opacity:1,scale:0.5},this);
+var rocks3=new Sprite(BattleEffects.rocks,{display:'block',x:x+side.leftof(25),y:y+35,z:side.z,opacity:1,scale:0.5},this);
+var rocks4=new Sprite(BattleEffects.rocks,{display:'block',x:x+side.leftof(-5),y:y+45,z:side.z,opacity:1,scale:0.5},this);
+[rocks1,rocks2,rocks3,rocks4].forEach(function(rock){
+rock.$el.css('filter','brightness(1.8) grayscale(0.3)');
+});
 this.$spritesFront[spriteIndex].append(rocks1.$el);
 this.$spritesFront[spriteIndex].append(rocks2.$el);
 this.$spritesFront[spriteIndex].append(rocks3.$el);
@@ -1090,10 +1138,44 @@ this.sideConditions[siden][id]=[toxicWeb];
 break;
 }
 };_proto.
-removeSideCondition=function removeSideCondition(siden,id){
+removeSideCondition=function removeSideCondition(siden,id,instant){
 if(!this.animating)return;
-if(this.sideConditions[siden][id]){for(var _i33=0,_this$sideConditions$2=
-this.sideConditions[siden][id];_i33<_this$sideConditions$2.length;_i33++){var sprite=_this$sideConditions$2[_i33];sprite.destroy();}
+if(this.sideConditions[siden][id]){
+var sprites=this.sideConditions[siden][id];
+if(instant){for(var _i33=0;_i33<
+sprites.length;_i33++){var sprite=sprites[_i33];sprite.destroy();}
+delete this.sideConditions[siden][id];
+return;
+}
+if(id==='stealthrock'){
+var side=this.battle.sides[siden];
+var liftedPos=[
+{x:function(x){return x+side.leftof(-110);},y:side.y+80},
+{x:function(x){return x+side.leftof(-55);},y:side.y+105},
+{x:function(x){return x+side.leftof(55);},y:side.y+80},
+{x:function(x){return x+side.leftof(110);},y:side.y+100}];
+
+var sideX=side.x;
+for(var i=0;i<sprites.length;i++){
+var _sprite=sprites[i];
+var pos=liftedPos[i];
+_sprite.anim({
+x:pos.x(sideX),
+y:pos.y,
+scale:0.28,
+opacity:0.15,
+time:1200
+},'swing');
+setTimeout(function(spriteToDestroy){
+return function(){
+spriteToDestroy.$el.css('opacity',0.075);
+};
+}(_sprite),700);
+}
+delete this.sideConditions[siden][id];
+return;
+}for(var _i35=0;_i35<
+sprites.length;_i35++){var _sprite2=sprites[_i35];_sprite2.destroy();}
 delete this.sideConditions[siden][id];
 }
 };_proto.
@@ -1183,12 +1265,12 @@ this.customControls=true;
 var $controls=this.$frame.parent().children('.battle-controls');
 $controls.html(html);
 };_proto.
-preloadImage=function preloadImage(url){var _this6=this;
+preloadImage=function preloadImage(url){var _this7=this;
 var token=url.replace(/\.(gif|png)$/,'').replace(/\//g,'-');
 if(this.preloadCache[token]){return;}
 this.preloadNeeded++;
 this.preloadCache[token]=new Image();
-this.preloadCache[token].onload=function(){_this6.preloadDone++;};
+this.preloadCache[token].onload=function(){_this7.preloadDone++;};
 this.preloadCache[token].src=url;
 };_proto.
 preloadEffects=function preloadEffects(){
@@ -1497,10 +1579,10 @@ PokemonSprite=function(_Sprite2){
 
 
 
-function PokemonSprite(spriteData,pos,scene,isFrontSprite){var _this7;
-_this7=_Sprite2.call(this,spriteData,pos,scene)||this;_this7.forme='';_this7.cryurl=undefined;_this7.subsp=null;_this7.$sub=null;_this7.isSubActive=false;_this7.$statbar=null;_this7.isFrontSprite=void 0;_this7.isMissedPokemon=false;_this7.oldsp=null;_this7.statbarLeft=0;_this7.statbarTop=0;_this7.left=0;_this7.top=0;_this7.effects={};
-_this7.cryurl=_this7.sp.cryurl;
-_this7.isFrontSprite=isFrontSprite;return _this7;
+function PokemonSprite(spriteData,pos,scene,isFrontSprite){var _this8;
+_this8=_Sprite2.call(this,spriteData,pos,scene)||this;_this8.forme='';_this8.cryurl=undefined;_this8.subsp=null;_this8.$sub=null;_this8.isSubActive=false;_this8.$statbar=null;_this8.isFrontSprite=void 0;_this8.isMissedPokemon=false;_this8.oldsp=null;_this8.statbarLeft=0;_this8.statbarTop=0;_this8.left=0;_this8.top=0;_this8.effects={};
+_this8.cryurl=_this8.sp.cryurl;
+_this8.isFrontSprite=isFrontSprite;return _this8;
 }_inheritsLoose(PokemonSprite,_Sprite2);var _proto3=PokemonSprite.prototype;_proto3.
 destroy=function destroy(){
 if(this.$el)this.$el.remove();
@@ -1577,21 +1659,21 @@ if(!this.scene.animating)return false;
 if(!this.isSubActive)return false;
 this.isSubActive=false;
 this.anim({time:300});
-this.$sub.animate(this.scene.pos({x:this.leftof(-50),y:this.y,z:this.z,opacity:0.5},this.subsp),300);for(var _i35=0,_this$scene$battle$si2=
-this.scene.battle.sides;_i35<_this$scene$battle$si2.length;_i35++){var side=_this$scene$battle$si2[_i35];for(var _i37=0,_side$active4=side.active;_i37<_side$active4.length;_i37++){var active=_side$active4[_i37];if(active&&active.sprite!==this){active.sprite.delay(300);}}}
+this.$sub.animate(this.scene.pos({x:this.leftof(-50),y:this.y,z:this.z,opacity:0.5},this.subsp),300);for(var _i37=0,_this$scene$battle$si2=
+this.scene.battle.sides;_i37<_this$scene$battle$si2.length;_i37++){var side=_this$scene$battle$si2[_i37];for(var _i39=0,_side$active4=side.active;_i39<_side$active4.length;_i39++){var active=_side$active4[_i39];if(active&&active.sprite!==this){active.sprite.delay(300);}}}
 this.scene.wait(300);
 this.scene.waitFor(this.$el);
 return true;
 };_proto3.
-afterMove=function afterMove(){var _this8=this;
+afterMove=function afterMove(){var _this9=this;
 if(!this.scene.animating)return false;
 if(!this.$sub||this.isSubActive)return false;
 this.isSubActive=true;
 this.$sub.delay(300);
 this.$el.add(this.$sub).promise().done(function(){
-if(!_this8.$sub||!_this8.$el)return;
-_this8.$el.animate(_this8.scene.pos({x:_this8.x,y:_this8.y,z:_this8.behind(30),opacity:0.3},_this8.sp),300);
-_this8.anim({time:300});
+if(!_this9.$sub||!_this9.$el)return;
+_this9.$el.animate(_this9.scene.pos({x:_this9.x,y:_this9.y,z:_this9.behind(30),opacity:0.3},_this9.sp),300);
+_this9.anim({time:300});
 });
 return false;
 };_proto3.
@@ -1800,7 +1882,7 @@ $statbar.animate({left:this.statbarLeft+(this.isFrontSprite?50:-50),opacity:0},
 300/this.scene.acceleration,function(){$statbar.remove();});
 }
 };_proto3.
-animFaint=function animFaint(pokemon){var _this9=this;
+animFaint=function animFaint(pokemon){var _this10=this;
 this.removeSub();
 if(!this.scene.animating){
 this.$el.remove();
@@ -1815,7 +1897,7 @@ this.scene.updateSidebars();
 if(this.cryurl){BattleSound.playEffect(this.cryurl);}
 this.anim({y:this.y-80,opacity:0},'accel');
 this.scene.waitFor(this.$el);
-this.$el.promise().done(function(){_this9.$el.remove();});
+this.$el.promise().done(function(){_this10.$el.remove();});
 var $statbar=this.$statbar;
 if($statbar){
 this.$statbar=null;
@@ -1828,7 +1910,7 @@ $statbar.animate({opacity:0},
 
 
 
-animTransform=function animTransform(pokemon,useSpeciesAnim,isPermanent){var _this10=this;
+animTransform=function animTransform(pokemon,useSpeciesAnim,isPermanent){var _this11=this;
 if(!this.scene.animating&&!isPermanent)return;
 var sp=Dex.getSpriteData(pokemon,this.isFrontSprite,{gen:this.scene.gen,mod:this.scene.mod});
 var oldsp=this.sp;
@@ -1870,10 +1952,10 @@ this.$el=$newEl;
 this.animReset();
 }else{
 this.$el.animate(this.scene.pos({x:this.x,y:this.y,z:this.z,yscale:0,xscale:0,opacity:0.3},oldsp),300,function(){
-if(_this10.cryurl&&doCry){BattleSound.playEffect(_this10.cryurl);}
-_this10.$el.replaceWith($newEl);
-_this10.$el=$newEl;
-_this10.$el.animate(scene.pos({x:_this10.x,y:_this10.y,z:_this10.z,opacity:1},sp),300);
+if(_this11.cryurl&&doCry){BattleSound.playEffect(_this11.cryurl);}
+_this11.$el.replaceWith($newEl);
+_this11.$el=$newEl;
+_this11.$el.animate(scene.pos({x:_this11.x,y:_this11.y,z:_this11.z,opacity:1},sp),300);
 });
 this.scene.wait(500);
 }
@@ -1910,8 +1992,8 @@ protect.anim({opacity:0.9,time:instant?0:400}).anim({opacity:0.4,time:instant?0:
 removeEffect=function removeEffect(id,instant){
 if(id==='formechange')this.removeTransform();
 if(id==='substitute')this.animSubFade(instant);
-if(this.effects[id]){for(var _i39=0,_this$effects$id2=
-this.effects[id];_i39<_this$effects$id2.length;_i39++){var sprite=_this$effects$id2[_i39];sprite.destroy();}
+if(this.effects[id]){for(var _i41=0,_this$effects$id2=
+this.effects[id];_i41<_this$effects$id2.length;_i41++){var sprite=_this$effects$id2[_i41];sprite.destroy();}
 delete this.effects[id];
 }
 };_proto3.
@@ -2011,8 +2093,8 @@ pokemon.status+"\" /> ";
 }
 if(pokemon.terastallized){status+="<img src=\""+Dex.resourcePrefix+"sprites/types/"+encodeURIComponent(pokemon.terastallized)+".png\" alt=\""+pokemon.terastallized+"\" class=\"pixelated\" /> ";}else
 if(pokemon.volatiles.typechange&&pokemon.volatiles.typechange[1]){
-var types=pokemon.volatiles.typechange[1].split('/');for(var _i41=0;_i41<
-types.length;_i41++){var type=types[_i41];status+='<img src="'+Dex.resourcePrefix+'sprites/types/'+encodeURIComponent(type)+'.png" alt="'+type+'" class="pixelated" /> ';}
+var types=pokemon.volatiles.typechange[1].split('/');for(var _i43=0;_i43<
+types.length;_i43++){var type=types[_i43];status+='<img src="'+Dex.resourcePrefix+'sprites/types/'+encodeURIComponent(type)+'.png" alt="'+type+'" class="pixelated" /> ';}
 }
 if(pokemon.volatiles.typeadd){
 var _type2=pokemon.volatiles.typeadd[1];
@@ -2023,11 +2105,11 @@ for(var i in pokemon.volatiles){
 if(i==='needles'&&pokemon.volatiles[i][2]){status+="<span class=\"bad\">Needles&nbsp;["+pokemon.volatiles[i][2]+"]</span> ";}else
 {status+=PokemonSprite.getEffectTag(i);}
 }
-for(var _i42 in pokemon.turnstatuses){
-if(_i42==='roost'&&!pokemon.getTypeList().includes('Flying'))continue;
-status+=PokemonSprite.getEffectTag(_i42);
+for(var _i44 in pokemon.turnstatuses){
+if(_i44==='roost'&&!pokemon.getTypeList().includes('Flying'))continue;
+status+=PokemonSprite.getEffectTag(_i44);
 }
-for(var _i43 in pokemon.movestatuses){status+=PokemonSprite.getEffectTag(_i43);}
+for(var _i45 in pokemon.movestatuses){status+=PokemonSprite.getEffectTag(_i45);}
 var statusbar=this.$statbar.find('.status');
 statusbar.html(status);
 };PokemonSprite.

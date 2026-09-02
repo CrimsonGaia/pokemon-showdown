@@ -1844,7 +1844,6 @@ export class Pokemon {
 		else {
 			const moveTypes = [move.type];
 			if (move.type2 && move.type2 !== move.type) moveTypes.push(move.type2);
-			// Magic moves ignore Tera and use original types for effectiveness
 			const defendingTypes = (move.flags?.magic) ? this.getTypes(false, true) : this.getTypes();
 			for (const attackingType of moveTypes) {
 				for (const defendingType of defendingTypes) {
@@ -1852,19 +1851,14 @@ export class Pokemon {
 					if (move.flags?.magic && !this.battle.dex.getImmunity(attackingType, defendingType)) typeMod = -1;
 					typeMod = this.battle.singleEvent('Effectiveness', move, null, this, defendingType, move, typeMod);
 					totalTypeMod += this.battle.runEvent('Effectiveness', this, defendingType, move, typeMod);
-					totalTypeMod += this.battle.runEvent('Effectiveness', this, defendingType, move, typeMod);
 				}
 			}
 		}
-		// Check flag-based effectiveness (weakness/resistance to move flags)
-		// Value 1 = weak to flag (1.5x damage taken = +0.585 typeMod to get log2(1.5))
-		// Value 2 = resist flag (0.75x damage taken = -0.415 typeMod to get log2(0.75))
 		for (const defendingType of this.getTypes()) {
 			const typeData = this.battle.dex.types.get(defendingType);
 			if (!typeData || !typeData.damageTaken) continue;
 			for (const flag in move.flags) {
 				let flagMod = typeData.damageTaken[flag];
-				// While under Magic Dust, Ghost types should be weak to contact moves
 				if (flag === 'contact' && defendingType === 'Ghost' && this.volatiles && this.volatiles['magicdust']) {
 					if (flagMod === 2) {
 						this.battle.debug(`Magic Dust flips ${defendingType} contact resist to weak`);
@@ -1879,15 +1873,13 @@ export class Pokemon {
 					this.battle.debug(`${defendingType} resists ${flag} flag (0.75x)`);
 					totalTypeMod -= 0.415;
 				}
-				// flagMod === 3 (immunity) is already handled by runImmunity checks elsewhere
 			}
 		}
 		if (this.species.name === 'Terapagos-Terastal' && this.hasAbility('Tera Shell') &&
 			!this.battle.suppressingAbility(this)) {
-			// Check which ability slot has Tera Shell
 			const teraShellSlot = this.ability1 === 'terashell' ? 1 : 2;
 			const abilityStateKey = teraShellSlot === 1 ? 'abilityState1' : 'abilityState2';
-			if (this[abilityStateKey].resisted) return -1; // all hits of multi-hit move should be not very effective
+			if (this[abilityStateKey].resisted) return -1;
 			if (move.category === 'Status' || move.id === 'struggle' || !this.runImmunity(move) || totalTypeMod < 0 || this.hp < this.maxhp) { return totalTypeMod; }
 			this.battle.add('-activate', this, 'ability: Tera Shell');
 			this[abilityStateKey].resisted = true;
@@ -1896,18 +1888,42 @@ export class Pokemon {
 		return totalTypeMod;
 	}
 		/** false = immune, true = not immune */
-	runImmunity(type:string,message?:boolean,source?:Pokemon,move?:ActiveMove){
-		if(!source)return true;
-		if(source.ignoreImmunity&&(source.ignoreImmunity===true||source.ignoreImmunity[type]))return true;
-		if(!type||type==='???')return true;
-		if(!this.battle.dex.types.isName(type))throw new Error("Use runStatusImmunity for "+type);
-		const negateImmunity=!this.battle.runEvent('NegateImmunity',this,type);
-		const notImmune=type==='Ground'?this.isGrounded(negateImmunity):negateImmunity||this.battle.dex.getImmunity(type,this);
-		if(notImmune)return true;
-		if(move?.flags?.magic)return true;
-		if(!message)return false;
-		if(notImmune===null)this.battle.add('-immune',this,'[from] ability: Levitate');
-		else this.battle.add('-immune',this);
+	runImmunity(source: ActiveMove | string, message?: string | boolean) {
+		if (!source) return true;
+		const move = typeof source !== 'string' ? source : undefined;
+		const type: string = typeof source !== 'string' ? source.type : source;
+
+		if (move && move.ignoreImmunity && (move.ignoreImmunity === true || move.ignoreImmunity[type])) return true;
+		if (!type || type === '???') return true;
+		if (!this.battle.dex.types.isName(type)) throw new Error("Use runStatusImmunity for " + type);
+
+		const negateImmunity = !this.battle.runEvent('NegateImmunity', this, type);
+		const notImmune = type === 'Ground' ? this.isGrounded(negateImmunity) : negateImmunity || this.battle.dex.getImmunity(type, this);
+		
+		if (notImmune) return true;
+
+		if (move) {
+			for (const defendingType of this.getTypes()) {
+				const typeData = this.battle.dex.types.get(defendingType);
+				if (!typeData?.damageTaken) continue;
+				for (const flag in move.flags) {
+					if (typeData.damageTaken[flag] === 3) {
+						if (message) this.battle.add('-immune', this);
+						return false;
+					}
+				}
+			}
+		}
+
+		// Magic moves ignore purely TYPE-chart immunity (see runEffectiveness, which turns it into a
+		// resistance instead) but not ability-granted immunity (Levitate, etc). notImmune is `false` for
+		// a type/item-based block (Flying-type, Air Balloon, or the plain type chart) and `null`
+		// specifically for Ground-type ability-based non-grounding (Levitate/eelevate/aerodynamic) -
+		// only bypass the former.
+		if (move?.flags?.magic && notImmune === false) return true;
+		if (!message) return false;
+		if (notImmune === null) this.battle.add('-immune', this, '[from] ability: Levitate');
+		else this.battle.add('-immune', this);
 		return false;
 	}
 	runStatusImmunity(type: string, message?: string) {

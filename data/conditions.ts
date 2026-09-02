@@ -204,7 +204,7 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 			else { this.add('-status', target, 'frz'); }
 			if (target.species.name === 'Shaymin-Sky' && target.baseSpecies.baseSpecies === 'Shaymin') { target.formeChange('Shaymin', this.effect, true); }
             // Initialize freeze turn counter
-            if (!target.volatiles['frzturns']) { target.volatiles['frzturns'] = { turns: 1 }; }
+            if (!target.volatiles['frzturns']) {  target.volatiles['frzturns'] = { id: 'frzturns', effectOrder: 0, turns: 1 }; } 
 			else { target.volatiles['frzturns'].turns = 1; }
 		},
 		onBeforeMovePriority: 10,
@@ -220,8 +220,8 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 			}
 			this.add('cant', pokemon, 'frz');
 			// Increment freeze turn counter for next turn
-			if (!pokemon.volatiles['frzturns']) { pokemon.volatiles['frzturns'] = { turns: 2 }; } 
-			else { if (!pokemon.battle.field.getPseudoWeather('timebreak')) { pokemon.volatiles['frzturns'].turns++; } }
+			if (!pokemon.volatiles['frzturns']) { pokemon.volatiles['frzturns'] = { id: 'frzturns', effectOrder: 0, turns: 2 }; } 
+			else if (!pokemon.battle.field.getPseudoWeather('timebreak')) { pokemon.volatiles['frzturns'].turns++; }
 			return false;
 		},
 		onModifyMove(move, pokemon) {
@@ -1007,7 +1007,7 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 			else if (target.hasAbility(['chlorophyll', 'solaraspect', 'solarpower'])) { this.damage(target.baseMaxhp / 12); }
 		},
 		onFieldEnd() {
-			this.add('-weather', 'none');
+			this.add('-weather', 'none', '[silent]');
 			const suppressed = ['shadowtag', 'shadowshield', 'shadowwalker', 'illuminate'];
 			const sortedActive = this.getAllActive();
 			this.speedSort(sortedActive);
@@ -1229,25 +1229,17 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 			if (source?.hasItem('floatstone')) { return 11; }
 			return 7;
 		},
-		// Prevent Tailwind from being set while active
-		onSideCondition(condition, target, source, effect) {
-			if (condition === 'stealthrock' && this.field.isWeather('turbulentwinds')) {
-				if (!this.field.stealthRockSuppressed) {
+		// Prevent Tailwind/Stealth Rock while active
+		onTrySideCondition(target, source, sideCondition) {
+			if (sideCondition.id === 'stealthrock' && this.field.isWeather('turbulentwinds')) {
+				if (!this.field.weatherState.stealthRockSuppressed) {
 					this.add('-message', 'Stealth Rock is suppressed by Turbulent Winds!');
-					this.field.stealthRockSuppressed = true;
+					this.field.weatherState.stealthRockSuppressed = true;
 				}
 				return false;
 			}
-			if (condition === 'tailwind' && this.field.isWeather('turbulentwinds')) {
+			if (sideCondition.id === 'tailwind' && this.field.isWeather('turbulentwinds')) {
 				this.add('-message', 'Tailwind cannot be set while Turbulent Winds are active!');
-				return false;
-			}
-			// Prevent Stealth Rock activation while weather is active
-			if (condition === 'stealthrock' && this.field.isWeather('turbulentwinds')) {
-				if (!this.field.stealthRockSuppressed) {
-					this.add('-message', 'The rocks were swept up by the Turbulent Winds!');
-					this.field.stealthRockSuppressed = true;
-				}
 				return false;
 			}
 		},
@@ -1268,8 +1260,22 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 		onFieldStart(field, source, effect) {
 			this.add('-weather', 'TurbulentWinds', '[from] ability: ' + effect.name, `[of] ${source}`);
 			let dispelled = false;
-			for (const side of this.sides) { if (side.removeSideCondition('tailwind')) { dispelled = true; } }
+			let swept = false;
+			this.field.weatherState.stealthRockSides = [];
+			for (const side of this.sides) {
+				if (side.removeSideCondition('tailwind')) {
+					dispelled = true;
+					this.add('-sideend', side, 'Tailwind', '[from] Turbulent Winds');
+				}
+				if (side.removeSideCondition('stealthrock')) {
+					swept = true;
+					this.field.weatherState.stealthRockSides.push(side);
+					this.add('-sideend', side, 'Stealth Rock', '[from] Turbulent Winds', '[silent]');
+					this.add('-message', `Turbulent Winds swept away the Stealth Rock from ${side.n === 0 ? 'your side' : 'the opposing side'}!`);
+				}
+			}
 			if (dispelled) { this.add('-message', 'Turbulent Winds rage, dispelling all Tailwinds!'); }
+			this.field.weatherState.stealthRockSuppressed = swept;
 			for (const pokemon of this.getAllActive()) {
 				// Trigger Wind Rider and Wind Power when weather starts - check both ability slots
 				const ability1 = this.toID((pokemon as any).ability1);
@@ -1313,11 +1319,11 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 		},
 		onWeather(target) { if (target.hasType('Fire')) { this.damage(target.baseMaxhp / 16); } },
 		onFieldEnd() {
-			if (this.field.stealthRockSuppressed) {
+			if (this.field.weatherState.stealthRockSuppressed) {
 				this.add('-message', 'The rocks settle back into position.');
-				this.field.stealthRockSuppressed = false;
+				this.field.weatherState.stealthRockSuppressed = false;
 			}
-			this.add('-weather', 'none');
+			this.add('-weather', 'none', '[silent]');
 		},
 	},
 	deltastream: { //Bug type airborneness implemented in sim/pokemon.js:Pokemon#isGrounded
@@ -1331,16 +1337,16 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 				return 0;
 			}
 		},
-		// Prevent Tailwind from being set while active
-		onTrySideCondition(condition, target, source, effect) {
-			if (condition === 'stealthrock' && this.field.isWeather('deltastream')) {
-				if (!this.field.stealthRockSuppressed) {
+		// Prevent Tailwind/Stealth Rock while active
+		onTrySideCondition(target, source, sideCondition) {
+			if (sideCondition.id === 'stealthrock' && this.field.isWeather('deltastream')) {
+				if (!this.field.weatherState.stealthRockSuppressed) {
 					this.add('-message', 'The rocks were swept up by Delta Stream!');
-					this.field.stealthRockSuppressed = true;
+					this.field.weatherState.stealthRockSuppressed = true;
 				}
 				return false;
 			}
-			if (condition === 'tailwind' && this.field.isWeather('deltastream')) {
+			if (sideCondition.id === 'tailwind' && this.field.isWeather('deltastream')) {
 				this.add('-message', 'Tailwind cannot be set while Delta Stream is active!');
 				return false;
 			}
@@ -1362,8 +1368,22 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 		onFieldStart(field, source, effect) {
 			this.add('-weather', 'DeltaStream', '[from] ability: ' + effect.name, `[of] ${source}`);
 			let dispelled = false;
-			for (const side of this.sides) { if (side.removeSideCondition('tailwind')) { dispelled = true; } }
+			let swept = false;
+			this.field.weatherState.stealthRockSides = [];
+			for (const side of this.sides) {
+				if (side.removeSideCondition('tailwind')) {
+					dispelled = true;
+					this.add('-sideend', side, 'Tailwind', '[from] Delta Stream');
+				}
+				if (side.removeSideCondition('stealthrock')) {
+					swept = true;
+					this.field.weatherState.stealthRockSides.push(side);
+					this.add('-sideend', side, 'Stealth Rock', '[from] Delta Stream', '[silent]');
+					this.add('-message', `Delta Stream swept away the Stealth Rock from ${side.n === 0 ? 'your side' : 'the opposing side'}!`);
+				}
+			}
 			if (dispelled) { this.add('-message', 'Delta Stream overpowers, dispelling all Tailwinds!'); }
+			this.field.weatherState.stealthRockSuppressed = swept;
 			for (const pokemon of this.getAllActive()) {pokemon.addVolatile('windburst'); }
 		},
 		onFieldResidualOrder: 1,
@@ -1374,9 +1394,9 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 		},
 		onWeather(target) { if (target.hasType('Fire')) { this.damage(target.baseMaxhp / 8); } },
 		onFieldEnd() {
-			if (this.field.stealthRockSuppressed) {
+			if (this.field.weatherState.stealthRockSuppressed) {
 				this.add('-message', 'The rocks settle back into position.');
-				this.field.stealthRockSuppressed = false;
+				this.field.weatherState.stealthRockSuppressed = false;
 			}
 			this.add('-weather', 'none');
 		},
@@ -1541,33 +1561,24 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 			if (source?.hasItem('terrainextender')) { return 11; }
 			return 4;
 		},
-		boostedpsyparticle: false,
-        setBoostedPsyParticle() {
-            if (!this.boostedpsyparticle) {
-                this.boostedpsyparticle = true;
-                this.add('-message', 'The psychic particles intensify, they now last long enough to reach airborne Pokémon!');
-            }
-        },
 		onTryHitPriority: 4,
 		onTryHit(target, source, effect) {
 			if (effect && (effect.priority <= 0.1 || effect.target === 'self')) { return; }
 			if (target.isSemiInvulnerable() || target.isAlly(source)) return;
-			const isAffected = this.boostedpsyparticle ? true : target.isGrounded();
+			const isAffected = this.field.terrainState.boostedpsyparticle ? true : target.isGrounded();
 			if (!isAffected) {
 				const baseMove = this.dex.moves.get(effect.id);
 				if (baseMove.priority > 0) { this.hint("Psychic Terrain doesn't affect Pokémon immune to Ground."); }
 				return;
 			}
-			// Only block priority moves if the attacker is NOT Normal type
 			const baseMove = this.dex.moves.get(effect.id);
 			if (baseMove.priority > 0 && source && source.hasType && source.hasType('Normal')) { return; }
 			this.add('-activate', target, 'terrain: Psychic Terrain');
-				return null;
+			return null;
 		},
 		onBasePowerPriority: 6,
 		onBasePower(basePower, attacker, defender, move) {
-			// If boostedpsyparticle is true, fliers are affected as if grounded
-			const isAffected = this.boostedpsyparticle ? true : attacker.isGrounded();
+			const isAffected = this.field.terrainState.boostedpsyparticle ? true : attacker.isGrounded();
 			if (move.type === 'Psychic' && isAffected && !attacker.isSemiInvulnerable()) {
 				this.debug('psychic terrain boost');
 				return this.chainModify([5325, 4096]);
@@ -1578,7 +1589,8 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 			}
 		},
 		onFieldStart(field, source, effect) {
-			if (effect?.effectType === 'Ability') { this.add('-terrain', 'Psychic Terrain', '[from] ability: ' + effect.name, `[of] ${source}`, '[duration] ' + this.field.terrainState.duration); } 
+			this.field.terrainState.boostedpsyparticle = false;
+			if (effect?.effectType === 'Ability') { this.add('-terrain', 'Psychic Terrain', '[from] ability: ' + effect.name, `[of] ${source}`, '[duration] ' + this.field.terrainState.duration); }
 			else { this.add('-terrain', 'Psychic Terrain', '[duration] ' + this.field.terrainState.duration); }
 		},
 		onFieldResidualOrder: 27,
@@ -1586,8 +1598,7 @@ export const Conditions: import('../sim/dex-conditions').ConditionDataTable = {
 		onFieldResidual() { this.add('-terrain', 'Psychic Terrain', '[upkeep]'); },
 		onFieldEnd() {
 			this.add('-terrain', 'none');
-			// Reset boostedpsyparticle when terrain ends
-			this.boostedpsyparticle = false;
+			this.field.terrainState.boostedpsyparticle = false;
 		},
 	},
 	toxicterrain: {

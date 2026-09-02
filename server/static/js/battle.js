@@ -2729,7 +2729,12 @@ break;
 case'-sidestart':{
 var _side=this.getSide(args[1]);
 var _effect20=Dex.getEffect(args[2]);
+var returning=_effect20.id==='stealthrock'&&(kwArgs.from==='Turbulent Winds'||kwArgs.from==='Delta Stream');
 _side.addSideCondition(_effect20,!!kwArgs.persistent);
+if(returning){
+this.scene.removeSideCondition(_side.n,_effect20.id,true);
+this.scene.addSideCondition(_side.n,_effect20.id,false,true);
+}
 switch(_effect20.id){
 case'tailwind':
 case'auroraveil':

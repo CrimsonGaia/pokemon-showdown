@@ -71,6 +71,8 @@ export class BattleScene implements BattleSceneStub {
 	interruptionCount = 1;
 	curWeather = '';
 	curTerrain = '';
+	teamBarRefreshScheduled = false;
+	teamBarPoolOrder: { p1: number[] | null, p2: number[] | null } = { p1: null, p2: null };
 	// Animation state
 	timeOffset = 0;
 	pokemonTimeOffset = 0;
@@ -100,7 +102,7 @@ export class BattleScene implements BattleSceneStub {
 			if (origAddDiv) {
 				logAny.addDiv = (...args: any[]) => {
 					const ret = origAddDiv(...args);
-					Promise.resolve().then(() => this.updateTeamBar());
+					this.scheduleTeamBarRefresh();
 					return ret;
 				};
 			}
@@ -499,17 +501,13 @@ export class BattleScene implements BattleSceneStub {
 	}
 	getTeamBarPoolHTML(side: Side, isP1: boolean): string {
 		const pooled = (side as any).teamsheetItems as (string | null)[] | undefined;
-		let html = `<div class="battleteambar-pool battleteambar-pool-${isP1 ? 'p1' : 'p2'}">`;
+		const key = isP1 ? 'p1' : 'p2';
+		let html = `<div class="battleteambar-pool battleteambar-pool-${key}" style="display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(5,1fr);grid-auto-flow:column;gap:2px;">`;
 		if (pooled?.length) {
-			// Display order is shuffled to prevent observant players from figuring out the items anyway
-			const indices = pooled.map((_, j) => j).filter(j => pooled[j]);
-			for (let k = indices.length - 1; k > 0; k--) {
-				const swapIdx = Math.floor(Math.random() * (k + 1));
-				[indices[k], indices[swapIdx]] = [indices[swapIdx], indices[k]];
-			}
-			for (const j of indices) {
+			const order = this.getStablePoolOrder(key, pooled);
+			for (const j of order) {
 				const item = pooled[j]!;
-				html += `<span class="itemicon battleteambar-poolicon" data-teambar-pool="${isP1 ? 'p1' : 'p2'}-${j}" style="${Dex.getItemIcon(item)}"></span>`;
+				html += `<span class="itemicon battleteambar-poolicon" data-teambar-pool="${key}-${j}" style="${Dex.getItemIcon(item)};width:48px;height:48px;"></span>`;
 			}
 		}
 		html += '</div>';
@@ -658,6 +656,32 @@ export class BattleScene implements BattleSceneStub {
 		this.updateRightSidebar();
 		this.updateTeamBar();
 	}
+		scheduleTeamBarRefresh() {
+		if (this.teamBarRefreshScheduled) return;
+		this.teamBarRefreshScheduled = true;
+		Promise.resolve().then(() => {
+			this.teamBarRefreshScheduled = false;
+			this.updateTeamBar();
+		});
+	}
+	getStablePoolOrder(key: 'p1' | 'p2', pooled: (string | null)[]): number[] {
+		const liveIndices = new Set(pooled.map((v, j) => (v ? j : -1)).filter(j => j >= 0));
+		let order = this.teamBarPoolOrder[key];
+		if (!order) {
+			// First time we've seen this side's pool this battle - shuffle once and keep it.
+			order = [...liveIndices];
+			for (let k = order.length - 1; k > 0; k--) {
+				const swapIdx = Math.floor(Math.random() * (k + 1));
+				[order[k], order[swapIdx]] = [order[swapIdx], order[k]];
+			}
+		} else {
+			// Drop indices that have since been attributed (item revealed/removed from the pool),
+			// but keep the rest in their existing order so unrevealed icons don't jump around.
+			order = order.filter(j => liveIndices.has(j));
+		}
+		this.teamBarPoolOrder[key] = order;
+		return order;
+	}
 	updateTeamBar() {
 		const p1Side = this.battle.nearSide;
 		const p2Side = this.battle.farSide;
@@ -685,7 +709,7 @@ export class BattleScene implements BattleSceneStub {
 		const p2PoolHTML = this.getTeamBarPoolHTML(p2Side, false);
 		this.$battleteambar.html(
 			`<div class="battleteambar-p1">${p1HTML}</div>` +
-			`<div class="battleteambar-pools">${p1PoolHTML}${p2PoolHTML}</div>` +
+			`<div class="battleteambar-pools" style="display:flex;flex-direction:row;gap:6px;">${p1PoolHTML}${p2PoolHTML}</div>` +
 			`<div class="battleteambar-p2">${p2HTML}</div>`
 		);
 		// FLIP: any pool icon present before this render but gone now just got attributed -
@@ -713,6 +737,7 @@ export class BattleScene implements BattleSceneStub {
 		this.updateTeamBar();
 	}
 	resetSides(skipEmpty?: boolean) {
+		this.teamBarPoolOrder = { p1: null, p2: null };
 		if (!skipEmpty) { for (const $spritesContainer of this.$sprites) { $spritesContainer.empty(); }}
 		for (const side of this.battle.sides) {
 			side.z = (side.isFar ? 200 : 0);
@@ -961,7 +986,7 @@ export class BattleScene implements BattleSceneStub {
 		if (sprite.$el) this.$sprites[+pokemon.side.isFar].append(sprite.$el);
 		return sprite;
 	}
-	addSideCondition(siden: number, id: ID, instant?: boolean) {
+	addSideCondition(siden: number, id: ID, instant?: boolean, returning?: boolean) {
 		if (!this.animating) return;
 		const side = this.battle.sides[siden];
 		const spriteIndex = +side.isFar;
@@ -1005,22 +1030,45 @@ export class BattleScene implements BattleSceneStub {
 			this.sideConditions[siden][id] = [mist];
 			mist.anim({ opacity: 0.7, time: instant ? 0 : 400, }).anim({ opacity: 0.3, time: instant ? 0 : 300, });
 			break;
-		case 'stealthrock':
-			const rock1 = new Sprite(BattleEffects.rock1, { display: 'block', x: x + side.leftof(-40), y: y - 10, z: side.z, opacity: 0.5, scale: 0.2, }, this);
-			const rock2 = new Sprite(BattleEffects.rock2, { display: 'block', x: x + side.leftof(-20), y: y - 40, z: side.z, opacity: 0.5, scale: 0.2, }, this);
-			const rock3 = new Sprite(BattleEffects.rock1, { display: 'block', x: x + side.leftof(30), y: y - 20, z: side.z, opacity: 0.5, scale: 0.2, }, this);
-			const rock4 = new Sprite(BattleEffects.rock2, { display: 'block', x: x + side.leftof(10), y: y - 30, z: side.z, opacity: 0.5, scale: 0.2, }, this);
+		case 'stealthrock': {
+			const settlePos = [
+				{ x: x + side.leftof(-90), y: y - 5, scale: 0.22 },
+				{ x: x + side.leftof(-35), y: y - 30, scale: 0.23 },
+				{ x: x + side.leftof(35), y: y - 15, scale: 0.23 },
+				{ x: x + side.leftof(90), y: y - 30, scale: 0.22 },
+			];
+			const liftedPos = [
+				{ x: x + side.leftof(-110), y: y + 80, scale: 0.28 },
+				{ x: x + side.leftof(-55), y: y + 105, scale: 0.28 },
+				{ x: x + side.leftof(55), y: y + 80, scale: 0.28 },
+				{ x: x + side.leftof(110), y: y + 100, scale: 0.28 },
+			];
+			const startPos = returning ? liftedPos : settlePos;
+			const startOpacity = returning ? 0.075 : 0.8;
+			const rock1 = new Sprite(BattleEffects.rock1, { display: 'block', x: startPos[0].x, y: startPos[0].y, z: side.z, opacity: startOpacity, scale: startPos[0].scale, }, this);
+			const rock2 = new Sprite(BattleEffects.rock2, { display: 'block', x: startPos[1].x, y: startPos[1].y, z: side.z, opacity: startOpacity, scale: startPos[1].scale, }, this);
+			const rock3 = new Sprite(BattleEffects.rock1, { display: 'block', x: startPos[2].x, y: startPos[2].y, z: side.z, opacity: startOpacity, scale: startPos[2].scale, }, this);
+			const rock4 = new Sprite(BattleEffects.rock2, { display: 'block', x: startPos[3].x, y: startPos[3].y, z: side.z, opacity: startOpacity, scale: startPos[3].scale, }, this);
 			this.$spritesFront[spriteIndex].append(rock1.$el);
 			this.$spritesFront[spriteIndex].append(rock2.$el);
 			this.$spritesFront[spriteIndex].append(rock3.$el);
 			this.$spritesFront[spriteIndex].append(rock4.$el);
 			this.sideConditions[siden][id] = [rock1, rock2, rock3, rock4];
+			if (returning) {
+				[rock1, rock2, rock3, rock4].forEach((rock, i) => {
+					rock.anim({ x: settlePos[i].x, y: settlePos[i].y, scale: settlePos[i].scale, opacity: 0.8, time: 1200 }, 'swing');
+				});
+			}
 			break;
+		}
 		case 'fluxscraps':
-			const rocks1 = new Sprite(BattleEffects.rocks, {display: 'block', x: x + side.leftof(-90), y: y + 30, z: side.z, opacity: 1, scale: 0.5, filter: 'brightness(1.8) grayscale(0.3)'}, this);
-			const rocks2 = new Sprite(BattleEffects.rocks, {display: 'block', x: x + side.leftof(-55), y: y + 40, z: side.z, opacity: 1, scale: 0.5, filter: 'brightness(1.8) grayscale(0.3)'}, this);
-			const rocks3 = new Sprite(BattleEffects.rocks, {display: 'block', x: x + side.leftof(25), y: y + 35, z: side.z, opacity: 1, scale: 0.5, filter: 'brightness(1.8) grayscale(0.3)'}, this);
-			const rocks4 = new Sprite(BattleEffects.rocks, {display: 'block', x: x + side.leftof(-5), y: y + 45, z: side.z, opacity: 1, scale: 0.5, filter: 'brightness(1.8) grayscale(0.3)'}, this);
+			const rocks1 = new Sprite(BattleEffects.rocks, {display: 'block', x: x + side.leftof(-90), y: y + 30, z: side.z, opacity: 1, scale: 0.5}, this);
+			const rocks2 = new Sprite(BattleEffects.rocks, {display: 'block', x: x + side.leftof(-55), y: y + 40, z: side.z, opacity: 1, scale: 0.5}, this);
+			const rocks3 = new Sprite(BattleEffects.rocks, {display: 'block', x: x + side.leftof(25), y: y + 35, z: side.z, opacity: 1, scale: 0.5}, this);
+			const rocks4 = new Sprite(BattleEffects.rocks, {display: 'block', x: x + side.leftof(-5), y: y + 45, z: side.z, opacity: 1, scale: 0.5}, this);
+			[rocks1, rocks2, rocks3, rocks4].forEach(rock => {
+				rock.$el.css('filter', 'brightness(1.8) grayscale(0.3)');
+			});
 			this.$spritesFront[spriteIndex].append(rocks1.$el);
 			this.$spritesFront[spriteIndex].append(rocks2.$el);
 			this.$spritesFront[spriteIndex].append(rocks3.$el);
@@ -1090,10 +1138,44 @@ export class BattleScene implements BattleSceneStub {
 			break;
 		}
 	}
-	removeSideCondition(siden: number, id: ID) {
+	removeSideCondition(siden: number, id: ID, instant?: boolean) {
 		if (!this.animating) return;
 		if (this.sideConditions[siden][id]) {
-			for (const sprite of this.sideConditions[siden][id]) sprite.destroy();
+			const sprites = this.sideConditions[siden][id];
+			if (instant) {
+				for (const sprite of sprites) sprite.destroy();
+				delete this.sideConditions[siden][id];
+				return;
+			}
+			if (id === 'stealthrock') {
+				const side = this.battle.sides[siden];
+				const liftedPos = [
+					{ x: (x: number) => x + side.leftof(-110), y: side.y + 80 },
+					{ x: (x: number) => x + side.leftof(-55), y: side.y + 105 },
+					{ x: (x: number) => x + side.leftof(55), y: side.y + 80 },
+					{ x: (x: number) => x + side.leftof(110), y: side.y + 100 },
+				];
+				const sideX = side.x;
+				for (let i = 0; i < sprites.length; i++) {
+					const sprite = sprites[i];
+					const pos = liftedPos[i];
+					sprite.anim({
+						x: pos.x(sideX),
+						y: pos.y,
+						scale: 0.28,
+						opacity: 0.15,
+						time: 1200,
+					}, 'swing');
+					setTimeout(((spriteToDestroy: Sprite) => {
+						return () => {
+							spriteToDestroy.$el.css('opacity', 0.075);
+						};
+					})(sprite), 700);
+				}
+				delete this.sideConditions[siden][id];
+				return;
+			}
+			for (const sprite of sprites) sprite.destroy();
 			delete this.sideConditions[siden][id];
 		}
 	}

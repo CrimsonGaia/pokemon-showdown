@@ -40334,6 +40334,7 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			terrainpulse: ["9L70"],
 			weatherball: ["9L70"],
 			rakestrike: ["9L75"],
+			recover: ["9L85"],
 	// TM/TR moves
 			dragonclaw: ["9M"],
 			endure: ["9M"],
@@ -40400,6 +40401,7 @@ export const Learnsets: import('../sim/dex-species').LearnsetDataTable = {
 			weatherball: ["9L70"],
 			rakestrike: ["9L75"],
 			dragonraze: ["9L80"],
+			recover: ["9L85"],
 	// TM/TR moves
 			dragonclaw: ["9M"],
 			endure: ["9M"],

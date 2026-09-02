@@ -74,9 +74,16 @@ export class Field {
 	clearWeather() {
 		if (!this.weather) return false;
 		const prevWeather = this.getWeather();
+		const prevWeatherState = this.weatherState;
+		const stealthRockSides = prevWeatherState.stealthRockSides || [];
 		this.battle.singleEvent('FieldEnd', prevWeather, this.weatherState, this);
 		this.weather = '';
 		this.battle.clearEffectState(this.weatherState);
+		for (const side of stealthRockSides) {
+			if (side.addSideCondition('stealthrock', side.active[0] || 'debug', prevWeather)) {
+				this.battle.add('-sidestart', side, 'Stealth Rock', '[from] ' + prevWeather.name, '[silent]');
+			}
+		}
 		this.battle.eachEvent('WeatherChange');
 		return true;
 	}

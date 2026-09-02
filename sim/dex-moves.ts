@@ -432,12 +432,9 @@ export class DataMove extends BasicEffect implements Readonly<BasicEffect & Move
 			else if (this.num >= 1) { this.gen = 1; }
 		}
 		assignMissingFields(this, data);
-		// Magic moves ignore type and ability immunities (treated as resistances instead), and
-		// get an amplified STAB modifier: 1.2x if the user's type matches once, 1.4x if it matches twice.
-		// Not affected by Terastallization - only the user's original types count.
+		// Magic moves ignore type immunities (treated as resistances instead) 
 		if (this.flags.magic) {
 			(this as any).ignoreImmunity = true;
-			(this as any).ignoreAbility = true;
 			const origEffectiveness = this.onEffectiveness;
 			(this as any).onEffectiveness = function (this: Battle, typeMod: number, target: Pokemon | null, type: string, move: ActiveMove) {
 				if (typeMod <= -99) return -1;

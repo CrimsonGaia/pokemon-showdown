@@ -754,11 +754,11 @@ export class BattleTextParser {
 				const template = this.template('start', effect);
 				return line1 + template.replace('[POKEMON]', this.pokemon(kwArgs.of)).replace('[SOURCE]', this.pokemon(pokemon));
 			}
-			if ((id === 'mummy' || id === 'lingeringaroma') && kwArgs.ability) {
+			if ((id === 'mummy' || id === 'lingeringaroma' || id === 'wanderingspirit') && kwArgs.ability) {
 				line1 += this.ability(kwArgs.ability, target);
-				line1 += this.ability(id === 'mummy' ? 'Mummy' : 'Lingering Aroma', target);
-				const template = this.template('changeAbility', id);
-				return line1 + template.replace('[TARGET]', this.pokemon(target));
+				line1 += this.ability(id === 'mummy' ? 'Mummy' : id === 'lingeringaroma' ? 'Lingering Aroma' : 'Wandering Spirit', target);
+				const template = this.template('changeAbility', 'mummy');
+				return line1 + template.replace('[TARGET]', this.pokemon(target)).replace('Mummy', id === 'wanderingspirit' ? 'Wandering Spirit' : id === 'lingeringaroma' ? 'Lingering Aroma' : 'Mummy');
 			}
 			if (id === 'commander') { // Commander didn't have a message prior to v1.2.0 of SV so this is for backwards compatibility
 				if (target === pokemon) return line1;

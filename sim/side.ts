@@ -311,6 +311,7 @@ export class Side {
 		if (!source) throw new Error(`setting sidecond without a source`);
 		if (!source.getSlot) source = (source as any as Side).active[0];
 		status = this.battle.dex.conditions.get(status);
+		if (!this.battle.runEvent('TrySideCondition', this, source, status)) return false;
 		if (this.sideConditions[status.id]) {
 			if (!(status as any).onSideRestart) return false;
 			return this.battle.singleEvent('SideRestart', status, this.sideConditions[status.id], this, source, sourceEffect);
