@@ -340,7 +340,7 @@ export class DataMove extends BasicEffect implements Readonly<BasicEffect & Move
 	/** Whether or not this move ignores defense boosts. */
 	readonly ignoreDefensive: boolean;
 	/**
-	 * Whether or not this move ignores type immunities. Defaults to true for Status moves and false for Physical/Special moves.
+	 * Whether or not this move ignores type immunities.
 	 * If an Object, its keys represent the types whose immunities are ignored, and its values should only be true.
 	 */
 	readonly ignoreImmunity: { [typeName: string]: boolean } | boolean;
@@ -405,7 +405,7 @@ export class DataMove extends BasicEffect implements Readonly<BasicEffect & Move
 		this.ignorePositiveDefensive = !!data.ignorePositiveDefensive;
 		this.ignoreOffensive = !!data.ignoreOffensive;
 		this.ignoreDefensive = !!data.ignoreDefensive;
-		this.ignoreImmunity = (data.ignoreImmunity !== undefined ? data.ignoreImmunity : this.category === 'Status');
+		this.ignoreImmunity = data.ignoreImmunity !== undefined ? data.ignoreImmunity : false;
 		this.pp = Number(data.pp);
 		this.noPPBoosts = !!(data.noPPBoosts ?? data.isZ);
 		this.flags = data.flags || {};

@@ -570,7 +570,7 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 			this.add('-activate', pokemon, 'ability: Flux Conduit'); 
 			this.actions.useMove('fluxscraps', pokemon, { sourceEffect: this.dex.abilities.get('fluxconduit'), }); 
 		},
-		onEnd(pokemon) { pokemon.side.removeSideCondition('fluxscraps'); },
+		onEnd(pokemon) { pokemon.side.foe.removeSideCondition('fluxscraps'); },
 		onAnyRedirectTarget(target, source, move) {
 			const activeMove = move as Move;
 			const holder = this.effectState.target;
@@ -1061,28 +1061,29 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 	},
 	neurotoxin: {
 		onHit(target, source, move) {
-			if (!target.hp) return;
-			if (move?.effectType === 'Move' && target.getMoveHitData(move).crit) { this.boost({atk: 3}, target, target); }
+			const pokemon = this.effectState.target;
+			if (!pokemon.hp) return;
+			if (move?.effectType === 'Move' && pokemon.getMoveHitData(move).crit) { this.boost({atk: 3}, pokemon, pokemon); }
 		},
-		onAnyAfterMove(source, target, move) {
-			if (source.moveLastTurnResult === false) {
-				this.boost({atk: 3}, target, target);
-				return move.basePower * 2;
+		onAfterMove(source, target, move) {
+			const pokemon = this.effectState.target;
+			if (source !== pokemon) return;
+			if (source.moveThisTurnResult === false) { this.boost({atk: 3}, pokemon, pokemon); }
+		},
+		onSourceDamagingHit(damage, target, source, move) {
+			if (this.effectState.target !== source) return;
+			if (move.flags?.pierce && this.randomChance(1, 5)) {
+				target.trySetStatus('par', source);
+				const targetAbility = target.getAbility(1);
+				if (targetAbility.flags['cantsuppress'] || targetAbility.id === 'neurotoxin') return;
+				target.setAbility('neurotoxin', source, null, false, false, 1);
 			}
 		},
-		onModifyMove(move, attacker, defender) { 
-			if (move.flags?.pierce && this.randomChance(1, 5)) { 
-				attacker.trySetStatus('par', defender);
-				const sourceAbility = attacker.getAbility(1);
-				if (sourceAbility.flags['cantsuppress'] || sourceAbility.id === 'neurotoxin') return;
-				if (this.checkMoveMakesContact(move, attacker, defender, !attacker.isAlly(defender))) {
-					const oldAbility = attacker.getAbility(1).id;
-					attacker.setAbility('neurotoxin', defender, null, false, false, 1);
-					if (oldAbility && oldAbility !== 'neurotoxin') { this.add('-activate', defender, 'ability: Neurotoxin', this.dex.abilities.get(oldAbility).name, `[of] ${attacker}`); }
-				}
-			} 
+		onSourceAfterFaint(length, target, source, effect) {
+			const pokemon = this.effectState.target;
+			if (source !== pokemon) return;
+			if (effect?.effectType === 'Move') { this.boost({atk: length}, pokemon); }
 		},
-		onSourceAfterFaint(length, target, source, effect) { if (effect && effect.effectType === 'Move') { this.boost({ atk: length }, source); } },
 		flags: {},
 		name: "Neurotoxin",
 		shortDesc: "Pierce moves gain a 20% chance to Paralyze; when this effect procs, also spread Neurotoxin to the target's Ability 1 slot. When user misses a move, fails a move, or is hit by a critical hit: boost Attack +3 stages. When user kills a pokemon with a damaging move: +1 Attack.",
@@ -6264,10 +6265,9 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 		num: 228,
 	},
 	neuroforce: {
-		onModifyDamage(damage, source, target, move) {
-			if (move && move.type === 'Psychic') { move.ignoreImmunity = true; }
-			if (move && target.getMoveHitData(move).typeMod > 0) { return this.chainModify(1.3); }
-		},
+		onModifyMovePriority: -5,
+		onModifyMove(move, pokemon) { if (move && move.type === 'Psychic') { move.ignoreImmunity = true; } },
+		onModifyDamage(damage, source, target, move) { if (move && target.getMoveHitData(move).typeMod > 0) { return this.chainModify(1.3); } },
 		flags: {},
 		name: "Neuroforce",
 		shortDesc: "User's Psychic type moves ignore immunities. User's super effective attacks are boosed in power 1.3x.",
@@ -7634,7 +7634,8 @@ export const Abilities: import('../sim/dex-abilities').AbilityDataTable = {
 	myceliummight: {
 		onFractionalPriorityPriority: -1,
 		onFractionalPriority(priority, pokemon, target, move) {  if (move.category === 'Status') { return -0.1; } },
-		onModifyMove(move) { if (move.category === 'Status') {
+		onModifyMove(move) { 
+			if (move.category === 'Status') {
 				move.ignoreAbility = true;
 				move.ignoreImmunity = true;
 			}

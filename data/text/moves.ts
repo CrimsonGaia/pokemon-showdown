@@ -4,6 +4,13 @@ export const MovesText: { [id: IDEntry]: MoveText } = {
 		desc: "Has a very high chance for a critical hit.",
 		shortDesc: "Very high critical hit ratio.",
 	},
+	abduct: {
+		name: "Abduct",
+		desc: "Carries the target to the sky on the first turn, then attacks on the second. The target cannot move while airborne. Fails if the target weighs 200kg or more.",
+		shortDesc: "User and target fly up turn 1, hits turn 2. Fails vs targets 200kg+.",
+
+		prepare: "[POKEMON] carried [TARGET] into the sky!",
+	},
 	absorb: {
 		name: "Absorb",
 		desc: "The user recovers 1/2 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down.",
@@ -817,6 +824,13 @@ export const MovesText: { [id: IDEntry]: MoveText } = {
 
 		typeChange: "  [POKEMON] burned itself out!",
 	},
+	burrow: {
+		name: "Burrow",
+		desc: "User burrows underground, dodging most incoming moves, but takes 2x damage from Avalanche, Earthquake, Mudslide, Surf, and Whirlpool.",
+		shortDesc: "Dodges most moves this turn; Avalanche/Earthquake/Mudslide/Surf/Whirlpool hit for 2x.",
+
+		start: "  [POKEMON] burrowed underground!",
+	},
 	buzzybuzz: {
 		name: "Buzzy Buzz",
 		desc: "Has a 100% chance to paralyze the foe.",
@@ -826,6 +840,15 @@ export const MovesText: { [id: IDEntry]: MoveText } = {
 		name: "Calm Mind",
 		desc: "Raises the user's Special Attack and Special Defense by 1 stage.",
 		shortDesc: "Raises the user's Sp. Atk and Sp. Def by 1.",
+	},
+	caltrops: {
+		name: "Caltrops",
+		desc: "Sets Caltrops: a grounded entry hazard that deals damage based on Steel weakness.",
+		shortDesc: "Sets Caltrops: grounded hazard, damage scales with Steel weakness.",
+
+		start: "  Caltrops were scattered on the ground all around [TEAM]!",
+		end: "  The caltrops disappeared from the ground around [TEAM]!",
+		damage: "  [POKEMON] was hurt by the caltrops!",
 	},
 	camouflage: {
 		name: "Camouflage",
@@ -1434,6 +1457,13 @@ export const MovesText: { [id: IDEntry]: MoveText } = {
 		name: "Discharge",
 		desc: "Has a 30% chance to paralyze the target.",
 		shortDesc: "30% chance to paralyze adjacent Pokemon.",
+	},
+	disperse: {
+		name: "Disperse",
+		desc: "User spreads its body thin, dodging most incoming moves, but Breath, Explosive, Powder, Sound, Wind, and Wing moves ignore this.",
+		shortDesc: "Dodges most moves this turn; Breath/Explosive/Powder/Sound/Wind/Wing bypass this.",
+
+		start: "  [POKEMON] spread its body thin!",
 	},
 	dive: {
 		name: "Dive",
@@ -2205,6 +2235,15 @@ export const MovesText: { [id: IDEntry]: MoveText } = {
 		desc: "This move is always a critical hit unless the target is under the effect of Lucky Chant or has the Battle Armor or Shell Armor Abilities. This move does not check accuracy.",
 		shortDesc: "Always results in a critical hit; no accuracy check.",
 	},
+	fluxscraps: {
+		name: "Flux Scraps",
+		desc: "Sets Flux Scraps: a grounded entry hazard that deals damage based on Steel weakness.",
+		shortDesc: "Sets Flux Scraps: grounded hazard, damage scales with Steel weakness.",
+
+		start: "  Scraps of [POKEMON]'s flux metal float in the air around [TEAM]!",
+		end: "  The flux scraps disappeared from around [TEAM]!",
+		damage: "  Flux scraps dug into [POKEMON]!",
+	},
 	fly: {
 		name: "Fly",
 		desc: "This attack charges on the first turn and executes on the second. On the first turn, the user avoids all attacks other than Gust, Hurricane, Sky Uppercut, Smack Down, Thousand Arrows, Thunder, and Twister, and Gust and Twister have doubled power when used against it. If the user is holding a Power Herb, the move completes in one turn.",
@@ -2779,6 +2818,22 @@ export const MovesText: { [id: IDEntry]: MoveText } = {
 		activate: "  [POKEMON]'s [MOVE] lost all of its PP due to the grudge!",
 		start: "[POKEMON] wants its target to bear a grudge!",
 	},
+	guard: {
+		name: "Guard",
+		desc: "+2 priority. Protects user, but not from Status moves.",
+		shortDesc: "+2 priority. Protects user, but not from Status moves.",
+
+		start: "  [POKEMON] braced itself!",
+		block: "  [POKEMON] guarded the attack!",
+	},
+	guardlv2: {
+		name: "GuardLv2",
+		desc: "+3 priority. Protects user.",
+		shortDesc: "+3 priority. Protects user.",
+
+		start: "  [POKEMON] braced itself!",
+		block: "  [POKEMON] guarded the attack!",
+	},
 	guardianofalola: {
 		name: "Guardian of Alola",
 		desc: "Deals damage to the target equal to 3/4 of its current HP, rounded down, but not less than 1 HP.",
@@ -3109,6 +3164,13 @@ export const MovesText: { [id: IDEntry]: MoveText } = {
 		desc: "Leaves the target with at least 1 HP.",
 		shortDesc: "Always leaves the target with at least 1 HP.",
 	},
+	holddown: {
+		name: "Hold Down",
+		desc: "User pins the target in place for 2 turns. The user and target remain vulnerable the entire time. If the target's Attack is 100 or more higher than the user's, it breaks free after 1 turn instead.",
+		shortDesc: "Sky Drop-style pin for 2 turns; 1 turn if target's Atk is 100+ higher.",
+
+		prepare: "[POKEMON] pinned [TARGET] to the ground!",
+	},
 	holdhands: {
 		name: "Hold Hands",
 		desc: "No competitive use. Fails if there is no ally adjacent to the user.",
@@ -3139,6 +3201,13 @@ export const MovesText: { [id: IDEntry]: MoveText } = {
 		name: "Horn Leech",
 		desc: "The user recovers 1/2 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down.",
 		shortDesc: "User recovers 50% of the damage dealt.",
+	},
+	hottake: {
+		name: "Hot Take",
+		desc: "Sets Sun for 2 turns, or 4 turns if the user holds a Heat Rock, then switches the user out.",
+		shortDesc: "Sets Sun for 2 turns (4 with Heat Rock), then switches out.",
+
+		prepare: "[POKEMON] is about to drop a hot take!",
 	},
 	howl: {
 		name: "Howl",
@@ -3195,6 +3264,14 @@ export const MovesText: { [id: IDEntry]: MoveText } = {
 		name: "Hyper Fang",
 		desc: "Has a 10% chance to make the target flinch.",
 		shortDesc: "10% chance to make the target flinch.",
+	},
+	hyperspacebarrier: {
+		name: "Hyperspace Barrier",
+		desc: "+4 priority. Protects the user from attacks. If a contact move that pierces protection hits the user, the attacker is forced to switch out.",
+		shortDesc: "+4 priority. Protects from attacks; piercing contact moves phase the attacker.",
+
+		start: "  [POKEMON] put up a warp barrier!",
+		block: "  [POKEMON] fell into the warp and was teleported away!",
 	},
 	hyperspacefury: {
 		name: "Hyperspace Fury",
@@ -3565,6 +3642,13 @@ export const MovesText: { [id: IDEntry]: MoveText } = {
 		desc: "Has a 50% chance to lower the target's accuracy by 1 stage.",
 		shortDesc: "50% chance to lower the target's accuracy by 1.",
 	},
+	leap: {
+		name: "Leap",
+		desc: "User jumps into the air, dodging most incoming moves, the same as Fly.",
+		shortDesc: "Dodges most moves this turn, same as Fly.",
+
+		start: "  [POKEMON] leapt into the air!",
+	},
 	leechlife: {
 		name: "Leech Life",
 		desc: "The user recovers 1/2 the HP lost by the target, rounded half up. If Big Root is held by the user, the HP recovered is 1.3x normal, rounded half down.",
@@ -3702,6 +3786,13 @@ export const MovesText: { [id: IDEntry]: MoveText } = {
 		name: "Lumina Crash",
 		desc: "Has a 100% chance to lower the target's Special Defense by 2 stages.",
 		shortDesc: "100% chance to lower the target's Sp. Def by 2.",
+	},
+	lunaralignment: {
+		name: "Lunar Alignment",
+		desc: "Charges on the first turn. Sets Eclipse on the second turn.",
+		shortDesc: "Charges turn 1. Sets Eclipse turn 2.",
+
+		prepare: "[POKEMON] communes with the moon!",
 	},
 	lunarblessing: {
 		name: "Lunar Blessing",
@@ -4240,6 +4331,14 @@ export const MovesText: { [id: IDEntry]: MoveText } = {
 		gen1: {
 			desc: "The user uses the last move used by the target. Fails if the target has not made a move since the user switched in, or if the last move used was Mirror Move.",
 		},
+	},
+	mirrorshield: {
+		name: "Mirror Shield",
+		desc: "+4 priority. Protects the user. If hit by a Beam or Light move, reflects it back at the attacker.",
+		shortDesc: "+4 priority. Protects user; reflects Beam/Light moves back at the attacker.",
+
+		start: "  [POKEMON] raised a mirrored shield!",
+		block: "  [POKEMON] was shielded by the mirror!",
 	},
 	mirrorshot: {
 		name: "Mirror Shot",
@@ -5453,6 +5552,14 @@ export const MovesText: { [id: IDEntry]: MoveText } = {
 		desc: "If there are other active Pokemon that chose this move for use this turn, those Pokemon take their turn immediately after the user, in Speed order, and this move's power is 120 for each other user.",
 		shortDesc: "Power doubles if others used Round this turn.",
 	},
+	roundhousekick: {
+		name: "Roundhouse Kick",
+		desc: "+5 priority. User focuses to counter incoming attacks, taking 1/8 damage and immediately returning a 90 BP Roundhouse Kick to each damaging attacker.",
+		shortDesc: "+5 priority. Focuses and counters damaging attacks.",
+
+		start: "  [POKEMON] readies a counter kick!",
+		activate: "  [POKEMON] braced against the hit!",
+	},
 	ruination: {
 		name: "Ruination",
 		desc: "Deals damage to the target equal to half of its current HP, rounded down, but not less than 1 HP.",
@@ -5662,6 +5769,14 @@ export const MovesText: { [id: IDEntry]: MoveText } = {
 		name: "Shadow Claw",
 		desc: "Has a higher chance for a critical hit.",
 		shortDesc: "High critical hit ratio.",
+	},
+	shadowclone: {
+		name: "Shadow Clone",
+		desc: "User transforms into the target, then creates a Substitute at the cost of 1/4 max HP. When the clone breaks or ends, the transformation ends as well.",
+		shortDesc: "Transforms into target, then makes a Substitute. Reverts when it breaks.",
+
+		fail: "  [POKEMON] couldn't make a Shadow Clone!",
+		activate: "  The Shadow Clone took the hit!",
 	},
 	shadowforce: {
 		name: "Shadow Force",
@@ -6136,6 +6251,13 @@ export const MovesText: { [id: IDEntry]: MoveText } = {
 		name: "Sparkly Swirl",
 		desc: "Every Pokemon in the user's party is cured of its non-volatile status condition.",
 		shortDesc: "Cures the user's party of all status conditions.",
+	},
+	sparkofbrilliance: {
+		name: "Spark of Brilliance",
+		desc: "Sets Electric Terrain and switches the user out.",
+		shortDesc: "Sets Electric Terrain, then switches out.",
+
+		prepare: "[POKEMON] looks to be deep in thought!",
 	},
 	spectralthief: {
 		name: "Spectral Thief",
@@ -6621,6 +6743,15 @@ export const MovesText: { [id: IDEntry]: MoveText } = {
 			desc: "The user restores its HP based on its Stockpile count. Restores 1/4 of its maximum HP if it's 1, 1/2 of its maximum HP if it's 2, both rounded half down, and all of its HP if it's 3. Fails if the user's Stockpile count is 0. The user's Stockpile count resets to 0.",
 		},
 	},
+	sweetextract: {
+		name: "Sweet Extract",
+		desc: "If used on an ally, heals 50% of its max HP. Otherwise inflicts Sweet Extract on the target for 2 turns, redirecting the target's attacks toward an ally. 100% chance to lower the target's Evasion and Attack by 1 stage. 20% chance to Charm the target.",
+		shortDesc: "Ally: heal 1/2 max HP. Foe: Sweet Extract (2 turns). 100% -1 Eva/Atk. 20% Charm.",
+
+		start: "  [POKEMON] was coated in Sweet Extract!",
+		activate: "  Sweet Extract redirected the attack!",
+		end: "  The Sweet Extract wore off of [POKEMON]!",
+	},
 	sweetkiss: {
 		name: "Sweet Kiss",
 		shortDesc: "Causes the target to become confused.",
@@ -6934,6 +7065,13 @@ export const MovesText: { [id: IDEntry]: MoveText } = {
 
 		cant: "The effects of Throat Chop prevent [POKEMON] from using certain moves!",
 	},
+	throwshade: {
+		name: "Throw Shade",
+		desc: "Sets Sandstorm for 5 turns, or 9 turns if the user holds a Smooth Rock, then switches the user out.",
+		shortDesc: "Sets Sandstorm for 5 turns (9 with Smooth Rock), then switches out.",
+
+		prepare: "[POKEMON] hurls countless insults and rumors!",
+	},
 	thunder: {
 		name: "Thunder",
 		desc: "Has a 30% chance to paralyze the target. This move can hit a target using Bounce, Fly, or Sky Drop, or is under the effect of Sky Drop. If the weather is Primordial Sea or Rain Dance, this move does not check accuracy. If the weather is Desolate Land or Sunny Day, this move's accuracy is 50%. If this move is used against a Pokemon holding Utility Umbrella, this move's accuracy remains at 70%.",
@@ -7038,6 +7176,13 @@ export const MovesText: { [id: IDEntry]: MoveText } = {
 			desc: "Badly poisons the target.",
 			shortDesc: "Badly poisons the target.",
 		},
+	},
+	toxicdiscourse: {
+		name: "Toxic Discourse",
+		desc: "Sets Toxic Terrain and switches the user out.",
+		shortDesc: "Sets Toxic Terrain, then switches out.",
+
+		prepare: "[POKEMON] is thinking about just the wrong thing to say!",
 	},
 	toxicspikes: {
 		name: "Toxic Spikes",

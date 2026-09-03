@@ -730,6 +730,12 @@ License: GPLv2
 	display: none;
 	position: absolute;
 }
+.turnstatus-guard {
+	background: #FFAA55;
+	border: 1px solid #CC7722;
+	display: none;
+	position: absolute;
+}
 .seeking {
 	display: block;
 	position: absolute;

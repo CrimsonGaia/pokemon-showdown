@@ -1717,7 +1717,7 @@ break;
 case'-supereffective':{
 var _poke12=this.getPokemon(args[1]);
 if(_poke12){
-this.scene.resultAnim(_poke12,'Super-effective','bad');
+this.scene.resultAnim(_poke12,'Weak','bad');
 if(Dex.afdMode===true){this.scene.runOtherAnim('hitmark',[_poke12]);}
 }
 if(this.activeMoveIsSpread)kwArgs.spread='.';
@@ -1726,7 +1726,7 @@ break;
 }
 case'-resisted':{
 var _poke13=this.getPokemon(args[1]);
-if(_poke13)this.scene.resultAnim(_poke13,'Resisted','neutral');
+if(_poke13)this.scene.resultAnim(_poke13,'Resist','neutral');
 if(this.activeMoveIsSpread)kwArgs.spread='.';
 this.log(args,kwArgs);
 break;

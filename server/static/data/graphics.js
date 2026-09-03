@@ -1579,6 +1579,8 @@ PokemonSprite=function(_Sprite2){
 
 
 
+
+
 function PokemonSprite(spriteData,pos,scene,isFrontSprite){var _this8;
 _this8=_Sprite2.call(this,spriteData,pos,scene)||this;_this8.forme='';_this8.cryurl=undefined;_this8.subsp=null;_this8.$sub=null;_this8.isSubActive=false;_this8.$statbar=null;_this8.isFrontSprite=void 0;_this8.isMissedPokemon=false;_this8.oldsp=null;_this8.statbarLeft=0;_this8.statbarTop=0;_this8.left=0;_this8.top=0;_this8.effects={};
 _this8.cryurl=_this8.sp.cryurl;
@@ -1963,7 +1965,7 @@ this.scene.updateSidebars();
 if(isPermanent){this.resetStatbar(pokemon);}else
 {this.updateStatbar(pokemon);}
 };_proto3.
-pokeEffect=function pokeEffect(id){if(id==='protect'||id==='magiccoat'){this.effects[id][0].anim({scale:1.2,opacity:1,time:100}).anim({opacity:0.4,time:300});}};_proto3.
+pokeEffect=function pokeEffect(id){if(id==='protect'||id==='magiccoat'||id==='guard'){this.effects[id][0].anim({scale:1.2,opacity:1,time:100}).anim({opacity:0.4,time:300});}};_proto3.
 addEffect=function addEffect(id,instant){
 if(id in this.effects){
 this.pokeEffect(id);
@@ -1982,8 +1984,9 @@ this.scene.$spritesFront[spriten].append(leechseed1.$el);
 this.scene.$spritesFront[spriten].append(leechseed2.$el);
 this.scene.$spritesFront[spriten].append(leechseed3.$el);
 this.effects['leechseed']=[leechseed1,leechseed2,leechseed3];
-}else if(id==='protect'||id==='magiccoat'){
-var protect=new Sprite(BattleEffects.protect,{display:'block',x:this.x,y:this.y,z:this.behind(-15),xscale:1,yscale:0,opacity:0.1},this.scene);
+}else if(id==='protect'||id==='magiccoat'||id==='guard'){
+var protectEffect=id==='guard'?BattleEffects.guard:BattleEffects.protect;
+var protect=new Sprite(protectEffect,{display:'block',x:this.x,y:this.y,z:this.behind(-15),xscale:1,yscale:0,opacity:0.1},this.scene);
 this.scene.$spritesFront[spriten].append(protect.$el);
 this.effects[id]=[protect];
 protect.anim({opacity:0.9,time:instant?0:400}).anim({opacity:0.4,time:instant?0:300});
@@ -2144,7 +2147,7 @@ $hptext.html(pokemon.hpWidth(100)+"%");
 $hptext.show();
 $hptextborder.show();
 }
-};return PokemonSprite;}(Sprite);PokemonSprite.statusTable={formechange:null,typechange:null,typeadd:null,trapped:null,throatchop:['Throat Chop','bad'],confusion:['Confused','bad'],healblock:['Heal Block','bad'],flashfire:['Flash Fire','good'],imprison:['Imprisoning foe','good'],autotomize:['Lightened','neutral'],miracleeye:['Miracle Eye','bad'],foresight:['Foresight','bad'],telekinesis:['Telekinesis','neutral'],transform:['Transformed','neutral'],powertrick:['Power Trick','neutral'],curse:['Curse','bad'],nightmare:['Nightmare','bad'],attract:['Infatuation','bad'],torment:['Torment','bad'],taunt:['Taunt','bad'],disable:['Disable','bad'],embargo:['Embargo','bad'],ingrain:['Ingrain','good'],aquaring:['Aqua Ring','good'],stockpile1:['Stockpile','good'],stockpile2:['Stockpile&times;2','good'],stockpile3:['Stockpile&times;3','good'],perish0:['Perish now','bad'],perish1:['Perish next turn','bad'],perish2:['Perish in 2','bad'],perish3:['Perish in 3','bad'],airballoon:['Balloon','good'],leechseed:['Leech Seed','bad'],encore:['Encore','bad'],mustrecharge:['Must recharge','bad'],bide:['Bide','good'],magnetrise:['Magnet Rise','good'],smackdown:['Smack Down','bad'],focusenergy:['Critical Hit Boost','good'],dragoncheer:['Critical Hit Boost','good'],slowstart:['Slow Start','bad'],protosynthesisatk:['Protosynthesis: Atk','good'],protosynthesisdef:['Protosynthesis: Def','good'],protosynthesisspa:['Protosynthesis: SpA','good'],protosynthesisspd:['Protosynthesis: SpD','good'],protosynthesisspe:['Protosynthesis: Spe','good'],quarkdriveatk:['Quark Drive: Atk','good'],quarkdrivedef:['Quark Drive: Def','good'],quarkdrivespa:['Quark Drive: SpA','good'],quarkdrivespd:['Quark Drive: SpD','good'],quarkdrivespe:['Quark Drive: Spe','good'],fallen1:['Fallen: 1','good'],fallen2:['Fallen: 2','good'],fallen3:['Fallen: 3','good'],fallen4:['Fallen: 4','good'],fallen5:['Fallen: 5','good'],noretreat:['No Retreat','bad'],octolock:['Octolock','bad'],tarshot:['Tar Shot','bad'],saltcure:['Salt Cure','bad'],syrupbomb:['Syrupy','bad'],doomdesire:null,futuresight:null,mimic:['Mimic','good'],watersport:['Water Sport','good'],mudsport:['Mud Sport','good'],substitute:null,uproar:['Uproar','neutral'],rage:['Rage','neutral'],roost:['Landed','neutral'],protect:['Protect','good'],quickguard:['Quick Guard','good'],wideguard:['Wide Guard','good'],craftyshield:['Crafty Shield','good'],matblock:['Mat Block','good'],maxguard:['Max Guard','good'],helpinghand:['Helping Hand','good'],magiccoat:['Magic Coat','good'],destinybond:['Destiny Bond','good'],snatch:['Snatch','good'],grudge:['Grudge','good'],charge:['Charge','good'],endure:['Endure','good'],focuspunch:['Focusing','neutral'],shelltrap:['Trap set','neutral'],powder:['Powder','bad'],electrify:['Electrify','bad'],glaiverush:['Glaive Rush','bad'],ragepowder:['Rage Powder','good'],followme:['Follow Me','good'],instruct:['Instruct','neutral'],beakblast:['Beak Blast','neutral'],laserfocus:['Laser Focus','good'],spotlight:['Spotlight','neutral'],itemremoved:null,bind:['Bind','bad'],clamp:['Clamp','bad'],firespin:['Fire Spin','bad'],infestation:['Infestation','bad'],magmastorm:['Magma Storm','bad'],sandtomb:['Sand Tomb','bad'],snaptrap:['Snap Trap','bad'],thundercage:['Thunder Cage','bad'],whirlpool:['Whirlpool','bad'],wrap:['Wrap','bad'],mist:['Mist','good'],lightscreen:['Light Screen','good'],reflect:['Reflect','good'],defeathered:['Defeathered','bad'],needles:['Needles','bad'],spent:['Spent','bad'],tripped:['Tripped','bad']};
+};return PokemonSprite;}(Sprite);PokemonSprite.statusTable={formechange:null,typechange:null,typeadd:null,trapped:null,throatchop:['Throat Chop','bad'],confusion:['Confused','bad'],healblock:['Heal Block','bad'],flashfire:['Flash Fire','good'],imprison:['Imprisoning foe','good'],autotomize:['Lightened','neutral'],miracleeye:['Miracle Eye','bad'],foresight:['Foresight','bad'],telekinesis:['Telekinesis','neutral'],transform:['Transformed','neutral'],powertrick:['Power Trick','neutral'],curse:['Curse','bad'],nightmare:['Nightmare','bad'],attract:['Infatuation','bad'],torment:['Torment','bad'],taunt:['Taunt','bad'],disable:['Disable','bad'],embargo:['Embargo','bad'],ingrain:['Ingrain','good'],aquaring:['Aqua Ring','good'],stockpile1:['Stockpile','good'],stockpile2:['Stockpile&times;2','good'],stockpile3:['Stockpile&times;3','good'],perish0:['Perish now','bad'],perish1:['Perish next turn','bad'],perish2:['Perish in 2','bad'],perish3:['Perish in 3','bad'],airballoon:['Balloon','good'],leechseed:['Leech Seed','bad'],encore:['Encore','bad'],mustrecharge:['Must recharge','bad'],bide:['Bide','good'],magnetrise:['Magnet Rise','good'],smackdown:['Smack Down','bad'],focusenergy:['Critical Hit Boost','good'],dragoncheer:['Critical Hit Boost','good'],slowstart:['Slow Start','bad'],protosynthesisatk:['Protosynthesis: Atk','good'],protosynthesisdef:['Protosynthesis: Def','good'],protosynthesisspa:['Protosynthesis: SpA','good'],protosynthesisspd:['Protosynthesis: SpD','good'],protosynthesisspe:['Protosynthesis: Spe','good'],quarkdriveatk:['Quark Drive: Atk','good'],quarkdrivedef:['Quark Drive: Def','good'],quarkdrivespa:['Quark Drive: SpA','good'],quarkdrivespd:['Quark Drive: SpD','good'],quarkdrivespe:['Quark Drive: Spe','good'],fallen1:['Fallen: 1','good'],fallen2:['Fallen: 2','good'],fallen3:['Fallen: 3','good'],fallen4:['Fallen: 4','good'],fallen5:['Fallen: 5','good'],noretreat:['No Retreat','bad'],octolock:['Octolock','bad'],tarshot:['Tar Shot','bad'],saltcure:['Salt Cure','bad'],syrupbomb:['Syrupy','bad'],doomdesire:null,futuresight:null,mimic:['Mimic','good'],watersport:['Water Sport','good'],mudsport:['Mud Sport','good'],substitute:null,uproar:['Uproar','neutral'],rage:['Rage','neutral'],roost:['Landed','neutral'],protect:['Protect','good'],guard:['Guard','good'],guardlv2:['GuardLv2','good'],quickguard:['Quick Guard','good'],wideguard:['Wide Guard','good'],craftyshield:['Crafty Shield','good'],matblock:['Mat Block','good'],maxguard:['Max Guard','good'],helpinghand:['Helping Hand','good'],magiccoat:['Magic Coat','good'],destinybond:['Destiny Bond','good'],snatch:['Snatch','good'],grudge:['Grudge','good'],charge:['Charge','good'],endure:['Endure','good'],focuspunch:['Focusing','neutral'],shelltrap:['Trap set','neutral'],powder:['Powder','bad'],electrify:['Electrify','bad'],glaiverush:['Glaive Rush','bad'],ragepowder:['Rage Powder','good'],followme:['Follow Me','good'],instruct:['Instruct','neutral'],beakblast:['Beak Blast','neutral'],laserfocus:['Laser Focus','good'],spotlight:['Spotlight','neutral'],itemremoved:null,bind:['Bind','bad'],clamp:['Clamp','bad'],firespin:['Fire Spin','bad'],infestation:['Infestation','bad'],magmastorm:['Magma Storm','bad'],sandtomb:['Sand Tomb','bad'],snaptrap:['Snap Trap','bad'],thundercage:['Thunder Cage','bad'],whirlpool:['Whirlpool','bad'],wrap:['Wrap','bad'],mist:['Mist','good'],lightscreen:['Light Screen','good'],reflect:['Reflect','good'],defeathered:['Defeathered','bad'],needles:['Needles','bad'],spent:['Spent','bad'],tripped:['Tripped','bad']};
 
 
 
@@ -2231,6 +2234,8 @@ zsymbol:{url:'z-symbol.png',w:150,h:100},
 ultra:{url:'ultra.png',w:113,h:165},
 hitmark:{url:'hitmarker.png',w:100,h:100},
 protect:{rawHTML:'<div class="turnstatus-protect" style="display:none;position:absolute" />',w:100,h:70},
+guard:{rawHTML:'<div class="turnstatus-guard" style="display:none;position:absolute" />',w:100,h:70},
+guardlv2:{rawHTML:'<div class="turnstatus-guard" style="display:none;position:absolute" />',w:100,h:70},
 auroraveil:{rawHTML:'<div class="sidecondition-auroraveil" style="display:none;position:absolute" />',w:100,h:50},
 reflect:{rawHTML:'<div class="sidecondition-reflect" style="display:none;position:absolute" />',w:100,h:50},
 safeguard:{rawHTML:'<div class="sidecondition-safeguard" style="display:none;position:absolute" />',w:100,h:50},
@@ -6019,6 +6024,8 @@ craftyshield:{anim:BattleOtherAnims.selfstatus.anim},
 matblock:{anim:BattleOtherAnims.selfstatus.anim},
 quickguard:{anim:BattleOtherAnims.selfstatus.anim},
 wideguard:{anim:BattleOtherAnims.selfstatus.anim},
+guard:{anim:BattleOtherAnims.selfstatus.anim},
+guardlv2:{anim:BattleOtherAnims.selfstatus.anim},
 endure:{anim:BattleOtherAnims.selfstatus.anim},
 bide:{anim:BattleOtherAnims.bidecharge.anim},
 focusenergy:{anim:BattleOtherAnims.selfstatus.anim},

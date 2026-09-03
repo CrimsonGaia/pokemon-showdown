@@ -834,6 +834,7 @@ export class BattleLog {
 			line = BattleLog.escapeHTML(line);
 			line = line.replace(/\*\*(.*)\*\*/, '<strong>$1</strong>');
 			line = line.replace(/\|\|([^|]*)\|\|([^|]*)\|\|/, '<abbr title="$1">$2</abbr>');
+			line = line.replace(/\u00A7eff\|([^\u00A7]*)\u00A7([^\u00A7]*)\u00A7/, '<span class="has-tooltip" style="text-decoration:underline dotted;cursor:help;" data-tooltip="effectiveness|$1">$2</span>');
 			if (line.startsWith('  ')) line = '<small>' + line.trim() + '</small>';
 			return line;
 		});

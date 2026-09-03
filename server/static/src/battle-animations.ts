@@ -1515,6 +1515,8 @@ export class PokemonSprite extends Sprite {
 		rage: ['Rage', 'neutral'],
 		roost: ['Landed', 'neutral'],
 		protect: ['Protect', 'good'],
+		guard: ['Guard', 'good'],
+		guardlv2: ['GuardLv2', 'good'],
 		quickguard: ['Quick Guard', 'good'],
 		wideguard: ['Wide Guard', 'good'],
 		craftyshield: ['Crafty Shield', 'good'],
@@ -1963,7 +1965,7 @@ export class PokemonSprite extends Sprite {
 		if (isPermanent) { this.resetStatbar(pokemon); } 
 		else { this.updateStatbar(pokemon); }
 	}
-	pokeEffect(id: ID) { if (id === 'protect' || id === 'magiccoat') { this.effects[id][0].anim({ scale: 1.2, opacity: 1, time: 100, }).anim({ opacity: 0.4, time: 300, }); } }
+	pokeEffect(id: ID) { if (id === 'protect' || id === 'magiccoat' || id === 'guard') { this.effects[id][0].anim({ scale: 1.2, opacity: 1, time: 100, }).anim({ opacity: 0.4, time: 300, }); } }
 	addEffect(id: ID, instant?: boolean) {
 		if (id in this.effects) {
 			this.pokeEffect(id);
@@ -1982,8 +1984,9 @@ export class PokemonSprite extends Sprite {
 			this.scene.$spritesFront[spriten].append(leechseed2.$el);
 			this.scene.$spritesFront[spriten].append(leechseed3.$el);
 			this.effects['leechseed'] = [leechseed1, leechseed2, leechseed3];
-		} else if (id === 'protect' || id === 'magiccoat') {
-			const protect = new Sprite(BattleEffects.protect, { display: 'block', x: this.x, y: this.y, z: this.behind(-15), xscale: 1, yscale: 0, opacity: 0.1, }, this.scene);
+		} else if (id === 'protect' || id === 'magiccoat' || id === 'guard') {
+			const protectEffect = id === 'guard' ? BattleEffects.guard : BattleEffects.protect;
+			const protect = new Sprite(protectEffect, { display: 'block', x: this.x, y: this.y, z: this.behind(-15), xscale: 1, yscale: 0, opacity: 0.1, }, this.scene);
 			this.scene.$spritesFront[spriten].append(protect.$el);
 			this.effects[id] = [protect];
 			protect.anim({ opacity: 0.9, time: instant ? 0 : 400, }).anim({ opacity: 0.4, time: instant ? 0 : 300, });
@@ -2231,6 +2234,8 @@ const BattleEffects: { [k: string]: SpriteData } = {
 	ultra: { url: 'ultra.png',  w: 113, h: 165, }, // by Pokemon Showdown user Modeling Clay
 	hitmark: { url: 'hitmarker.png',  w: 100, h: 100, }, // by Pokemon Showdown user Ridaz
 	protect: { rawHTML: '<div class="turnstatus-protect" style="display:none;position:absolute" />', w: 100, h: 70, },
+	guard: { rawHTML: '<div class="turnstatus-guard" style="display:none;position:absolute" />', w: 100, h: 70, },
+	guardlv2: { rawHTML: '<div class="turnstatus-guard" style="display:none;position:absolute" />', w: 100, h: 70, },
 	auroraveil: { rawHTML: '<div class="sidecondition-auroraveil" style="display:none;position:absolute" />', w: 100, h: 50, },
 	reflect: { rawHTML: '<div class="sidecondition-reflect" style="display:none;position:absolute" />', w: 100, h: 50, },
 	safeguard: { rawHTML: '<div class="sidecondition-safeguard" style="display:none;position:absolute" />', w: 100, h: 50, },

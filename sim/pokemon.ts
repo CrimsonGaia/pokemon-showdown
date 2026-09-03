@@ -1838,19 +1838,39 @@ export class Pokemon {
 		}
 		return weather;
 	}
-	runEffectiveness(move: ActiveMove) {
+	/**
+	 * chain, if passed, is populated with one entry per contribution, for the effectiveness
+	 * tooltip. kind/label/defendingType describe *what* contributed; mod is on the same
+	 * +1/-1-per-tier scale as the return value (not a raw multiplier); effectLabel is set when an
+	 * ability/item/move-level effect changed that specific contribution's value, naming what did.
+	 */
+	runEffectiveness(move: ActiveMove, chain?: { kind: 'type' | 'flag' | 'special', label: string, defendingType: string, mod: number, effectLabel?: string, immune?: boolean }[]) {
 		let totalTypeMod = 0;
-		if (this.terastallized && move.type === 'Stellar') { totalTypeMod = 1; } 
-		else {
+		if (this.terastallized && move.type === 'Stellar') {
+			totalTypeMod = 1;
+			if (chain) chain.push({ kind: 'special', label: 'Stellar Tera', defendingType: '', mod: 1 });
+		} else {
 			const moveTypes = [move.type];
 			if (move.type2 && move.type2 !== move.type) moveTypes.push(move.type2);
+			if (!move.flags?.magic) {
+				const fullyImmuneType = moveTypes.find(t => !this.battle.dex.getImmunity(t, this));
+				if (fullyImmuneType) {
+					if (chain) chain.push({ kind: 'type', label: fullyImmuneType, defendingType: '', mod: 0, immune: true });
+					return -99; // sentinel: battle-actions.ts reads this as "0x - Immune", not clamped like a normal mod
+				}
+			}
 			const defendingTypes = (move.flags?.magic) ? this.getTypes(false, true) : this.getTypes();
 			for (const attackingType of moveTypes) {
 				for (const defendingType of defendingTypes) {
-					let typeMod = this.battle.dex.getEffectiveness(attackingType, defendingType);
-					if (move.flags?.magic && !this.battle.dex.getImmunity(attackingType, defendingType)) typeMod = -1;
-					typeMod = this.battle.singleEvent('Effectiveness', move, null, this, defendingType, move, typeMod);
-					totalTypeMod += this.battle.runEvent('Effectiveness', this, defendingType, move, typeMod);
+					let rawTypeMod = this.battle.dex.getEffectiveness(attackingType, defendingType);
+					const afterMove = this.battle.singleEvent('Effectiveness', move, null, this, defendingType, move, rawTypeMod);
+					const afterAbility = this.battle.runEvent('Effectiveness', this, defendingType, move, afterMove);
+					totalTypeMod += afterAbility;
+					if (chain && afterAbility !== 0) {
+						let effectLabel: string | undefined;
+						if (afterAbility !== rawTypeMod) { effectLabel = afterMove !== rawTypeMod ? `move: ${move.name}` : 'ability/item effect'; }
+						chain.push({ kind: 'type', label: attackingType, defendingType, mod: afterAbility, effectLabel });
+					}
 				}
 			}
 		}
@@ -1859,19 +1879,23 @@ export class Pokemon {
 			if (!typeData || !typeData.damageTaken) continue;
 			for (const flag in move.flags) {
 				let flagMod = typeData.damageTaken[flag];
+				let effectLabel: string | undefined;
 				if (flag === 'contact' && defendingType === 'Ghost' && this.volatiles && this.volatiles['magicdust']) {
 					if (flagMod === 2) {
 						this.battle.debug(`Magic Dust flips ${defendingType} contact resist to weak`);
 						flagMod = 1;
+						effectLabel = 'ability: Magic Dust';
 					}
 				}
 				if (flagMod === 1) {
 					this.battle.debug(`${defendingType} is weak to ${flag} flag (1.5x)`);
 					totalTypeMod += 0.585;
+					if (chain) chain.push({ kind: 'flag', label: flag, defendingType, mod: 0.585, effectLabel });
 				}
 				if (flagMod === 2) {
 					this.battle.debug(`${defendingType} resists ${flag} flag (0.75x)`);
 					totalTypeMod -= 0.415;
+					if (chain) chain.push({ kind: 'flag', label: flag, defendingType, mod: -0.415, effectLabel });
 				}
 			}
 		}
@@ -1883,6 +1907,7 @@ export class Pokemon {
 			if (move.category === 'Status' || move.id === 'struggle' || !this.runImmunity(move) || totalTypeMod < 0 || this.hp < this.maxhp) { return totalTypeMod; }
 			this.battle.add('-activate', this, 'ability: Tera Shell');
 			this[abilityStateKey].resisted = true;
+			if (chain) chain.push({ kind: 'special', label: 'Tera Shell', defendingType: '', mod: -1 - totalTypeMod, effectLabel: 'ability: Tera Shell' });
 			return -1;
 		}
 		return totalTypeMod;
@@ -1892,16 +1917,9 @@ export class Pokemon {
 		if (!source) return true;
 		const move = typeof source !== 'string' ? source : undefined;
 		const type: string = typeof source !== 'string' ? source.type : source;
-
 		if (move && move.ignoreImmunity && (move.ignoreImmunity === true || move.ignoreImmunity[type])) return true;
 		if (!type || type === '???') return true;
 		if (!this.battle.dex.types.isName(type)) throw new Error("Use runStatusImmunity for " + type);
-
-		const negateImmunity = !this.battle.runEvent('NegateImmunity', this, type);
-		const notImmune = type === 'Ground' ? this.isGrounded(negateImmunity) : negateImmunity || this.battle.dex.getImmunity(type, this);
-		
-		if (notImmune) return true;
-
 		if (move) {
 			for (const defendingType of this.getTypes()) {
 				const typeData = this.battle.dex.types.get(defendingType);
@@ -1914,16 +1932,28 @@ export class Pokemon {
 				}
 			}
 		}
-
-		// Magic moves ignore purely TYPE-chart immunity (see runEffectiveness, which turns it into a
-		// resistance instead) but not ability-granted immunity (Levitate, etc). notImmune is `false` for
-		// a type/item-based block (Flying-type, Air Balloon, or the plain type chart) and `null`
-		// specifically for Ground-type ability-based non-grounding (Levitate/eelevate/aerodynamic) -
-		// only bypass the former.
+		const types = move?.type2 && move.type2 !== type ? [type, move.type2] : [type];
+		let notImmune: boolean | null = true;
+		let blockedType = type;
+		for (const t of types) {
+			const negateImmunity = !this.battle.runEvent('NegateImmunity', this, t);
+			const result = t === 'Ground'? this.isGrounded(negateImmunity): negateImmunity || this.battle.dex.getImmunity(t, this);
+			if (!result) {
+				notImmune = result;
+				blockedType = t;
+				break;
+			}
+		}
+		if (notImmune) return true;
 		if (move?.flags?.magic && notImmune === false) return true;
 		if (!message) return false;
-		if (notImmune === null) this.battle.add('-immune', this, '[from] ability: Levitate');
-		else this.battle.add('-immune', this);
+		if (notImmune === null) { this.battle.add('-immune', this, '[from] ability: Levitate'); return false; }
+		if (!move) { this.battle.add('-immune', this); return false; }
+		const moveFlags = Object.keys(move.flags || {}).filter(f => (move.flags as any)[f]);
+		const targetTypes = this.getTypes();
+		const header = [move.name, move.type, move.type2 || '', move.category, moveFlags.join(','), this.name, this.species.name, targetTypes[0] || '', targetTypes[1] || '', -99,].join('~');
+		const entry = ['type', blockedType, '', 0, '', '1'].join('~');
+		this.battle.add('-resisted', this, "It doesn't affect [POKEMON]...", '[chain] ' + header + '##' + entry);
 		return false;
 	}
 	runStatusImmunity(type: string, message?: string) {

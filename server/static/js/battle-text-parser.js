@@ -319,6 +319,10 @@ if(!effect)return'';
 if(!effect.startsWith('ability:'))return'';
 return this.ability(effect.slice(8).trim(),holder);
 };_proto.
+effectivenessTooltip=function effectivenessTooltip(text,kwArgs){
+if(!kwArgs.chain)return text;
+return text.split('\n').map(function(line){return"\xA7eff|"+kwArgs.chain+"\xA7"+line+"\xA7";}).join('\n');
+};_proto.
 ability=function ability(name,holder){
 if(!name)return'';
 return BattleText["default"].abilityActivation.replace('[POKEMON]',this.pokemon(holder)).replace('[ABILITY]',this.effect(name))+'\n';
@@ -734,7 +738,7 @@ return this.template('activate',_effect10);
 }
 case'-message':{
 var _message=args[1];
-return'  '+_message+'\n';
+return'  '+this.effectivenessTooltip(_message,kwArgs)+'\n';
 }
 case'-hint':{
 var _message2=args[1];
@@ -885,12 +889,13 @@ return _line23+_template61.replace('[POKEMON]',this.pokemon(_pokemon28));
 }
 case'-clearallboost':{return this.template('clearAllBoost',kwArgs.from);}
 case'-crit':case'-supereffective':case'-resisted':{
-var _pokemon29=args[1];
+var _pokemon29=args[1],customText=args[2];
+if(customText&&cmd!=='-crit'){return this.effectivenessTooltip(customText.replace('[POKEMON]',this.pokemon(_pokemon29)),kwArgs);}
 var _templateId8=cmd.slice(1);
 if(_templateId8==='supereffective')_templateId8='superEffective';
 if(kwArgs.spread)_templateId8+='Spread';
 var _template62=this.template(_templateId8);
-return _template62.replace('[POKEMON]',this.pokemon(_pokemon29));
+return this.effectivenessTooltip(_template62.replace('[POKEMON]',this.pokemon(_pokemon29)),kwArgs);
 }
 case'-block':{
 var _pokemon30=args[1],_effect14=args[2],_move2=args[3],attacker=args[4];

@@ -300,7 +300,11 @@ export class BattleTooltips {
 			buf = this.showTeraChargeTooltip(cur, max, alreadyTera);
 			break;
 		}
-				case 'pokemon': { // pokemon|SIDE|POKEMON
+			case 'effectiveness': { // effectiveness|HEADER##ENTRY;ENTRY;... (see showEffectivenessTooltip)
+			buf = this.showEffectivenessTooltip(args[1] || '');
+			break;
+		}
+		case 'pokemon': { // pokemon|SIDE|POKEMON
 			// mouse over sidebar pokemon
 			let sideIndex = parseInt(args[1], 10);
 			let side = this.battle.sides[sideIndex];
@@ -608,6 +612,126 @@ export class BattleTooltips {
 		text += `Terastallized this battle, and drains each turn your Pokemon stays Terastallized at a rate depending `;
 		text += `on its form. Charge is restored to 0 once it hits empty, reverting the Terastallization.</p>`;
 		return `<div class="tooltipinner-wrapper">${text}</div>`;
+	}
+	showEffectivenessTooltip(payload: string) {
+		const esc = (s: string) => BattleLog.escapeHTML(s);
+		const POS_COLOR = '#3d7dca';
+		const NEG_COLOR = '#c43b3b';
+		// No direct access to the dex search grid's own color source, so reusing this fork's one
+		// canonical type-color map (also used for Guard Action/Tera Type styling elsewhere).
+		const TYPE_COLORS: Record<string, string> = {
+			Normal: '#A8A878', Fire: '#F08030', Water: '#6890F0', Electric: '#F8D030', Grass: '#78C850',
+			Ice: '#98D8D8', Fighting: '#C03028', Poison: '#A040A0', Ground: '#E0C068',
+			Flying: '#A890F0', Psychic: '#F85888', Bug: '#A8B820', Rock: '#B8A038',
+			Ghost: '#705898', Dragon: '#7038F8', Dark: '#705848', Steel: '#B8B8D0', Fairy: '#EE99AC',
+		};
+		const cardBg = (t1: string, t2?: string) => {
+			const c1 = TYPE_COLORS[t1] || '#888';
+			const c2 = t2 ? (TYPE_COLORS[t2] || '#888') : c1;
+			return `background:linear-gradient(135deg, ${c1}55, ${c2}55);`;
+		};
+		const KNOWN_FLAG_ICONS = new Set(['contact', 'binding', 'bind', 'bite', 'bomb', 'bullet', 'drain',
+			'explosive', 'fist', 'punch', 'powder', 'pulse', 'slicing', 'slice', 'sound', 'wind', 'airborne',
+			'aura', 'beam', 'breath', 'claw', 'crash', 'crush', 'dance', 'heal', 'kick', 'launch', 'light',
+			'lunar', 'magic', 'pierce', 'shadow', 'solar', 'spin', 'sweep', 'throw', 'weapon', 'wing',
+			'bypassprotect', 'nonreflectable', 'nonmirror', 'nonsnatchable', 'bypasssubstitute']);
+		const typeIcon = (type: string) => `<div class="typechart-icon-wrap" style="width:32px;height:14px;display:inline-flex;align-items:center;">${Dex.getTypeIcon(type)}</div>`;
+		const flagIcon = (flag: string): string | null => {
+			if (!KNOWN_FLAG_ICONS.has(flag.toLowerCase())) return null;
+			const resized = Dex.getFlagIcon(flag).replace(/width="\d+"/, 'width="64"').replace(/height="\d+"/, 'height="16"');
+			return `<div class="typechart-icon-wrap" style="width:64px;height:16px;display:inline-flex;align-items:center;font-size:7px;">${resized}</div>`;
+		};
+		const badgeFor = (mod: number) => {
+			const positive = mod > 0;
+			const absMod = Math.abs(mod);
+			let icon: string;
+			if (absMod >= 2) icon = 'quatro.png';
+			else if (absMod >= 1.5) icon = 'tres.png';
+			else if (absMod >= 1) icon = 'dos.png';
+			else icon = 'uno.png';
+			const iconUrl = `https://play.pokemonshowdown.com/sprites/misc/${icon}`;
+			const style = positive ?
+				'filter: brightness(0) saturate(100%) invert(37%) sepia(93%) saturate(1247%) hue-rotate(199deg) brightness(97%) contrast(101%);' :
+				'filter: brightness(0) saturate(100%) invert(20%) sepia(87%) saturate(3492%) hue-rotate(353deg) brightness(94%) contrast(93%); transform: scaleY(-1);';
+			return `<img src="${iconUrl}" style="position:absolute;top:-4px;right:-6px;width:10px;height:10px;${style}" />`;
+		};
+		const multText = (mult: number, mod: number) => {
+			const label = '×' + (mult >= 10 ? mult.toFixed(0) : mult.toFixed(2)).replace(/\.?0+$/, '');
+			const color = mod > 0 ? POS_COLOR : mod < 0 ? NEG_COLOR : 'inherit';
+			return `<strong style="color:${color};">${label}</strong>`;
+		};
+		const stepMult = (mod: number) => (mod === 0 ? 1 : Math.pow(2, mod));
+		const tierText = (mult: number) => {
+			if (mult > 1) {
+				if (mult >= Math.sqrt(4 * 5)) return 'Supremely effective!';
+				if (mult >= Math.sqrt(3 * 4)) return 'Extremely effective!';
+				if (mult >= Math.sqrt(2 * 3)) return 'Severely effective!';
+				if (mult >= Math.sqrt(1.5 * 2)) return 'Super effective!';
+				return 'Very effective!';
+			}
+			if (mult < 1) {
+				if (mult <= Math.sqrt(0.2 * 0.25)) return 'Ineffective...';
+				if (mult <= Math.sqrt(0.25 * (1 / 3))) return 'Barely effective...';
+				if (mult <= Math.sqrt((1 / 3) * 0.5)) return 'Hardly effective...';
+				if (mult <= Math.sqrt(0.5 * (1 / 1.5))) return 'Not very effective...';
+				return 'Mostly effective...';
+			}
+			return 'Neutral';
+		};
+		const [headerStr, entriesStr] = (payload || '').split('##');
+		const [moveName, moveType, moveType2, moveCategory, moveFlagsStr, targetName, targetSpecies, targetType1, targetType2, totalModStr] = (headerStr || '').split('~');		const totalMod = parseFloat(totalModStr) || 0;
+		const moveFlags = (moveFlagsStr ? moveFlagsStr.split(',').filter(Boolean) : [])
+			.map(f => flagIcon(f)).filter((html): html is string => html !== null);
+		const cardStyle = (t1: string, t2?: string, basis = '50%') => `position:relative;border:1px solid #999;border-radius:5px;padding:4px 6px;flex:1 1 ${basis};min-width:0;${cardBg(t1, t2)}`;		const flagsWrap = 'display:flex;flex-wrap:wrap;gap:3px;max-width:132px;margin-top:2px;';
+		let header = `<div style="display:flex;align-items:stretch;gap:6px;">`;
+		header += `<div style="${cardStyle(moveType, moveType2, '58%')}">`;
+		header += `<div style="position:absolute;top:3px;right:3px;">${Dex.getCategoryIcon(moveCategory)}</div>`;
+		header += `<strong style="display:block;padding-right:34px;">${esc(moveName || (moveType ? moveType + ' Attack' : 'Attack'))}</strong>`;
+		header += `<div style="display:flex;gap:3px;margin-top:2px;">${typeIcon(moveType)}${moveType2 ? typeIcon(moveType2) : ''}</div>`;
+		if (moveFlags.length) header += `<div style="${flagsWrap}">${moveFlags.join('')}</div>`;
+		header += `</div>`;
+		header += `<div style="align-self:center;font-weight:bold;font-size:11px;">VS.</div>`;
+		header += `<div style="${cardStyle(targetType1, targetType2, '38%')}text-align:center;">`;
+		header += `<span class="picon" style="${Dex.getPokemonIcon(targetSpecies || targetName)}"></span>`;
+		header += `<div><strong>${esc(targetName || '?')}</strong></div>`;
+		header += `<div style="display:flex;gap:3px;margin-top:2px;justify-content:center;">${typeIcon(targetType1)}${targetType2 ? typeIcon(targetType2) : ''}</div>`;
+		header += `</div></div>`;
+				const entries = (entriesStr || '').split(';').filter(Boolean).map(entry => {
+			const [kind, label, defendingType, modStr, effectLabel, immuneStr] = entry.split('~');
+			return { kind, label, defendingType, mod: parseFloat(modStr) || 0, effectLabel: effectLabel || '', immune: immuneStr === '1' };
+		}).sort((a, b) => (b.immune ? -100 : b.mod) - (a.immune ? -100 : a.mod));
+		let rows = '';
+		for (const e of entries) {
+			if (!e.mod && !e.immune) continue;
+			const flagHtml = e.kind === 'flag' ? flagIcon(e.label) : null;
+			const sourceIcon = e.kind === 'type' ? typeIcon(e.label) : flagHtml;
+			// Immune entries skip the severity badge - "immune" isn't a magnitude on the same scale as
+			// the numbered tiers, it's a hard block of just that half of a dual-type move.
+			const iconStack = sourceIcon ?
+				`<span style="position:relative;display:inline-block;">${sourceIcon}${e.immune ? '' : badgeFor(e.mod)}</span>` :
+				`<span style="font-size:10px;">${esc(e.label)}</span>`;
+			const targetIcon = e.defendingType ? typeIcon(e.defendingType) : '';
+			const rowMult = e.immune ? multText(0, -1) :
+				e.kind === 'type' ? multText(e.mod > 0 ? 2 : 0.5, e.mod) :
+				e.kind === 'flag' ? multText(e.mod > 0 ? 1.5 : 0.75, e.mod) :
+				multText(Math.pow(2, e.mod), e.mod);
+			rows += `<div style="display:flex;flex-direction:column;gap:1px;padding:1px 0;">`;
+			if (e.effectLabel) { rows += `<small style="opacity:0.7;">${esc(e.effectLabel)}</small>`; }
+			rows += `<span style="display:flex;align-items:center;gap:4px;">`;
+			rows += iconStack;
+			if (targetIcon) { rows += ` <small>vs</small> ${targetIcon}`; }
+			rows += `<span style="margin-left:auto;flex:0 0 auto;min-width:34px;font-size:11px;display:flex;align-items:center;justify-content:flex-end;">${rowMult}</span>`;
+			rows += `</span></div>`;
+		}
+		if (!rows) rows = `<p class="tooltip-section">No individual contributions recorded.</p>`;
+		const overallMult = stepMult(totalMod);
+		const overall = `<div style="display:flex;align-items:center;gap:8px;margin-top:6px;padding-top:6px;border-top:1px solid #ccc;">` +
+			`<strong style="font-size:11px;">Overall</strong>` +
+			`<div style="width:1px;align-self:stretch;background:#ccc;"></div>` +
+			`<span style="font-size:11px;">${tierText(overallMult)}</span>` +
+			`<span style="margin-left:auto;flex:0 0 auto;font-size:16px;display:flex;align-items:center;">${multText(overallMult, totalMod)}</span>` +
+			`</div>`;
+		return `<div class="tooltipinner-wrapper">${header}${rows}${overall}</div>`;
 	}
 	/**
 	 * Needs either a Pokemon or a ServerPokemon, but note that neither are guaranteed: If you hover over a possible switch-in that's

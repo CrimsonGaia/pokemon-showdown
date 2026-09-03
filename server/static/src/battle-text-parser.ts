@@ -319,6 +319,10 @@ export class BattleTextParser {
 		if (!effect.startsWith('ability:')) return '';
 		return this.ability(effect.slice(8).trim(), holder);
 	}
+	effectivenessTooltip(text: string, kwArgs: KWArgs) {
+		if (!kwArgs.chain) return text;
+		return text.split('\n').map(line => `\u00A7eff|${kwArgs.chain}\u00A7${line}\u00A7`).join('\n');
+	}
 	ability(name: string | undefined, holder: string) {
 		if (!name) return '';
 		return BattleText.default.abilityActivation.replace('[POKEMON]', this.pokemon(holder)).replace('[ABILITY]', this.effect(name)) + '\n';
@@ -734,7 +738,7 @@ export class BattleTextParser {
 		}
 		case '-message': {
 			let [, message] = args;
-			return '  ' + message + '\n';
+			return '  ' + this.effectivenessTooltip(message, kwArgs) + '\n';
 		}
 		case '-hint': {
 			let [, message] = args;
@@ -885,12 +889,13 @@ export class BattleTextParser {
 		}
 		case '-clearallboost': { return this.template('clearAllBoost', kwArgs.from); }
 		case '-crit': case '-supereffective': case '-resisted': {
-			const [, pokemon] = args;
+			const [, pokemon, customText] = args;
+			if (customText && cmd !== '-crit') { return this.effectivenessTooltip(customText.replace('[POKEMON]', this.pokemon(pokemon)), kwArgs); }
 			let templateId = cmd.slice(1);
 			if (templateId === 'supereffective') templateId = 'superEffective';
 			if (kwArgs.spread) templateId += 'Spread';
 			const template = this.template(templateId);
-			return template.replace('[POKEMON]', this.pokemon(pokemon));
+			return this.effectivenessTooltip(template.replace('[POKEMON]', this.pokemon(pokemon)), kwArgs);
 		}
 		case '-block': {
 			let [, pokemon, effect, move, attacker] = args;

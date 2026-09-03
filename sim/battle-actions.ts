@@ -492,7 +492,6 @@ export class BattleActions {
 		return hitResults;
 	}
 	hitStepTypeImmunity(targets: Pokemon[], pokemon: Pokemon, move: ActiveMove) {
-		if (move.ignoreImmunity === undefined) { move.ignoreImmunity = false; }
 		const hitResults = [];
 		for (const i of targets.keys()) { hitResults[i] = targets[i].runImmunity(move, !move.smartTarget); }
 		return hitResults;
@@ -500,7 +499,20 @@ export class BattleActions {
 	hitStepTryImmunity(targets: Pokemon[], pokemon: Pokemon, move: ActiveMove) {
 		const hitResults = [];
 		for (const [i, target] of targets.entries()) {
-			if (!move.ignoreImmunity && !this.battle.singleEvent('TryImmunity', move, {}, target, pokemon, move)) {
+			let flagImmune = false;
+			if (!move.ignoreImmunity && target !== pokemon) {
+				for (const flag in move.flags) {
+					if (!this.dex.getImmunity(flag, target)) {
+						this.battle.debug(`natural ${flag} immunity`);
+						this.battle.add('-immune', target);
+						hitResults[i] = false;
+						flagImmune = true;
+						break;
+					}
+				}
+			}
+			if (flagImmune) { continue; } 
+			else if (!this.battle.singleEvent('TryImmunity', move, {}, target, pokemon, move)) {
 				this.battle.add('-immune', target);
 				hitResults[i] = false;
 			} else if (move.pranksterBoosted && pokemon.hasAbility('prankster') && !targets[i].isAlly(pokemon) && !this.dex.getImmunity('prankster', target)) {
@@ -1288,44 +1300,49 @@ export class BattleActions {
 			baseDamage = this.battle.modify(baseDamage, totalMultiplier);
 		}
 		// types
-		let typeMod = target.runEffectiveness(move);
-		// Clamp to -6 to 6 range (supports decimal values for flag effectiveness)
-		typeMod = Math.max(-6, Math.min(typeMod, 6));
+		const effectivenessChain: { kind: 'type' | 'flag' | 'special', label: string, defendingType: string, mod: number, effectLabel?: string, immune?: boolean }[] = [];
+		let typeMod = target.runEffectiveness(move, effectivenessChain);
+		// -99 is the "fully immune - 0x overall" sentinel from runEffectiveness - skip the normal
+		// clamp, which would otherwise crush it down to -6 and lose the distinction entirely.
+		const isFullyImmune = typeMod <= -99;
+		if (!isFullyImmune) {
+			// Clamp to -6 to 6 range (supports decimal values for flag effectiveness)
+			typeMod = Math.max(-6, Math.min(typeMod, 6));
+		}
 		target.getMoveHitData(move).typeMod = typeMod;
-				// Type effectiveness messages
-		if (!suppressMessages && typeMod !== 0) {
-			// Range-based rather than exact-match: flag-based weak/resist bonuses (see
-			// Pokemon.runEffectiveness) add fractional amounts like +0.585/-0.415 that essentially
-			// never land exactly on a clean 0.5-increment, so an exact-match switch here would miss
-			// almost every real move. Each tier's reference value is used as its lower (for weakness)
-			// or upper (for resistance) bound instead.
-			if (typeMod > 0) {
-				if (typeMod >= 2.5) { this.battle.add('-message', "It's supremely effective!"); }
-				else if (typeMod >= 2) { this.battle.add('-message', "It's extremely effective!"); }
-				else if (typeMod >= 1.5) { this.battle.add('-message', "It's severely effective!"); }
-				else if (typeMod >= 1) { this.battle.add('-supereffective', target); } // "It's super effective!"
-				else { this.battle.add('-message', "It's very effective!"); }
-			} else {
-				if (typeMod <= -5) { this.battle.add('-message', "It's ineffective..."); }
-				else if (typeMod <= -4) { this.battle.add('-message', "It's barely effective..."); }
-				else if (typeMod <= -3) { this.battle.add('-message', "It's hardly effective..."); }
-				else if (typeMod <= -2) { this.battle.add('-resisted', target); } // "It's not very effective..."
-				else { this.battle.add('-message', "It's mostly effective..."); }
-			}
+		// Type effectiveness
+		const multiplier = isFullyImmune ? 0 : typeMod === 0 ? 1 : Math.pow(2, typeMod);
+		if (!suppressMessages) {
+			const moveFlags = Object.keys(move.flags || {}).filter(f => (move.flags as any)[f]);
+			const targetTypes = target.getTypes();
+			const header = [
+				move.name, move.type, move.type2 || '', move.category, moveFlags.join(','),
+				target.name, target.species.name, targetTypes[0] || '', targetTypes[1] || '', typeMod,
+			].join('~');
+			const entries = effectivenessChain.map(e => [e.kind, e.label, e.defendingType, e.mod, e.effectLabel || '', e.immune ? '1' : ''].join('~')).join(';');
+			const chainKwarg = ['[chain] ' + header + '##' + entries];
+			if (isFullyImmune) { this.battle.add('-resisted', target, "It's immune...", ...chainKwarg); } 
+			else if (multiplier > 1) {
+				let text: string;
+				if (multiplier >= Math.sqrt(4 * 5)) text = "It's supremely effective!"; // >=4.472
+				else if (multiplier >= Math.sqrt(3 * 4)) text = "It's extremely effective!"; // >=3.464
+				else if (multiplier >= Math.sqrt(2 * 3)) text = "It's severely effective!"; // >=2.449
+				else if (multiplier >= Math.sqrt(1.5 * 2)) text = "It's super effective!"; // >=1.732
+				else text = "It's very effective!";
+				this.battle.add('-supereffective', target, text, ...chainKwarg);
+			} else if (multiplier < 1) {
+				let text: string;
+				if (multiplier <= Math.sqrt(0.2 * 0.25)) text = "It's ineffective..."; // <=0.2236
+				else if (multiplier <= Math.sqrt(0.25 * (1 / 3))) text = "It's barely effective..."; // <=0.2887
+				else if (multiplier <= Math.sqrt((1 / 3) * 0.5)) text = "It's hardly effective..."; // <=0.4082
+				else if (multiplier <= Math.sqrt(0.5 * (1 / 1.5))) text = "It's not very effective..."; // <=0.5774
+				else text = "It's mostly effective...";
+				this.battle.add('-resisted', target, text, ...chainKwarg);
+			} else if (effectivenessChain.some(e => e.immune)) { this.battle.add('-resisted', target, "It's neutrally effective", ...chainKwarg); }
+			else { this.battle.add('-message', "It's neutrally effective", ...chainKwarg); }
 		}
-		if (typeMod > 0) { // Apply type effectiveness: each full point is 2x, each 0.5 is 1.5x
-			const fullSteps = Math.floor(typeMod);
-			const halfStep = typeMod % 1 >= 0.5;
-			for (let i = 0; i < fullSteps; i++) baseDamage *= 2;
-			if (halfStep) baseDamage = tr(baseDamage * 1.5);
-		}
-		if (typeMod < 0) { // Apply type resistance: each full point is ÷2, each 0.5 is ÷1.5
-			const absTypeMod = Math.abs(typeMod);
-			const fullSteps = Math.floor(absTypeMod);
-			const halfStep = absTypeMod % 1 >= 0.5;
-			for (let i = 0; i < fullSteps; i++) baseDamage = tr(baseDamage / 2);
-			if (halfStep) baseDamage = tr(baseDamage / 1.5);
-		}
+		if (typeMod && multiplier !== 0) { baseDamage = tr(baseDamage * multiplier); }
+		else if (isFullyImmune) { baseDamage = 0; }
 		if (isCrit && !suppressMessages) this.battle.add('-crit', target);
 		if (pokemon.status === 'brn' && move.category === 'Physical' && !pokemon.hasAbility('guts')) { if (this.battle.gen < 6 || move.id !== 'facade') { baseDamage = this.battle.modify(baseDamage, 0.5); } }
 		// Final modifier. Modifiers that modify damage after min damage check, such as Life Orb.

@@ -39,6 +39,7 @@
 			this.battle.joinButtons = true;
 			this.tooltips = this.battle.scene.tooltips;
 			this.tooltips.listen(this.$controls);
+			this.tooltips.listen(this.$chatFrame);
 			var self = this;
 			this.battle.subscribe(function () {
 				self.updateControls();

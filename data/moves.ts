@@ -1278,7 +1278,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 			boosts: {def: 2},
 		},
 		secondary: { chance: 100, volatileStatus: 'magicdust', },
-		desc: "50% chance to boost user's Defense [+2 stages]. Applies Magic Dust to target, removing their type immunities for 3 turns. Also extends the duration of Misty Terrain 2 turns.; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "50% chance to boost user's Defense [+2 stages]. Applies Magic Dust to target, removing their type immunities for 3 turns. Also extends the duration of Misty Terrain 2 turns.; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "50% +2 DEF: User. Applies Magic Dust",
 		target: "allAdjacentFoes",
 	},
@@ -2289,7 +2289,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		flags: { contact: 1, magic: 1, protect: 1, mirror: 1, metronome: 1 },
 		overrideOffensivePokemon: 'target',
 		secondary: null,
-		desc: "Uses target's Attack stat instead of user's; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "Uses target's Attack stat instead of user's; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "Uses target's Attack stat instead of user's",
 		target: "normal",
 	},
@@ -3907,7 +3907,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		critRatio: 4,
 		flags: { contact: 1, magic: 1, protect: 1, mirror: 1, metronome: 1 },
 		secondary: null,
-		desc: "Doubles power if user moves after target, or they switch out; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "Doubles power if user moves after target, or they switch out; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "2x power if user moves after target",
 		target: "normal",
 	},
@@ -4019,7 +4019,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		critRatio: 1,
 		flags: { contact: 1, magic: 1, wing: 1, protect: 1, mirror: 1, metronome: 1 },
 		secondary: { chance: 100, volatileStatus: 'magicdust', },
-		desc: "Applies Magic Dust to target, removing their type immunities for 3 turns. Also extends the duration of Misty Terrain 2 turns; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "Applies Magic Dust to target, removing their type immunities for 3 turns. Also extends the duration of Misty Terrain 2 turns; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "Applies Magic Dust to target",
 		target: "normal",
 	},
@@ -4248,7 +4248,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		critRatio: 4,
 		flags: { contact: 1, magic: 1, protect: 1, mirror: 1, metronome: 1 },
 		secondary: null,
-		desc: "Base Power boosts by 20 for each stat boost user has; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "Base Power boosts by 20 for each stat boost user has; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "Each stat boost = +20BP",
 		target: "normal",
 	},
@@ -6895,7 +6895,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		flags: { magic: 1, protect: 1, mirror: 1, metronome: 1 },
         overrideDefensiveStat: 'def',
 		secondary: { chance: 10, boosts: {atk: -1, def: -1, spa: -1, spd: -1, spe: -1,}, },
-		desc: "10% chance to lower target's Attack, Defense, Special Attack, Special Defense, Speed. Uses target's Defense in damage calulations; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "10% chance to lower target's Attack, Defense, Special Attack, Special Defense, Speed. Uses target's Defense in damage calulations; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "10% chance to omninerf. Uses target's DEF stat",
 		target: "allAdjacentFoes",
 	},
@@ -7165,7 +7165,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		flags: { magic: 1, wind: 1, protect: 1, mirror: 1, metronome: 1, nosketch: 1, },
 		onModifyMove(move, pokemon, target) { if (target && ['raindance', 'primordialsea', 'turbulentwinds', 'deltastream'].includes(target.effectiveWeather())) { move.accuracy = true; } },
 		secondary: { chance: 30, boosts: {spe: -1,}, },
-		desc: "30% chance to lower target's Speed [-1 stage]. Bypasses accuracy checks under Rain/Turbulent Winds; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "30% chance to lower target's Speed [-1 stage]. Bypasses accuracy checks under Rain/Turbulent Winds; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "30% -1 SPE: Target. Bypasses accuracy under Rain/Turbulent Winds",
 		target: "allAdjacentFoes",
 	},
@@ -7939,7 +7939,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 				this.add('-end', target, 'eeriespell'); 
 			},
 		},
-		desc: "Traps target, and target's last used move loses 3PP at end of every turn for 3 turns; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances; SOUND: This move bypasses substitutes",
+		desc: "Traps target, and target's last used move loses 3PP at end of every turn for 3 turns; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances; SOUND: This move bypasses substitutes",
 		shortDesc: "Traps target, and target's last used move loses 3PP at end of every turn for 3 turns",
 		target: "normal",
 	},
@@ -8213,7 +8213,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		critRatio: 0,
 		flags: { magic: 1, wind: 1, protect: 1, mirror: 1, metronome: 1 },
 		secondary: { chance: 100, volatileStatus: 'magicdust', },
-		desc: "Applies Magic Dust to target, removing their type immunities for 3 turns. Also extends the duration of Misty Terrain 2 turns; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "Applies Magic Dust to target, removing their type immunities for 3 turns. Also extends the duration of Misty Terrain 2 turns; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "Applies Magic Dust to target",
 		target: "normal",
 	},
@@ -8844,7 +8844,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		critRatio: 4,
 		flags: { magic: 1, infusible: 1, protect: 1, mirror: 1, metronome: 1 },
 		secondary: null,
-		desc: "Power is doubled is target is afflicted with a Status condition; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "Power is doubled is target is afflicted with a Status condition; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "2X power if target has a Status",
 		target: "normal",
 	},
@@ -8943,7 +8943,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		breaksProtect: true,
 		pierce: [1, 1],
 		secondary: null,
-		desc: "Ignores protection effects; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "Ignores protection effects; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "Ignores protection effects",
 		target: "normal",
 	},
@@ -9246,7 +9246,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		critRatio: 5,
 		flags: { magic: 1, slicing: 1, protect: 1, mirror: 1, metronome: 1 },
 		secondary: null,
-		desc: "MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "",
 		target: "allAdjacentFoes",
 	},
@@ -9408,7 +9408,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 				return 120;
 			}
 		},
-		desc: "50% chance to lower target's Special Attack [-1 stage]. 1.5x power over Misty Terrain; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "50% chance to lower target's Special Attack [-1 stage]. 1.5x power over Misty Terrain; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "50% -1 Sp.ATK: Target. 1.5x power over Misty Terrain",
 		target: "normal",
 	},
@@ -9557,7 +9557,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		critRatio: 3,
 		flags: { magic: 1, protect: 1, mirror: 1, metronome: 1 },
 		secondary: { chance: 100, boosts: {spa: -1,}, },
-		desc: "Lower target's Special Attack [-1 stage]; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "Lower target's Special Attack [-1 stage]; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "-1 Sp.ATK: Target",
 		target: "normal",
 	},
@@ -9847,7 +9847,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		critRatio: 6,
 		flags: { beam: 1, light: 1, magic: 1, protect: 1, mirror: 1, metronome: 1 },
         secondary: { chance: 10, self: {boosts: {spa: 1,},}, },
-		desc: "10% chance to boost user's Special Attack [+1 stage]; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "10% chance to boost user's Special Attack [+1 stage]; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "10% +1 Sp.ATK: User",
 		target: "normal",
 	},
@@ -10191,7 +10191,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		flags: { magic: 1, wind: 1, protect: 1, mirror: 1, metronome: 1, nosketch: 1, },
 		onModifyMove(move, pokemon, target) { if (target && ['raindance', 'primordialsea', 'sandstorm'].includes(target.effectiveWeather())) { move.accuracy = true; } },
 		secondary: { chance: 20, status: 'brn', },
-		desc: "20% chance to Burn target. Bypasses accuracy checks under Rain, or Sandstorm; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "20% chance to Burn target. Bypasses accuracy checks under Rain, or Sandstorm; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "20% Burn. Bypasses accuracy under Rain, or Sandstorm",
 		target: "allAdjacentFoes",
 	},
@@ -10616,7 +10616,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 			const numberTargets = move.hitTargets.length;
 			for (const pokemon of move.hitTargets) { if (pokemon !== source && pokemon.isActive && (pokemon.removeVolatile('sparklingaria') || numberTargets > 1) && pokemon.status === 'brn') { pokemon.cureStatus(); } } // bypasses Shield Dust when hitting multiple targets
 		},
-		desc: "Cures target of Burn; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances; SOUND: This move bypasses substitutes",
+		desc: "Cures target of Burn; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances; SOUND: This move bypasses substitutes",
 		shortDesc: "Cures target of Burn",
 		target: "allAdjacent",
 	},
@@ -10701,7 +10701,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		critRatio: 4,
 		flags: { magic: 1, wind: 1, protect: 1, mirror: 1, nosketch: 1, },
 		secondary: { chance: 30, boosts: {atk: -1,}, },
-		desc: "30% chance to lower target's Attack [-1 stage]. Bypasses accuracy checks under Turbulent Winds, or over Misty Terrain; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "30% chance to lower target's Attack [-1 stage]. Bypasses accuracy checks under Turbulent Winds, or over Misty Terrain; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "30% -1 ATK: Target. Bypasses accuracy checks under Turbulent Winds, or over Misty Terrain",
 		target: "allAdjacentFoes",
 	},
@@ -10781,7 +10781,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 			{ chance: 20, volatileStatus: 'confusion', },
 			{ chance: 100, volatileStatus: 'magicdust', },
 		],
-		desc: "Applies Magic Dust to target, removing their type immunities for 3 turns. Also extends the duration of Misty Terrain 2 turns. 20% chance to Confuse target; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "Applies Magic Dust to target, removing their type immunities for 3 turns. Also extends the duration of Misty Terrain 2 turns. 20% chance to Confuse target; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "Applies Magic Dust. 20% chance to Confuse target",
 		target: "normal",
 	},
@@ -10904,7 +10904,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		critRatio: 2,
 		flags: { magic: 1, protect: 1, mirror: 1, metronome: 1 },
 		secondary: null,
-		desc: "+3 priority; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "+3 priority; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "+3 priority",
 		target: "allAdjacentFoes",
 	},
@@ -11349,7 +11349,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 				else if (move.hit === 3) { target.trySetStatus('par', source); }
 			},
 		},
-		desc: "Hits 3 times. 10% chance to Frostbite, Burn, Paralyze in THAT ORDER; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "Hits 3 times. 10% chance to Frostbite, Burn, Paralyze in THAT ORDER; MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "Hits 3 times. 10% chance to Frostbite, Burn, Paralyze in THAT ORDER",
 		target: "normal",
 	},
@@ -11813,7 +11813,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 			if (this.field.isTerrain('electricterrain')) { move.accuracy = true; }
 		},
 		secondary: { chance: 20, status: 'par', },
-		desc: "20% chance to Paralyze target. Bypasses accuracy checks under Rain, or over Electric Terrain. MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type based immunities become resistances",
+		desc: "20% chance to Paralyze target. Bypasses accuracy checks under Rain, or over Electric Terrain. MAGIC: Ignores Tera [on both sides]. Reduced STAB modifier [1.2x] ; Target's Type and Ability based immunities become resistances",
 		shortDesc: "20% Paralyze. Bypasses accuracy under Rain, or over Electric Terrain",
 		target: "allAdjacentFoes",
 	},
@@ -12429,6 +12429,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		flags: { metronome: 1, noassist: 1, failinstruct: 1, },
 		stallingMove: true,
 		onTryMove(attacker, defender, move) {
+			this.add('-singleturn', attacker, 'move: Burrow');
 			attacker.addVolatile('burrow');
 			return null;
 		},
@@ -12475,6 +12476,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		sideCondition: 'caltrops',
 		condition: {
 			onSideStart(side) { this.add('-sidestart', side, 'move: Caltrops'); },
+			onSideEnd(side) { this.add('-sideend', side, 'move: Caltrops'); },
 			onSwitchIn(pokemon) {
 				if (!pokemon.isGrounded() || pokemon.hasItem('heavydutyboots')) return;
 				const typeMod = this.clampIntRange(pokemon.runEffectiveness(this.dex.getActiveMove('caltrops')), -6, 6);
@@ -13093,6 +13095,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		flags: { metronome: 1, noassist: 1, failinstruct: 1, },
 		stallingMove: true,
 		onTryMove(attacker, defender, move) {
+			this.add('-singleturn', attacker, 'move: Disperse');
 			attacker.addVolatile('disperse');
 			return null;
 		},
@@ -14540,7 +14543,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		guardActionCD: 2,
 		flags: { noassist: 1, failcopycat: 1, failinstruct: 1, nosketch: 1, metronome: 1 },
 		stallingMove: true,
-		volatileStatus: 'protect',
+		volatileStatus: 'hyperspacebarrier',
 		onPrepareHit(pokemon) { return !!this.queue.willAct() && this.runEvent('StallMove', pokemon); },
 		onHit(pokemon) { pokemon.addVolatile('stall'); },
 		condition: {
@@ -14549,7 +14552,15 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 			onTryHitPriority: 3,
 			onTryHit(target, source, move) {
 				if (!move.flags['protect'] || move.category === 'Status') { return; }
-				this.add('-activate', target, 'move: Hyperspace Barrier');
+				this.add('-activate', target, 'move: Hyperspace Barrier', `[of] ${source}`);
+				if (move.pierce) {
+					target.getMoveHitData(move).pierced = move.pierce;
+					if (source && source !== target && this.checkMoveMakesContact(move, source, target) && !source.forceSwitchFlag) {
+						source.forceSwitchFlag = true;
+						this.add('-message', `${source.name} was warped away!`);
+					}
+					return;
+				}
 				return this.NOT_FAIL;
 			},
 			onHit(target, source, move) {
@@ -14771,6 +14782,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		flags: { airborne: 1, gravity: 1, metronome: 1, noassist: 1, failinstruct: 1, },
 		stallingMove: true,
 		onTryMove(attacker, defender, move) {
+			this.add('-singleturn', attacker, 'move: Leap');
 			attacker.addVolatile('leap');
 			return null;
 		},
@@ -15452,8 +15464,8 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 			onTryHitPriority: 3,
 			onTryHit(target, source, move) {
 				if (!move.flags['protect']) { return; }
-				if ((move.flags['beam'] || move.flags['light']) && !move.pierce) {
-					this.add('-activate', target, 'move: Mirror Shield');
+					if ((move.flags['beam'] || move.flags['light']) && !move.pierce) {
+					this.add('-message', `${target.name}'s Mirror Shield reflected the attack!`);
 					const newMove = this.dex.getActiveMove(move.id);
 					newMove.hasBounced = true;
 					newMove.pranksterBoosted = false;
@@ -18758,6 +18770,7 @@ export const Moves: import('../sim/dex-moves').MoveDataTable = {
 		sideCondition: 'fluxscraps',
 		condition: {
 			onSideStart(side) { this.add('-sidestart', side, 'move: Flux Scraps'); },
+			onSideEnd(side) { this.add('-sideend', side, 'move: Flux Scraps'); },
 			onSwitchIn(pokemon) {
 				if (pokemon.hasItem('heavydutyboots')) return;
 				const typeMod = this.clampIntRange(pokemon.runEffectiveness(this.dex.getActiveMove('fluxscraps')), -6, 6);
